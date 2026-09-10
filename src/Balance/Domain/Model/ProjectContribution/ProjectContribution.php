@@ -16,7 +16,7 @@ class ProjectContribution
 {
     use AggregateRoot;
 
-    private const float TONNE_TOLERANCE = 0.000001;
+    public const float TONNE_TOLERANCE = 0.000001;
 
     /** @var iterable<ProjectContributionCreditAllocation> */
     private iterable $creditAllocations = [];

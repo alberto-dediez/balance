@@ -7,6 +7,7 @@ namespace App\Shared\Application\CommandBus;
 use App\Balance\Application\CreditPurchase\Alerts\CheckCreditAlertsRequest;
 use App\Balance\Application\LedgerEntry\Check\CheckLedgerRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
+use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderallocatedContributionsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
@@ -43,6 +44,11 @@ class CommandSchedule
                     to: new \DateTimeImmutable('NOW'),
                 ),
                 time: '03:00',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'balance:reallocate-contributions',
+                command: new ReallocateAllUnderallocatedContributionsRequest(),
+                time: '05:00',
             ),
             ScheduledCommand::dailyAt(
                 id: 'balance:check-credit-alerts',

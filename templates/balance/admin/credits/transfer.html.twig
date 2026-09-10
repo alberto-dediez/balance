@@ -1,0 +1,41 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Compras de créditos de CO2' | trans) ~ ' > ' ~ ('Transferir crédito' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_credit_purchases_view', {'creditPurchaseId': creditPurchase.id}) }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Lote de origen' | trans }}">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">{{ 'Cuenta' | trans }}</dt>
+            <dd class="col-sm-9">{{ creditPurchase.accountId | account_name }}</dd>
+
+            <dt class="col-sm-3">{{ 'Identificador' | trans }}</dt>
+            <dd class="col-sm-9">{{ creditPurchase.reference ?? '-' }} · {{ 'lote' | trans }} {{ creditPurchase.lotNumber }}</dd>
+
+            <dt class="col-sm-3">{{ 'Toneladas del lote' | trans }}</dt>
+            <dd class="col-sm-9">{{ creditPurchase.availableTonnes | number_format(4, ',', '.') }} t</dd>
+
+            <dt class="col-sm-3">{{ 'Disponibles para transferir' | trans }}</dt>
+            <dd class="col-sm-9"><strong>{{ transferableTonnes | number_format(4, ',', '.') }} t</strong></dd>
+        </dl>
+    </twig:Card>
+
+    {{ form_start(form) }}
+
+    <twig:Card title="{{ 'Transferencia' | trans }}">
+        {{ form_errors(form) }}
+        {{ form_row(form.destinationAccountId) }}
+        {{ form_row(form.tonnes) }}
+    </twig:Card>
+
+    <twig:Card>
+        <twig:ActionBar>
+            <twig:ActionBar:Button type="primary" :button="form.saveAndReturn" />
+        </twig:ActionBar>
+    </twig:Card>
+
+    {{ form_end(form) }}
+{% endblock %}

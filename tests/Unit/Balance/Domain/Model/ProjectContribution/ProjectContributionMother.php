@@ -9,6 +9,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFunding;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
@@ -151,6 +152,39 @@ class ProjectContributionMother
             originId: $originId,
             origin: ProjectContributionOrigin::AttendeeSurveyResponse,
             originName: 'Congreso Andalucía Sostenible',
+        );
+    }
+
+    public static function paidAt(
+        \DateTimeImmutable $paidAt,
+        AccountId $accountId,
+        ProjectId $projectId,
+        float $tonnes = 1.0,
+    ): ProjectContribution {
+        return new ProjectContribution(
+            id: ProjectContributionId::generate(),
+            accountId: $accountId,
+            projectId: $projectId,
+            originId: (string) ProjectContributionId::generate(),
+            originName: 'Hotel Los Olivos',
+            co2eqKg: $tonnes * 1000,
+            tonnes: $tonnes,
+            pricePerTonne: 20.0,
+            costPerTonne: 15.0,
+            contributionAmount: round($tonnes * 15.0, 2),
+            managementFeeAmount: round($tonnes * 5.0, 2),
+            taxableAmount: round($tonnes * 20.0, 2),
+            vatRate: 21.0,
+            vatAmount: round($tonnes * 20.0 * 0.21, 2),
+            totalAmount: round($tonnes * 20.0 * 1.21, 2),
+            vatReason: VatExemptionReason::Standard,
+            contributorName: 'Guest',
+            contributorEmail: 'guest@example.com',
+            contributorCountry: 'ES',
+            status: ProjectContributionStatus::Paid,
+            registeredAt: $paidAt,
+            paidAt: $paidAt,
+            resolvedAt: $paidAt,
         );
     }
 

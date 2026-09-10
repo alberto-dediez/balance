@@ -295,6 +295,44 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         return $allocated;
     }
 
+    /** @return list<ProjectContribution> */
+    public function underallocatedContributions(?AccountId $accountId, ?ProjectId $projectId): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        $qb
+            ->select('pc')
+            ->from(ProjectContribution::class, 'pc')
+            ->leftJoin('pc.creditAllocations', 'a')
+            ->andWhere($qb->expr()->eq('pc.status', ':status'))
+            ->groupBy('pc.id')
+            ->having($qb->expr()->lt('COALESCE(SUM(a.tonnes), 0)', 'pc.tonnes - :tolerance'))
+            ->orderBy('pc.paidAt', 'ASC')
+            ->addOrderBy('pc.id', 'ASC')
+            ->setParameter('status', ProjectContributionStatus::Paid->value)
+            ->setParameter('tolerance', ProjectContribution::TONNE_TOLERANCE)
+        ;
+
+        if ($accountId instanceof AccountId) {
+            $qb
+                ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+                ->setParameter('accountId', (string) $accountId)
+            ;
+        }
+
+        if ($projectId instanceof ProjectId) {
+            $qb
+                ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
+                ->setParameter('projectId', (string) $projectId)
+            ;
+        }
+
+        /** @var list<ProjectContribution> $contributions */
+        $contributions = $qb->getQuery()->getResult();
+
+        return $contributions;
+    }
+
     /** @return list<ProjectContributionCreditAllocation> */
     public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array
     {

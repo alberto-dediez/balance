@@ -6977,6 +6977,66 @@
         <source>Todas las consultoras</source>
         <target>Tüm danışmanlar</target>
       </trans-unit>
+      <trans-unit id="UkCn6us" resname="Se han transferido {tonnes} t, de las que {absorbed} t se han aplicado a aportaciones pendientes">
+        <source>Se han transferido {tonnes} t, de las que {absorbed} t se han aplicado a aportaciones pendientes</source>
+        <target>{tonnes} t aktarıldı, bunun {absorbed} t kadarı bekleyen katkılara uygulandı</target>
+      </trans-unit>
+      <trans-unit id="P5CQ00c" resname="Cuenta de destino">
+        <source>Cuenta de destino</source>
+        <target>Hedef hesap</target>
+      </trans-unit>
+      <trans-unit id="o2GukTC" resname="Toneladas a transferir">
+        <source>Toneladas a transferir</source>
+        <target>Aktarılacak ton</target>
+      </trans-unit>
+      <trans-unit id="wCERkJD" resname="Déjalo vacío para transferir todo el remanente">
+        <source>Déjalo vacío para transferir todo el remanente</source>
+        <target>Kalanın tamamını aktarmak için boş bırakın</target>
+      </trans-unit>
+      <trans-unit id="iBAvLXn" resname="Transferir crédito">
+        <source>Transferir crédito</source>
+        <target>Kredi aktar</target>
+      </trans-unit>
+      <trans-unit id="9fXyBCA" resname="lote">
+        <source>lote</source>
+        <target>parti</target>
+      </trans-unit>
+      <trans-unit id="MhLBL8_" resname="Transferido">
+        <source>Transferido</source>
+        <target>Aktarıldı</target>
+      </trans-unit>
+      <trans-unit id="re7G.O2" resname="Toneladas del lote">
+        <source>Toneladas del lote</source>
+        <target>Partinin ton miktarı</target>
+      </trans-unit>
+      <trans-unit id="pLCs6BU" resname="Lote de origen">
+        <source>Lote de origen</source>
+        <target>Kaynak parti</target>
+      </trans-unit>
+      <trans-unit id="FmBnX2_" resname="Transferencia">
+        <source>Transferencia</source>
+        <target>Aktarım</target>
+      </trans-unit>
+      <trans-unit id="DDJ048u" resname="transferidas">
+        <source>transferidas</source>
+        <target>aktarıldı</target>
+      </trans-unit>
+      <trans-unit id="hIdVG12" resname="Toneladas recibidas">
+        <source>Toneladas recibidas</source>
+        <target>Alınan ton</target>
+      </trans-unit>
+      <trans-unit id="6kAn2EU" resname="Toneladas del serial">
+        <source>Toneladas del serial</source>
+        <target>Seri numarasının tonajı</target>
+      </trans-unit>
+      <trans-unit id="naOHAyF" resname="Esta compra no tiene crédito disponible para transferir">
+        <source>Esta compra no tiene crédito disponible para transferir</source>
+        <target>Bu satın almada aktarılabilecek kredi yok</target>
+      </trans-unit>
+      <trans-unit id="WcaTUEm" resname="Disponibles para transferir">
+        <source>Disponibles para transferir</source>
+        <target>Aktarıma uygun</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

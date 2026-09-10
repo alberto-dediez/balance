@@ -34,9 +34,7 @@ class ValidateCreditPurchaseService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($creditPurchase, SecurityAction::Edit, $user);
 
-        $duplicated = $this->creditPurchaseRepository->findOneByReference($request->reference);
-
-        if (null !== $duplicated && !$duplicated->id()->equals($creditPurchase->id())) {
+        if ($this->creditPurchaseRepository->existsByReference($request->reference, $creditPurchase->id())) {
             throw new DuplicatedPurchaseReferenceException($request->reference);
         }
 

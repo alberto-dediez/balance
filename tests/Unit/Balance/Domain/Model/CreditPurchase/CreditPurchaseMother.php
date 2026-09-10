@@ -76,6 +76,63 @@ class CreditPurchaseMother
         );
     }
 
+    public static function transferred(
+        ?AccountId $accountId = null,
+        ?ProjectId $projectId = null,
+        float $tonnes = 100.0,
+        float $transferredTonnes = 70.0,
+        ?float $amount = null,
+    ): CreditPurchase {
+        $creditPurchase = self::pending($accountId, $projectId, $tonnes);
+        $creditPurchase->validate(
+            purchasedTonnes: $tonnes,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'ref-' . (string) $creditPurchase->id(),
+            certificate: null,
+            validatedBy: UserId::generate(),
+            amount: $amount,
+        );
+
+        $pricePerTonne = $creditPurchase->pricePerTonne();
+
+        $creditPurchase->transfer(
+            tonnes: $transferredTonnes,
+            amount: null !== $pricePerTonne ? round($pricePerTonne * $transferredTonnes, 2) : 0.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+
+        return $creditPurchase;
+    }
+
+    public static function receivedLot(
+        string $reference,
+        float $purchasedTonnes = 100.0,
+        float $offsetTonnes = 30.0,
+        int $lotNumber = 2,
+        ?AccountId $accountId = null,
+        ?ProjectId $projectId = null,
+        ?float $amount = null,
+    ): CreditPurchase {
+        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
+        $creditPurchase->receive(
+            sourceCreditPurchaseId: CreditPurchaseId::generate(),
+            accountId: $accountId ?? AccountId::generate(),
+            projectId: $projectId ?? ProjectId::generate(),
+            purchasedTonnes: $purchasedTonnes,
+            offsetTonnes: $offsetTonnes,
+            amount: $amount,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: $reference,
+            lotNumber: $lotNumber,
+            certificate: null,
+            transferredBy: UserId::generate(),
+        );
+
+        return $creditPurchase;
+    }
+
     public static function partiallyValidated(?AccountId $accountId = null, ?ProjectId $projectId = null): CreditPurchase
     {
         $creditPurchase = self::pending($accountId, $projectId, 10.0);

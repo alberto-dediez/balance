@@ -212,6 +212,52 @@ abstract class ProjectContributionRepositoryTest extends KernelTestCase
         $this->assertSame([], $allocated);
     }
 
+    public function testUnderallocatedContributionsOnlyReturnsPaidAndIncompleteOnes(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $underallocated = ProjectContributionMother::paid($accountId, $projectId, 5.0);
+        $repository->add($this->allocated($underallocated, CreditPurchaseId::generate(), 2.0));
+
+        $fullyAllocated = ProjectContributionMother::paid($accountId, $projectId, 4.0);
+        $repository->add($this->allocated($fullyAllocated, CreditPurchaseId::generate(), 4.0));
+
+        $repository->add(ProjectContributionMother::pending($accountId, $projectId, 3.0));
+        $repository->add(ProjectContributionMother::paid(AccountId::generate(), ProjectId::generate(), 7.0));
+
+        $contributions = $repository->underallocatedContributions($accountId, $projectId);
+
+        $this->assertCount(1, $contributions);
+        $this->assertTrue($underallocated->id()->equals($contributions[0]->id()));
+
+        $this->assertCount(2, $repository->underallocatedContributions(null, null));
+        $this->assertCount(1, $repository->underallocatedContributions($accountId, null));
+        $this->assertCount(1, $repository->underallocatedContributions(null, $projectId));
+    }
+
+    public function testUnderallocatedContributionsAreOrderedByPaymentDate(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $first = ProjectContributionMother::paidAt(new \DateTimeImmutable('-3 days'), $accountId, $projectId, 2.0);
+        $second = ProjectContributionMother::paidAt(new \DateTimeImmutable('-1 day'), $accountId, $projectId, 3.0);
+
+        $repository->add($second);
+        $repository->add($first);
+
+        $contributions = $repository->underallocatedContributions($accountId, $projectId);
+
+        $this->assertCount(2, $contributions);
+        $this->assertTrue($first->id()->equals($contributions[0]->id()));
+        $this->assertTrue($second->id()->equals($contributions[1]->id()));
+    }
+
     private function allocated(
         ProjectContribution $projectContribution,
         CreditPurchaseId $creditPurchaseId,

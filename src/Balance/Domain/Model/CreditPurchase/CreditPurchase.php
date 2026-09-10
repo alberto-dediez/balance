@@ -33,6 +33,9 @@ class CreditPurchase
         private ?UserId $resolvedBy = null,
         private ?string $rejectionReason = null,
         private array $notifiedThresholds = [],
+        private float $offsetTonnes = 0.0,
+        private float $voidedTonnes = 0.0,
+        private int $lotNumber = 1,
         array $events = [],
         private \DateTimeImmutable $requestedAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $resolvedAt = null,
@@ -81,13 +84,35 @@ class CreditPurchase
         return $this->amount;
     }
 
+    public function offsetTonnes(): float
+    {
+        return $this->offsetTonnes;
+    }
+
+    public function voidedTonnes(): float
+    {
+        return $this->voidedTonnes;
+    }
+
+    public function lotNumber(): int
+    {
+        return $this->lotNumber;
+    }
+
+    public function isTransferred(): bool
+    {
+        return $this->voidedTonnes > CreditBalance::TONNE_TOLERANCE;
+    }
+
     public function pricePerTonne(): ?float
     {
-        if (null === $this->amount || null === $this->purchasedTonnes || 0.0 === $this->purchasedTonnes) {
+        $effectiveTonnes = $this->availableTonnes();
+
+        if (null === $this->amount || $effectiveTonnes <= 0.0) {
             return null;
         }
 
-        return round($this->amount / $this->purchasedTonnes, 6);
+        return round($this->amount / $effectiveTonnes, 6);
     }
 
     public function paymentType(): ?CreditPurchasePaymentType
@@ -157,7 +182,7 @@ class CreditPurchase
             return 0.0;
         }
 
-        return $this->purchasedTonnes;
+        return max(0.0, $this->purchasedTonnes - $this->offsetTonnes - $this->voidedTonnes);
     }
 
     public function request(AccountId $accountId, ProjectId $projectId, UserId $requestedBy, float $tonnes): void
@@ -239,6 +264,100 @@ class CreditPurchase
         );
     }
 
+    public function transfer(
+        float $tonnes,
+        float $amount,
+        CreditPurchaseId $destinationCreditPurchaseId,
+        AccountId $destinationAccountId,
+        UserId $transferredBy,
+    ): void {
+        if (CreditPurchaseStatus::Validated !== $this->status) {
+            throw new NonTransferableCreditPurchaseException($this->id());
+        }
+
+        if (CreditPurchasePaymentType::PaidByBioscore !== $this->paymentType) {
+            throw new NonTransferableCreditPurchaseException($this->id());
+        }
+
+        if (null === $this->reference) {
+            throw new NonTransferableCreditPurchaseException($this->id());
+        }
+
+        if ($tonnes <= 0.0) {
+            throw new InsufficientTransferableCreditException($this->id());
+        }
+
+        $this->recordApplyAndPublish(
+            new CreditPurchaseTransferred(
+                creditPurchaseId: $this->id(),
+                destinationCreditPurchaseId: $destinationCreditPurchaseId,
+                destinationAccountId: $destinationAccountId,
+                transferredTonnes: $tonnes,
+                transferredAmount: $amount,
+                transferredBy: $transferredBy,
+            ),
+        );
+    }
+
+    public function receive(
+        CreditPurchaseId $sourceCreditPurchaseId,
+        AccountId $accountId,
+        ProjectId $projectId,
+        float $purchasedTonnes,
+        float $offsetTonnes,
+        ?float $amount,
+        CreditPurchasePaymentType $paymentType,
+        string $reference,
+        int $lotNumber,
+        ?MediaId $certificate,
+        UserId $transferredBy,
+    ): void {
+        $this->recordApplyAndPublish(
+            new CreditPurchaseReceived(
+                creditPurchaseId: $this->id(),
+                sourceCreditPurchaseId: $sourceCreditPurchaseId,
+                accountId: $accountId,
+                projectId: $projectId,
+                purchasedTonnes: $purchasedTonnes,
+                offsetTonnes: $offsetTonnes,
+                amount: $amount,
+                paymentType: $paymentType,
+                reference: $reference,
+                lotNumber: $lotNumber,
+                certificate: $certificate,
+                transferredBy: $transferredBy,
+            ),
+        );
+    }
+
+    public function applyCreditPurchaseTransferred(CreditPurchaseTransferred $event): void
+    {
+        $this->voidedTonnes += $event->transferredTonnes();
+
+        if (null !== $this->amount) {
+            $this->amount = round($this->amount - $event->transferredAmount(), 2);
+        }
+    }
+
+    public function applyCreditPurchaseReceived(CreditPurchaseReceived $event): void
+    {
+        $this->accountId = $event->accountId();
+        $this->projectId = $event->projectId();
+        $this->requestedBy = $event->transferredBy();
+        $this->resolvedBy = $event->transferredBy();
+        $this->requestedTonnes = $event->receivedTonnes();
+        $this->status = CreditPurchaseStatus::Validated;
+        $this->purchasedTonnes = $event->purchasedTonnes();
+        $this->offsetTonnes = $event->offsetTonnes();
+        $this->amount = $event->amount();
+        $this->paymentType = $event->paymentType();
+        $this->reference = $event->reference();
+        $this->lotNumber = $event->lotNumber();
+        $this->certificate = null !== $event->certificate() ? (string) $event->certificate() : null;
+        $this->requestedAt = $event->occurredOn();
+        $this->resolvedAt = $event->occurredOn();
+    }
+
     public function reachThreshold(
         CreditAlertThreshold $threshold,
         float $consumedTonnes,
@@ -266,7 +385,7 @@ class CreditPurchase
                 accountId: $accountId,
                 projectId: $projectId,
                 threshold: $threshold,
-                purchasedTonnes: $this->purchasedTonnes,
+                purchasedTonnes: $this->availableTonnes(),
                 consumedTonnes: $consumedTonnes,
                 availableTonnes: $availableTonnes,
                 projectAvailableTonnes: $projectAvailableTonnes,

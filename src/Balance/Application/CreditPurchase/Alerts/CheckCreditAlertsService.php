@@ -96,9 +96,9 @@ final class CheckCreditAlertsService implements CommandHandler
             return null;
         }
 
-        $purchasedTonnes = $creditPurchase->purchasedTonnes();
+        $purchasedTonnes = $creditPurchase->availableTonnes();
 
-        if (null === $purchasedTonnes || $purchasedTonnes <= 0.0) {
+        if ($purchasedTonnes <= 0.0) {
             return null;
         }
 

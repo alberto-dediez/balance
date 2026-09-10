@@ -98,8 +98,9 @@ final class ReallocateUnderallocatedContributionsService
                 break;
             }
 
-            $startTonnes = $alreadyAllocated[(string) $creditPurchase->id()] ?? 0.0;
-            $available = $creditPurchase->availableTonnes() - $startTonnes;
+            $allocatedSoFar = $alreadyAllocated[(string) $creditPurchase->id()] ?? 0.0;
+            $startTonnes = $creditPurchase->offsetTonnes() + $allocatedSoFar;
+            $available = $creditPurchase->availableTonnes() - $allocatedSoFar;
 
             if ($available <= self::MIN_ALLOCATABLE_TONNES) {
                 continue;
@@ -115,7 +116,7 @@ final class ReallocateUnderallocatedContributionsService
                 startTonnes: $startTonnes,
             );
 
-            $alreadyAllocated[(string) $creditPurchase->id()] = $startTonnes + $consumed;
+            $alreadyAllocated[(string) $creditPurchase->id()] = $allocatedSoFar + $consumed;
             $pending -= $consumed;
             ++$position;
         }

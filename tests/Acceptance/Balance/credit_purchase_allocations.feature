@@ -42,3 +42,21 @@ Feature:
         When I am logged as "other@dediez.software"
         When I go to "/es/credits/purchases/2222"
         Then the response status should be 403
+
+    Scenario: The two holders of a transferred serial publish contiguous ranges
+        Given account "OtherCompany" with id "999" exists
+        Given user "other@dediez.software" with role "ROLE_OWNER" of account "999" exists
+        Given credit purchase "3333" for account "666" and project "1111" requesting "100" tonnes exists
+        Given credit purchase "3333" is validated with "100" tonnes and reference "REF-SPLIT" paid by "paid_by_bioscore"
+        Given contribution "C2" of account "666" for project "1111" with "8" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C2" succeeded
+        Given contribution "C3" of account "666" for project "1111" with "8" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C3" succeeded
+        Then contribution "C3" should consume the range "0" to "8" of serial "REF-SPLIT"
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/credits/3333/transfer"
+        When I submit a form with "destinationAccountId:999" and button "Transferir crédito"
+        When I follow redirect
+        Given contribution "C4" of account "999" for project "1111" with "5" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C4" succeeded
+        Then contribution "C4" should consume the range "8" to "13" of serial "REF-SPLIT"

@@ -207,6 +207,28 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         return $allocated;
     }
 
+    /** @return list<ProjectContribution> */
+    public function underallocatedContributions(?AccountId $accountId, ?ProjectId $projectId): array
+    {
+        $contributions = array_values(array_filter(
+            $this->findByFilter(new ProjectContributionFilter(
+                accountId: $accountId,
+                projectId: $projectId,
+                status: ProjectContributionStatus::Paid,
+                limit: 0,
+            )),
+            static fn(ProjectContribution $contribution): bool => $contribution->unallocatedTonnes() > ProjectContribution::TONNE_TOLERANCE,
+        ));
+
+        usort(
+            $contributions,
+            static fn(ProjectContribution $a, ProjectContribution $b): int => [$a->paidAt()?->getTimestamp() ?? 0, (string) $a->id()]
+                <=> [$b->paidAt()?->getTimestamp() ?? 0, (string) $b->id()],
+        );
+
+        return $contributions;
+    }
+
     /** @return list<ProjectContributionCreditAllocation> */
     public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array
     {

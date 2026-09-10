@@ -13,7 +13,9 @@ interface CreditPurchaseRepository
 
     public function find(CreditPurchaseId $creditPurchaseId): ?CreditPurchase;
 
-    public function findOneByReference(string $reference): ?CreditPurchase;
+    public function existsByReference(string $reference, ?CreditPurchaseId $excluding = null): bool;
+
+    public function nextLotNumberFor(string $reference): int;
 
     /** @return array<CreditPurchase> */
     public function findByFilter(CreditPurchaseFilter $filter): array;

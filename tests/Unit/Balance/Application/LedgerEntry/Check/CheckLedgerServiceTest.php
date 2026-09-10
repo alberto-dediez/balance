@@ -7,14 +7,17 @@ namespace App\Tests\Unit\Balance\Application\LedgerEntry\Check;
 use App\Balance\Application\LedgerEntry\Check\CheckLedgerRequest;
 use App\Balance\Application\LedgerEntry\Check\CheckLedgerResponse;
 use App\Balance\Application\LedgerEntry\Check\CheckLedgerService;
+use App\Balance\Application\LedgerEntry\Check\LedgerFinding;
 use App\Balance\Application\LedgerEntry\Check\LedgerFindingCode;
 use App\Balance\Application\LedgerEntry\LedgerEntryAuthorizer;
 use App\Balance\Application\LedgerEntry\Record\RecordContributionLedgerEntriesRequest;
 use App\Balance\Application\LedgerEntry\Record\RecordContributionLedgerEntriesService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\LedgerEntry\LedgerCheckCompleted;
 use App\Balance\Domain\Model\LedgerEntry\LedgerEntryFilter;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectType;
+use App\Balance\Domain\Model\ProjectContribution\AllocatedCreditLine;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryCreditPurchaseRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryLedgerEntryRepository;
@@ -23,6 +26,7 @@ use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectRe
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\LedgerEntry\LedgerEntryMother;
 use App\Tests\Unit\Balance\Domain\Model\LedgerEntry\LedgerEntryRepositoryMother;
@@ -112,6 +116,34 @@ class CheckLedgerServiceTest extends TestCase
         $this->assertSame(LedgerFindingCode::ContributionSumMismatch, $response->findings[0]->code);
     }
 
+    public function testASerialSplitBetweenTwoLotsIsNotReportedAsOverallocated(): void
+    {
+        $source = CreditPurchaseMother::transferred($this->accountId, $this->projectId, 100.0, 70.0);
+        $this->purchases->add($source);
+
+        $destinationAccountId = AccountId::generate();
+
+        $destination = CreditPurchaseMother::receivedLot(
+            reference: (string) $source->reference(),
+            purchasedTonnes: 100.0,
+            offsetTonnes: 30.0,
+            lotNumber: 2,
+            accountId: $destinationAccountId,
+            projectId: $this->projectId,
+        );
+        $this->purchases->add($destination);
+
+        $this->givenAllocatedContribution($this->accountId, $source->id(), 30.0, 0.0);
+        $this->givenAllocatedContribution($destinationAccountId, $destination->id(), 70.0, 30.0);
+
+        $response = $this->check();
+
+        $this->assertSame([], array_values(array_filter(
+            $response->findings,
+            static fn(LedgerFinding $finding): bool => LedgerFindingCode::OverallocatedCreditPurchase === $finding->code,
+        )));
+    }
+
     public function testEntriesOfAnUnpaidContributionAreReportedAsOrphans(): void
     {
         $contribution = ProjectContributionMother::pending($this->accountId, $this->projectId, 1.0);
@@ -191,6 +223,28 @@ class CheckLedgerServiceTest extends TestCase
         $this->contributions->add($contribution);
 
         return $contribution;
+    }
+
+    private function givenAllocatedContribution(
+        AccountId $accountId,
+        CreditPurchaseId $creditPurchaseId,
+        float $tonnes,
+        float $startTonnes,
+    ): void {
+        $contribution = ProjectContributionMother::paid($accountId, $this->projectId, $tonnes);
+        $contribution->allocateCredits([
+            new AllocatedCreditLine(
+                position: 0,
+                creditPurchaseId: $creditPurchaseId,
+                purchaseReference: 'SERIAL-1',
+                tonnes: $tonnes,
+                startTonnes: $startTonnes,
+            ),
+        ]);
+
+        $this->contributions->add($contribution);
+
+        $this->givenRecordedEntries($contribution);
     }
 
     private function givenRecordedEntries(ProjectContribution $contribution): void

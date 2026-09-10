@@ -88,7 +88,7 @@
                 ] %}
 
                 <twig:List:Table :columns="columns" :elements="creditPurchases">
-                    <td>{{ element.requestedTonnes }}</td>
+                    <td>{{ element.lotNumber > 1 ? '-' : element.requestedTonnes }}</td>
                     <td>{{ element.purchasedTonnes ?? '-' }}</td>
                     <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
                     <td>{{ element.reference ?? '-' }}</td>

@@ -32,15 +32,36 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
         return $this->creditPurchases[(string) $creditPurchaseId] ?? null;
     }
 
-    public function findOneByReference(string $reference): ?CreditPurchase
+    public function existsByReference(string $reference, ?CreditPurchaseId $excluding = null): bool
     {
         foreach ($this->creditPurchases as $creditPurchase) {
-            if ($creditPurchase->reference() === $reference) {
-                return $creditPurchase;
+            if ($creditPurchase->reference() !== $reference) {
+                continue;
             }
+
+            if ($excluding instanceof CreditPurchaseId && $excluding->equals($creditPurchase->id())) {
+                continue;
+            }
+
+            return true;
         }
 
-        return null;
+        return false;
+    }
+
+    public function nextLotNumberFor(string $reference): int
+    {
+        $maxLotNumber = 0;
+
+        foreach ($this->creditPurchases as $creditPurchase) {
+            if ($creditPurchase->reference() !== $reference) {
+                continue;
+            }
+
+            $maxLotNumber = max($maxLotNumber, $creditPurchase->lotNumber());
+        }
+
+        return $maxLotNumber + 1;
     }
 
     private function matches(CreditPurchase $creditPurchase, CreditPurchaseFilter $filter): bool
@@ -144,7 +165,7 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
                 ];
             }
 
-            $balances[$key]['purchasedTonnes'] += (float) $creditPurchase->purchasedTonnes();
+            $balances[$key]['purchasedTonnes'] += $creditPurchase->availableTonnes();
             ++$balances[$key]['purchasesCount'];
         }
 
@@ -184,7 +205,7 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
         );
 
         foreach ($validated as $creditPurchase) {
-            $purchased += (float) $creditPurchase->purchasedTonnes();
+            $purchased += $creditPurchase->availableTonnes();
         }
 
         return $purchased;

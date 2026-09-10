@@ -20,13 +20,33 @@
         </dd>
 
         <dt class="col-sm-4">{{ 'Identificador' | trans }}</dt>
-        <dd class="col-sm-8">{{ creditPurchase.reference ?? '-' }}</dd>
+        <dd class="col-sm-8">
+            {{ creditPurchase.reference ?? '-' }}
+            {% if creditPurchase.reference is not null %}
+                <span class="text-muted">· {{ 'lote' | trans }} {{ creditPurchase.lotNumber }}</span>
+            {% endif %}
+        </dd>
 
-        <dt class="col-sm-4">{{ 'Toneladas solicitadas' | trans }}</dt>
+        {% set isReceivedLot = creditPurchase.lotNumber > 1 %}
+
+        {% if isReceivedLot %}
+            <dt class="col-sm-4">{{ 'Toneladas recibidas' | trans }}</dt>
+        {% else %}
+            <dt class="col-sm-4">{{ 'Toneladas solicitadas' | trans }}</dt>
+        {% endif %}
         <dd class="col-sm-8">{{ creditPurchase.requestedTonnes | number_format(4, ',', '.') }} t</dd>
 
-        <dt class="col-sm-4">{{ 'Toneladas compradas' | trans }}</dt>
+        {% if isReceivedLot %}
+            <dt class="col-sm-4">{{ 'Toneladas del serial' | trans }}</dt>
+        {% else %}
+            <dt class="col-sm-4">{{ 'Toneladas compradas' | trans }}</dt>
+        {% endif %}
         <dd class="col-sm-8">{{ creditPurchase.purchasedTonnes is not null ? (creditPurchase.purchasedTonnes | number_format(4, ',', '.') ~ ' t') : '-' }}</dd>
+
+        {% if creditPurchase.isTransferred %}
+            <dt class="col-sm-4">{{ 'Transferido' | trans }}</dt>
+            <dd class="col-sm-8">{{ creditPurchase.voidedTonnes | number_format(4, ',', '.') }} t</dd>
+        {% endif %}
 
         {% if showCost %}
             <dt class="col-sm-4">{{ 'Coste del lote' | trans }}</dt>
@@ -71,6 +91,8 @@
             'allocations': allocations,
             'purchasedTonnes': purchasedTonnes,
             'availableTonnes': availableTonnes,
+            'offsetTonnes': creditPurchase.offsetTonnes,
+            'voidedTonnes': creditPurchase.voidedTonnes,
             'height': 24,
             'labels': true,
         }) }}

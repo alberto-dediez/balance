@@ -1,11 +1,32 @@
 {#
-    Variables expected: allocations, purchasedTonnes, availableTonnes; optional: height, labels
+    Variables expected: allocations, purchasedTonnes, availableTonnes; optional: offsetTonnes, voidedTonnes, height, labels
 #}
+{% macro transferred(tonnes, purchasedTonnes, labels) %}
+    {% if tonnes > 0 and purchasedTonnes > 0 %}
+        {% set percent = tonnes / purchasedTonnes * 100 %}
+        <div class="progress-bar progress-bar-striped bg-secondary bg-opacity-50 text-dark"
+             role="progressbar"
+             style="width: {{ percent }}%"
+             aria-valuenow="{{ percent }}"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             title="{{ 'Transferido' | trans }}: {{ tonnes | number_format(4, ',', '.') }} t">
+            {% if labels and percent >= 8 %}{{ 'Transferido' | trans }}{% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% import _self as bar %}
+
 {% set colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger', 'bg-secondary'] %}
 {% set height = height | default(12) %}
 {% set labels = labels | default(false) %}
+{% set offsetTonnes = offsetTonnes | default(0) %}
+{% set voidedTonnes = voidedTonnes | default(0) %}
 
 <div class="progress" style="height: {{ height }}px;">
+    {{ bar.transferred(offsetTonnes, purchasedTonnes, labels) }}
+
     {% for allocation in allocations %}
         {% set percent = purchasedTonnes > 0 ? (allocation.tonnes / purchasedTonnes * 100) : 0 %}
         <div class="progress-bar {{ colors[loop.index0 % colors|length] }}"
@@ -31,6 +52,8 @@
             {% if labels and freePercent >= 8 %}{{ 'Libre' | trans }}{% endif %}
         </div>
     {% endif %}
+
+    {{ bar.transferred(voidedTonnes, purchasedTonnes, labels) }}
 </div>
 
 {% if labels %}
@@ -46,6 +69,13 @@
             <span>
                 <span class="badge bg-light border">&nbsp;</span>
                 {{ 'Libre' | trans }}
+            </span>
+        {% endif %}
+
+        {% if offsetTonnes + voidedTonnes > 0 %}
+            <span>
+                <span class="badge bg-secondary bg-opacity-50 border">&nbsp;</span>
+                {{ 'Transferido' | trans }}
             </span>
         {% endif %}
     </div>

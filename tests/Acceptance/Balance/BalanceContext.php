@@ -10,12 +10,14 @@ use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsService;
 use App\Balance\Domain\Model\AccountProject\AccountProject;
+use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectId;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStatus;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseFilter;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
@@ -291,6 +293,43 @@ final class BalanceContext implements Context
         Assert::assertEqualsWithDelta((float) $tonnes, $balance->availableTonnes(), 0.0001);
     }
 
+    #[When('I go to the detail of lot :lotNumber of serial :reference')]
+    public function iGoToTheDetailOfLotOfSerial(int $lotNumber, string $reference): void
+    {
+        $purchases = $this->getCreditPurchaseRepository()->findByFilter(
+            new CreditPurchaseFilter(reference: $reference, limit: 0),
+        );
+
+        foreach ($purchases as $creditPurchase) {
+            if ($creditPurchase->lotNumber() === $lotNumber) {
+                $this->client->request('GET', sprintf('/es/credits/purchases/%s', (string) $creditPurchase->id()));
+
+                return;
+            }
+        }
+
+        Assert::fail(sprintf('No lot %d found for serial "%s".', $lotNumber, $reference));
+    }
+
+    #[Then('project :projectId should be adhered to account :accountId')]
+    public function projectShouldBeAdheredToAccount(string $projectId, string $accountId): void
+    {
+        Assert::assertCount(1, $this->getAccountProjectRepository()->findByFilter(new AccountProjectFilter(
+            accountId: new AccountId($accountId),
+            projectId: new ProjectId($projectId),
+            limit: 0,
+        )));
+    }
+
+    #[Then('credit purchase :id should have :tonnes free tonnes')]
+    public function creditPurchaseShouldHaveFreeTonnes(string $id, string $tonnes): void
+    {
+        $creditPurchase = $this->getCreditPurchaseRepository()->find(new CreditPurchaseId($id));
+
+        Assert::assertNotNull($creditPurchase);
+        Assert::assertEqualsWithDelta((float) $tonnes, $creditPurchase->availableTonnes(), 0.0001);
+    }
+
     #[Then('there should be :count contributions')]
     public function thereShouldBeContributions(int $count): void
     {
@@ -457,6 +496,22 @@ final class BalanceContext implements Context
         }
 
         Assert::assertEqualsWithDelta((float) $tonnes, $consumed, 0.0001);
+    }
+
+    #[Then('contribution :id should consume the range :startTonnes to :endTonnes of serial :serial')]
+    public function contributionShouldConsumeTheRangeOfSerial(
+        string $id,
+        string $startTonnes,
+        string $endTonnes,
+        string $serial,
+    ): void {
+        $contribution = $this->getProjectContributionRepository()->find(new ProjectContributionId($id));
+
+        Assert::assertNotNull($contribution);
+        Assert::assertContains(
+            ['serial' => $serial, 'startTonnes' => (float) $startTonnes, 'endTonnes' => (float) $endTonnes],
+            $contribution->creditLots(),
+        );
     }
 
     #[Then('contribution :id should consume no credit')]

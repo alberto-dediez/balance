@@ -3,6 +3,16 @@
 {% set page_title = ('Compras de créditos de CO2' | trans) ~ ' > ' ~ (creditPurchase.reference ?? (creditPurchase.requestedAt | date('d/m/Y'))) %}
 
 {% block top_actions %}
+    {% if creditPurchase.status.value == 'validated'
+        and creditPurchase.paymentType is not null
+        and creditPurchase.paymentType.value == 'paid_by_bioscore'
+        and availableTonnes > 0 %}
+        <twig:TopAction path="{{ path('admin_credit_purchases_transfer', {'creditPurchaseId': creditPurchase.id}) }}">
+            <twig:Icon name="solar:transfer-horizontal-line-duotone" size="lg" class="me-2" />
+            {{ 'Transferir crédito' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('admin_credit_purchases') }}" />
 {% endblock %}
 

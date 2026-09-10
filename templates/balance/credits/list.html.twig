@@ -57,9 +57,10 @@
                     {% set allocations = allocationsByPurchase[element.id ~ ''] ?? [] %}
                     {% set purchasedTonnes = element.purchasedTonnes ?? 0 %}
                     {% set allocatedTonnes = allocations | reduce((total, allocation) => total + allocation.tonnes, 0) %}
+                    {% set freeTonnes = max(0, element.availableTonnes - allocatedTonnes) %}
 
                     <td>{{ element.requestedAt | date('d/m/Y') }}</td>
-                    <td>{{ element.requestedTonnes | number_format(4, ',', '.') }}</td>
+                    <td>{{ element.lotNumber > 1 ? '-' : (element.requestedTonnes | number_format(4, ',', '.')) }}</td>
                     <td>{{ element.purchasedTonnes is not null ? (element.purchasedTonnes | number_format(4, ',', '.')) : '-' }}</td>
                     <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
                     <td>{{ element.reference ?? '-' }}</td>
@@ -74,11 +75,16 @@
                             {{ include('@balance/credits/_bar.html.twig', {
                                 'allocations': allocations,
                                 'purchasedTonnes': purchasedTonnes,
-                                'availableTonnes': purchasedTonnes - allocatedTonnes,
+                                'availableTonnes': freeTonnes,
+                                'offsetTonnes': element.offsetTonnes,
+                                'voidedTonnes': element.voidedTonnes,
                             }) }}
                             <small class="text-muted">
                                 {{ allocatedTonnes | number_format(2, ',', '.') }} t {{ 'compensadas' | trans }} /
-                                {{ (purchasedTonnes - allocatedTonnes) | number_format(2, ',', '.') }} t {{ 'libres' | trans }}
+                                {{ freeTonnes | number_format(2, ',', '.') }} t {{ 'libres' | trans }}
+                                {% if element.isTransferred %}
+                                    / {{ element.voidedTonnes | number_format(2, ',', '.') }} t {{ 'transferidas' | trans }}
+                                {% endif %}
                             </small>
                         {% else %}
                             -

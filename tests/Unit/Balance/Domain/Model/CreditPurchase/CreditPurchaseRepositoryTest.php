@@ -71,19 +71,66 @@ abstract class CreditPurchaseRepositoryTest extends KernelTestCase
         $this->assertCount(1, $result);
     }
 
-    public function testFindOneByReference(): void
+    public function testExistsByReference(): void
     {
         $repository = $this->createSUT();
 
         $creditPurchase = CreditPurchaseMother::validated();
         $repository->add($creditPurchase);
 
-        $found = $repository->findOneByReference((string) $creditPurchase->reference());
+        $reference = (string) $creditPurchase->reference();
 
-        $this->assertNotNull($found);
-        $this->assertTrue($creditPurchase->id()->equals($found->id()));
+        $this->assertTrue($repository->existsByReference($reference));
+        $this->assertFalse($repository->existsByReference($reference, $creditPurchase->id()));
+        $this->assertFalse($repository->existsByReference('does-not-exist'));
+    }
 
-        $this->assertNull($repository->findOneByReference('does-not-exist'));
+    public function testNextLotNumberForReference(): void
+    {
+        $repository = $this->createSUT();
+
+        $this->assertSame(1, $repository->nextLotNumberFor('does-not-exist'));
+
+        $creditPurchase = CreditPurchaseMother::validated();
+        $repository->add($creditPurchase);
+
+        $reference = (string) $creditPurchase->reference();
+
+        $this->assertSame(2, $repository->nextLotNumberFor($reference));
+
+        $repository->add(CreditPurchaseMother::receivedLot(
+            reference: $reference,
+            purchasedTonnes: 10.0,
+            offsetTonnes: 4.0,
+            lotNumber: 2,
+        ));
+
+        $this->assertSame(3, $repository->nextLotNumberFor($reference));
+    }
+
+    public function testTransferredLotsDoNotDuplicateTonnes(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $destinationAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $source = CreditPurchaseMother::transferred($accountId, $projectId, 100.0, 70.0);
+        $repository->add($source);
+
+        $repository->add(CreditPurchaseMother::receivedLot(
+            reference: (string) $source->reference(),
+            purchasedTonnes: 100.0,
+            offsetTonnes: 30.0,
+            lotNumber: 2,
+            accountId: $destinationAccountId,
+            projectId: $projectId,
+        ));
+
+        $this->assertSame(30.0, $repository->balanceFor($accountId, $projectId)->purchasedTonnes());
+        $this->assertSame(70.0, $repository->balanceFor($destinationAccountId, $projectId)->purchasedTonnes());
+        $this->assertSame(100.0, $repository->purchasedTonnesForProject($projectId));
     }
 
     public function testBalancesByAccountSumsValidatedPurchasesByProject(): void

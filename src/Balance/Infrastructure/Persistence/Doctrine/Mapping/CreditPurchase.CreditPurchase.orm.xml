@@ -18,14 +18,21 @@
         <field name="purchasedTonnes" type="float" column="purchased_tonnes" nullable="true"/>
         <field name="amount" type="float" column="amount" nullable="true"/>
         <field name="paymentType" type="string" column="payment_type" length="20" enum-type="App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType" nullable="true"/>
-        <field name="reference" type="string" column="reference" length="255" nullable="true" unique="true"/>
+        <field name="reference" type="string" column="reference" length="255" nullable="true"/>
         <field name="certificate" type="string" column="certificate" length="36" nullable="true"/>
         <field name="resolvedBy" type="user_id" column="resolved_by" nullable="true"/>
         <field name="rejectionReason" type="text" column="rejection_reason" nullable="true"/>
         <field name="notifiedThresholds" type="json" column="notified_thresholds" nullable="false"/>
+        <field name="offsetTonnes" type="float" column="offset_tonnes" nullable="false"/>
+        <field name="voidedTonnes" type="float" column="voided_tonnes" nullable="false"/>
+        <field name="lotNumber" type="integer" column="lot_number" nullable="false"/>
         <field name="requestedAt" type="datetime_immutable" column="requested_at" nullable="false"/>
         <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true"/>
         <field name="cancelledAt" type="datetime_immutable" column="cancelled_at" nullable="true"/>
+
+        <unique-constraints>
+            <unique-constraint columns="reference,lot_number" name="uniq_credit_purchase_reference_lot"/>
+        </unique-constraints>
 
         <indexes>
             <index columns="account_id" name="idx_credit_purchase_account_id"/>

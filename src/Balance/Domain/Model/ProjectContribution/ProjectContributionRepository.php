@@ -41,6 +41,9 @@ interface ProjectContributionRepository
         \DateTimeImmutable $now,
     ): array;
 
+    /** @return list<ProjectContribution> */
+    public function underallocatedContributions(?AccountId $accountId, ?ProjectId $projectId): array;
+
     /** @return list<ProjectContributionCreditAllocation> */
     public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array;
 

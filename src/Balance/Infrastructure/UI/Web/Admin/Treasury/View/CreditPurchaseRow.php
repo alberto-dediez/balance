@@ -15,7 +15,7 @@ final readonly class CreditPurchaseRow
 
     public function purchasedTonnes(): float
     {
-        return $this->creditPurchase->purchasedTonnes() ?? 0.0;
+        return $this->creditPurchase->availableTonnes();
     }
 
     public function idleTonnes(): float

@@ -201,6 +201,30 @@ class AllocateContributionCreditsServiceTest extends TestCase
         $this->assertSame(4.0, $allocations[0]->tonnes());
     }
 
+    public function testAReceivedLotIsPublishedFromItsOffset(): void
+    {
+        $this->givenCompensationProject();
+
+        $lot = CreditPurchaseMother::receivedLot(
+            reference: 'SERIAL-1',
+            purchasedTonnes: 100.0,
+            offsetTonnes: 30.0,
+            lotNumber: 2,
+            accountId: $this->accountId,
+            projectId: $this->projectId,
+        );
+        $this->purchases->add($lot);
+
+        $contribution = $this->givenPaidContribution(20.0);
+
+        $this->allocate($contribution);
+
+        $this->assertSame(
+            [['serial' => 'SERIAL-1', 'startTonnes' => 30.0, 'endTonnes' => 50.0]],
+            $contribution->creditLots(),
+        );
+    }
+
     private function givenCompensationProject(): void
     {
         $this->projects->add(ProjectMother::contributable(

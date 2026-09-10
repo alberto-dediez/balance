@@ -42,16 +42,41 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
         ;
     }
 
-    public function findOneByReference(string $reference): ?CreditPurchase
+    public function existsByReference(string $reference, ?CreditPurchaseId $excluding = null): bool
     {
-        $qb = $this->createQueryBuilderFromFilter(new CreditPurchaseFilter());
+        $qb = $this->manager->createQueryBuilder();
 
-        return $qb
+        $qb
+            ->select('COUNT(cp.id)')
+            ->from(CreditPurchase::class, 'cp')
+            ->andWhere($qb->expr()->eq('cp.reference', ':reference'))
+            ->setParameter('reference', $reference)
+        ;
+
+        if ($excluding instanceof CreditPurchaseId) {
+            $qb
+                ->andWhere($qb->expr()->neq('cp.id', ':excluding'))
+                ->setParameter('excluding', (string) $excluding)
+            ;
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult() > 0;
+    }
+
+    public function nextLotNumberFor(string $reference): int
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        $maxLotNumber = $qb
+            ->select('MAX(cp.lotNumber)')
+            ->from(CreditPurchase::class, 'cp')
             ->andWhere($qb->expr()->eq('cp.reference', ':reference'))
             ->setParameter('reference', $reference)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getSingleScalarResult()
         ;
+
+        return null !== $maxLotNumber ? (int) $maxLotNumber + 1 : 1;
     }
 
     private function createQueryBuilderFromFilter(CreditPurchaseFilter $filter): QueryBuilder
@@ -143,7 +168,7 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
         $qb = $this->manager->createQueryBuilder();
 
         $rows = $qb
-            ->select('cp.projectId as projectId, SUM(cp.purchasedTonnes) as purchasedTonnes, COUNT(cp) as purchasesCount')
+            ->select('cp.projectId as projectId, SUM(cp.purchasedTonnes - cp.offsetTonnes - cp.voidedTonnes) as purchasedTonnes, COUNT(cp) as purchasesCount')
             ->from(CreditPurchase::class, 'cp')
             ->andWhere($qb->expr()->eq('cp.accountId', ':accountId'))
             ->andWhere($qb->expr()->eq('cp.status', ':status'))
@@ -186,7 +211,7 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
         $qb = $this->manager->createQueryBuilder();
 
         return (float) $qb
-            ->select('COALESCE(SUM(cp.purchasedTonnes), 0)')
+            ->select('COALESCE(SUM(cp.purchasedTonnes - cp.offsetTonnes - cp.voidedTonnes), 0)')
             ->from(CreditPurchase::class, 'cp')
             ->andWhere($qb->expr()->eq('cp.projectId', ':projectId'))
             ->andWhere($qb->expr()->eq('cp.status', ':status'))

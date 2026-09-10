@@ -41,11 +41,16 @@
         {% set project = element.projectId | project_name %}
         <td>{{ element.accountId | account_name }}</td>
         <td>{{ project }}</td>
-        <td>{{ element.requestedTonnes }}</td>
+        <td>{{ element.lotNumber > 1 ? '-' : element.requestedTonnes }}</td>
         <td>{{ element.purchasedTonnes ?? '-' }}</td>
         <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
         <td>{{ element.paymentType ? (element.paymentType.value | trans({}, 'creditPurchasePaymentType')) : '-' }}</td>
-        <td>{{ element.reference ?? '-' }}</td>
+        <td>
+            {{ element.reference ?? '-' }}
+            {% if element.reference is not null %}
+                <span class="text-muted">· {{ 'lote' | trans }} {{ element.lotNumber }}</span>
+            {% endif %}
+        </td>
         <td>
             {{ element.status.value | trans({}, 'creditPurchaseStatus') }}
             {% if element.isPartiallyFulfilled %}
@@ -56,6 +61,13 @@
         <td>
             {% if element.status.value == 'validated' %}
                 <twig:List:Action:View path="{{ path('admin_credit_purchases_view', {'creditPurchaseId': element.id}) }}" />
+            {% endif %}
+
+            {% if element.status.value == 'validated'
+                and element.paymentType is not null
+                and element.paymentType.value == 'paid_by_bioscore'
+                and element.availableTonnes > 0 %}
+                <twig:List:Action:Transfer path="{{ path('admin_credit_purchases_transfer', {'creditPurchaseId': element.id}) }}" />
             {% endif %}
 
             {% if element.status.value == 'pending' %}

@@ -14,15 +14,7 @@ final class AccountProjectAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        assert($subject instanceof AccountProject);
-
-        $currentAccountId = $this->currentAccountId($user);
-        $subjectAccountId = $subject->accountId();
-
-        return $this->userHasRole($user, Role::Owner)
-            && $currentAccountId instanceof AccountId
-            && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+        return $this->canAdmin($subject, $user) || $this->isOwnAccount($subject, $user);
     }
 
     protected function canView(mixed $subject, User $user): bool
@@ -32,21 +24,30 @@ final class AccountProjectAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)) {
-            return true;
-        }
-
-        return $this->canRegister($subject, $user);
+        return $this->canAdmin($subject, $user) || $this->isOwnAccount($subject, $user);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return $this->canRegister($subject, $user);
+        return $this->isOwnAccount($subject, $user);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
     {
-        return $this->canRegister($subject, $user);
+        return $this->isOwnAccount($subject, $user);
+    }
+
+    private function isOwnAccount(mixed $subject, User $user): bool
+    {
+        assert($subject instanceof AccountProject);
+
+        $currentAccountId = $this->currentAccountId($user);
+        $subjectAccountId = $subject->accountId();
+
+        return $this->userHasRole($user, Role::Owner)
+            && $currentAccountId instanceof AccountId
+            && null !== $subjectAccountId
+            && $currentAccountId->equals($subjectAccountId);
     }
 
     public function supports(mixed $subject): bool

@@ -10,10 +10,14 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseCancelled;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseNotPendingException;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseReceived;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRejected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRequested;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseTransferred;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
 use App\Balance\Domain\Model\CreditPurchase\CreditThresholdReached;
+use App\Balance\Domain\Model\CreditPurchase\InsufficientTransferableCreditException;
+use App\Balance\Domain\Model\CreditPurchase\NonTransferableCreditPurchaseException;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -177,6 +181,140 @@ class CreditPurchaseTest extends TestCase
         $creditPurchase = CreditPurchaseMother::pending();
 
         $this->assertSame(0.0, $creditPurchase->availableTonnes());
+    }
+
+    public function testTransferVoidsTheRemainderAndProratesTheAmount(): void
+    {
+        $creditPurchase = $this->bioscorePurchase(100.0, 1000.0);
+
+        $creditPurchase->transfer(
+            tonnes: 70.0,
+            amount: 700.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+
+        $this->assertSame(70.0, $creditPurchase->voidedTonnes());
+        $this->assertSame(30.0, $creditPurchase->availableTonnes());
+        $this->assertSame(300.0, $creditPurchase->amount());
+        $this->assertSame(10.0, $creditPurchase->pricePerTonne());
+        $this->assertTrue($creditPurchase->isTransferred());
+
+        $this->assertInstanceOf(CreditPurchaseTransferred::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testTransferOfAPurchaseWithoutAmountKeepsTheAmountNull(): void
+    {
+        $creditPurchase = $this->bioscorePurchase(100.0, null);
+
+        $creditPurchase->transfer(
+            tonnes: 40.0,
+            amount: 0.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+
+        $this->assertNull($creditPurchase->amount());
+        $this->assertNull($creditPurchase->pricePerTonne());
+        $this->assertSame(60.0, $creditPurchase->availableTonnes());
+    }
+
+    public function testTransferOfANonValidatedPurchaseThrows(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pending();
+
+        $this->expectException(NonTransferableCreditPurchaseException::class);
+
+        $creditPurchase->transfer(
+            tonnes: 1.0,
+            amount: 0.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+    }
+
+    public function testTransferOfAPurchasePaidByTheClientThrows(): void
+    {
+        $creditPurchase = CreditPurchaseMother::validated(tonnes: 100.0);
+
+        $this->expectException(NonTransferableCreditPurchaseException::class);
+
+        $creditPurchase->transfer(
+            tonnes: 1.0,
+            amount: 0.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+    }
+
+    public function testTransferOfZeroTonnesThrows(): void
+    {
+        $creditPurchase = $this->bioscorePurchase(100.0, 1000.0);
+
+        $this->expectException(InsufficientTransferableCreditException::class);
+
+        $creditPurchase->transfer(
+            tonnes: 0.0,
+            amount: 0.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+    }
+
+    public function testReceiveStartsAValidatedLotWithTheOffsetOfTheSource(): void
+    {
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $destination = new CreditPurchase(id: CreditPurchaseId::generate());
+        $destination->receive(
+            sourceCreditPurchaseId: CreditPurchaseId::generate(),
+            accountId: $accountId,
+            projectId: $projectId,
+            purchasedTonnes: 100.0,
+            offsetTonnes: 30.0,
+            amount: 700.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'SERIAL-1',
+            lotNumber: 2,
+            certificate: null,
+            transferredBy: UserId::generate(),
+        );
+
+        $this->assertNotNull($destination->accountId());
+        $this->assertNotNull($destination->projectId());
+        $this->assertTrue($accountId->equals($destination->accountId()));
+        $this->assertTrue($projectId->equals($destination->projectId()));
+        $this->assertSame(70.0, $destination->availableTonnes());
+        $this->assertSame(70.0, $destination->requestedTonnes());
+        $this->assertSame(30.0, $destination->offsetTonnes());
+        $this->assertSame(2, $destination->lotNumber());
+        $this->assertSame(10.0, $destination->pricePerTonne());
+        $this->assertFalse($destination->isPartiallyFulfilled());
+        $this->assertFalse($destination->isTransferred());
+        $this->assertSame([], $destination->notifiedThresholds());
+
+        $this->assertInstanceOf(CreditPurchaseReceived::class, $this->spySubscriber->lastEvent());
+    }
+
+    private function bioscorePurchase(float $tonnes, ?float $amount): CreditPurchase
+    {
+        $creditPurchase = CreditPurchaseMother::pending(tonnes: $tonnes);
+        $creditPurchase->validate(
+            purchasedTonnes: $tonnes,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'SERIAL-' . (string) $creditPurchase->id(),
+            certificate: null,
+            validatedBy: UserId::generate(),
+            amount: $amount,
+        );
+
+        return $creditPurchase;
     }
 
     public function testReachThresholdPublishesCreditThresholdReached(): void

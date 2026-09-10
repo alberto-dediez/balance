@@ -183,6 +183,46 @@ class CheckCreditAlertsServiceTest extends TestCase
         );
     }
 
+    public function testThresholdsOfAReceivedLotAreMeasuredOnItsEffectiveTonnes(): void
+    {
+        $lot = CreditPurchaseMother::receivedLot(
+            reference: 'SERIAL-1',
+            purchasedTonnes: 100.0,
+            offsetTonnes: 30.0,
+            lotNumber: 2,
+            accountId: $this->accountId,
+            projectId: $this->projectId,
+        );
+        $this->creditPurchaseRepository->add($lot);
+
+        $this->consume($lot, 63.0);
+
+        $response = $this->check();
+
+        $this->assertSame(1, $response->alerted);
+        $this->assertSame([CreditAlertThreshold::High], $this->thresholdEvents());
+
+        $event = $this->lastThresholdEvent();
+
+        $this->assertSame(70.0, $event->purchasedTonnes());
+        $this->assertSame(63.0, $event->consumedTonnes());
+        $this->assertSame(7.0, $event->availableTonnes());
+    }
+
+    private function lastThresholdEvent(): CreditThresholdReached
+    {
+        $events = array_values(array_filter(
+            $this->spySubscriber->events(),
+            static fn(DomainEvent $event): bool => $event instanceof CreditThresholdReached,
+        ));
+
+        $event = end($events);
+
+        $this->assertInstanceOf(CreditThresholdReached::class, $event);
+
+        return $event;
+    }
+
     private function validatedPurchase(float $tonnes, ?\DateTimeImmutable $resolvedAt = null): CreditPurchase
     {
         $creditPurchase = CreditPurchaseMother::validatedAt(

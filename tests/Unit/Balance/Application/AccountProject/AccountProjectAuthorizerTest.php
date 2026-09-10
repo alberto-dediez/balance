@@ -33,16 +33,28 @@ class AccountProjectAuthorizerTest extends TestCase
 
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Register, $user));
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Remove, $user));
     }
 
-    public function testAdminCanListButNotRegister(): void
+    public function testOwnerCanEditOwnAccount(): void
+    {
+        $accountId = AccountId::generate();
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
+        $subject = new AccountProject(id: AccountProjectId::generate(), accountId: $accountId);
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testAdminCanListAndRegisterButNotEditOrRemove(): void
     {
         $user = UserMother::adminUser();
         $subject = new AccountProject(id: AccountProjectId::generate(), accountId: AccountId::generate());
 
         $this->assertTrue($this->createSUT()->canDoThat($subject, Action::List, $user));
-        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Register, $user));
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Register, $user));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Remove, $user));
     }
 
     public function testUserCannotDoAnything(): void
