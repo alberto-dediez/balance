@@ -201,3 +201,7 @@ asset-prod:
 
 asset-email:
 	./var/dart-sass/sass assets/styles/email.scss assets/styles/email.css --no-source-map
+
+## —— AI 🤖 ——————————————————————————————————————————————————————————————
+ai-setup: ## Initialize the AI (Claude) settings: .claude folders, shared/skills/CLAUDE.md links and fileSuggestion hook
+	../ai/setup-ai.sh $(CURDIR)
