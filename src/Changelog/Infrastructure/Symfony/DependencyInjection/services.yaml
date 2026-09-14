@@ -1,0 +1,42 @@
+parameters:
+    changelog.dir: '%kernel.project_dir%/changelog'
+    changelog.entries_dir: '%changelog.dir%/entries'
+    changelog.manuals_dir: '%changelog.dir%/manuals'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Changelog\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Changelog\Infrastructure\Persistence\Filesystem\FilesystemChangelogEntryRepository:
+        arguments:
+            $entriesPath: '%changelog.entries_dir%'
+
+    App\Changelog\Infrastructure\Storage\LocalManualStorage:
+        arguments:
+            $basePath: '%changelog.manuals_dir%'
+
+    App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntryRepository:
+        alias: App\Changelog\Infrastructure\Persistence\Filesystem\FilesystemChangelogEntryRepository
+
+    App\Changelog\Domain\Model\ChangelogEntry\ManualStorage:
+        alias: App\Changelog\Infrastructure\Storage\LocalManualStorage
+
+when@test:
+    services:
+        App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntryRepository:
+            alias: App\Changelog\Infrastructure\Persistence\InMemory\InMemoryChangelogEntryRepository
+
+        App\Changelog\Infrastructure\Persistence\InMemory\InMemoryChangelogEntryRepository:
+            public: true
+
+        App\Changelog\Domain\Model\ChangelogEntry\ManualStorage:
+            alias: App\Changelog\Infrastructure\Storage\InMemoryManualStorage
+
+        App\Changelog\Infrastructure\Storage\InMemoryManualStorage:
+            public: true

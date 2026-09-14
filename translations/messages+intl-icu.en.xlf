@@ -1641,6 +1641,58 @@
         <source>Estamos realizando tareas de mantenimiento para mejorar el servicio. Vuelve a intentarlo en unos minutos.</source>
         <target>We are performing maintenance to improve the service. Please try again in a few minutes.</target>
       </trans-unit>
+      <trans-unit id="j8KGNWv" resname="Novedades">
+        <source>Novedades</source>
+        <target>What's new</target>
+      </trans-unit>
+      <trans-unit id="qHaNrGf" resname="Changelog">
+        <source>Changelog</source>
+        <target>Changelog</target>
+      </trans-unit>
+      <trans-unit id="XOgyHLN" resname="Buscar">
+        <source>Buscar</source>
+        <target>Search</target>
+      </trans-unit>
+      <trans-unit id="gu6issl" resname="Categoría">
+        <source>Categoría</source>
+        <target>Category</target>
+      </trans-unit>
+      <trans-unit id="sMdJ.FO" resname="Todas las categorías">
+        <source>Todas las categorías</source>
+        <target>All categories</target>
+      </trans-unit>
+      <trans-unit id="dGb3Ep8" resname="Volver a la novedad">
+        <source>Volver a la novedad</source>
+        <target>Back to entry</target>
+      </trans-unit>
+      <trans-unit id="TEtsDh9" resname="Manual técnico">
+        <source>Manual técnico</source>
+        <target>Technical manual</target>
+      </trans-unit>
+      <trans-unit id="x49eIZq" resname="Ver">
+        <source>Ver</source>
+        <target>View</target>
+      </trans-unit>
+      <trans-unit id="4ln2Gzy" resname="Título">
+        <source>Título</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="_nUHVoV" resname="Resumen">
+        <source>Resumen</source>
+        <target>Summary</target>
+      </trans-unit>
+      <trans-unit id="toI842v" resname="No hay novedades publicadas">
+        <source>No hay novedades publicadas</source>
+        <target>No published entries yet</target>
+      </trans-unit>
+      <trans-unit id="cGMmyKt" resname="Ver manual">
+        <source>Ver manual</source>
+        <target>View manual</target>
+      </trans-unit>
+      <trans-unit id="bI_BeGg" resname="Descargar manual">
+        <source>Descargar manual</source>
+        <target>Download manual</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

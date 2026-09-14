@@ -85,6 +85,24 @@ final readonly class WebContext implements Context
         $this->client->submit($formData);
     }
 
+    #[When('I filter by :field with :value')]
+    public function iFilterByWith(string $field, string $value): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $fieldNode = $crawler->filter(sprintf('form [name$="[%s]"]', $field));
+
+        Assert::assertGreaterThan(0, $fieldNode->count(), sprintf('No filter field named "%s" was found', $field));
+
+        $name = (string) $fieldNode->attr('name');
+
+        $formData = $crawler->filterXPath(sprintf('//form[.//*[@name="%s"]]', $name))->form();
+
+        $formData[$name] = $value;
+
+        $this->client->submit($formData);
+    }
+
     #[Then('the response status should be :code')]
     public function theResponseStatusShouldBe(int $expectedCode): void
     {

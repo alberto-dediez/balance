@@ -188,6 +188,18 @@ class NodeLister
             );
         }
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Novedades'),
+            icon: 'solar:notes-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Changelog'),
+                    icon: 'solar:document-text-line-duotone',
+                    target: $this->router->generate('admin_changelog'),
+                ),
+            ],
+        );
+
         return $nodes;
     }
 

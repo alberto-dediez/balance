@@ -1,0 +1,10 @@
+{% set categoryClasses = {
+    'feature': 'bg-primary-subtle text-primary',
+    'improvement': 'bg-info-subtle text-info',
+    'fix': 'bg-warning-subtle text-warning',
+    'security': 'bg-danger-subtle text-danger',
+} %}
+
+<span class="badge {{ categoryClasses[category.value] }}">
+    {{ category.name | trans({}, 'changelogCategory') }}
+</span>

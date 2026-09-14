@@ -1,0 +1,41 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Novedades' | trans) ~ ' > ' ~ entry.title %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_changelog') }}" />
+
+    {% if entry.hasManual %}
+        <twig:TopAction path="{{ path('admin_changelog_manual', { slug: entry.slug }) }}" target="_blank">
+            <twig:Icon name="solar:document-text-line-duotone" size="lg" class="me-2" />
+            {{ 'Ver manual' | trans }}
+        </twig:TopAction>
+        <twig:TopAction path="{{ path('admin_changelog_manual', { slug: entry.slug, download: 1 }) }}">
+            <twig:Icon name="solar:download-square-line-duotone" size="lg" class="me-2" />
+            {{ 'Descargar manual' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
+    {% if entry.hasTechnicalManual and canViewTechnicalManual %}
+        <twig:TopAction path="{{ path('admin_changelog_tech_manual', { slug: entry.slug }) }}">
+            <twig:Icon name="solar:code-square-line-duotone" size="lg" class="me-2" />
+            {{ 'Manual técnico' | trans }}
+        </twig:TopAction>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="text-muted">{{ entry.date | date('d/m/Y') }}</span>
+            {% include '@changelog/admin/_category_badge.html.twig' with { category: entry.category } %}
+            {% if entry.version %}
+                <span class="badge bg-secondary-subtle text-secondary">{{ entry.version }}</span>
+            {% endif %}
+        </div>
+
+        <div class="changelog-body">
+            {{ entry.body | changelog_markdown | raw }}
+        </div>
+    </twig:Card>
+{% endblock %}
