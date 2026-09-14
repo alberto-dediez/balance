@@ -1,0 +1,15 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Novedades' | trans) ~ ' > ' ~ entry.title ~ ' > ' ~ ('Manual técnico' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_changelog_entry', { slug: entry.slug }) }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <div class="changelog-body">
+            {{ markdown | changelog_markdown | raw }}
+        </div>
+    </twig:Card>
+{% endblock %}

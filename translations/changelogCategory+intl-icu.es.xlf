@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="X9R.Mu8" resname="Feature">
+        <source>Feature</source>
+        <target>Nueva funcionalidad</target>
+      </trans-unit>
+      <trans-unit id="HAjtwXX" resname="Improvement">
+        <source>Improvement</source>
+        <target>Mejora</target>
+      </trans-unit>
+      <trans-unit id="Kev_rIf" resname="Fix">
+        <source>Fix</source>
+        <target>Corrección</target>
+      </trans-unit>
+      <trans-unit id="8dn7uBl" resname="Security">
+        <source>Security</source>
+        <target>Seguridad</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

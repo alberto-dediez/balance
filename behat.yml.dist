@@ -21,6 +21,7 @@ default:
                 - App\Tests\Acceptance\EventOperations\EventOperationsContext
                 - App\Tests\Acceptance\Balance\BalanceContext
                 - App\Tests\Acceptance\Payments\PaymentsContext
+                - App\Tests\Acceptance\Changelog\ChangelogContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:

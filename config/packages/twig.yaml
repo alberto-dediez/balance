@@ -24,6 +24,7 @@ twig:
         'templates/balance': 'balance'
         'templates/payments': 'payments'
         'templates/themes': 'themes'
+        'templates/changelog': 'changelog'
         '%kernel.project_dir%/assets': assets
 
 when@test:

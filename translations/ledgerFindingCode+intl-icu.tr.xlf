@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="eWLkkVU" resname="contribution_sum_mismatch">
+        <source>contribution_sum_mismatch</source>
+        <target>Muhasebe kayıtları ile tahsil edilen tutar uyuşmuyor</target>
+      </trans-unit>
+      <trans-unit id="Zkc_o.Y" resname="paid_contribution_without_entries">
+        <source>paid_contribution_without_entries</source>
+        <target>Muhasebe kaydı olmayan ödenmiş katkı</target>
+      </trans-unit>
+      <trans-unit id="Pi3hX1e" resname="orphan_entries">
+        <source>orphan_entries</source>
+        <target>Ödenmemiş bir katkıya ait muhasebe kayıtları</target>
+      </trans-unit>
+      <trans-unit id="mAgx3Ds" resname="overallocated_credit_purchase">
+        <source>overallocated_credit_purchase</source>
+        <target>Satın alınandan fazla ton tahsis edilmiş kredi partisi</target>
+      </trans-unit>
+      <trans-unit id="OgyP_uX" resname="unbalanced_payout">
+        <source>unbalanced_payout</source>
+        <target>Muhasebe kayıtlarıyla uyuşmayan ödeme</target>
+      </trans-unit>
+      <trans-unit id="T79VgS9" resname="payout_numbering_gap">
+        <source>payout_numbering_gap</source>
+        <target>Ödeme numaralandırmasında boşluk</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

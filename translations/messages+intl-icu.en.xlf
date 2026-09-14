@@ -4435,7 +4435,7 @@
       </trans-unit>
       <trans-unit id="CSI7bkF" resname="Importe total (€)">
         <source>Importe total (€)</source>
-        <target>Total amount (?)</target>
+        <target>Total amount (€)</target>
       </trans-unit>
       <trans-unit id="ZouU9BR" resname="Identificador de la compra">
         <source>Identificador de la compra</source>
@@ -7376,6 +7376,34 @@
       <trans-unit id="WcaTUEm" resname="Disponibles para transferir">
         <source>Disponibles para transferir</source>
         <target>Available to transfer</target>
+      </trans-unit>
+      <trans-unit id="j8KGNWv" resname="Novedades">
+        <source>Novedades</source>
+        <target>What's new</target>
+      </trans-unit>
+      <trans-unit id="qHaNrGf" resname="Changelog">
+        <source>Changelog</source>
+        <target>Changelog</target>
+      </trans-unit>
+      <trans-unit id="sMdJ.FO" resname="Todas las categorías">
+        <source>Todas las categorías</source>
+        <target>All categories</target>
+      </trans-unit>
+      <trans-unit id="TEtsDh9" resname="Manual técnico">
+        <source>Manual técnico</source>
+        <target>Technical manual</target>
+      </trans-unit>
+      <trans-unit id="toI842v" resname="No hay novedades publicadas">
+        <source>No hay novedades publicadas</source>
+        <target>No published entries yet</target>
+      </trans-unit>
+      <trans-unit id="cGMmyKt" resname="Ver manual">
+        <source>Ver manual</source>
+        <target>View manual</target>
+      </trans-unit>
+      <trans-unit id="bI_BeGg" resname="Descargar manual">
+        <source>Descargar manual</source>
+        <target>Download manual</target>
       </trans-unit>
     </body>
   </file>

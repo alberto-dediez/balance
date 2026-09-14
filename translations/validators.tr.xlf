@@ -327,7 +327,7 @@
       </trans-unit>
       <trans-unit id="BmDYW0B" resname="This value should be a multiple of {{ compared_value }}.">
         <source>This value should be a multiple of {{ compared_value }}.</source>
-        <target>Bu değer {{ compare_value }} değerinin katlarından biri olmalıdır.</target>
+        <target>Bu değer {{ compared_value }} değerinin katlarından biri olmalıdır.</target>
       </trans-unit>
       <trans-unit id="7urGdp4" resname="This Business Identifier Code (BIC) is not associated with IBAN {{ iban }}.">
         <source>This Business Identifier Code (BIC) is not associated with IBAN {{ iban }}.</source>
@@ -696,6 +696,14 @@
       <trans-unit id="KDstS.U" resname="Ya existe un factor de emisión para el año {{ year }}">
         <source>Ya existe un factor de emisión para el año {{ year }}</source>
         <target>{{ year }} yılı için zaten bir emisyon faktörü mevcut</target>
+      </trans-unit>
+      <trans-unit id="6wB7G3U" resname="Introduce un color hexadecimal de 6 dígitos, por ejemplo #8A2432.">
+        <source>Introduce un color hexadecimal de 6 dígitos, por ejemplo #8A2432.</source>
+        <target>6 haneli bir onaltılık renk kodu girin, örneğin #8A2432.</target>
+      </trans-unit>
+      <trans-unit id="vcMlDy5" resname="Usa solo letras, números, espacios y guiones: no es un nombre de familia válido.">
+        <source>Usa solo letras, números, espacios y guiones: no es un nombre de familia válido.</source>
+        <target>Yalnızca harf, rakam, boşluk ve tire kullanın: bu geçerli bir aile adı değil.</target>
       </trans-unit>
     </body>
   </file>

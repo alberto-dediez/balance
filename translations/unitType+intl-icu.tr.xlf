@@ -29,6 +29,22 @@
         <source>pernoctacion</source>
         <target>Konaklama (gecelik)</target>
       </trans-unit>
+      <trans-unit id="bFWgxz5" resname="g">
+        <source>g</source>
+        <target>Gram</target>
+      </trans-unit>
+      <trans-unit id="GQ6PzdZ" resname="t">
+        <source>t</source>
+        <target>Ton</target>
+      </trans-unit>
+      <trans-unit id="8oki9qX" resname="m3">
+        <source>m3</source>
+        <target>Metreküp</target>
+      </trans-unit>
+      <trans-unit id="xvr1Zm3" resname="km">
+        <source>km</source>
+        <target>Kilometre</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

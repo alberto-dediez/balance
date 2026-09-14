@@ -7377,6 +7377,34 @@
         <source>Disponibles para transferir</source>
         <target>Disponibles para transferir</target>
       </trans-unit>
+      <trans-unit id="j8KGNWv" resname="Novedades">
+        <source>Novedades</source>
+        <target>Novedades</target>
+      </trans-unit>
+      <trans-unit id="qHaNrGf" resname="Changelog">
+        <source>Changelog</source>
+        <target>Changelog</target>
+      </trans-unit>
+      <trans-unit id="sMdJ.FO" resname="Todas las categorías">
+        <source>Todas las categorías</source>
+        <target>Todas las categorías</target>
+      </trans-unit>
+      <trans-unit id="TEtsDh9" resname="Manual técnico">
+        <source>Manual técnico</source>
+        <target>Manual técnico</target>
+      </trans-unit>
+      <trans-unit id="toI842v" resname="No hay novedades publicadas">
+        <source>No hay novedades publicadas</source>
+        <target>No hay novedades publicadas</target>
+      </trans-unit>
+      <trans-unit id="cGMmyKt" resname="Ver manual">
+        <source>Ver manual</source>
+        <target>Ver manual</target>
+      </trans-unit>
+      <trans-unit id="bI_BeGg" resname="Descargar manual">
+        <source>Descargar manual</source>
+        <target>Descargar manual</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

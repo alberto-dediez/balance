@@ -7037,6 +7037,374 @@
         <source>Disponibles para transferir</source>
         <target>Aktarıma uygun</target>
       </trans-unit>
+      <trans-unit id="IidMCo3" resname="El usuario no existe">
+        <source>El usuario no existe</source>
+        <target>Kullanıcı mevcut değil</target>
+      </trans-unit>
+      <trans-unit id="fnyBiXs" resname="No tienes notificaciones">
+        <source>No tienes notificaciones</source>
+        <target>Bildiriminiz yok</target>
+      </trans-unit>
+      <trans-unit id="WtkfX2x" resname="Peso por unidad (kg)">
+        <source>Peso por unidad (kg)</source>
+        <target>Birim başına ağırlık (kg)</target>
+      </trans-unit>
+      <trans-unit id=".eaCK3u" resname="Crear nuevo año">
+        <source>Crear nuevo año</source>
+        <target>Yeni yıl oluştur</target>
+      </trans-unit>
+      <trans-unit id="IaH5sbh" resname="Registrar residuo">
+        <source>Registrar residuo</source>
+        <target>Atık kaydet</target>
+      </trans-unit>
+      <trans-unit id="KzfSf6T" resname="Cálculo de Huella de Carbono actualizado con éxito">
+        <source>Cálculo de Huella de Carbono actualizado con éxito</source>
+        <target>Karbon Ayak İzi hesaplaması başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="pe_G6TH" resname="Inicio del periodo de cálculo">
+        <source>Inicio del periodo de cálculo</source>
+        <target>Hesaplama döneminin başlangıcı</target>
+      </trans-unit>
+      <trans-unit id="nEsPoa8" resname="Fin del periodo de cálculo">
+        <source>Fin del periodo de cálculo</source>
+        <target>Hesaplama döneminin sonu</target>
+      </trans-unit>
+      <trans-unit id="vSPFJr4" resname="CO₂ equivalente (kg)">
+        <source>CO₂ equivalente (kg)</source>
+        <target>CO₂ eşdeğeri (kg)</target>
+      </trans-unit>
+      <trans-unit id="6gqBHs1" resname="Emisiones por asistente">
+        <source>Emisiones por asistente</source>
+        <target>Katılımcı başına emisyon</target>
+      </trans-unit>
+      <trans-unit id="FVzHEcX" resname="Garantía de origen">
+        <source>Garantía de origen</source>
+        <target>Menşe garantisi</target>
+      </trans-unit>
+      <trans-unit id="aqQRgl7" resname="Cantidad (kWh)">
+        <source>Cantidad (kWh)</source>
+        <target>Miktar (kWh)</target>
+      </trans-unit>
+      <trans-unit id=".hIzKEw" resname="Combustibles fijos en instalaciones">
+        <source>Combustibles fijos en instalaciones</source>
+        <target>Tesislerdeki sabit yakıtlar</target>
+      </trans-unit>
+      <trans-unit id="pJJ8kDh" resname="Electricidad de maquinaria">
+        <source>Electricidad de maquinaria</source>
+        <target>Makine elektriği</target>
+      </trans-unit>
+      <trans-unit id="atcOL8R" resname="Electricidad de instalaciones">
+        <source>Electricidad de instalaciones</source>
+        <target>Tesis elektriği</target>
+      </trans-unit>
+      <trans-unit id="cpyGGf7" resname="Gestión de residuos">
+        <source>Gestión de residuos</source>
+        <target>Atık yönetimi</target>
+      </trans-unit>
+      <trans-unit id="XAP_.iO" resname="Guardar y continuar">
+        <source>Guardar y continuar</source>
+        <target>Kaydet ve devam et</target>
+      </trans-unit>
+      <trans-unit id="gnj6rQe" resname="Volver a cerrar y continuar">
+        <source>Volver a cerrar y continuar</source>
+        <target>Yeniden kapat ve devam et</target>
+      </trans-unit>
+      <trans-unit id="LmPlqiU" resname="Volver a cerrar la encuesta">
+        <source>Volver a cerrar la encuesta</source>
+        <target>Anketi yeniden kapat</target>
+      </trans-unit>
+      <trans-unit id="fSrRpt0" resname="Nº de días">
+        <source>Nº de días</source>
+        <target>Gün sayısı</target>
+      </trans-unit>
+      <trans-unit id="cTVktT." resname="¿Te alojaste en hotel?">
+        <source>¿Te alojaste en hotel?</source>
+        <target>Otelde konakladınız mı?</target>
+      </trans-unit>
+      <trans-unit id="KtNlqdN" resname="Emisiones por fase y fuente">
+        <source>Emisiones por fase y fuente</source>
+        <target>Aşama ve kaynağa göre emisyonlar</target>
+      </trans-unit>
+      <trans-unit id="Osp1xaP" resname="No hay emisiones registradas.">
+        <source>No hay emisiones registradas.</source>
+        <target>Kayıtlı emisyon yok.</target>
+      </trans-unit>
+      <trans-unit id=".dKgqHy" resname="Grupo de factores de emisión">
+        <source>Grupo de factores de emisión</source>
+        <target>Emisyon faktörü grubu</target>
+      </trans-unit>
+      <trans-unit id="esSZ0XU" resname="No se ha podido eliminar el informe: {error}">
+        <source>No se ha podido eliminar el informe: {error}</source>
+        <target>Rapor silinemedi: {error}</target>
+      </trans-unit>
+      <trans-unit id="5QuqRxc" resname="No se ha podido generar el informe: {error}">
+        <source>No se ha podido generar el informe: {error}</source>
+        <target>Rapor oluşturulamadı: {error}</target>
+      </trans-unit>
+      <trans-unit id="B97Cqk0" resname="Generando el informe, esto puede tardar varios minutos…">
+        <source>Generando el informe, esto puede tardar varios minutos…</source>
+        <target>Rapor oluşturuluyor, bu işlem birkaç dakika sürebilir…</target>
+      </trans-unit>
+      <trans-unit id="X6xX7OT" resname="Genera un informe PDF completo con los resultados, gráficos y análisis de esta huella de carbono, en español e inglés.">
+        <source>Genera un informe PDF completo con los resultados, gráficos y análisis de esta huella de carbono, en español e inglés.</source>
+        <target>Bu karbon ayak izinin sonuçlarını, grafiklerini ve analizini içeren eksiksiz bir PDF raporunu İspanyolca ve İngilizce olarak oluşturur.</target>
+      </trans-unit>
+      <trans-unit id="YlRfgxt" resname="Generar informe">
+        <source>Generar informe</source>
+        <target>Rapor oluştur</target>
+      </trans-unit>
+      <trans-unit id="nONVAQw" resname="Descargar informe (ES)">
+        <source>Descargar informe (ES)</source>
+        <target>Raporu indir (ES)</target>
+      </trans-unit>
+      <trans-unit id="NWbmiOV" resname="Descargar informe (EN)">
+        <source>Descargar informe (EN)</source>
+        <target>Raporu indir (EN)</target>
+      </trans-unit>
+      <trans-unit id="s5r5Ahz" resname="Para regenerar el informe, elimínalo primero.">
+        <source>Para regenerar el informe, elimínalo primero.</source>
+        <target>Raporu yeniden oluşturmak için önce silin.</target>
+      </trans-unit>
+      <trans-unit id="sDHpkyu" resname="¿Seguro que quieres eliminar el informe? Esta acción no se puede deshacer.">
+        <source>¿Seguro que quieres eliminar el informe? Esta acción no se puede deshacer.</source>
+        <target>Raporu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</target>
+      </trans-unit>
+      <trans-unit id="29liG6u" resname="Eliminar informe">
+        <source>Eliminar informe</source>
+        <target>Raporu sil</target>
+      </trans-unit>
+      <trans-unit id="e.VRADw" resname="El informe de huella de carbono ya está disponible. Puedes descargarlo en los siguientes enlaces:">
+        <source>El informe de huella de carbono ya está disponible. Puedes descargarlo en los siguientes enlaces:</source>
+        <target>Karbon ayak izi raporu artık hazır. Aşağıdaki bağlantılardan indirebilirsiniz:</target>
+      </trans-unit>
+      <trans-unit id="DMmXBmw" resname="Volver a resultados">
+        <source>Volver a resultados</source>
+        <target>Sonuçlara dön</target>
+      </trans-unit>
+      <trans-unit id="jGWDGzY" resname="Si se deja vacío se usará el nombre del archivo">
+        <source>Si se deja vacío se usará el nombre del archivo</source>
+        <target>Boş bırakılırsa dosya adı kullanılır</target>
+      </trans-unit>
+      <trans-unit id="zH5zS5." resname="Catálogo de proyectos">
+        <source>Catálogo de proyectos</source>
+        <target>Proje kataloğu</target>
+      </trans-unit>
+      <trans-unit id="9lYHQJn" resname="Mis proyectos">
+        <source>Mis proyectos</source>
+        <target>Projelerim</target>
+      </trans-unit>
+      <trans-unit id="QEk8qxE" resname="Fecha de adhesión">
+        <source>Fecha de adhesión</source>
+        <target>Katılım tarihi</target>
+      </trans-unit>
+      <trans-unit id="5h9eSMA" resname="Solo adheridos">
+        <source>Solo adheridos</source>
+        <target>Yalnızca katılınanlar</target>
+      </trans-unit>
+      <trans-unit id="sN0dtKi" resname="Solo no adheridos">
+        <source>Solo no adheridos</source>
+        <target>Yalnızca katılınmayanlar</target>
+      </trans-unit>
+      <trans-unit id="uWb5OZi" resname="Incluye los archivos compartidos con toda la plataforma">
+        <source>Incluye los archivos compartidos con toda la plataforma</source>
+        <target>Tüm platformla paylaşılan dosyaları içerir</target>
+      </trans-unit>
+      <trans-unit id="BMeQlHK" resname="Quién puede acceder a este archivo">
+        <source>Quién puede acceder a este archivo</source>
+        <target>Bu dosyaya kimler erişebilir</target>
+      </trans-unit>
+      <trans-unit id="3RXFaxK" resname="Quién puede acceder a los archivos subidos">
+        <source>Quién puede acceder a los archivos subidos</source>
+        <target>Yüklenen dosyalara kimler erişebilir</target>
+      </trans-unit>
+      <trans-unit id="CSI7bkF" resname="Importe total (€)">
+        <source>Importe total (€)</source>
+        <target>Toplam tutar (€)</target>
+      </trans-unit>
+      <trans-unit id="Rlabl1I" resname="Historial de solicitudes">
+        <source>Historial de solicitudes</source>
+        <target>Talep geçmişi</target>
+      </trans-unit>
+      <trans-unit id="6M83dwn" resname="Historial de solicitudes de créditos">
+        <source>Historial de solicitudes de créditos</source>
+        <target>Kredi talepleri geçmişi</target>
+      </trans-unit>
+      <trans-unit id="3vkiBbU" resname="Precio medio / tonelada">
+        <source>Precio medio / tonelada</source>
+        <target>Ton başına ortalama fiyat</target>
+      </trans-unit>
+      <trans-unit id="4tDhTGq" resname="Ver transacciones">
+        <source>Ver transacciones</source>
+        <target>İşlemleri görüntüle</target>
+      </trans-unit>
+      <trans-unit id="YCKSMOO" resname="No se puede retirar: la cuenta tiene toneladas disponibles">
+        <source>No se puede retirar: la cuenta tiene toneladas disponibles</source>
+        <target>Geri çekilemez: hesapta kullanılabilir ton var</target>
+      </trans-unit>
+      <trans-unit id="eeKhodq" resname="Ubicación de la sede guardada: {label}">
+        <source>Ubicación de la sede guardada: {label}</source>
+        <target>Etkinlik mekanı konumu kaydedildi: {label}</target>
+      </trans-unit>
+      <trans-unit id="NCAqJgj" resname="Se ha borrado la ubicación de la sede.">
+        <source>Se ha borrado la ubicación de la sede.</source>
+        <target>Etkinlik mekanı konumu silindi.</target>
+      </trans-unit>
+      <trans-unit id="CViFUCp" resname="El evento está bloqueado y no se puede cambiar la ubicación de la sede.">
+        <source>El evento está bloqueado y no se puede cambiar la ubicación de la sede.</source>
+        <target>Etkinlik kilitli, etkinlik mekanı konumu değiştirilemez.</target>
+      </trans-unit>
+      <trans-unit id="yYWsFwS" resname="No se ha podido guardar la ubicación de la sede: {error}">
+        <source>No se ha podido guardar la ubicación de la sede: {error}</source>
+        <target>Etkinlik mekanı konumu kaydedilemedi: {error}</target>
+      </trans-unit>
+      <trans-unit id="Na1GLfh" resname="Las distancias de los asistentes se calculan hasta este punto. Si no se indica, los asistentes tendrán que introducir sus kilómetros a mano.">
+        <source>Las distancias de los asistentes se calculan hasta este punto. Si no se indica, los asistentes tendrán que introducir sus kilómetros a mano.</source>
+        <target>Katılımcıların mesafeleri bu noktaya kadar hesaplanır. Belirtilmezse katılımcılar kilometrelerini elle girmek zorunda kalır.</target>
+      </trans-unit>
+      <trans-unit id="4k87hrS" resname="Guardar ubicación">
+        <source>Guardar ubicación</source>
+        <target>Konumu kaydet</target>
+      </trans-unit>
+      <trans-unit id="6nUYjiq" resname="Ubicación de la sede">
+        <source>Ubicación de la sede</source>
+        <target>Etkinlik mekanı konumu</target>
+      </trans-unit>
+      <trans-unit id="TRTm7wA" resname="Emisiones medias por huésped">
+        <source>Emisiones medias por huésped</source>
+        <target>Misafir başına ortalama emisyon</target>
+      </trans-unit>
+      <trans-unit id="8_dNcGg" resname="Huella de los huéspedes">
+        <source>Huella de los huéspedes</source>
+        <target>Misafirlerin ayak izi</target>
+      </trans-unit>
+      <trans-unit id="_nUHVoV" resname="Resumen">
+        <source>Resumen</source>
+        <target>Özet</target>
+      </trans-unit>
+      <trans-unit id="IXXsqYH" resname="Esta es la huella de carbono de tu estancia.">
+        <source>Esta es la huella de carbono de tu estancia.</source>
+        <target>Bu, konaklamanızın karbon ayak izidir.</target>
+      </trans-unit>
+      <trans-unit id="ccs3te7" resname="Noches declaradas: {nights}">
+        <source>Noches declaradas: {nights}</source>
+        <target>Bildirilen gece sayısı: {nights}</target>
+      </trans-unit>
+      <trans-unit id="T5VPLnn" resname="Cuéntanos cómo llegaste hasta aquí y cuántas noches te alojaste, y te diremos la huella de carbono de tu estancia.">
+        <source>Cuéntanos cómo llegaste hasta aquí y cuántas noches te alojaste, y te diremos la huella de carbono de tu estancia.</source>
+        <target>Buraya nasıl geldiğinizi ve kaç gece konakladığınızı bize bildirin, konaklamanızın karbon ayak izini size söyleyelim.</target>
+      </trans-unit>
+      <trans-unit id="78u53_q" resname="Nº de noches que te alojaste">
+        <source>Nº de noches que te alojaste</source>
+        <target>Konakladığınız gece sayısı</target>
+      </trans-unit>
+      <trans-unit id="OaEBQSq" resname="Calculadora de huella de tu estancia">
+        <source>Calculadora de huella de tu estancia</source>
+        <target>Konaklamanızın ayak izi hesaplayıcısı</target>
+      </trans-unit>
+      <trans-unit id="4mr13gi" resname="Huella de carbono">
+        <source>Huella de carbono</source>
+        <target>Karbon ayak izi</target>
+      </trans-unit>
+      <trans-unit id="IsVeJYy" resname="(sin impuestos)">
+        <source>(sin impuestos)</source>
+        <target>(vergiler hariç)</target>
+      </trans-unit>
+      <trans-unit id="QvUqQEq" resname="Compensar tu huella en este proyecto cuesta {amount} €.">
+        <source>Compensar tu huella en este proyecto cuesta {amount} €.</source>
+        <target>Ayak izinizi bu projede denkleştirmenin maliyeti {amount} €.</target>
+      </trans-unit>
+      <trans-unit id="9Ot3yVP" resname="Aportar a este proyecto">
+        <source>Aportar a este proyecto</source>
+        <target>Bu projeye katkıda bulun</target>
+      </trans-unit>
+      <trans-unit id="p7O_Ie_" resname="Coste total">
+        <source>Coste total</source>
+        <target>Toplam maliyet</target>
+      </trans-unit>
+      <trans-unit id="r.6zjyc" resname="Emisor">
+        <source>Emisor</source>
+        <target>Düzenleyen</target>
+      </trans-unit>
+      <trans-unit id="Ys2tHBS" resname="Código del certificado">
+        <source>Código del certificado</source>
+        <target>Sertifika kodu</target>
+      </trans-unit>
+      <trans-unit id="S.RCtwb" resname="Encuesta">
+        <source>Encuesta</source>
+        <target>Anket</target>
+      </trans-unit>
+      <trans-unit id="HabqxyM" resname="Identificador de la cuenta o proyecto">
+        <source>Identificador de la cuenta o proyecto</source>
+        <target>Hesap veya proje tanımlayıcısı</target>
+      </trans-unit>
+      <trans-unit id="o.wwmh_" resname="Media por huésped">
+        <source>Media por huésped</source>
+        <target>Misafir başına ortalama</target>
+      </trans-unit>
+      <trans-unit id="RWgdbLv" resname="Remesa SEPA">
+        <source>Remesa SEPA</source>
+        <target>SEPA toplu ödeme dosyası</target>
+      </trans-unit>
+      <trans-unit id="k90TuvY" resname="Remesa CSV">
+        <source>Remesa CSV</source>
+        <target>CSV toplu ödeme dosyası</target>
+      </trans-unit>
+      <trans-unit id="tmeDegB" resname="Remesada">
+        <source>Remesada</source>
+        <target>Toplu ödemeye alındı</target>
+      </trans-unit>
+      <trans-unit id="nSkaZG6" resname="Remesa">
+        <source>Remesa</source>
+        <target>Toplu ödeme</target>
+      </trans-unit>
+      <trans-unit id="MWoGIGn" resname="Compensar esta huella en este proyecto cuesta {amount} €.">
+        <source>Compensar esta huella en este proyecto cuesta {amount} €.</source>
+        <target>Bu ayak izini bu projede denkleştirmenin maliyeti {amount} €.</target>
+      </trans-unit>
+      <trans-unit id="6dN36Pp" resname="Tema actualizado con éxito">
+        <source>Tema actualizado con éxito</source>
+        <target>Tema başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="eZ42GcD" resname="Cambiar tema">
+        <source>Cambiar tema</source>
+        <target>Temayı değiştir</target>
+      </trans-unit>
+      <trans-unit id="ePQoO5p" resname="Solo un superadministrador puede cambiar el tema de una cuenta.">
+        <source>Solo un superadministrador puede cambiar el tema de una cuenta.</source>
+        <target>Bir hesabın temasını yalnızca bir süper yönetici değiştirebilir.</target>
+      </trans-unit>
+      <trans-unit id="IA6MfOG" resname="Suplantando cuenta">
+        <source>Suplantando cuenta</source>
+        <target>Hesabın yerine geçiliyor</target>
+      </trans-unit>
+      <trans-unit id="j8KGNWv" resname="Novedades">
+        <source>Novedades</source>
+        <target>Yenilikler</target>
+      </trans-unit>
+      <trans-unit id="qHaNrGf" resname="Changelog">
+        <source>Changelog</source>
+        <target>Değişiklik günlüğü</target>
+      </trans-unit>
+      <trans-unit id="sMdJ.FO" resname="Todas las categorías">
+        <source>Todas las categorías</source>
+        <target>Tüm kategoriler</target>
+      </trans-unit>
+      <trans-unit id="TEtsDh9" resname="Manual técnico">
+        <source>Manual técnico</source>
+        <target>Teknik kılavuz</target>
+      </trans-unit>
+      <trans-unit id="toI842v" resname="No hay novedades publicadas">
+        <source>No hay novedades publicadas</source>
+        <target>Yayımlanmış yenilik yok</target>
+      </trans-unit>
+      <trans-unit id="cGMmyKt" resname="Ver manual">
+        <source>Ver manual</source>
+        <target>Kılavuzu görüntüle</target>
+      </trans-unit>
+      <trans-unit id="bI_BeGg" resname="Descargar manual">
+        <source>Descargar manual</source>
+        <target>Kılavuzu indir</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

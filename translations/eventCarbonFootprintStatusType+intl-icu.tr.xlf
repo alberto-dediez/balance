@@ -41,6 +41,10 @@
         <source>employees_answered</source>
         <target>Çalışanlar yanıtlandı</target>
       </trans-unit>
+      <trans-unit id="i52mVEa" resname="in_progress">
+        <source>in_progress</source>
+        <target>Devam ediyor</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
