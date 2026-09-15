@@ -1,0 +1,4 @@
+{% trans with {
+    '{name}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el gas refrigerante "{name}" por el usuario {user}{% endtrans %}

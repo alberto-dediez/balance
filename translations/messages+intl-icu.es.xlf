@@ -7405,6 +7405,62 @@
         <source>Descargar manual</source>
         <target>Descargar manual</target>
       </trans-unit>
+      <trans-unit id="LTl.a6_" resname="Gases refrigerantes">
+        <source>Gases refrigerantes</source>
+        <target>Gases refrigerantes</target>
+      </trans-unit>
+      <trans-unit id="drcdTGm" resname="Gas refrigerante creado correctamente: {name}">
+        <source>Gas refrigerante creado correctamente: {name}</source>
+        <target>Gas refrigerante creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="QWR.THa" resname="Gas refrigerante actualizado con éxito">
+        <source>Gas refrigerante actualizado con éxito</source>
+        <target>Gas refrigerante actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="nOQSTcO" resname="Se ha eliminado el gas refrigerante {name}">
+        <source>Se ha eliminado el gas refrigerante {name}</source>
+        <target>Se ha eliminado el gas refrigerante {name}</target>
+      </trans-unit>
+      <trans-unit id="lxwvSwR" resname="No se ha podido eliminar el gas refrigerante {name}">
+        <source>No se ha podido eliminar el gas refrigerante {name}</source>
+        <target>No se ha podido eliminar el gas refrigerante {name}</target>
+      </trans-unit>
+      <trans-unit id="b.kI7qw" resname="Se ha eliminado el gas refrigerante {id}">
+        <source>Se ha eliminado el gas refrigerante {id}</source>
+        <target>Se ha eliminado el gas refrigerante {id}</target>
+      </trans-unit>
+      <trans-unit id="YeS2xi9" resname="No se ha podido eliminar el gas refrigerante {id}">
+        <source>No se ha podido eliminar el gas refrigerante {id}</source>
+        <target>No se ha podido eliminar el gas refrigerante {id}</target>
+      </trans-unit>
+      <trans-unit id="GwyU4g3" resname="Se ha añadido el factor de emisión del año {year} al gas refrigerante {id} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al gas refrigerante {id} por el usuario {user}</source>
+        <target>Se ha añadido el factor de emisión del año {year} al gas refrigerante {id} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="sTRmXit" resname="Se ha actualizado el factor de emisión del gas refrigerante {id} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del gas refrigerante {id} por el usuario {user}</source>
+        <target>Se ha actualizado el factor de emisión del gas refrigerante {id} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="RsUiIe." resname="Se ha eliminado el factor de emisión del año {year} del gas refrigerante {id} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del gas refrigerante {id} por el usuario {user}</source>
+        <target>Se ha eliminado el factor de emisión del año {year} del gas refrigerante {id} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="26Yvxxq" resname="Se ha registrado el gas refrigerante &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado el gas refrigerante "{name}" por el usuario {user}</source>
+        <target>Se ha registrado el gas refrigerante "{name}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="xA_kfzv" resname="Se ha actualizado el gas refrigerante &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado el gas refrigerante "{name}" por el usuario {user}</source>
+        <target>Se ha actualizado el gas refrigerante "{name}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="WkbT4JI" resname="Se ha eliminado el gas refrigerante {id} por el usuario {user}">
+        <source>Se ha eliminado el gas refrigerante {id} por el usuario {user}</source>
+        <target>Se ha eliminado el gas refrigerante {id} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="M.DfiO0" resname="Gas refrigerante">
+        <source>Gas refrigerante</source>
+        <target>Gas refrigerante</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

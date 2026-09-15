@@ -125,6 +125,10 @@
         <source>electricityMarketer</source>
         <target>Elektrik tedarikçisi</target>
       </trans-unit>
+      <trans-unit id="aprk4A4" resname="refrigerantGas">
+        <source>refrigerantGas</source>
+        <target>Soğutucu gaz</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

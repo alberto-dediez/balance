@@ -125,6 +125,10 @@
         <source>electricityMarketer</source>
         <target>Electricity Marketer</target>
       </trans-unit>
+      <trans-unit id="aprk4A4" resname="refrigerantGas">
+        <source>refrigerantGas</source>
+        <target>Refrigerant gas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -261,6 +261,11 @@ class NodeLister
                     target: $this->router->generate('admin_gdo_factors'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Gases refrigerantes'),
+                    icon: 'solar:snowflake-line-duotone',
+                    target: $this->router->generate('admin_refrigerant_gases'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Residuos'),
                     icon: 'solar:trash-bin-minimalistic-line-duotone',
                     target: $this->router->generate('admin_wastes'),

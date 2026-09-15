@@ -125,6 +125,10 @@
         <source>electricityMarketer</source>
         <target>Comercializadora eléctrica</target>
       </trans-unit>
+      <trans-unit id="aprk4A4" resname="refrigerantGas">
+        <source>refrigerantGas</source>
+        <target>Gas refrigerante</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
