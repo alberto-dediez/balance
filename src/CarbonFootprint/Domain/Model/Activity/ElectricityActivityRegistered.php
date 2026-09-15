@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Domain\Model\Activity;
 
 use App\CarbonFootprint\Domain\DomainEvent;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
+use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -29,6 +30,9 @@ final class ElectricityActivityRegistered extends DomainEvent
         private Emissions $emissions,
         private Quantity $quantity,
         private ?string $source = null,
+        private ?ElectricityMixId $electricityMixId = null,
+        private ?EmissionFactor $locationBasedEmissionFactor = null,
+        private ?Emissions $locationBasedEmissions = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -75,6 +79,21 @@ final class ElectricityActivityRegistered extends DomainEvent
         return $this->source;
     }
 
+    public function electricityMixId(): ?ElectricityMixId
+    {
+        return $this->electricityMixId;
+    }
+
+    public function locationBasedEmissionFactor(): ?EmissionFactor
+    {
+        return $this->locationBasedEmissionFactor;
+    }
+
+    public function locationBasedEmissions(): ?Emissions
+    {
+        return $this->locationBasedEmissions;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->activityId;
@@ -102,6 +121,16 @@ final class ElectricityActivityRegistered extends DomainEvent
             'quantityValue' => $this->quantity->value(),
             'quantityUnit' => $this->quantity->unit()->value,
             'source' => $this->source,
+            'electricityMixId' => null !== $this->electricityMixId ? (string) $this->electricityMixId : null,
+            'locationBasedEmissionFactorCo2eq' => $this->locationBasedEmissionFactor?->co2eq(),
+            'locationBasedEmissionFactorCo2' => $this->locationBasedEmissionFactor?->co2(),
+            'locationBasedEmissionFactorCh4' => $this->locationBasedEmissionFactor?->ch4(),
+            'locationBasedEmissionFactorN2o' => $this->locationBasedEmissionFactor?->n2o(),
+            'locationBasedEmissionFactorSource' => $this->locationBasedEmissionFactor?->source(),
+            'locationBasedEmissionsCo2eq' => $this->locationBasedEmissions?->co2eq(),
+            'locationBasedEmissionsCo2' => $this->locationBasedEmissions?->co2(),
+            'locationBasedEmissionsCh4' => $this->locationBasedEmissions?->ch4(),
+            'locationBasedEmissionsN2o' => $this->locationBasedEmissions?->n2o(),
         ];
     }
 
@@ -115,6 +144,8 @@ final class ElectricityActivityRegistered extends DomainEvent
 
         $emissionFactorUnit = Unit::tryFrom($payload['emissionFactorUnit']);
         assert(null !== $emissionFactorUnit);
+
+        $hasLocationBasedResult = null !== ($payload['locationBasedEmissionFactorCo2eq'] ?? null);
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
@@ -139,6 +170,23 @@ final class ElectricityActivityRegistered extends DomainEvent
             ),
             quantity: new Quantity((float) $payload['quantityValue'], $quantityUnit),
             source: $payload['source'] ?? null,
+            electricityMixId: null !== ($payload['electricityMixId'] ?? null) ? new ElectricityMixId($payload['electricityMixId']) : null,
+            locationBasedEmissionFactor: $hasLocationBasedResult ? new EmissionFactor(
+                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
+                co2eq: $payload['locationBasedEmissionFactorCo2eq'],
+                co2: $payload['locationBasedEmissionFactorCo2'] ?? '0',
+                ch4: $payload['locationBasedEmissionFactorCh4'] ?? '0',
+                n2o: $payload['locationBasedEmissionFactorN2o'] ?? '0',
+                year: (int) $payload['emissionFactorYear'],
+                unit: Unit::KWh,
+                source: $payload['locationBasedEmissionFactorSource'] ?? null,
+            ) : null,
+            locationBasedEmissions: $hasLocationBasedResult ? new Emissions(
+                co2eq: $payload['locationBasedEmissionsCo2eq'] ?? '0',
+                co2: $payload['locationBasedEmissionsCo2'] ?? '0',
+                ch4: $payload['locationBasedEmissionsCh4'] ?? '0',
+                n2o: $payload['locationBasedEmissionsN2o'] ?? '0',
+            ) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

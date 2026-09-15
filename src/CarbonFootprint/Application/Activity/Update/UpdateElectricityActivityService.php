@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\Activity\Update;
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\ActivityNotFoundException;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
+use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
@@ -27,6 +28,7 @@ class UpdateElectricityActivityService implements CommandHandler
         private ActivityAuthorizer $authorizer,
         private ElectricityEmissionFactorSelector $factorSelector,
         private EmissionsCalculator $calculator,
+        private ElectricityMixEmissionsResolver $mixResolver,
     ) {}
 
     public function __invoke(UpdateElectricityActivityRequest $request, User $user): UpdateElectricityActivityResponse
@@ -48,6 +50,8 @@ class UpdateElectricityActivityService implements CommandHandler
         );
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
+        $mix = $this->mixResolver->resolve($request->countryId, $request->year, $request->emissionFactorGroupId, $request->quantity);
+
         $activity->update(
             electricityMarketerId: $request->electricityMarketerId,
             gdOFactorId: $request->gdOFactorId,
@@ -55,6 +59,9 @@ class UpdateElectricityActivityService implements CommandHandler
             emissions: $emissions,
             quantity: $request->quantity,
             source: $request->source,
+            electricityMixId: $mix?->electricityMixId,
+            locationBasedEmissionFactor: $mix?->emissionFactor,
+            locationBasedEmissions: $mix?->emissions,
         );
 
         $this->activityRepository->save($activity);

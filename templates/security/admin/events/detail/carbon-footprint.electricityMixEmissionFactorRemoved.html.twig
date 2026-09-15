@@ -1,0 +1,5 @@
+{% trans with {
+    '{id}': event.electricityMixId,
+    '{year}': event.year,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el factor de emisión del año {year} del mix eléctrico {id} por el usuario {user}{% endtrans %}

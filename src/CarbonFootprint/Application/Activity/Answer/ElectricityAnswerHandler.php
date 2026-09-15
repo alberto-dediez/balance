@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
@@ -28,7 +29,7 @@ final class ElectricityAnswerHandler implements ActivityAnswerHandler
         return ActivityType::Electricity;
     }
 
-    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user): ActivityId
+    public function register(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, AccountId $accountId, User $user, ?CountryId $countryId = null): ActivityId
     {
         assert($answer instanceof ElectricityAnswer);
 
@@ -40,12 +41,13 @@ final class ElectricityAnswerHandler implements ActivityAnswerHandler
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
             source: $answer->source,
+            countryId: $countryId,
         ), $user);
 
         return $response->activityId;
     }
 
-    public function update(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user): void
+    public function update(ActivityAnswer $answer, int $year, EmissionFactorGroupId $emissionFactorGroupId, User $user, ?CountryId $countryId = null): void
     {
         assert($answer instanceof ElectricityAnswer);
         assert(null !== $answer->existingActivityId);
@@ -58,6 +60,7 @@ final class ElectricityAnswerHandler implements ActivityAnswerHandler
             year: $year,
             emissionFactorGroupId: $emissionFactorGroupId,
             source: $answer->source,
+            countryId: $countryId,
         ), $user);
     }
 }

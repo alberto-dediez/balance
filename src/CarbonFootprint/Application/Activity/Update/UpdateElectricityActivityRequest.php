@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Shared\Application\CommandBus\Command;
 
 class UpdateElectricityActivityRequest implements Command
@@ -21,5 +22,6 @@ class UpdateElectricityActivityRequest implements Command
         public int $year,
         public EmissionFactorGroupId $emissionFactorGroupId,
         public ?string $source = null,
+        public ?CountryId $countryId = null,
     ) {}
 }

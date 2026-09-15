@@ -48,6 +48,8 @@ doctrine:
             electricity_marketer_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerEmissionFactorIdType
             refrigerant_gas_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RefrigerantGasIdType
             refrigerant_gas_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RefrigerantGasEmissionFactorIdType
+            electricity_mix_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMixIdType
+            electricity_mix_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMixEmissionFactorIdType
             gdo_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\GdOFactorIdType
             gdo_factor_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\GdOFactorEmissionFactorIdType
             machinery_fuel_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MachineryFuelIdType

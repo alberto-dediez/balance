@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Answer;
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
+use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
@@ -18,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryElectricityMarketerRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryElectricityMixRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryGdOFactorRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -56,10 +58,11 @@ class ElectricityAnswerHandlerTest extends TestCase
         $authorizer = new ActivityAuthorizer();
         $calculator = new EmissionsCalculator();
         $selector = new ElectricityEmissionFactorSelector($electricityMarketerRepository, $gdOFactorRepository);
+        $mixResolver = new ElectricityMixEmissionsResolver(new InMemoryElectricityMixRepository(), $calculator);
 
         $this->sut = new ElectricityAnswerHandler(
-            new RegisterElectricityActivityService($this->activityRepository, $authorizer, $selector, $calculator),
-            new UpdateElectricityActivityService($this->activityRepository, $authorizer, $selector, $calculator),
+            new RegisterElectricityActivityService($this->activityRepository, $authorizer, $selector, $calculator, $mixResolver),
+            new UpdateElectricityActivityService($this->activityRepository, $authorizer, $selector, $calculator, $mixResolver),
         );
     }
 

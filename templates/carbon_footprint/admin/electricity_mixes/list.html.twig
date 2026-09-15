@@ -1,0 +1,48 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Mixes eléctricos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'País' | trans,
+            'sortable': false
+        }, {
+            'label': 'Unidad' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': 'Fecha de actualización' | trans,
+            'sortable': true,
+            'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="electricityMixes" :bulkForm="bulkForm">
+        <td>{{ element.countryId | country_name }}</td>
+        <td>{{ 'kWh' | trans({}, 'unitType') }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_electricity_mixes_edit', {'electricityMixId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_electricity_mixes_remove', {'electricityMixId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:EmissionFactors path="{{ path('admin_electricity_mixes_emission_factors') }}" />
+    <twig:Link:Import path="{{ path('import', {'code': 'electricity_mixes'}) }}" />
+    <twig:Link:Export path="{{ path('export', {'code': 'electricity_mixes'}) }}" />
+    <twig:Link:Register path="{{ path('admin_electricity_mixes_register') }}" />
+{% endblock list_actions %}

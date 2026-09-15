@@ -1,0 +1,32 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_electricity_mixes') }}" />
+{% endblock %}
+
+{% set page_title = ('Mixes eléctricos' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ (electricityMix.countryId | country_name) %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    {{ form_row(form.countryId) }}
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card>
+            {% include '@carbon_footprint/admin/emission_factors/_form.simple.html.twig' %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
+use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
@@ -27,6 +28,7 @@ class RegisterElectricityActivityService implements CommandHandler
         private ActivityAuthorizer $authorizer,
         private ElectricityEmissionFactorSelector $factorSelector,
         private EmissionsCalculator $calculator,
+        private ElectricityMixEmissionsResolver $mixResolver,
     ) {}
 
     public function __invoke(RegisterElectricityActivityRequest $request, User $user): RegisterElectricityActivityResponse
@@ -44,6 +46,8 @@ class RegisterElectricityActivityService implements CommandHandler
         );
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
 
+        $mix = $this->mixResolver->resolve($request->countryId, $request->year, $request->emissionFactorGroupId, $request->quantity);
+
         $activity = ElectricityActivity::register(
             id: $id,
             accountId: $request->accountId,
@@ -53,6 +57,9 @@ class RegisterElectricityActivityService implements CommandHandler
             emissions: $emissions,
             quantity: $request->quantity,
             source: $request->source,
+            electricityMixId: $mix?->electricityMixId,
+            locationBasedEmissionFactor: $mix?->emissionFactor,
+            locationBasedEmissions: $mix?->emissions,
         );
 
         $this->activityRepository->save($activity);

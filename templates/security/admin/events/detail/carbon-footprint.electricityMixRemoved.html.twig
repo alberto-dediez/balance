@@ -1,0 +1,4 @@
+{% trans with {
+    '{id}': event.electricityMixId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el mix eléctrico {id} por el usuario {user}{% endtrans %}

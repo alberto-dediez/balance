@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\Activity\Answer;
 
+use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
@@ -15,7 +16,10 @@ use App\Security\Domain\Model\User\User;
 
 final class PhaseAnswersSynchronizer
 {
-    public function __construct(private ActivityAnswerHandlerRegistry $handlers) {}
+    public function __construct(
+        private ActivityAnswerHandlerRegistry $handlers,
+        private EventCarbonFootprintCountryResolver $countryResolver,
+    ) {}
 
     /**
      * @param list<SectionAnswer>      $sectionAnswers
@@ -36,6 +40,8 @@ final class PhaseAnswersSynchronizer
             ?? throw new \InvalidArgumentException(sprintf('EventCarbonFootprint "%s" has no account configured.', $eventCarbonFootprint->id()));
 
         $year = $eventCarbonFootprint->calculationYear();
+
+        $countryId = $this->countryResolver->resolve($eventCarbonFootprint);
 
         $answersBySource = [];
         foreach ($sections as $section) {
@@ -64,13 +70,13 @@ final class PhaseAnswersSynchronizer
                     $existingActivityId = $answer->existingActivityId;
 
                     if (null !== $existingActivityId && self::contains($existingIds, $existingActivityId)) {
-                        $handler->update($answer, $year, $emissionFactorGroupId, $user);
+                        $handler->update($answer, $year, $emissionFactorGroupId, $user, $countryId);
                         $keptIds[] = $existingActivityId;
 
                         continue;
                     }
 
-                    $activityId = $handler->register($answer, $year, $emissionFactorGroupId, $accountId, $user);
+                    $activityId = $handler->register($answer, $year, $emissionFactorGroupId, $accountId, $user, $countryId);
                     $eventCarbonFootprint->addActivity($activityId, $phase, $source, $providerId, $fromEmployees);
                     $keptIds[] = $activityId;
                 }

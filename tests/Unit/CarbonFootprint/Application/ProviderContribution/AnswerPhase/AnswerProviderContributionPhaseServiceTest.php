@@ -12,6 +12,7 @@ use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
+use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\ProviderContribution\AnswerPhase\AnswerProviderContributionPhaseRequest;
 use App\CarbonFootprint\Application\ProviderContribution\AnswerPhase\AnswerProviderContributionPhaseService;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthenticator;
@@ -54,7 +55,9 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositor
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -98,7 +101,7 @@ class AnswerProviderContributionPhaseServiceTest extends TestCase
             new ProviderContributionAuthenticator($this->providerContributionRepository, $this->providerRepository, $this->userRepository),
             $this->providerContributionRepository,
             $this->eventCarbonFootprintRepository,
-            new PhaseAnswersSynchronizer($handlers),
+            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
         );
     }
 
@@ -236,5 +239,10 @@ class AnswerProviderContributionPhaseServiceTest extends TestCase
         $this->providerContributionRepository->add($contribution);
 
         return [$eventCarbonFootprint, $contribution];
+    }
+
+    private function countryResolver(): EventCarbonFootprintCountryResolver
+    {
+        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

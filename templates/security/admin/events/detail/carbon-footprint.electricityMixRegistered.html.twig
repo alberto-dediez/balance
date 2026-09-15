@@ -1,0 +1,4 @@
+{% trans with {
+    '{name}': event.countryId | country_name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el mix eléctrico "{name}" por el usuario {user}{% endtrans %}

@@ -26,6 +26,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyRespon
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
+use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -90,6 +91,7 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
@@ -153,6 +155,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getElectricityMarketerRepository(): ElectricityMarketerRepository
     {
         return $this->client->getContainer()->get(ElectricityMarketerRepository::class);
+    }
+
+    public function getElectricityMixRepository(): ElectricityMixRepository
+    {
+        return $this->client->getContainer()->get(ElectricityMixRepository::class);
     }
 
     public function getRefrigerantGasRepository(): RefrigerantGasRepository
@@ -367,6 +374,36 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getElectricityMarketerRepository()->add($electricityMarketer);
+    }
+
+    #[Given('electricity mix for country :country with id :id exists')]
+    public function electricityMixWithIdExists(string $country, string $id): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $electricityMix = ElectricityMixMother::fromCountryAndId($country, $id);
+
+        $this->getElectricityMixRepository()->add($electricityMix);
+    }
+
+    #[Given('electricity mix for country :country with id :id and emission factor for year :year exists')]
+    public function electricityMixWithEmissionFactorExists(string $country, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $electricityMix = ElectricityMixMother::fromCountryAndId($country, $id);
+
+        $electricityMix->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            source: 'IPCC',
+        ));
+
+        $this->getElectricityMixRepository()->add($electricityMix);
     }
 
     #[Given('refrigerant gas :name with id :id exists')]

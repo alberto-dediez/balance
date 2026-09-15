@@ -129,6 +129,14 @@
         <source>refrigerantGas</source>
         <target>Refrigerant gas</target>
       </trans-unit>
+      <trans-unit id="zgkntYS" resname="electricityMix">
+        <source>electricityMix</source>
+        <target>Electricity mix</target>
+      </trans-unit>
+      <trans-unit id="OjcRGRi" resname="country">
+        <source>country</source>
+        <target>Country</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

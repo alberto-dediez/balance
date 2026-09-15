@@ -7461,6 +7461,70 @@
         <source>Gas refrigerante</source>
         <target>Soğutucu gaz</target>
       </trans-unit>
+      <trans-unit id="iaQjtBv" resname="Mixes eléctricos">
+        <source>Mixes eléctricos</source>
+        <target>Elektrik karışımları</target>
+      </trans-unit>
+      <trans-unit id="5PhyxOo" resname="Ya existe un mix eléctrico para ese país">
+        <source>Ya existe un mix eléctrico para ese país</source>
+        <target>Bu ülke için zaten bir elektrik karışımı var</target>
+      </trans-unit>
+      <trans-unit id="g93ax3d" resname="Mix eléctrico creado correctamente: {name}">
+        <source>Mix eléctrico creado correctamente: {name}</source>
+        <target>Elektrik karışımı başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="2H6cVs0" resname="Mix eléctrico actualizado con éxito">
+        <source>Mix eléctrico actualizado con éxito</source>
+        <target>Elektrik karışımı başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="iERt8oi" resname="Se ha eliminado el mix eléctrico {name}">
+        <source>Se ha eliminado el mix eléctrico {name}</source>
+        <target>{name} elektrik karışımı silindi</target>
+      </trans-unit>
+      <trans-unit id="naZHqqg" resname="No se ha podido eliminar el mix eléctrico {name}">
+        <source>No se ha podido eliminar el mix eléctrico {name}</source>
+        <target>{name} elektrik karışımı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="lYgZJLI" resname="Se ha eliminado el mix eléctrico {id}">
+        <source>Se ha eliminado el mix eléctrico {id}</source>
+        <target>{id} elektrik karışımı silindi</target>
+      </trans-unit>
+      <trans-unit id="H5ZL_TO" resname="No se ha podido eliminar el mix eléctrico {id}">
+        <source>No se ha podido eliminar el mix eléctrico {id}</source>
+        <target>{id} elektrik karışımı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="VRm9YuU" resname="Selecciona un país">
+        <source>Selecciona un país</source>
+        <target>Bir ülke seçin</target>
+      </trans-unit>
+      <trans-unit id="u97LJ9v" resname="Mix eléctrico">
+        <source>Mix eléctrico</source>
+        <target>Elektrik karışımı</target>
+      </trans-unit>
+      <trans-unit id="3R4knZa" resname="Se ha eliminado el mix eléctrico {id} por el usuario {user}">
+        <source>Se ha eliminado el mix eléctrico {id} por el usuario {user}</source>
+        <target>{id} elektrik karışımı {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="RAma5CD" resname="Se ha añadido el factor de emisión del año {year} al mix eléctrico {id} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al mix eléctrico {id} por el usuario {user}</source>
+        <target>{year} yılı emisyon faktörü {user} kullanıcısı tarafından {id} elektrik karışımına eklendi</target>
+      </trans-unit>
+      <trans-unit id="eMFIrfP" resname="Se ha registrado el mix eléctrico &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado el mix eléctrico "{name}" por el usuario {user}</source>
+        <target>"{name}" elektrik karışımı {user} kullanıcısı tarafından kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="HoJUnmB" resname="Se ha actualizado el mix eléctrico &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado el mix eléctrico "{name}" por el usuario {user}</source>
+        <target>"{name}" elektrik karışımı {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="DMvaN3A" resname="Se ha eliminado el factor de emisión del año {year} del mix eléctrico {id} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del mix eléctrico {id} por el usuario {user}</source>
+        <target>{year} yılı emisyon faktörü {user} kullanıcısı tarafından {id} elektrik karışımından silindi</target>
+      </trans-unit>
+      <trans-unit id="Jxl2JIG" resname="Se ha actualizado el factor de emisión del mix eléctrico {id} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del mix eléctrico {id} por el usuario {user}</source>
+        <target>{id} elektrik karışımının emisyon faktörü {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

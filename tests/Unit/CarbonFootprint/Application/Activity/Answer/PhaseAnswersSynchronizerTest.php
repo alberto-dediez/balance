@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Answer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
+use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MachineryFuelAnswer;
@@ -21,9 +22,16 @@ use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -125,7 +133,7 @@ class PhaseAnswersSynchronizerTest extends TestCase
         $machineryFuelHandler->method('register')->willReturn($machineryFuelActivityId);
 
         $handlers = new ActivityAnswerHandlerRegistry([$machineryFuelHandler]);
-        $sut = new PhaseAnswersSynchronizer($handlers);
+        $sut = new PhaseAnswersSynchronizer($handlers, $this->countryResolver());
 
         $machineryFuelSection = new SectionAnswer(
             Phase::Assembly->sections()[2],
@@ -195,6 +203,37 @@ class PhaseAnswersSynchronizerTest extends TestCase
         );
     }
 
+    public function testPassesTheCountryOfTheEventPropertyToTheHandler(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::from(eventId: 'E-1', id: (string) EventCarbonFootprintId::generate());
+
+        $eventRepository = EventRepositoryMother::inMemory();
+        $eventRepository->add(EventMother::from(name: 'Event', id: 'E-1', propertyId: 'P-1'));
+
+        $propertyRepository = PropertyRepositoryMother::inMemory();
+        $propertyRepository->add(PropertyMother::from(
+            propertyId: new PropertyId('P-1'),
+            info: new PropertyInfo(countryId: new CountryId('C-ES')),
+        ));
+
+        $handler = $this->materialHandler();
+        $handler->expects($this->once())
+            ->method('register')
+            ->with(
+                $this->isInstanceOf(MaterialAnswer::class),
+                $eventCarbonFootprint->calculationYear(),
+                $eventCarbonFootprint->emissionFactorGroupId(),
+                $eventCarbonFootprint->accountId(),
+                $this->isInstanceOf(User::class),
+                $this->equalTo(new CountryId('C-ES')),
+            )
+            ->willReturn(ActivityId::generate());
+
+        $sut = $this->createSUT($handler, new EventCarbonFootprintCountryResolver($eventRepository, $propertyRepository));
+
+        $sut->sync($eventCarbonFootprint, Phase::Materials, [$this->materialsSection([$this->materialAnswer()])], UserMother::ownerUser());
+    }
+
     private function materialHandler(): ActivityAnswerHandler&MockObject
     {
         $handler = $this->createMock(ActivityAnswerHandler::class);
@@ -203,10 +242,15 @@ class PhaseAnswersSynchronizerTest extends TestCase
         return $handler;
     }
 
-    private function createSUT(?ActivityAnswerHandler $handler = null): PhaseAnswersSynchronizer
+    private function createSUT(?ActivityAnswerHandler $handler = null, ?EventCarbonFootprintCountryResolver $countryResolver = null): PhaseAnswersSynchronizer
     {
         $handlers = null !== $handler ? [$handler] : [];
 
-        return new PhaseAnswersSynchronizer(new ActivityAnswerHandlerRegistry($handlers));
+        return new PhaseAnswersSynchronizer(new ActivityAnswerHandlerRegistry($handlers), $countryResolver ?? $this->countryResolver());
+    }
+
+    private function countryResolver(): EventCarbonFootprintCountryResolver
+    {
+        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

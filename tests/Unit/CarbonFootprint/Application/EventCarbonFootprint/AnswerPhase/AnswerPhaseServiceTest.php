@@ -6,21 +6,31 @@ namespace App\Tests\Unit\CarbonFootprint\Application\EventCarbonFootprint\Answer
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
+use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\MaterialAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
+use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
+use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MaterialEmissionFactorSelector;
+use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMaterialActivityService;
+use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CateringItemAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MaterialAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
+use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixId;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionAnswer;
@@ -34,6 +44,9 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
+use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -41,10 +54,20 @@ use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -81,7 +104,7 @@ class AnswerPhaseServiceTest extends TestCase
         $this->sut = new AnswerPhaseService(
             $this->eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            new PhaseAnswersSynchronizer($handlers),
+            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
         );
     }
 
@@ -261,6 +284,86 @@ class AnswerPhaseServiceTest extends TestCase
         $this->assertTrue($this->sut->isHandled(new AnswerPhaseRequest(EventCarbonFootprintMother::random()->id(), Phase::Materials)));
     }
 
+    public function testAnswersElectricityAndStoresBothResults(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::fromEventId('E-1');
+        $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);
+
+        $year = $eventCarbonFootprint->calculationYear();
+
+        $electricityMarketer = ElectricityMarketerMother::registeredElectricityMarketer();
+        $electricityMarketer->setEmissionFactor($this->kWhEmissionFactor('0.25', $year));
+        $electricityMarketerRepository = ElectricityMarketerRepositoryMother::inMemory();
+        $electricityMarketerRepository->add($electricityMarketer);
+
+        $electricityMix = ElectricityMixMother::fromCountryAndId('C-ES', (string) ElectricityMixId::generate());
+        $electricityMix->setEmissionFactor($this->kWhEmissionFactor('0.18', $year));
+        $electricityMixRepository = ElectricityMixRepositoryMother::inMemory();
+        $electricityMixRepository->add($electricityMix);
+
+        $eventRepository = EventRepositoryMother::inMemory();
+        $eventRepository->add(EventMother::from(name: 'Event', id: 'E-1', propertyId: 'P-1'));
+
+        $propertyRepository = PropertyRepositoryMother::inMemory();
+        $propertyRepository->add(PropertyMother::from(
+            propertyId: new PropertyId('P-1'),
+            info: new PropertyInfo(countryId: new CountryId('C-ES')),
+        ));
+
+        $authorizer = new ActivityAuthorizer();
+        $calculator = new EmissionsCalculator();
+        $selector = new ElectricityEmissionFactorSelector($electricityMarketerRepository, GdOFactorRepositoryMother::inMemory());
+        $mixResolver = new ElectricityMixEmissionsResolver($electricityMixRepository, $calculator);
+
+        $handlers = new ActivityAnswerHandlerRegistry([
+            new ElectricityAnswerHandler(
+                new RegisterElectricityActivityService($this->activityRepository, $authorizer, $selector, $calculator, $mixResolver),
+                new UpdateElectricityActivityService($this->activityRepository, $authorizer, $selector, $calculator, $mixResolver),
+            ),
+        ]);
+
+        $sut = new AnswerPhaseService(
+            $this->eventCarbonFootprintRepository,
+            new EventCarbonFootprintAuthorizer(),
+            new PhaseAnswersSynchronizer($handlers, new EventCarbonFootprintCountryResolver($eventRepository, $propertyRepository)),
+        );
+
+        $section = new SectionAnswer(
+            Phase::Assembly->sections()[4],
+            [new ElectricityAnswer(
+                electricityMarketerId: $electricityMarketer->id(),
+                gdOFactorId: null,
+                quantity: new Quantity(1000.0, Unit::KWh),
+            )],
+        );
+
+        $sut(new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Assembly, [$section]), $this->ownerUser());
+
+        $activityIds = $eventCarbonFootprint->activities()->filterByPhase(Phase::Assembly)->activityIds();
+
+        $this->assertCount(1, $activityIds);
+
+        $activity = $this->activityRepository->findById($activityIds[0]);
+
+        $this->assertInstanceOf(ElectricityActivity::class, $activity);
+        $this->assertSame(250.0, (float) $activity->emissions()->co2eq());
+        $this->assertSame(180.0, (float) $activity->locationBasedEmissions()?->co2eq());
+        $this->assertSame((string) $electricityMix->id(), (string) $activity->electricityMixId());
+    }
+
+    private function kWhEmissionFactor(string $co2eq, int $year): EmissionFactor
+    {
+        return new EmissionFactor(
+            co2eq: $co2eq,
+            co2: $co2eq,
+            ch4: '0',
+            n2o: '0',
+            year: $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
+            unit: Unit::KWh,
+        );
+    }
+
     private function materialsSection(): SectionAnswer
     {
         return new SectionAnswer(
@@ -280,5 +383,10 @@ class AnswerPhaseServiceTest extends TestCase
     private function ownerUser(): User
     {
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+    }
+
+    private function countryResolver(): EventCarbonFootprintCountryResolver
+    {
+        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

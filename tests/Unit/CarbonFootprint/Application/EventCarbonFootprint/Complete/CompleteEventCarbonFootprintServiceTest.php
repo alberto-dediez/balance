@@ -20,6 +20,7 @@ use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeePar
 use App\CarbonFootprint\Application\EventCarbonFootprint\Complete\CompleteEventCarbonFootprintRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Complete\CompleteEventCarbonFootprintService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
@@ -58,6 +59,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbon
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -122,7 +124,7 @@ class CompleteEventCarbonFootprintServiceTest extends TestCase
             new EmployeeContributionsAggregator(),
             new MobilityFactorBasisProvider(new InMemoryMobilityRepository()),
             $overnightStayRepository,
-            new PhaseAnswersSynchronizer($handlers),
+            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
         );
     }
 
@@ -287,5 +289,10 @@ class CompleteEventCarbonFootprintServiceTest extends TestCase
     private function ownerUser(): User
     {
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+    }
+
+    private function countryResolver(): EventCarbonFootprintCountryResolver
+    {
+        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }
