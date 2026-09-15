@@ -77,6 +77,9 @@
             ".php-cs-fixer.dist.php"
         ]
     },
+    "knpuniversity/oauth2-client-bundle": {
+        "version": "v2.20.2"
+    },
     "lexik/jwt-authentication-bundle": {
         "version": "3.2",
         "recipe": {

@@ -7,6 +7,7 @@ namespace App\Tests\Acceptance\Shared;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -136,6 +137,17 @@ final class AcceptanceClient
             'username' => $user->username(),
             'roles' => $user->getRoles(),
         ]));
+    }
+
+    public function setSessionValue(string $key, mixed $value): void
+    {
+        $sessionFactory = $this->getContainer()->get('session.factory');
+
+        $session = $sessionFactory->createSession();
+        $session->set($key, $value);
+        $session->save();
+
+        $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
     }
 
     public function setBearerToken(string $token): void

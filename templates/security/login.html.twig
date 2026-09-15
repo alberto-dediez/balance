@@ -51,6 +51,18 @@
             <button class="btn btn-primary w-100 py-8 mb-4 rounded-2" name="submit" type="submit">{% trans -%}Acceder{%- endtrans %}</button>
         </div>
 
+        {% if sso_providers is not empty %}
+            <div class="text-center text-muted mb-3">{% trans -%}o{%- endtrans %}</div>
+            {% for provider in sso_providers %}
+                <div class="form-group mb-3 text-center">
+                    <a href="{{ path('app_login_sso', {provider: provider.key, locale: app.request.locale}) }}"
+                       class="btn btn-outline-primary w-100 py-8 rounded-2 d-flex align-items-center justify-content-center">
+                        {{ ux_icon('simple-icons:' ~ provider.key, {class: 'me-2'}) }}
+                        {{ 'Continuar con {provider}'|trans({'provider': provider.label}) }}
+                    </a>
+                </div>
+            {% endfor %}
+        {% endif %}
 
         <input type="hidden" name="_csrf_token"
             value="{{ csrf_token('authenticate') }}"

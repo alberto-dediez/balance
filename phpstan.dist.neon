@@ -28,6 +28,12 @@ parameters:
             identifier: nullsafe.neverNull
             path: src/Notifications/Infrastructure/Notification/DispatchingSystemNotifier.php
         -
+            # The doctrine extension narrows the nullable "locale" custom-type field to non-null,
+            # but User::preferredLocale() is genuinely nullable at runtime.
+            message: '#Using nullsafe property access "\?->value" on left side of \?\? is unnecessary\. Use -> instead\.#'
+            identifier: nullsafe.neverNull
+            path: src/Security/Infrastructure/Symfony/Security/SsoAuthenticator.php
+        -
             message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
             path: src/Shared/Application/CommandBus/CommandInvokeHandlerTrait.php
         -

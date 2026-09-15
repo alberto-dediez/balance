@@ -1,0 +1,17 @@
+knpu_oauth2_client:
+    clients:
+        google:
+            type: google
+            client_id: '%env(SSO_GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(SSO_GOOGLE_CLIENT_SECRET)%'
+            redirect_route: app_login_sso_callback
+            redirect_params: { provider: google }
+        microsoft:
+            type: azure
+            client_id: '%env(SSO_MICROSOFT_CLIENT_ID)%'
+            client_secret: '%env(SSO_MICROSOFT_CLIENT_SECRET)%'
+            redirect_route: app_login_sso_callback
+            redirect_params: { provider: microsoft }
+            tenant: '%env(SSO_MICROSOFT_TENANT)%'
+            default_end_point_version: '2.0'
+            scope: ['openid', 'profile', 'email']

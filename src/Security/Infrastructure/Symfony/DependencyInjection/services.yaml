@@ -3,6 +3,8 @@ parameters:
     app.signature_sms_enabled: '%env(bool:SIGNATURE_SMS_ENABLED)%'
     app.signature_whatsapp_enabled: '%env(bool:SIGNATURE_WHATSAPP_ENABLED)%'
     app.account_impersonation_enabled: '%env(bool:ACCOUNT_IMPERSONATION_ENABLED)%'
+    app.sso_google_enabled: '%env(bool:SSO_GOOGLE_ENABLED)%'
+    app.sso_microsoft_enabled: '%env(bool:SSO_MICROSOFT_ENABLED)%'
 
 services:
     _defaults:
@@ -17,6 +19,7 @@ services:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
+            - '../../../Infrastructure/Sso/InMemory/'
 
     App\Security\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
@@ -109,3 +112,62 @@ services:
     App\Shared\Infrastructure\Storage\LocalFileUploader:
         arguments:
             $rootDir: '%app.uploads_dir%'
+
+    App\Security\Infrastructure\Symfony\Security\SsoAuthenticator:
+        arguments:
+            $defaultLocale: '%app.locale_default%'
+
+    App\Security\Infrastructure\UI\Web\Sso\SsoController:
+        arguments:
+            $defaultLocale: '%app.locale_default%'
+
+when@dev:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Security\Infrastructure\Sso\OAuth2\GoogleSsoProvider:
+            arguments:
+                $enabled: '%app.sso_google_enabled%'
+
+        App\Security\Infrastructure\Sso\OAuth2\MicrosoftSsoProvider:
+            arguments:
+                $enabled: '%app.sso_microsoft_enabled%'
+
+when@prod:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Security\Infrastructure\Sso\OAuth2\GoogleSsoProvider:
+            arguments:
+                $enabled: '%app.sso_google_enabled%'
+
+        App\Security\Infrastructure\Sso\OAuth2\MicrosoftSsoProvider:
+            arguments:
+                $enabled: '%app.sso_microsoft_enabled%'
+
+when@test:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Security\Infrastructure\Sso\SsoProviderRegistry:
+            public: true
+
+        security.sso_provider.google:
+            class: App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider
+            arguments:
+                $key: google
+                $label: Google
+            tags: ['security.sso_provider']
+
+        security.sso_provider.microsoft:
+            class: App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider
+            arguments:
+                $key: microsoft
+                $label: Microsoft
+            tags: ['security.sso_provider']

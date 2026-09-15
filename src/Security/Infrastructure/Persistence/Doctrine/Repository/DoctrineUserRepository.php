@@ -44,10 +44,13 @@ class DoctrineUserRepository implements UserRepository
                 accountId: $user->accountId(),
                 account: $account,
                 roles: $user->roles(),
+                recoverToken: $user->recoverToken(),
                 events: $user->recordedEvents(),
                 removed: $user->isRemoved(),
                 registeredAt: $user->registeredAt() ?? new \DateTimeImmutable(),
                 removedAt: $user->removedAt(),
+                preferredLocale: $user->preferredLocale(),
+                pictureId: $user->pictureId(),
             );
         }
 

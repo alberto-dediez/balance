@@ -1693,6 +1693,14 @@
         <source>Descargar manual</source>
         <target>Download manual</target>
       </trans-unit>
+      <trans-unit id="l38rxuW" resname="o">
+        <source>o</source>
+        <target>or</target>
+      </trans-unit>
+      <trans-unit id="LKypIGA" resname="Continuar con {provider}">
+        <source>Continuar con {provider}</source>
+        <target>Continue with {provider}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

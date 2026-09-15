@@ -18,7 +18,25 @@ class DoctrineUserRepositoryTest extends UserRepositoryTest
         $manager = $this->getContainer()->get(EntityManagerInterface::class);
 
         $accountRepository = $this->createMock(DoctrineAccountRepository::class);
-        $accountRepository->method('find')->willReturnCallback(fn($id): ?Account => null !== $id ? new Account($id) : null);
+        $accountRepository->method('find')->willReturnCallback(function ($id) use ($manager): ?Account {
+            if (null === $id) {
+                return null;
+            }
+
+            $account = $manager->find(Account::class, $id);
+
+            if ($account instanceof Account) {
+                return $account;
+            }
+
+            $account = new Account($id);
+            $account->register('account', true);
+
+            $manager->persist($account);
+            $manager->flush();
+
+            return $account;
+        });
 
         /* @var DoctrineAccountRepository&MockObject $accountRepository */
 

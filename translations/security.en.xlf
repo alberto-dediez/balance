@@ -81,6 +81,14 @@
         <source>Too many failed login attempts, please try again in %minutes% minutes.</source>
         <target>Too many failed login attempts, please try again in %minutes% minutes.</target>
       </trans-unit>
+      <trans-unit id="OMEkA_Q" resname="SSO authentication could not be completed.">
+        <source>SSO authentication could not be completed.</source>
+        <target>Sign-in with the identity provider could not be completed.</target>
+      </trans-unit>
+      <trans-unit id="zx8m3fs" resname="No user is registered with the identity provider email.">
+        <source>No user is registered with the identity provider email.</source>
+        <target>No user is registered with the identity provider email.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
