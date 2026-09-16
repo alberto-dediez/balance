@@ -1,6 +1,6 @@
 ---
 title: Sección de novedades para administradores
-date: 2026-09-14
+date: "2026-09-14 12:12"
 category: feature
 summary: Los administradores ya pueden consultar dentro de la plataforma qué ha cambiado en cada actualización, con acceso directo al manual de cada funcionalidad.
 plan: 2026-09-14-changelog-section

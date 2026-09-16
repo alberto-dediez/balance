@@ -79,6 +79,34 @@ class ChangelogEntryParserTest extends TestCase
         $this->assertSame((new \DateTimeImmutable('2026-09-14 00:00:00'))->getTimestamp(), $unquoted->date->getTimestamp());
     }
 
+    public function testADateWithoutTimeIsMidnight(): void
+    {
+        $sut = new ChangelogEntryParser();
+
+        $entry = $sut->parse($this->fixturesPath . '/2026-09-03-date-as-string.md', '2026-09-03-date-as-string.md');
+
+        $this->assertSame('2026-09-03 00:00:00', $entry->date->format('Y-m-d H:i:s'));
+    }
+
+    public function testAQuotedDateWithTimeKeepsTheTime(): void
+    {
+        $sut = new ChangelogEntryParser();
+
+        $entry = $sut->parse($this->fixturesPath . '/2026-09-10-date-with-time.md', '2026-09-10-date-with-time.md');
+
+        $this->assertSame('2026-09-10 14:32:00', $entry->date->format('Y-m-d H:i:s'));
+    }
+
+    public function testAnUnquotedDateWithTimeKeepsTheTimeInTheLocalTimezone(): void
+    {
+        $sut = new ChangelogEntryParser();
+
+        $entry = $sut->parse($this->fixturesPath . '/2026-09-11-date-with-time-unquoted.md', '2026-09-11-date-with-time-unquoted.md');
+
+        $this->assertSame('2026-09-11 09:05:00', $entry->date->format('Y-m-d H:i:s'));
+        $this->assertSame((new \DateTimeImmutable('2026-09-11 09:05:00'))->getTimestamp(), $entry->date->getTimestamp());
+    }
+
     public function testSlugIsDerivedByStrippingTheDatePrefix(): void
     {
         $sut = new ChangelogEntryParser();
