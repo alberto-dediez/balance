@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\UI\Api\LoginSso;
 
-use App\Security\Infrastructure\SSO\SSOClient;
-use App\Security\Infrastructure\SSO\SSOJwtDecoderInterface;
+use App\Security\Infrastructure\Sso\Bioscore\BioscoreSsoProvider;
+use App\Security\Infrastructure\Sso\SsoAuthenticationFailedException;
 use App\Security\Infrastructure\Symfony\Security\UserProvider;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Areas;
@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 #[Route('/login/sso', name: 'api_login_sso', methods: ['POST'])]
 #[Areas(['mobile', 'admin'])]
-#[OA\Post(description: 'Exchange an SSO token for an API JWT token', summary: 'SSO login', tags: ['Security'])]
+#[OA\Post(description: 'Exchange a Bioscore SSO token for an API JWT token', summary: 'SSO login', tags: ['Security'])]
 #[OA\Response(
     response: 200,
     description: 'Returns a JWT token',
@@ -34,24 +34,17 @@ class LoginSsoController extends AbstractController
     public function __invoke(
         #[MapRequestPayload()]
         LoginSsoRequest $request,
-        SSOClient $ssoClient,
-        SSOJwtDecoderInterface $jwtDecoder,
+        BioscoreSsoProvider $bioscore,
         UserProvider $userProvider,
         JWTTokenManagerInterface $jwtManager,
     ): JsonResponse {
-        if (!$ssoClient->checkToken($request->token)) {
-            return $this->json(['error' => 'Invalid SSO token.'], Response::HTTP_UNAUTHORIZED);
-        }
-
         try {
-            $payload = $jwtDecoder->decode($request->token);
-        } catch (\Throwable) {
+            $identity = $bioscore->identityFromToken($request->token);
+        } catch (SsoAuthenticationFailedException) {
             return $this->json(['error' => 'Invalid SSO token.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $emailInToken = $payload['email'] ?? null;
-
-        if ($emailInToken !== $request->username) {
+        if ($identity->email !== mb_strtolower($request->username)) {
             return $this->json(['error' => 'Invalid SSO token.'], Response::HTTP_UNAUTHORIZED);
         }
 

@@ -26,7 +26,7 @@ class UserMother
         return new User(
             id: new UserId('system'),
             username: 'system',
-            roles: [Role::Admin],
+            roles: [Role::Admin, Role::SuperAdmin],
         );
     }
 
@@ -76,6 +76,7 @@ class UserMother
         return self::from(
             userId: $userId,
             username: $username,
+            role: $role,
         );
     }
 
@@ -85,16 +86,18 @@ class UserMother
             userId: UserId::generate(),
             username: $username,
             accountId: $account->id(),
+            account: $account,
         );
     }
 
-    public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId): User
+    public static function fromUsernameAndRoleAndAccount(string $username, Role $role, AccountId $accountId, ?Account $account = null): User
     {
         return self::from(
             userId: UserId::generate(),
             username: $username,
             role: $role,
             accountId: $accountId,
+            account: $account,
         );
     }
 
@@ -107,13 +110,14 @@ class UserMother
         );
     }
 
-    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null): User
+    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null, ?Account $account = null): User
     {
         return new User(
             id: $userId,
             username: $username,
             password: 'apassword',
             accountId: $accountId,
+            account: $account,
             roles: [
                 $role,
             ],

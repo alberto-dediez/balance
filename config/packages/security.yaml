@@ -37,7 +37,7 @@ security:
             entry_point: form_login
             user_checker: App\Security\Infrastructure\Symfony\Security\UserChecker
             custom_authenticators:
-                - App\Security\Infrastructure\Symfony\Security\SSOAuthenticator
+                - App\Security\Infrastructure\Symfony\Security\SsoAuthenticator
             form_login:
                 login_path: app_login
                 check_path: app_login

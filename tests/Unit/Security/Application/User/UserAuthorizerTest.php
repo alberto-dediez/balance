@@ -240,6 +240,33 @@ class UserAuthorizerTest extends TestCase
         $this->assertTrue($sut->canChangeRole($subject, Role::Owner, $admin));
     }
 
+    public function testAdminCannotChangeSuperAdminRole(): void
+    {
+        $sut = $this->createSUT();
+
+        $result = $sut->canChangeRole(UserMother::random(), Role::SuperAdmin, UserMother::adminUser());
+
+        $this->assertFalse($result);
+    }
+
+    public function testAdminCanChangeAdminRole(): void
+    {
+        $sut = $this->createSUT();
+
+        $result = $sut->canChangeRole(UserMother::random(), Role::Admin, UserMother::adminUser());
+
+        $this->assertTrue($result);
+    }
+
+    public function testSuperAdminCanChangeSuperAdminRole(): void
+    {
+        $sut = $this->createSUT();
+
+        $result = $sut->canChangeRole(UserMother::random(), Role::SuperAdmin, UserMother::superAdminUser());
+
+        $this->assertTrue($result);
+    }
+
     private function createSUT(): UserAuthorizer
     {
         return new UserAuthorizer();

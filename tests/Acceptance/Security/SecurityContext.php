@@ -26,8 +26,10 @@ use App\Security\Domain\Model\SignatureRequest\Token;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
-use App\Security\Infrastructure\SSO\InMemory\InMemorySSOClient;
-use App\Security\Infrastructure\SSO\InMemory\InMemorySSOJwtDecoder;
+use App\Security\Infrastructure\Sso\Bioscore\InMemory\InMemoryBioscoreClient;
+use App\Security\Infrastructure\Sso\Bioscore\InMemory\InMemoryBioscoreJwtDecoder;
+use App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider;
+use App\Security\Infrastructure\Sso\SsoProviderRegistry;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
@@ -63,6 +65,15 @@ final class SecurityContext implements Context
     public function after(AfterScenarioScope $scope): void
     {
         $this->client->reset();
+
+        foreach ($this->getSsoProviderRegistry()->all() as $provider) {
+            if ($provider instanceof InMemorySsoProvider) {
+                $provider->reset();
+            }
+        }
+
+        $this->getBioscoreClient()->reset();
+        $this->getBioscoreJwtDecoder()->reset();
     }
 
     private function getUserRepository(): UserRepository
@@ -90,6 +101,34 @@ final class SecurityContext implements Context
         return $this->client->getContainer()->get(RecordedEventRepository::class);
     }
 
+    private function getSsoProviderRegistry(): SsoProviderRegistry
+    {
+        $registry = $this->client->getContainer()->get(SsoProviderRegistry::class);
+
+        Assert::assertInstanceOf(SsoProviderRegistry::class, $registry);
+
+        return $registry;
+    }
+
+    private function getInMemorySsoProvider(string $key): InMemorySsoProvider
+    {
+        $provider = $this->getSsoProviderRegistry()->get($key);
+
+        Assert::assertInstanceOf(InMemorySsoProvider::class, $provider);
+
+        return $provider;
+    }
+
+    private function getBioscoreClient(): InMemoryBioscoreClient
+    {
+        return $this->client->getContainer()->get(InMemoryBioscoreClient::class);
+    }
+
+    private function getBioscoreJwtDecoder(): InMemoryBioscoreJwtDecoder
+    {
+        return $this->client->getContainer()->get(InMemoryBioscoreJwtDecoder::class);
+    }
+
     #[Given('user :username with role :role exists')]
     public function userWithRoleExists(string $username, string $role): void
     {
@@ -108,12 +147,55 @@ final class SecurityContext implements Context
         $this->getUserRepository()->add($user);
     }
 
+    #[Given('user :username with role :role with id :id exists')]
+    public function userWithRoleWithIdExists(string $username, string $role, string $id): void
+    {
+        assertNotEmpty(Role::tryFrom($role));
+
+        $user = UserMother::fromUsernameAndRoleAndId($username, Role::tryFrom($role), new UserId($id));
+
+        $this->getUserRepository()->add($user);
+    }
+
     #[Given('account :name with id :id exists')]
     public function accountWithIdExists(string $username, string $id): void
     {
         $account = AccountMother::fromNameAndId($username, $id);
 
         $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('inactive account :name with id :id exists')]
+    public function inactiveAccountWithIdExists(string $name, string $id): void
+    {
+        $account = AccountMother::fromNameAndId($name, $id);
+        $account->changeStatus(false);
+
+        $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('the SSO provider :key identifies the user as :email')]
+    public function theSsoProviderIdentifiesTheUserAs(string $key, string $email): void
+    {
+        $this->getInMemorySsoProvider($key)->identifyAs($email);
+    }
+
+    #[Given('the page :path was requested before signing in')]
+    public function thePageWasRequestedBeforeSigningIn(string $path): void
+    {
+        $this->client->setSessionValue('_security.main.target_path', $path);
+    }
+
+    #[Given('the SSO provider :key fails')]
+    public function theSsoProviderFails(string $key): void
+    {
+        $this->getInMemorySsoProvider($key)->fail();
+    }
+
+    #[Given('the SSO provider :key is disabled')]
+    public function theSsoProviderIsDisabled(string $key): void
+    {
+        $this->getInMemorySsoProvider($key)->disable();
     }
 
     #[Given('account :name with id :id is a consultant')]
@@ -208,7 +290,14 @@ final class SecurityContext implements Context
     {
         assertNotEmpty(Role::tryFrom($role));
 
-        $user = UserMother::fromUsernameAndRoleAndAccount($username, Role::tryFrom($role), new AccountId($account));
+        $accountId = new AccountId($account);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount(
+            $username,
+            Role::tryFrom($role),
+            $accountId,
+            $this->getAccountRepository()->find($accountId),
+        );
 
         $this->getUserRepository()->add($user);
     }
@@ -532,17 +621,15 @@ final class SecurityContext implements Context
         $this->getSignatureRequestRepository()->add($signatureRequest);
     }
 
-    #[Given('the SSO client rejects all tokens')]
-    public function theSSOClientRejectsAllTokens(): void
+    #[Given('Bioscore rejects all SSO tokens')]
+    public function bioscoreRejectsAllSsoTokens(): void
     {
-        $ssoClient = $this->client->getContainer()->get(InMemorySSOClient::class);
-        $ssoClient->setValidToken(false);
+        $this->getBioscoreClient()->setValidToken(false);
     }
 
-    #[Given('the SSO token decodes to email :email')]
-    public function theSSOTokenDecodesToEmail(string $email): void
+    #[Given('the Bioscore SSO token decodes to email :email')]
+    public function theBioscoreSsoTokenDecodesToEmail(string $email): void
     {
-        $jwtDecoder = $this->client->getContainer()->get(InMemorySSOJwtDecoder::class);
-        $jwtDecoder->setEmail($email);
+        $this->getBioscoreJwtDecoder()->setEmail($email);
     }
 }

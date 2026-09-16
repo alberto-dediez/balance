@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Security\Domain\Model\User;
 
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class UserRepositoryTest extends KernelTestCase
@@ -25,6 +28,21 @@ abstract class UserRepositoryTest extends KernelTestCase
 
         $this->assertNotNull($recoverUser);
         $this->assertEquals($user->id(), $recoverUser->id());
+    }
+
+    public function testAddUserOfAnAccountKeepsItsPreferences(): void
+    {
+        $repository = $this->createSUT();
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, AccountId::generate());
+        $user->changePreferredLocale(Locale::English);
+
+        $repository->add($user);
+
+        $recoverUser = $repository->find($user->id());
+
+        $this->assertNotNull($recoverUser);
+        $this->assertEquals(Locale::English, $recoverUser->preferredLocale());
     }
 
     public function testRemoveUserToRepository(): void

@@ -4,7 +4,7 @@
     <twig:TopAction:Return path="{{ path('users') }}" />
 {% endblock %}
 
-{% set page_title = ('Usuarios' | trans) 
+{% set page_title = ('Usuarios' | trans)
     ~ ' > '
     ~ ('Editar' | trans)
     ~ ' > '
@@ -19,7 +19,7 @@
 
                     {{ form_row(form.roles) }}
                 </div>
-            </div>    
+            </div>
 
             <twig:ActionBar>
                 <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />

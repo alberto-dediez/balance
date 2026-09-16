@@ -8,6 +8,7 @@ use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\UpdateProfile\UpdateProfileRequest;
 use App\Security\Application\User\UpdateProfile\UpdateProfileService;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Form\AdminEditUserType;
 use App\Security\Infrastructure\Symfony\Form\EditUser;
@@ -45,9 +46,12 @@ class EditController extends AbstractController
 
         $form = $this->createForm(AdminEditUserType::class, new EditUser($user->roles(), $user->preferredLocale()));
 
+        /** @var Role[] $manageableRoles */
+        $manageableRoles = array_values($form->get('roles')->getConfig()->getOption('choices'));
+
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy, $updateProfile): void {
-                $this->updateRoles($user, $form->get('roles')->getData(), $performBy);
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy, $updateProfile, $manageableRoles): void {
+                $this->updateRoles($user, $form->get('roles')->getData(), $manageableRoles, $performBy);
 
                 /** @var Locale|null $preferredLocale */
                 $preferredLocale = $form->get('preferredLocale')->getData() ?: null;

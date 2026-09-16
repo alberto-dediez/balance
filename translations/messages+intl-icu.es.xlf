@@ -7525,6 +7525,14 @@
         <source>Se ha actualizado el factor de emisión del mix eléctrico {id} por el usuario {user}</source>
         <target>Se ha actualizado el factor de emisión del mix eléctrico {id} por el usuario {user}</target>
       </trans-unit>
+      <trans-unit id="l38rxuW" resname="o">
+        <source>o</source>
+        <target>o</target>
+      </trans-unit>
+      <trans-unit id="LKypIGA" resname="Continuar con {provider}">
+        <source>Continuar con {provider}</source>
+        <target>Continuar con {provider}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

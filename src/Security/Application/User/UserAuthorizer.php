@@ -80,7 +80,7 @@ final class UserAuthorizer extends AbstractAuthorizer
             return true;
         }
         if ($this->userHasRole($user, Role::Admin)) {
-            return true;
+            return in_array($role, Role::casesForAdmins(), true);
         }
 
         $currentAccountId = $this->currentAccountId($user);
