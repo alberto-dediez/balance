@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\UI\Api\UserUngrantRole;
 
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\UngrantRole\UngrantRoleRequest;
 use App\Security\Application\User\UngrantRole\UngrantRoleService;
 use App\Security\Domain\Model\User\Role;
@@ -34,13 +35,17 @@ class UserUngrantRoleController extends AbstractController
         UngrantRoleService $ungrantRole,
         LoggedUser $loggedUser,
     ): JsonResponse {
-        $response = $ungrantRole(
-            new UngrantRoleRequest(
-                userId: new UserId($userId),
-                role: Role::from($request->role),
-            ),
-            $loggedUser(),
-        );
+        try {
+            $response = $ungrantRole(
+                new UngrantRoleRequest(
+                    userId: new UserId($userId),
+                    role: Role::from($request->role),
+                ),
+                $loggedUser(),
+            );
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
+        }
 
         return $this->json(new UserUngrantRoleResponse(
             userId: (string) $response->userId,

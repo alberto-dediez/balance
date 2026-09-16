@@ -120,6 +120,16 @@ final class SecurityContext implements Context
         $this->getUserRepository()->add($user);
     }
 
+    #[Given('user :username with role :role with id :id exists')]
+    public function userWithRoleWithIdExists(string $username, string $role, string $id): void
+    {
+        assertNotEmpty(Role::tryFrom($role));
+
+        $user = UserMother::fromUsernameAndRoleAndId($username, Role::tryFrom($role), new UserId($id));
+
+        $this->getUserRepository()->add($user);
+    }
+
     #[Given('account :name with id :id exists')]
     public function accountWithIdExists(string $username, string $id): void
     {

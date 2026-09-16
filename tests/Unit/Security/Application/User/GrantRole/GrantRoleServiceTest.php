@@ -140,6 +140,53 @@ class GrantRoleServiceTest extends TestCase
         $sut($request, $performBy);
     }
 
+    public function testAdminCannotGrantSuperAdminRole(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $admin = UserMother::adminUser();
+
+        $user = UserMother::registeredUser();
+
+        $repository->add($user);
+
+        $request = new GrantRoleRequest(
+            userId: $user->id(),
+            role: Role::SuperAdmin,
+        );
+
+        $sut($request, $admin);
+    }
+
+    public function testSystemUserCanGrantSuperAdminRole(): void
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $system = UserMother::systemUser();
+
+        $user = UserMother::registeredUser();
+
+        $repository->add($user);
+
+        $request = new GrantRoleRequest(
+            userId: $user->id(),
+            role: Role::SuperAdmin,
+        );
+
+        $result = $sut($request, $system);
+
+        $userPersisted = $repository->find($result->userId);
+
+        $this->assertNotNull($userPersisted);
+        $this->assertTrue($userPersisted->hasRole(Role::SuperAdmin));
+    }
+
     public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();

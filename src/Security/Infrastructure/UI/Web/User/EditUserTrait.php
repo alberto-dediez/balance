@@ -21,10 +21,11 @@ trait EditUserTrait
 
     /**
      * @param Role[] $roles
+     * @param Role[] $manageableRoles
      */
-    protected function updateRoles(User $user, array $roles, User $performBy): void
+    protected function updateRoles(User $user, array $roles, array $manageableRoles, User $performBy): void
     {
-        $this->ungrantRoles($user, $roles, $performBy);
+        $this->ungrantRoles($user, $roles, $manageableRoles, $performBy);
         $this->grantRoles($user, $roles, $performBy);
     }
 
@@ -60,8 +61,9 @@ trait EditUserTrait
 
     /**
      * @param Role[] $roles
+     * @param Role[] $manageableRoles
      */
-    protected function ungrantRoles(User $user, array $roles, User $performBy): void
+    protected function ungrantRoles(User $user, array $roles, array $manageableRoles, User $performBy): void
     {
         if (0 === count($roles)) {
             return;
@@ -70,6 +72,14 @@ trait EditUserTrait
         $ungrantRole = $this->ungrantRole;
 
         foreach ($user->roles() as $role) {
+            if (Role::User === $role) {
+                continue;
+            }
+
+            if (!in_array($role, $manageableRoles, true)) {
+                continue;
+            }
+
             $roleIsAllowed = in_array($role, $roles);
 
             if ($roleIsAllowed) {

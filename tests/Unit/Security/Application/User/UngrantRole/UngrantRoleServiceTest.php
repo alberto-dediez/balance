@@ -137,6 +137,58 @@ class UngrantRoleServiceTest extends TestCase
         $sut($request, $user);
     }
 
+    public function testAdminCannotUngrantSuperAdminRole(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $admin = UserMother::adminUser();
+
+        $user = UserMother::superAdminUser();
+
+        $repository->add($user);
+
+        $request = new UngrantRoleRequest(
+            userId: $user->id(),
+            role: Role::SuperAdmin,
+        );
+
+        $sut($request, $admin);
+    }
+
+    public function testSuperAdminCanUngrantSuperAdminRole(): void
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $performBy = UserMother::superAdminUser();
+
+        $user = UserMother::superAdminUser();
+
+        $repository->add($user);
+
+        $request = new UngrantRoleRequest(
+            userId: $user->id(),
+            role: Role::SuperAdmin,
+        );
+
+        $result = $sut($request, $performBy);
+
+        $userPersisted = $repository->find($result->userId);
+
+        $this->assertNotNull($userPersisted);
+        $this->assertFalse($userPersisted->hasRole(Role::SuperAdmin));
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertNotNull($lastEvent);
+        $this->assertTrue($lastEvent instanceof RoleUngranted);
+    }
+
     public function testIsHandle(): void
     {
         $repository = new InMemoryUserRepository();

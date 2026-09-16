@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\UI\Api\UserGrantRole;
 
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\GrantRole\GrantRoleRequest;
 use App\Security\Application\User\GrantRole\GrantRoleService;
 use App\Security\Domain\Model\User\Role;
@@ -34,13 +35,17 @@ class UserGrantRoleController extends AbstractController
         GrantRoleService $grantRole,
         LoggedUser $loggedUser,
     ): JsonResponse {
-        $response = $grantRole(
-            new GrantRoleRequest(
-                userId: new UserId($userId),
-                role: Role::from($request->role),
-            ),
-            $loggedUser(),
-        );
+        try {
+            $response = $grantRole(
+                new GrantRoleRequest(
+                    userId: new UserId($userId),
+                    role: Role::from($request->role),
+                ),
+                $loggedUser(),
+            );
+        } catch (UnauthorizedActionException $e) {
+            throw $this->createAccessDeniedException($e->getMessage());
+        }
 
         return $this->json(new UserGrantRoleResponse(
             userId: (string) $response->userId,

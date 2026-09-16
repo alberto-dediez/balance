@@ -26,7 +26,7 @@ class UserMother
         return new User(
             id: new UserId('system'),
             username: 'system',
-            roles: [Role::Admin],
+            roles: [Role::Admin, Role::SuperAdmin],
         );
     }
 

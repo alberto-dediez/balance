@@ -6,6 +6,7 @@ namespace App\Security\Infrastructure\UI\Web\User;
 
 use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
@@ -45,8 +46,11 @@ class EditController extends AbstractController
         try {
             $form = $this->createForm(EditUserType::class, new EditUser($user->roles()));
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy): void {
-                $this->updateRoles($user, $form->get('roles')->getData(), $performBy);
+            /** @var Role[] $manageableRoles */
+            $manageableRoles = array_values($form->get('roles')->getConfig()->getOption('choices'));
+
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($user, $performBy, $manageableRoles): void {
+                $this->updateRoles($user, $form->get('roles')->getData(), $manageableRoles, $performBy);
             });
 
             if ($needsRedirect) {

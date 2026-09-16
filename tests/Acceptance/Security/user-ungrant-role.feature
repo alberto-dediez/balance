@@ -59,3 +59,22 @@ Feature:
         }
         """
         Then the status code should be 403
+
+    Scenario: As an admin, I cannot ungrant the super admin role via API
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" with id "admin" of account "mycompany" exists
+        Given user "superadmin@dediez.software" with role "ROLE_SUPER_ADMIN" with id "superadmin" of account "mycompany" exists
+        When I am authenticated in API as "admin@dediez.software"
+        And I send a PUT request to "/api/users/superadmin/ungrant-role" with body:
+        """
+        {
+            "role": "ROLE_SUPER_ADMIN"
+        }
+        """
+        Then the status code should be 403
+
+    Scenario: Command security:user:ungrant-role can ungrant the super admin role
+        Given I am the system
+        Given user "superadmin@dediez.software" with role "ROLE_SUPER_ADMIN" exists
+        When command "security:user:ungrant-role" is executed with argument "username:superadmin@dediez.software role:ROLE_SUPER_ADMIN"
+        Then Is Executed Successfully
+        Then I don't want to see "ROLE_SUPER_ADMIN" in command output

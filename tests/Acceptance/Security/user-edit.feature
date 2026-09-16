@@ -33,11 +33,11 @@ Feature:
     When I am logged as "admin@dediez.software"
     When I go to "/es/admin/users/edit/333"
     When I submit a form with "roles:[1,2]" and button "Guardar y salir"
-    Then I am redirected to "/es/admin/users" 
+    Then I am redirected to "/es/admin/users"
 
   Scenario: As owner I can edit users of my account
       Given account "MyCompany" with id "666" exists
-      Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists  
+      Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
       Given user "user1@dediez.software" with id "333" of account "666" exists
       Given user "user2@dediez.software" with id "4444" exists
       When I am logged as "owner@dediez.software"
@@ -47,9 +47,41 @@ Feature:
   Scenario: As owner I can't edit users of other accounts
       Given account "MyCompany" with id "666" exists
       Given account "OtherCompany" with id "44" exists
-      Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists  
+      Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
       Given user "user1@dediez.software" with id "333" of account "666" exists
       Given user "user2@dediez.software" with id "4444" of account "44" exists
       When I am logged as "owner@dediez.software"
       When I go to "/es/users/edit/4444"
       Then the response status should be 403
+
+  Scenario: As an admin, saving a super admin user keeps its super admin role
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    Given user "superadmin@dediez.software" with role "ROLE_SUPER_ADMIN" with id "333" exists
+    When I am logged as "admin@dediez.software"
+    When I go to "/es/admin/users/edit/333"
+    When I submit a form with "roles:[0,1]" and button "Guardar"
+    When I follow redirect
+    Then the response status should be 200
+    Then I do not see a text "Retirado acceso como"
+    Then I do not see a text "No se ha podido retirar acceso"
+
+  Scenario: As an owner, saving an admin of my account keeps its admin role
+    Given account "MyCompany" with id "666" exists
+    Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" with id "333" of account "666" exists
+    When I am logged as "owner@dediez.software"
+    When I go to "/es/users/edit/333"
+    When I submit a form with "roles:[0,1]" and button "Guardar"
+    When I follow redirect
+    Then the response status should be 200
+    Then I do not see a text "No se ha podido retirar acceso"
+
+  Scenario: As an admin, unchecking the user role does not ungrant it
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    Given user "user2@dediez.software" with role "ROLE_OWNER" with id "333" exists
+    When I am logged as "admin@dediez.software"
+    When I go to "/es/admin/users/edit/333"
+    When I submit a form with "roles:[1]" and button "Guardar"
+    When I follow redirect
+    Then the response status should be 200
+    Then I do not see a text "Retirado acceso como"
