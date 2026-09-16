@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity" table="refrigerant_gas_activities">
+        <field name="refrigerantGasId" type="refrigerant_gas_id" column="refrigerant_gas_id" nullable="false" />
+        <field name="source" type="string" length="255" nullable="true" />
+    </entity>
+
+</doctrine-mapping>

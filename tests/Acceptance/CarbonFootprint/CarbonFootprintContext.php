@@ -1481,6 +1481,31 @@ final readonly class CarbonFootprintContext implements Context
         Assert::assertSame(sprintf('%s/%s-es.pdf', $report->accountId(), $report->id()), $report->filePathFor(Locale::Spanish));
     }
 
+    #[When('I calculate emissions for event :eventId with type :type, item :itemId, quantity :quantity and unit :unit')]
+    public function iCalculateEmissionsForEvent(string $eventId, string $type, string $itemId, string $quantity, string $unit): void
+    {
+        $this->client->request(
+            'POST',
+            sprintf('/es/events/%s/carbon-footprint/emissions/calculate', $eventId),
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'application/json'],
+            json_encode(['type' => $type, 'itemId' => $itemId, 'quantity' => $quantity, 'unit' => $unit], JSON_THROW_ON_ERROR),
+        );
+    }
+
+    #[Then('the calculated co2eq emissions should be :value')]
+    public function theCalculatedCo2EqEmissionsShouldBe(string $value): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $json = json_decode($response, true);
+
+        Assert::assertIsArray($json);
+        Assert::assertArrayHasKey('emissions', $json);
+        Assert::assertEqualsWithDelta((float) $value, (float) $json['emissions']['co2eq'], 0.0001);
+    }
+
     private function getEventCarbonFootprintReportRepository(): EventCarbonFootprintReportRepository
     {
         return $this->client->getContainer()->get(EventCarbonFootprintReportRepository::class);

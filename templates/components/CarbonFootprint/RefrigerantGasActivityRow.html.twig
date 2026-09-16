@@ -1,0 +1,57 @@
+{% props prefix, index, items, units, row = null, readOnly = false %}
+
+{% if readOnly %}
+    {% set selectedItem = null %}
+    {% for item in items %}
+        {% if row and row.itemId == item.id ~ '' %}{% set selectedItem = item %}{% endif %}
+    {% endfor %}
+    <tr>
+        <td>{{ row and row.source ? row.source : '' }}</td>
+        <td>{{ selectedItem ? selectedItem.name : '—' }}</td>
+        <td>{{ row ? row.quantity : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}</td>
+        <td class="text-end text-nowrap">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</td>
+        <td></td>
+    </tr>
+{% else %}
+<tr class="collection-element">
+    <td>
+        <input type="text" name="{{ prefix }}[{{ index }}][source]" class="form-control" value="{{ row and row.source ? row.source : '' }}" data-field="source">
+    </td>
+    <td>
+        <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
+        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#itemChanged" required="required">
+            <option value="">{{ 'Selecciona una opción' | trans }}</option>
+            {% for item in items %}
+                <option value="{{ item.id }}" data-unit="{{ item.unit.value }}" data-magnitude="{{ item.unit.magnitude.value }}"{{ row and row.itemId == item.id ~ '' ? ' selected' }}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <div class="input-group">
+            <input
+                type="number"
+                name="{{ prefix }}[{{ index }}][quantity]"
+                class="form-control"
+                step="any"
+                min="0"
+                value="{{ row ? row.quantity : '0' }}"
+                data-field="quantity"
+                data-action="activity-emissions#recalculate"
+            >
+            <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
+                {% for unit in units %}
+                    <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </td>
+    <td class="text-end text-nowrap">
+        <span data-field="emissions">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</span>
+    </td>
+    <td class="text-end">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+            <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+        </button>
+    </td>
+</tr>
+{% endif %}

@@ -38,6 +38,13 @@ class RefrigerantGasTest extends TestCase
         $this->assertSame('R-410A', $refrigerantGas->name());
     }
 
+    public function testUnitIsAlwaysKilogram(): void
+    {
+        $refrigerantGas = $this->refrigerantGas();
+
+        $this->assertSame(Unit::Kilogram, $refrigerantGas->unit());
+    }
+
     public function testUpdatePublishesTheEvent(): void
     {
         $refrigerantGas = $this->refrigerantGas();

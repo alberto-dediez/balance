@@ -18,6 +18,7 @@
             <discriminator-mapping value="overnight_stay" class="App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity" />
             <discriminator-mapping value="road_transport" class="App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity" />
             <discriminator-mapping value="waste" class="App\CarbonFootprint\Domain\Model\Activity\WasteActivity" />
+            <discriminator-mapping value="refrigerant_gas" class="App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity" />
         </discriminator-map>
 
         <id name="id" type="activity_id" column="id">

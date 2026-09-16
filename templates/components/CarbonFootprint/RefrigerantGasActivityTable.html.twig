@@ -1,0 +1,55 @@
+{% props title, prefix, rows, items, units, eventId = null, calculateUrl = null, readOnly = false %}
+
+{% set massUnits = units | filter(unit => unit.magnitude.value == 'mass') %}
+
+{% set proto %}{{ component('CarbonFootprint:RefrigerantGasActivityRow', { prefix: prefix, index: '__name__', items: items, units: massUnits }) }}{% endset %}
+
+<twig:Card :title="title">
+    <div
+        {% if not readOnly %}
+        data-controller="collection activity-emissions"
+        data-collection-prototype-value="{{ proto | e('html_attr') }}"
+        data-activity-emissions-url-value="{{ calculateUrl ?? path('events_carbon_footprint_emissions_calculate', {eventId: eventId}) }}"
+        data-activity-emissions-type-value="refrigerant_gas"
+        {% endif %}
+    >
+        <div class="table-responsive overflow-visible">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th class="col-2">{{ 'Fuente' | trans }}</th>
+                        <th class="col-3">{{ 'Gas refrigerante' | trans }}</th>
+                        <th class="col-3">{{ 'Cantidad' | trans }}</th>
+                        <th class="col-2 text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="collection">
+                    {% for row in rows %}
+                        <twig:CarbonFootprint:RefrigerantGasActivityRow
+                            prefix="{{ prefix }}"
+                            :index="loop.index0"
+                            :row="row"
+                            :items="items"
+                            :units="massUnits"
+                            :readOnly="readOnly"
+                        />
+                    {% else %}
+                        {% if readOnly %}
+                            <tr><td colspan="5" class="text-muted">{{ 'No hay actividades registradas.' | trans }}</td></tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not readOnly %}
+            <div class="mt-2">
+                <button type="button" class="btn btn-outline-info" data-action="collection#add">
+                    <twig:Icon name="solar:add-circle-outline" />
+                    {{ 'Añadir' | trans }}
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</twig:Card>

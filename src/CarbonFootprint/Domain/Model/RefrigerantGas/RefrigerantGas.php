@@ -41,6 +41,11 @@ class RefrigerantGas implements \Stringable
         return $this->name;
     }
 
+    public function unit(): Unit
+    {
+        return Unit::Kilogram;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;

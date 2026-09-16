@@ -47,5 +47,5 @@ igual con el resultado por localización vacío y sin aviso. Nada se recalcula s
 guardada solo lo recoge si se vuelve a guardar su paso de electricidad.
 
 En la edición anual en masa, vaciar los cuatro valores de un país elimina ese factor y dejar la
-fila a medias da error. Al importar, la columna **País** espera el código ISO —ES, FR, PT—, no el
+fila a medias da error. Al importar, la columna **País** espera el código ISO —ESP, FRA, PRT—, no el
 nombre. No se admiten factores de años posteriores al actual.

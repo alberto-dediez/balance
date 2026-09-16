@@ -16,6 +16,7 @@ enum ActivityType: string
     case OvernightStay     = 'overnight_stay';
     case RoadTransport     = 'road_transport';
     case Waste             = 'waste';
+    case RefrigerantGas    = 'refrigerant_gas';
 
     public static function fromActivity(Activity $activity): self
     {
@@ -30,6 +31,7 @@ enum ActivityType: string
             $activity instanceof OvernightStayActivity     => self::OvernightStay,
             $activity instanceof RoadTransportActivity     => self::RoadTransport,
             $activity instanceof WasteActivity             => self::Waste,
+            $activity instanceof RefrigerantGasActivity    => self::RefrigerantGas,
             default => throw new \InvalidArgumentException(sprintf('Unknown activity class "%s".', $activity::class)),
         };
     }
