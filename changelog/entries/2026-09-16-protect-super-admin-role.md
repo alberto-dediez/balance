@@ -1,6 +1,6 @@
 ---
 title: Roles protegidos al editar un usuario
-date: 2026-09-15
+date: "2026-09-16 07:46"
 category: security
 summary: Editar a un usuario ya no le retira, sin querer, los roles que quien edita no puede gestionar.
 plan: 2026-09-15-protect-super-admin-role

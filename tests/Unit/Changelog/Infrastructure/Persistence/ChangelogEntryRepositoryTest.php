@@ -33,6 +33,21 @@ abstract class ChangelogEntryRepositoryTest extends TestCase
         $this->assertSame('older', (string) $result[1]->slug);
     }
 
+    public function testEntriesOfTheSameDayAreOrderedByTimeDescending(): void
+    {
+        $morning = $this->entry('morning', '2026-01-01 09:15');
+        $afternoon = $this->entry('afternoon', '2026-01-01 16:40');
+        $midnight = $this->entry('midnight', '2026-01-01');
+
+        $repository = $this->givenEntries([$morning, $afternoon, $midnight]);
+
+        $result = $repository->findByFilter(new ChangelogEntryFilter());
+
+        $this->assertSame('afternoon', (string) $result[0]->slug);
+        $this->assertSame('morning', (string) $result[1]->slug);
+        $this->assertSame('midnight', (string) $result[2]->slug);
+    }
+
     public function testTiesAreBrokenBySlugAscending(): void
     {
         $b = $this->entry('b-slug', '2026-01-01');

@@ -74,6 +74,19 @@ class FilesystemChangelogEntryRepositoryTest extends ChangelogEntryRepositoryTes
         $this->assertSame('valid', (string) $result[0]->slug);
     }
 
+    public function testTwoFilesWithTheSameSlugAndDayKeepTheLatestTime(): void
+    {
+        file_put_contents($this->entriesPath . '/2026-01-01-dup.md', $this->frontMatter('"2026-01-01 18:00"', 'Reciente'));
+        file_put_contents($this->entriesPath . '/2026-01-02-dup.md', $this->frontMatter('2026-01-01', 'Antigua'));
+
+        $repository = $this->createRepository();
+
+        $found = $repository->findBySlug(new ChangelogEntrySlug('dup'));
+
+        $this->assertNotNull($found);
+        $this->assertSame('Reciente', $found->title);
+    }
+
     public function testTwoFilesWithTheSameSlugKeepTheLatestDate(): void
     {
         file_put_contents($this->entriesPath . '/2026-01-01-dup.md', $this->frontMatter('2026-01-01', 'Antigua'));
@@ -100,9 +113,9 @@ class FilesystemChangelogEntryRepositoryTest extends ChangelogEntryRepositoryTes
     private function frontMatterFromEntry(ChangelogEntry $entry): string
     {
         return sprintf(
-            "---\ntitle: %s\ndate: %s\ncategory: %s\nsummary: %s\npublished: %s\n---\n\n%s\n",
+            "---\ntitle: %s\ndate: \"%s\"\ncategory: %s\nsummary: %s\npublished: %s\n---\n\n%s\n",
             $entry->title,
-            $entry->date->format('Y-m-d'),
+            $entry->date->format('Y-m-d H:i'),
             $entry->category->value,
             $entry->summary,
             $entry->published ? 'true' : 'false',

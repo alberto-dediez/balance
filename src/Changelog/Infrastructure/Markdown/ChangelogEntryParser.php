@@ -17,6 +17,8 @@ final class ChangelogEntryParser
 
     private const string MANUAL_NAME_PATTERN = '/^[a-z0-9][a-z0-9._-]*$/i';
 
+    private const array DATE_FORMATS = ['!Y-m-d H:i:s', '!Y-m-d H:i', '!Y-m-d'];
+
     public function parse(string $absolutePath, string $fileName): ChangelogEntry
     {
         $contents = @file_get_contents($absolutePath);
@@ -145,18 +147,20 @@ final class ChangelogEntryParser
         }
 
         if (is_int($value)) {
-            $value = (new \DateTimeImmutable('@' . $value))->format('Y-m-d');
+            $value = (new \DateTimeImmutable('@' . $value))->format('Y-m-d H:i:s');
         }
 
-        if (is_string($value) && '' !== $value) {
-            $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+        if (is_string($value) && '' !== trim($value)) {
+            foreach (self::DATE_FORMATS as $format) {
+                $date = \DateTimeImmutable::createFromFormat($format, trim($value));
 
-            if (false !== $date) {
-                return $date;
+                if (false !== $date) {
+                    return $date;
+                }
             }
         }
 
-        throw new InvalidChangelogEntryException($fileName, '"date" is required and must be a parseable "YYYY-MM-DD" date');
+        throw new InvalidChangelogEntryException($fileName, '"date" is required and must be a parseable "YYYY-MM-DD" or "YYYY-MM-DD HH:MM" date');
     }
 
     /**
