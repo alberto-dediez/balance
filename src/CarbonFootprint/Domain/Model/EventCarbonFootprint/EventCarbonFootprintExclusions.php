@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 

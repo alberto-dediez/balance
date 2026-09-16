@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
-class EventCarbonFootprintExclusion
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
+
+class EventCarbonFootprintExclusion implements SourceExclusion
 {
     public function __construct(
         private EventCarbonFootprintExclusionId $id,
@@ -27,6 +32,11 @@ class EventCarbonFootprintExclusion
     }
 
     public function phase(): Phase
+    {
+        return $this->phase;
+    }
+
+    public function stage(): CalculationStage
     {
         return $this->phase;
     }

@@ -1,0 +1,59 @@
+{% set readOnly = readOnly | default(false) %}
+{% set unassignedLabel = unassignedLabel | default(null) %}
+
+<twig:CarbonFootprint:SourceSection
+    source="fixed_facilities"
+    :exclusion="exclusions['fixed_facilities'] ?? null"
+    :reasons="exclusionReasons"
+    :readOnly="readOnly"
+>
+    {% for block in blocks %}
+        <twig:CarbonFootprint:CombustibleActivityTable
+            title="{{ block.property ? block.property.name : (unassignedLabel ?? ('Instalaciones' | trans)) }}"
+            prefix="{{ block.prefixBase is empty ? 'combustibles' : block.prefixBase ~ '[combustibles]' }}"
+            :rows="block.combustibleRows"
+            :items="block.combustibles"
+            :units="block.units"
+            :calculateUrl="calculateUrl"
+            :readOnly="readOnly"
+        />
+    {% endfor %}
+</twig:CarbonFootprint:SourceSection>
+
+<twig:CarbonFootprint:SourceSection
+    source="own_vehicles"
+    :exclusion="exclusions['own_vehicles'] ?? null"
+    :reasons="exclusionReasons"
+    :readOnly="readOnly"
+>
+    {% for block in blocks %}
+        <twig:CarbonFootprint:RoadTransportActivityTable
+            title="{{ block.property ? block.property.name : (unassignedLabel ?? ('Desplazamientos en vehículos' | trans)) }}"
+            prefix="{{ block.prefixBase is empty ? 'vehicles' : block.prefixBase ~ '[vehicles]' }}"
+            :rows="block.roadTransportRows"
+            :items="block.roadTransports"
+            :units="block.units"
+            :calculateUrl="calculateUrl"
+            :readOnly="readOnly"
+        />
+    {% endfor %}
+</twig:CarbonFootprint:SourceSection>
+
+<twig:CarbonFootprint:SourceSection
+    source="refrigerant_leaks"
+    :exclusion="exclusions['refrigerant_leaks'] ?? null"
+    :reasons="exclusionReasons"
+    :readOnly="readOnly"
+>
+    {% for block in blocks %}
+        <twig:CarbonFootprint:RefrigerantGasActivityTable
+            title="{{ block.property ? block.property.name : (unassignedLabel ?? ('Fugas de equipos de refrigeración' | trans)) }}"
+            prefix="{{ block.prefixBase is empty ? 'refrigerantGases' : block.prefixBase ~ '[refrigerantGases]' }}"
+            :rows="block.refrigerantGasRows"
+            :items="block.refrigerantGases"
+            :units="block.units"
+            :calculateUrl="calculateUrl"
+            :readOnly="readOnly"
+        />
+    {% endfor %}
+</twig:CarbonFootprint:SourceSection>

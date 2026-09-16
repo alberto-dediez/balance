@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -95,6 +97,19 @@ class EventCarbonFootprintActivities
 
         foreach ($this->activities as $activity) {
             if ($activity->fromEmployees() === $fromEmployees) {
+                $filtered[] = $activity;
+            }
+        }
+
+        return new self($filtered);
+    }
+
+    public function filterByPlacement(ActivityPlacement $placement): self
+    {
+        $filtered = [];
+
+        foreach ($this->activities as $activity) {
+            if ($activity->placement()->equals($placement)) {
                 $filtered[] = $activity;
             }
         }

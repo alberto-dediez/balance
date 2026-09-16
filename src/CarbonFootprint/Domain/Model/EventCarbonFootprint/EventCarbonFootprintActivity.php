@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 
 class EventCarbonFootprintActivity
@@ -53,6 +55,16 @@ class EventCarbonFootprintActivity
     public function fromEmployees(): bool
     {
         return $this->fromEmployees;
+    }
+
+    public function placement(): ActivityPlacement
+    {
+        return new ActivityPlacement(
+            stage: $this->phase,
+            source: $this->source,
+            providerId: $this->providerId,
+            fromEmployees: $this->fromEmployees,
+        );
     }
 
     public function addedAt(): \DateTimeImmutable

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Unit;
 
 final class EventCarbonFootprintReportActivityLine

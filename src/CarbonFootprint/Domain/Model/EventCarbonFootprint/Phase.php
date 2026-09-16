@@ -5,13 +5,21 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 
-enum Phase: string
+enum Phase: string implements CalculationStage
 {
     case Materials   = 'materials';
     case Assembly       = 'assembly';
     case Celebration = 'celebration';
     case Breakdown    = 'breakdown';
+
+    public function key(): string
+    {
+        return $this->value;
+    }
 
     /** @return list<SectionDefinition> */
     public function sections(): array

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseResponse;
-use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
@@ -100,9 +100,9 @@ class MaterialsStepViewTest extends TestCase
         $sections = Phase::Materials->sections();
 
         return new GetPhaseResponse([
-            new PhaseSection($sections[0], $materialActivities, $materialsCatalog),
-            new PhaseSection($sections[1], [], []),
-            new PhaseSection($sections[2], [], []),
+            new StageSection($sections[0], $materialActivities, $materialsCatalog),
+            new StageSection($sections[1], [], []),
+            new StageSection($sections[2], [], []),
         ]);
     }
 }

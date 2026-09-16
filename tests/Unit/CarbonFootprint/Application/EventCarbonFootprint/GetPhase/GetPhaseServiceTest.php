@@ -15,20 +15,23 @@ use App\CarbonFootprint\Application\Activity\Catalog\MobilityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\OvernightStayCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\RoadTransportCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\WasteCatalogProvider;
+use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
+use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseResponse;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseService;
-use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Material\Material;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialRepository;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -87,8 +90,7 @@ class GetPhaseServiceTest extends TestCase
         $this->sut = new GetPhaseService(
             $this->eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            $catalogProviders,
-            $this->activityRepository,
+            new StageSectionsBuilder($catalogProviders, $this->activityRepository),
         );
     }
 
@@ -112,8 +114,8 @@ class GetPhaseServiceTest extends TestCase
         $electricityActivity = ElectricityActivityMother::registered();
         $this->activityRepository->save($machineryFuelActivity);
         $this->activityRepository->save($electricityActivity);
-        $eventCarbonFootprint->addActivity($machineryFuelActivity->id(), Phase::Assembly, Source::MachineryOperation);
-        $eventCarbonFootprint->addActivity($electricityActivity->id(), Phase::Assembly, Source::MachineryOperation);
+        $eventCarbonFootprint->addActivity($machineryFuelActivity->id(), new ActivityPlacement(Phase::Assembly, Source::MachineryOperation));
+        $eventCarbonFootprint->addActivity($electricityActivity->id(), new ActivityPlacement(Phase::Assembly, Source::MachineryOperation));
 
         $response = ($this->sut)(new GetPhaseRequest($eventCarbonFootprint->id(), Phase::Assembly), $this->ownerUser());
 
@@ -124,6 +126,28 @@ class GetPhaseServiceTest extends TestCase
         $machineryElectricity = $this->section($response, 'machineryElectricity');
         $this->assertCount(1, $machineryElectricity->activities);
         $this->assertSame($electricityActivity, $machineryElectricity->activities[0]);
+    }
+
+    public function testTheOrganizerStepDoesNotListActivitiesFromProvidersNorFromEmployees(): void
+    {
+        $eventCarbonFootprint = $this->registeredEventCarbonFootprint();
+
+        $organizerActivity = MachineryFuelActivityMother::registered();
+        $providerActivity = MachineryFuelActivityMother::registered();
+        $employeesActivity = MachineryFuelActivityMother::registered();
+        $this->activityRepository->save($organizerActivity);
+        $this->activityRepository->save($providerActivity);
+        $this->activityRepository->save($employeesActivity);
+
+        $eventCarbonFootprint->addActivity($organizerActivity->id(), new ActivityPlacement(Phase::Assembly, Source::MachineryOperation));
+        $eventCarbonFootprint->addActivity($providerActivity->id(), new ActivityPlacement(Phase::Assembly, Source::MachineryOperation, providerId: ProviderId::generate()));
+        $eventCarbonFootprint->addActivity($employeesActivity->id(), new ActivityPlacement(Phase::Assembly, Source::MachineryOperation, fromEmployees: true));
+
+        $response = ($this->sut)(new GetPhaseRequest($eventCarbonFootprint->id(), Phase::Assembly), $this->ownerUser());
+
+        $machineryFuels = $this->section($response, 'machineryFuels');
+        $this->assertCount(1, $machineryFuels->activities);
+        $this->assertSame($organizerActivity, $machineryFuels->activities[0]);
     }
 
     public function testCatalogsContainOnlyItemsHavingEmissionFactorForTheCalculationYearAndGroup(): void
@@ -201,7 +225,7 @@ class GetPhaseServiceTest extends TestCase
         return $material;
     }
 
-    private function section(GetPhaseResponse $response, string $key): PhaseSection
+    private function section(GetPhaseResponse $response, string $key): StageSection
     {
         foreach ($response->sections as $section) {
             if ($section->definition->key === $key) {

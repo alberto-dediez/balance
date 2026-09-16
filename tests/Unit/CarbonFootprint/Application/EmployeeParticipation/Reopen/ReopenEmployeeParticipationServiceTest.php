@@ -7,10 +7,11 @@ namespace App\Tests\Unit\CarbonFootprint\Application\EmployeeParticipation\Reope
 use App\CarbonFootprint\Application\EmployeeParticipation\Reopen\ReopenEmployeeParticipationRequest;
 use App\CarbonFootprint\Application\EmployeeParticipation\Reopen\ReopenEmployeeParticipationService;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmployeeParticipationRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -68,9 +69,9 @@ class ReopenEmployeeParticipationServiceTest extends TestCase
         $participation->close(5.0);
         $this->employeeParticipationRepository->add($participation);
 
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::SuppliersAndStaffMobility, null, true);
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Assembly, Source::SuppliersAndStaffMobility, null, true));
         $manualActivityId = ActivityId::generate();
-        $eventCarbonFootprint->addActivity($manualActivityId, Phase::Assembly, Source::SuppliersAndStaffMobility);
+        $eventCarbonFootprint->addActivity($manualActivityId, new ActivityPlacement(Phase::Assembly, Source::SuppliersAndStaffMobility));
         $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);
 
         ($this->sut)(new ReopenEmployeeParticipationRequest($eventCarbonFootprint->id()), $this->ownerUser());

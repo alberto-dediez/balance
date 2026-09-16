@@ -1,0 +1,9 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Huella de propiedades' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('property_carbon_footprints') }}" />
+{% endblock %}

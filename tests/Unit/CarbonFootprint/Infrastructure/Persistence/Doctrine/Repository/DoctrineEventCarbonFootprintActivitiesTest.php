@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Repository\DoctrineActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Repository\DoctrineEventCarbonFootprintRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -34,7 +35,7 @@ class DoctrineEventCarbonFootprintActivitiesTest extends KernelTestCase
         $activity = MaterialActivityMother::registered();
         $activityRepository->save($activity);
 
-        $eventCarbonFootprint->addActivity($activity->id(), Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity($activity->id(), new ActivityPlacement(Phase::Materials, Source::Materials));
         $eventCarbonFootprintRepository->add($eventCarbonFootprint);
 
         $manager->clear();

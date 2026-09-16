@@ -9,13 +9,15 @@ use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\MachineryFuelCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\MobilityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\OvernightStayCatalogProvider;
+use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\ProviderContribution\GetPhase\GetProviderContributionPhaseRequest;
 use App\CarbonFootprint\Application\ProviderContribution\GetPhase\GetProviderContributionPhaseService;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthenticator;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionPhaseSectionsBuilder;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
@@ -79,7 +81,7 @@ class GetProviderContributionPhaseServiceTest extends TestCase
         $this->sut = new GetProviderContributionPhaseService(
             new ProviderContributionAuthenticator($this->providerContributionRepository, $this->providerRepository, $this->userRepository),
             $this->eventCarbonFootprintRepository,
-            new ProviderContributionPhaseSectionsBuilder($catalogProviders, $this->activityRepository),
+            new ProviderContributionPhaseSectionsBuilder(new StageSectionsBuilder($catalogProviders, $this->activityRepository)),
         );
     }
 
@@ -104,15 +106,15 @@ class GetProviderContributionPhaseServiceTest extends TestCase
 
         $ownActivity = CombustibleActivityMother::registered();
         $this->activityRepository->save($ownActivity);
-        $eventCarbonFootprint->addActivity($ownActivity->id(), Phase::Assembly, Source::FixedFacilities, $providerId);
+        $eventCarbonFootprint->addActivity($ownActivity->id(), new ActivityPlacement(Phase::Assembly, Source::FixedFacilities, $providerId));
 
         $ownerActivity = CombustibleActivityMother::registered();
         $this->activityRepository->save($ownerActivity);
-        $eventCarbonFootprint->addActivity($ownerActivity->id(), Phase::Assembly, Source::FixedFacilities);
+        $eventCarbonFootprint->addActivity($ownerActivity->id(), new ActivityPlacement(Phase::Assembly, Source::FixedFacilities));
 
         $otherProviderActivity = CombustibleActivityMother::registered();
         $this->activityRepository->save($otherProviderActivity);
-        $eventCarbonFootprint->addActivity($otherProviderActivity->id(), Phase::Assembly, Source::FixedFacilities, ProviderId::generate());
+        $eventCarbonFootprint->addActivity($otherProviderActivity->id(), new ActivityPlacement(Phase::Assembly, Source::FixedFacilities, ProviderId::generate()));
 
         $response = ($this->sut)(new GetProviderContributionPhaseRequest($contribution->token(), Phase::Assembly));
 

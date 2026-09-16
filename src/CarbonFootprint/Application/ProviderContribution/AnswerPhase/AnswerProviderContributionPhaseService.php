@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\ProviderContribution\AnswerPhase;
 
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthenticator;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
@@ -19,7 +19,7 @@ final class AnswerProviderContributionPhaseService
         private ProviderContributionAuthenticator $authenticator,
         private ProviderContributionRepository $providerContributionRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        private PhaseAnswersSynchronizer $answersSynchronizer,
+        private StageAnswersSynchronizer $answersSynchronizer,
     ) {}
 
     public function __invoke(AnswerProviderContributionPhaseRequest $request): void

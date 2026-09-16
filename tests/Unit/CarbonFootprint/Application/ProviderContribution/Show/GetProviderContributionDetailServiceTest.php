@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\MachineryFuelCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\MobilityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\OvernightStayCatalogProvider;
+use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthorizer;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionPhaseSectionsBuilder;
@@ -57,7 +58,7 @@ class GetProviderContributionDetailServiceTest extends TestCase
             new ProviderContributionAuthorizer(),
             $this->eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            new ProviderContributionPhaseSectionsBuilder($catalogProviders, ActivityRepositoryMother::inMemory()),
+            new ProviderContributionPhaseSectionsBuilder(new StageSectionsBuilder($catalogProviders, ActivityRepositoryMother::inMemory())),
         );
     }
 

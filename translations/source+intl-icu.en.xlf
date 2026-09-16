@@ -45,6 +45,14 @@
         <source>waste_management</source>
         <target>Waste management</target>
       </trans-unit>
+      <trans-unit id="eSXkmfU" resname="own_vehicles">
+        <source>own_vehicles</source>
+        <target>Vehicle trips</target>
+      </trans-unit>
+      <trans-unit id="L2TEd2P" resname="refrigerant_leaks">
+        <source>refrigerant_leaks</source>
+        <target>Refrigeration equipment leaks</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\UI\Web\ProviderContribution\View;
 
-use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
+use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
@@ -43,10 +43,10 @@ class ProviderContributionPhaseStepViewTest extends TestCase
         $sections = Phase::Assembly->providerSections();
 
         $view = $this->sut->build([
-            new PhaseSection($sections[0], [], []),
-            new PhaseSection($sections[1], [], []),
-            new PhaseSection($sections[2], [], [$organizingTeam, $suppliers, $attendees]),
-            new PhaseSection($sections[3], [], []),
+            new StageSection($sections[0], [], []),
+            new StageSection($sections[1], [], []),
+            new StageSection($sections[2], [], [$organizingTeam, $suppliers, $attendees]),
+            new StageSection($sections[3], [], []),
         ]);
 
         $this->assertSame([$suppliers], $view['overnightStays']);

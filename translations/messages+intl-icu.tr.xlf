@@ -7525,6 +7525,114 @@
         <source>Se ha actualizado el factor de emisión del mix eléctrico {id} por el usuario {user}</source>
         <target>{id} elektrik karışımının emisyon faktörü {user} kullanıcısı tarafından güncellendi</target>
       </trans-unit>
+      <trans-unit id="EMfWzA0" resname="Ya existe una huella de carbono para esta propiedad y año">
+        <source>Ya existe una huella de carbono para esta propiedad y año</source>
+        <target>Bu tesis ve yıl için zaten bir karbon ayak izi var</target>
+      </trans-unit>
+      <trans-unit id="iNL5b0h" resname="La propiedad no existe o no pertenece a tu cuenta">
+        <source>La propiedad no existe o no pertenece a tu cuenta</source>
+        <target>Tesis mevcut değil veya hesabınıza ait değil</target>
+      </trans-unit>
+      <trans-unit id="TexzSul" resname="Se ha eliminado el cálculo de huella de carbono">
+        <source>Se ha eliminado el cálculo de huella de carbono</source>
+        <target>Karbon ayak izi hesaplaması silindi</target>
+      </trans-unit>
+      <trans-unit id="66sH1pW" resname="No se ha podido eliminar el cálculo de huella de carbono">
+        <source>No se ha podido eliminar el cálculo de huella de carbono</source>
+        <target>Karbon ayak izi hesaplaması silinemedi</target>
+      </trans-unit>
+      <trans-unit id="dGkCurS" resname="Se ha eliminado el cálculo de huella de carbono {id}">
+        <source>Se ha eliminado el cálculo de huella de carbono {id}</source>
+        <target>{id} karbon ayak izi hesaplaması silindi</target>
+      </trans-unit>
+      <trans-unit id="B5OT4KZ" resname="No se ha podido eliminar el cálculo de huella de carbono {id}">
+        <source>No se ha podido eliminar el cálculo de huella de carbono {id}</source>
+        <target>{id} karbon ayak izi hesaplaması silinemedi</target>
+      </trans-unit>
+      <trans-unit id="XXO1ZC3" resname="Sin asignar a propiedad">
+        <source>Sin asignar a propiedad</source>
+        <target>Tesise atanmamış</target>
+      </trans-unit>
+      <trans-unit id="wKSIR6x" resname="Ya existe una huella de carbono para esta empresa y año">
+        <source>Ya existe una huella de carbono para esta empresa y año</source>
+        <target>Bu şirket ve yıl için zaten bir karbon ayak izi var</target>
+      </trans-unit>
+      <trans-unit id="JKIzEGl" resname="La empresa no existe o no pertenece a tu cuenta">
+        <source>La empresa no existe o no pertenece a tu cuenta</source>
+        <target>Şirket mevcut değil veya hesabınıza ait değil</target>
+      </trans-unit>
+      <trans-unit id="jD7D9pi" resname="Todas las propiedades">
+        <source>Todas las propiedades</source>
+        <target>Tüm tesisler</target>
+      </trans-unit>
+      <trans-unit id="go0b673" resname="Selecciona una propiedad">
+        <source>Selecciona una propiedad</source>
+        <target>Bir tesis seçin</target>
+      </trans-unit>
+      <trans-unit id="IDAEaL8" resname="Todas las empresas">
+        <source>Todas las empresas</source>
+        <target>Tüm şirketler</target>
+      </trans-unit>
+      <trans-unit id="dxaccO3" resname="Selecciona una empresa">
+        <source>Selecciona una empresa</source>
+        <target>Bir şirket seçin</target>
+      </trans-unit>
+      <trans-unit id="RRajqTl" resname="Huella de propiedades">
+        <source>Huella de propiedades</source>
+        <target>Tesis ayak izi</target>
+      </trans-unit>
+      <trans-unit id="xZmSnjp" resname="Huella de empresas">
+        <source>Huella de empresas</source>
+        <target>Şirket ayak izi</target>
+      </trans-unit>
+      <trans-unit id="l38rxuW" resname="o">
+        <source>o</source>
+        <target>o</target>
+      </trans-unit>
+      <trans-unit id="LKypIGA" resname="Continuar con {provider}">
+        <source>Continuar con {provider}</source>
+        <target>Continuar con {provider}</target>
+      </trans-unit>
+      <trans-unit id="siNPyMP" resname="Electricidad por localización (kg CO₂eq)">
+        <source>Electricidad por localización (kg CO₂eq)</source>
+        <target>Konum bazlı elektrik (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="cSa8T7q" resname="Alcance">
+        <source>Alcance</source>
+        <target>Kapsam</target>
+      </trans-unit>
+      <trans-unit id="Y_W43k." resname="Emisiones por alcance">
+        <source>Emisiones por alcance</source>
+        <target>Kapsama göre emisyonlar</target>
+      </trans-unit>
+      <trans-unit id="1a5dRGA" resname="Emisiones por propiedad">
+        <source>Emisiones por propiedad</source>
+        <target>Tesise göre emisyonlar</target>
+      </trans-unit>
+      <trans-unit id="RWC9gAM" resname="Matriz alcance × fuente">
+        <source>Matriz alcance × fuente</source>
+        <target>Kapsam × kaynak matrisi</target>
+      </trans-unit>
+      <trans-unit id="mZG4Yz." resname="Alcance 1">
+        <source>Alcance 1</source>
+        <target>Kapsam 1</target>
+      </trans-unit>
+      <trans-unit id="T1YZILx" resname="Alcance 2">
+        <source>Alcance 2</source>
+        <target>Kapsam 2</target>
+      </trans-unit>
+      <trans-unit id="HeprmKh" resname="Consumo eléctrico">
+        <source>Consumo eléctrico</source>
+        <target>Elektrik tüketimi</target>
+      </trans-unit>
+      <trans-unit id="eB.s5Ew" resname="Desplazamientos en vehículos">
+        <source>Desplazamientos en vehículos</source>
+        <target>Araç yolculukları</target>
+      </trans-unit>
+      <trans-unit id="NNQ2P01" resname="Fugas de equipos de refrigeración">
+        <source>Fugas de equipos de refrigeración</source>
+        <target>Soğutma ekipmanı kaçakları</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

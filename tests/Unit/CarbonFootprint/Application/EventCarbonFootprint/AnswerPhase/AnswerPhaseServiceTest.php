@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\MaterialAnswerHandler;
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
@@ -17,10 +16,12 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivit
 use App\CarbonFootprint\Application\Activity\Register\RegisterMaterialActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityService;
+use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase\AnswerPhaseService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
-use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CateringItemAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
@@ -28,17 +29,17 @@ use App\CarbonFootprint\Domain\Model\Activity\Answer\MaterialAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionAnswer;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionDefinition;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Material\Material;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -104,7 +105,8 @@ class AnswerPhaseServiceTest extends TestCase
         $this->sut = new AnswerPhaseService(
             $this->eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
+            new StageAnswersProcessor(),
+            new StageAnswersSynchronizer($handlers, $this->countryResolver()),
         );
     }
 
@@ -325,7 +327,8 @@ class AnswerPhaseServiceTest extends TestCase
         $sut = new AnswerPhaseService(
             $this->eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            new PhaseAnswersSynchronizer($handlers, new EventCarbonFootprintCountryResolver($eventRepository, $propertyRepository)),
+            new StageAnswersProcessor(),
+            new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver($eventRepository, $propertyRepository)),
         );
 
         $section = new SectionAnswer(
@@ -385,8 +388,8 @@ class AnswerPhaseServiceTest extends TestCase
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
     }
 
-    private function countryResolver(): EventCarbonFootprintCountryResolver
+    private function countryResolver(): CarbonFootprintCountryResolver
     {
-        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
+        return new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

@@ -29,6 +29,10 @@
         <td>{{ element.address ? element.address.city : '' }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
+            {% if element.accountId and element | is_authorized('view') %}
+                <twig:List:Action:CarbonFootprint path="{{ path('company_carbon_footprints_register', {companyId: element.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('companies_edit', {'companyId': element.id}) }}" />
             {% endif %}

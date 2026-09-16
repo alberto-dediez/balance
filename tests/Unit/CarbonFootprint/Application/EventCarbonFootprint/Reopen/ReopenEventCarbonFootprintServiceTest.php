@@ -8,11 +8,12 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAut
 use App\CarbonFootprint\Application\EventCarbonFootprint\Reopen\ReopenEventCarbonFootprintRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Reopen\ReopenEventCarbonFootprintService;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
@@ -83,7 +84,7 @@ class ReopenEventCarbonFootprintServiceTest extends TestCase
     private function completedEventCarbonFootprint(): EventCarbonFootprint
     {
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Materials, Source::Materials));
         $eventCarbonFootprint->complete(
             totalEmissions: new Emissions('30', '30', '0', '0'),
             emissionsPerAttendee: new Emissions('10', '10', '0', '0'),

@@ -1,0 +1,43 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Huella de propiedades' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Propiedad' | trans
+        }, {
+            'label': 'Año' | trans,
+            'sortable': true,
+            'sortableBy': 'year'
+        }, {
+            'label': 'Estado' | trans
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="propertyCarbonFootprints" :bulkForm="bulkForm">
+        <td>{{ element.propertyId | property_name }}</td>
+        <td>{{ element.year }}</td>
+        <td>{{ element.status.value | trans({}, 'organizationalCarbonFootprintStatusType') }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('property_carbon_footprints_edit', {'propertyCarbonFootprintId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('property_carbon_footprints_remove', {'propertyCarbonFootprintId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('property_carbon_footprints_register') }}" />
+{% endblock list_actions %}

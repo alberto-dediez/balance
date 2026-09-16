@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\EmployeeParticipation\Close;
 
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MobilityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\OvernightStayAnswer;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionRepository;
 use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeContributionsAggregation;
@@ -19,8 +21,6 @@ use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeParticipation
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayFilter;
@@ -47,7 +47,7 @@ class CloseEmployeeParticipationService implements CommandHandler
         private EmployeeContributionsAggregator $aggregator,
         private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
         private OvernightStayRepository $overnightStayRepository,
-        private PhaseAnswersSynchronizer $answersSynchronizer,
+        private StageAnswersSynchronizer $answersSynchronizer,
     ) {}
 
     public function __invoke(CloseEmployeeParticipationRequest $request, User $user): CloseEmployeeParticipationResponse

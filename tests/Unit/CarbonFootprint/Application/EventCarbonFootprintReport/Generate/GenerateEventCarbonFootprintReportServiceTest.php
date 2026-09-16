@@ -6,18 +6,20 @@ namespace App\Tests\Unit\CarbonFootprint\Application\EventCarbonFootprintReport\
 
 use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
 use App\CarbonFootprint\Application\Activity\Catalog\MaterialCatalogProvider;
+use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsService;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\ActivityItemNameResolver;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\EventCompensationCollector;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportStatus;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -216,7 +218,7 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
             accountId: 'account-id',
             emissionFactorGroupId: $emissionFactorGroup->id(),
         );
-        $eventCarbonFootprint->addActivity($activity->id(), Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity($activity->id(), new ActivityPlacement(Phase::Materials, Source::Materials));
         $eventCarbonFootprintRepository->add($eventCarbonFootprint);
 
         $report = EventCarbonFootprintReportMother::pending((string) $eventCarbonFootprint->id(), 'account-id');
@@ -225,7 +227,7 @@ class GenerateEventCarbonFootprintReportServiceTest extends TestCase
         $getResultsService = new GetResultsService(
             $eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            $activityRepository,
+            new EmissionsBreakdownBuilder($activityRepository),
         );
 
         $itemNameResolver = new ActivityItemNameResolver(

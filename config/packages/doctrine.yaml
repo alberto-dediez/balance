@@ -64,6 +64,12 @@ doctrine:
             activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ActivityIdType
             event_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintActivityIdType
             event_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintExclusionIdType
+            property_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintIdType
+            property_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintActivityIdType
+            property_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintExclusionIdType
+            company_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintIdType
+            company_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintActivityIdType
+            company_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintExclusionIdType
             provider_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ProviderContributionIdType
             attendee_survey_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyIdType
             attendee_survey_response_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyResponseIdType

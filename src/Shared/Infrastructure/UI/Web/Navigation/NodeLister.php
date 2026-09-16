@@ -401,9 +401,26 @@ class NodeLister
                     target: $this->router->generate('properties'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Huellas de Carbono'),
+                    icon: 'carbon:sustainability',
+                    target: $this->router->generate('property_carbon_footprints'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Empresas'),
+            icon: 'solar:case-line-duotone',
+            items: [
+                new Node(
                     label: new TranslatableMessage('Empresas'),
                     icon: 'solar:case-line-duotone',
                     target: $this->router->generate('companies'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Huellas de Carbono'),
+                    icon: 'carbon:sustainability',
+                    target: $this->router->generate('company_carbon_footprints'),
                 ),
             ],
         );

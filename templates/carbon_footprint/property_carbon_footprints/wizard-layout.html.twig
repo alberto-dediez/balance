@@ -1,0 +1,24 @@
+{% extends '@shared/layout/wizard.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('property_carbon_footprints') }}" />
+{% endblock %}
+
+{% set page_title = ('Propiedades' | trans)
+    ~ ' > '
+    ~ (propertyCarbonFootprint.propertyId | property_name)
+    ~ ' > '
+    ~ ('Huella de Carbono' | trans)
+    ~ ' '
+    ~ propertyCarbonFootprint.year %}
+
+{% set wizard_active = propertyCarbonFootprint.status.stepNumber %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'Alcance 1' | trans, href: path('property_carbon_footprints_scope_1', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
+        {label: 'Alcance 2' | trans, href: path('property_carbon_footprints_scope_2', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
+        {label: 'Resultados' | trans, href: path('property_carbon_footprints_results', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

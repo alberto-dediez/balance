@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\ProviderContribution\AnswerPhase;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
 
 final class AnswerProviderContributionPhaseRequest
 {

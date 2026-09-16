@@ -10,13 +10,13 @@ use App\CarbonFootprint\Application\ProviderContribution\AnswerPhase\AnswerProvi
 use App\CarbonFootprint\Application\ProviderContribution\AnswerPhase\AnswerProviderContributionPhaseService;
 use App\CarbonFootprint\Application\ProviderContribution\GetPhase\GetProviderContributionPhaseRequest;
 use App\CarbonFootprint\Application\ProviderContribution\GetPhase\GetProviderContributionPhaseService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\CarbonFootprint\StageAnswerHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProviderContribution\View\ProviderContributionPhaseStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\ProviderContribution\ProviderContributionPublicControllerTrait;
 use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
@@ -45,7 +45,7 @@ class BreakdownController extends AbstractController
         GetProviderContributionPhaseService $getPhase,
         AnswerProviderContributionPhaseService $answerPhase,
         AnswerProviderContributionService $answerProviderContribution,
-        PhaseAnswerHttpMapper $answerMapper,
+        StageAnswerHttpMapper $answerMapper,
         ProviderContributionPhaseStepView $stepView,
         Request $request,
     ): Response {
@@ -65,7 +65,7 @@ class BreakdownController extends AbstractController
                     token: $token,
                     phase: self::PHASE,
                     sectionAnswers: $worked
-                        ? $answerMapper->map($request, self::PHASE, self::PHASE->providerSections())
+                        ? $answerMapper->map($request->request->all(), self::PHASE->providerSections())
                         : array_map(static fn(SectionDefinition $section): SectionAnswer => new SectionAnswer($section, []), self::PHASE->providerSections()),
                 ));
 

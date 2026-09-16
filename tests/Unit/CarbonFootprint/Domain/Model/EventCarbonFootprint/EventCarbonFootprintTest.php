@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintActivityRemoved;
@@ -17,9 +20,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRe
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintSourceExcluded;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintSourceIncluded;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -38,10 +39,10 @@ class EventCarbonFootprintTest extends TestCase
 
         $keptId = ActivityId::generate();
         $staleId = ActivityId::generate();
-        $eventCarbonFootprint->addActivity($keptId, Phase::Materials, Source::Materials);
-        $eventCarbonFootprint->addActivity($staleId, Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity($keptId, new ActivityPlacement(Phase::Materials, Source::Materials));
+        $eventCarbonFootprint->addActivity($staleId, new ActivityPlacement(Phase::Materials, Source::Materials));
 
-        $eventCarbonFootprint->retainActivities(Phase::Materials, Source::Materials, [$keptId]);
+        $eventCarbonFootprint->retainActivities(new ActivityPlacement(Phase::Materials, Source::Materials), [$keptId]);
 
         $activityIds = $eventCarbonFootprint->activities()->activityIds();
         $this->assertCount(1, $activityIds);
@@ -53,9 +54,9 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
 
         $otherPhaseId = ActivityId::generate();
-        $eventCarbonFootprint->addActivity($otherPhaseId, Phase::Assembly, Source::MachineryOperation);
+        $eventCarbonFootprint->addActivity($otherPhaseId, new ActivityPlacement(Phase::Assembly, Source::MachineryOperation));
 
-        $eventCarbonFootprint->retainActivities(Phase::Materials, Source::Materials, []);
+        $eventCarbonFootprint->retainActivities(new ActivityPlacement(Phase::Materials, Source::Materials), []);
 
         $activityIds = $eventCarbonFootprint->activities()->activityIds();
         $this->assertCount(1, $activityIds);
@@ -67,10 +68,10 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
 
         $staleId = ActivityId::generate();
-        $eventCarbonFootprint->addActivity($staleId, Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity($staleId, new ActivityPlacement(Phase::Materials, Source::Materials));
         $eventCarbonFootprint->clearEvents();
 
-        $eventCarbonFootprint->retainActivities(Phase::Materials, Source::Materials, []);
+        $eventCarbonFootprint->retainActivities(new ActivityPlacement(Phase::Materials, Source::Materials), []);
 
         $events = array_filter($eventCarbonFootprint->recordedEvents(), static fn($e) => $e instanceof EventCarbonFootprintActivityRemoved);
         $this->assertCount(1, $events);
@@ -133,7 +134,7 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint = $this->completedEventCarbonFootprintWithOneActivity();
 
         $this->expectException(EventCarbonFootprintAlreadyCompletedException::class);
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Materials, Source::Materials));
     }
 
     public function testRemoveActivityThrowsWhenCompleted(): void
@@ -163,10 +164,10 @@ class EventCarbonFootprintTest extends TestCase
         $otherSourceId = ActivityId::generate();
         $otherPhaseId = ActivityId::generate();
         $providerActivityId = ActivityId::generate();
-        $eventCarbonFootprint->addActivity($organizerId, Phase::Assembly, Source::WasteManagement);
-        $eventCarbonFootprint->addActivity($otherSourceId, Phase::Assembly, Source::FreightTransport);
-        $eventCarbonFootprint->addActivity($otherPhaseId, Phase::Celebration, Source::WasteManagement);
-        $eventCarbonFootprint->addActivity($providerActivityId, Phase::Assembly, Source::WasteManagement, ProviderId::generate());
+        $eventCarbonFootprint->addActivity($organizerId, new ActivityPlacement(Phase::Assembly, Source::WasteManagement));
+        $eventCarbonFootprint->addActivity($otherSourceId, new ActivityPlacement(Phase::Assembly, Source::FreightTransport));
+        $eventCarbonFootprint->addActivity($otherPhaseId, new ActivityPlacement(Phase::Celebration, Source::WasteManagement));
+        $eventCarbonFootprint->addActivity($providerActivityId, new ActivityPlacement(Phase::Assembly, Source::WasteManagement, ProviderId::generate()));
         $eventCarbonFootprint->clearEvents();
 
         $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
@@ -237,7 +238,7 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
         $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
 
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::WasteManagement);
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Assembly, Source::WasteManagement));
 
         $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
     }
@@ -247,7 +248,7 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
         $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
 
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::WasteManagement, ProviderId::generate());
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Assembly, Source::WasteManagement, ProviderId::generate()));
 
         $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
     }
@@ -257,7 +258,7 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
         $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::SuppliersAndStaffMobility, ExclusionReason::NoDataAvailable);
 
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::SuppliersAndStaffMobility, null, true);
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Assembly, Source::SuppliersAndStaffMobility, null, true));
 
         $this->assertCount(0, $eventCarbonFootprint->activities()->activityIds());
     }
@@ -295,7 +296,7 @@ class EventCarbonFootprintTest extends TestCase
     private function completedEventCarbonFootprintWithOneActivity(): EventCarbonFootprint
     {
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Materials, Source::Materials));
         $eventCarbonFootprint->complete(
             totalEmissions: new Emissions('30', '30', '0', '0'),
             emissionsPerAttendee: new Emissions('10', '10', '0', '0'),

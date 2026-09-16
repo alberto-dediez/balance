@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Chart;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCharts;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportChartsGenerator;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportData;

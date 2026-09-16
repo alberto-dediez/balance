@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use PHPUnit\Framework\TestCase;
 
 class PhaseTest extends TestCase

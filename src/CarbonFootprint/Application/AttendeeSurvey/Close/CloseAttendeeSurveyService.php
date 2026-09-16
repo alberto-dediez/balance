@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\AttendeeSurvey\Close;
 
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\MobilityAnswer;
@@ -13,10 +13,10 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyResponsesAggregator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayFilter;
@@ -42,7 +42,7 @@ class CloseAttendeeSurveyService implements CommandHandler
         private AttendeeSurveyResponseRepository $attendeeSurveyResponseRepository,
         private AttendeeSurveyResponsesAggregator $aggregator,
         private OvernightStayRepository $overnightStayRepository,
-        private PhaseAnswersSynchronizer $answersSynchronizer,
+        private StageAnswersSynchronizer $answersSynchronizer,
         private MobilityFactorBasisProvider $mobilityFactorBasisProvider,
     ) {}
 

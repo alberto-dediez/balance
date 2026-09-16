@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\MobilityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\OvernightStayAnswerHandler;
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
@@ -16,20 +15,22 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivitySe
 use App\CarbonFootprint\Application\Activity\Register\RegisterOvernightStayActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityService;
+use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeeParticipationService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Complete\CompleteEventCarbonFootprintRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Complete\CompleteEventCarbonFootprintService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
-use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeContributionsAggregator;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyRepository;
@@ -124,7 +125,7 @@ class CompleteEventCarbonFootprintServiceTest extends TestCase
             new EmployeeContributionsAggregator(),
             new MobilityFactorBasisProvider(new InMemoryMobilityRepository()),
             $overnightStayRepository,
-            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
+            new StageAnswersSynchronizer($handlers, $this->countryResolver()),
         );
     }
 
@@ -281,7 +282,7 @@ class CompleteEventCarbonFootprintServiceTest extends TestCase
         $activity->update($activity->materialId(), $activity->condition(), $activity->emissionFactor(), new Emissions($co2eq, $co2eq, '0', '0'), $activity->quantity());
         $this->activityRepository->save($activity);
 
-        $eventCarbonFootprint->addActivity($activity->id(), $phase, $source);
+        $eventCarbonFootprint->addActivity($activity->id(), new ActivityPlacement($phase, $source));
 
         return $activity;
     }
@@ -291,8 +292,8 @@ class CompleteEventCarbonFootprintServiceTest extends TestCase
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
     }
 
-    private function countryResolver(): EventCarbonFootprintCountryResolver
+    private function countryResolver(): CarbonFootprintCountryResolver
     {
-        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
+        return new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\DomainEvent;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 

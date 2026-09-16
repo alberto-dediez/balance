@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\EventCarbonFootprint\AnswerPhase;
 
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -22,7 +22,8 @@ class AnswerPhaseService implements CommandHandler
     public function __construct(
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         private EventCarbonFootprintAuthorizer $authorizer,
-        private PhaseAnswersSynchronizer $answersSynchronizer,
+        private StageAnswersProcessor $answersProcessor,
+        private StageAnswersSynchronizer $answersSynchronizer,
     ) {}
 
     public function __invoke(AnswerPhaseRequest $request, User $user): void
@@ -35,55 +36,11 @@ class AnswerPhaseService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($eventCarbonFootprint, SecurityAction::Edit, $user);
 
-        $sectionsByKey = [];
-        foreach ($request->phase->sections() as $section) {
-            $sectionsByKey[$section->key] = $section;
-        }
+        $validated = $this->answersProcessor->validate($request->phase, $request->sectionAnswers, $request->exclusions);
 
-        $sectionAnswers = [];
-        foreach ($request->sectionAnswers as $sectionAnswer) {
-            $definition = $sectionsByKey[$sectionAnswer->definition->key]
-                ?? throw new \InvalidArgumentException(sprintf('Section "%s" does not belong to phase "%s".', $sectionAnswer->definition->key, $request->phase->value));
+        $this->answersProcessor->applyExclusions($eventCarbonFootprint, $request->phase, $validated->exclusionsBySource);
 
-            foreach ($sectionAnswer->answers as $answer) {
-                if ($answer->type() !== $definition->activityType) {
-                    throw new \InvalidArgumentException(sprintf('Answer of type "%s" does not match section "%s" type.', $answer->type()->value, $definition->key));
-                }
-            }
-
-            $sectionAnswers[] = new SectionAnswer($definition, $sectionAnswer->answers);
-        }
-
-        $phaseSources = [];
-        foreach ($request->phase->sections() as $section) {
-            $phaseSources[$section->source->value] = $section->source;
-        }
-
-        $exclusionsBySource = [];
-        foreach ($request->exclusions as $exclusion) {
-            if (!isset($phaseSources[$exclusion->source->value])) {
-                throw new \InvalidArgumentException(sprintf('Source "%s" does not belong to phase "%s".', $exclusion->source->value, $request->phase->value));
-            }
-
-            $exclusionsBySource[$exclusion->source->value] = $exclusion;
-        }
-
-        foreach ($sectionAnswers as $sectionAnswer) {
-            if ([] !== $sectionAnswer->answers && isset($exclusionsBySource[$sectionAnswer->definition->source->value])) {
-                throw new \InvalidArgumentException(sprintf('Section "%s" cannot have answers because its source "%s" is excluded.', $sectionAnswer->definition->key, $sectionAnswer->definition->source->value));
-            }
-        }
-
-        foreach ($phaseSources as $sourceValue => $source) {
-            if (isset($exclusionsBySource[$sourceValue])) {
-                $exclusion = $exclusionsBySource[$sourceValue];
-                $eventCarbonFootprint->excludeSource($request->phase, $source, $exclusion->reason, $exclusion->comment);
-            } else {
-                $eventCarbonFootprint->includeSource($request->phase, $source);
-            }
-        }
-
-        $this->answersSynchronizer->sync($eventCarbonFootprint, $request->phase, $sectionAnswers, $user);
+        $this->answersSynchronizer->sync($eventCarbonFootprint, $request->phase, $validated->sectionAnswers, $user);
 
         $eventCarbonFootprint->answerPhase($request->phase);
 

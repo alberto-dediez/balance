@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseResponse;
-use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
@@ -213,16 +213,16 @@ class CelebrationStepViewTest extends TestCase
         $sections = Phase::Celebration->sections();
 
         return new GetPhaseResponse([
-            new PhaseSection($sections[0], [], []),
-            new PhaseSection($sections[1], [], []),
-            new PhaseSection($sections[2], $machineryFuelActivities, []),
-            new PhaseSection($sections[3], $machineryElectricityActivities, $electricityCatalog, $gdOFactorsCatalog),
-            new PhaseSection($sections[4], [], $electricityCatalog, $gdOFactorsCatalog),
-            new PhaseSection($sections[5], $overnightStayActivities, $overnightStayCatalog),
-            new PhaseSection($sections[6], [], []),
-            new PhaseSection($sections[7], [], []),
-            new PhaseSection($sections[8], [], []),
-            new PhaseSection($sections[9], [], $overnightStayCatalog),
+            new StageSection($sections[0], [], []),
+            new StageSection($sections[1], [], []),
+            new StageSection($sections[2], $machineryFuelActivities, []),
+            new StageSection($sections[3], $machineryElectricityActivities, $electricityCatalog, $gdOFactorsCatalog),
+            new StageSection($sections[4], [], $electricityCatalog, $gdOFactorsCatalog),
+            new StageSection($sections[5], $overnightStayActivities, $overnightStayCatalog),
+            new StageSection($sections[6], [], []),
+            new StageSection($sections[7], [], []),
+            new StageSection($sections[8], [], []),
+            new StageSection($sections[9], [], $overnightStayCatalog),
         ]);
     }
 }

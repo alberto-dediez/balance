@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint" table="company_carbon_footprints">
+        <indexes>
+            <index name="IDX_ccf_company_year" columns="company_id,year" />
+            <index name="IDX_ccf_account" columns="account_id" />
+        </indexes>
+
+        <id name="id" type="company_carbon_footprint_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="companyId" type="company_id" column="company_id" nullable="false" />
+        <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="emissionFactorGroupId" type="emission_factor_group_id" column="emission_factor_group_id" nullable="false" />
+        <field name="year" type="integer" column="year" nullable="false" />
+
+        <embedded name="totalEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="total_emissions_" />
+
+        <field name="status" type="string" enum-type="App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus" nullable="false" />
+
+        <field name="removed" type="boolean" nullable="false" />
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true" />
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true" />
+
+        <one-to-many field="activities" target-entity="App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintActivity" mapped-by="companyCarbonFootprint" orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="exclusions" target-entity="App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintExclusion" mapped-by="companyCarbonFootprint" orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

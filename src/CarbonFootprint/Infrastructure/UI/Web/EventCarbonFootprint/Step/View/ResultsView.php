@@ -6,9 +6,9 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Vi
 
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsResponse;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsResponse;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCompensation;
 use App\CarbonFootprint\Infrastructure\UI\Web\Chart\TripChartBuilder;
 use App\EventOperations\Domain\Model\Event\Event;
@@ -85,7 +85,7 @@ final class ResultsView
 
         foreach ($results->exclusions as $exclusion) {
             $rows[] = [
-                'phase' => $this->translator->trans($exclusion->phase()->value, [], 'phase'),
+                'phase' => $this->translator->trans($exclusion->stage()->key(), [], 'phase'),
                 'source' => $this->translator->trans($exclusion->source()->value, [], 'source'),
                 'reason' => $this->translator->trans($exclusion->reason()->value, [], 'exclusionReason'),
                 'comment' => $exclusion->comment(),

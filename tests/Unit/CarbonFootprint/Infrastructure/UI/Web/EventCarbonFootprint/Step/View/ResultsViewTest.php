@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View;
 
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsResponse;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCompensation;
 use App\CarbonFootprint\Infrastructure\UI\Web\Chart\TripChartBuilder;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ResultsView;

@@ -7,11 +7,12 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Event\EmployeeParticipation;
 use App\CarbonFootprint\Application\EmployeeParticipation\Reopen\ReopenEmployeeParticipationService;
 use App\CarbonFootprint\Domain\Event\EmployeeParticipation\ReopenEmployeeParticipationOnEventCarbonFootprintReopenedSubscriber;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeParticipationStatus;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintReopened;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmployeeParticipationRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -57,9 +58,9 @@ class ReopenEmployeeParticipationOnEventCarbonFootprintReopenedSubscriberTest ex
         $employeeParticipationRepository = new InMemoryEmployeeParticipationRepository();
         $employeeParticipationRepository->add($participation);
 
-        $eventCarbonFootprint->addActivity(ActivityId::generate(), Phase::Assembly, Source::SuppliersAndStaffMobility, null, true);
+        $eventCarbonFootprint->addActivity(ActivityId::generate(), new ActivityPlacement(Phase::Assembly, Source::SuppliersAndStaffMobility, null, true));
         $manualActivityId = ActivityId::generate();
-        $eventCarbonFootprint->addActivity($manualActivityId, Phase::Assembly, Source::SuppliersAndStaffMobility);
+        $eventCarbonFootprint->addActivity($manualActivityId, new ActivityPlacement(Phase::Assembly, Source::SuppliersAndStaffMobility));
         $eventCarbonFootprintRepository->add($eventCarbonFootprint);
 
         $sut = $this->createSUT($employeeParticipationRepository, $eventCarbonFootprintRepository);

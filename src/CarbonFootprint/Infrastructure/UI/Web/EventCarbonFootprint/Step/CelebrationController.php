@@ -10,9 +10,9 @@ use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseReques
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseService;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Infrastructure\UI\Web\CarbonFootprint\StageAnswerHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\CarbonFootprint\StageExclusionHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseAnswerHttpMapper;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Answer\PhaseExclusionHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\CelebrationStepView;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -34,8 +34,8 @@ class CelebrationController extends AbstractController
         string $eventId,
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        PhaseAnswerHttpMapper $answerMapper,
-        PhaseExclusionHttpMapper $exclusionMapper,
+        StageAnswerHttpMapper $answerMapper,
+        StageExclusionHttpMapper $exclusionMapper,
         AnswerPhaseService $answerPhase,
         GetPhaseService $getPhase,
         CelebrationStepView $stepView,
@@ -64,7 +64,7 @@ class CelebrationController extends AbstractController
 
             try {
                 $answerPhase(
-                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Celebration, $answerMapper->map($request, Phase::Celebration), $exclusionMapper->map($request, Phase::Celebration)),
+                    new AnswerPhaseRequest($eventCarbonFootprint->id(), Phase::Celebration, $answerMapper->map($request->request->all(), Phase::Celebration->sections()), $exclusionMapper->map($request, Phase::Celebration)),
                     $loggedUser(),
                 );
             } catch (UnauthorizedActionException $e) {

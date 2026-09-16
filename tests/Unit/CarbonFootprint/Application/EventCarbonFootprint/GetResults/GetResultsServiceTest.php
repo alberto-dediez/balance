@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\EventCarbonFootprint\GetResults;
 
+use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\Security\Application\UnauthorizedActionException;
@@ -41,7 +43,7 @@ class GetResultsServiceTest extends TestCase
         $this->sut = new GetResultsService(
             $this->eventCarbonFootprintRepository,
             new EventCarbonFootprintAuthorizer(),
-            $this->activityRepository,
+            new EmissionsBreakdownBuilder($this->activityRepository),
         );
     }
 
@@ -52,18 +54,18 @@ class GetResultsServiceTest extends TestCase
         $activity = MaterialActivityMother::registered(new AccountId('account-id'));
         $activity->update($activity->materialId(), $activity->condition(), $activity->emissionFactor(), new Emissions('12', '12', '0', '0'), $activity->quantity());
         $this->activityRepository->save($activity);
-        $eventCarbonFootprint->addActivity($activity->id(), Phase::Materials, Source::Materials);
+        $eventCarbonFootprint->addActivity($activity->id(), new ActivityPlacement(Phase::Materials, Source::Materials));
 
         $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);
 
         $response = ($this->sut)(new GetResultsRequest($eventCarbonFootprint->id()), $this->ownerUser());
 
-        $this->assertCount(10, $response->emissionsBySource);
+        $this->assertCount(12, $response->emissionsBySource);
         $this->assertCount(4, $response->emissionsByPhase);
         $this->assertCount(4, $response->emissionsByPhaseAndSource);
 
         foreach ($response->emissionsByPhaseAndSource as $sources) {
-            $this->assertCount(10, $sources);
+            $this->assertCount(12, $sources);
         }
 
         $this->assertSame('12', $response->emissionsBySource[Source::Materials->value]->co2eq());
@@ -81,7 +83,7 @@ class GetResultsServiceTest extends TestCase
         $response = ($this->sut)(new GetResultsRequest($eventCarbonFootprint->id()), $this->ownerUser());
 
         $this->assertCount(1, $response->exclusions);
-        $this->assertSame(Phase::Assembly, $response->exclusions[0]->phase());
+        $this->assertSame(Phase::Assembly, $response->exclusions[0]->stage());
         $this->assertSame(Source::WasteManagement, $response->exclusions[0]->source());
         $this->assertSame(ExclusionReason::NoDataAvailable, $response->exclusions[0]->reason());
     }

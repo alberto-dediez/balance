@@ -23,8 +23,13 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
@@ -35,9 +40,7 @@ use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionId
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
@@ -51,7 +54,10 @@ use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
@@ -90,6 +96,7 @@ use App\Tests\Acceptance\Shared\AcceptancePlaceFinder;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -100,6 +107,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
@@ -1065,7 +1073,7 @@ final readonly class CarbonFootprintContext implements Context
             UserMother::adminUser(),
         );
 
-        $eventCarbonFootprint->addActivity($response->activityId, Phase::Celebration, Source::AttendeesMobility);
+        $eventCarbonFootprint->addActivity($response->activityId, new ActivityPlacement(Phase::Celebration, Source::AttendeesMobility));
 
         $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
     }
@@ -1108,7 +1116,7 @@ final readonly class CarbonFootprintContext implements Context
             UserMother::adminUser(),
         );
 
-        $eventCarbonFootprint->addActivity($response->activityId, Phase::Assembly, Source::WasteManagement);
+        $eventCarbonFootprint->addActivity($response->activityId, new ActivityPlacement(Phase::Assembly, Source::WasteManagement));
 
         $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
     }
@@ -1524,5 +1532,154 @@ final readonly class CarbonFootprintContext implements Context
     private function getTripCalculationRepository(): TripCalculationRepository
     {
         return $this->client->getContainer()->get(TripCalculationRepository::class);
+    }
+
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year exists')]
+    public function propertyCarbonFootprintExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getPropertyCarbonFootprintRepository()->add(
+            PropertyCarbonFootprintMother::from($propertyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with scope 1 answered exists')]
+    public function propertyCarbonFootprintWithScope1AnsweredExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getPropertyCarbonFootprintRepository()->add(
+            PropertyCarbonFootprintMother::withScope1Answered($propertyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with scope 2 answered exists')]
+    public function propertyCarbonFootprintWithScope2AnsweredExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getPropertyCarbonFootprintRepository()->add(
+            PropertyCarbonFootprintMother::withScope2Answered($propertyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year exists')]
+    public function companyCarbonFootprintExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::from($companyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with scope 1 answered exists')]
+    public function companyCarbonFootprintWithScope1AnsweredExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::withScope1Answered($companyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with scope 2 answered exists')]
+    public function companyCarbonFootprintWithScope2AnsweredExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::withScope2Answered($companyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[When('I submit the scope :scope step form excluding source :source with reason :reason and comment :comment')]
+    public function iSubmitTheScopeStepFormExcludingSource(string $scope, string $source, string $reason, string $comment): void
+    {
+        $scopeEnum = Scope::from($scope);
+        $sourceEnum = Source::from($source);
+
+        $form = $this->client->getCrawler()->filter('form')->form();
+
+        foreach ($scopeEnum->sections() as $section) {
+            if ($section->source !== $sourceEnum) {
+                continue;
+            }
+
+            foreach (array_keys($form->all()) as $name) {
+                if (str_starts_with($name, $section->key . '[')) {
+                    unset($form[$name]);
+                }
+            }
+        }
+
+        $excludedField = $form['exclusions[' . $source . '][excluded]'];
+        Assert::assertInstanceOf(ChoiceFormField::class, $excludedField);
+        $excludedField->tick();
+
+        $form['exclusions[' . $source . '][reason]'] = $reason;
+        $form['exclusions[' . $source . '][comment]'] = $comment;
+
+        $this->client->submit($form);
+    }
+
+    #[When('I submit the company scope :scope step form with a combustible :itemId of :quantity :unit for property :propertyId')]
+    public function iSubmitTheCompanyScopeStepFormWithACombustibleForProperty(string $scope, string $itemId, string $quantity, string $unit, string $propertyId): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $token = $crawler->filter('input[name="_token"]')->attr('value');
+        Assert::assertNotNull($token);
+
+        $row = ['combustibles' => [['itemId' => $itemId, 'quantity' => $quantity, 'unit' => $unit]]];
+
+        $parameters = ['_token' => $token]
+            + ('none' === $propertyId ? ['unassigned' => $row] : ['properties' => [$propertyId => $row]]);
+
+        $uri = $this->client->getRequest()->getUri();
+
+        $this->client->requestWithFiles('POST', $uri, $parameters, [], ['HTTP_REFERER' => $uri]);
+    }
+
+    #[Then('property carbon footprint :id should have source :source excluded in scope :scope')]
+    public function propertyCarbonFootprintShouldHaveSourceExcludedInScope(string $id, string $source, string $scope): void
+    {
+        $footprint = $this->getPropertyCarbonFootprintRepository()->find(new PropertyCarbonFootprintId($id));
+
+        Assert::assertNotNull($footprint);
+        Assert::assertTrue($footprint->isSourceExcluded(Scope::from($scope), Source::from($source)));
+    }
+
+    #[Then('property carbon footprint :id should have :count activities of source :source in scope :scope')]
+    public function propertyCarbonFootprintShouldHaveActivitiesOfSourceInScope(string $id, int $count, string $source, string $scope): void
+    {
+        $footprint = $this->getPropertyCarbonFootprintRepository()->find(new PropertyCarbonFootprintId($id));
+
+        Assert::assertNotNull($footprint);
+        Assert::assertCount($count, $footprint->activityIds(new ActivityPlacement(Scope::from($scope), Source::from($source))));
+    }
+
+    #[Then('company carbon footprint :id should have :count activities of source :source in scope :scope for property :propertyId')]
+    public function companyCarbonFootprintShouldHaveActivitiesOfSourceInScopeForProperty(string $id, int $count, string $source, string $scope, string $propertyId): void
+    {
+        $footprint = $this->getCompanyCarbonFootprintRepository()->find(new CompanyCarbonFootprintId($id));
+
+        Assert::assertNotNull($footprint);
+        Assert::assertCount($count, $footprint->activityIds(new ActivityPlacement(
+            Scope::from($scope),
+            Source::from($source),
+            propertyId: 'none' === $propertyId ? null : new PropertyId($propertyId),
+        )));
+    }
+
+    private function getPropertyCarbonFootprintRepository(): PropertyCarbonFootprintRepository
+    {
+        return $this->client->getContainer()->get(PropertyCarbonFootprintRepository::class);
+    }
+
+    private function getCompanyCarbonFootprintRepository(): CompanyCarbonFootprintRepository
+    {
+        return $this->client->getContainer()->get(CompanyCarbonFootprintRepository::class);
     }
 }

@@ -1,0 +1,79 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint;
+
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\Property\Domain\Model\Company\CompanyId;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+
+class CompanyCarbonFootprintMother
+{
+    public static function registered(): CompanyCarbonFootprint
+    {
+        return self::from(
+            companyId: (string) CompanyId::generate(),
+            id: (string) CompanyCarbonFootprintId::generate(),
+        );
+    }
+
+    public static function fromCompanyIdAndAccount(string $companyId, string $accountId): CompanyCarbonFootprint
+    {
+        return self::from(
+            companyId: $companyId,
+            id: (string) CompanyCarbonFootprintId::generate(),
+            accountId: $accountId,
+        );
+    }
+
+    public static function from(
+        string $companyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = new CompanyCarbonFootprint(
+            id: new CompanyCarbonFootprintId($id),
+        );
+        $companyCarbonFootprint->register(
+            companyId: new CompanyId($companyId),
+            accountId: new AccountId($accountId),
+            emissionFactorGroupId: $emissionFactorGroupId ?? EmissionFactorGroupMother::default()->id(),
+            year: $year,
+        );
+
+        return $companyCarbonFootprint;
+    }
+
+    public static function withScope1Answered(
+        string $companyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = self::from($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $companyCarbonFootprint->answerScope(Scope::Scope1);
+
+        return $companyCarbonFootprint;
+    }
+
+    public static function withScope2Answered(
+        string $companyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = self::withScope1Answered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $companyCarbonFootprint->answerScope(Scope::Scope2);
+
+        return $companyCarbonFootprint;
+    }
+}

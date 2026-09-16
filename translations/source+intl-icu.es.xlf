@@ -45,6 +45,14 @@
         <source>waste_management</source>
         <target>Gestión de residuos</target>
       </trans-unit>
+      <trans-unit id="eSXkmfU" resname="own_vehicles">
+        <source>own_vehicles</source>
+        <target>Desplazamientos en vehículos</target>
+      </trans-unit>
+      <trans-unit id="L2TEd2P" resname="refrigerant_leaks">
+        <source>refrigerant_leaks</source>
+        <target>Fugas de equipos de refrigeración</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

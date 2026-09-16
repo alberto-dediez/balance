@@ -7533,6 +7533,106 @@
         <source>Continuar con {provider}</source>
         <target>Continuar con {provider}</target>
       </trans-unit>
+      <trans-unit id="EMfWzA0" resname="Ya existe una huella de carbono para esta propiedad y año">
+        <source>Ya existe una huella de carbono para esta propiedad y año</source>
+        <target>Ya existe una huella de carbono para esta propiedad y año</target>
+      </trans-unit>
+      <trans-unit id="iNL5b0h" resname="La propiedad no existe o no pertenece a tu cuenta">
+        <source>La propiedad no existe o no pertenece a tu cuenta</source>
+        <target>La propiedad no existe o no pertenece a tu cuenta</target>
+      </trans-unit>
+      <trans-unit id="TexzSul" resname="Se ha eliminado el cálculo de huella de carbono">
+        <source>Se ha eliminado el cálculo de huella de carbono</source>
+        <target>Se ha eliminado el cálculo de huella de carbono</target>
+      </trans-unit>
+      <trans-unit id="66sH1pW" resname="No se ha podido eliminar el cálculo de huella de carbono">
+        <source>No se ha podido eliminar el cálculo de huella de carbono</source>
+        <target>No se ha podido eliminar el cálculo de huella de carbono</target>
+      </trans-unit>
+      <trans-unit id="dGkCurS" resname="Se ha eliminado el cálculo de huella de carbono {id}">
+        <source>Se ha eliminado el cálculo de huella de carbono {id}</source>
+        <target>Se ha eliminado el cálculo de huella de carbono {id}</target>
+      </trans-unit>
+      <trans-unit id="B5OT4KZ" resname="No se ha podido eliminar el cálculo de huella de carbono {id}">
+        <source>No se ha podido eliminar el cálculo de huella de carbono {id}</source>
+        <target>No se ha podido eliminar el cálculo de huella de carbono {id}</target>
+      </trans-unit>
+      <trans-unit id="XXO1ZC3" resname="Sin asignar a propiedad">
+        <source>Sin asignar a propiedad</source>
+        <target>Sin asignar a propiedad</target>
+      </trans-unit>
+      <trans-unit id="wKSIR6x" resname="Ya existe una huella de carbono para esta empresa y año">
+        <source>Ya existe una huella de carbono para esta empresa y año</source>
+        <target>Ya existe una huella de carbono para esta empresa y año</target>
+      </trans-unit>
+      <trans-unit id="JKIzEGl" resname="La empresa no existe o no pertenece a tu cuenta">
+        <source>La empresa no existe o no pertenece a tu cuenta</source>
+        <target>La empresa no existe o no pertenece a tu cuenta</target>
+      </trans-unit>
+      <trans-unit id="jD7D9pi" resname="Todas las propiedades">
+        <source>Todas las propiedades</source>
+        <target>Todas las propiedades</target>
+      </trans-unit>
+      <trans-unit id="go0b673" resname="Selecciona una propiedad">
+        <source>Selecciona una propiedad</source>
+        <target>Selecciona una propiedad</target>
+      </trans-unit>
+      <trans-unit id="IDAEaL8" resname="Todas las empresas">
+        <source>Todas las empresas</source>
+        <target>Todas las empresas</target>
+      </trans-unit>
+      <trans-unit id="dxaccO3" resname="Selecciona una empresa">
+        <source>Selecciona una empresa</source>
+        <target>Selecciona una empresa</target>
+      </trans-unit>
+      <trans-unit id="RRajqTl" resname="Huella de propiedades">
+        <source>Huella de propiedades</source>
+        <target>Huella de propiedades</target>
+      </trans-unit>
+      <trans-unit id="xZmSnjp" resname="Huella de empresas">
+        <source>Huella de empresas</source>
+        <target>Huella de empresas</target>
+      </trans-unit>
+      <trans-unit id="siNPyMP" resname="Electricidad por localización (kg CO₂eq)">
+        <source>Electricidad por localización (kg CO₂eq)</source>
+        <target>Electricidad por localización (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="cSa8T7q" resname="Alcance">
+        <source>Alcance</source>
+        <target>Alcance</target>
+      </trans-unit>
+      <trans-unit id="Y_W43k." resname="Emisiones por alcance">
+        <source>Emisiones por alcance</source>
+        <target>Emisiones por alcance</target>
+      </trans-unit>
+      <trans-unit id="1a5dRGA" resname="Emisiones por propiedad">
+        <source>Emisiones por propiedad</source>
+        <target>Emisiones por propiedad</target>
+      </trans-unit>
+      <trans-unit id="RWC9gAM" resname="Matriz alcance × fuente">
+        <source>Matriz alcance × fuente</source>
+        <target>Matriz alcance × fuente</target>
+      </trans-unit>
+      <trans-unit id="mZG4Yz." resname="Alcance 1">
+        <source>Alcance 1</source>
+        <target>Alcance 1</target>
+      </trans-unit>
+      <trans-unit id="T1YZILx" resname="Alcance 2">
+        <source>Alcance 2</source>
+        <target>Alcance 2</target>
+      </trans-unit>
+      <trans-unit id="HeprmKh" resname="Consumo eléctrico">
+        <source>Consumo eléctrico</source>
+        <target>Consumo eléctrico</target>
+      </trans-unit>
+      <trans-unit id="eB.s5Ew" resname="Desplazamientos en vehículos">
+        <source>Desplazamientos en vehículos</source>
+        <target>Desplazamientos en vehículos</target>
+      </trans-unit>
+      <trans-unit id="NNQ2P01" resname="Fugas de equipos de refrigeración">
+        <source>Fugas de equipos de refrigeración</source>
+        <target>Fugas de equipos de refrigeración</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

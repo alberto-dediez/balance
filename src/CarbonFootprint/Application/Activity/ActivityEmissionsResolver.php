@@ -7,8 +7,8 @@ namespace App\CarbonFootprint\Application\Activity;
 use App\CarbonFootprint\Application\Activity\Calculate\CalculateActivityEmissionsResponse;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\Quantity;
 
 final class ActivityEmissionsResolver
@@ -19,19 +19,19 @@ final class ActivityEmissionsResolver
     ) {}
 
     public function resolve(
-        EventCarbonFootprint $eventCarbonFootprint,
+        CarbonFootprint $carbonFootprint,
         ActivityType $activityType,
         string $itemId,
         ?ItemCondition $condition,
         Quantity $quantity,
         ?string $secondaryItemId,
     ): CalculateActivityEmissionsResponse {
-        $emissionFactorGroupId = $eventCarbonFootprint->emissionFactorGroupId()
-            ?? throw new \InvalidArgumentException(sprintf('EventCarbonFootprint "%s" has no emission factor group configured.', $eventCarbonFootprint->id()));
+        $emissionFactorGroupId = $carbonFootprint->emissionFactorGroupId()
+            ?? throw new \InvalidArgumentException(sprintf('Carbon footprint "%s" has no emission factor group configured.', $carbonFootprint->id()));
 
         return $this->resolveForGroupAndYear(
             $emissionFactorGroupId,
-            $eventCarbonFootprint->calculationYear(),
+            $carbonFootprint->calculationYear(),
             $activityType,
             $itemId,
             $condition,

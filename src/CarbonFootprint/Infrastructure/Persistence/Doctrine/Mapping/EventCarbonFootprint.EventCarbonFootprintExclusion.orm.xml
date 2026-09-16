@@ -19,8 +19,8 @@
         </many-to-one>
 
         <field name="phase" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase" nullable="false" />
-        <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source" nullable="false" />
-        <field name="reason" type="string" enum-type="App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason" nullable="false" />
+        <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\Source" nullable="false" />
+        <field name="reason" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason" nullable="false" />
         <field name="comment" type="text" nullable="true" />
         <field name="excludedAt" type="datetime_immutable" column="excluded_at" nullable="false" />
     </entity>

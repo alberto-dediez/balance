@@ -1,0 +1,22 @@
+{% set readOnly = readOnly | default(false) %}
+{% set unassignedLabel = unassignedLabel | default(null) %}
+
+<twig:CarbonFootprint:SourceSection
+    source="building_electricity"
+    :exclusion="exclusions['building_electricity'] ?? null"
+    :reasons="exclusionReasons"
+    :readOnly="readOnly"
+>
+    {% for block in blocks %}
+        <twig:CarbonFootprint:ElectricityActivityTable
+            title="{{ block.property ? block.property.name : (unassignedLabel ?? ('Consumo eléctrico' | trans)) }}"
+            prefix="{{ block.prefixBase is empty ? 'electricity' : block.prefixBase ~ '[electricity]' }}"
+            :rows="block.electricityRows"
+            :marketers="block.electricityMarketers"
+            :gdOFactors="block.gdOFactors"
+            :units="block.units"
+            :calculateUrl="calculateUrl"
+            :readOnly="readOnly"
+        />
+    {% endfor %}
+</twig:CarbonFootprint:SourceSection>

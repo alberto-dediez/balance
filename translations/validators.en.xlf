@@ -557,6 +557,30 @@
         <source>This filename does not match the expected charset.</source>
         <target>This filename does not match the expected charset.</target>
       </trans-unit>
+      <trans-unit id="iTwuWRs" resname="This value is not valid XML.">
+        <source>This value is not valid XML.</source>
+        <target>This value is not valid XML.</target>
+      </trans-unit>
+      <trans-unit id="hueZAUr" resname="This value does not conform to the expected XSD schema.">
+        <source>This value does not conform to the expected XSD schema.</source>
+        <target>This value does not conform to the expected XSD schema.</target>
+      </trans-unit>
+      <trans-unit id="1yeK8aU" resname="This XML payload is too large ({{ size }} bytes): it exceeds the limit of {{ limit }} bytes.">
+        <source>This XML payload is too large ({{ size }} bytes): it exceeds the limit of {{ limit }} bytes.</source>
+        <target>This XML payload is too large ({{ size }} bytes): it exceeds the limit of {{ limit }} bytes.</target>
+      </trans-unit>
+      <trans-unit id="ZXF_Jfm" resname="This value is not a valid cron expression.">
+        <source>This value is not a valid cron expression.</source>
+        <target>This value is not a valid cron expression.</target>
+      </trans-unit>
+      <trans-unit id="FZRbmh3" resname="The referenced entity does not exist.">
+        <source>The referenced entity does not exist.</source>
+        <target>The referenced entity does not exist.</target>
+      </trans-unit>
+      <trans-unit id="3kc.phM" resname="This is not a valid ULID.">
+        <source>This is not a valid ULID.</source>
+        <target>This value is not a valid ULID.</target>
+      </trans-unit>
       <trans-unit id="tDkL4Jc" resname="This form should not contain extra fields.">
         <source>This form should not contain extra fields.</source>
         <target>This form should not contain extra fields.</target>
@@ -688,6 +712,14 @@
       <trans-unit id="2MEQpjY" resname="Please enter a valid week.">
         <source>Please enter a valid week.</source>
         <target>Please enter a valid week.</target>
+      </trans-unit>
+      <trans-unit id="_vG7Dae" resname="Please enter a valid UUID.">
+        <source>Please enter a valid UUID.</source>
+        <target>Please enter a valid UUID.</target>
+      </trans-unit>
+      <trans-unit id="f.1qjbZ" resname="The lower bound must not be greater than the upper bound.">
+        <source>The lower bound must not be greater than the upper bound.</source>
+        <target>The lower bound must not be greater than the upper bound.</target>
       </trans-unit>
       <trans-unit id="KDstS.U" resname="Ya existe un factor de emisión para el año {{ year }}">
         <source>Ya existe un factor de emisión para el año {{ year }}</source>

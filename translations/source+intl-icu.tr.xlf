@@ -45,6 +45,14 @@
         <source>waste_management</source>
         <target>Atık yönetimi</target>
       </trans-unit>
+      <trans-unit id="eSXkmfU" resname="own_vehicles">
+        <source>own_vehicles</source>
+        <target>Araç yolculukları</target>
+      </trans-unit>
+      <trans-unit id="L2TEd2P" resname="refrigerant_leaks">
+        <source>refrigerant_leaks</source>
+        <target>Soğutma ekipmanı kaçakları</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

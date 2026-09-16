@@ -1,0 +1,20 @@
+{% extends '@carbon_footprint/company_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 2 %}
+
+{% block wizard_panels %}
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('scope_2_' ~ companyCarbonFootprint.id) }}">
+
+        {% include '@carbon_footprint/organizational_carbon_footprints/_scope_2_sections.html.twig' with {unassignedLabel: 'Sin asignar a propiedad' | trans} %}
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('company_carbon_footprints_scope_1', {companyCarbonFootprintId: companyCarbonFootprintId}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <button type="submit" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </button>
+        </div>
+    </form>
+{% endblock %}

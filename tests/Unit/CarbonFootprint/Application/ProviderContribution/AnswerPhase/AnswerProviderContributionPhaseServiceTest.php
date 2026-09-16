@@ -7,22 +7,22 @@ namespace App\Tests\Unit\CarbonFootprint\Application\ProviderContribution\Answer
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\CombustibleAnswerHandler;
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
-use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\ProviderContribution\AnswerPhase\AnswerProviderContributionPhaseRequest;
 use App\CarbonFootprint\Application\ProviderContribution\AnswerPhase\AnswerProviderContributionPhaseService;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthenticator;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionClosedException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
@@ -101,7 +101,7 @@ class AnswerProviderContributionPhaseServiceTest extends TestCase
             new ProviderContributionAuthenticator($this->providerContributionRepository, $this->providerRepository, $this->userRepository),
             $this->providerContributionRepository,
             $this->eventCarbonFootprintRepository,
-            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
+            new StageAnswersSynchronizer($handlers, $this->countryResolver()),
         );
     }
 
@@ -241,8 +241,8 @@ class AnswerProviderContributionPhaseServiceTest extends TestCase
         return [$eventCarbonFootprint, $contribution];
     }
 
-    private function countryResolver(): EventCarbonFootprintCountryResolver
+    private function countryResolver(): CarbonFootprintCountryResolver
     {
-        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
+        return new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\EventCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityReference;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
-use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
 
-class EventCarbonFootprint implements \Stringable
+class EventCarbonFootprint implements CarbonFootprint, \Stringable
 {
     use AggregateRoot;
 
@@ -166,10 +172,16 @@ class EventCarbonFootprint implements \Stringable
         };
     }
 
-    /** @param ActivityId[] $keptIds */
-    public function retainActivities(Phase $phase, Source $source, array $keptIds, ?ProviderId $providerId = null, bool $fromEmployees = false): void
+    /** @return ActivityId[] */
+    public function activityIds(ActivityPlacement $placement): array
     {
-        $existingIds = $this->activities()->filterByPhase($phase)->filterBySource($source)->filterByProviderId($providerId)->filterByFromEmployees($fromEmployees)->activityIds();
+        return $this->activities()->filterByPlacement($placement)->activityIds();
+    }
+
+    /** @param ActivityId[] $keptIds */
+    public function retainActivities(ActivityPlacement $placement, array $keptIds): void
+    {
+        $existingIds = $this->activityIds($placement);
 
         foreach ($existingIds as $existingId) {
             $kept = false;
@@ -380,9 +392,12 @@ class EventCarbonFootprint implements \Stringable
         $this->removedAt = $event->occurredOn();
     }
 
-    public function addActivity(ActivityId $activityId, Phase $phase, Source $source, ?ProviderId $providerId = null, bool $fromEmployees = false): void
+    public function addActivity(ActivityId $activityId, ActivityPlacement $placement): void
     {
         $this->ensureIsEditable();
+
+        $phase = $placement->stage;
+        assert($phase instanceof Phase);
 
         foreach ($this->activities as $activity) {
             if ($activity->activityId()->equals($activityId)) {
@@ -390,7 +405,7 @@ class EventCarbonFootprint implements \Stringable
             }
         }
 
-        if ($this->exclusions()->isExcluded($phase, $source)) {
+        if ($this->exclusions()->isExcluded($phase, $placement->source)) {
             return;
         }
 
@@ -399,9 +414,9 @@ class EventCarbonFootprint implements \Stringable
                 eventCarbonFootprintId: $this->id,
                 activityId: $activityId,
                 phase: $phase,
-                source: $source,
-                providerId: $providerId,
-                fromEmployees: $fromEmployees,
+                source: $placement->source,
+                providerId: $placement->providerId,
+                fromEmployees: $placement->fromEmployees,
             ),
         );
     }
@@ -435,9 +450,41 @@ class EventCarbonFootprint implements \Stringable
         return new EventCarbonFootprintExclusions($this->exclusions);
     }
 
-    public function excludeSource(Phase $phase, Source $source, ExclusionReason $reason, ?string $comment = null): void
+    /** @return array<string, SourceExclusion> */
+    public function exclusionsFor(CalculationStage $stage): array
+    {
+        assert($stage instanceof Phase);
+
+        $indexed = [];
+
+        foreach ($this->exclusions()->filterByPhase($stage)->toArray() as $exclusion) {
+            $indexed[$exclusion->source()->value] = $exclusion;
+        }
+
+        return $indexed;
+    }
+
+    /** @return list<SourceExclusion> */
+    public function allExclusions(): array
+    {
+        return $this->exclusions()->toArray();
+    }
+
+    /** @return list<ActivityReference> */
+    public function activityReferences(): array
+    {
+        return array_map(
+            static fn(EventCarbonFootprintActivity $activity) => new ActivityReference($activity->activityId(), $activity->placement()),
+            array_values($this->activities()->toArray()),
+        );
+    }
+
+    public function excludeSource(CalculationStage $stage, Source $source, ExclusionReason $reason, ?string $comment = null): void
     {
         $this->ensureIsEditable();
+
+        $phase = $stage;
+        assert($phase instanceof Phase);
 
         $existing = $this->exclusions()->forPhaseAndSource($phase, $source);
         if (null !== $existing && $existing->reason() === $reason && $existing->comment() === $comment) {
@@ -454,12 +501,15 @@ class EventCarbonFootprint implements \Stringable
             ),
         );
 
-        $this->retainActivities($phase, $source, [], null);
+        $this->retainActivities(new ActivityPlacement($phase, $source), []);
     }
 
-    public function includeSource(Phase $phase, Source $source): void
+    public function includeSource(CalculationStage $stage, Source $source): void
     {
         $this->ensureIsEditable();
+
+        $phase = $stage;
+        assert($phase instanceof Phase);
 
         if (!$this->exclusions()->isExcluded($phase, $source)) {
             return;

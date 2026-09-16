@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\MobilityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\OvernightStayAnswerHandler;
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
@@ -19,16 +18,18 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityServic
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityService;
 use App\CarbonFootprint\Application\AttendeeSurvey\Close\CloseAttendeeSurveyRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\Close\CloseAttendeeSurveyService;
+use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
-use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyResponsesAggregator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -109,7 +110,7 @@ class CloseAttendeeSurveyServiceTest extends TestCase
             $this->attendeeSurveyResponseRepository,
             new AttendeeSurveyResponsesAggregator(new TripLegsAccumulator()),
             $this->overnightStayRepository,
-            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
+            new StageAnswersSynchronizer($handlers, $this->countryResolver()),
             new MobilityFactorBasisProvider($this->mobilityRepository),
         );
     }
@@ -121,7 +122,7 @@ class CloseAttendeeSurveyServiceTest extends TestCase
         $attendeeSurvey = $this->registeredAttendeeSurvey($eventId);
 
         $manualActivityId = $this->registerActivity();
-        $eventCarbonFootprint->addActivity($manualActivityId, Phase::Celebration, Source::AttendeesMobility);
+        $eventCarbonFootprint->addActivity($manualActivityId, new ActivityPlacement(Phase::Celebration, Source::AttendeesMobility));
 
         ($this->sut)(
             new CloseAttendeeSurveyRequest($eventCarbonFootprint->id(), 100, ConfidenceLevel::Ninety),
@@ -146,7 +147,7 @@ class CloseAttendeeSurveyServiceTest extends TestCase
         $attendeeSurvey = $this->registeredAttendeeSurvey($eventId);
 
         $manualActivityId = $this->registerActivity();
-        $eventCarbonFootprint->addActivity($manualActivityId, Phase::Celebration, Source::AttendeesMobility);
+        $eventCarbonFootprint->addActivity($manualActivityId, new ActivityPlacement(Phase::Celebration, Source::AttendeesMobility));
 
         $overnightStay = OvernightStayMother::registeredOvernightStay();
         $overnightStay->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Pernoctacion)->withYear(self::YEAR));
@@ -296,8 +297,8 @@ class CloseAttendeeSurveyServiceTest extends TestCase
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
     }
 
-    private function countryResolver(): EventCarbonFootprintCountryResolver
+    private function countryResolver(): CarbonFootprintCountryResolver
     {
-        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
+        return new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

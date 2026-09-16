@@ -1,0 +1,24 @@
+{% extends '@shared/layout/wizard.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('company_carbon_footprints') }}" />
+{% endblock %}
+
+{% set page_title = ('Empresas' | trans)
+    ~ ' > '
+    ~ (companyCarbonFootprint.companyId | company_name)
+    ~ ' > '
+    ~ ('Huella de Carbono' | trans)
+    ~ ' '
+    ~ companyCarbonFootprint.year %}
+
+{% set wizard_active = companyCarbonFootprint.status.stepNumber %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'Alcance 1' | trans, href: path('company_carbon_footprints_scope_1', {companyCarbonFootprintId: companyCarbonFootprintId})},
+        {label: 'Alcance 2' | trans, href: path('company_carbon_footprints_scope_2', {companyCarbonFootprintId: companyCarbonFootprintId})},
+        {label: 'Resultados' | trans, href: path('company_carbon_footprints_results', {companyCarbonFootprintId: companyCarbonFootprintId})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

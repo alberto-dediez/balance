@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseResponse;
-use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\PhaseSection;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\StepExclusionsView;
 
 final class MaterialsStepView
 {
@@ -35,34 +36,20 @@ final class MaterialsStepView
             'merchandisingItems' => $merchandisingItems->catalog,
             'units' => Unit::cases(),
             'conditions' => ItemCondition::cases(),
-            'exclusions' => $this->exclusions($response),
+            'exclusions' => StepExclusionsView::build($response->exclusions),
             'exclusionReasons' => ExclusionReason::cases(),
         ];
     }
 
-    /** @return array<string, array{reason: string, comment: ?string}> */
-    private function exclusions(GetPhaseResponse $response): array
-    {
-        $exclusions = [];
-        foreach ($response->exclusions as $sourceValue => $exclusion) {
-            $exclusions[$sourceValue] = [
-                'reason' => $exclusion->reason()->value,
-                'comment' => $exclusion->comment(),
-            ];
-        }
-
-        return $exclusions;
-    }
-
     /** @return list<ActivityRowView> */
-    private function rows(PhaseSection $section): array
+    private function rows(StageSection $section): array
     {
         $factory = $this->rowViewFactories->forActivityType($section->definition->activityType);
 
         return array_map(static fn($activity) => $factory->create($activity), $section->activities);
     }
 
-    private function section(GetPhaseResponse $response, string $key): PhaseSection
+    private function section(GetPhaseResponse $response, string $key): StageSection
     {
         foreach ($response->sections as $section) {
             if ($section->definition->key === $key) {

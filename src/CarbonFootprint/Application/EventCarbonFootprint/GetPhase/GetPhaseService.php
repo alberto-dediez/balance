@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase;
 
-use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
+use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
-use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
-use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -17,8 +15,7 @@ final class GetPhaseService
     public function __construct(
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         private EventCarbonFootprintAuthorizer $authorizer,
-        private ActivityCatalogProviderRegistry $catalogProviders,
-        private ActivityRepository $activityRepository,
+        private StageSectionsBuilder $sectionsBuilder,
     ) {}
 
     public function __invoke(GetPhaseRequest $request, User $user): GetPhaseResponse
@@ -31,43 +28,8 @@ final class GetPhaseService
 
         $this->authorizer->denyUnlessCanDoThat($eventCarbonFootprint, SecurityAction::View, $user);
 
-        $year = $eventCarbonFootprint->calculationYear();
-        $emissionFactorGroupId = $eventCarbonFootprint->emissionFactorGroupId();
+        $stageSections = $this->sectionsBuilder->build($eventCarbonFootprint, $request->phase);
 
-        $sections = [];
-
-        foreach ($request->phase->sections() as $definition) {
-            $provider = $this->catalogProviders->forActivityType($definition->activityType);
-
-            $activityIds = $eventCarbonFootprint->activities()
-                ->filterByPhase($request->phase)
-                ->filterBySource($definition->source)
-                ->activityIds();
-
-            $activities = [];
-            foreach ($activityIds as $activityId) {
-                $activity = $this->activityRepository->findById($activityId);
-
-                if (null === $activity || ActivityType::fromActivity($activity) !== $definition->activityType) {
-                    continue;
-                }
-
-                $activities[] = $activity;
-            }
-
-            $sections[] = new PhaseSection(
-                definition: $definition,
-                activities: $activities,
-                catalog: $provider->catalog($year, $emissionFactorGroupId),
-                secondaryCatalog: $provider->secondaryCatalog($year, $emissionFactorGroupId),
-            );
-        }
-
-        $exclusions = [];
-        foreach ($eventCarbonFootprint->exclusions()->filterByPhase($request->phase)->toArray() as $exclusion) {
-            $exclusions[$exclusion->source()->value] = $exclusion;
-        }
-
-        return new GetPhaseResponse($sections, $exclusions);
+        return new GetPhaseResponse($stageSections->sections, $stageSections->exclusions);
     }
 }

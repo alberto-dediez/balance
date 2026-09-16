@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\MobilityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\OvernightStayAnswerHandler;
-use App\CarbonFootprint\Application\Activity\Answer\PhaseAnswersSynchronizer;
 use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
@@ -17,19 +16,21 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivitySe
 use App\CarbonFootprint\Application\Activity\Register\RegisterOvernightStayActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityService;
+use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeeParticipationRequest;
 use App\CarbonFootprint\Application\EmployeeParticipation\Close\CloseEmployeeParticipationService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
-use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution;
 use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeContributionsAggregator;
 use App\CarbonFootprint\Domain\Model\EmployeeParticipation\EmployeeParticipation;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\OvernightStay\CategoryOvernight;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
@@ -112,7 +113,7 @@ class CloseEmployeeParticipationServiceTest extends TestCase
             new EmployeeContributionsAggregator(),
             new MobilityFactorBasisProvider($this->mobilityRepository),
             $this->overnightStayRepository,
-            new PhaseAnswersSynchronizer($handlers, $this->countryResolver()),
+            new StageAnswersSynchronizer($handlers, $this->countryResolver()),
         );
     }
 
@@ -122,7 +123,7 @@ class CloseEmployeeParticipationServiceTest extends TestCase
         $participation = $this->registeredParticipation($eventCarbonFootprint, 10);
 
         $manualActivityId = $this->registerActivity();
-        $eventCarbonFootprint->addActivity($manualActivityId, Phase::Assembly, Source::SuppliersAndStaffMobility);
+        $eventCarbonFootprint->addActivity($manualActivityId, new ActivityPlacement(Phase::Assembly, Source::SuppliersAndStaffMobility));
 
         ($this->sut)(new CloseEmployeeParticipationRequest($eventCarbonFootprint->id()), $this->ownerUser());
 
@@ -141,7 +142,7 @@ class CloseEmployeeParticipationServiceTest extends TestCase
         $this->registeredParticipation($eventCarbonFootprint, 10);
 
         $manualActivityId = $this->registerActivity();
-        $eventCarbonFootprint->addActivity($manualActivityId, Phase::Assembly, Source::SuppliersAndStaffMobility);
+        $eventCarbonFootprint->addActivity($manualActivityId, new ActivityPlacement(Phase::Assembly, Source::SuppliersAndStaffMobility));
 
         $overnightStay = OvernightStayMother::from('hotel', (string) OvernightStayId::generate(), CategoryOvernight::OrganizingTeam);
         $overnightStay->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Pernoctacion)->withYear(self::YEAR));
@@ -297,8 +298,8 @@ class CloseEmployeeParticipationServiceTest extends TestCase
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
     }
 
-    private function countryResolver(): EventCarbonFootprintCountryResolver
+    private function countryResolver(): CarbonFootprintCountryResolver
     {
-        return new EventCarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
+        return new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), PropertyRepositoryMother::inMemory());
     }
 }

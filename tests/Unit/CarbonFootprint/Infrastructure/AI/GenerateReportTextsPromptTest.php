@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;

@@ -11,10 +11,11 @@ use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\GetAdminDashboar
 use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\GetAdminDashboardService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Source;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -77,7 +78,7 @@ class GetAdminDashboardServiceTest extends TestCase
         );
         $activity = MaterialActivityMother::registered();
         $activityRepository->save($activity);
-        $completedFootprintA->addActivity($activity->id(), Phase::Materials, Source::Materials);
+        $completedFootprintA->addActivity($activity->id(), new ActivityPlacement(Phase::Materials, Source::Materials));
 
         $completedFootprintA->complete(
             totalEmissions: new Emissions(co2eq: '1000'),
