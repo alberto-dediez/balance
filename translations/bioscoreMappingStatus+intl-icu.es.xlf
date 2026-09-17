@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="WvvmwiO" resname="unmapped">
+        <source>unmapped</source>
+        <target>Sin mapear</target>
+      </trans-unit>
+      <trans-unit id="yJGCXRb" resname="auto_mapped">
+        <source>auto_mapped</source>
+        <target>Mapeado automáticamente</target>
+      </trans-unit>
+      <trans-unit id="M5sLPYm" resname="manually_mapped">
+        <source>manually_mapped</source>
+        <target>Mapeado manualmente</target>
+      </trans-unit>
+      <trans-unit id="XMzPn1r" resname="ignored">
+        <source>ignored</source>
+        <target>Ignorado</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

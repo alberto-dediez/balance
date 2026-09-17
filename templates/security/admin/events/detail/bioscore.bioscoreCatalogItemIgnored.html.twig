@@ -1,0 +1,4 @@
+{% trans with {
+    '{itemId}': event.itemId,
+    '{user}': element.userId | user_name
+} %}Se ha marcado como ignorado el elemento de Bioscore {itemId} por el usuario {user}{% endtrans %}

@@ -1,0 +1,5 @@
+{% trans with {
+    '{name}': event.name,
+    '{bioscoreId}': event.bioscoreId,
+    '{catalog}': event.catalog.value | trans({}, 'bioscoreCatalog')
+} %}Se ha registrado el elemento de Bioscore "{name}" (#{bioscoreId}) del catálogo {catalog}{% endtrans %}

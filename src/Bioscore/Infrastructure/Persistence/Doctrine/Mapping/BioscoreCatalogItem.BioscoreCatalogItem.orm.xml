@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItem" table="bioscore_catalog_items">
+        <unique-constraints>
+            <unique-constraint name="uq_bioscore_catalog_items_catalog_bioscore_id" columns="catalog,bioscore_id"/>
+        </unique-constraints>
+
+        <indexes>
+            <index name="idx_bioscore_catalog_items_status" columns="catalog,status,withdrawn"/>
+            <index name="idx_bioscore_catalog_items_target" columns="target_id"/>
+        </indexes>
+
+        <id name="id" type="bioscore_catalog_item_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="catalog" type="string" length="32" nullable="false" enum-type="App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalog"/>
+        <field name="bioscoreId" type="integer" column="bioscore_id" nullable="false"/>
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="unit" type="string" length="50" nullable="false"/>
+        <field name="targetId" type="string" column="target_id" length="36" nullable="true"/>
+        <field name="status" type="string" length="32" nullable="false" enum-type="App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreMappingStatus"/>
+        <field name="withdrawn" type="boolean" nullable="false"/>
+
+        <field name="firstSeenAt" type="datetime_immutable" column="first_seen_at" nullable="false"/>
+        <field name="lastSeenAt" type="datetime_immutable" column="last_seen_at" nullable="false"/>
+        <field name="mappedAt" type="datetime_immutable" column="mapped_at" nullable="true"/>
+        <field name="withdrawnAt" type="datetime_immutable" column="withdrawn_at" nullable="true"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+    </entity>
+</doctrine-mapping>

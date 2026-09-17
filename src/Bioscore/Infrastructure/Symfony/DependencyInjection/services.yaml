@@ -1,0 +1,33 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Bioscore\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+when@dev:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Bioscore\Infrastructure\Gateway\HttpBioscoreCatalogGateway:
+            arguments:
+                $apiBaseUrl: '%sso_api_url%'
+                $username: '%env(BIOSCORE_API_USERNAME)%'
+                $password: '%env(BIOSCORE_API_PASSWORD)%'
+
+when@prod:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Bioscore\Infrastructure\Gateway\HttpBioscoreCatalogGateway:
+            arguments:
+                $apiBaseUrl: '%sso_api_url%'
+                $username: '%env(BIOSCORE_API_USERNAME)%'
+                $password: '%env(BIOSCORE_API_PASSWORD)%'

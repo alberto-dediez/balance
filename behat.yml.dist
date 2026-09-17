@@ -22,6 +22,7 @@ default:
                 - App\Tests\Acceptance\Balance\BalanceContext
                 - App\Tests\Acceptance\Payments\PaymentsContext
                 - App\Tests\Acceptance\Changelog\ChangelogContext
+                - App\Tests\Acceptance\Bioscore\BioscoreContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:

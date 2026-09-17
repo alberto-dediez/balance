@@ -1,0 +1,5 @@
+{% trans with {
+    '{itemId}': event.itemId,
+    '{targetId}': event.previousTargetId,
+    '{user}': element.userId | user_name
+} %}Se ha desmapeado el elemento de Bioscore {itemId} del maestro {targetId} por el usuario {user}{% endtrans %}

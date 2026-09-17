@@ -1,0 +1,56 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(returnRoute) }}" />
+{% endblock %}
+
+{% set page_title = ('Bioscore' | trans)
+    ~ ' > '
+    ~ (item.catalog.value | trans({}, 'bioscoreCatalog'))
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ item.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-md-6">
+                    <twig:View:Field label="{{ 'Elemento de Bioscore' | trans }}">
+                        {{ item.name }} <span class="text-muted">(#{{ item.bioscoreId }})</span>
+                    </twig:View:Field>
+                </div>
+                <div class="col-md-3">
+                    <twig:View:Field label="{{ 'Unidad en Bioscore' | trans }}">
+                        {{ item.unit is not empty ? item.unit : '---' }}
+                    </twig:View:Field>
+                </div>
+                <div class="col-md-3">
+                    <twig:View:Field label="{{ 'Estado' | trans }}">
+                        <span class="badge {{ item.status.style }}">{{ item.status.value | trans({}, 'bioscoreMappingStatus') }}</span>
+                        {% if item.withdrawn %}
+                            <span class="badge bg-dark">{% trans %}Retirado{% endtrans %}</span>
+                        {% endif %}
+                    </twig:View:Field>
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.targetId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.ignore) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

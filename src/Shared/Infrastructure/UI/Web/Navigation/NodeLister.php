@@ -306,6 +306,34 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Bioscore'),
+            icon: 'solar:link-circle-line-duotone',
+            target: '#bioscore',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Combustibles de instalaciones'),
+                    icon: 'solar:fire-line-duotone',
+                    target: $this->router->generate('admin_bioscore_facility_fuels'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Combustibles de vehículos'),
+                    icon: 'solar:bus-line-duotone',
+                    target: $this->router->generate('admin_bioscore_transport_fuels'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Gases refrigerantes'),
+                    icon: 'solar:snowflake-line-duotone',
+                    target: $this->router->generate('admin_bioscore_refrigerant_gases'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Comercializadoras eléctricas'),
+                    icon: 'solar:bolt-line-duotone',
+                    target: $this->router->generate('admin_bioscore_electricity_marketers'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

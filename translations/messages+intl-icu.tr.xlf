@@ -7633,6 +7633,146 @@
         <source>Fugas de equipos de refrigeración</source>
         <target>Soğutma ekipmanı kaçakları</target>
       </trans-unit>
+      <trans-unit id="OrRPJll" resname="Equivalencias de Bioscore actualizadas con éxito">
+        <source>Equivalencias de Bioscore actualizadas con éxito</source>
+        <target>Bioscore eşleştirmeleri başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="5sh3KtR" resname="Sincronización de maestros de Bioscore encolada">
+        <source>Sincronización de maestros de Bioscore encolada</source>
+        <target>Bioscore ana veri senkronizasyonu kuyruğa alındı</target>
+      </trans-unit>
+      <trans-unit id="rRCCGoD" resname="Sincronizar ahora">
+        <source>Sincronizar ahora</source>
+        <target>Şimdi senkronize et</target>
+      </trans-unit>
+      <trans-unit id="1qGE4vi" resname="Disponibilidad">
+        <source>Disponibilidad</source>
+        <target>Kullanılabilirlik</target>
+      </trans-unit>
+      <trans-unit id="dtlqU68" resname="Retirados">
+        <source>Retirados</source>
+        <target>Kaldırılanlar</target>
+      </trans-unit>
+      <trans-unit id="tjM.ZxS" resname="Destino en la plataforma">
+        <source>Destino en la plataforma</source>
+        <target>Platformdaki karşılığı</target>
+      </trans-unit>
+      <trans-unit id="IqmD90N" resname="Sin mapear">
+        <source>Sin mapear</source>
+        <target>Eşleştirilmemiş</target>
+      </trans-unit>
+      <trans-unit id="vIiepkb" resname="Maestros de Bioscore pendientes de mapear">
+        <source>Maestros de Bioscore pendientes de mapear</source>
+        <target>Eşleştirilmeyi bekleyen Bioscore ana verileri</target>
+      </trans-unit>
+      <trans-unit id="TdniKZ1" resname="Combustibles de instalaciones">
+        <source>Combustibles de instalaciones</source>
+        <target>Tesis yakıtları</target>
+      </trans-unit>
+      <trans-unit id="tABz1dW" resname="Combustibles de vehículos">
+        <source>Combustibles de vehículos</source>
+        <target>Araç yakıtları</target>
+      </trans-unit>
+      <trans-unit id="mf3auXq" resname="Huellas de Carbono">
+        <source>Huellas de Carbono</source>
+        <target>Karbon ayak izleri</target>
+      </trans-unit>
+      <trans-unit id="9VtWAVs" resname="Se ha mapeado el elemento de Bioscore {itemId} al maestro {targetId} de forma {mode} por el usuario {user}">
+        <source>Se ha mapeado el elemento de Bioscore {itemId} al maestro {targetId} de forma {mode} por el usuario {user}</source>
+        <target>{itemId} Bioscore ögesi, {user} kullanıcısı tarafından {mode} olarak {targetId} ana verisine eşleştirildi</target>
+      </trans-unit>
+      <trans-unit id="gTvBeHn" resname="automática">
+        <source>automática</source>
+        <target>otomatik</target>
+      </trans-unit>
+      <trans-unit id="ikTP6Vn" resname="manual">
+        <source>manual</source>
+        <target>elle</target>
+      </trans-unit>
+      <trans-unit id="HPFE4ql" resname="Se ha registrado el elemento de Bioscore &quot;{name}&quot; (#{bioscoreId}) del catálogo {catalog}">
+        <source>Se ha registrado el elemento de Bioscore "{name}" (#{bioscoreId}) del catálogo {catalog}</source>
+        <target>{catalog} kataloğundaki "{name}" (#{bioscoreId}) Bioscore ögesi kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="43lsAio" resname="Se ha desmapeado el elemento de Bioscore {itemId} del maestro {targetId} por el usuario {user}">
+        <source>Se ha desmapeado el elemento de Bioscore {itemId} del maestro {targetId} por el usuario {user}</source>
+        <target>{itemId} Bioscore ögesinin {targetId} ana verisiyle eşleştirmesi {user} kullanıcısı tarafından kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="1j3TmLL" resname="Se ha marcado como ignorado el elemento de Bioscore {itemId} por el usuario {user}">
+        <source>Se ha marcado como ignorado el elemento de Bioscore {itemId} por el usuario {user}</source>
+        <target>{itemId} Bioscore ögesi {user} kullanıcısı tarafından yok sayıldı olarak işaretlendi</target>
+      </trans-unit>
+      <trans-unit id="QEl2Zap" resname="La sincronización de maestros de Bioscore ha dejado {pending} elemento(s) nuevo(s) sin mapear y {invalidated} mapeo(s) invalidado(s).">
+        <source>La sincronización de maestros de Bioscore ha dejado {pending} elemento(s) nuevo(s) sin mapear y {invalidated} mapeo(s) invalidado(s).</source>
+        <target>Bioscore ana veri senkronizasyonu {pending} yeni eşleştirilmemiş öge ve {invalidated} geçersiz eşleştirme bıraktı.</target>
+      </trans-unit>
+      <trans-unit id="CKelmuy" resname="Mapeos invalidados">
+        <source>Mapeos invalidados</source>
+        <target>Geçersiz eşleştirmeler</target>
+      </trans-unit>
+      <trans-unit id="P0afhS5" resname="No se pudieron descargar">
+        <source>No se pudieron descargar</source>
+        <target>İndirilemedi</target>
+      </trans-unit>
+      <trans-unit id="MwSFOi3" resname="pendientes">
+        <source>pendientes</source>
+        <target>bekliyor</target>
+      </trans-unit>
+      <trans-unit id="qWR3Wcd" resname="No hay elementos en este catálogo. Lanza una sincronización.">
+        <source>No hay elementos en este catálogo. Lanza una sincronización.</source>
+        <target>Bu katalogda öge yok. Bir senkronizasyon başlatın.</target>
+      </trans-unit>
+      <trans-unit id="hEay.2I" resname="Elemento de Bioscore">
+        <source>Elemento de Bioscore</source>
+        <target>Bioscore ögesi</target>
+      </trans-unit>
+      <trans-unit id="uT9s3st" resname="Unidad en Bioscore">
+        <source>Unidad en Bioscore</source>
+        <target>Bioscore birimi</target>
+      </trans-unit>
+      <trans-unit id="2IP5Axb" resname="Última vez visto">
+        <source>Última vez visto</source>
+        <target>Son görülme</target>
+      </trans-unit>
+      <trans-unit id="aWUgLEq" resname="Retirado">
+        <source>Retirado</source>
+        <target>Kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="t9pKBiu" resname="Equivalencia de Bioscore actualizada con éxito">
+        <source>Equivalencia de Bioscore actualizada con éxito</source>
+        <target>Bioscore eşleştirmesi başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="3Bv_Ltr" resname="Se ha ignorado el elemento de Bioscore {id}">
+        <source>Se ha ignorado el elemento de Bioscore {id}</source>
+        <target>{id} Bioscore öğesi yok sayıldı</target>
+      </trans-unit>
+      <trans-unit id="HWuTKl1" resname="No se ha podido ignorar el elemento de Bioscore {id}">
+        <source>No se ha podido ignorar el elemento de Bioscore {id}</source>
+        <target>{id} Bioscore öğesi yok sayılamadı</target>
+      </trans-unit>
+      <trans-unit id="ZYKBuHv" resname="Quitar mapeo">
+        <source>Quitar mapeo</source>
+        <target>Eşleştirmeyi kaldır</target>
+      </trans-unit>
+      <trans-unit id="dIe3i8x" resname="Se ha quitado el mapeo del elemento de Bioscore {id}">
+        <source>Se ha quitado el mapeo del elemento de Bioscore {id}</source>
+        <target>{id} Bioscore öğesinin eşleştirmesi kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="ZGDa5pf" resname="No se ha podido quitar el mapeo del elemento de Bioscore {id}">
+        <source>No se ha podido quitar el mapeo del elemento de Bioscore {id}</source>
+        <target>{id} Bioscore öğesinin eşleştirmesi kaldırılamadı</target>
+      </trans-unit>
+      <trans-unit id="P4HTNZ2" resname="Ignorar este elemento">
+        <source>Ignorar este elemento</source>
+        <target>Bu öğeyi yok say</target>
+      </trans-unit>
+      <trans-unit id="adi9uF1" resname="Elementos pendientes de mapear: {count}">
+        <source>Elementos pendientes de mapear: {count}</source>
+        <target>Eşleştirme bekleyen öğeler: {count}</target>
+      </trans-unit>
+      <trans-unit id="ZLUGEdq" resname="Se encolará la sincronización de todos los maestros de Bioscore. ¿Desea continuar?">
+        <source>Se encolará la sincronización de todos los maestros de Bioscore. ¿Desea continuar?</source>
+        <target>Tüm Bioscore ana verilerinin senkronizasyonu kuyruğa alınacak. Devam etmek istiyor musunuz?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,0 +1,7 @@
+{% props path, color = 'outlinePrimary' %}
+
+<twig:Link :path="path" :color="color" :attributes="attributes">
+    <twig:Icon name="solar:refresh-line-duotone" size="lg" class="me-2" />
+
+    {% trans %}Sincronizar ahora{% endtrans %}
+</twig:Link>

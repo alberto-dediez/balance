@@ -8,6 +8,7 @@ use App\Balance\Application\CreditPurchase\Alerts\CheckCreditAlertsRequest;
 use App\Balance\Application\LedgerEntry\Check\CheckLedgerRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderallocatedContributionsRequest;
+use App\Bioscore\Application\BioscoreCatalogItem\Sync\SyncBioscoreCatalogsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
@@ -54,6 +55,11 @@ class CommandSchedule
                 id: 'balance:check-credit-alerts',
                 command: new CheckCreditAlertsRequest(now: new \DateTimeImmutable('NOW')),
                 time: '04:30',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'bioscore:sync-catalogs',
+                command: new SyncBioscoreCatalogsRequest(now: new \DateTimeImmutable('NOW')),
+                time: '06:00',
             ),
         ];
     }

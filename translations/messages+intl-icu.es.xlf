@@ -7633,6 +7633,146 @@
         <source>Fugas de equipos de refrigeración</source>
         <target>Fugas de equipos de refrigeración</target>
       </trans-unit>
+      <trans-unit id="OrRPJll" resname="Equivalencias de Bioscore actualizadas con éxito">
+        <source>Equivalencias de Bioscore actualizadas con éxito</source>
+        <target>Equivalencias de Bioscore actualizadas con éxito</target>
+      </trans-unit>
+      <trans-unit id="5sh3KtR" resname="Sincronización de maestros de Bioscore encolada">
+        <source>Sincronización de maestros de Bioscore encolada</source>
+        <target>Sincronización de maestros de Bioscore encolada</target>
+      </trans-unit>
+      <trans-unit id="rRCCGoD" resname="Sincronizar ahora">
+        <source>Sincronizar ahora</source>
+        <target>Sincronizar ahora</target>
+      </trans-unit>
+      <trans-unit id="1qGE4vi" resname="Disponibilidad">
+        <source>Disponibilidad</source>
+        <target>Disponibilidad</target>
+      </trans-unit>
+      <trans-unit id="dtlqU68" resname="Retirados">
+        <source>Retirados</source>
+        <target>Retirados</target>
+      </trans-unit>
+      <trans-unit id="tjM.ZxS" resname="Destino en la plataforma">
+        <source>Destino en la plataforma</source>
+        <target>Destino en la plataforma</target>
+      </trans-unit>
+      <trans-unit id="IqmD90N" resname="Sin mapear">
+        <source>Sin mapear</source>
+        <target>Sin mapear</target>
+      </trans-unit>
+      <trans-unit id="vIiepkb" resname="Maestros de Bioscore pendientes de mapear">
+        <source>Maestros de Bioscore pendientes de mapear</source>
+        <target>Maestros de Bioscore pendientes de mapear</target>
+      </trans-unit>
+      <trans-unit id="TdniKZ1" resname="Combustibles de instalaciones">
+        <source>Combustibles de instalaciones</source>
+        <target>Combustibles de instalaciones</target>
+      </trans-unit>
+      <trans-unit id="tABz1dW" resname="Combustibles de vehículos">
+        <source>Combustibles de vehículos</source>
+        <target>Combustibles de vehículos</target>
+      </trans-unit>
+      <trans-unit id="mf3auXq" resname="Huellas de Carbono">
+        <source>Huellas de Carbono</source>
+        <target>Huellas de Carbono</target>
+      </trans-unit>
+      <trans-unit id="9VtWAVs" resname="Se ha mapeado el elemento de Bioscore {itemId} al maestro {targetId} de forma {mode} por el usuario {user}">
+        <source>Se ha mapeado el elemento de Bioscore {itemId} al maestro {targetId} de forma {mode} por el usuario {user}</source>
+        <target>Se ha mapeado el elemento de Bioscore {itemId} al maestro {targetId} de forma {mode} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="gTvBeHn" resname="automática">
+        <source>automática</source>
+        <target>automática</target>
+      </trans-unit>
+      <trans-unit id="ikTP6Vn" resname="manual">
+        <source>manual</source>
+        <target>manual</target>
+      </trans-unit>
+      <trans-unit id="HPFE4ql" resname="Se ha registrado el elemento de Bioscore &quot;{name}&quot; (#{bioscoreId}) del catálogo {catalog}">
+        <source>Se ha registrado el elemento de Bioscore "{name}" (#{bioscoreId}) del catálogo {catalog}</source>
+        <target>Se ha registrado el elemento de Bioscore "{name}" (#{bioscoreId}) del catálogo {catalog}</target>
+      </trans-unit>
+      <trans-unit id="43lsAio" resname="Se ha desmapeado el elemento de Bioscore {itemId} del maestro {targetId} por el usuario {user}">
+        <source>Se ha desmapeado el elemento de Bioscore {itemId} del maestro {targetId} por el usuario {user}</source>
+        <target>Se ha desmapeado el elemento de Bioscore {itemId} del maestro {targetId} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="1j3TmLL" resname="Se ha marcado como ignorado el elemento de Bioscore {itemId} por el usuario {user}">
+        <source>Se ha marcado como ignorado el elemento de Bioscore {itemId} por el usuario {user}</source>
+        <target>Se ha marcado como ignorado el elemento de Bioscore {itemId} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="QEl2Zap" resname="La sincronización de maestros de Bioscore ha dejado {pending} elemento(s) nuevo(s) sin mapear y {invalidated} mapeo(s) invalidado(s).">
+        <source>La sincronización de maestros de Bioscore ha dejado {pending} elemento(s) nuevo(s) sin mapear y {invalidated} mapeo(s) invalidado(s).</source>
+        <target>La sincronización de maestros de Bioscore ha dejado {pending} elemento(s) nuevo(s) sin mapear y {invalidated} mapeo(s) invalidado(s).</target>
+      </trans-unit>
+      <trans-unit id="CKelmuy" resname="Mapeos invalidados">
+        <source>Mapeos invalidados</source>
+        <target>Mapeos invalidados</target>
+      </trans-unit>
+      <trans-unit id="P0afhS5" resname="No se pudieron descargar">
+        <source>No se pudieron descargar</source>
+        <target>No se pudieron descargar</target>
+      </trans-unit>
+      <trans-unit id="MwSFOi3" resname="pendientes">
+        <source>pendientes</source>
+        <target>pendientes</target>
+      </trans-unit>
+      <trans-unit id="qWR3Wcd" resname="No hay elementos en este catálogo. Lanza una sincronización.">
+        <source>No hay elementos en este catálogo. Lanza una sincronización.</source>
+        <target>No hay elementos en este catálogo. Lanza una sincronización.</target>
+      </trans-unit>
+      <trans-unit id="hEay.2I" resname="Elemento de Bioscore">
+        <source>Elemento de Bioscore</source>
+        <target>Elemento de Bioscore</target>
+      </trans-unit>
+      <trans-unit id="uT9s3st" resname="Unidad en Bioscore">
+        <source>Unidad en Bioscore</source>
+        <target>Unidad en Bioscore</target>
+      </trans-unit>
+      <trans-unit id="2IP5Axb" resname="Última vez visto">
+        <source>Última vez visto</source>
+        <target>Última vez visto</target>
+      </trans-unit>
+      <trans-unit id="aWUgLEq" resname="Retirado">
+        <source>Retirado</source>
+        <target>Retirado</target>
+      </trans-unit>
+      <trans-unit id="t9pKBiu" resname="Equivalencia de Bioscore actualizada con éxito">
+        <source>Equivalencia de Bioscore actualizada con éxito</source>
+        <target>Equivalencia de Bioscore actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="3Bv_Ltr" resname="Se ha ignorado el elemento de Bioscore {id}">
+        <source>Se ha ignorado el elemento de Bioscore {id}</source>
+        <target>Se ha ignorado el elemento de Bioscore {id}</target>
+      </trans-unit>
+      <trans-unit id="HWuTKl1" resname="No se ha podido ignorar el elemento de Bioscore {id}">
+        <source>No se ha podido ignorar el elemento de Bioscore {id}</source>
+        <target>No se ha podido ignorar el elemento de Bioscore {id}</target>
+      </trans-unit>
+      <trans-unit id="ZYKBuHv" resname="Quitar mapeo">
+        <source>Quitar mapeo</source>
+        <target>Quitar mapeo</target>
+      </trans-unit>
+      <trans-unit id="dIe3i8x" resname="Se ha quitado el mapeo del elemento de Bioscore {id}">
+        <source>Se ha quitado el mapeo del elemento de Bioscore {id}</source>
+        <target>Se ha quitado el mapeo del elemento de Bioscore {id}</target>
+      </trans-unit>
+      <trans-unit id="ZGDa5pf" resname="No se ha podido quitar el mapeo del elemento de Bioscore {id}">
+        <source>No se ha podido quitar el mapeo del elemento de Bioscore {id}</source>
+        <target>No se ha podido quitar el mapeo del elemento de Bioscore {id}</target>
+      </trans-unit>
+      <trans-unit id="P4HTNZ2" resname="Ignorar este elemento">
+        <source>Ignorar este elemento</source>
+        <target>Ignorar este elemento</target>
+      </trans-unit>
+      <trans-unit id="adi9uF1" resname="Elementos pendientes de mapear: {count}">
+        <source>Elementos pendientes de mapear: {count}</source>
+        <target>Elementos pendientes de mapear: {count}</target>
+      </trans-unit>
+      <trans-unit id="ZLUGEdq" resname="Se encolará la sincronización de todos los maestros de Bioscore. ¿Desea continuar?">
+        <source>Se encolará la sincronización de todos los maestros de Bioscore. ¿Desea continuar?</source>
+        <target>Se encolará la sincronización de todos los maestros de Bioscore. ¿Desea continuar?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

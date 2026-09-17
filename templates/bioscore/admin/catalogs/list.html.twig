@@ -1,0 +1,73 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = ('Bioscore' | trans) ~ ' > ' ~ (catalog | trans({}, 'bioscoreCatalog')) %}
+
+{% block table %}
+    {% if pendingCount > 0 %}
+        <twig:Alert:Alert type="warning">
+            {{ 'Elementos pendientes de mapear: {count}' | trans({'{count}': pendingCount}) }}
+        </twig:Alert:Alert>
+    {% endif %}
+
+    {% if items is empty %}
+        <p class="mb-0">{% trans %}No hay elementos en este catálogo. Lanza una sincronización.{% endtrans %}</p>
+    {% else %}
+        {% set columns = [
+            {
+                'label': 'Elemento de Bioscore' | trans,
+                'sortable': true,
+                'sortableBy': 'name'
+            }, {
+                'label': 'Unidad en Bioscore' | trans
+            }, {
+                'label': 'Estado' | trans,
+                'sortable': true,
+                'sortableBy': 'status'
+            }, {
+                'label': 'Destino en la plataforma' | trans
+            }, {
+                'label': 'Última vez visto' | trans,
+                'sortable': true,
+                'sortableBy': 'lastSeenAt'
+            }, {
+                'label': ''
+            }
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="items" :bulkForm="bulkForm">
+            <td>
+                {{ element.name }} <span class="text-muted">(#{{ element.bioscoreId }})</span>
+            </td>
+            <td>{{ element.unit is not empty ? element.unit : '---' }}</td>
+            <td>
+                <span class="badge {{ element.status.style }}">{{ element.status.value | trans({}, 'bioscoreMappingStatus') }}</span>
+                {% if element.withdrawn %}
+                    <span class="badge bg-dark">{% trans %}Retirado{% endtrans %}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if element.targetId is not null and targetsById[element.targetId] is defined %}
+                    {% set target = targetsById[element.targetId] %}
+                    {{ target.name }}{% if target.vehicle is not null %} - {{ target.vehicle.value | trans({}, 'roadTransportVehicleType') }}{% endif %}
+                {% else %}
+                    ---
+                {% endif %}
+            </td>
+            <td>{{ element.lastSeenAt | date('d/m/Y') }}</td>
+            <td>
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('admin_bioscore_catalog_items_edit', {'itemId': element.id}) }}" />
+                {% endif %}
+            </td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Sync
+        path="{{ path('admin_bioscore_catalogs_sync', {'catalog': catalog, '_token': csrf_token('bioscore_sync')}) }}"
+        data-controller="confirm"
+        data-confirm-text-param="{{ 'Se encolará la sincronización de todos los maestros de Bioscore. ¿Desea continuar?' | trans }}"
+        data-action="confirm#link:prevent"
+    />
+{% endblock list_actions %}

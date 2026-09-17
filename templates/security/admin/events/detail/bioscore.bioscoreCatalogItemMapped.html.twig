@@ -1,0 +1,6 @@
+{% trans with {
+    '{itemId}': event.itemId,
+    '{targetId}': event.targetId,
+    '{mode}': event.automatic ? 'automática' | trans : 'manual' | trans,
+    '{user}': element.userId | user_name
+} %}Se ha mapeado el elemento de Bioscore {itemId} al maestro {targetId} de forma {mode} por el usuario {user}{% endtrans %}

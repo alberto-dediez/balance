@@ -1,0 +1,42 @@
+<p>
+    {% trans with {'{pending}': newPendingCount, '{invalidated}': invalidatedCount} -%}
+        La sincronización de maestros de Bioscore ha dejado {pending} elemento(s) nuevo(s) sin mapear y {invalidated} mapeo(s) invalidado(s).
+    {%- endtrans %}
+</p>
+
+{% for catalog, route in routes %}
+    {% set pendingEntries = newPending | filter(entry => entry.catalog == catalog) %}
+
+    {% if pendingEntries is not empty %}
+        <p><a href="{{ path(route) }}">{{ catalog | trans({}, 'bioscoreCatalog') }}</a></p>
+        <ul>
+            {% for entry in pendingEntries %}
+                <li>{{ entry.name }} (#{{ entry.bioscoreId }})</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endfor %}
+
+{% if invalidated is not empty %}
+    <p>{% trans %}Mapeos invalidados{% endtrans %}:</p>
+
+    {% for catalog, route in routes %}
+        {% set invalidatedEntries = invalidated | filter(entry => entry.catalog == catalog) %}
+
+        {% if invalidatedEntries is not empty %}
+            <p><a href="{{ path(route) }}">{{ catalog | trans({}, 'bioscoreCatalog') }}</a></p>
+            <ul>
+                {% for entry in invalidatedEntries %}
+                    <li>{{ entry.name }} (#{{ entry.bioscoreId }})</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if failedCatalogs is not empty %}
+    <p>
+        {% trans %}No se pudieron descargar{% endtrans %}:
+        {{ failedCatalogs | map(c => c | trans({}, 'bioscoreCatalog')) | join(', ') }}
+    </p>
+{% endif %}

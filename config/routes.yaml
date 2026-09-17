@@ -171,6 +171,17 @@ payments-webhook:
         namespace: App\Payments\Infrastructure\UI\Web\Public
     type: attribute
 
+bioscore-web:
+    resource:
+        path: ../src/Bioscore/Infrastructure/UI/Web/
+        namespace: App\Bioscore\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 changelog-web:
     resource:
         path: ../src/Changelog/Infrastructure/UI/Web/

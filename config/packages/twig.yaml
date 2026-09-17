@@ -25,6 +25,7 @@ twig:
         'templates/payments': 'payments'
         'templates/themes': 'themes'
         'templates/changelog': 'changelog'
+        'templates/bioscore': 'bioscore'
         '%kernel.project_dir%/assets': assets
 
 when@test:
