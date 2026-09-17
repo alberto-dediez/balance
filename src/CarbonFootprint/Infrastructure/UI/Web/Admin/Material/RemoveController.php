@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\Material\Remove\RemoveMaterialService;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/materials/remove/{materialId}', name: 'admin_materials_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetMaterialFromIdTrait;

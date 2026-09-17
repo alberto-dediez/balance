@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\Mobility\Remove\RemoveMobilityService;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/mobilities/remove/{mobilityId}', name: 'admin_mobilities_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetMobilityFromIdTrait;

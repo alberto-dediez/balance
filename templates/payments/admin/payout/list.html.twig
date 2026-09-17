@@ -64,7 +64,7 @@
                 <twig:List:Action:Pay path="{{ path('admin_payouts_pay', {'payoutId': element.id}) }}" />
             {% endif %}
             {% if element.isCancellable %}
-                <twig:List:Action:Delete path="{{ path('admin_payouts_cancel', {'payoutId': element.id, _token: csrf_token('payout_cancel_' ~ element.id)}) }}" />
+                <twig:List:Action:Delete path="{{ path('admin_payouts_cancel', {'payoutId': element.id}) }}" />
             {% endif %}
         </td>
     </twig:List:Table>

@@ -6,7 +6,7 @@ Feature:
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given provider "Proveedor A" with id "333" of account "666" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/providers/remove/333"
+        When I go to "/es/providers/remove/333" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado el proveedor Proveedor A"
@@ -15,5 +15,5 @@ Feature:
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given provider "Proveedor A" with id "333" exists
         When I am logged as "user1@dediez.software"
-        When I go to "/es/providers/remove/333"
+        When I go to "/es/providers/remove/333" with csrf token "remove"
         Then the response status should be 403

@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\GdOFactor\Remove\RemoveGdOFactorService;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/gdo-factors/remove/{gdOFactorId}', name: 'admin_gdo_factors_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetGdOFactorFromIdTrait;

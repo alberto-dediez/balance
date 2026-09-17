@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\RefrigerantGas\Remove\RemoveRefrigerantGasSe
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/refrigerant-gases/remove/{refrigerantGasId}', name: 'admin_refrigerant_gases_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetRefrigerantGasFromIdTrait;

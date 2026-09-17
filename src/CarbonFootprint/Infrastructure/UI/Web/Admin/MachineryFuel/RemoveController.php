@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\MachineryFuel\Remove\RemoveMachineryFuelServ
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/machinery-fuels/remove/{machineryFuelId}', name: 'admin_machinery_fuels_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetMachineryFuelFromIdTrait;

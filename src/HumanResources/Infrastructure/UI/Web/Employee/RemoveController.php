@@ -9,12 +9,14 @@ use App\HumanResources\Application\Employee\Remove\RemoveEmployeeService;
 use App\HumanResources\Domain\Model\Employee\EmployeeRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/employees/remove/{employeeId}', name: 'employees_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetEmployeeFromIdTrait;

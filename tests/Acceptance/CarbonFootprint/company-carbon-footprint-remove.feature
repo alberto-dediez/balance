@@ -7,7 +7,7 @@ Feature:
         Given company "Hotelera" with id "C1" of account "666" exists
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/company-carbon-footprints/999/remove"
+        When I go to "/es/company-carbon-footprints/999/remove" with csrf token "remove"
         Then I follow redirect
         Then the response status should be 200
         Then I see a table with 2 rows
@@ -22,7 +22,7 @@ Feature:
         Given company "Hotelera" with id "C1" of account "666" exists
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/companies/remove/C1"
+        When I go to "/es/admin/companies/remove/C1" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado la empresa"

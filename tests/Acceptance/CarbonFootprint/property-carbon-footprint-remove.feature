@@ -7,7 +7,7 @@ Feature:
         Given property "Hotel" with id "1111" of account "666" exists
         Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/property-carbon-footprints/999/remove"
+        When I go to "/es/property-carbon-footprints/999/remove" with csrf token "remove"
         Then I follow redirect
         Then the response status should be 200
         Then I see a table with 2 rows
@@ -22,7 +22,7 @@ Feature:
         Given property "Hotel" with id "1111" of account "666" exists
         Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/properties/remove/1111"
+        When I go to "/es/admin/properties/remove/1111" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado la propiedad"

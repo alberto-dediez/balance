@@ -11,12 +11,14 @@ use App\Property\Infrastructure\UI\Web\Admin\Property\GetPropertyFromIdTrait;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/properties/remove/{propertyId}', name: 'properties_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetPropertyFromIdTrait;

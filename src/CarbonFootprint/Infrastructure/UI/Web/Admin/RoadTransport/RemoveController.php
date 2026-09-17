@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\RoadTransport\Remove\RemoveRoadTransportServ
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/road-transports/remove/{roadTransportId}', name: 'admin_road_transports_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetRoadTransportFromIdTrait;

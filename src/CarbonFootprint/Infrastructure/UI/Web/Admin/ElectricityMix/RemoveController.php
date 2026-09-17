@@ -10,12 +10,14 @@ use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/electricity-mixes/remove/{electricityMixId}', name: 'admin_electricity_mixes_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetElectricityMixFromIdTrait;

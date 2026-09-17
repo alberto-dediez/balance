@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\EmissionFactorGroup\Remove\RemoveEmissionFac
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/emission-factor-groups/remove/{emissionFactorGroupId}', name: 'admin_emission_factor_groups_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetEmissionFactorGroupFromIdTrait;

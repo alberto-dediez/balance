@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\Waste\Remove\RemoveWasteService;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/wastes/remove/{wasteId}', name: 'admin_wastes_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetWasteFromIdTrait;

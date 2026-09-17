@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\MerchandisingItem\Remove\RemoveMerchandising
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/merchandising-items/remove/{merchandisingItemId}', name: 'admin_merchandising_items_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetMerchandisingItemFromIdTrait;

@@ -6,7 +6,7 @@ Feature:
         Given country "España" with iso "ES" and id "C-ES" exists
         Given electricity mix for country "C-ES" with id "333" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/electricity-mixes/remove/333"
+        When I go to "/es/admin/electricity-mixes/remove/333" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado el mix eléctrico España"
@@ -17,5 +17,5 @@ Feature:
         Given country "España" with iso "ES" and id "C-ES" exists
         Given electricity mix for country "C-ES" with id "333" exists
         When I am logged as "user1@dediez.software"
-        When I go to "/es/admin/electricity-mixes/remove/333"
+        When I go to "/es/admin/electricity-mixes/remove/333" with csrf token "remove"
         Then the response status should be 403

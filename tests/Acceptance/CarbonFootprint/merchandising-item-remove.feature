@@ -5,7 +5,7 @@ Feature:
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         Given merchandising item "Item 1" with id "333" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/merchandising-items/remove/333"
+        When I go to "/es/admin/merchandising-items/remove/333" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado el artículo de merchandising Item 1"
@@ -15,5 +15,5 @@ Feature:
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given merchandising item "Item 1" with id "333" exists
         When I am logged as "user1@dediez.software"
-        When I go to "/es/admin/merchandising-items/remove/333"
+        When I go to "/es/admin/merchandising-items/remove/333" with csrf token "remove"
         Then the response status should be 403

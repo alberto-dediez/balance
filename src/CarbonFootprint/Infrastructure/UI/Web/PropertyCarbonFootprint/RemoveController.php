@@ -9,12 +9,14 @@ use App\CarbonFootprint\Application\PropertyCarbonFootprint\Remove\RemovePropert
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/property-carbon-footprints/{propertyCarbonFootprintId}/remove', name: 'property_carbon_footprints_remove')]
+#[CsrfProtected('remove')]
 class RemoveController extends AbstractController
 {
     use GetPropertyCarbonFootprintFromIdTrait;
