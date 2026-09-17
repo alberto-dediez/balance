@@ -7,7 +7,7 @@
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('notifications') }}" />
 
-    <twig:TopAction path="{{ path('notification_remove', {'id': notification.id}) }}"
+    <twig:TopAction path="{{ path('notification_remove', {'id': notification.id, '_token': csrf_token('remove')}) }}"
         class="text-danger"
         data-controller="confirm"
         data-confirm-text-param="{{ '¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer' | trans }}"

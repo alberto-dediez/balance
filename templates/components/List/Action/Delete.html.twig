@@ -1,6 +1,8 @@
 {% props path %}
 
-<twig:List:Action :path="path"
+{% set separator = '?' in path ? '&' : '?' %}
+
+<twig:List:Action path="{{ path ~ separator ~ '_token=' ~ csrf_token('remove') | url_encode }}"
     title="{{ 'Eliminar' | trans }}"
     class="text-danger"
     data-controller="confirm"

@@ -10,6 +10,7 @@ use App\Security\Application\User\Remove\RemoveUserService;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Security\Infrastructure\UI\Web\User\GetUserFromIdTrait;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,6 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[Route('/admin/users/remove/{userId}', name: 'admin_users_remove')]
+#[CsrfProtected('remove')]
 #[IsGranted('ROLE_ADMIN')]
 class RemoveController extends AbstractController
 {
