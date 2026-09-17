@@ -2,6 +2,11 @@
 
 {% set wizard_selected = 2 %}
 
+{% block top_actions %}
+    {{ parent() }}
+    <twig:TopAction:BioscoreConsumptions path="{{ path('company_carbon_footprints_bioscore_load', {companyCarbonFootprintId: companyCarbonFootprintId, scope: 'scope_2', _token: csrf_token('bioscore_load_' ~ companyCarbonFootprint.id)}) }}" />
+{% endblock %}
+
 {% block wizard_panels %}
     <form method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('scope_2_' ~ companyCarbonFootprint.id) }}">

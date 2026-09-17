@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Bioscore\Infrastructure\Gateway;
 
 use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalog;
 use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreUnavailableException;
+use App\Bioscore\Infrastructure\Gateway\BioscoreApiAuthenticator;
 use App\Bioscore\Infrastructure\Gateway\HttpBioscoreCatalogGateway;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -114,11 +115,12 @@ class HttpBioscoreCatalogGatewayTest extends TestCase
     /** @param list<MockResponse> $responses */
     private function createSUT(array $responses): HttpBioscoreCatalogGateway
     {
+        $httpClient = $this->httpClient($responses);
+
         return new HttpBioscoreCatalogGateway(
-            httpClient: $this->httpClient($responses),
+            httpClient: $httpClient,
             apiBaseUrl: 'https://bioscore.test/api',
-            username: 'events',
-            password: 'secret',
+            authenticator: new BioscoreApiAuthenticator($httpClient, 'https://bioscore.test/api', 'events', 'secret'),
             logger: new NullLogger(),
         );
     }

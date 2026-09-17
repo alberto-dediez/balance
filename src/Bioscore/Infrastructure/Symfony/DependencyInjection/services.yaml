@@ -14,11 +14,19 @@ when@dev:
             autowire: true
             autoconfigure: true
 
-        App\Bioscore\Infrastructure\Gateway\HttpBioscoreCatalogGateway:
+        App\Bioscore\Infrastructure\Gateway\BioscoreApiAuthenticator:
             arguments:
                 $apiBaseUrl: '%sso_api_url%'
                 $username: '%env(BIOSCORE_API_USERNAME)%'
                 $password: '%env(BIOSCORE_API_PASSWORD)%'
+
+        App\Bioscore\Infrastructure\Gateway\HttpBioscoreCatalogGateway:
+            arguments:
+                $apiBaseUrl: '%sso_api_url%'
+
+        App\Bioscore\Infrastructure\Gateway\HttpBioscoreConsumptionGateway:
+            arguments:
+                $apiBaseUrl: '%sso_api_url%'
 
 when@prod:
     services:
@@ -26,8 +34,16 @@ when@prod:
             autowire: true
             autoconfigure: true
 
-        App\Bioscore\Infrastructure\Gateway\HttpBioscoreCatalogGateway:
+        App\Bioscore\Infrastructure\Gateway\BioscoreApiAuthenticator:
             arguments:
                 $apiBaseUrl: '%sso_api_url%'
                 $username: '%env(BIOSCORE_API_USERNAME)%'
                 $password: '%env(BIOSCORE_API_PASSWORD)%'
+
+        App\Bioscore\Infrastructure\Gateway\HttpBioscoreCatalogGateway:
+            arguments:
+                $apiBaseUrl: '%sso_api_url%'
+
+        App\Bioscore\Infrastructure\Gateway\HttpBioscoreConsumptionGateway:
+            arguments:
+                $apiBaseUrl: '%sso_api_url%'

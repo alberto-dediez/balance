@@ -1,0 +1,12 @@
+{% props path %}
+
+<twig:TopAction
+    :path="path"
+    data-controller="confirm"
+    data-confirm-text-param="{{ 'Se sustituirán las actividades de este alcance por los consumos registrados en Bioscore y se perderán las filas introducidas a mano. ¿Desea continuar?' | trans }}"
+    data-action="confirm#link:prevent"
+>
+    <twig:Icon name="solar:cloud-download-line-duotone" size="lg" class="me-2" />
+
+    {{ 'Cargar consumos de Bioscore' | trans }}
+</twig:TopAction>

@@ -16,19 +16,16 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[When(env: 'prod')]
 final class HttpBioscoreCatalogGateway implements BioscoreCatalogGateway
 {
-    private ?string $token = null;
-
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $apiBaseUrl,
-        private readonly string $username,
-        private readonly string $password,
+        private readonly BioscoreApiAuthenticator $authenticator,
         private readonly LoggerInterface $logger,
     ) {}
 
     public function fetch(BioscoreCatalog $catalog): array
     {
-        $rows = $this->request($catalog, $this->token());
+        $rows = $this->request($catalog, $this->authenticator->token());
 
         $entries = [];
 
@@ -58,9 +55,9 @@ final class HttpBioscoreCatalogGateway implements BioscoreCatalogGateway
             $statusCode = $response->getStatusCode();
 
             if (401 === $statusCode && $retry) {
-                $this->token = null;
+                $this->authenticator->invalidate();
 
-                return $this->request($catalog, $this->token(), retry: false);
+                return $this->request($catalog, $this->authenticator->token(), retry: false);
             }
 
             if (200 !== $statusCode) {
@@ -113,34 +110,5 @@ final class HttpBioscoreCatalogGateway implements BioscoreCatalogGateway
             name: $name,
             unit: is_string($unit) ? $unit : '',
         );
-    }
-
-    private function token(): string
-    {
-        if (null !== $this->token) {
-            return $this->token;
-        }
-
-        try {
-            $response = $this->httpClient->request('POST', rtrim($this->apiBaseUrl, '/') . '/login', [
-                'json' => ['username' => $this->username, 'password' => $this->password],
-            ]);
-
-            if (200 !== $response->getStatusCode()) {
-                throw BioscoreUnavailableException::authenticationFailed();
-            }
-
-            $token = $response->toArray()['token'] ?? null;
-
-            if (!is_string($token) || '' === $token) {
-                throw BioscoreUnavailableException::authenticationFailed();
-            }
-
-            return $this->token = $token;
-        } catch (BioscoreUnavailableException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            throw BioscoreUnavailableException::authenticationFailed($e);
-        }
     }
 }

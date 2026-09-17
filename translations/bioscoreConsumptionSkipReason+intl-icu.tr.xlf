@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="WvvmwiO" resname="unmapped">
+        <source>unmapped</source>
+        <target>Eşleştirilmemiş Bioscore öğesi</target>
+      </trans-unit>
+      <trans-unit id="iZ70Bem" resname="target_missing">
+        <source>target_missing</source>
+        <target>Eşleştirilen ana kayıt artık yok</target>
+      </trans-unit>
+      <trans-unit id="ehMyyRH" resname="incompatible_unit">
+        <source>incompatible_unit</source>
+        <target>Ana kayıtla uyumsuz birim</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

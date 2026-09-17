@@ -7773,6 +7773,42 @@
         <source>Se encolará la sincronización de todos los maestros de Bioscore. ¿Desea continuar?</source>
         <target>Tüm Bioscore ana verilerinin senkronizasyonu kuyruğa alınacak. Devam etmek istiyor musunuz?</target>
       </trans-unit>
+      <trans-unit id="Xylnrss" resname="Ninguna propiedad de esta huella está vinculada a Bioscore">
+        <source>Ninguna propiedad de esta huella está vinculada a Bioscore</source>
+        <target>Bu ayak izindeki hiçbir tesis Bioscore ile bağlantılı değil</target>
+      </trans-unit>
+      <trans-unit id="FQIi4zj" resname="Consumos de Bioscore cargados: {activities} actividades en {properties} propiedad(es)">
+        <source>Consumos de Bioscore cargados: {activities} actividades en {properties} propiedad(es)</source>
+        <target>Bioscore tüketimleri yüklendi: {properties} tesiste {activities} faaliyet</target>
+      </trans-unit>
+      <trans-unit id="WRlg6n." resname="Se han vuelto a incluir las fuentes: {sources}">
+        <source>Se han vuelto a incluir las fuentes: {sources}</source>
+        <target>Şu kaynaklar yeniden dahil edildi: {sources}</target>
+      </trans-unit>
+      <trans-unit id="PbgPzwA" resname="Consumos de Bioscore omitidos ({count}): {items}">
+        <source>Consumos de Bioscore omitidos ({count}): {items}</source>
+        <target>Atlanan Bioscore tüketimleri ({count}): {items}</target>
+      </trans-unit>
+      <trans-unit id="OQKHJnz" resname="No se ha podido conectar con Bioscore">
+        <source>No se ha podido conectar con Bioscore</source>
+        <target>Bioscore ile bağlantı kurulamadı</target>
+      </trans-unit>
+      <trans-unit id="XXI4ry_" resname="No se han podido cargar los consumos: {error}">
+        <source>No se han podido cargar los consumos: {error}</source>
+        <target>Tüketimler yüklenemedi: {error}</target>
+      </trans-unit>
+      <trans-unit id="psCXYfu" resname="La empresa no tiene propiedades">
+        <source>La empresa no tiene propiedades</source>
+        <target>Şirketin tesisi yok</target>
+      </trans-unit>
+      <trans-unit id="xwRKTYp" resname="Cargar consumos de Bioscore">
+        <source>Cargar consumos de Bioscore</source>
+        <target>Bioscore tüketimlerini yükle</target>
+      </trans-unit>
+      <trans-unit id="qDphfIO" resname="Se sustituirán las actividades de este alcance por los consumos registrados en Bioscore y se perderán las filas introducidas a mano. ¿Desea continuar?">
+        <source>Se sustituirán las actividades de este alcance por los consumos registrados en Bioscore y se perderán las filas introducidas a mano. ¿Desea continuar?</source>
+        <target>Bu kapsamdaki faaliyetler Bioscore'da kayıtlı tüketimlerle değiştirilecek ve elle girilen satırlar kaybolacak. Devam etmek istiyor musunuz?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

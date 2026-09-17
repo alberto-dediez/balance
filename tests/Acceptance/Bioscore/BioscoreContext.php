@@ -10,7 +10,10 @@ use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItem;
 use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemId;
 use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemRepository;
 use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreMappingStatus;
+use App\Bioscore\Domain\Model\BioscoreConsumption\BioscoreConsumption;
 use App\Bioscore\Infrastructure\Gateway\InMemoryBioscoreCatalogGateway;
+use App\Bioscore\Infrastructure\Gateway\InMemoryBioscoreConsumptionGateway;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemMother;
 use Behat\Behat\Context\Context;
@@ -33,11 +36,17 @@ final class BioscoreContext implements Context
     public function after(): void
     {
         $this->getGateway()->reset();
+        $this->getConsumptionGateway()->reset();
     }
 
     private function getGateway(): InMemoryBioscoreCatalogGateway
     {
         return $this->client->getContainer()->get(InMemoryBioscoreCatalogGateway::class);
+    }
+
+    private function getConsumptionGateway(): InMemoryBioscoreConsumptionGateway
+    {
+        return $this->client->getContainer()->get(InMemoryBioscoreConsumptionGateway::class);
     }
 
     private function getRepository(): BioscoreCatalogItemRepository
@@ -134,6 +143,43 @@ final class BioscoreContext implements Context
         Assert::assertNotNull(
             $this->getRepository()->findByCatalogAndBioscoreId(BioscoreCatalog::from($catalog), (int) $bioscoreId),
         );
+    }
+
+    #[Given('Bioscore returns for property :propertyId in :year a :group consumption of :consumption :unit of item :bioscoreId named :name')]
+    public function bioscoreReturnsForPropertyAConsumption(string $propertyId, string $year, string $group, string $consumption, string $unit, string $bioscoreId, string $name): void
+    {
+        [$list, $usableForFacilities, $usableForTransportation] = match ($group) {
+            'facility_fuel' => ['combustibles', true, false],
+            'transport_fuel' => ['combustibles', false, true],
+            'dual_fuel' => ['combustibles', true, true],
+            'refrigerant_gas' => ['refrigerant_gases', null, null],
+            'electricity' => ['electricity', null, null],
+            default => throw new \InvalidArgumentException(sprintf('Unknown Bioscore consumption group "%s"', $group)),
+        };
+
+        $this->getConsumptionGateway()->add(
+            new PropertyId($propertyId),
+            $list,
+            new BioscoreConsumption((int) $bioscoreId, $name, $unit, $usableForFacilities, $usableForTransportation, (float) $consumption, 0.0),
+            year: (int) $year,
+        );
+    }
+
+    #[Given('Bioscore consumptions are unavailable')]
+    public function bioscoreConsumptionsAreUnavailable(): void
+    {
+        $this->getConsumptionGateway()->fail();
+    }
+
+    #[Then('Bioscore was asked for consumptions of account :accountId and property :propertyId in :year')]
+    public function bioscoreWasAskedForConsumptions(string $accountId, string $propertyId, string $year): void
+    {
+        $query = $this->getConsumptionGateway()->lastQuery();
+
+        Assert::assertNotNull($query, 'Bioscore was not asked for consumptions');
+        Assert::assertSame($accountId, (string) $query->accountId);
+        Assert::assertSame((int) $year, $query->year);
+        Assert::assertContains($propertyId, array_map(static fn(PropertyId $id): string => (string) $id, $query->propertyIds));
     }
 
     private function item(string $id): BioscoreCatalogItem
