@@ -13,6 +13,8 @@ use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\Security\Core\Exception\LogoutException;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -50,6 +52,17 @@ final readonly class WebContext implements Context
     public function iGoTo(string $path): void
     {
         $this->client->request('GET', $path);
+    }
+
+    #[When('I go to :path with csrf token :tokenId')]
+    #[When('I go to :path with csrf token :tokenId as :parameter')]
+    public function iGoToWithCsrfToken(string $path, string $tokenId, string $parameter = '_token'): void
+    {
+        $tokenManager = $this->client->getContainer()->get(CsrfTokenManagerInterface::class);
+        $token = $tokenManager->getToken($tokenId)->getValue();
+        $separator = str_contains($path, '?') ? '&' : '?';
+
+        $this->client->request('GET', $path . $separator . $parameter . '=' . urlencode($token), ['HTTP_SEC_FETCH_SITE' => 'same-origin']);
     }
 
     #[When('I follow redirect')]
@@ -113,6 +126,7 @@ final readonly class WebContext implements Context
         } else {
             $code = match (true) {
                 $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
+                $exception instanceof LogoutException => 403,
                 default => $exception->getCode(),
             };
         }

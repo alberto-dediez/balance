@@ -5,7 +5,7 @@ Feature:
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" exists
         When I am logged as "user1@dediez.software"
-        When I go to "/es/notifications/11111111-1111-1111-1111-111111111111/remove"
+        When I go to "/es/notifications/11111111-1111-1111-1111-111111111111/remove" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "La notificación ha sido eliminada"
@@ -15,7 +15,7 @@ Feature:
         Given user "user2@dediez.software" with role "ROLE_USER" exists
         Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" exists
         When I am logged as "user2@dediez.software"
-        When I go to "/es/notifications/11111111-1111-1111-1111-111111111111/remove"
+        When I go to "/es/notifications/11111111-1111-1111-1111-111111111111/remove" with csrf token "remove"
         Then the response status should be 403
 
     Scenario: As an admin I can remove any notification
@@ -23,7 +23,7 @@ Feature:
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/notifications/11111111-1111-1111-1111-111111111111/remove"
+        When I go to "/es/notifications/11111111-1111-1111-1111-111111111111/remove" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "La notificación ha sido eliminada"

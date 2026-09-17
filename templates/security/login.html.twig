@@ -8,12 +8,12 @@
 
         <div class="form-group mb-3">
             <label class="form-label" for="username">{% trans -%}Email{%- endtrans %}</label>
-            <input 
-                class="form-control" 
-                type="text" 
-                id="username" 
-                required="" 
-                name="_username" 
+            <input
+                class="form-control"
+                type="text"
+                id="username"
+                required=""
+                name="_username"
                 placeholder="{% trans -%}Introduce tu email{%- endtrans %}"
             >
         </div>
@@ -21,15 +21,15 @@
         <div class="form-group mb-3">
             <label class="form-label" for="password">{% trans -%}Contraseña{%- endtrans %}</label>
             <div class="input-group" data-controller="password">
-                <input 
-                    class="form-control" 
-                    type="password" 
-                    required="" 
-                    id="password" 
-                    name="_password" 
+                <input
+                    class="form-control"
+                    type="password"
+                    required=""
+                    id="password"
+                    name="_password"
                     placeholder="{% trans -%}Introduce tu contraseña{%- endtrans %}"
                 >
-                <button class="btn btn-light reveal rounded-end" 
+                <button class="btn btn-light reveal rounded-end"
                     type="button"
                     title="{% trans -%}Mostrar / ocultar contraseña{%- endtrans %}"
                     data-action="click->password#toogleVisibility"
@@ -64,7 +64,7 @@
             {% endfor %}
         {% endif %}
 
-        <input type="hidden" name="_csrf_token"
+        <input type="hidden" name="_csrf_token" data-controller="csrf-protection"
             value="{{ csrf_token('authenticate') }}"
         >
     </form>
@@ -81,4 +81,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-{% endblock %}        
+{% endblock %}

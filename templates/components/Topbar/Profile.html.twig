@@ -58,7 +58,7 @@
             {% endif %}
         </div>
         <div class="d-grid py-4 px-7 pt-8">
-            <a href="{{ path('app_logout') }}" class="btn btn-primary">
+            <a href="{{ path('app_logout', {'_csrf_token': csrf_token('logout')}) }}" class="btn btn-primary">
                 <span>{% trans -%}Cerrar sesión{%- endtrans %}</span>
             </a>
         </div>

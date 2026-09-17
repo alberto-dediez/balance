@@ -6,7 +6,7 @@ Feature:
         Given account "MyCompany" with id "mycompany" exists
         Given signature request with id "333" and account "mycompany" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/signature-requests/remove/333"
+        When I go to "/es/admin/signature-requests/remove/333" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado la solicitud de firma 333"
@@ -17,5 +17,5 @@ Feature:
         Given account "MyCompany" with id "mycompany" exists
         Given signature request with id "333" and account "mycompany" exists
         When I am logged as "user1@dediez.software"
-        When I go to "/es/admin/signature-requests/remove/333"
+        When I go to "/es/admin/signature-requests/remove/333" with csrf token "remove"
         Then the response status should be 403

@@ -5,7 +5,7 @@ Feature:
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         Given user "user1@dediez.software" with id "333" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/es/admin/users/remove/333"
+        When I go to "/es/admin/users/remove/333" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado al usuario"
@@ -15,7 +15,7 @@ Feature:
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given user "user2@dediez.software" with id "333" exists
         When I am logged as "user1@dediez.software"
-        When I go to "/es/admin/users/remove/333"
+        When I go to "/es/admin/users/remove/333" with csrf token "remove"
         Then the response status should be 403
 
     Scenario: As owner I can remove users of my account
@@ -24,7 +24,7 @@ Feature:
         Given user "user1@dediez.software" with id "333" of account "666" exists
         Given user "user2@dediez.software" with id "4444" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/users/remove/333"
+        When I go to "/es/users/remove/333" with csrf token "remove"
         When I follow redirect
         Then the response status should be 200
 
@@ -35,5 +35,12 @@ Feature:
         Given user "user1@dediez.software" with id "333" of account "666" exists
         Given user "user2@dediez.software" with id "4444" of account "44" exists
         When I am logged as "owner@dediez.software"
-        When I go to "/es/users/remove/4444"
+        When I go to "/es/users/remove/4444" with csrf token "remove"
+        Then the response status should be 403
+
+    Scenario: Without a CSRF token the removal is refused
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user "user1@dediez.software" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/users/remove/333"
         Then the response status should be 403
