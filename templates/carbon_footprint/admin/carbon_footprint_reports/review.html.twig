@@ -1,0 +1,50 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_carbon_footprint_reports') }}" />
+{% endblock %}
+
+{% set page_title = ('Informes de huella' | trans)
+    ~ ' > '
+    ~ ('Revisar' | trans)
+    ~ ' > '
+    ~ review.subjectName %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Cuenta' | trans }}">{{ report.accountId is not empty ? (report.accountId | account_name) : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Huella' | trans }}">
+                    <span class="badge bg-secondary">{{ report.subjectType.value | trans({}, 'carbonFootprintReportSubjectType') }}</span>
+                    {{ review.subjectName }}
+                </twig:View:Field>
+                <twig:View:Field label="{{ 'Año de cálculo' | trans }}">{{ review.calculationYear }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Emisiones totales (t CO₂eq)' | trans }}">{{ (review.totalEmissions.co2eq / 1000) | number_format(2, ',', '.') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Solicitado por' | trans }}">{{ report.requestedBy is not empty ? (report.requestedBy | user_name) : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Fecha de envío' | trans }}">{{ report.submittedAt is not null ? (report.submittedAt | date('d/m/Y H:i')) : '---' }}</twig:View:Field>
+            </div>
+        </div>
+    </twig:Card>
+
+    {{ form_start(form) }}
+        <twig:Card>
+            {{ form_errors(form) }}
+
+            <div class="row">
+                <div class="col-12">
+                    {% for child in form.children | filter(child => child.vars.block_prefixes[1] is defined and child.vars.block_prefixes[1] != 'submit' and child.vars.block_prefixes[1] != 'button') %}
+                        {{ form_row(child) }}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-danger" :button="form.reject" />
+                <twig:ActionBar:Button type="primary" :button="form.approve" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

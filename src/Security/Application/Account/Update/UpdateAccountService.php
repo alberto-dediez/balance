@@ -9,6 +9,7 @@ use App\Security\Application\Account\ConsultantPolicy;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -59,6 +60,8 @@ class UpdateAccountService implements CommandHandler
             $this->updateConsultantStatus($account, $request, $user);
         }
 
+        $this->updateReportPermissions($account, $request, $user);
+
         $this->repository->add($account);
 
         return new UpdateAccountResponse(
@@ -93,6 +96,19 @@ class UpdateAccountService implements CommandHandler
         $this->consultantPolicy->denyUnlessAssignable($request->consultantAccountId);
 
         $account->changeConsultant($request->consultantAccountId);
+    }
+
+    private function updateReportPermissions(Account $account, UpdateAccountRequest $request, User $user): void
+    {
+        $permissions = new AccountReportPermissions($request->reportCanEditTexts, $request->reportAutoReview);
+
+        if ($permissions->equals($account->reportPermissions())) {
+            return;
+        }
+
+        $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
+
+        $account->changeReportPermissions($permissions);
     }
 
     private function sameConsultant(?AccountId $requested, ?AccountId $current): bool

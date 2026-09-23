@@ -91,3 +91,4 @@ Feature:
         When I go to "/es/admin/accounts/666/branding"
         Then the response status should be 200
         Then I see a text "Tema visual"
+        Then I see a text "Classic"

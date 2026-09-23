@@ -54,6 +54,16 @@ class ReopenEventCarbonFootprintServiceTest extends TestCase
         $this->assertCount(1, $eventCarbonFootprint->activities()->activityIds());
     }
 
+    public function testAdminReopensACompletedEventCarbonFootprint(): void
+    {
+        $eventCarbonFootprint = $this->completedEventCarbonFootprint();
+        $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);
+
+        ($this->sut)(new ReopenEventCarbonFootprintRequest($eventCarbonFootprint->id()), UserMother::adminUser());
+
+        $this->assertSame(EventCarbonFootprintStatus::Started, $eventCarbonFootprint->status());
+    }
+
     public function testEventCarbonFootprintNotFoundThrows(): void
     {
         $this->expectException(\InvalidArgumentException::class);

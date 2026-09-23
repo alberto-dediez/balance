@@ -8,10 +8,11 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionPaid;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReport;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\Notifications\Application\Notification\Notify\SystemNotification;
 use App\Notifications\Application\Notification\Notify\SystemNotifier;
@@ -32,7 +33,7 @@ class EventCarbonFootprintReportOutdatedNotifier implements DomainEventSubscribe
         private SystemNotifier $notifier,
         private ProjectContributionRepository $projectContributionRepository,
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
-        private EventCarbonFootprintReportRepository $reportRepository,
+        private CarbonFootprintReportRepository $reportRepository,
         private UserRepository $userRepository,
     ) {
         $this->register();
@@ -62,9 +63,9 @@ class EventCarbonFootprintReportOutdatedNotifier implements DomainEventSubscribe
             return;
         }
 
-        $report = $this->reportRepository->findByEventCarbonFootprintId($eventCarbonFootprint->id());
+        $report = $this->reportRepository->findBySubject(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprint->id());
 
-        if (!$report instanceof EventCarbonFootprintReport || !$report->status()->isGenerated()) {
+        if (!$report instanceof CarbonFootprintReport || !$report->status()->isGenerated()) {
             return;
         }
 

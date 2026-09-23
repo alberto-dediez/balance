@@ -1,0 +1,57 @@
+{% props report = null, canEdit = false %}
+
+<twig:Card title="{{ 'Informe de huella de carbono' | trans }}">
+    {% if report is null or report.status.isGeneratingTexts %}
+        <twig:Alert:Alert type="info">
+            {{ 'Se están generando los textos del informe, te notificaremos cuando estén listos.' | trans }}
+        </twig:Alert:Alert>
+    {% elseif report.status.isDraft %}
+        <twig:Alert:Alert type="warning">
+            {{ 'Los textos del informe están listos para revisar.' | trans }}
+        </twig:Alert:Alert>
+
+        {% if canEdit %}
+            <a href="{{ path('carbon_footprint_reports_texts', {reportId: report.id}) }}" class="btn btn-primary">
+                <twig:Icon name="solar:document-text-line-duotone" />
+                {{ 'Revisar textos del informe' | trans }}
+            </a>
+        {% endif %}
+    {% elseif report.status.isPendingReview %}
+        <twig:Alert:Alert type="info">
+            {{ 'El informe está pendiente de revisión por el equipo de la plataforma.' | trans }}
+        </twig:Alert:Alert>
+    {% elseif report.status.isGeneratingPdf %}
+        <twig:Alert:Alert type="info">
+            {{ 'Se está generando el informe, te notificaremos cuando esté disponible.' | trans }}
+        </twig:Alert:Alert>
+    {% elseif report.status.isGenerated %}
+        <p class="text-muted">{{ 'Emitido el {date}' | trans({'{date}': report.generatedAt | date('d/m/Y H:i')}) }}</p>
+
+        <a href="{{ path('carbon_footprint_reports_download', {reportId: report.id}) }}" class="btn btn-outline-primary" target="_blank">
+            <twig:Icon name="solar:file-download-line-duotone" />
+            {{ 'Descargar informe' | trans }}
+        </a>
+    {% elseif report.status.isRejected %}
+        <twig:Alert:Alert type="danger">
+            {{ 'El informe ha sido rechazado: {comment}' | trans({'{comment}': report.reviewComment}) }}
+        </twig:Alert:Alert>
+
+        <p class="text-muted mb-0">{{ 'Revisa los datos de la huella; al completarla de nuevo se generará un informe nuevo.' | trans }}</p>
+    {% elseif report.status.isFailed %}
+        <twig:Alert:Alert type="danger">
+            {{ 'No se ha podido generar el informe de esta huella de carbono: {error}' | trans({'{error}': report.errorMessage}) }}
+        </twig:Alert:Alert>
+
+        {% if canEdit %}
+            <a href="{{ path('carbon_footprint_reports_retry', {reportId: report.id, _token: csrf_token('carbon_footprint_report')}) }}"
+               class="btn btn-outline-danger"
+               data-controller="confirm"
+               data-confirm-text-param="{{ '¿Seguro que quieres volver a generar el informe?' | trans }}"
+               data-action="confirm#link:prevent"
+            >
+                <twig:Icon name="solar:refresh-line-duotone" />
+                {{ 'Reintentar generación' | trans }}
+            </a>
+        {% endif %}
+    {% endif %}
+</twig:Card>

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Event\EventCarbonFootprint;
 
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Register\RegisterEventCarbonFootprintReportRequest;
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Register\RegisterEventCarbonFootprintReportService;
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Remove\RemoveEventCarbonFootprintReportRequest;
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Remove\RemoveEventCarbonFootprintReportService;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Register\RegisterCarbonFootprintReportRequest;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Register\RegisterCarbonFootprintReportService;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Remove\RemoveCarbonFootprintReportRequest;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Remove\RemoveCarbonFootprintReportService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintCompleted;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
@@ -20,9 +21,9 @@ class RegisterReportOnEventCarbonFootprintCompletedSubscriber implements DomainE
     use RegisterTrait;
 
     public function __construct(
-        private RegisterEventCarbonFootprintReportService $registerEventCarbonFootprintReport,
-        private RemoveEventCarbonFootprintReportService $removeEventCarbonFootprintReport,
-        private EventCarbonFootprintReportRepository $reportRepository,
+        private RegisterCarbonFootprintReportService $registerCarbonFootprintReport,
+        private RemoveCarbonFootprintReportService $removeCarbonFootprintReport,
+        private CarbonFootprintReportRepository $reportRepository,
         private LoggedUser $loggedUser,
     ) {
         $this->register();
@@ -38,17 +39,17 @@ class RegisterReportOnEventCarbonFootprintCompletedSubscriber implements DomainE
 
         $user = $this->loggedUser->__invoke();
 
-        $report = $this->reportRepository->findByEventCarbonFootprintId($event->eventCarbonFootprintId());
+        $report = $this->reportRepository->findBySubject(CarbonFootprintReportSubjectType::Event, (string) $event->eventCarbonFootprintId());
 
         if (null !== $report) {
-            if ($report->status()->isPending()) {
+            if ($report->status()->isInProgress()) {
                 return;
             }
 
-            ($this->removeEventCarbonFootprintReport)(new RemoveEventCarbonFootprintReportRequest($report->id()), $user);
+            ($this->removeCarbonFootprintReport)(new RemoveCarbonFootprintReportRequest($report->id()), $user);
         }
 
-        ($this->registerEventCarbonFootprintReport)(new RegisterEventCarbonFootprintReportRequest($event->eventCarbonFootprintId()), $user);
+        ($this->registerCarbonFootprintReport)(new RegisterCarbonFootprintReportRequest(CarbonFootprintReportSubjectType::Event, (string) $event->eventCarbonFootprintId()), $user);
     }
 
     public function isSubscribedTo(DomainEvent $event): bool

@@ -100,3 +100,13 @@ Feature:
         When I go to "/es/admin/accounts/edit/333"
         When I submit a form with "name:MyCompany|active:1|consultant:1|consultantAccountId:" and button "Guardar y salir"
         Then I am redirected to "/es/admin/accounts"
+
+    Scenario: As an admin, I can change the report permissions of an account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        When I submit a form with "name:MyCompany|active:1|reportCanEditTexts:1|reportAutoReview:0" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Cuenta actualizada"

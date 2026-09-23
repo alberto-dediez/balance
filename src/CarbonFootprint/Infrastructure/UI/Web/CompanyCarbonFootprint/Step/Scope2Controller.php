@@ -51,6 +51,12 @@ class Scope2Controller extends AbstractController
             return $this->redirectToRoute('company_carbon_footprints_scope_1', ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
         }
 
+        if ($request->isMethod('POST') && $companyCarbonFootprint->isCompleted()) {
+            $this->addFlash('warning', new TranslatableMessage('La huella está completada. Reábrela para modificarla.'));
+
+            return $this->redirectToRoute('company_carbon_footprints_results', ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
+        }
+
         if ($request->isMethod('POST')) {
             if (!$this->isCsrfTokenValid('scope_2_' . $companyCarbonFootprint->id(), $request->request->getString('_token'))) {
                 throw $this->createAccessDeniedException('Token CSRF no válido');
@@ -92,6 +98,7 @@ class Scope2Controller extends AbstractController
             [
                 'companyCarbonFootprint' => $companyCarbonFootprint,
                 'companyCarbonFootprintId' => $companyCarbonFootprintId,
+                'readOnly' => $companyCarbonFootprint->isCompleted(),
                 'blocks' => $blocks,
                 'exclusions' => StepExclusionsView::build($response->exclusions),
                 'exclusionReasons' => ExclusionReason::cases(),

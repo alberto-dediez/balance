@@ -33,3 +33,14 @@ Feature:
         Then I see a text "Esta encuesta ya se ha cerrado"
         Then I see a text "card-body text-center py-6 px-4"
         Then I do not see a text "col-xl-5"
+
+    Scenario: An account on the Classic theme keeps the default palette and has no own stylesheet
+        Given account "ClassicCorp" with id "classic-account" exists
+        Given account "classic-account" has branding with theme "classic"
+        Given event "Evento Classic" with id "ev-classic" of account "classic-account" exists
+        Given attendee survey with id "AS-CLASSIC" and token "token-classic" for event "ev-classic" of account "classic-account" exists
+        Given attendee survey "AS-CLASSIC" has venue location "IFEMA, Madrid" at "40.4680", "-3.6160"
+        When I go to "/es/carbon-footprint/attendee-survey/token-classic/intercity"
+        Then the response status should be 200
+        Then I see a text "--brand-primary:#3E7490"
+        Then I do not see a text "styles/themes/"

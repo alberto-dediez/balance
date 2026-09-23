@@ -4,23 +4,6 @@
 
 {% block wizard_panels %}
     {% if eventCarbonFootprint.status.isCompleted and results is not null %}
-        {% if report is null or report.status.isPending %}
-            <div class="alert alert-info mt-3" role="alert">
-                {{ 'Se está generando un informe sobre esta huella de carbono, te notificaremos cuando esté disponible.' | trans }}
-            </div>
-        {% elseif report.status.isFailed %}
-            <div class="alert alert-danger mt-3" role="alert">
-                {{ 'No se ha podido generar el informe de esta huella de carbono: {error}' | trans({'{error}': report.errorMessage}) }}
-
-                {% if eventCarbonFootprint | is_authorized('edit') %}
-                    <a href="{{ path('events_carbon_footprint_report_reissue', {eventId: eventId}) }}" class="btn btn-outline-danger mt-2" onclick="return confirm('{{ '¿Seguro que quieres volver a generar el informe?' | trans | e('js') }}');">
-                        <twig:Icon name="solar:refresh-line-duotone" />
-                        {{ 'Reintentar generación' | trans }}
-                    </a>
-                {% endif %}
-            </div>
-        {% endif %}
-
         <div class="row">
             <div class="col-9">
                 <twig:Card title="{{ 'Totales' | trans }}">
@@ -110,6 +93,8 @@
                 </div>
             </div>
             <div class="col-3">
+                <twig:CarbonFootprint:ReportStatus :report="report" :canEdit="eventCarbonFootprint | is_authorized('edit')" />
+
                 {% if report is not null and report.status.isGenerated and reportOutdated %}
                     <twig:Card title="{{ 'Informe de huella de carbono' | trans }}">
                         <div class="alert alert-warning" role="alert">
@@ -117,7 +102,12 @@
                         </div>
 
                         {% if eventCarbonFootprint | is_authorized('edit') %}
-                            <a href="{{ path('events_carbon_footprint_report_reissue', {eventId: eventId}) }}" class="btn btn-outline-secondary mt-2" onclick="return confirm('{{ '¿Seguro que quieres reemitir el informe?' | trans | e('js') }}');">
+                            <a href="{{ path('carbon_footprint_reports_reissue', {reportId: report.id, _token: csrf_token('carbon_footprint_report')}) }}"
+                               class="btn btn-outline-secondary mt-2"
+                               data-controller="confirm"
+                               data-confirm-text-param="{{ '¿Seguro que quieres reemitir el informe?' | trans }}"
+                               data-action="confirm#link:prevent"
+                            >
                                 <twig:Icon name="solar:refresh-line-duotone" />
                                 {{ 'Reemitir informe' | trans }}
                             </a>

@@ -1,0 +1,6 @@
+<p>{% trans with {'{account}': accountName} -%}La cuenta {account} ha enviado a revisión un informe de huella de carbono.{%- endtrans %}</p>
+<p>
+    <a href="{{ path('admin_carbon_footprint_reports_review', {reportId: report.id}) }}">
+        {% trans -%}Revisar informe{%- endtrans -%}
+    </a>
+</p>

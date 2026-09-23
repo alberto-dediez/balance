@@ -106,6 +106,11 @@ class EventCarbonFootprint implements CarbonFootprint, \Stringable
         return $this->status;
     }
 
+    public function isCompleted(): bool
+    {
+        return $this->status->isCompleted();
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;

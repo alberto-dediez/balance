@@ -1,6 +1,28 @@
 {% extends '@shared/layout/wizard.html.twig' %}
 
 {% block top_actions %}
+    {% set carbonFootprintReport = carbon_footprint_report('property', propertyCarbonFootprintId) %}
+
+    {% if carbonFootprintReport is not null and carbonFootprintReport.status.isGenerated and carbonFootprintReport | is_authorized('view') %}
+        <twig:TopAction path="{{ path('carbon_footprint_reports_download', {reportId: carbonFootprintReport.id}) }}" target="_blank">
+            <twig:Icon name="solar:file-download-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Descargar informe' | trans }}
+        </twig:TopAction>
+
+        {% if carbonFootprintReport | is_authorized('edit') %}
+            <twig:TopAction path="{{ path('carbon_footprint_reports_reissue', {reportId: carbonFootprintReport.id, _token: csrf_token('carbon_footprint_report')}) }}"
+                data-controller="confirm"
+                data-confirm-text-param="{{ '¿Seguro que quieres reemitir el informe?' | trans }}"
+                data-action="confirm#link:prevent"
+            >
+                <twig:Icon name="solar:refresh-line-duotone" size="lg" class="me-2" />
+
+                {{ 'Reemitir informe' | trans }}
+            </twig:TopAction>
+        {% endif %}
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('property_carbon_footprints') }}" />
 {% endblock %}
 

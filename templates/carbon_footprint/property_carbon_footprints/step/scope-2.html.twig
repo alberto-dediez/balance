@@ -4,7 +4,9 @@
 
 {% block top_actions %}
     {{ parent() }}
-    <twig:TopAction:BioscoreConsumptions path="{{ path('property_carbon_footprints_bioscore_load', {propertyCarbonFootprintId: propertyCarbonFootprintId, scope: 'scope_2', _token: csrf_token('bioscore_load_' ~ propertyCarbonFootprint.id)}) }}" />
+    {% if not readOnly %}
+        <twig:TopAction:BioscoreConsumptions path="{{ path('property_carbon_footprints_bioscore_load', {propertyCarbonFootprintId: propertyCarbonFootprintId, scope: 'scope_2', _token: csrf_token('bioscore_load_' ~ propertyCarbonFootprint.id)}) }}" />
+    {% endif %}
 {% endblock %}
 
 {% block wizard_panels %}
@@ -17,9 +19,11 @@
             <a href="{{ path('property_carbon_footprints_scope_1', {propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" class="btn btn-outline-primary">
                 &larr; {{ 'Anterior' | trans }}
             </a>
-            <button type="submit" class="btn btn-primary">
-                {{ 'Siguiente' | trans }} &rarr;
-            </button>
+            {% if not readOnly %}
+                <button type="submit" class="btn btn-primary">
+                    {{ 'Siguiente' | trans }} &rarr;
+                </button>
+            {% endif %}
         </div>
     </form>
 {% endblock %}

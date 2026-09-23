@@ -1,0 +1,6 @@
+<h3>{% trans -%}Informe de huella rechazado{%- endtrans -%}</h3>
+<p>{% trans -%}El informe de huella de carbono ha sido rechazado y la huella se ha reabierto para que revises los datos.{%- endtrans %}</p>
+<p><strong>{% trans -%}Comentario{%- endtrans %}:</strong> {{ comment }}</p>
+<a href="{{ url(resultsRoute, resultsParams) }}" class="btn btn-primary">
+    {% trans -%}Ver resultados{%- endtrans -%}
+</a>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSection" table="carbon_footprint_report_sections">
+        <indexes>
+            <index name="IDX_CARBON_FOOTPRINT_REPORT_SECTIONS_REPORT" columns="carbon_footprint_report_id" />
+        </indexes>
+
+        <id name="report" association-key="true" />
+        <id name="key" type="string" length="50" column="section_key" />
+
+        <field name="content" type="text" column="content" nullable="false" />
+        <field name="position" type="integer" column="position" nullable="false" />
+
+        <many-to-one field="report" target-entity="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport" inversed-by="sections">
+            <join-column name="carbon_footprint_report_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

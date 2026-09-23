@@ -7,6 +7,7 @@ namespace App\EventOperations\Application\Event\Unlock;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action as SecurityAction;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -30,7 +31,11 @@ class UnlockEventService implements CommandHandler
             throw new \InvalidArgumentException('Event not found');
         }
 
-        $this->authorizer->denyUnlessCanDoThat($event, SecurityAction::Edit, $user);
+        if (!$this->authorizer->canDoThat($event, SecurityAction::Edit, $user)
+            && !$this->authorizer->canDoThat($event, SecurityAction::Admin, $user)
+        ) {
+            throw new UnauthorizedActionException($event, SecurityAction::Edit);
+        }
 
         $event->unlock();
 

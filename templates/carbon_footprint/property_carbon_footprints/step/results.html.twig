@@ -3,122 +3,147 @@
 {% set wizard_selected = 3 %}
 
 {% block wizard_panels %}
-    <twig:Card title="{{ 'Totales' | trans }}">
-        <dl class="row mt-3">
-            <dt class="col-sm-4">{{ 'CO₂ equivalente total (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ results.totalEmissions.co2eq | number_format(2, ',', '.') }}</dd>
-
-            <dt class="col-sm-4">{{ 'CO₂ (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ results.totalEmissions.co2 | number_format(2, ',', '.') }}</dd>
-
-            <dt class="col-sm-4">{{ 'CH₄ (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ results.totalEmissions.ch4 | number_format(2, ',', '.') }}</dd>
-
-            <dt class="col-sm-4">{{ 'N₂O (kg)' | trans }}</dt>
-            <dd class="col-sm-8">{{ results.totalEmissions.n2o | number_format(2, ',', '.') }}</dd>
-
-            <dt class="col-sm-4">{{ 'Electricidad por localización (kg CO₂eq)' | trans }}</dt>
-            <dd class="col-sm-8">{{ results.locationBasedElectricityEmissions.co2eq | number_format(2, ',', '.') }}</dd>
-        </dl>
-    </twig:Card>
-
     <div class="row">
-        <div class="col-lg-6 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header fw-semibold">{{ 'Emisiones por fuente' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
-                <div class="card-body">
-                    {% if sourceChart.values is not empty %}
-                        <twig:Chart:Donut
-                            title="{{ 'Emisiones por fuente' | trans }}"
-                            :values="sourceChart.values"
-                            :categories="sourceChart.labels"
-                            unit="kg"
-                            :decimals="0"
-                            :legend="true"
-                        />
-                    {% else %}
-                        <p class="text-muted mb-0">{{ 'No hay emisiones registradas por fuente.' | trans }}</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+        <div class="col-9">
+            <twig:Card title="{{ 'Totales' | trans }}">
+                <dl class="row mt-3">
+                    <dt class="col-sm-4">{{ 'CO₂ equivalente total (kg)' | trans }}</dt>
+                    <dd class="col-sm-8">{{ results.totalEmissions.co2eq | number_format(2, ',', '.') }}</dd>
 
-        <div class="col-lg-6 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header fw-semibold">{{ 'Emisiones por alcance' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
-                <div class="card-body">
-                    <twig:Chart:Bar
-                        title="{{ 'Emisiones' | trans }}"
-                        :values="scopeChart.values"
-                        :categories="scopeChart.labels"
-                        :colors="['var(--bs-info)', 'var(--bs-warning)']"
-                        unit="kg"
-                        :decimals="0"
-                    />
-                </div>
-            </div>
-        </div>
+                    <dt class="col-sm-4">{{ 'CO₂ (kg)' | trans }}</dt>
+                    <dd class="col-sm-8">{{ results.totalEmissions.co2 | number_format(2, ',', '.') }}</dd>
 
-        {% block extra_charts %}{% endblock %}
-    </div>
+                    <dt class="col-sm-4">{{ 'CH₄ (kg)' | trans }}</dt>
+                    <dd class="col-sm-8">{{ results.totalEmissions.ch4 | number_format(2, ',', '.') }}</dd>
 
-    {% if exclusions is not empty %}
-        <twig:Card title="{{ 'Fuentes de emisión excluidas' | trans }}">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>{{ 'Alcance' | trans }}</th>
-                        <th>{{ 'Fuente' | trans }}</th>
-                        <th>{{ 'Motivo' | trans }}</th>
-                        <th>{{ 'Comentario' | trans }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for exclusion in exclusions %}
-                        <tr>
-                            <td>{{ exclusion.scope }}</td>
-                            <td>{{ exclusion.source }}</td>
-                            <td>{{ exclusion.reason }}</td>
-                            <td>{{ exclusion.comment ?? '-' }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </twig:Card>
-    {% endif %}
+                    <dt class="col-sm-4">{{ 'N₂O (kg)' | trans }}</dt>
+                    <dd class="col-sm-8">{{ results.totalEmissions.n2o | number_format(2, ',', '.') }}</dd>
 
-    <twig:Card title="{{ 'Matriz alcance × fuente' | trans }}">
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>{{ 'Alcance' | trans }}</th>
-                        <th>{{ 'Fuente' | trans }}</th>
-                        <th class="text-end">{{ 'CO₂eq (kg)' | trans }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for scope, sources in results.emissionsByScopeAndSource %}
-                        {% for source, emissions in sources %}
-                            {% if emissions.co2eq != '0' %}
-                                <tr>
-                                    <td>{{ scope | trans({}, 'scope') }}</td>
-                                    <td>{{ source | trans({}, 'source') }}</td>
-                                    <td class="text-end">{{ emissions.co2eq | number_format(2, ',', '.') }}</td>
-                                </tr>
+                    <dt class="col-sm-4">{{ 'Electricidad por localización (kg CO₂eq)' | trans }}</dt>
+                    <dd class="col-sm-8">{{ results.locationBasedElectricityEmissions.co2eq | number_format(2, ',', '.') }}</dd>
+                </dl>
+            </twig:Card>
+
+            <div class="row">
+                <div class="col-lg-6 d-flex">
+                    <div class="card flex-fill">
+                        <div class="card-header fw-semibold">{{ 'Emisiones por fuente' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                        <div class="card-body">
+                            {% if sourceChart.values is not empty %}
+                                <twig:Chart:Donut
+                                    title="{{ 'Emisiones por fuente' | trans }}"
+                                    :values="sourceChart.values"
+                                    :categories="sourceChart.labels"
+                                    unit="kg"
+                                    :decimals="0"
+                                    :legend="true"
+                                />
+                            {% else %}
+                                <p class="text-muted mb-0">{{ 'No hay emisiones registradas por fuente.' | trans }}</p>
                             {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </twig:Card>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="d-flex justify-content-start mt-3">
-        <a href="{{ path('property_carbon_footprints_scope_2', {propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" class="btn btn-outline-primary">
-            &larr; {{ 'Anterior' | trans }}
-        </a>
+                <div class="col-lg-6 d-flex">
+                    <div class="card flex-fill">
+                        <div class="card-header fw-semibold">{{ 'Emisiones por alcance' | trans }} <span class="text-muted fw-normal">(kg CO₂eq)</span></div>
+                        <div class="card-body">
+                            <twig:Chart:Bar
+                                title="{{ 'Emisiones' | trans }}"
+                                :values="scopeChart.values"
+                                :categories="scopeChart.labels"
+                                :colors="['var(--bs-info)', 'var(--bs-warning)']"
+                                unit="kg"
+                                :decimals="0"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {% block extra_charts %}{% endblock %}
+            </div>
+
+            {% if exclusions is not empty %}
+                <twig:Card title="{{ 'Fuentes de emisión excluidas' | trans }}">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>{{ 'Alcance' | trans }}</th>
+                                <th>{{ 'Fuente' | trans }}</th>
+                                <th>{{ 'Motivo' | trans }}</th>
+                                <th>{{ 'Comentario' | trans }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for exclusion in exclusions %}
+                                <tr>
+                                    <td>{{ exclusion.scope }}</td>
+                                    <td>{{ exclusion.source }}</td>
+                                    <td>{{ exclusion.reason }}</td>
+                                    <td>{{ exclusion.comment ?? '-' }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </twig:Card>
+            {% endif %}
+
+            <twig:Card title="{{ 'Matriz alcance × fuente' | trans }}">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Alcance' | trans }}</th>
+                                <th>{{ 'Fuente' | trans }}</th>
+                                <th class="text-end">{{ 'CO₂eq (kg)' | trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scope, sources in results.emissionsByScopeAndSource %}
+                                {% for source, emissions in sources %}
+                                    {% if emissions.co2eq != '0' %}
+                                        <tr>
+                                            <td>{{ scope | trans({}, 'scope') }}</td>
+                                            <td>{{ source | trans({}, 'source') }}</td>
+                                            <td class="text-end">{{ emissions.co2eq | number_format(2, ',', '.') }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </twig:Card>
+
+            <div class="d-flex justify-content-start mt-3">
+                <a href="{{ path('property_carbon_footprints_scope_2', {propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" class="btn btn-outline-primary">
+                    &larr; {{ 'Anterior' | trans }}
+                </a>
+            </div>
+        </div>
+        <div class="col-3">
+            {% if propertyCarbonFootprint.status.isCompleted or (report is not null and report.status.isRejected) %}
+                <twig:CarbonFootprint:ReportStatus :report="report" :canEdit="propertyCarbonFootprint | is_authorized('edit')" />
+            {% endif %}
+
+            {% if propertyCarbonFootprint.status.isCompleted and propertyCarbonFootprint | is_authorized('edit') %}
+                <twig:Card title="{{ 'Reabrir cálculo' | trans }}">
+                    <p class="text-muted">
+                        {{ 'Al reabrir el cálculo podrás volver a editar los alcances. Se conservarán los datos introducidos, pero se eliminará el informe generado.' | trans }}
+                    </p>
+
+                    <form method="post" action="{{ path('property_carbon_footprints_reopen', {propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" onsubmit="return confirm('{{ '¿Seguro que quieres reabrir el cálculo? Se eliminará el informe generado.' | trans | e('js') }}');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('reopen_' ~ propertyCarbonFootprint.id) }}">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <twig:Icon name="solar:restart-line-duotone" />
+                            {{ 'Reabrir cálculo' | trans }}
+                        </button>
+                    </form>
+                </twig:Card>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

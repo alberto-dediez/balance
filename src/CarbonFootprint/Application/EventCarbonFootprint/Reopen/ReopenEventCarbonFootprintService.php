@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\EventCarbonFootprint\Reopen;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\Security\Application\Action as SecurityAction;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -30,7 +31,11 @@ class ReopenEventCarbonFootprintService implements CommandHandler
             throw new \InvalidArgumentException('EventCarbonFootprint not found');
         }
 
-        $this->authorizer->denyUnlessCanDoThat($eventCarbonFootprint, SecurityAction::Edit, $user);
+        if (!$this->authorizer->canDoThat($eventCarbonFootprint, SecurityAction::Edit, $user)
+            && !$this->authorizer->canDoThat($eventCarbonFootprint, SecurityAction::Admin, $user)
+        ) {
+            throw new UnauthorizedActionException($eventCarbonFootprint, SecurityAction::Edit);
+        }
 
         if (!$eventCarbonFootprint->status()->isCompleted()) {
             throw new \InvalidArgumentException('Only a completed EventCarbonFootprint can be reopened');

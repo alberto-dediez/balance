@@ -6,9 +6,9 @@ namespace App\Tests\Unit\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootpr
 
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsResponse;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportCompensation;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCompensation;
 use App\CarbonFootprint\Infrastructure\UI\Web\Chart\TripChartBuilder;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ResultsView;
 use App\Shared\Domain\Event\DomainEventPublisher;

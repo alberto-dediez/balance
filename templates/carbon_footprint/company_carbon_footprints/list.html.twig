@@ -27,6 +27,12 @@
         <td>{{ element.status.value | trans({}, 'organizationalCarbonFootprintStatusType') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
+            {% set carbonFootprintReport = carbon_footprint_report('company', element.id) %}
+
+            {% if carbonFootprintReport is not null and carbonFootprintReport.status.isGenerated and carbonFootprintReport | is_authorized('view') %}
+                <twig:List:Action:Download path="{{ path('carbon_footprint_reports_download', {'reportId': carbonFootprintReport.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('company_carbon_footprints_edit', {'companyCarbonFootprintId': element.id}) }}" />
             {% endif %}

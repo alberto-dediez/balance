@@ -1,5 +1,8 @@
 <h3>{% trans -%}Informe de huella de carbono disponible{%- endtrans -%}</h3>
 <p>{% trans -%}El informe de huella de carbono ya está disponible.{%- endtrans %}</p>
-<a href="{{ url('events_carbon_footprint_report_download', {eventId: eventId}) }}" class="btn btn-primary">
+<a href="{{ url('carbon_footprint_reports_download', {reportId: report.id}) }}" class="btn btn-primary">
     {% trans -%}Descargar informe{%- endtrans -%}
+</a>
+<a href="{{ url(resultsRoute, resultsParams) }}" class="btn btn-outline-primary">
+    {% trans -%}Ver resultados{%- endtrans -%}
 </a>

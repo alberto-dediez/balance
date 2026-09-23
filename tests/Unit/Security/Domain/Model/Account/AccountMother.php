@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Security\Domain\Model\Account;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 
 class AccountMother
@@ -48,6 +49,14 @@ class AccountMother
     {
         $account = self::fromName($name);
         $account->changeConsultant($consultantAccountId);
+
+        return $account;
+    }
+
+    public static function withReportPermissions(string $name, string $id, bool $canEditTexts, bool $autoReview): Account
+    {
+        $account = self::fromNameAndId($name, $id);
+        $account->changeReportPermissions(new AccountReportPermissions($canEditTexts, $autoReview));
 
         return $account;
     }

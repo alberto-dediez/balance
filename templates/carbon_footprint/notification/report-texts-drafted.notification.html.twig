@@ -1,0 +1,6 @@
+<p>{% trans -%}Los textos del informe de huella de carbono están listos. Revísalos y corrígelos antes de solicitar la revisión o emitir el informe.{%- endtrans %}</p>
+<p>
+    <a href="{{ path('carbon_footprint_reports_texts', {reportId: report.id}) }}">
+        {% trans -%}Revisar textos del informe{%- endtrans -%}
+    </a>
+</p>

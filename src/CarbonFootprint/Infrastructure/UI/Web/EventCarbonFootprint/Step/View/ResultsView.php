@@ -7,9 +7,9 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\Vi
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsResponse;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsResponse;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportCompensation;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportCompensation;
 use App\CarbonFootprint\Infrastructure\UI\Web\Chart\TripChartBuilder;
 use App\EventOperations\Domain\Model\Event\Event;
 use Symfony\Contracts\Translation\TranslatorInterface;

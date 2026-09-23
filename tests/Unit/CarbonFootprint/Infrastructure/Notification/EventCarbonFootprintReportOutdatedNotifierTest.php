@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\Notification;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReport;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportId;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Infrastructure\Notification\EventCarbonFootprintReportOutdatedNotifier;
-use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintReportRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCarbonFootprintReportRepository;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Security\Domain\Model\Account\AccountId;
@@ -16,9 +15,9 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
 use App\Tests\Unit\Notifications\Application\Notification\Notify\SpySystemNotifier;
@@ -99,15 +98,11 @@ class EventCarbonFootprintReportOutdatedNotifierTest extends TestCase
         $userRepository = new InMemoryUserRepository();
         $userRepository->add(UserMother::fromUsernameAndRoleAndId('owner', Role::Owner, $userId));
 
-        $report = new EventCarbonFootprintReport(id: EventCarbonFootprintReportId::generate());
-        $report->register($eventCarbonFootprint->id(), new AccountId('account-id'), $userId);
+        $report = $generated
+            ? CarbonFootprintReportMother::generated(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprint->id(), new AccountId('account-id'), $userId)
+            : CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprint->id(), new AccountId('account-id'), $userId);
 
-        if ($generated) {
-            $report->translate('account-id/report-es.pdf', Locale::Spanish);
-            $report->generate();
-        }
-
-        $reportRepository = new InMemoryEventCarbonFootprintReportRepository();
+        $reportRepository = new InMemoryCarbonFootprintReportRepository();
         $reportRepository->add($report);
 
         $projectContributions = ProjectContributionRepositoryMother::inMemory();

@@ -12,6 +12,8 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintTrait;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
@@ -181,6 +183,35 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
+    public function complete(Emissions $totalEmissions): void
+    {
+        $this->ensureIsEditable();
+
+        if (OrganizationalCarbonFootprintStatus::Scope2Answered !== $this->status) {
+            throw new OrganizationalCarbonFootprintNotReadyToCompleteException('Organizational carbon footprint cannot be completed until scope 2 is answered');
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintCompleted(
+                companyCarbonFootprintId: $this->id,
+                totalEmissions: $totalEmissions,
+            ),
+        );
+    }
+
+    public function reopen(): void
+    {
+        if (!$this->status->isCompleted()) {
+            throw new OrganizationalCarbonFootprintNotCompletedException('Only a completed organizational carbon footprint can be reopened');
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintReopened(
+                companyCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -243,6 +274,20 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
     public function applyCompanyCarbonFootprintSourceIncluded(CompanyCarbonFootprintSourceIncluded $event): void
     {
         $this->detachExclusion($event->scope(), $event->source());
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintCompleted(CompanyCarbonFootprintCompleted $event): void
+    {
+        $this->status = OrganizationalCarbonFootprintStatus::Completed;
+        $this->totalEmissions = $event->totalEmissions();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintReopened(CompanyCarbonFootprintReopened $event): void
+    {
+        $this->status = OrganizationalCarbonFootprintStatus::Scope2Answered;
+        $this->totalEmissions = new Emissions();
         $this->updatedAt = $event->occurredOn();
     }
 

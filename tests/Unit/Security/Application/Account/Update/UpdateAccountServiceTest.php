@@ -12,9 +12,11 @@ use App\Security\Domain\Model\Account\AccountConsultantChanged;
 use App\Security\Domain\Model\Account\AccountConsultantStatusChanged;
 use App\Security\Domain\Model\Account\AccountEmissionFactorGroupChanged;
 use App\Security\Domain\Model\Account\AccountNameChanged;
+use App\Security\Domain\Model\Account\AccountReportPermissionsChanged;
 use App\Security\Domain\Model\Account\AccountStatusChanged;
 use App\Security\Domain\Model\Account\ConsultantCannotHaveConsultantException;
 use App\Security\Domain\Model\Account\ConsultantHasAssignedAccountsException;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -369,6 +371,77 @@ class UpdateAccountServiceTest extends TestCase
         );
 
         $sut($request, $user);
+    }
+
+    public function testAdminChangesTheReportPermissions(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            reportCanEditTexts: true,
+            reportAutoReview: false,
+        );
+
+        $sut($request, UserMother::adminUser());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountReportPermissionsChanged::class, $lastEvent);
+        $this->assertTrue($account->reportPermissions()->canEditTexts());
+        $this->assertFalse($account->reportPermissions()->autoReview());
+    }
+
+    public function testOwnerCannotChangeTheReportPermissionsOfItsOwnAccount(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            reportCanEditTexts: true,
+            reportAutoReview: true,
+        );
+
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id()));
+    }
+
+    public function testOwnerCanRenameItsOwnAccountWithoutChangingTheReportPermissions(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'Renamed',
+            active: $account->isActive(),
+        );
+
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id()));
+
+        $this->assertSame('Renamed', $account->name());
     }
 
     public function testIsHandle(): void

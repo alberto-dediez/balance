@@ -4,15 +4,17 @@
     {% set carbonFootprintReport = event_carbon_footprint_report(eventId) %}
 
     {% if carbonFootprintReport is not null and carbonFootprintReport.status.isGenerated and carbonFootprintReport | is_authorized('view') %}
-        <twig:TopAction path="{{ path('events_carbon_footprint_report_download', {eventId: eventId}) }}" target="_blank">
+        <twig:TopAction path="{{ path('carbon_footprint_reports_download', {reportId: carbonFootprintReport.id}) }}" target="_blank">
             <twig:Icon name="solar:file-download-line-duotone" size="lg" class="me-2" />
 
             {{ 'Descargar informe' | trans }}
         </twig:TopAction>
 
         {% if carbonFootprintReport | is_authorized('edit') %}
-            <twig:TopAction path="{{ path('events_carbon_footprint_report_reissue', {eventId: eventId}) }}"
-                onclick="return confirm('{{ '¿Seguro que quieres reemitir el informe?' | trans | e('js') }}');"
+            <twig:TopAction path="{{ path('carbon_footprint_reports_reissue', {reportId: carbonFootprintReport.id, _token: csrf_token('carbon_footprint_report')}) }}"
+                data-controller="confirm"
+                data-confirm-text-param="{{ '¿Seguro que quieres reemitir el informe?' | trans }}"
+                data-action="confirm#link:prevent"
             >
                 <twig:Icon name="solar:refresh-line-duotone" size="lg" class="me-2" />
 
@@ -41,6 +43,15 @@
 {% set wizard_active = eventCarbonFootprint.status.activeStepNumber %}
 
 {% block content %}
+    {% set rejectedReport = event_carbon_footprint_report(eventId) %}
+
+    {% if rejectedReport is not null and rejectedReport.status.isRejected %}
+        <twig:Alert:Alert type="danger">
+            {{ 'El informe ha sido rechazado: {comment}' | trans({'{comment}': rejectedReport.reviewComment}) }}
+            {{ 'Revisa los datos de la huella; al completarla de nuevo se generará un informe nuevo.' | trans }}
+        </twig:Alert:Alert>
+    {% endif %}
+
     {% set isCompleted = eventCarbonFootprint.status.isCompleted %}
     {% set wizard_steps = [
         {label: 'Materiales' | trans, href: isCompleted ? path('events_carbon_footprint_results', {eventId: eventId, step: 'materials'}) : path('events_carbon_footprint_materials', {eventId: eventId})},

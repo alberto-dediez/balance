@@ -26,6 +26,7 @@ class Account implements \Stringable
         protected ?EmissionFactorGroupId $emissionFactorGroupId = null,
         protected bool $consultant = false,
         protected ?AccountId $consultantAccountId = null,
+        protected AccountReportPermissions $reportPermissions = new AccountReportPermissions(),
     ) {
         $this->events = $events;
     }
@@ -73,6 +74,11 @@ class Account implements \Stringable
     public function consultantAccountId(): ?AccountId
     {
         return $this->consultantAccountId;
+    }
+
+    public function reportPermissions(): AccountReportPermissions
+    {
+        return $this->reportPermissions;
     }
 
     public function register(string $name, bool $active, ?EmissionFactorGroupId $emissionFactorGroupId = null, bool $consultant = false): void
@@ -146,6 +152,21 @@ class Account implements \Stringable
         );
     }
 
+    public function changeReportPermissions(AccountReportPermissions $permissions): void
+    {
+        if ($permissions->equals($this->reportPermissions)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new AccountReportPermissionsChanged(
+                accountId: $this->id(),
+                canEditTexts: $permissions->canEditTexts(),
+                autoReview: $permissions->autoReview(),
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -188,6 +209,11 @@ class Account implements \Stringable
     public function applyAccountConsultantChanged(AccountConsultantChanged $event): void
     {
         $this->consultantAccountId = $event->consultantAccountId();
+    }
+
+    public function applyAccountReportPermissionsChanged(AccountReportPermissionsChanged $event): void
+    {
+        $this->reportPermissions = new AccountReportPermissions($event->canEditTexts(), $event->autoReview());
     }
 
     public function applyAccountRemoved(AccountRemoved $event): void

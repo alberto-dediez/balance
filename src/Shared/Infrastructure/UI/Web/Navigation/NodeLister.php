@@ -359,6 +359,11 @@ class NodeLister
                     target: $this->router->generate('admin_signature_requests'),
                 ),
                 new Node(
+                    label: new TranslatableMessage('Informes de huella'),
+                    icon: 'solar:document-text-line-duotone',
+                    target: $this->router->generate('admin_carbon_footprint_reports'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Registro'),
                     icon: 'solar:record-minimalistic-line-duotone',
                     target: $this->router->generate('admin_events'),

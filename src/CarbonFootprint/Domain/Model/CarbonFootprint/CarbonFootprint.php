@@ -19,6 +19,8 @@ interface CarbonFootprint
 
     public function calculationYear(): int;
 
+    public function isCompleted(): bool;
+
     /** @return ActivityId[] */
     public function activityIds(ActivityPlacement $placement): array;
 

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Symfony\Twig;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReport;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
 use Twig\Extension\AbstractExtension;
@@ -20,19 +21,19 @@ class EventCarbonFootprintExtension extends AbstractExtension
     /** @var array<string, EventCarbonFootprint|null> */
     private array $cache = [];
 
-    /** @var array<string, EventCarbonFootprintReport|null> */
+    /** @var array<string, CarbonFootprintReport|null> */
     private array $reportCache = [];
 
     public function __construct(
         private readonly EventCarbonFootprintRepository $repository,
-        private readonly EventCarbonFootprintReportRepository $reportRepository,
+        private readonly CarbonFootprintReportRepository $reportRepository,
     ) {}
 
     public function getFunctions(): array
     {
         return [
             new TwigFunction('event_carbon_footprint', $this->eventCarbonFootprint(...)),
-            new TwigFunction('event_carbon_footprint_report', $this->eventCarbonFootprintReport(...)),
+            new TwigFunction('event_carbon_footprint_report', $this->carbonFootprintReport(...)),
         ];
     }
 
@@ -55,7 +56,7 @@ class EventCarbonFootprintExtension extends AbstractExtension
         return $this->cache[$key];
     }
 
-    public function eventCarbonFootprintReport(EventId|string $eventId): ?EventCarbonFootprintReport
+    public function carbonFootprintReport(EventId|string $eventId): ?CarbonFootprintReport
     {
         $key = (string) $eventId;
 
@@ -64,7 +65,7 @@ class EventCarbonFootprintExtension extends AbstractExtension
 
             $this->reportCache[$key] = null === $carbonFootprint
                 ? null
-                : $this->reportRepository->findByEventCarbonFootprintId($carbonFootprint->id());
+                : $this->reportRepository->findBySubject(CarbonFootprintReportSubjectType::Event, (string) $carbonFootprint->id());
         }
 
         return $this->reportCache[$key];

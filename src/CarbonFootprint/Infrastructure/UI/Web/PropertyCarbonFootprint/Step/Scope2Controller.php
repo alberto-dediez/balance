@@ -49,6 +49,12 @@ class Scope2Controller extends AbstractController
             return $this->redirectToRoute('property_carbon_footprints_scope_1', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
         }
 
+        if ($request->isMethod('POST') && $propertyCarbonFootprint->isCompleted()) {
+            $this->addFlash('warning', new TranslatableMessage('La huella está completada. Reábrela para modificarla.'));
+
+            return $this->redirectToRoute('property_carbon_footprints_results', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
+        }
+
         if ($request->isMethod('POST')) {
             if (!$this->isCsrfTokenValid('scope_2_' . $propertyCarbonFootprint->id(), $request->request->getString('_token'))) {
                 throw $this->createAccessDeniedException('Token CSRF no válido');
@@ -83,6 +89,7 @@ class Scope2Controller extends AbstractController
                 'blocks' => [$stepView->build($response->sections) + ['property' => null, 'prefixBase' => '']],
                 'propertyCarbonFootprint' => $propertyCarbonFootprint,
                 'propertyCarbonFootprintId' => $propertyCarbonFootprintId,
+                'readOnly' => $propertyCarbonFootprint->isCompleted(),
                 'exclusions' => StepExclusionsView::build($response->exclusions),
                 'exclusionReasons' => ExclusionReason::cases(),
                 'calculateUrl' => $this->generateUrl('property_carbon_footprints_emissions_calculate', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]),

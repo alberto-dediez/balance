@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\AI\Gemini;
 
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportTexts;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
@@ -12,7 +12,7 @@ use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
 final class TranslateReportTextsPrompt implements GeminiPrompt
 {
     public function __construct(
-        private readonly EventCarbonFootprintReportTexts $texts,
+        private readonly CarbonFootprintReportTexts $texts,
         private readonly Locale $from,
         private readonly Locale $to,
         private readonly float $temperature = 0.2,
@@ -23,8 +23,8 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
         $lines = [
             'You are a professional translator specialized in sustainability and carbon footprint reports.',
             sprintf(
-                'Translate the following %s Markdown sections of an event carbon footprint report from %s to %s.',
-                $this->hasCompensation() ? 'five' : 'four',
+                'Translate the following %d Markdown sections of a carbon footprint report from %s to %s.',
+                count($this->texts->sections),
                 $this->from->name,
                 $this->to->name,
             ),
@@ -35,64 +35,42 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
             '- Preserve the Markdown structure exactly: keep every heading at its original level (a ### heading must stay ###), and keep bold text, bullet lists and paragraphs.',
             '- Do not alter numbers, units or references to emission factor sources.',
             '- Do not add, remove or summarize content; only translate it.',
-            '',
-            '<executiveSummary>',
-            $this->texts->executiveSummary,
-            '</executiveSummary>',
-            '',
-            '<methodology>',
-            $this->texts->methodology,
-            '</methodology>',
-            '',
-            '<emissionFactorSources>',
-            $this->texts->emissionFactorSources,
-            '</emissionFactorSources>',
-            '',
-            '<analysisAndRecommendations>',
-            $this->texts->analysisAndRecommendations,
-            '</analysisAndRecommendations>',
         ];
 
-        if ($this->hasCompensation()) {
+        foreach ($this->texts->sections as $key => $content) {
             $lines[] = '';
-            $lines[] = '<compensation>';
-            $lines[] = $this->texts->compensation;
-            $lines[] = '</compensation>';
+            $lines[] = sprintf('<%s>', $key);
+            $lines[] = $content;
+            $lines[] = sprintf('</%s>', $key);
         }
 
         $lines[] = '';
         $lines[] = 'Respond strictly as a JSON object with this exact shape:';
-        $lines[] = $this->hasCompensation()
-            ? '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string", "compensation": "string"}'
-            : '{"executiveSummary": "string", "methodology": "string", "emissionFactorSources": "string", "analysisAndRecommendations": "string"}';
+        $lines[] = $this->shape();
 
         return implode("\n", $lines);
     }
 
-    private function hasCompensation(): bool
+    private function shape(): string
     {
-        return '' !== $this->texts->compensation;
+        $pairs = array_map(static fn(string $key): string => sprintf('"%s": "string"', $key), array_keys($this->texts->sections));
+
+        return '{' . implode(', ', $pairs) . '}';
     }
 
     public function responseSchema(): array
     {
-        $schema = [
-            'type' => 'OBJECT',
-            'properties' => [
-                'executiveSummary' => ['type' => 'STRING'],
-                'methodology' => ['type' => 'STRING'],
-                'emissionFactorSources' => ['type' => 'STRING'],
-                'analysisAndRecommendations' => ['type' => 'STRING'],
-            ],
-            'required' => ['executiveSummary', 'methodology', 'emissionFactorSources', 'analysisAndRecommendations'],
-        ];
+        $properties = [];
 
-        if ($this->hasCompensation()) {
-            $schema['properties']['compensation'] = ['type' => 'STRING'];
-            $schema['required'][] = 'compensation';
+        foreach (array_keys($this->texts->sections) as $key) {
+            $properties[$key] = ['type' => 'STRING'];
         }
 
-        return $schema;
+        return [
+            'type' => 'OBJECT',
+            'properties' => $properties,
+            'required' => array_keys($this->texts->sections),
+        ];
     }
 
     public function temperature(): float

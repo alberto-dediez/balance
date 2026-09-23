@@ -17,5 +17,7 @@ class UpdateAccountRequest implements Command
         public ?EmissionFactorGroupId $emissionFactorGroupId = null,
         public bool $consultant = false,
         public ?AccountId $consultantAccountId = null,
+        public bool $reportCanEditTexts = false,
+        public bool $reportAutoReview = true,
     ) {}
 }

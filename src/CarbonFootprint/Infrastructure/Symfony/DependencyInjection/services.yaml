@@ -31,15 +31,33 @@ services:
             $invalidTokenLimiter: '@limiter.property_trip_invalid_token'
             $placesLimiter: '@limiter.property_trip_places'
 
-    App\CarbonFootprint\Application\EventCarbonFootprintReport\Generate\GenerateEventCarbonFootprintReportService:
+    App\CarbonFootprint\Application\CarbonFootprintReport\Register\RegisterCarbonFootprintReportService:
         arguments:
             $localeList: '%app.locale_list%'
 
-    App\CarbonFootprint\Infrastructure\Storage\LocalEventCarbonFootprintReportStorage:
+    App\CarbonFootprint\Application\CarbonFootprintReport\GeneratePdf\GenerateCarbonFootprintReportPdfService:
+        arguments:
+            $localeList: '%app.locale_list%'
+
+    App\CarbonFootprint\Application\CarbonFootprintReport\GenerateTexts\GenerateCarbonFootprintReportTextsService:
+        arguments:
+            $localeList: '%app.locale_list%'
+
+    App\CarbonFootprint\Infrastructure\Storage\LocalCarbonFootprintReportStorage:
         arguments:
             $basePath: '%app.uploads_dir%/carbon-footprint-reports'
 
-    App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportStorage: '@App\CarbonFootprint\Infrastructure\Storage\LocalEventCarbonFootprintReportStorage'
+    App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportStorage: '@App\CarbonFootprint\Infrastructure\Storage\LocalCarbonFootprintReportStorage'
+
+    App\CarbonFootprint\Infrastructure\Tcpdf\ThemeAwareCarbonFootprintReportPdfGenerator:
+        arguments:
+            $themeGenerators: !tagged_locator { tag: 'app.theme.report_generator', index_by: 'theme' }
+
+    App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator:
+        tags:
+            - { name: 'app.theme.report_generator', theme: 'classic' }
+
+    App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator: '@App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator'
 
     App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver:
         arguments:

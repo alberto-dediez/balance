@@ -97,6 +97,11 @@ final readonly class PdfBranding
         return $this->hex($this->primary);
     }
 
+    public function secondaryHex(): string
+    {
+        return $this->hex($this->secondary);
+    }
+
     public function darkHex(): string
     {
         return $this->hex($this->dark);

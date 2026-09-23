@@ -38,11 +38,11 @@ trait GenericGenerator
         return $this->pdfBranding ??= PdfBranding::bioscore();
     }
 
-    private function createPDF(string $title, ?PdfBranding $branding = null): ReportTcpdf
+    private function createPDF(string $title, ?PdfBranding $branding = null, string $orientation = 'P'): ReportTcpdf
     {
         $this->pdfBranding = $branding ?? PdfBranding::bioscore();
 
-        $pdf = new ReportTcpdf('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf = new ReportTcpdf($orientation, 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetCreator($this->pdfBranding()->documentAuthor);
         $pdf->SetAuthor($this->pdfBranding()->documentAuthor);
         $pdf->SetTitle($title);
@@ -254,8 +254,130 @@ trait GenericGenerator
         $pdf->Cell(18, 5, $pdf->getAliasNumPage() . ' / ' . $pdf->getAliasNbPages(), 0, 0, 'L');
     }
 
-    private function renderSectionTitle(\TCPDF $pdf, string $title): void
+    private function bookmark(\TCPDF $pdf, string $title): void
     {
+        $pdf->Bookmark($title, 0, -1, '', '', $this->pdfBranding()->primary);
+    }
+
+    private function contentWidth(\TCPDF $pdf): float
+    {
+        $margins = $pdf->getMargins();
+
+        return $pdf->getPageWidth() - $margins['left'] - $margins['right'];
+    }
+
+    private function renderTableOfContents(ReportTcpdf $pdf, string $title, int $page = 2, ?\Closure $renderTitle = null): void
+    {
+        $pdf->addTOCPage();
+
+        if (null === $renderTitle) {
+            $this->renderSectionTitle($pdf, $title, false);
+        } else {
+            $renderTitle($pdf, $title);
+        }
+
+        $this->setFont($pdf, 10.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+        $pdf->addTOC($page, $this->registerFont($this->getFontPath('Regular')), '.', $title, '', $this->pdfBranding()->primary);
+        $pdf->endTOCPage();
+    }
+
+    /** @param list<PdfKeyFigure> $figures */
+    private function renderKeyFigures(ReportTcpdf $pdf, string $title, array $figures, ?\Closure $renderTitle = null): void
+    {
+        $pdf->AddPage();
+
+        if (null === $renderTitle) {
+            $this->renderSectionTitle($pdf, $title);
+        } else {
+            $renderTitle($pdf, $title);
+        }
+
+        $contentWidth = $this->contentWidth($pdf);
+        $columns = $contentWidth < 200 ? 2 : 3;
+        $gap = 6.0;
+        $cardWidth = ($contentWidth - $gap * ($columns - 1)) / $columns;
+        $cardHeight = 34.0;
+        $left = $pdf->getMargins()['left'];
+        $top = $pdf->GetY();
+
+        foreach ($figures as $index => $figure) {
+            $column = $index % $columns;
+            $row = intdiv($index, $columns);
+
+            if (0 === $column && $row > 0) {
+                $top += $cardHeight + $gap;
+            }
+
+            if ($top + $cardHeight > $pdf->getPageHeight() - $pdf->getMargins()['bottom']) {
+                $pdf->AddPage();
+                $top = $pdf->GetY();
+            }
+
+            $x = $left + $column * ($cardWidth + $gap);
+
+            $pdf->Rect($x, $top, $cardWidth, $cardHeight, 'F', [], $this->pdfBranding()->subtle);
+            $pdf->Rect($x, $top, 2.4, $cardHeight, 'F', [], $this->pdfBranding()->secondary);
+
+            $label = mb_strtoupper($figure->label);
+            $labelFontSize = 8.0;
+            $this->setFont($pdf, $labelFontSize, self::FONT_STYLE_SEMIBOLD, $this->pdfBranding()->primary);
+
+            while ($labelFontSize > 6.0 && $pdf->GetStringWidth($label) > $cardWidth - 8) {
+                $labelFontSize -= 0.5;
+                $this->setFont($pdf, $labelFontSize, self::FONT_STYLE_SEMIBOLD, $this->pdfBranding()->primary);
+            }
+
+            $pdf->setXY($x + 6, $top + 4);
+            $pdf->Cell($cardWidth - 8, 5, $label, 0, 0, 'L');
+
+            $this->renderKeyFigureValue($pdf, $figure->value, $x + 6, $top + 11, $cardWidth - 8);
+
+            $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->setXY($x + 6, $top + 24);
+            $pdf->Cell($cardWidth - 8, 5, $figure->unit, 0, 0, 'L');
+        }
+
+        $pdf->setY($top + $cardHeight + $gap);
+    }
+
+    private function renderKeyFigureValue(\TCPDF $pdf, string $value, float $x, float $y, float $width): void
+    {
+        $fontSize = 22.0;
+        $this->setFont($pdf, $fontSize, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
+
+        while ($fontSize > 16.0 && $pdf->GetStringWidth($value) > $width) {
+            --$fontSize;
+            $this->setFont($pdf, $fontSize, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
+        }
+
+        $pdf->setXY($x, $y);
+
+        if ($pdf->GetStringWidth($value) <= $width) {
+            $pdf->Cell($width, 12, $value, 0, 0, 'L');
+
+            return;
+        }
+
+        $cellHeightRatio = $pdf->getCellHeightRatio();
+        $pdf->setCellHeightRatio(1.1);
+        $fontSize = 15.0;
+        $this->setFont($pdf, $fontSize, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
+
+        while ($fontSize > 10.0 && $pdf->getNumLines($value, $width) > 2) {
+            --$fontSize;
+            $this->setFont($pdf, $fontSize, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->dark);
+        }
+
+        $pdf->MultiCell($width, 6, $value, 0, 'L', false, 0, $x, $y, true, 0, false, true, 12.5, 'M', true);
+        $pdf->setCellHeightRatio($cellHeightRatio);
+    }
+
+    private function renderSectionTitle(\TCPDF $pdf, string $title, bool $bookmark = true): void
+    {
+        if ($bookmark) {
+            $this->bookmark($pdf, $title);
+        }
+
         $pdf->setXY(16, max(self::CONTENT_MARGIN_TOP, $pdf->GetY()));
         $this->setFont($pdf, 26, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 

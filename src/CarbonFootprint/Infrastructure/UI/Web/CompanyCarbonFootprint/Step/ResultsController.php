@@ -6,6 +6,8 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\CompanyCarbonFootprint\Step;
 
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults\GetCompanyCarbonFootprintResultsRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults\GetCompanyCarbonFootprintResultsService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\CompanyCarbonFootprint\GetCompanyCarbonFootprintFromIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\OrganizationalResultsView;
@@ -23,6 +25,7 @@ class ResultsController extends AbstractController
     public function __invoke(
         string $companyCarbonFootprintId,
         CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
+        CarbonFootprintReportRepository $reportRepository,
         GetCompanyCarbonFootprintResultsService $getResults,
         OrganizationalResultsView $resultsView,
         LoggedUser $loggedUser,
@@ -53,6 +56,7 @@ class ResultsController extends AbstractController
                 'companyCarbonFootprint' => $companyCarbonFootprint,
                 'companyCarbonFootprintId' => $companyCarbonFootprintId,
                 'results' => $results,
+                'report' => $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Company, (string) $companyCarbonFootprint->id()),
             ],
         );
     }

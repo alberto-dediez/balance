@@ -6,6 +6,8 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\PropertyCarbonFootprint\Step
 
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\GetResults\GetPropertyCarbonFootprintResultsRequest;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\GetResults\GetPropertyCarbonFootprintResultsService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\OrganizationalResultsView;
 use App\CarbonFootprint\Infrastructure\UI\Web\PropertyCarbonFootprint\GetPropertyCarbonFootprintFromIdTrait;
@@ -23,6 +25,7 @@ class ResultsController extends AbstractController
     public function __invoke(
         string $propertyCarbonFootprintId,
         PropertyCarbonFootprintRepository $propertyCarbonFootprintRepository,
+        CarbonFootprintReportRepository $reportRepository,
         GetPropertyCarbonFootprintResultsService $getResults,
         OrganizationalResultsView $resultsView,
         LoggedUser $loggedUser,
@@ -51,6 +54,7 @@ class ResultsController extends AbstractController
                 'propertyCarbonFootprint' => $propertyCarbonFootprint,
                 'propertyCarbonFootprintId' => $propertyCarbonFootprintId,
                 'results' => $results,
+                'report' => $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Property, (string) $propertyCarbonFootprint->id()),
             ],
         );
     }

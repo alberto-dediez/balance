@@ -7809,6 +7809,330 @@
         <source>Se sustituirán las actividades de este alcance por los consumos registrados en Bioscore y se perderán las filas introducidas a mano. ¿Desea continuar?</source>
         <target>The activities of this scope will be replaced by the consumptions recorded in Bioscore and the manually entered rows will be lost. Do you want to continue?</target>
       </trans-unit>
+      <trans-unit id="DZgpx9z" resname="Puede editar los textos del informe de huella">
+        <source>Puede editar los textos del informe de huella</source>
+        <target>Can edit the footprint report texts</target>
+      </trans-unit>
+      <trans-unit id="eSYWMvc" resname="Autorrevisión del informe de huella">
+        <source>Autorrevisión del informe de huella</source>
+        <target>Footprint report auto-review</target>
+      </trans-unit>
+      <trans-unit id="0sjq0ZU" resname="Índice">
+        <source>Índice</source>
+        <target>Table of contents</target>
+      </trans-unit>
+      <trans-unit id="iLwR936" resname="Cifras clave">
+        <source>Cifras clave</source>
+        <target>Key figures</target>
+      </trans-unit>
+      <trans-unit id="ux1R.Xr" resname="Informe de huella de carbono de la propiedad">
+        <source>Informe de huella de carbono de la propiedad</source>
+        <target>Property carbon footprint report</target>
+      </trans-unit>
+      <trans-unit id="msIN_zG" resname="Informe de huella de carbono de la empresa">
+        <source>Informe de huella de carbono de la empresa</source>
+        <target>Company carbon footprint report</target>
+      </trans-unit>
+      <trans-unit id="qTnaOkq" resname="Propósito">
+        <source>Propósito</source>
+        <target>Purpose</target>
+      </trans-unit>
+      <trans-unit id="mywc2pC" resname="Contexto normativo">
+        <source>Contexto normativo</source>
+        <target>Regulatory context</target>
+      </trans-unit>
+      <trans-unit id="LsGcxsp" resname="Relación con los ODS">
+        <source>Relación con los ODS</source>
+        <target>Relation to the SDGs</target>
+      </trans-unit>
+      <trans-unit id="8nQaDlE" resname="Conclusión">
+        <source>Conclusión</source>
+        <target>Conclusion</target>
+      </trans-unit>
+      <trans-unit id="1yqTuON" resname="Datos de la huella">
+        <source>Datos de la huella</source>
+        <target>Footprint data</target>
+      </trans-unit>
+      <trans-unit id="1wZ2N1q" resname="Emisiones incluidas en cada alcance">
+        <source>Emisiones incluidas en cada alcance</source>
+        <target>Emissions included in each scope</target>
+      </trans-unit>
+      <trans-unit id="eactPWK" resname="Incluida">
+        <source>Incluida</source>
+        <target>Included</target>
+      </trans-unit>
+      <trans-unit id=".iu1IlH" resname="Fuente excluida: {reason}">
+        <source>Fuente excluida: {reason}</source>
+        <target>Excluded source: {reason}</target>
+      </trans-unit>
+      <trans-unit id="eV7u2XY" resname="No hay datos reportados">
+        <source>No hay datos reportados</source>
+        <target>No data reported</target>
+      </trans-unit>
+      <trans-unit id="yMXQ0f_" resname="Informe de huella de carbono de la propiedad {year}">
+        <source>Informe de huella de carbono de la propiedad {year}</source>
+        <target>Property carbon footprint report {year}</target>
+      </trans-unit>
+      <trans-unit id="Cfe36L3" resname="Informe de huella de carbono de la empresa {year}">
+        <source>Informe de huella de carbono de la empresa {year}</source>
+        <target>Company carbon footprint report {year}</target>
+      </trans-unit>
+      <trans-unit id="cCUVFdM" resname="Informe de huella de carbono del evento {year}">
+        <source>Informe de huella de carbono del evento {year}</source>
+        <target>Event carbon footprint report {year}</target>
+      </trans-unit>
+      <trans-unit id="83P7r.n" resname="Democratizamos la sostenibilidad">
+        <source>Democratizamos la sostenibilidad</source>
+        <target>We democratise sustainability</target>
+      </trans-unit>
+      <trans-unit id="zjwVe3v" resname="(excluida)">
+        <source>(excluida)</source>
+        <target>(excluded)</target>
+      </trans-unit>
+      <trans-unit id="dF62VIv" resname="Los datos de alcance 1 y alcance 2 dependen del tipo de instalaciones y equipos de la organización.">
+        <source>Los datos de alcance 1 y alcance 2 dependen del tipo de instalaciones y equipos de la organización.</source>
+        <target>Scope 1 and scope 2 data depend on the type of facilities and equipment of the organisation.</target>
+      </trans-unit>
+      <trans-unit id="XJGuesK" resname="No se incluyen las emisiones de alcance 3 porque la organización no dispone de los datos necesarios.">
+        <source>No se incluyen las emisiones de alcance 3 porque la organización no dispone de los datos necesarios.</source>
+        <target>Scope 3 emissions are not included because the organisation does not have the necessary data.</target>
+      </trans-unit>
+      <trans-unit id="iEd1_Lf" resname="Huella de carbono {year}">
+        <source>Huella de carbono {year}</source>
+        <target>Carbon footprint {year}</target>
+      </trans-unit>
+      <trans-unit id="xZD7F6J" resname="Datos de">
+        <source>Datos de</source>
+        <target>Data of</target>
+      </trans-unit>
+      <trans-unit id="S20ixRn" resname="Anexo">
+        <source>Anexo</source>
+        <target>Annex</target>
+      </trans-unit>
+      <trans-unit id="T_2sn4f" resname="Tabla {number}. {caption}">
+        <source>Tabla {number}. {caption}</source>
+        <target>Table {number}. {caption}</target>
+      </trans-unit>
+      <trans-unit id="kjPx.Zl" resname="{total} kg de CO₂eq">
+        <source>{total} kg de CO₂eq</source>
+        <target>{total} kg CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="csRv8df" resname="Alcance 1: {total} kg de CO₂eq">
+        <source>Alcance 1: {total} kg de CO₂eq</source>
+        <target>Scope 1: {total} kg CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="PbMkgz_" resname="Alcance 2: {total} kg de CO₂eq">
+        <source>Alcance 2: {total} kg de CO₂eq</source>
+        <target>Scope 2: {total} kg CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="7ku4asN" resname="Proyectos de compensación">
+        <source>Proyectos de compensación</source>
+        <target>Offset projects</target>
+      </trans-unit>
+      <trans-unit id="GTptoyy" resname="Fase con más emisiones">
+        <source>Fase con más emisiones</source>
+        <target>Phase with the most emissions</target>
+      </trans-unit>
+      <trans-unit id="Y26n0K2" resname="Fuente con más emisiones">
+        <source>Fuente con más emisiones</source>
+        <target>Source with the most emissions</target>
+      </trans-unit>
+      <trans-unit id="2VtvSka" resname="Cobertura compensada">
+        <source>Cobertura compensada</source>
+        <target>Offset coverage</target>
+      </trans-unit>
+      <trans-unit id="zXGF5d6" resname="Electricidad por localización">
+        <source>Electricidad por localización</source>
+        <target>Location-based electricity</target>
+      </trans-unit>
+      <trans-unit id="YHW_lVO" resname="Propiedades incluidas">
+        <source>Propiedades incluidas</source>
+        <target>Properties included</target>
+      </trans-unit>
+      <trans-unit id="w3RQQ05" resname="Elemento">
+        <source>Elemento</source>
+        <target>Item</target>
+      </trans-unit>
+      <trans-unit id="GckH.gr" resname="Factor">
+        <source>Factor</source>
+        <target>Factor</target>
+      </trans-unit>
+      <trans-unit id="QGljgtW" resname="Emisiones mercado kgCO2eq">
+        <source>Emisiones mercado kgCO2eq</source>
+        <target>Market-based emissions kgCO2eq</target>
+      </trans-unit>
+      <trans-unit id="JcI.ikv" resname="Emisiones localización kgCO2eq">
+        <source>Emisiones localización kgCO2eq</source>
+        <target>Location-based emissions kgCO2eq</target>
+      </trans-unit>
+      <trans-unit id="9I2KHhm" resname="La huella está completada. Reábrela para modificarla.">
+        <source>La huella está completada. Reábrela para modificarla.</source>
+        <target>The footprint is completed. Reopen it to modify it.</target>
+      </trans-unit>
+      <trans-unit id="kh.VTnM" resname="El informe no tiene textos pendientes de revisar.">
+        <source>El informe no tiene textos pendientes de revisar.</source>
+        <target>The report has no texts pending review.</target>
+      </trans-unit>
+      <trans-unit id="z_es2Gf" resname="Informe enviado a revisión.">
+        <source>Informe enviado a revisión.</source>
+        <target>Report submitted for review.</target>
+      </trans-unit>
+      <trans-unit id="O6fwqCn" resname="Se está generando el informe, te notificaremos cuando esté disponible.">
+        <source>Se está generando el informe, te notificaremos cuando esté disponible.</source>
+        <target>The report is being generated, we will notify you when it is available.</target>
+      </trans-unit>
+      <trans-unit id="F60Kt57" resname="Textos guardados.">
+        <source>Textos guardados.</source>
+        <target>Texts saved.</target>
+      </trans-unit>
+      <trans-unit id="F8.QVdR" resname="Se está volviendo a generar el informe.">
+        <source>Se está volviendo a generar el informe.</source>
+        <target>The report is being generated again.</target>
+      </trans-unit>
+      <trans-unit id="JVabPRo" resname="Este informe ya no está pendiente de revisión.">
+        <source>Este informe ya no está pendiente de revisión.</source>
+        <target>This report is no longer pending review.</target>
+      </trans-unit>
+      <trans-unit id="6Vcro2E" resname="Informe rechazado. La huella se ha reabierto.">
+        <source>Informe rechazado. La huella se ha reabierto.</source>
+        <target>Report rejected. The footprint has been reopened.</target>
+      </trans-unit>
+      <trans-unit id="7YXJwcR" resname="Informe aprobado. Se está generando el PDF.">
+        <source>Informe aprobado. Se está generando el PDF.</source>
+        <target>Report approved. The PDF is being generated.</target>
+      </trans-unit>
+      <trans-unit id="2YapHwl" resname="Comentario para el cliente">
+        <source>Comentario para el cliente</source>
+        <target>Comment for the customer</target>
+      </trans-unit>
+      <trans-unit id="v7Mgeg3" resname="Obligatorio si rechazas el informe.">
+        <source>Obligatorio si rechazas el informe.</source>
+        <target>Required if you reject the report.</target>
+      </trans-unit>
+      <trans-unit id="1NLe9St" resname="Aprobar y emitir">
+        <source>Aprobar y emitir</source>
+        <target>Approve and issue</target>
+      </trans-unit>
+      <trans-unit id="apvRzEZ" resname="Tipo de huella">
+        <source>Tipo de huella</source>
+        <target>Footprint type</target>
+      </trans-unit>
+      <trans-unit id="UvzKFer" resname="Guardar borrador">
+        <source>Guardar borrador</source>
+        <target>Save draft</target>
+      </trans-unit>
+      <trans-unit id="5G1_2ZL" resname="Solicitar revisión">
+        <source>Solicitar revisión</source>
+        <target>Request review</target>
+      </trans-unit>
+      <trans-unit id="lEgaDN." resname="Emitir informe">
+        <source>Emitir informe</source>
+        <target>Issue report</target>
+      </trans-unit>
+      <trans-unit id="x7WXF9q" resname="Informe de huella pendiente de revisión">
+        <source>Informe de huella pendiente de revisión</source>
+        <target>Footprint report pending review</target>
+      </trans-unit>
+      <trans-unit id="zsEeSxH" resname="Textos del informe de huella listos para revisar">
+        <source>Textos del informe de huella listos para revisar</source>
+        <target>Footprint report texts ready for review</target>
+      </trans-unit>
+      <trans-unit id="4iYK0C8" resname="Informe de huella rechazado">
+        <source>Informe de huella rechazado</source>
+        <target>Footprint report rejected</target>
+      </trans-unit>
+      <trans-unit id="Xh5E4lS" resname="Informes de huella">
+        <source>Informes de huella</source>
+        <target>Footprint reports</target>
+      </trans-unit>
+      <trans-unit id="6jEUKKv" resname="Se están generando los textos del informe, te notificaremos cuando estén listos.">
+        <source>Se están generando los textos del informe, te notificaremos cuando estén listos.</source>
+        <target>The report texts are being generated, we will notify you when they are ready.</target>
+      </trans-unit>
+      <trans-unit id="CEGNLwi" resname="Los textos del informe están listos para revisar.">
+        <source>Los textos del informe están listos para revisar.</source>
+        <target>The report texts are ready for review.</target>
+      </trans-unit>
+      <trans-unit id="bnxXv4T" resname="El informe está pendiente de revisión por el equipo de la plataforma.">
+        <source>El informe está pendiente de revisión por el equipo de la plataforma.</source>
+        <target>The report is pending review by the platform team.</target>
+      </trans-unit>
+      <trans-unit id="ne4BCc9" resname="El informe ha sido rechazado: {comment}">
+        <source>El informe ha sido rechazado: {comment}</source>
+        <target>The report has been rejected: {comment}</target>
+      </trans-unit>
+      <trans-unit id="ZUaXIPm" resname="Revisar textos del informe">
+        <source>Revisar textos del informe</source>
+        <target>Review report texts</target>
+      </trans-unit>
+      <trans-unit id="CmrpVNF" resname="Emitido el {date}">
+        <source>Emitido el {date}</source>
+        <target>Issued on {date}</target>
+      </trans-unit>
+      <trans-unit id="liUOtmH" resname="Revisa los datos de la huella; al completarla de nuevo se generará un informe nuevo.">
+        <source>Revisa los datos de la huella; al completarla de nuevo se generará un informe nuevo.</source>
+        <target>Review the footprint data; when you complete it again a new report will be generated.</target>
+      </trans-unit>
+      <trans-unit id="PqICrel" resname="Revisar">
+        <source>Revisar</source>
+        <target>Review</target>
+      </trans-unit>
+      <trans-unit id="LDrupUo" resname="Al reabrir el cálculo podrás volver a editar los alcances. Se conservarán los datos introducidos, pero se eliminará el informe generado.">
+        <source>Al reabrir el cálculo podrás volver a editar los alcances. Se conservarán los datos introducidos, pero se eliminará el informe generado.</source>
+        <target>Reopening the calculation lets you edit the scopes again. The data entered will be kept, but the generated report will be removed.</target>
+      </trans-unit>
+      <trans-unit id="XrZIojc" resname="Los textos del informe de huella de carbono están listos. Revísalos y corrígelos antes de solicitar la revisión o emitir el informe.">
+        <source>Los textos del informe de huella de carbono están listos. Revísalos y corrígelos antes de solicitar la revisión o emitir el informe.</source>
+        <target>The carbon footprint report texts are ready. Review and correct them before requesting the review or issuing the report.</target>
+      </trans-unit>
+      <trans-unit id="WJpGmVB" resname="El informe de huella de carbono ha sido rechazado y la huella se ha reabierto para que revises los datos.">
+        <source>El informe de huella de carbono ha sido rechazado y la huella se ha reabierto para que revises los datos.</source>
+        <target>The carbon footprint report has been rejected and the footprint has been reopened so you can review the data.</target>
+      </trans-unit>
+      <trans-unit id="MPk8K72" resname="La cuenta {account} ha enviado a revisión un informe de huella de carbono.">
+        <source>La cuenta {account} ha enviado a revisión un informe de huella de carbono.</source>
+        <target>Account {account} has submitted a carbon footprint report for review.</target>
+      </trans-unit>
+      <trans-unit id="rWpSlC3" resname="Revisar informe">
+        <source>Revisar informe</source>
+        <target>Review report</target>
+      </trans-unit>
+      <trans-unit id="pHSzKK8" resname="Revisa y corrige los textos generados automáticamente. Las cifras, tablas y gráficas del informe se calculan a partir de la huella y no se editan aquí.">
+        <source>Revisa y corrige los textos generados automáticamente. Las cifras, tablas y gráficas del informe se calculan a partir de la huella y no se editan aquí.</source>
+        <target>Review and correct the automatically generated texts. The figures, tables and charts of the report are calculated from the footprint and are not edited here.</target>
+      </trans-unit>
+      <trans-unit id="f4IIjfE" resname="Textos del informe">
+        <source>Textos del informe</source>
+        <target>Report texts</target>
+      </trans-unit>
+      <trans-unit id="siFtAZp" resname="Huella">
+        <source>Huella</source>
+        <target>Footprint</target>
+      </trans-unit>
+      <trans-unit id="lFjLJJx" resname="Fecha de envío">
+        <source>Fecha de envío</source>
+        <target>Submission date</target>
+      </trans-unit>
+      <trans-unit id="xLWWTeH" resname="No hay informes que coincidan con los filtros.">
+        <source>No hay informes que coincidan con los filtros.</source>
+        <target>No reports match the filters.</target>
+      </trans-unit>
+      <trans-unit id="SlDOKVL" resname="Emisiones totales (t CO₂eq)">
+        <source>Emisiones totales (t CO₂eq)</source>
+        <target>Total emissions (t CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="mqyopvx" resname="Solicitado por">
+        <source>Solicitado por</source>
+        <target>Requested by</target>
+      </trans-unit>
+      <trans-unit id="7aFgAXC" resname="Factores">
+        <source>Factores</source>
+        <target>Factors</target>
+      </trans-unit>
+      <trans-unit id="URJDmE2" resname="No se ha podido volver a generar el informe: {error}">
+        <source>No se ha podido volver a generar el informe: {error}</source>
+        <target>The report could not be regenerated: {error}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Acceptance\Security;
 
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\Branding\Branding;
 use App\Security\Domain\Model\Branding\BrandingId;
@@ -203,6 +204,17 @@ final class SecurityContext implements Context
     {
         $account = AccountMother::fromNameAndId($name, $id);
         $account->changeConsultantStatus(true);
+
+        $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('account :id has report permissions can edit texts :canEdit and auto review :autoReview')]
+    public function accountHasReportPermissions(string $id, string $canEdit, string $autoReview): void
+    {
+        $account = $this->getAccountRepository()->find(new AccountId($id));
+        Assert::assertNotNull($account, sprintf('Account "%s" not found', $id));
+
+        $account->changeReportPermissions(new AccountReportPermissions('1' === $canEdit, '1' === $autoReview));
 
         $this->getAccountRepository()->add($account);
     }

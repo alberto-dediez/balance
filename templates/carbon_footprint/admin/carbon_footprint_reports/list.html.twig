@@ -1,0 +1,56 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Informes de huella' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Huella' | trans,
+            'sortable': false
+        }, {
+            'label': 'Cuenta' | trans,
+            'sortable': false
+        }, {
+            'label': 'Estado' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de envío' | trans,
+            'sortable': true,
+            'sortableBy': 'submittedAt'
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    {% if reports is empty %}
+        <p class="mb-0">{{ 'No hay informes que coincidan con los filtros.' | trans }}</p>
+    {% endif %}
+
+    <twig:List:Table :columns="columns" :elements="reports">
+        <td>
+            <span class="badge bg-secondary">{{ element.subjectType.value | trans({}, 'carbonFootprintReportSubjectType') }}</span>
+            {{ element | carbon_footprint_report_subject_name }}
+        </td>
+        <td>{{ element.accountId is not empty ? (element.accountId | account_name) : '---' }}</td>
+        <td>
+            <div class="badge {{ element.status.style }}">
+                {{ element.status.value | trans({}, 'carbonFootprintReportStatus') }}
+            </div>
+        </td>
+        <td>{{ element.submittedAt is not null ? (element.submittedAt | date('d/m/Y H:i')) : '---' }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element.status.isPendingReview %}
+                <twig:List:Action:Review path="{{ path('admin_carbon_footprint_reports_review', {'reportId': element.id}) }}" />
+            {% endif %}
+
+            {% if element.status.isGenerated %}
+                <twig:List:Action:Download path="{{ path('admin_carbon_footprint_reports_download', {'reportId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

@@ -10,7 +10,8 @@ La plataforma se puede vender como marca blanca en dos niveles.
   marca de la plataforma.
 - **Nivel 2 — temas visuales, tocando código.** Un tema aporta valores por defecto de los
   tokens, opcionalmente una hoja SCSS propia, opcionalmente plantillas Twig que sustituyen a las
-  públicas y opcionalmente un renderizador de certificado distinto. Solo un SuperAdmin puede
+  públicas, opcionalmente un renderizador de certificado distinto y opcionalmente una
+  maquetación propia del informe de huella de carbono. Solo un Admin o SuperAdmin puede
   asignar un tema a una cuenta.
 
 ## Cómo funciona el nivel 1
@@ -108,8 +109,31 @@ App\Balance\Infrastructure\Tcpdf\AuroraContributionCertificatePdfGenerator:
 tema, y le pasará el `PdfBranding` ya resuelto: el generador hereda gratis los colores, la
 tipografía y el logotipo de la cuenta.
 
+### 6. (Opcional) Un informe de huella propio
+
+El informe de huella de carbono (evento, propiedad y empresa) no adopta la marca de la cuenta:
+siempre se emite con los logotipos y los colores de la plataforma. Lo que sí elige el tema es la
+**maquetación**. Implementa `CarbonFootprintReportPdfGenerator` y etiqueta el servicio con
+`app.theme.report_generator` indexado por el slug:
+
+```yaml
+App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator:
+    tags:
+        - { name: 'app.theme.report_generator', theme: 'classic' }
+```
+
+`ThemeAwareCarbonFootprintReportPdfGenerator` lo elegirá por el tema del branding de la cuenta y
+le pasará el **slug** del tema (no un `PdfBranding`): el generador decide qué hacer con él y los
+colores y la tipografía siguen siendo los de `PdfBranding::bioscore()`. Sin generador para el slug
+se usa el informe vertical por defecto.
+
+`ClassicTheme` (`src/Shared/Infrastructure/Theme/ClassicTheme.php`) es el ejemplo de tema que solo
+cambia el informe: sus `defaults()` son los de `DefaultTheme`, no tiene hoja de estilos ni
+plantillas y aporta únicamente el generador apaisado.
+
 ## Fuera de alcance
 
 Dominio propio por cuenta (las URLs públicas siguen siendo las de la plataforma y la cuenta se
 resuelve desde el token o la entidad), backoffice y área privada, y los informes PDF de
-DataExchange y CarbonFootprint: todos mantienen la marca de la plataforma.
+DataExchange y CarbonFootprint: todos mantienen la marca de la plataforma. En el informe de
+huella de carbono el tema elige solo la maquetación (ver el apartado 6).

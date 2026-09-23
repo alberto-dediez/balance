@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport" table="carbon_footprint_reports">
+        <indexes>
+            <index name="IDX_CARBON_FOOTPRINT_REPORT_STATUS" columns="status" />
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint name="UNIQ_CARBON_FOOTPRINT_REPORT_SUBJECT" columns="subject_type,carbon_footprint_id" />
+        </unique-constraints>
+
+        <id name="id" type="carbon_footprint_report_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="subjectType" type="string" length="20" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType" column="subject_type" nullable="false" />
+        <field name="carbonFootprintId" type="string" length="36" column="carbon_footprint_id" nullable="false" />
+        <field name="accountId" type="account_id" column="account_id" nullable="true" />
+        <field name="requestedBy" type="user_id" column="requested_by" nullable="true" />
+
+        <field name="status" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportStatus" nullable="false" />
+        <field name="baseLocale" type="locale" length="5" column="base_locale" nullable="true" />
+
+        <field name="errorMessage" type="text" column="error_message" nullable="true" />
+
+        <field name="submittedAt" type="datetime_immutable" column="submitted_at" nullable="true" />
+        <field name="approvedAt" type="datetime_immutable" column="approved_at" nullable="true" />
+        <field name="autoApproved" type="boolean" column="auto_approved" nullable="false" />
+        <field name="reviewedBy" type="user_id" column="reviewed_by" nullable="true" />
+        <field name="reviewedAt" type="datetime_immutable" column="reviewed_at" nullable="true" />
+        <field name="reviewComment" type="text" column="review_comment" nullable="true" />
+
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+        <field name="generatedAt" type="datetime_immutable" column="generated_at" nullable="true" />
+
+        <one-to-many field="translations"
+                     target-entity="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTranslation"
+                     mapped-by="translatable"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="sections"
+                     target-entity="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSection"
+                     mapped-by="report"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="position" direction="ASC" />
+            </order-by>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

@@ -79,7 +79,7 @@ doctrine:
             trip_calculation_leg_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLegIdType
             employee_participation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeParticipationIdType
             employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeContributionIdType
-            event_carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EventCarbonFootprintReportIdType
+            carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CarbonFootprintReportIdType
             public_landing_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingIdType
             public_landing_block_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingBlockIdType
             project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectIdType

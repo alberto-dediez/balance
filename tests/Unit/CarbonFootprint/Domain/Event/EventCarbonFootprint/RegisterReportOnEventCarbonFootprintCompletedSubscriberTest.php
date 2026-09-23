@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Event\EventCarbonFootprint;
 
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Register\RegisterEventCarbonFootprintReportService;
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Remove\RemoveEventCarbonFootprintReportService;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Register\RegisterCarbonFootprintReportService;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Remove\RemoveCarbonFootprintReportService;
 use App\CarbonFootprint\Domain\Event\EventCarbonFootprint\RegisterReportOnEventCarbonFootprintCompletedSubscriber;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintCompleted;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintProvidersAnswered;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeLoggedUser;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -45,10 +46,10 @@ class RegisterReportOnEventCarbonFootprintCompletedSubscriberTest extends TestCa
 
     public function testHandleRegistersReportWhenNoneExists(): void
     {
-        $registerService = $this->createMock(RegisterEventCarbonFootprintReportService::class);
+        $registerService = $this->createMock(RegisterCarbonFootprintReportService::class);
         $registerService->expects($this->once())->method('__invoke');
 
-        $removeService = $this->createMock(RemoveEventCarbonFootprintReportService::class);
+        $removeService = $this->createMock(RemoveCarbonFootprintReportService::class);
         $removeService->expects($this->never())->method('__invoke');
 
         $sut = $this->createSUT($registerService, $removeService);
@@ -59,13 +60,13 @@ class RegisterReportOnEventCarbonFootprintCompletedSubscriberTest extends TestCa
     {
         $eventCarbonFootprintId = EventCarbonFootprintId::generate();
 
-        $reportRepository = EventCarbonFootprintReportRepositoryMother::inMemory();
-        $reportRepository->add(EventCarbonFootprintReportMother::pending((string) $eventCarbonFootprintId));
+        $reportRepository = CarbonFootprintReportRepositoryMother::inMemory();
+        $reportRepository->add(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprintId));
 
-        $registerService = $this->createMock(RegisterEventCarbonFootprintReportService::class);
+        $registerService = $this->createMock(RegisterCarbonFootprintReportService::class);
         $registerService->expects($this->never())->method('__invoke');
 
-        $removeService = $this->createMock(RemoveEventCarbonFootprintReportService::class);
+        $removeService = $this->createMock(RemoveCarbonFootprintReportService::class);
         $removeService->expects($this->never())->method('__invoke');
 
         $sut = $this->createSUT($registerService, $removeService, $reportRepository);
@@ -76,13 +77,30 @@ class RegisterReportOnEventCarbonFootprintCompletedSubscriberTest extends TestCa
     {
         $eventCarbonFootprintId = EventCarbonFootprintId::generate();
 
-        $reportRepository = EventCarbonFootprintReportRepositoryMother::inMemory();
-        $reportRepository->add(EventCarbonFootprintReportMother::generated((string) $eventCarbonFootprintId));
+        $reportRepository = CarbonFootprintReportRepositoryMother::inMemory();
+        $reportRepository->add(CarbonFootprintReportMother::generated(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprintId));
 
-        $registerService = $this->createMock(RegisterEventCarbonFootprintReportService::class);
+        $registerService = $this->createMock(RegisterCarbonFootprintReportService::class);
         $registerService->expects($this->once())->method('__invoke');
 
-        $removeService = $this->createMock(RemoveEventCarbonFootprintReportService::class);
+        $removeService = $this->createMock(RemoveCarbonFootprintReportService::class);
+        $removeService->expects($this->once())->method('__invoke');
+
+        $sut = $this->createSUT($registerService, $removeService, $reportRepository);
+        $sut->handle($this->completedEvent($eventCarbonFootprintId));
+    }
+
+    public function testHandleReplacesARejectedReport(): void
+    {
+        $eventCarbonFootprintId = EventCarbonFootprintId::generate();
+
+        $reportRepository = CarbonFootprintReportRepositoryMother::inMemory();
+        $reportRepository->add(CarbonFootprintReportMother::rejected(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprintId));
+
+        $registerService = $this->createMock(RegisterCarbonFootprintReportService::class);
+        $registerService->expects($this->once())->method('__invoke');
+
+        $removeService = $this->createMock(RemoveCarbonFootprintReportService::class);
         $removeService->expects($this->once())->method('__invoke');
 
         $sut = $this->createSUT($registerService, $removeService, $reportRepository);
@@ -101,18 +119,18 @@ class RegisterReportOnEventCarbonFootprintCompletedSubscriberTest extends TestCa
     private function createSUT(
         ?MockObject $registerService = null,
         ?MockObject $removeService = null,
-        ?EventCarbonFootprintReportRepository $reportRepository = null,
+        ?CarbonFootprintReportRepository $reportRepository = null,
     ): RegisterReportOnEventCarbonFootprintCompletedSubscriber {
-        /** @var RegisterEventCarbonFootprintReportService&MockObject $registerEventCarbonFootprintReport */
-        $registerEventCarbonFootprintReport = $registerService ?? $this->createMock(RegisterEventCarbonFootprintReportService::class);
+        /** @var RegisterCarbonFootprintReportService&MockObject $registerCarbonFootprintReport */
+        $registerCarbonFootprintReport = $registerService ?? $this->createMock(RegisterCarbonFootprintReportService::class);
 
-        /** @var RemoveEventCarbonFootprintReportService&MockObject $removeEventCarbonFootprintReport */
-        $removeEventCarbonFootprintReport = $removeService ?? $this->createMock(RemoveEventCarbonFootprintReportService::class);
+        /** @var RemoveCarbonFootprintReportService&MockObject $removeCarbonFootprintReport */
+        $removeCarbonFootprintReport = $removeService ?? $this->createMock(RemoveCarbonFootprintReportService::class);
 
         return new RegisterReportOnEventCarbonFootprintCompletedSubscriber(
-            $registerEventCarbonFootprintReport,
-            $removeEventCarbonFootprintReport,
-            $reportRepository ?? EventCarbonFootprintReportRepositoryMother::inMemory(),
+            $registerCarbonFootprintReport,
+            $removeCarbonFootprintReport,
+            $reportRepository ?? CarbonFootprintReportRepositoryMother::inMemory(),
             new FakeLoggedUser(UserMother::adminUser()),
         );
     }

@@ -18,6 +18,8 @@
         <field name="emissionFactorGroupId" type="emission_factor_group_id" column="emission_factor_group_id" nullable="true"/>
         <field name="consultant" type="boolean" nullable="false"/>
         <field name="consultantAccountId" type="account_id" column="consultant_account_id" nullable="true"/>
+
+        <embedded name="reportPermissions" class="App\Security\Domain\Model\Account\AccountReportPermissions" use-column-prefix="true" column-prefix="report_" />
     </entity>
 
 </doctrine-mapping>

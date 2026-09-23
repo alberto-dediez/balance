@@ -10,6 +10,7 @@ use App\EventOperations\Application\Event\Unlock\UnlockEventService;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Event\EventUnlocked;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -51,6 +52,43 @@ class UnlockEventServiceTest extends TestCase
 
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof EventUnlocked);
+    }
+
+    public function testAnAdminCanUnlockAnEventOfAnyAccount(): void
+    {
+        $repository = EventRepositoryMother::inMemory();
+
+        $event = EventMother::fromNameAndAccountAndId('Event', 'account-id-test', (string) EventId::generate());
+        $event->lock();
+
+        $repository->add($event);
+
+        $sut = $this->createSUT($repository);
+
+        $sut(new UnlockEventRequest($event->id()), UserMother::adminUser());
+
+        $this->assertFalse($event->isLocked());
+        $this->assertInstanceOf(EventUnlocked::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testAnOwnerOfAnotherAccountCannotUnlock(): void
+    {
+        $repository = EventRepositoryMother::inMemory();
+
+        $event = EventMother::fromNameAndAccountAndId('Event', 'account-id-test', (string) EventId::generate());
+        $event->lock();
+
+        $repository->add($event);
+
+        $sut = $this->createSUT($repository);
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        try {
+            $sut(new UnlockEventRequest($event->id()), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('other-account')));
+        } finally {
+            $this->assertTrue($event->isLocked());
+        }
     }
 
     public function testUnlockingANotLockedEventDoesNothing(): void

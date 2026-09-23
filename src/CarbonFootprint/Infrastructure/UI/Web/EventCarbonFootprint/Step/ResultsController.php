@@ -6,16 +6,17 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step;
 
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsService;
+use App\CarbonFootprint\Application\CarbonFootprintReport\GetCompensationSummary\GetCompensationSummaryRequest;
+use App\CarbonFootprint\Application\CarbonFootprintReport\GetCompensationSummary\GetCompensationSummaryService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetPhase\GetPhaseService;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsRequest;
 use App\CarbonFootprint\Application\EventCarbonFootprint\GetResults\GetResultsService;
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\GetCompensationSummary\GetCompensationSummaryRequest;
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\GetCompensationSummary\GetCompensationSummaryService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\GetEventCarbonFootprintFromEventIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\AssemblyBreakdownStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\CelebrationStepView;
@@ -47,7 +48,7 @@ class ResultsController extends AbstractController
         GetPhaseService $getPhase,
         GetAttendeeSurveyStatsService $getAttendeeSurveyStatsService,
         GetCompensationSummaryService $getCompensationSummary,
-        EventCarbonFootprintReportRepository $reportRepository,
+        CarbonFootprintReportRepository $reportRepository,
         MaterialsStepView $materialsStepView,
         AssemblyBreakdownStepView $assemblyBreakdownStepView,
         CelebrationStepView $celebrationStepView,
@@ -133,7 +134,7 @@ class ResultsController extends AbstractController
         } catch (\InvalidArgumentException) {
         }
 
-        $report = $reportRepository->findByEventCarbonFootprintId($eventCarbonFootprint->id());
+        $report = $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprint->id());
         $compensation = $getCompensationSummary(new GetCompensationSummaryRequest($eventCarbonFootprint->id()), $user)->compensation;
         $reportGeneratedAt = $report?->generatedAt();
         $lastCompensatedAt = $compensation->lastCompensatedAt;

@@ -8,13 +8,18 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintAlreadyCompletedException;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintActivityRemoved;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintCompleted;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRegistered;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintReopened;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintSourceExcluded;
 use PHPUnit\Framework\TestCase;
 
@@ -159,5 +164,72 @@ final class PropertyCarbonFootprintTest extends TestCase
         $this->expectException(OrganizationalCarbonFootprintAlreadyCompletedException::class);
 
         $footprint->answerScope(Scope::Scope1);
+    }
+
+    public function testCompleteFromScope2AnsweredSetsTheStatusAndTheTotal(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('property-1', 'footprint-1');
+
+        $footprint->complete(new Emissions('3930', '3900', '10', '20'));
+
+        $completed = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintCompleted);
+        $this->assertCount(1, $completed);
+        $this->assertSame(OrganizationalCarbonFootprintStatus::Completed, $footprint->status());
+        $this->assertTrue($footprint->isCompleted());
+        $this->assertSame('3930', $footprint->totalEmissions()->co2eq());
+    }
+
+    public function testCompleteFromScope1AnsweredThrows(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope1Answered('property-1', 'footprint-1');
+
+        $this->expectException(OrganizationalCarbonFootprintNotReadyToCompleteException::class);
+
+        $footprint->complete(new Emissions());
+    }
+
+    public function testCompletedFootprintRejectsActivitiesExclusionsAndAnswers(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('property-1', 'footprint-1');
+        $footprint->complete(new Emissions());
+
+        $failures = 0;
+
+        foreach ([
+            static fn() => $footprint->addActivity(ActivityId::generate(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities)),
+            static fn() => $footprint->excludeSource(Scope::Scope1, Source::FixedFacilities, ExclusionReason::NoDataAvailable),
+            static fn() => $footprint->answerScope(Scope::Scope2),
+        ] as $edition) {
+            try {
+                $edition();
+            } catch (OrganizationalCarbonFootprintAlreadyCompletedException) {
+                ++$failures;
+            }
+        }
+
+        $this->assertSame(3, $failures);
+    }
+
+    public function testReopenReturnsToScope2AnsweredWithZeroTotal(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('property-1', 'footprint-1');
+        $footprint->complete(new Emissions('3930', '3900', '10', '20'));
+
+        $footprint->reopen();
+
+        $reopened = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintReopened);
+        $this->assertCount(1, $reopened);
+        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope2Answered, $footprint->status());
+        $this->assertFalse($footprint->isCompleted());
+        $this->assertSame('0', $footprint->totalEmissions()->co2eq());
+    }
+
+    public function testReopenWithoutCompletingThrows(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('property-1', 'footprint-1');
+
+        $this->expectException(OrganizationalCarbonFootprintNotCompletedException::class);
+
+        $footprint->reopen();
     }
 }

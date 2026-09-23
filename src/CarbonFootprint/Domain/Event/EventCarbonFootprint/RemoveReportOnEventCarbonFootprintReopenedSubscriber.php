@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Event\EventCarbonFootprint;
 
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Remove\RemoveEventCarbonFootprintReportRequest;
-use App\CarbonFootprint\Application\EventCarbonFootprintReport\Remove\RemoveEventCarbonFootprintReportService;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Remove\RemoveCarbonFootprintReportRequest;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Remove\RemoveCarbonFootprintReportService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintReopened;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprintReport\EventCarbonFootprintReportRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
@@ -18,8 +19,8 @@ class RemoveReportOnEventCarbonFootprintReopenedSubscriber implements DomainEven
     use RegisterTrait;
 
     public function __construct(
-        private RemoveEventCarbonFootprintReportService $removeEventCarbonFootprintReport,
-        private EventCarbonFootprintReportRepository $reportRepository,
+        private RemoveCarbonFootprintReportService $removeCarbonFootprintReport,
+        private CarbonFootprintReportRepository $reportRepository,
         private LoggedUser $loggedUser,
     ) {
         $this->register();
@@ -33,14 +34,14 @@ class RemoveReportOnEventCarbonFootprintReopenedSubscriber implements DomainEven
 
         assert($event instanceof EventCarbonFootprintReopened);
 
-        $report = $this->reportRepository->findByEventCarbonFootprintId($event->eventCarbonFootprintId());
+        $report = $this->reportRepository->findBySubject(CarbonFootprintReportSubjectType::Event, (string) $event->eventCarbonFootprintId());
 
-        if (null === $report) {
+        if (null === $report || $report->status()->isRejected()) {
             return;
         }
 
-        ($this->removeEventCarbonFootprintReport)(
-            new RemoveEventCarbonFootprintReportRequest($report->id()),
+        ($this->removeCarbonFootprintReport)(
+            new RemoveCarbonFootprintReportRequest($report->id()),
             $this->loggedUser->__invoke(),
         );
     }

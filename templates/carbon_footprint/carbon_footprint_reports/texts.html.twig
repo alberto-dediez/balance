@@ -1,0 +1,41 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(resultsRoute, resultsParams) }}" />
+{% endblock %}
+
+{% set page_title = ('Huella de Carbono' | trans)
+    ~ ' > '
+    ~ (report | carbon_footprint_report_subject_name)
+    ~ ' > '
+    ~ ('Textos del informe' | trans) %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <twig:Alert:Alert type="info">
+                {{ 'Revisa y corrige los textos generados automáticamente. Las cifras, tablas y gráficas del informe se calculan a partir de la huella y no se editan aquí.' | trans }}
+            </twig:Alert:Alert>
+
+            {{ form_errors(form) }}
+
+            <div class="row">
+                <div class="col-12">
+                    {% for child in form.children | filter(child => child.vars.block_prefixes[1] is defined and child.vars.block_prefixes[1] != 'submit' and child.vars.block_prefixes[1] != 'button') %}
+                        {{ form_row(child) }}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.save" />
+                {% if autoReview %}
+                    <twig:ActionBar:Button type="outline-primary" :button="form.submitForReview" />
+                    <twig:ActionBar:Button type="primary" :button="form.issue" />
+                {% else %}
+                    <twig:ActionBar:Button type="primary" :button="form.submitForReview" />
+                {% endif %}
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

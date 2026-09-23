@@ -68,7 +68,7 @@ class NodeListerTest extends TestCase
         $this->assertNotNull($adminNode);
         $this->assertTrue($adminNode->selected);
         $this->assertFalse($adminNode->items[2]->selected);
-        $this->assertTrue($adminNode->items[4]->selected);
+        $this->assertTrue($adminNode->items[5]->selected);
     }
 
     /**

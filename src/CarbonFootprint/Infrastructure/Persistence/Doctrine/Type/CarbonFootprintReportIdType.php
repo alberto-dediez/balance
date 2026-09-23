@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type;
+
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportId;
+use App\Shared\Infrastructure\Persistence\Doctrine\Type\AggregateRootIdTypeTrait;
+use Doctrine\DBAL\Types\Type;
+
+class CarbonFootprintReportIdType extends Type
+{
+    use AggregateRootIdTypeTrait;
+
+    public function getName(): string
+    {
+        return 'carbon_footprint_report_id';
+    }
+
+    public function getClassName(): string
+    {
+        return CarbonFootprintReportId::class;
+    }
+}

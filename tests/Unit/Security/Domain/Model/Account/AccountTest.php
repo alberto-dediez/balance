@@ -7,6 +7,8 @@ namespace App\Tests\Unit\Security\Domain\Model\Account;
 use App\Security\Domain\Model\Account\AccountConsultantChanged;
 use App\Security\Domain\Model\Account\AccountConsultantStatusChanged;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountReportPermissions;
+use App\Security\Domain\Model\Account\AccountReportPermissionsChanged;
 use App\Security\Domain\Model\Account\ConsultantCannotHaveConsultantException;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -74,5 +76,38 @@ class AccountTest extends TestCase
         $account = AccountMother::consultantAccount();
 
         $account->changeConsultant(AccountId::generate());
+    }
+
+    public function testReportPermissionsDefaultToNoEditionAndAutoReview(): void
+    {
+        $account = AccountMother::fromName('MyAccount');
+
+        $this->assertFalse($account->reportPermissions()->canEditTexts());
+        $this->assertTrue($account->reportPermissions()->autoReview());
+    }
+
+    public function testChangeReportPermissionsPublishesEventAndUpdatesThem(): void
+    {
+        $account = AccountMother::fromName('MyAccount');
+
+        $account->changeReportPermissions(new AccountReportPermissions(true, false));
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountReportPermissionsChanged::class, $lastEvent);
+        $this->assertTrue($lastEvent->canEditTexts());
+        $this->assertFalse($lastEvent->autoReview());
+        $this->assertTrue($account->reportPermissions()->canEditTexts());
+        $this->assertFalse($account->reportPermissions()->autoReview());
+    }
+
+    public function testChangeReportPermissionsWithoutChangesDoesNotPublish(): void
+    {
+        $account = AccountMother::fromName('MyAccount');
+        $eventsBefore = count($this->spySubscriber->events());
+
+        $account->changeReportPermissions(new AccountReportPermissions(false, true));
+
+        $this->assertCount($eventsBefore, $this->spySubscriber->events());
     }
 }

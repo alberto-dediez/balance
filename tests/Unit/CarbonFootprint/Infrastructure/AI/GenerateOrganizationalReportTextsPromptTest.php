@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
+
+use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateOrganizationalReportTextsPrompt;
+use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
+use PHPUnit\Framework\TestCase;
+
+class GenerateOrganizationalReportTextsPromptTest extends TestCase
+{
+    public function testResponseSchemaHasTheFourRequiredSections(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish);
+
+        $schema = $prompt->responseSchema();
+
+        $this->assertSame('OBJECT', $schema['type']);
+        $this->assertSame(['purpose', 'regulatoryContext', 'sustainableDevelopmentGoals', 'conclusion'], $schema['required']);
+        foreach ($schema['required'] as $property) {
+            $this->assertSame('STRING', $schema['properties'][$property]['type']);
+        }
+    }
+
+    public function testModelTierIsMedium(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish);
+
+        $this->assertSame(GeminiModelTier::MEDIUM, $prompt->modelTier());
+        $this->assertSame(0.3, $prompt->temperature());
+    }
+
+    public function testTextIncludesTheSubjectDataTotalsAndExclusions(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::English);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('Name: Hotel Sol', $text);
+        $this->assertStringContainsString('Calculation year: 2025', $text);
+        $this->assertStringContainsString('- scope_1: 1430', $text);
+        $this->assertStringContainsString('- scope_2: 2500', $text);
+        $this->assertStringContainsString('scope_1 | refrigerant_leaks | not_applicable | Sin equipos de refrigeración', $text);
+        $this->assertStringContainsString('Write all output in English', $text);
+        $this->assertStringNotContainsString('Emissions by property', $text);
+    }
+
+    public function testTextIncludesTheBreakdownByPropertyForACompany(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), Locale::Spanish);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('Emissions by property', $text);
+        $this->assertStringContainsString('- Hotel Sol: 2680', $text);
+        $this->assertStringContainsString('- Sin asignar a propiedad: 1250', $text);
+    }
+}
