@@ -19,6 +19,8 @@ doctrine:
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType
+            announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
+            youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
 
     orm:
         auto_generate_proxy_classes: true
@@ -61,6 +63,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Library/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Library\Domain\Model'
                 alias: Library
+            Changelog:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Changelog/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Changelog\Domain\Model'
+                alias: Changelog
         controller_resolver:
             auto_mapping: false
 

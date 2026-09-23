@@ -17,7 +17,8 @@ parameters:
         objectManagerLoader: tests/object-manager.php
     ignoreErrors:
         -
-            message: '#Trait App\\Shared\\Infrastructure\\Persistence\\Doctrine\\Repository\\DoctrineTranslatableRepositoryTrait is used zero times and is not analysed\.#'
+            message: '#type mapping mismatch.*but database expects Doctrine\\Common\\Collections\\Collection#'
+            identifier: doctrine.associationType
         -
             message: '#Instanceof between App\\Shared\\Domain\\Model\\Locale\\Translation and App\\Shared\\Domain\\Model\\Locale\\Translation will always evaluate to true\.#'
             identifier: instanceof.alwaysTrue

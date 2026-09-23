@@ -1,0 +1,4 @@
+{% trans with {
+    '{title}': event.title,
+    '{locale}': event.locale.value | locale_name
+} %}Traducida la novedad {title} al idioma {locale}{% endtrans %}

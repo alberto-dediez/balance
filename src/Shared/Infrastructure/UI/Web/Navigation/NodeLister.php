@@ -6,6 +6,7 @@ namespace App\Shared\Infrastructure\UI\Web\Navigation;
 
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -19,6 +20,8 @@ class NodeLister
         private readonly RequestStack $requestStack,
         private readonly bool $internalNotificationsEnabled = true,
         private readonly ?CurrentRolesProvider $currentRolesProvider = null,
+        #[Autowire(param: 'app.announcements_enabled')]
+        private readonly bool $announcementsEnabled = true,
     ) {}
 
     /**
@@ -128,6 +131,21 @@ class NodeLister
         );
     }
 
+    private function announcementsNode(): Node
+    {
+        return new Node(
+            label: new TranslatableMessage('Novedades'),
+            icon: 'solar:notes-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Novedades'),
+                    icon: 'solar:document-text-line-duotone',
+                    target: $this->router->generate('announcements'),
+                ),
+            ],
+        );
+    }
+
     /**
      * @return list<Node>
      */
@@ -193,6 +211,16 @@ class NodeLister
             icon: 'solar:notes-line-duotone',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Novedades'),
+                    icon: 'solar:notes-line-duotone',
+                    target: $this->router->generate('announcements'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Gestionar novedades'),
+                    icon: 'solar:pen-new-square-line-duotone',
+                    target: $this->router->generate('admin_announcements'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Changelog'),
                     icon: 'solar:document-text-line-duotone',
                     target: $this->router->generate('admin_changelog'),
@@ -238,6 +266,10 @@ class NodeLister
             );
         }
 
+        if ($this->announcementsEnabled) {
+            $nodes[] = $this->announcementsNode();
+        }
+
         return $nodes;
     }
 
@@ -262,6 +294,10 @@ class NodeLister
                     ),
                 ],
             );
+        }
+
+        if ($this->announcementsEnabled) {
+            $nodes[] = $this->announcementsNode();
         }
 
         return $nodes;

@@ -21,6 +21,9 @@ return [
     'theme' => [
         'path' => './assets/js/theme.js',
     ],
+    'timezone' => [
+        'path' => './assets/js/timezone.js',
+    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

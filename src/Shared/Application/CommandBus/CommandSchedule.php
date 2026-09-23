@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\CommandBus;
 
+use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
@@ -33,6 +34,11 @@ class CommandSchedule
                 id: 'security:purge-expired-signature-requests',
                 command: new PurgeExpiredSignatureRequestsRequest(new \DateTimeImmutable('NOW')),
                 time: '02:00',
+            ),
+            ScheduledCommand::everyMinutes(
+                id: 'changelog:publish-scheduled-announcements',
+                command: new PublishScheduledAnnouncementsRequest(new \DateTimeImmutable('NOW')),
+                minutes: 5,
             ),
         ];
     }

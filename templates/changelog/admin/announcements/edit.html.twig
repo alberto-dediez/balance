@@ -1,0 +1,42 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_announcements') }}" />
+{% endblock %}
+
+{% set page_title = ('Gestionar novedades' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ announcement.title %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.category) }}
+                    {{ form_row(form.date) }}
+                    {{ form_row(form.version) }}
+                    {{ form_row(form.title) }}
+                    {{ form_row(form.summary) }}
+                    {{ form_row(form.body) }}
+                    {{ form_row(form.youtubeUrl) }}
+                    {{ form_row(form.manual) }}
+
+                    {% if form.vars.value.manualFileName is not empty %}
+                        <p class="text-muted">{{ 'Manual actual: {file}' | trans({'{file}': form.vars.value.manualFileName}) }}</p>
+                        {{ form_row(form.removeManual) }}
+                    {% else %}
+                        {% do form.removeManual.setRendered %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

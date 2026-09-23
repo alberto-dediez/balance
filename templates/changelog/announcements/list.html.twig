@@ -1,0 +1,33 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Novedades' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Fecha' | trans
+        }, {
+            'label': 'Categoría' | trans
+        }, {
+            'label': 'Título' | trans
+        }, {
+            'label': 'Resumen' | trans
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    {% if announcements is empty %}
+        <p class="text-muted mb-0">{{ 'No hay novedades publicadas' | trans }}</p>
+    {% else %}
+        <twig:List:Table :columns="columns" :elements="announcements">
+            <td>{{ element.date | date('d/m/Y', false) }}</td>
+            <td>{% include '@changelog/admin/_category_badge.html.twig' with { category: element.category } %}</td>
+            <td>{{ element.title }}</td>
+            <td>{{ element.summary }}</td>
+            <td>
+                <twig:List:Action:View path="{{ path('announcements_show', { announcementId: element.id }) }}" />
+            </td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}

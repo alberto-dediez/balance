@@ -21,7 +21,7 @@
         <p class="text-muted mb-0">{{ 'No hay novedades publicadas' | trans }}</p>
     {% else %}
         <twig:List:Table :columns="columns" :elements="entries">
-            <td>{{ element.date | date('d/m/Y') }}</td>
+            <td>{{ element.date | date('d/m/Y', false) }}</td>
             <td>{% include '@changelog/admin/_category_badge.html.twig' with { category: element.category } %}</td>
             <td>{{ element.title }}</td>
             <td>{{ element.summary }}</td>

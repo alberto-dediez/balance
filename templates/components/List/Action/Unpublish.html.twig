@@ -1,0 +1,12 @@
+{% props path %}
+
+{% set separator = '?' in path ? '&' : '?' %}
+
+<twig:List:Action path="{{ path ~ separator ~ '_token=' ~ csrf_token('unpublish') | url_encode }}"
+    title="{{ 'Despublicar' | trans }}"
+    data-controller="confirm"
+    data-confirm-text-param="{{ '¿Seguro que quieres despublicar esta novedad? Dejará de verse para los usuarios' | trans }}"
+    data-action="confirm#link:prevent"
+>
+    <twig:Icon name="solar:eye-closed-line-duotone" size="lg" />
+</twig:List:Action>

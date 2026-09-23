@@ -6,6 +6,7 @@ namespace App\Tests\Acceptance\Shared;
 
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use App\Shared\Infrastructure\Timezone\CookieTimezoneProvider;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Step\Then;
@@ -46,6 +47,12 @@ final readonly class WebContext implements Context
         $this->client->loginUser(
             new SecurityUser($user),
         );
+    }
+
+    #[When('my browser timezone is :timezone')]
+    public function myBrowserTimezoneIs(string $timezone): void
+    {
+        $this->client->setCookie(CookieTimezoneProvider::COOKIE, $timezone);
     }
 
     #[When('I go to :path')]

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Changelog\Domain\Model\Announcement\Announcement" table="announcements">
+        <indexes>
+            <index columns="published,date" name="idx_announcement_published_date"/>
+            <index columns="published,scheduled_at" name="idx_announcement_scheduled"/>
+        </indexes>
+
+        <id name="id" type="announcement_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="category" type="string" enum-type="App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory" nullable="false"/>
+        <field name="date" type="date_immutable" column="date" nullable="false"/>
+        <field name="version" type="string" length="50" nullable="true"/>
+        <field name="title" type="string" length="255" nullable="false"/>
+        <field name="summary" type="text" nullable="false"/>
+        <field name="body" type="text" nullable="false"/>
+        <field name="youtubeVideo" type="youtube_video" column="youtube_video_id" length="11" nullable="true"/>
+        <field name="manualFileName" type="string" column="manual_file_name" length="255" nullable="true"/>
+        <field name="manualPath" type="string" column="manual_path" length="255" nullable="true"/>
+        <field name="published" type="boolean" nullable="false"/>
+        <field name="publishedAt" type="datetime_immutable" column="published_at" nullable="true"/>
+        <field name="scheduledAt" type="datetime_immutable" column="scheduled_at" nullable="true"/>
+        <field name="notifyOnPublish" type="boolean" column="notify_on_publish" nullable="false"/>
+        <field name="registeredBy" type="user_id" column="registered_by" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <one-to-many field="translations"
+                     target-entity="App\Changelog\Domain\Model\Announcement\AnnouncementTranslation"
+                     mapped-by="translatable"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

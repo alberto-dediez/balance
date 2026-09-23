@@ -7,3 +7,4 @@ import './bootstrap.js';
  */
 
 import 'theme';
+import 'timezone';

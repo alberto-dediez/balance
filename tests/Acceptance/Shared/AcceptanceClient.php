@@ -150,6 +150,11 @@ final class AcceptanceClient
         $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
     }
 
+    public function setCookie(string $name, string $value): void
+    {
+        $this->client->getCookieJar()->set(new Cookie($name, $value));
+    }
+
     public function setBearerToken(string $token): void
     {
         $this->server['HTTP_AUTHORIZATION'] = sprintf('Bearer %s', $token);
