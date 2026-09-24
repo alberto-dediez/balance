@@ -24,6 +24,9 @@ return [
     'timezone' => [
         'path' => './assets/js/timezone.js',
     ],
+    'toast' => [
+        'path' => './assets/js/toast.js',
+    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

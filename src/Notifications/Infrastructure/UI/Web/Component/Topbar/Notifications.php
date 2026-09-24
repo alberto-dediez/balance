@@ -14,11 +14,23 @@ final readonly class Notifications
     public function __construct(
         private UnreadNotificationsProvider $provider,
         private bool $internalNotificationsEnabled = true,
+        private bool $liveNotificationsEnabled = true,
+        private int $pollingSeconds = 30,
     ) {}
 
     public function enabled(): bool
     {
         return $this->internalNotificationsEnabled;
+    }
+
+    public function liveEnabled(): bool
+    {
+        return $this->internalNotificationsEnabled && $this->liveNotificationsEnabled;
+    }
+
+    public function pollingSeconds(): int
+    {
+        return max(5, $this->pollingSeconds);
     }
 
     public function count(): int

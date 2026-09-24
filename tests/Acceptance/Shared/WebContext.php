@@ -72,6 +72,12 @@ final readonly class WebContext implements Context
         $this->client->request('GET', $path . $separator . $parameter . '=' . urlencode($token), ['HTTP_SEC_FETCH_SITE' => 'same-origin']);
     }
 
+    #[When('I press :text')]
+    public function iPress(string $text): void
+    {
+        $this->client->submit($this->client->getCrawler()->selectButton($text)->form());
+    }
+
     #[When('I follow redirect')]
     public function iFollowredirect(): void
     {

@@ -1861,6 +1861,10 @@
         <source>Despublicada la novedad</source>
         <target>Despublicada la novedad</target>
       </trans-unit>
+      <trans-unit id="UNR9CvQ" resname="Tienes una nueva notificación">
+        <source>Tienes una nueva notificación</source>
+        <target>Tienes una nueva notificación</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
