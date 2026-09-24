@@ -653,9 +653,9 @@
         <source>Código incorrecto.</source>
         <target>Código incorrecto.</target>
       </trans-unit>
-      <trans-unit id="cXxD2Ir" resname="Te quedan %n% intentos.">
-        <source>Te quedan %n% intentos.</source>
-        <target>Te quedan %n% intentos.</target>
+      <trans-unit id="cXxD2Ir" resname="Te quedan {n} intentos.">
+        <source>Te quedan {n} intentos.</source>
+        <target>Te quedan {n} intentos.</target>
       </trans-unit>
       <trans-unit id="5187CUS" resname="Verificar">
         <source>Verificar</source>
@@ -1864,6 +1864,134 @@
       <trans-unit id="UNR9CvQ" resname="Tienes una nueva notificación">
         <source>Tienes una nueva notificación</source>
         <target>Tienes una nueva notificación</target>
+      </trans-unit>
+      <trans-unit id="VNOL_oX" resname="Código de acceso">
+        <source>Código de acceso</source>
+        <target>Código de acceso</target>
+      </trans-unit>
+      <trans-unit id="WPqNeNy" resname="Tu código de acceso es:">
+        <source>Tu código de acceso es:</source>
+        <target>Tu código de acceso es:</target>
+      </trans-unit>
+      <trans-unit id="OzWAyP_" resname="Si no has intentado acceder, cambia tu contraseña.">
+        <source>Si no has intentado acceder, cambia tu contraseña.</source>
+        <target>Si no has intentado acceder, cambia tu contraseña.</target>
+      </trans-unit>
+      <trans-unit id="FLLVh0l" resname="Tu aplicación de autenticación no está disponible; te hemos enviado el código por email.">
+        <source>Tu aplicación de autenticación no está disponible; te hemos enviado el código por email.</source>
+        <target>Tu aplicación de autenticación no está disponible; te hemos enviado el código por email.</target>
+      </trans-unit>
+      <trans-unit id="Np0sRqe" resname="Verificación en dos pasos">
+        <source>Verificación en dos pasos</source>
+        <target>Verificación en dos pasos</target>
+      </trans-unit>
+      <trans-unit id="q5ikyk0" resname="Introduce el código de tu aplicación de autenticación.">
+        <source>Introduce el código de tu aplicación de autenticación.</source>
+        <target>Introduce el código de tu aplicación de autenticación.</target>
+      </trans-unit>
+      <trans-unit id="mG.NRnM" resname="Cancelar y volver al acceso">
+        <source>Cancelar y volver al acceso</source>
+        <target>Cancelar y volver al acceso</target>
+      </trans-unit>
+      <trans-unit id="mZ5BYND" resname="Código incorrecto. Te quedan {n} intentos.">
+        <source>Código incorrecto. Te quedan {n} intentos.</source>
+        <target>Código incorrecto. Te quedan {n} intentos.</target>
+      </trans-unit>
+      <trans-unit id="0L5EYJO" resname="Segundo factor activado por email">
+        <source>Segundo factor activado por email</source>
+        <target>Segundo factor activado por email</target>
+      </trans-unit>
+      <trans-unit id="G3yAnAN" resname="Segundo factor activado con la aplicación de autenticación">
+        <source>Segundo factor activado con la aplicación de autenticación</source>
+        <target>Segundo factor activado con la aplicación de autenticación</target>
+      </trans-unit>
+      <trans-unit id="HbUJkXK" resname="Activación del segundo factor cancelada">
+        <source>Activación del segundo factor cancelada</source>
+        <target>Activación del segundo factor cancelada</target>
+      </trans-unit>
+      <trans-unit id="HEr0gAv" resname="Segundo factor desactivado">
+        <source>Segundo factor desactivado</source>
+        <target>Segundo factor desactivado</target>
+      </trans-unit>
+      <trans-unit id="Tu6_kKy" resname="Demasiados intentos. Vuelve a empezar la activación">
+        <source>Demasiados intentos. Vuelve a empezar la activación</source>
+        <target>Demasiados intentos. Vuelve a empezar la activación</target>
+      </trans-unit>
+      <trans-unit id="s5L4vPl" resname="Segundo factor restablecido">
+        <source>Segundo factor restablecido</source>
+        <target>Segundo factor restablecido</target>
+      </trans-unit>
+      <trans-unit id="MypsN.D" resname="Método">
+        <source>Método</source>
+        <target>Método</target>
+      </trans-unit>
+      <trans-unit id="6HBLTTn" resname="Segundo factor">
+        <source>Segundo factor</source>
+        <target>Segundo factor</target>
+      </trans-unit>
+      <trans-unit id="epOWHM6" resname="Activado: {method}">
+        <source>Activado: {method}</source>
+        <target>Activado: {method}</target>
+      </trans-unit>
+      <trans-unit id="jzD1TgO" resname="Obligatorio: código por email">
+        <source>Obligatorio: código por email</source>
+        <target>Obligatorio: código por email</target>
+      </trans-unit>
+      <trans-unit id="JhhBV7q" resname="No activado">
+        <source>No activado</source>
+        <target>No activado</target>
+      </trans-unit>
+      <trans-unit id="ZDRbP7D" resname="¿Seguro que quieres desactivar el segundo factor?">
+        <source>¿Seguro que quieres desactivar el segundo factor?</source>
+        <target>¿Seguro que quieres desactivar el segundo factor?</target>
+      </trans-unit>
+      <trans-unit id="umX2GB8" resname="Desactivar segundo factor">
+        <source>Desactivar segundo factor</source>
+        <target>Desactivar segundo factor</target>
+      </trans-unit>
+      <trans-unit id="tfApp05" resname="Aplicación de autenticación">
+        <source>Aplicación de autenticación</source>
+        <target>Aplicación de autenticación</target>
+      </trans-unit>
+      <trans-unit id="tfRel03" resname="Vincular otro dispositivo">
+        <source>Vincular otro dispositivo</source>
+        <target>Vincular otro dispositivo</target>
+      </trans-unit>
+      <trans-unit id="tfEml06" resname="¿Seguro que quieres usar el email como segundo factor?">
+        <source>¿Seguro que quieres usar el email como segundo factor?</source>
+        <target>¿Seguro que quieres usar el email como segundo factor?</target>
+      </trans-unit>
+      <trans-unit id="tfCsr07" resname="No se ha podido validar el formulario. Vuelve a introducir el código.">
+        <source>No se ha podido validar el formulario. Vuelve a introducir el código.</source>
+        <target>No se ha podido validar el formulario. Vuelve a introducir el código.</target>
+      </trans-unit>
+      <trans-unit id="tfKep04" resname="Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.">
+        <source>Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.</source>
+        <target>Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.</target>
+      </trans-unit>
+      <trans-unit id="6RzkG5X" resname="Cancelar">
+        <source>Cancelar</source>
+        <target>Cancelar</target>
+      </trans-unit>
+      <trans-unit id="FmHouvK" resname="Escanea este código con Google Authenticator (o cualquier app compatible) e introduce el código que muestra.">
+        <source>Escanea este código con Google Authenticator (o cualquier app compatible) e introduce el código que muestra.</source>
+        <target>Escanea este código con Google Authenticator (o cualquier app compatible) e introduce el código que muestra.</target>
+      </trans-unit>
+      <trans-unit id="RDBDG2E" resname="Clave manual: {key}">
+        <source>Clave manual: {key}</source>
+        <target>Clave manual: {key}</target>
+      </trans-unit>
+      <trans-unit id="PQskbMA" resname="Segundo factor &gt; Aplicación de autenticación">
+        <source>Segundo factor &gt; Aplicación de autenticación</source>
+        <target><![CDATA[Segundo factor > Aplicación de autenticación]]></target>
+      </trans-unit>
+      <trans-unit id="bJo8SU4" resname="Restablecer segundo factor">
+        <source>Restablecer segundo factor</source>
+        <target>Restablecer segundo factor</target>
+      </trans-unit>
+      <trans-unit id="tHLKQnh" resname="¿Seguro que quieres restablecer el segundo factor de este usuario?">
+        <source>¿Seguro que quieres restablecer el segundo factor de este usuario?</source>
+        <target>¿Seguro que quieres restablecer el segundo factor de este usuario?</target>
       </trans-unit>
     </body>
   </file>

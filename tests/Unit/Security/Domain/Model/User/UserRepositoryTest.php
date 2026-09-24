@@ -7,7 +7,9 @@ namespace App\Tests\Unit\Security\Domain\Model\User;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\TwoFactorMethod;
 use App\Security\Domain\Model\User\UserFilter;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -43,6 +45,30 @@ abstract class UserRepositoryTest extends KernelTestCase
 
         $this->assertNotNull($recoverUser);
         $this->assertEquals(Locale::English, $recoverUser->preferredLocale());
+    }
+
+    public function testAddUserOfAnAccountKeepsItsTwoFactorState(): void
+    {
+        $repository = $this->createSUT();
+
+        $user = UserMother::from(
+            userId: UserId::generate(),
+            username: 'two-factor@dediez.software',
+            accountId: AccountId::generate(),
+            twoFactorMethod: TwoFactorMethod::Totp,
+            totpSecret: 'stored-secret',
+        );
+        $user->requestTotpEnrolment('pending-secret');
+
+        $repository->add($user);
+
+        $recoverUser = $repository->find($user->id());
+
+        $this->assertNotNull($recoverUser);
+        $this->assertEquals(TwoFactorMethod::Totp, $recoverUser->twoFactorMethod());
+        $this->assertEquals('stored-secret', $recoverUser->totpSecret());
+        $this->assertEquals('pending-secret', $recoverUser->pendingTotpSecret());
+        $this->assertTrue($recoverUser->twoFactorChallenge()->isPending());
     }
 
     public function testRemoveUserToRepository(): void

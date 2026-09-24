@@ -7,6 +7,7 @@ namespace App\Security\Infrastructure\Symfony\Security;
 use App\Security\Infrastructure\Sso\SsoAuthenticationFailedException;
 use App\Security\Infrastructure\Sso\SsoProviderRegistry;
 use App\Security\Infrastructure\Sso\UnknownSsoProviderException;
+use App\Security\Infrastructure\Symfony\Security\TwoFactor\SsoBadge;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,7 +75,7 @@ final class SsoAuthenticator extends AbstractAuthenticator
                     throw new CustomUserMessageAuthenticationException(self::UNKNOWN_USER_MESSAGE, [], 0, $e);
                 }
             }),
-            [(new RememberMeBadge())->enable()],
+            [(new RememberMeBadge())->enable(), new SsoBadge()],
         );
     }
 

@@ -185,6 +185,12 @@ final readonly class WebContext implements Context
         Assert::assertCount(1, $button);
     }
 
+    #[Then('I do not see a link with name :name')]
+    public function iDoNotSeeALinkWithName(string $name): void
+    {
+        Assert::assertCount(0, $this->client->getCrawler()->selectLink($name));
+    }
+
     #[Then('I see a table with :rows rows')]
     public function iSeeATableWithRows(int $rows): void
     {

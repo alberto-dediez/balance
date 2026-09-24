@@ -18,11 +18,15 @@ use App\Security\Domain\Model\SignatureRequest\SignatureRequestRepository;
 use App\Security\Domain\Model\SignatureRequest\Signer;
 use App\Security\Domain\Model\SignatureRequest\Token;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\TwoFactorMethod;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider;
 use App\Security\Infrastructure\Sso\SsoProviderRegistry;
+use App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTotpAuthenticator;
+use App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTwoFactorPolicy;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Infrastructure\Symfony\Event\EmailListener;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
@@ -38,6 +42,9 @@ use PHPUnit\Framework\Assert;
 use function PHPUnit\Framework\assertNotEmpty;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final class SecurityContext implements Context
@@ -62,6 +69,8 @@ final class SecurityContext implements Context
                 $provider->reset();
             }
         }
+
+        $this->getTwoFactorPolicy()->reset();
     }
 
     private function getUserRepository(): UserRepository
@@ -100,6 +109,233 @@ final class SecurityContext implements Context
         Assert::assertInstanceOf(InMemorySsoProvider::class, $provider);
 
         return $provider;
+    }
+
+    private function getTwoFactorPolicy(): InMemoryTwoFactorPolicy
+    {
+        $policy = $this->client->getContainer()->get(InMemoryTwoFactorPolicy::class);
+
+        Assert::assertInstanceOf(InMemoryTwoFactorPolicy::class, $policy);
+
+        return $policy;
+    }
+
+    private function currentCrawler(): Crawler
+    {
+        return new Crawler((string) $this->client->getResponse()->getContent(), $this->client->getRequest()->getUri());
+    }
+
+    private function twoFactorForm(string $action): Form
+    {
+        $button = $this->currentCrawler()->filterXPath(sprintf('//form[.//input[@name="action" and @value="%s"]]//button', $action));
+
+        Assert::assertGreaterThan(0, $button->count(), sprintf('No se encontró el formulario "%s" del segundo factor', $action));
+
+        return $button->first()->form();
+    }
+
+    private function submitTwoFactorCode(string $code): void
+    {
+        $form = $this->twoFactorForm('verify');
+        $form['code'] = $code;
+
+        $this->client->submit($form);
+    }
+
+    #[Given('two factor authentication is required')]
+    public function twoFactorAuthenticationIsRequired(): void
+    {
+        $this->getTwoFactorPolicy()->require();
+    }
+
+    #[Given('two factor authentication is optional')]
+    public function twoFactorAuthenticationIsOptional(): void
+    {
+        $this->getTwoFactorPolicy()->makeOptional();
+    }
+
+    #[Given('two factor authentication for SSO is enabled')]
+    public function twoFactorAuthenticationForSsoIsEnabled(): void
+    {
+        $this->getTwoFactorPolicy()->enableSso();
+    }
+
+    #[Given('user :username with two factor method :method exists')]
+    public function userWithTwoFactorMethodExists(string $username, string $method): void
+    {
+        $this->getUserRepository()->add(UserMother::withTwoFactorMethod($username, TwoFactorMethod::from($method), InMemoryTotpAuthenticator::SECRET));
+    }
+
+    #[Given('user :username with an unreadable authenticator secret exists')]
+    public function userWithAnUnreadableAuthenticatorSecretExists(string $username): void
+    {
+        $this->getUserRepository()->add(UserMother::withTwoFactorMethod($username, TwoFactorMethod::Totp, InMemoryTotpAuthenticator::UNREADABLE_SECRET));
+    }
+
+    #[Given('user :username with id :id and two factor method :method exists')]
+    public function userWithIdAndTwoFactorMethodExists(string $username, string $id, string $method): void
+    {
+        $this->addUserWithTwoFactorMethod($username, new UserId($id), null, TwoFactorMethod::from($method));
+    }
+
+    #[Given('user :username with id :id of account :account with two factor method :method exists')]
+    public function userWithIdOfAccountWithTwoFactorMethodExists(string $username, string $id, string $account, string $method): void
+    {
+        $this->addUserWithTwoFactorMethod($username, new UserId($id), new AccountId($account), TwoFactorMethod::from($method));
+    }
+
+    private function addUserWithTwoFactorMethod(string $username, UserId $userId, ?AccountId $accountId, TwoFactorMethod $method): void
+    {
+        $user = UserMother::from(
+            userId: $userId,
+            username: $username,
+            accountId: $accountId,
+            twoFactorMethod: $method,
+            totpSecret: TwoFactorMethod::Totp === $method ? InMemoryTotpAuthenticator::SECRET : null,
+        );
+
+        $this->getUserRepository()->add($user);
+    }
+
+    #[When('I sign in with :username and :password')]
+    public function iSignInWith(string $username, string $password, bool $rememberMe = false): void
+    {
+        $this->client->request('GET', '/es/login');
+
+        $form = $this->currentCrawler()->filter('input[name="_csrf_token"]')->closest('form')?->form();
+
+        Assert::assertInstanceOf(Form::class, $form);
+
+        $form['_username'] = $username;
+        $form['_password'] = $password;
+
+        if ($rememberMe) {
+            $form['_remember_me'] = 'on';
+        }
+
+        $this->client->submit($form);
+    }
+
+    #[When('I sign in with :username and :password remembering me')]
+    public function iSignInWithRememberingMe(string $username, string $password): void
+    {
+        $this->iSignInWith($username, $password, true);
+    }
+
+    #[When('my session expires')]
+    public function mySessionExpires(): void
+    {
+        $this->client->clearCookiesExcept('REMEMBERME');
+    }
+
+    #[When('I submit the two factor code from the last email')]
+    public function iSubmitTheTwoFactorCodeFromTheLastEmail(): void
+    {
+        $emailListener = $this->client->getContainer()->get(EmailListener::class);
+
+        Assert::assertInstanceOf(EmailListener::class, $emailListener);
+
+        $messages = $emailListener->getMessages();
+
+        Assert::assertNotEmpty($messages, 'No se ha enviado ningún email');
+
+        $lastMessage = $messages[count($messages) - 1];
+
+        Assert::assertInstanceOf(Email::class, $lastMessage);
+
+        $body = (string) ($lastMessage->getHtmlBody() ?? $lastMessage->getTextBody());
+
+        Assert::assertMatchesRegularExpression('/(?<![#\w])(\d{6})(?!\w)/', $body, 'El email no contiene un código de 6 dígitos');
+
+        preg_match('/(?<![#\w])(\d{6})(?!\w)/', $body, $matches);
+
+        $this->submitTwoFactorCode($matches[1]);
+    }
+
+    #[When('I submit the valid authenticator code')]
+    public function iSubmitTheValidAuthenticatorCode(): void
+    {
+        $this->submitTwoFactorCode(InMemoryTotpAuthenticator::VALID_CODE);
+    }
+
+    #[When('I submit a wrong two factor code')]
+    public function iSubmitAWrongTwoFactorCode(): void
+    {
+        $this->submitTwoFactorCode('000000');
+    }
+
+    #[When('I submit a two factor code with an invalid csrf token')]
+    public function iSubmitATwoFactorCodeWithAnInvalidCsrfToken(): void
+    {
+        $form = $this->twoFactorForm('verify');
+        $form['code'] = '000000';
+        $form['_token'] = 'invalid';
+
+        $this->client->submit($form);
+    }
+
+    #[When('I resend the two factor code')]
+    public function iResendTheTwoFactorCode(): void
+    {
+        $this->client->submit($this->twoFactorForm('resend'));
+    }
+
+    #[Then('going to :path redirects to :target')]
+    public function goingToRedirectsTo(string $path, string $target): void
+    {
+        $this->client->catchExceptions(true);
+
+        try {
+            $this->client->request('GET', $path);
+        } finally {
+            $this->client->catchExceptions(false);
+        }
+
+        $response = $this->client->getResponse();
+
+        Assert::assertTrue($response->isRedirect(), sprintf('La respuesta a "%s" no es una redirección (%d)', $path, $response->getStatusCode()));
+        Assert::assertEquals($target, parse_url((string) $response->headers->get('Location'), PHP_URL_PATH));
+    }
+
+    #[Then('user :username has two factor method :method')]
+    public function userHasTwoFactorMethod(string $username, string $method): void
+    {
+        $user = $this->getUserRepository()->findByUsername($username);
+
+        Assert::assertNotNull($user);
+        Assert::assertEquals(TwoFactorMethod::from($method), $user->twoFactorMethod());
+    }
+
+    #[Then('user :username has no two factor method')]
+    public function userHasNoTwoFactorMethod(string $username): void
+    {
+        $user = $this->getUserRepository()->findByUsername($username);
+
+        Assert::assertNotNull($user);
+        Assert::assertNull($user->twoFactorMethod());
+    }
+
+    #[Then('the response has a remember me cookie')]
+    public function theResponseHasARememberMeCookie(): void
+    {
+        Assert::assertTrue($this->responseHasRememberMeCookie(), 'La respuesta no emite la cookie REMEMBERME');
+    }
+
+    #[Then('the response has no remember me cookie')]
+    public function theResponseHasNoRememberMeCookie(): void
+    {
+        Assert::assertFalse($this->responseHasRememberMeCookie(), 'La respuesta emite la cookie REMEMBERME');
+    }
+
+    private function responseHasRememberMeCookie(): bool
+    {
+        foreach ($this->client->getResponse()->headers->getCookies() as $cookie) {
+            if ('REMEMBERME' === $cookie->getName() && !$cookie->isCleared() && '' !== (string) $cookie->getValue()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     #[Given('user :username with role :role exists')]

@@ -1,0 +1,70 @@
+{% extends '@security/layout.html.twig' %}
+
+{% block form_title %}
+    <h4 class="text-uppercase mt-0">{% trans -%}Verificación en dos pasos{%- endtrans %}</h4>
+{% endblock %}
+
+{% block form %}
+    {% if isFallback %}
+        <twig:Alert type="warning">{% trans -%}Tu aplicación de autenticación no está disponible; te hemos enviado el código por email.{%- endtrans %}</twig:Alert>
+    {% endif %}
+
+    {% if resent %}
+        <twig:Alert type="success">{% trans -%}Se ha enviado un nuevo código.{%- endtrans %}</twig:Alert>
+    {% endif %}
+
+    <p class="text-muted">
+        {% if method == 'Totp' %}
+            {% trans -%}Introduce el código de tu aplicación de autenticación.{%- endtrans %}
+        {% else %}
+            {% trans -%}Hemos enviado un código de 6 dígitos al email{%- endtrans %} <strong>{{ maskedDestination }}</strong>.
+        {% endif %}
+    </p>
+
+    {% if error == 'csrf' %}
+        <twig:Alert type="warning">{% trans -%}No se ha podido validar el formulario. Vuelve a introducir el código.{%- endtrans %}</twig:Alert>
+    {% endif %}
+
+    {% if error == 'invalid' %}
+        <twig:Alert type="warning">{{ 'Código incorrecto. Te quedan {n} intentos.' | trans({'n': attemptsLeft ?? 0}) }}</twig:Alert>
+    {% endif %}
+
+    <form method="POST" action="{{ path('app_login_two_factor_verify') }}">
+        <input type="hidden" name="action" value="verify">
+        <input type="hidden" name="_token" data-controller="csrf-protection" value="{{ csrf_token('two-factor') }}">
+
+        <div class="form-group mb-3">
+            <label for="code" class="form-label">{% trans -%}Código de verificación{%- endtrans %}</label>
+            <input type="text"
+                   id="code"
+                   name="code"
+                   class="form-control form-control-lg text-center"
+                   inputmode="numeric"
+                   autocomplete="one-time-code"
+                   maxlength="6"
+                   pattern="\d{6}"
+                   required
+                   autofocus>
+        </div>
+
+        <div class="form-group mb-0 text-center">
+            <button type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">{% trans -%}Verificar{%- endtrans %}</button>
+        </div>
+    </form>
+
+    {% if method == 'Email' %}
+        <form method="POST" action="{{ path('app_login_two_factor_verify') }}">
+            <input type="hidden" name="action" value="resend">
+            <input type="hidden" name="_token" data-controller="csrf-protection" value="{{ csrf_token('two-factor') }}">
+            <div class="text-center">
+                <button type="submit" class="btn btn-link">{% trans -%}¿No has recibido el código? Reenviar{%- endtrans %}</button>
+            </div>
+        </form>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="{{ path('app_logout', {'_csrf_token': csrf_token('logout')}) }}" class="text-muted">{% trans -%}Cancelar y volver al acceso{%- endtrans %}</a>
+        </div>
+    </div>
+{% endblock form %}

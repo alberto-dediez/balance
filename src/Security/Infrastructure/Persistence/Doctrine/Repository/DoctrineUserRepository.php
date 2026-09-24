@@ -51,6 +51,10 @@ class DoctrineUserRepository implements UserRepository
                 removedAt: $user->removedAt(),
                 preferredLocale: $user->preferredLocale(),
                 pictureId: $user->pictureId(),
+                twoFactorMethod: $user->twoFactorMethod(),
+                totpSecret: $user->totpSecret(),
+                pendingTotpSecret: $user->pendingTotpSecret(),
+                twoFactorChallenge: $user->twoFactorChallenge(),
             );
         }
 

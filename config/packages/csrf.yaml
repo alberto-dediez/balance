@@ -11,3 +11,9 @@ framework:
             - logout
             - remove
             - unpublish
+            - two-factor
+            - two-factor-cancel
+            - two-factor-disable
+            - two-factor-email
+            - two-factor-totp
+            - two-factor-reset

@@ -1,0 +1,58 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = 'Segundo factor' | trans %}
+
+{% block top_actions %}
+    {% if currentMethod and not required %}
+        <twig:TopAction
+            path="{{ path('profile_two_factor_disable', {'_token': csrf_token('two-factor-disable')}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ '¿Seguro que quieres desactivar el segundo factor?' | trans }}"
+            data-action="confirm#link:prevent"
+        >
+            <twig:Icon name="solar:shield-cross-line-duotone" size="lg" class="me-2" />
+            {{ 'Desactivar segundo factor' | trans }}
+        </twig:TopAction>
+    {% endif %}
+    {% if currentMethod is null or currentMethod.value != 'Email' %}
+        <twig:TopAction
+            path="{{ path('profile_two_factor_email', {'_token': csrf_token('two-factor-email')}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ '¿Seguro que quieres usar el email como segundo factor?' | trans }}"
+            data-action="confirm#link:prevent"
+        >
+            <twig:Icon name="solar:letter-line-duotone" size="lg" class="me-2" />
+            {{ 'Email' | trans }}
+        </twig:TopAction>
+    {% endif %}
+    {% if currentMethod is null or currentMethod.value != 'Totp' %}
+        <twig:TopAction path="{{ path('profile_two_factor_totp', {'_token': csrf_token('two-factor-totp')}) }}">
+            <twig:Icon name="solar:smartphone-line-duotone" size="lg" class="me-2" />
+            {{ 'Aplicación de autenticación' | trans }}
+        </twig:TopAction>
+    {% else %}
+        <twig:TopAction path="{{ path('profile_two_factor_totp', {'_token': csrf_token('two-factor-totp')}) }}">
+            <twig:Icon name="solar:refresh-line-duotone" size="lg" class="me-2" />
+            {{ 'Vincular otro dispositivo' | trans }}
+        </twig:TopAction>
+    {% endif %}
+    <twig:TopAction:Return path="{{ path('profile') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row">
+            <div class="col-12">
+                <twig:View:Field label="{{ 'Estado' | trans }}">
+                    {% if currentMethod %}
+                        <span class="badge bg-success">{{ 'Activado: {method}' | trans({'method': currentMethod.value | trans({}, 'twoFactorMethod')}) }}</span>
+                    {% elseif required %}
+                        <span class="badge bg-info">{{ 'Obligatorio: código por email' | trans }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ 'No activado' | trans }}</span>
+                    {% endif %}
+                </twig:View:Field>
+            </div>
+        </div>
+    </twig:Card>
+{% endblock %}

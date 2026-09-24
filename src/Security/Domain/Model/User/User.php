@@ -33,6 +33,10 @@ class User implements \Stringable
         protected ?\DateTimeImmutable $removedAt = null,
         protected ?Locale $preferredLocale = null,
         protected ?MediaId $pictureId = null,
+        protected ?TwoFactorMethod $twoFactorMethod = null,
+        protected ?string $totpSecret = null,
+        protected ?string $pendingTotpSecret = null,
+        protected ?TwoFactorChallenge $twoFactorChallenge = null,
     ) {
         $this->events = $events;
     }
@@ -135,6 +139,36 @@ class User implements \Stringable
         return $this->pictureId instanceof MediaId;
     }
 
+    public function twoFactorMethod(): ?TwoFactorMethod
+    {
+        return $this->twoFactorMethod;
+    }
+
+    public function hasTwoFactor(): bool
+    {
+        return $this->twoFactorMethod instanceof TwoFactorMethod;
+    }
+
+    public function totpSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    public function pendingTotpSecret(): ?string
+    {
+        return $this->pendingTotpSecret;
+    }
+
+    public function hasPendingTotpEnrolment(): bool
+    {
+        return null !== $this->pendingTotpSecret;
+    }
+
+    public function twoFactorChallenge(): TwoFactorChallenge
+    {
+        return $this->twoFactorChallenge ?? TwoFactorChallenge::none();
+    }
+
     public function register(string $username, string $password, ?AccountId $accountId = null): void
     {
         $this->recordApplyAndPublish(
@@ -223,6 +257,120 @@ class User implements \Stringable
         );
     }
 
+    public function enableTwoFactorByEmail(): void
+    {
+        $this->recordApplyAndPublish(
+            new TwoFactorEnrolmentConfirmed(
+                userId: $this->id(),
+                method: TwoFactorMethod::Email,
+            ),
+        );
+    }
+
+    public function requestTotpEnrolment(#[\SensitiveParameter] string $encryptedSecret): void
+    {
+        $this->recordApplyAndPublish(
+            new TwoFactorEnrolmentRequested(
+                userId: $this->id(),
+                method: TwoFactorMethod::Totp,
+                encryptedSecret: $encryptedSecret,
+                challenge: TwoFactorChallenge::withoutCode(),
+            ),
+        );
+    }
+
+    public function confirmTotpEnrolment(string $code, TotpAuthenticator $totp): void
+    {
+        if (null === $this->pendingTotpSecret || !$this->twoFactorChallenge()->isPending()) {
+            throw new TwoFactorNotPendingException();
+        }
+
+        if (!$totp->verify($this->pendingTotpSecret, $code)) {
+            $this->failTwoFactorVerification(TwoFactorMethod::Totp);
+        }
+
+        $this->recordApplyAndPublish(
+            new TwoFactorEnrolmentConfirmed(
+                userId: $this->id(),
+                method: TwoFactorMethod::Totp,
+            ),
+        );
+    }
+
+    public function cancelTotpEnrolment(): void
+    {
+        if (!$this->hasPendingTotpEnrolment()) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new TwoFactorEnrolmentCancelled(
+                userId: $this->id(),
+            ),
+        );
+    }
+
+    public function disableTwoFactor(): void
+    {
+        if (!$this->hasTwoFactor() && !$this->hasPendingTotpEnrolment() && !$this->twoFactorChallenge()->expiresAt() instanceof \DateTimeImmutable) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new TwoFactorDisabled(
+                userId: $this->id(),
+            ),
+        );
+    }
+
+    public function requestTwoFactorChallenge(TwoFactorMethod $method, TwoFactorChallenge $challenge, string $maskedDestination): void
+    {
+        $this->recordApplyAndPublish(
+            new TwoFactorChallengeRequested(
+                userId: $this->id(),
+                method: $method,
+                challenge: $challenge,
+                maskedDestination: $maskedDestination,
+                expiresAt: $challenge->expiresAt(),
+            ),
+        );
+    }
+
+    public function verifyTwoFactor(string $code, TwoFactorMethod $method, #[\SensitiveParameter] string $appSecret, TotpAuthenticator $totp): void
+    {
+        if (!$this->twoFactorChallenge()->isPending()) {
+            throw new TwoFactorNotPendingException();
+        }
+
+        $isValid = match ($method) {
+            TwoFactorMethod::Totp => $totp->verify($this->totpSecret ?? '', $code),
+            TwoFactorMethod::Email => $this->twoFactorChallenge()->verify($code, $appSecret),
+        };
+
+        if (!$isValid) {
+            $this->failTwoFactorVerification($method);
+        }
+
+        $this->recordApplyAndPublish(
+            new TwoFactorVerified(
+                userId: $this->id(),
+                method: $method,
+            ),
+        );
+    }
+
+    private function failTwoFactorVerification(TwoFactorMethod $method): never
+    {
+        $this->recordApplyAndPublish(
+            new TwoFactorVerificationFailed(
+                userId: $this->id(),
+                method: $method,
+            ),
+        );
+
+        throw new TwoFactorCodeInvalidException($this->twoFactorChallenge()->attemptsLeft(), $this->twoFactorChallenge()->isLocked());
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -285,6 +433,49 @@ class User implements \Stringable
     {
         $this->password = $event->password();
         $this->recoverToken = null;
+    }
+
+    public function applyTwoFactorEnrolmentRequested(TwoFactorEnrolmentRequested $event): void
+    {
+        $this->pendingTotpSecret = $event->encryptedSecret();
+        $this->twoFactorChallenge = $event->challenge();
+    }
+
+    public function applyTwoFactorEnrolmentConfirmed(TwoFactorEnrolmentConfirmed $event): void
+    {
+        $this->twoFactorMethod = $event->method();
+        $this->totpSecret = TwoFactorMethod::Totp === $event->method() ? $this->pendingTotpSecret : null;
+        $this->pendingTotpSecret = null;
+        $this->twoFactorChallenge = TwoFactorChallenge::none();
+    }
+
+    public function applyTwoFactorEnrolmentCancelled(TwoFactorEnrolmentCancelled $event): void
+    {
+        $this->pendingTotpSecret = null;
+        $this->twoFactorChallenge = TwoFactorChallenge::none();
+    }
+
+    public function applyTwoFactorDisabled(TwoFactorDisabled $event): void
+    {
+        $this->twoFactorMethod = null;
+        $this->totpSecret = null;
+        $this->pendingTotpSecret = null;
+        $this->twoFactorChallenge = TwoFactorChallenge::none();
+    }
+
+    public function applyTwoFactorChallengeRequested(TwoFactorChallengeRequested $event): void
+    {
+        $this->twoFactorChallenge = $event->challenge();
+    }
+
+    public function applyTwoFactorVerificationFailed(TwoFactorVerificationFailed $event): void
+    {
+        $this->twoFactorChallenge = $this->twoFactorChallenge()->withFailedAttempt();
+    }
+
+    public function applyTwoFactorVerified(TwoFactorVerified $event): void
+    {
+        $this->twoFactorChallenge = TwoFactorChallenge::none();
     }
 
     public function applyUserRemoved(UserRemoved $event): void
