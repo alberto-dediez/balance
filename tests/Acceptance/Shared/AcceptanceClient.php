@@ -98,6 +98,11 @@ final class AcceptanceClient
         }
     }
 
+    public function catchExceptions(bool $catchExceptions): void
+    {
+        $this->client->catchExceptions($catchExceptions);
+    }
+
     public function followRedirect(): void
     {
         $this->crawler = $this->client->followRedirect();
@@ -168,6 +173,23 @@ final class AcceptanceClient
         $session->save();
 
         $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
+    }
+
+    public function setCookie(string $name, string $value): void
+    {
+        $this->client->getCookieJar()->set(new Cookie($name, $value));
+    }
+
+    public function clearCookiesExcept(string $name): void
+    {
+        $cookieJar = $this->client->getCookieJar();
+        $kept = array_filter($cookieJar->all(), static fn(Cookie $cookie): bool => $name === $cookie->getName());
+
+        $cookieJar->clear();
+
+        foreach ($kept as $cookie) {
+            $cookieJar->set($cookie);
+        }
     }
 
     public function setBearerToken(string $token): void

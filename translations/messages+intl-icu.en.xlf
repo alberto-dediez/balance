@@ -969,7 +969,7 @@
         <source>Código incorrecto.</source>
         <target>Incorrect code.</target>
       </trans-unit>
-      <trans-unit id="4S6RMyl" resname="Te quedan {n} intentos.">
+      <trans-unit id="cXxD2Ir" resname="Te quedan {n} intentos.">
         <source>Te quedan {n} intentos.</source>
         <target>You have {n} attempts remaining.</target>
       </trans-unit>
@@ -2143,7 +2143,7 @@
       </trans-unit>
       <trans-unit id="FrkSox0" resname="Combustibles">
         <source>Combustibles</source>
-        <target>Combustibles</target>
+        <target>Fuels</target>
       </trans-unit>
       <trans-unit id="4ITGYnt" resname="Combustible creado correctamente: {name}">
         <source>Combustible creado correctamente: {name}</source>
@@ -2199,7 +2199,7 @@
       </trans-unit>
       <trans-unit id="XRuiJWe" resname="Combustible">
         <source>Combustible</source>
-        <target>Combustible</target>
+        <target>Fuel</target>
       </trans-unit>
       <trans-unit id="imFmXRj" resname="Kg CO2eq (nueva fabricación)">
         <source>Kg CO2eq (nueva fabricación)</source>
@@ -6475,7 +6475,7 @@
       </trans-unit>
       <trans-unit id="CJk6ef4" resname="Personalización actualizada con éxito">
         <source>Personalización actualizada con éxito</source>
-        <target>Personalización actualizada con éxito</target>
+        <target>Branding updated successfully</target>
       </trans-unit>
       <trans-unit id="6dN36Pp" resname="Tema actualizado con éxito">
         <source>Tema actualizado con éxito</source>
@@ -8132,6 +8132,294 @@
       <trans-unit id="URJDmE2" resname="No se ha podido volver a generar el informe: {error}">
         <source>No se ha podido volver a generar el informe: {error}</source>
         <target>The report could not be regenerated: {error}</target>
+      </trans-unit>
+      <trans-unit id="nh2JtwH" resname="Gestionar novedades">
+        <source>Gestionar novedades</source>
+        <target>Manage announcements</target>
+      </trans-unit>
+      <trans-unit id="TOE37XY" resname="Novedad registrada correctamente: {title}">
+        <source>Novedad registrada correctamente: {title}</source>
+        <target>Announcement successfully registered: {title}</target>
+      </trans-unit>
+      <trans-unit id="3S2KLcH" resname="Novedad actualizada con éxito">
+        <source>Novedad actualizada con éxito</source>
+        <target>Announcement successfully updated</target>
+      </trans-unit>
+      <trans-unit id="uPYJZff" resname="Se ha eliminado la novedad {title}">
+        <source>Se ha eliminado la novedad {title}</source>
+        <target>The announcement {title} has been removed</target>
+      </trans-unit>
+      <trans-unit id="hZBcOeS" resname="No se ha podido eliminar la novedad {title}">
+        <source>No se ha podido eliminar la novedad {title}</source>
+        <target>The announcement {title} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="qUqLfC9" resname="Programación cancelada">
+        <source>Programación cancelada</source>
+        <target>Schedule cancelled</target>
+      </trans-unit>
+      <trans-unit id="fT1JP5c" resname="Novedad despublicada">
+        <source>Novedad despublicada</source>
+        <target>Announcement unpublished</target>
+      </trans-unit>
+      <trans-unit id="b642Z4q" resname="La novedad ya estaba publicada">
+        <source>La novedad ya estaba publicada</source>
+        <target>The announcement was already published</target>
+      </trans-unit>
+      <trans-unit id="WliyXy1" resname="Novedad programada para el {date}">
+        <source>Novedad programada para el {date}</source>
+        <target>Announcement scheduled for {date}</target>
+      </trans-unit>
+      <trans-unit id="stEIo2T" resname="Novedad publicada. Se está notificando a los usuarios">
+        <source>Novedad publicada. Se está notificando a los usuarios</source>
+        <target>Announcement published. Users are being notified</target>
+      </trans-unit>
+      <trans-unit id="wD4eXsS" resname="Novedad publicada">
+        <source>Novedad publicada</source>
+        <target>Announcement published</target>
+      </trans-unit>
+      <trans-unit id="fhFa8zD" resname="Versión">
+        <source>Versión</source>
+        <target>Version</target>
+      </trans-unit>
+      <trans-unit id="hep3T3U" resname="Contenido">
+        <source>Contenido</source>
+        <target>Content</target>
+      </trans-unit>
+      <trans-unit id="nb1kcIP" resname="Enlace a un vídeo de YouTube">
+        <source>Enlace a un vídeo de YouTube</source>
+        <target>YouTube video link</target>
+      </trans-unit>
+      <trans-unit id="UhKCz2G" resname="Manual (PDF)">
+        <source>Manual (PDF)</source>
+        <target>Manual (PDF)</target>
+      </trans-unit>
+      <trans-unit id="EiiF4vf" resname="El manual debe ser un PDF">
+        <source>El manual debe ser un PDF</source>
+        <target>The manual must be a PDF</target>
+      </trans-unit>
+      <trans-unit id="Nu5htx9" resname="Quitar el manual actual">
+        <source>Quitar el manual actual</source>
+        <target>Remove the current manual</target>
+      </trans-unit>
+      <trans-unit id="_xkEWlm" resname="Fecha y hora de publicación">
+        <source>Fecha y hora de publicación</source>
+        <target>Publication date and time</target>
+      </trans-unit>
+      <trans-unit id="bmwmT3X" resname="Déjalo vacío para publicar ahora">
+        <source>Déjalo vacío para publicar ahora</source>
+        <target>Leave it empty to publish now</target>
+      </trans-unit>
+      <trans-unit id="g8ZxSWD" resname="Notificar a los usuarios">
+        <source>Notificar a los usuarios</source>
+        <target>Notify users</target>
+      </trans-unit>
+      <trans-unit id="VZW9t17" resname="Cada usuario recibirá una notificación interna con el título y el resumen en su idioma cuando la novedad se publique">
+        <source>Cada usuario recibirá una notificación interna con el título y el resumen en su idioma cuando la novedad se publique</source>
+        <target>Each user will receive an internal notification with the title and summary in their language when the announcement is published</target>
+      </trans-unit>
+      <trans-unit id="OEnsybj" resname="Publicar">
+        <source>Publicar</source>
+        <target>Publish</target>
+      </trans-unit>
+      <trans-unit id="FXm0suO" resname="Nueva novedad: {title}">
+        <source>Nueva novedad: {title}</source>
+        <target>New announcement: {title}</target>
+      </trans-unit>
+      <trans-unit id="5GJN_u7" resname="No es un enlace válido de YouTube">
+        <source>No es un enlace válido de YouTube</source>
+        <target>This is not a valid YouTube link</target>
+      </trans-unit>
+      <trans-unit id="XUtNo0u" resname="Esta novedad no está publicada y solo la ven los administradores">
+        <source>Esta novedad no está publicada y solo la ven los administradores</source>
+        <target>This announcement is not published and only administrators can see it</target>
+      </trans-unit>
+      <trans-unit id="OlwQaah" resname="Manual actual: {file}">
+        <source>Manual actual: {file}</source>
+        <target>Current manual: {file}</target>
+      </trans-unit>
+      <trans-unit id="tCxHUst" resname="Despublicar">
+        <source>Despublicar</source>
+        <target>Unpublish</target>
+      </trans-unit>
+      <trans-unit id="8HpJSxq" resname="¿Seguro que quieres despublicar esta novedad? Dejará de verse para los usuarios">
+        <source>¿Seguro que quieres despublicar esta novedad? Dejará de verse para los usuarios</source>
+        <target>Are you sure you want to unpublish this announcement? Users will no longer see it</target>
+      </trans-unit>
+      <trans-unit id="w_ZbKkO" resname="Idiomas">
+        <source>Idiomas</source>
+        <target>Languages</target>
+      </trans-unit>
+      <trans-unit id=".55PRfY" resname="Programada para">
+        <source>Programada para</source>
+        <target>Scheduled for</target>
+      </trans-unit>
+      <trans-unit id="eyPO.Hw" resname="Ver la novedad">
+        <source>Ver la novedad</source>
+        <target>View the announcement</target>
+      </trans-unit>
+      <trans-unit id="KpfX6.C" resname="Se ha eliminado la novedad {id}">
+        <source>Se ha eliminado la novedad {id}</source>
+        <target>The announcement {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="aHmh6DI" resname="No se ha podido eliminar la novedad {id}">
+        <source>No se ha podido eliminar la novedad {id}</source>
+        <target>The announcement {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="cJznzMM" resname="Actualizada la novedad {title}">
+        <source>Actualizada la novedad {title}</source>
+        <target>Announcement {title} updated</target>
+      </trans-unit>
+      <trans-unit id="K.BzEFJ" resname="Programada la publicación de la novedad para el {date}">
+        <source>Programada la publicación de la novedad para el {date}</source>
+        <target>Announcement publication scheduled for {date}</target>
+      </trans-unit>
+      <trans-unit id="NQXWrbO" resname="Traducida la novedad {title} al idioma {locale}">
+        <source>Traducida la novedad {title} al idioma {locale}</source>
+        <target>Announcement {title} translated into {locale}</target>
+      </trans-unit>
+      <trans-unit id="76M0bO2" resname="Eliminada la novedad">
+        <source>Eliminada la novedad</source>
+        <target>Announcement removed</target>
+      </trans-unit>
+      <trans-unit id="fVK_wG4" resname="Publicada la novedad">
+        <source>Publicada la novedad</source>
+        <target>Announcement published</target>
+      </trans-unit>
+      <trans-unit id="h.1zJSQ" resname="Registrada la novedad {title}">
+        <source>Registrada la novedad {title}</source>
+        <target>Announcement {title} registered</target>
+      </trans-unit>
+      <trans-unit id="t747FbH" resname="Despublicada la novedad">
+        <source>Despublicada la novedad</source>
+        <target>Announcement unpublished</target>
+      </trans-unit>
+      <trans-unit id="UNR9CvQ" resname="Tienes una nueva notificación">
+        <source>Tienes una nueva notificación</source>
+        <target>You have a new notification</target>
+      </trans-unit>
+      <trans-unit id="VNOL_oX" resname="Código de acceso">
+        <source>Código de acceso</source>
+        <target>Access code</target>
+      </trans-unit>
+      <trans-unit id="WPqNeNy" resname="Tu código de acceso es:">
+        <source>Tu código de acceso es:</source>
+        <target>Your access code is:</target>
+      </trans-unit>
+      <trans-unit id="OzWAyP_" resname="Si no has intentado acceder, cambia tu contraseña.">
+        <source>Si no has intentado acceder, cambia tu contraseña.</source>
+        <target>If you did not try to sign in, change your password.</target>
+      </trans-unit>
+      <trans-unit id="FLLVh0l" resname="Tu aplicación de autenticación no está disponible; te hemos enviado el código por email.">
+        <source>Tu aplicación de autenticación no está disponible; te hemos enviado el código por email.</source>
+        <target>Your authenticator app is not available; we have sent you the code by email.</target>
+      </trans-unit>
+      <trans-unit id="Np0sRqe" resname="Verificación en dos pasos">
+        <source>Verificación en dos pasos</source>
+        <target>Two-step verification</target>
+      </trans-unit>
+      <trans-unit id="q5ikyk0" resname="Introduce el código de tu aplicación de autenticación.">
+        <source>Introduce el código de tu aplicación de autenticación.</source>
+        <target>Enter the code from your authenticator app.</target>
+      </trans-unit>
+      <trans-unit id="mG.NRnM" resname="Cancelar y volver al acceso">
+        <source>Cancelar y volver al acceso</source>
+        <target>Cancel and return to sign in</target>
+      </trans-unit>
+      <trans-unit id="mZ5BYND" resname="Código incorrecto. Te quedan {n} intentos.">
+        <source>Código incorrecto. Te quedan {n} intentos.</source>
+        <target>Wrong code. You have {n} attempts left.</target>
+      </trans-unit>
+      <trans-unit id="0L5EYJO" resname="Segundo factor activado por email">
+        <source>Segundo factor activado por email</source>
+        <target>Second factor enabled by email</target>
+      </trans-unit>
+      <trans-unit id="G3yAnAN" resname="Segundo factor activado con la aplicación de autenticación">
+        <source>Segundo factor activado con la aplicación de autenticación</source>
+        <target>Second factor enabled with the authenticator app</target>
+      </trans-unit>
+      <trans-unit id="HbUJkXK" resname="Activación del segundo factor cancelada">
+        <source>Activación del segundo factor cancelada</source>
+        <target>Second factor activation cancelled</target>
+      </trans-unit>
+      <trans-unit id="HEr0gAv" resname="Segundo factor desactivado">
+        <source>Segundo factor desactivado</source>
+        <target>Second factor disabled</target>
+      </trans-unit>
+      <trans-unit id="Tu6_kKy" resname="Demasiados intentos. Vuelve a empezar la activación">
+        <source>Demasiados intentos. Vuelve a empezar la activación</source>
+        <target>Too many attempts. Start the activation again</target>
+      </trans-unit>
+      <trans-unit id="s5L4vPl" resname="Segundo factor restablecido">
+        <source>Segundo factor restablecido</source>
+        <target>Second factor reset</target>
+      </trans-unit>
+      <trans-unit id="MypsN.D" resname="Método">
+        <source>Método</source>
+        <target>Method</target>
+      </trans-unit>
+      <trans-unit id="6HBLTTn" resname="Segundo factor">
+        <source>Segundo factor</source>
+        <target>Second factor</target>
+      </trans-unit>
+      <trans-unit id="epOWHM6" resname="Activado: {method}">
+        <source>Activado: {method}</source>
+        <target>Enabled: {method}</target>
+      </trans-unit>
+      <trans-unit id="jzD1TgO" resname="Obligatorio: código por email">
+        <source>Obligatorio: código por email</source>
+        <target>Required: code by email</target>
+      </trans-unit>
+      <trans-unit id="JhhBV7q" resname="No activado">
+        <source>No activado</source>
+        <target>Not enabled</target>
+      </trans-unit>
+      <trans-unit id="ZDRbP7D" resname="¿Seguro que quieres desactivar el segundo factor?">
+        <source>¿Seguro que quieres desactivar el segundo factor?</source>
+        <target>Are you sure you want to disable the second factor?</target>
+      </trans-unit>
+      <trans-unit id="umX2GB8" resname="Desactivar segundo factor">
+        <source>Desactivar segundo factor</source>
+        <target>Disable second factor</target>
+      </trans-unit>
+      <trans-unit id="tfApp05" resname="Aplicación de autenticación">
+        <source>Aplicación de autenticación</source>
+        <target>Authenticator app</target>
+      </trans-unit>
+      <trans-unit id="tfRel03" resname="Vincular otro dispositivo">
+        <source>Vincular otro dispositivo</source>
+        <target>Link another device</target>
+      </trans-unit>
+      <trans-unit id="tfEml06" resname="¿Seguro que quieres usar el email como segundo factor?">
+        <source>¿Seguro que quieres usar el email como segundo factor?</source>
+        <target>Are you sure you want to use email as your second factor?</target>
+      </trans-unit>
+      <trans-unit id="tfCsr07" resname="No se ha podido validar el formulario. Vuelve a introducir el código.">
+        <source>No se ha podido validar el formulario. Vuelve a introducir el código.</source>
+        <target>The form could not be validated. Please enter the code again.</target>
+      </trans-unit>
+      <trans-unit id="tfKep04" resname="Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.">
+        <source>Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.</source>
+        <target>Your current second factor stays enabled until you verify the new code. If you cancel, it is not changed.</target>
+      </trans-unit>
+      <trans-unit id="FmHouvK" resname="Escanea este código con Google Authenticator (o cualquier app compatible) e introduce el código que muestra.">
+        <source>Escanea este código con Google Authenticator (o cualquier app compatible) e introduce el código que muestra.</source>
+        <target>Scan this code with Google Authenticator (or any compatible app) and enter the code it shows.</target>
+      </trans-unit>
+      <trans-unit id="RDBDG2E" resname="Clave manual: {key}">
+        <source>Clave manual: {key}</source>
+        <target>Manual key: {key}</target>
+      </trans-unit>
+      <trans-unit id="PQskbMA" resname="Segundo factor &gt; Aplicación de autenticación">
+        <source>Segundo factor &gt; Aplicación de autenticación</source>
+        <target><![CDATA[Second factor > Authenticator app]]></target>
+      </trans-unit>
+      <trans-unit id="bJo8SU4" resname="Restablecer segundo factor">
+        <source>Restablecer segundo factor</source>
+        <target>Reset second factor</target>
+      </trans-unit>
+      <trans-unit id="tHLKQnh" resname="¿Seguro que quieres restablecer el segundo factor de este usuario?">
+        <source>¿Seguro que quieres restablecer el segundo factor de este usuario?</source>
+        <target>Are you sure you want to reset the second factor of this user?</target>
       </trans-unit>
     </body>
   </file>

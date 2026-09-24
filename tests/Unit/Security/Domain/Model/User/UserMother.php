@@ -8,6 +8,7 @@ use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\RecoverToken;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\TwoFactorMethod;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 
@@ -110,7 +111,17 @@ class UserMother
         );
     }
 
-    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null, ?Account $account = null): User
+    public static function withTwoFactorMethod(string $username, TwoFactorMethod $method, ?string $totpSecret = null): User
+    {
+        return self::from(
+            userId: UserId::generate(),
+            username: $username,
+            twoFactorMethod: $method,
+            totpSecret: TwoFactorMethod::Totp === $method ? ($totpSecret ?? 'in-memory-secret') : null,
+        );
+    }
+
+    public static function from(UserId $userId, string $username = 'username', Role $role = Role::User, ?AccountId $accountId = null, ?RecoverToken $recoverToken = null, ?Account $account = null, ?TwoFactorMethod $twoFactorMethod = null, ?string $totpSecret = null): User
     {
         return new User(
             id: $userId,
@@ -123,6 +134,8 @@ class UserMother
             ],
             recoverToken: $recoverToken,
             registeredAt: new \DateTimeImmutable('NOW'),
+            twoFactorMethod: $twoFactorMethod,
+            totpSecret: $totpSecret,
         );
     }
 

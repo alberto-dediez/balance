@@ -6,6 +6,7 @@ namespace App\Notifications\Infrastructure\UI\Web\User\Notification;
 
 use App\Notifications\Application\Notification\Read\MarkAllNotificationsAsReadService;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/notifications/read-all', name: 'notifications_mark_all_read', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
+#[CsrfProtected('mark_all_read')]
 class MarkAllReadController extends AbstractController
 {
     public function __construct(private bool $internalNotificationsEnabled = true) {}

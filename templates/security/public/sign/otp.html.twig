@@ -31,14 +31,14 @@
                         {% endif %}
                     </p>
 
-                    {% if error == 'invalid' %}
-                        <div class="alert alert-warning">
-                            {{ 'Código incorrecto.' | trans }}
-                            {% if attemptsLeft is not null %}
-                                {{ 'Te quedan {n} intentos.' | trans({'n': attemptsLeft}) }}
-                            {% endif %}
-                        </div>
-                    {% endif %}
+                        {% if error == 'invalid' %}
+                            <div class="alert alert-warning">
+                                {{ 'Código incorrecto.' | trans }}
+                                {% if attemptsLeft is not null %}
+                                    {{ 'Te quedan {n} intentos.' | trans({'{n}': attemptsLeft}) }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
 
                     <form method="POST" action="{{ path('public_sign_otp_post', {'token': token}) }}">
                         <input type="hidden" name="action" value="verify">

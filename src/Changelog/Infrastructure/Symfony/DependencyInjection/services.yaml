@@ -2,11 +2,15 @@ parameters:
     changelog.dir: '%kernel.project_dir%/changelog'
     changelog.entries_dir: '%changelog.dir%/entries'
     changelog.manuals_dir: '%changelog.dir%/manuals'
+    changelog.announcement_manuals_dir: '%app.uploads_dir%/announcements'
+    app.announcements_enabled: '%env(bool:ANNOUNCEMENTS_ENABLED)%'
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            $announcementsEnabled: '%app.announcements_enabled%'
 
     App\Changelog\:
         resource: '../../../'
@@ -27,6 +31,16 @@ services:
     App\Changelog\Domain\Model\ChangelogEntry\ManualStorage:
         alias: App\Changelog\Infrastructure\Storage\LocalManualStorage
 
+    App\Changelog\Infrastructure\Storage\LocalAnnouncementManualStorage:
+        arguments:
+            $basePath: '%changelog.announcement_manuals_dir%'
+
+    App\Changelog\Domain\Model\Announcement\AnnouncementRepository:
+        alias: App\Changelog\Infrastructure\Persistence\Doctrine\Repository\DoctrineAnnouncementRepository
+
+    App\Changelog\Domain\Model\Announcement\AnnouncementManualStorage:
+        alias: App\Changelog\Infrastructure\Storage\LocalAnnouncementManualStorage
+
 when@test:
     services:
         App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntryRepository:
@@ -39,4 +53,16 @@ when@test:
             alias: App\Changelog\Infrastructure\Storage\InMemoryManualStorage
 
         App\Changelog\Infrastructure\Storage\InMemoryManualStorage:
+            public: true
+
+        App\Changelog\Domain\Model\Announcement\AnnouncementRepository:
+            alias: App\Changelog\Infrastructure\Persistence\InMemory\Repository\InMemoryAnnouncementRepository
+
+        App\Changelog\Infrastructure\Persistence\InMemory\Repository\InMemoryAnnouncementRepository:
+            public: true
+
+        App\Changelog\Domain\Model\Announcement\AnnouncementManualStorage:
+            alias: App\Changelog\Infrastructure\Storage\InMemoryAnnouncementManualStorage
+
+        App\Changelog\Infrastructure\Storage\InMemoryAnnouncementManualStorage:
             public: true

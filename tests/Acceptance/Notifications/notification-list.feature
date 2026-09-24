@@ -22,8 +22,18 @@ Feature:
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" exists
         When I am logged as "user1@dediez.software"
-        When I send a "POST" request to "/es/notifications/read-all"
+        When I go to "/es/notifications"
+        When I press "Marcar todas como leídas"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Todas las notificaciones se han marcado como leídas"
         Then I do not see a text "Marcar todas como leídas"
+
+    Scenario: Marking all notifications as read without csrf token is forbidden
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" exists
+        When I am logged as "user1@dediez.software"
+        When I send a "POST" request to "/es/notifications/read-all"
+        Then the response status should be 403
+        When I go to "/es/notifications"
+        Then I see a text "Marcar todas como leídas"

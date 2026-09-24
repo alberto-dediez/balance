@@ -1,0 +1,39 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Gestionar novedades' | trans)
+    ~ ' > '
+    ~ ('Publicar' | trans)
+    ~ ' > '
+    ~ announcement.title %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_announcements') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Título' | trans }}">{{ announcement.title }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Fecha' | trans }}">{{ announcement.date | date('d/m/Y', false) }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Categoría' | trans }}">{{ announcement.category.name | trans({}, 'changelogCategory') }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Idiomas' | trans }}">{{ ([defaultLocale] | merge(announcement.translations | map(translation => translation.locale))) | map(locale => locale.value | upper) | join(', ') }}</twig:View:Field>
+
+                    {% if announcement.isScheduled %}
+                        <twig:View:Field label="{{ 'Programada para' | trans }}">{{ announcement.scheduledAt | date('d/m/Y H:i') }}</twig:View:Field>
+                    {% endif %}
+
+                    {{ form_row(form.publishAt) }}
+                    {% if form.notifyUsers is defined %}
+                        {{ form_row(form.notifyUsers) }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.publish" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

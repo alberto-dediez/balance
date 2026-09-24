@@ -4,7 +4,7 @@ DOCKER_COMP = docker compose --env-file .env $(shell [ -f .env.local ] && echo "
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
 DATABASE_CONT = $(DOCKER_COMP) exec database
-TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" -e STRIPE_SECRET_KEY="sk_test_dummy" -e STRIPE_WEBHOOK_SECRET="whsec_dummy" -e ACCOUNT_IMPERSONATION_ENABLED=true php
+TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" -e STRIPE_SECRET_KEY="sk_test_dummy" -e STRIPE_WEBHOOK_SECRET="whsec_dummy" -e ACCOUNT_IMPERSONATION_ENABLED=true -e ANNOUNCEMENTS_ENABLED=true php
 # Executables
 PHP      = $(PHP_CONT) php
 PHP_TEST = $(TEST_CONT) php -d memory_limit=512M

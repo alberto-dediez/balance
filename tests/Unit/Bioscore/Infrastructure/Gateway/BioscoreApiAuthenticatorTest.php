@@ -22,8 +22,11 @@ class BioscoreApiAuthenticatorTest extends TestCase
     {
         $authenticator = $this->createSUT([$this->loginResponse('a-token')]);
 
-        $this->assertSame('a-token', $authenticator->token());
-        $this->assertSame('a-token', $authenticator->token());
+        $firstToken = $authenticator->token();
+        $secondToken = $authenticator->token();
+
+        $this->assertSame('a-token', $firstToken);
+        $this->assertSame('a-token', $secondToken);
         $this->assertCount(1, $this->requestedUrls);
         $this->assertSame('https://bioscore.test/api/login', $this->requestedUrls[0]);
         $this->assertSame('{"username":"events","password":"secret"}', $this->requestedOptions[0]['body']);

@@ -1,0 +1,12 @@
+{% set statusClasses = {
+    'published': 'bg-success-subtle text-success',
+    'scheduled': 'bg-info-subtle text-info',
+    'draft': 'bg-warning-subtle text-warning',
+} %}
+
+<span class="badge {{ statusClasses[status.value] }}">
+    {{ status.name | trans({}, 'announcementStatusType') }}
+</span>
+{% if status.value == 'scheduled' and scheduledAt is not empty %}
+    <span class="text-muted small">{{ scheduledAt | date('d/m/Y H:i') }}</span>
+{% endif %}

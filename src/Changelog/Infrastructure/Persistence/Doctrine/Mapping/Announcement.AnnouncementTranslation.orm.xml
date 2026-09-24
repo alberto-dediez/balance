@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Changelog\Domain\Model\Announcement\AnnouncementTranslation" table="announcement_translations">
+        <id name="locale" type="locale" length="5" />
+        <id name="translatable" association-key="true" />
+
+        <field name="title" type="string" length="255" nullable="false"/>
+        <field name="summary" type="text" nullable="false"/>
+        <field name="body" type="text" nullable="false"/>
+        <field name="youtubeVideo" type="youtube_video" column="youtube_video_id" length="11" nullable="true"/>
+        <field name="manualFileName" type="string" column="manual_file_name" length="255" nullable="true"/>
+        <field name="manualPath" type="string" column="manual_path" length="255" nullable="true"/>
+
+        <many-to-one field="translatable" target-entity="App\Changelog\Domain\Model\Announcement\Announcement" inversed-by="translations">
+            <join-column name="announcement_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

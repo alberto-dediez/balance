@@ -27,7 +27,7 @@
 {% block content %}
     <twig:Card>
         <div class="d-flex align-items-center gap-2 mb-3">
-            <span class="text-muted">{{ entry.date | date('d/m/Y') }}</span>
+            <span class="text-muted">{{ entry.date | date('d/m/Y', false) }}</span>
             {% include '@changelog/admin/_category_badge.html.twig' with { category: entry.category } %}
             {% if entry.version %}
                 <span class="badge bg-secondary-subtle text-secondary">{{ entry.version }}</span>

@@ -45,6 +45,16 @@
                 </div>
             </a>
 
+            <a href="{{ path('profile_two_factor') }}" class="py-8 px-7 mt-8 d-flex align-items-center">
+                <span class="d-flex align-items-center justify-content-center bg-success-subtle text-success rounded round">
+                   <twig:Icon name="solar:shield-check-line-duotone" size="lg" />
+                </span>
+                <div class="w-75 v-middle ps-3">
+                    <h5 class="mb-1 fs-3 fw-medium">{% trans -%}Segundo factor{%- endtrans %}</h5>
+                    <span class="fs-2 d-block text-body-secondary">{% trans -%}Verificación en dos pasos{%- endtrans %}</span>
+                </div>
+            </a>
+
             {% if is_granted('IS_IMPERSONATOR') %}
                 <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="py-8 px-7 mt-8 d-flex align-items-center">
                     <span class="d-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded round">

@@ -89,6 +89,10 @@
         <source>No user is registered with the identity provider email.</source>
         <target>No user is registered with the identity provider email.</target>
       </trans-unit>
+      <trans-unit id="Su86nQg" resname="Two-factor verification failed. Please sign in again.">
+        <source>Two-factor verification failed. Please sign in again.</source>
+        <target>Two-step verification failed. Please sign in again.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

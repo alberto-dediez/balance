@@ -28,8 +28,11 @@ doctrine:
             provider_id: App\EventOperations\Infrastructure\Persistence\Doctrine\Type\ProviderIdType
             event_id: App\EventOperations\Infrastructure\Persistence\Doctrine\Type\EventIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
+            two_factor_method: App\Security\Infrastructure\Persistence\Doctrine\Type\TwoFactorMethodType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType
+            announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
+            youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
@@ -139,6 +142,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Library/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Library\Domain\Model'
                 alias: Library
+                
+            Changelog:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Changelog/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Changelog\Domain\Model'
+                alias: Changelog
 
             HumanResources:
                 type: xml

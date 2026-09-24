@@ -60,6 +60,10 @@ class SecurityUser extends User implements UserInterface, PasswordAuthenticatedU
             registeredAt: $user->registeredAt() ?? new \DateTimeImmutable('NOW'),
             preferredLocale: $user->preferredLocale(),
             pictureId: $user->pictureId(),
+            twoFactorMethod: $user->twoFactorMethod(),
+            totpSecret: $user->totpSecret(),
+            pendingTotpSecret: $user->pendingTotpSecret(),
+            twoFactorChallenge: $user->twoFactorChallenge(),
         );
     }
 }

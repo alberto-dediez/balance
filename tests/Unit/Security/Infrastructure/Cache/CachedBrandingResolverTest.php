@@ -32,11 +32,15 @@ class CachedBrandingResolverTest extends TestCase
         $account = AccountMother::fromName('Acme');
         $sut = new CachedBrandingResolver($this->inner($repository), $cache);
 
-        $this->assertSame('#3E7490', $sut->resolve($account->id())->primary->value);
+        $tokensBeforeBranding = $sut->resolve($account->id());
+
+        $this->assertSame('#3E7490', $tokensBeforeBranding->primary->value);
 
         $repository->add(BrandingMother::brandedForAccount($account->id()));
 
-        $this->assertSame('#3E7490', $sut->resolve($account->id())->primary->value);
+        $tokensAfterBranding = $sut->resolve($account->id());
+
+        $this->assertSame('#3E7490', $tokensAfterBranding->primary->value);
     }
 
     public function testTheSubscriberInvalidatesTheCachedTokens(): void

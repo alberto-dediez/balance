@@ -1,0 +1,54 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Gestionar novedades' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Fecha' | trans
+        }, {
+            'label': 'Categoría' | trans
+        }, {
+            'label': 'Título' | trans
+        }, {
+            'label': 'Estado' | trans
+        }, {
+            'label': 'Idiomas' | trans
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="announcements" :bulkForm="bulkForm">
+        <td>{{ element.date | date('d/m/Y', false) }}</td>
+        <td>{% include '@changelog/admin/_category_badge.html.twig' with { category: element.category } %}</td>
+        <td>{{ element.title }}</td>
+        <td>{% include '@changelog/admin/announcements/_status_badge.html.twig' with { status: element.status, scheduledAt: element.scheduledAt } %}</td>
+        <td>{{ ([defaultLocale] | merge(element.translations | map(translation => translation.locale))) | map(locale => locale.value | upper) | join(', ') }}</td>
+        <td>
+            {% if element | is_authorized('view') %}
+                <twig:List:Action:View path="{{ path('announcements_show', { announcementId: element.id }) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_announcements_edit', { announcementId: element.id }) }}" />
+
+                {% if element.status.value != 'published' %}
+                    <twig:List:Action:Publish path="{{ path('admin_announcements_publish', { announcementId: element.id }) }}" />
+                {% endif %}
+
+                {% if element.status.value != 'draft' %}
+                    <twig:List:Action:Unpublish path="{{ path('admin_announcements_unpublish', { announcementId: element.id }) }}" />
+                {% endif %}
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_announcements_remove', { announcementId: element.id }) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_announcements_register') }}" />
+{% endblock list_actions %}

@@ -9,6 +9,7 @@ use App\Balance\Application\LedgerEntry\Check\CheckLedgerRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderallocatedContributionsRequest;
 use App\Bioscore\Application\BioscoreCatalogItem\Sync\SyncBioscoreCatalogsRequest;
+use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
@@ -60,6 +61,11 @@ class CommandSchedule
                 id: 'bioscore:sync-catalogs',
                 command: new SyncBioscoreCatalogsRequest(now: new \DateTimeImmutable('NOW')),
                 time: '06:00',
+            ),
+            ScheduledCommand::everyMinutes(
+                id: 'changelog:publish-scheduled-announcements',
+                command: new PublishScheduledAnnouncementsRequest(new \DateTimeImmutable('NOW')),
+                minutes: 5,
             ),
         ];
     }

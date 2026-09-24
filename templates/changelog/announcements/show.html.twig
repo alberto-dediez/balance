@@ -1,0 +1,44 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Novedades' | trans) ~ ' > ' ~ announcement.title %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('announcements') }}" />
+
+    {% if announcement.hasManual %}
+        <twig:TopAction path="{{ path('announcements_manual', { announcementId: announcement.id }) }}" target="_blank">
+            <twig:Icon name="solar:document-text-line-duotone" size="lg" class="me-2" />
+            {{ 'Ver manual' | trans }}
+        </twig:TopAction>
+        <twig:TopAction path="{{ path('announcements_manual', { announcementId: announcement.id, download: 1 }) }}">
+            <twig:Icon name="solar:download-square-line-duotone" size="lg" class="me-2" />
+            {{ 'Descargar manual' | trans }}
+        </twig:TopAction>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if announcement.status.value != 'published' %}
+        <twig:Alert type="warning">{{ 'Esta novedad no está publicada y solo la ven los administradores' | trans }}</twig:Alert>
+    {% endif %}
+
+    <twig:Card>
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="text-muted">{{ announcement.date | date('d/m/Y', false) }}</span>
+            {% include '@changelog/admin/_category_badge.html.twig' with { category: announcement.category } %}
+            {% if announcement.version %}
+                <span class="badge bg-secondary-subtle text-secondary">{{ announcement.version }}</span>
+            {% endif %}
+        </div>
+
+        {% if announcement.hasVideo %}
+            <div class="ratio ratio-16x9 mb-3">
+                <iframe src="{{ announcement.youtubeVideo.embedUrl }}" title="{{ announcement.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+        {% endif %}
+
+        <div class="changelog-body">
+            {{ announcement.body | changelog_markdown | raw }}
+        </div>
+    </twig:Card>
+{% endblock %}

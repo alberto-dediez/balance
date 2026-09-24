@@ -55,6 +55,7 @@
               data-controller="mark-all-read"
               data-action="mark-all-read#submit"
               data-notifications-mark-all>
+            <input type="hidden" name="_token" value="{{ csrf_token('mark_all_read') }}">
             <button type="submit" class="btn btn-info d-flex">
                 <twig:Icon name="solar:check-read-line-duotone" size="lg" class="me-2" />
 

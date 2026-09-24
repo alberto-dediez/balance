@@ -85,6 +85,51 @@ class NodeListerTest extends TestCase
         return null;
     }
 
+    public function testUsersAndOwnersSeeAnnouncementsWhenEnabled(): void
+    {
+        foreach ([Role::User, Role::Owner] as $role) {
+            $sut = $this->createSUT(FakeSecurity::fromRole($role), routes: ['announcements' => '/es/announcements']);
+
+            $this->assertContains('/es/announcements', $this->targets($sut->nodes()), $role->value);
+        }
+    }
+
+    public function testUsersAndOwnersDoNotSeeAnnouncementsWhenDisabled(): void
+    {
+        foreach ([Role::User, Role::Owner] as $role) {
+            $sut = $this->createSUT(FakeSecurity::fromRole($role), routes: ['announcements' => '/es/announcements'], announcementsEnabled: false);
+
+            $this->assertNotContains('/es/announcements', $this->targets($sut->nodes()), $role->value);
+        }
+    }
+
+    public function testAdminsSeeAnnouncementsWhenDisabled(): void
+    {
+        $sut = $this->createSUT(FakeSecurity::fromRole(Role::Admin), routes: ['announcements' => '/es/announcements'], announcementsEnabled: false);
+
+        $this->assertContains('/es/announcements', $this->targets($sut->nodes()));
+    }
+
+    /**
+     * @param list<Node> $nodes
+     *
+     * @return list<?string>
+     */
+    private function targets(array $nodes): array
+    {
+        $targets = [];
+
+        foreach ($nodes as $node) {
+            $targets[] = $node->target;
+
+            foreach ($node->items as $item) {
+                $targets[] = $item->target;
+            }
+        }
+
+        return $targets;
+    }
+
     /**
      * @param array<string, string> $routes
      */
@@ -92,6 +137,7 @@ class NodeListerTest extends TestCase
         AuthorizationCheckerInterface $security,
         string $currentPath = '/es/admin/users',
         array $routes = [],
+        bool $announcementsEnabled = true,
     ): NodeLister {
         $router = $this->createMock(RouterInterface::class);
 
@@ -102,6 +148,6 @@ class NodeListerTest extends TestCase
         $requestStack = new RequestStack();
         $requestStack->push(Request::create($currentPath));
 
-        return new NodeLister($security, $router, $requestStack);
+        return new NodeLister($security, $router, $requestStack, announcementsEnabled: $announcementsEnabled);
     }
 }

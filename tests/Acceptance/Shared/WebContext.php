@@ -6,6 +6,7 @@ namespace App\Tests\Acceptance\Shared;
 
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use App\Shared\Infrastructure\Timezone\CookieTimezoneProvider;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Step\Then;
@@ -54,6 +55,12 @@ final class WebContext implements Context
         );
     }
 
+    #[When('my browser timezone is :timezone')]
+    public function myBrowserTimezoneIs(string $timezone): void
+    {
+        $this->client->setCookie(CookieTimezoneProvider::COOKIE, $timezone);
+    }
+
     #[When('I go to :path')]
     public function iGoTo(string $path): void
     {
@@ -69,6 +76,12 @@ final class WebContext implements Context
         $separator = str_contains($path, '?') ? '&' : '?';
 
         $this->client->request('GET', $path . $separator . $parameter . '=' . urlencode($token), ['HTTP_SEC_FETCH_SITE' => 'same-origin']);
+    }
+
+    #[When('I press :text')]
+    public function iPress(string $text): void
+    {
+        $this->client->submit($this->client->getCrawler()->selectButton($text)->form());
     }
 
     #[When('I make a POST request to :path')]
@@ -306,6 +319,12 @@ final class WebContext implements Context
         $button = $crawler->selectLink($name);
 
         Assert::assertCount(1, $button);
+    }
+
+    #[Then('I do not see a link with name :name')]
+    public function iDoNotSeeALinkWithName(string $name): void
+    {
+        Assert::assertCount(0, $this->client->getCrawler()->selectLink($name));
     }
 
     #[Then('I see a table with :rows rows')]

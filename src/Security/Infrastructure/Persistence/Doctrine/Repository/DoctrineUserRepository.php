@@ -51,6 +51,10 @@ class DoctrineUserRepository implements UserRepository
                 removedAt: $user->removedAt(),
                 preferredLocale: $user->preferredLocale(),
                 pictureId: $user->pictureId(),
+                twoFactorMethod: $user->twoFactorMethod(),
+                totpSecret: $user->totpSecret(),
+                pendingTotpSecret: $user->pendingTotpSecret(),
+                twoFactorChallenge: $user->twoFactorChallenge(),
             );
         }
 
@@ -160,9 +164,9 @@ class DoctrineUserRepository implements UserRepository
         if ($filter->excludeRole instanceof Role) {
             $qb
                 ->andWhere(
-                    $qb->expr()->notLike('u.roles', ':role'),
+                    $qb->expr()->notLike('u.roles', ':excludeRole'),
                 )
-                ->setParameter('role', '%' . $filter->excludeRole->value . '%')
+                ->setParameter('excludeRole', '%' . $filter->excludeRole->value . '%')
             ;
         }
 

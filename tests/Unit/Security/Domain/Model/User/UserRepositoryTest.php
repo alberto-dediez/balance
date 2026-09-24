@@ -7,7 +7,9 @@ namespace App\Tests\Unit\Security\Domain\Model\User;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\TwoFactorMethod;
 use App\Security\Domain\Model\User\UserFilter;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -43,6 +45,30 @@ abstract class UserRepositoryTest extends KernelTestCase
 
         $this->assertNotNull($recoverUser);
         $this->assertEquals(Locale::English, $recoverUser->preferredLocale());
+    }
+
+    public function testAddUserOfAnAccountKeepsItsTwoFactorState(): void
+    {
+        $repository = $this->createSUT();
+
+        $user = UserMother::from(
+            userId: UserId::generate(),
+            username: 'two-factor@dediez.software',
+            accountId: AccountId::generate(),
+            twoFactorMethod: TwoFactorMethod::Totp,
+            totpSecret: 'stored-secret',
+        );
+        $user->requestTotpEnrolment('pending-secret');
+
+        $repository->add($user);
+
+        $recoverUser = $repository->find($user->id());
+
+        $this->assertNotNull($recoverUser);
+        $this->assertEquals(TwoFactorMethod::Totp, $recoverUser->twoFactorMethod());
+        $this->assertEquals('stored-secret', $recoverUser->totpSecret());
+        $this->assertEquals('pending-secret', $recoverUser->pendingTotpSecret());
+        $this->assertTrue($recoverUser->twoFactorChallenge()->isPending());
     }
 
     public function testRemoveUserToRepository(): void
@@ -125,6 +151,23 @@ abstract class UserRepositoryTest extends KernelTestCase
         $result = $repository->findByFilter($filter);
 
         $this->assertCount(1, $result);
+    }
+
+    public function testFindByFilterWithRoleExcludesProvidersByDefault(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(UserMother::fromUsernameAndRole('admin@dediez.software', Role::Admin));
+        $repository->add(UserMother::fromUsernameAndRole('user@dediez.software', Role::User));
+        $repository->add(UserMother::fromUsernameAndRole('provider@dediez.software', Role::Provider));
+
+        $admins = $repository->findByFilter(new UserFilter(role: Role::Admin));
+
+        $this->assertCount(1, $admins);
+        $this->assertEquals('admin@dediez.software', $admins[0]->username());
+
+        $this->assertCount(2, $repository->findByFilter(new UserFilter()));
+        $this->assertCount(3, $repository->findByFilter(new UserFilter(excludeRole: null)));
     }
 
     public function testFindByFilterWithLimitZeroReturnAllElements(): void

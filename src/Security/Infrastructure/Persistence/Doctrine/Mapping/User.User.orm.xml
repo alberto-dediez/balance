@@ -11,6 +11,7 @@
         </id>
 
         <embedded name="recoverToken" class="App\Security\Domain\Model\User\RecoverToken" use-column-prefix="true" column-prefix="recover_" />
+        <embedded name="twoFactorChallenge" class="App\Security\Domain\Model\User\TwoFactorChallenge" use-column-prefix="true" column-prefix="two_factor_" />
 
         <field name="username" type="string" length="255" nullable="false"/>
         <field name="password" type="string" length="1024" nullable="false"/>
@@ -21,6 +22,9 @@
         <field name="accountId" type="account_id" nullable="true"/>
         <field name="preferredLocale" type="locale" column="preferred_locale" nullable="true"/>
         <field name="pictureId" type="media_id" column="picture_id" nullable="true"/>
+        <field name="twoFactorMethod" type="two_factor_method" column="two_factor_method" length="16" nullable="true"/>
+        <field name="totpSecret" type="string" length="255" column="two_factor_totp_secret" nullable="true"/>
+        <field name="pendingTotpSecret" type="string" length="255" column="two_factor_pending_totp_secret" nullable="true"/>
 
         <many-to-one field="account" target-entity="App\Security\Domain\Model\Account\Account">
             <cascade><cascade-remove /></cascade>

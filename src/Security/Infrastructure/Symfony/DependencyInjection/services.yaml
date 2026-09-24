@@ -10,6 +10,8 @@ parameters:
     app.sso_google_enabled: '%env(bool:SSO_GOOGLE_ENABLED)%'
     app.sso_microsoft_enabled: '%env(bool:SSO_MICROSOFT_ENABLED)%'
     app.sso_bioscore_enabled: '%env(bool:SSO_BIOSCORE_ENABLED)%'
+    app.two_factor_required: '%env(bool:TWO_FACTOR_REQUIRED)%'
+    app.two_factor_sso_enabled: '%env(bool:TWO_FACTOR_SSO_ENABLED)%'
 
 services:
     _defaults:
@@ -25,6 +27,8 @@ services:
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
             - '../../../Infrastructure/Sso/InMemory/'
+            - '../../../Infrastructure/Symfony/Security/TwoFactor/InMemoryTwoFactorPolicy.php'
+            - '../../../Infrastructure/Symfony/Security/TwoFactor/InMemoryTotpAuthenticator.php'
 
     App\Security\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
@@ -143,6 +147,42 @@ services:
         arguments:
             $enabled: '%app.sso_bioscore_enabled%'
 
+    App\Security\Infrastructure\Symfony\Security\TwoFactor\EnvTwoFactorPolicy:
+        arguments:
+            $twoFactorRequired: '%app.two_factor_required%'
+            $twoFactorSsoEnabled: '%app.two_factor_sso_enabled%'
+
+    App\Security\Application\User\TwoFactor\TwoFactorPolicy:
+        alias: App\Security\Infrastructure\Symfony\Security\TwoFactor\EnvTwoFactorPolicy
+
+    App\Security\Infrastructure\Symfony\Security\TwoFactor\OtphpTotpAuthenticator:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    App\Security\Domain\Model\User\TotpAuthenticator:
+        alias: App\Security\Infrastructure\Symfony\Security\TwoFactor\OtphpTotpAuthenticator
+
+    App\Security\Infrastructure\UI\Web\ProfileTwoFactorController:
+        arguments:
+            $issuer: '%company.name%'
+
+    App\Security\Infrastructure\UI\Web\TwoFactorLoginController:
+        arguments:
+            $twoFactorCodeLimiter: '@limiter.two_factor_code'
+            $defaultLocale: '%app.locale_default%'
+
+    App\Security\Application\User\RequestTwoFactorChallenge\RequestTwoFactorChallengeService:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    App\Security\Application\User\VerifyTwoFactorChallenge\VerifyTwoFactorChallengeService:
+        arguments:
+            $appSecret: '%kernel.secret%'
+
+    App\Security\Application\User\RequestTwoFactorEnrolment\RequestTwoFactorEnrolmentService:
+        arguments:
+            $issuer: '%company.name%'
+
 when@dev:
     services:
         _defaults:
@@ -198,6 +238,20 @@ when@test:
             autoconfigure: true
 
         App\Security\Infrastructure\Sso\SsoProviderRegistry:
+            public: true
+
+        App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTwoFactorPolicy:
+            public: true
+
+        App\Security\Application\User\TwoFactor\TwoFactorPolicy:
+            alias: App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTwoFactorPolicy
+            public: true
+
+        App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTotpAuthenticator:
+            public: true
+
+        App\Security\Domain\Model\User\TotpAuthenticator:
+            alias: App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTotpAuthenticator
             public: true
 
         security.sso_provider.google:

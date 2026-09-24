@@ -2,6 +2,18 @@
 
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('admin_users') }}" />
+
+    {% if user.twoFactorMethod and user | is_authorized('edit') %}
+        <twig:TopAction path="{{ path('admin_users_two_factor_reset', {userId: user.id, _token: csrf_token('two-factor-reset')}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ '¿Seguro que quieres restablecer el segundo factor de este usuario?' | trans }}"
+            data-action="confirm#link:prevent"
+        >
+            <twig:Icon name="solar:shield-cross-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Restablecer segundo factor' | trans }}
+        </twig:TopAction>
+    {% endif %}
 {% endblock %}
 
 {% set page_title = ('Usuarios' | trans)
@@ -17,6 +29,7 @@
                 <div class="col-12">
                     <twig:View:Field label="{{ 'Nombre de usuario' | trans }}">{{ user.username }}</twig:View:Field>
                     <twig:View:Field label="{{ 'Cuenta' | trans }}">{{ user.account != null ? user.account.name : '---' }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Segundo factor' | trans }}">{{ user.twoFactorMethod ? (user.twoFactorMethod.value | trans({}, 'twoFactorMethod')) : ('No activado' | trans) }}</twig:View:Field>
 
                     {{ form_row(form.roles) }}
                     {{ form_row(form.preferredLocale) }}
