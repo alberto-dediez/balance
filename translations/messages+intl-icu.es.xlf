@@ -653,7 +653,7 @@
         <source>Código incorrecto.</source>
         <target>Código incorrecto.</target>
       </trans-unit>
-      <trans-unit id="cXxD2Ir" resname="Te quedan {n} intentos.">
+      <trans-unit id="4S6RMyl" resname="Te quedan {n} intentos.">
         <source>Te quedan {n} intentos.</source>
         <target>Te quedan {n} intentos.</target>
       </trans-unit>
@@ -1949,23 +1949,23 @@
         <source>Desactivar segundo factor</source>
         <target>Desactivar segundo factor</target>
       </trans-unit>
-      <trans-unit id="tfApp05" resname="Aplicación de autenticación">
+      <trans-unit id="cGPKTAt" resname="Aplicación de autenticación">
         <source>Aplicación de autenticación</source>
         <target>Aplicación de autenticación</target>
       </trans-unit>
-      <trans-unit id="tfRel03" resname="Vincular otro dispositivo">
+      <trans-unit id="M3yw3xA" resname="Vincular otro dispositivo">
         <source>Vincular otro dispositivo</source>
         <target>Vincular otro dispositivo</target>
       </trans-unit>
-      <trans-unit id="tfEml06" resname="¿Seguro que quieres usar el email como segundo factor?">
+      <trans-unit id="g019dUg" resname="¿Seguro que quieres usar el email como segundo factor?">
         <source>¿Seguro que quieres usar el email como segundo factor?</source>
         <target>¿Seguro que quieres usar el email como segundo factor?</target>
       </trans-unit>
-      <trans-unit id="tfCsr07" resname="No se ha podido validar el formulario. Vuelve a introducir el código.">
+      <trans-unit id="R_GxXGM" resname="No se ha podido validar el formulario. Vuelve a introducir el código.">
         <source>No se ha podido validar el formulario. Vuelve a introducir el código.</source>
         <target>No se ha podido validar el formulario. Vuelve a introducir el código.</target>
       </trans-unit>
-      <trans-unit id="tfKep04" resname="Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.">
+      <trans-unit id="rq2OKbi" resname="Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.">
         <source>Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.</source>
         <target>Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.</target>
       </trans-unit>
@@ -1992,6 +1992,26 @@
       <trans-unit id="tHLKQnh" resname="¿Seguro que quieres restablecer el segundo factor de este usuario?">
         <source>¿Seguro que quieres restablecer el segundo factor de este usuario?</source>
         <target>¿Seguro que quieres restablecer el segundo factor de este usuario?</target>
+      </trans-unit>
+      <trans-unit id="R3gcJ2D" resname="Arrastra aquí los archivos o pulsa para elegirlos">
+        <source>Arrastra aquí los archivos o pulsa para elegirlos</source>
+        <target>Arrastra aquí los archivos o pulsa para elegirlos</target>
+      </trans-unit>
+      <trans-unit id="j0sBB5t" resname="Arrastra aquí el archivo o pulsa para elegirlo">
+        <source>Arrastra aquí el archivo o pulsa para elegirlo</source>
+        <target>Arrastra aquí el archivo o pulsa para elegirlo</target>
+      </trans-unit>
+      <trans-unit id="iGwrkiC" resname="Seleccionado">
+        <source>Seleccionado</source>
+        <target>Seleccionado</target>
+      </trans-unit>
+      <trans-unit id="T.d0CAW" resname="Cargar más">
+        <source>Cargar más</source>
+        <target>Cargar más</target>
+      </trans-unit>
+      <trans-unit id="uvkf8x9" resname="Compartido">
+        <source>Compartido</source>
+        <target>Compartido</target>
       </trans-unit>
     </body>
   </file>

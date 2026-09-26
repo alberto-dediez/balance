@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\Security\Csrf\SameOriginCsrfTokenManager;
 
 class MediaPickerTypeTest extends KernelTestCase
@@ -184,6 +185,47 @@ class MediaPickerTypeTest extends KernelTestCase
         $this->assertStringContainsString('data-media-picker-target="selection"', $html);
         $this->assertStringContainsString('data-media-picker-target="modal"', $html);
         $this->assertStringContainsString(sprintf('value="%s"', (string) $media->id()), $html);
+        $this->assertStringContainsString('data-media-picker-target="itemTemplate"', $html);
+        $this->assertStringContainsString('data-media-picker-target="dropzone"', $html);
+        $this->assertStringContainsString('media-picker--card', $html);
+    }
+
+    public function testTheResultsShowTheTranslatedTypeOfEachMedia(): void
+    {
+        $html = $this->renderWidget($this->createForm()->createView());
+
+        $this->assertStringContainsString('data-slot="type" data-type="Image" hidden>Imagen</span>', $html);
+        $this->assertStringContainsString('data-slot="type" data-type="Document" hidden>Documento</span>', $html);
+        $this->assertStringContainsString('data-slot="type" data-type="Other" hidden>Otro</span>', $html);
+    }
+
+    public function testItRendersTheAvatarPreview(): void
+    {
+        $html = $this->renderWidget($this->createForm(preview: 'avatar')->createView());
+
+        $this->assertStringContainsString('media-picker--avatar', $html);
+        $this->assertStringContainsString('dropzone--compact', $html);
+    }
+
+    public function testItRejectsAnUnknownPreview(): void
+    {
+        $this->expectException(InvalidOptionsException::class);
+
+        $this->createForm(preview: 'huge');
+    }
+
+    public function testTheClearButtonIsHiddenWhenNothingIsSelected(): void
+    {
+        $media = MediaMother::uploadedMedia();
+
+        $this->getRepository()->add($media);
+
+        $empty = $this->renderWidget($this->createForm()->createView());
+        $selected = $this->renderWidget($this->createForm($media->id())->createView());
+
+        $this->assertMatchesRegularExpression('/class="[^"]*d-none[^"]*"\s+data-media-picker-target="clear"/', $empty);
+        $this->assertMatchesRegularExpression('/class="[^"]*"\s+data-media-picker-target="clear"/', $selected);
+        $this->assertDoesNotMatchRegularExpression('/class="[^"]*d-none[^"]*"\s+data-media-picker-target="clear"/', $selected);
     }
 
     public function testTheSubmittedValueBecomesAMediaId(): void
@@ -203,7 +245,7 @@ class MediaPickerTypeTest extends KernelTestCase
      *
      * @return FormInterface<mixed>
      */
-    private function createForm(?MediaId $mediaId = null, array $types = [], ?MediaVisibility $visibility = null): FormInterface
+    private function createForm(?MediaId $mediaId = null, array $types = [], ?MediaVisibility $visibility = null, string $preview = 'card'): FormInterface
     {
         $factory = self::getContainer()->get('form.factory');
 
@@ -213,6 +255,7 @@ class MediaPickerTypeTest extends KernelTestCase
                 'types' => $types,
                 'visibility' => $visibility,
                 'data' => $mediaId,
+                'preview' => $preview,
             ])
             ->getForm()
         ;

@@ -134,6 +134,7 @@ class MediaPickerType extends AbstractType
         $view->vars['placeholder'] = $options['placeholder'];
         $view->vars['visibility'] = $visibility;
         $view->vars['selected'] = $this->selectedMedia($form->getData());
+        $view->vars['preview'] = $options['preview'];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -145,12 +146,14 @@ class MediaPickerType extends AbstractType
             'accept' => '',
             'visibility' => null,
             'placeholder' => new TranslatableMessage('No hay ningún archivo seleccionado'),
+            'preview' => 'card',
         ]);
 
         $resolver->setAllowedTypes('multiple', 'bool');
         $resolver->setAllowedTypes('types', 'array');
         $resolver->setAllowedTypes('accept', 'string');
         $resolver->setAllowedTypes('visibility', ['null', MediaVisibility::class]);
+        $resolver->setAllowedValues('preview', ['card', 'avatar']);
     }
 
     public function getParent(): string

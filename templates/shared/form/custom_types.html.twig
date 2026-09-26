@@ -46,29 +46,84 @@
     </select>
 {%- endblock autocomplete_remote_widget %}
 
+{% block file_widget %}
+    {% set is_multiple = attr.multiple is defined %}
+    {% set attr = attr | merge({class: (attr.class | default('') ~ ' dropzone__input') | trim}) %}
+
+    <div class="dropzone"
+         data-controller="file-input"
+         data-action="click->file-input#browse dragover->file-input#dragOver dragleave->file-input#dragLeave drop->file-input#drop">
+        <input type="file" {{ block('widget_attributes') }} data-file-input-target="input" data-action="change->file-input#update">
+
+        <twig:Icon name="solar:cloud-upload-line-duotone" size="xl" class="dropzone__icon" />
+
+        <div class="dropzone__text">
+            {% if is_multiple %}
+                {% trans %}Arrastra aquí los archivos o pulsa para elegirlos{% endtrans %}
+            {% else %}
+                {% trans %}Arrastra aquí el archivo o pulsa para elegirlo{% endtrans %}
+            {% endif %}
+        </div>
+
+        <template data-file-input-target="fileTemplate">
+            <twig:Icon name="solar:file-line-duotone" size="md" />
+        </template>
+
+        <ul class="dropzone__files list-unstyled mb-0" data-file-input-target="list"></ul>
+    </div>
+{% endblock file_widget %}
+
 {% block media_picker_widget %}
     {% set field_name = multiple ? full_name ~ '[]' : full_name %}
 
-    <div id="{{ id }}" class="media-picker"{% for key, attr_value in attr %} {{ key }}="{{ attr_value }}"{% endfor %}>
-        <div class="row g-2 mb-2" data-media-picker-target="selection" data-remove-text="{{ 'Quitar archivo' | trans }}" data-empty-text="{{ placeholder | trans }}">
+    <div id="{{ id }}" class="media-picker media-picker--{{ preview }}{% if multiple %} media-picker--multiple{% endif %}"{% for key, attr_value in attr %} {{ key }}="{{ attr_value }}"{% endfor %}>
+        <template data-media-picker-target="itemTemplate">
+            <div class="media-picker__item" data-media-id="">
+                <button type="button" class="media-picker__remove" data-action="media-picker#removeItem" aria-label="{{ 'Quitar archivo' | trans }}">
+                    <twig:Icon name="solar:close-square-line-duotone" size="md" />
+                </button>
+
+                <twig:Library:Thumbnail size="md" slots="true" />
+
+                <div class="media-picker__name text-truncate" data-slot="name"></div>
+            </div>
+        </template>
+
+        <template data-media-picker-target="resultTemplate">
+            <div class="col-6 col-md-3">
+                <button type="button" class="media-picker__result" data-media-id="">
+                    <span class="media-picker__check" title="{{ 'Seleccionado' | trans }}">
+                        <twig:Icon name="solar:check-circle-line-duotone" size="lg" />
+                    </span>
+
+                    <twig:Library:Thumbnail size="md" slots="true" />
+
+                    <div class="media-picker__name text-truncate" data-slot="name"></div>
+
+                    {% for badge_type in ['Image', 'Document', 'Video', 'Audio', 'Other'] %}
+                        <span class="badge bg-secondary-subtle text-secondary" data-slot="type" data-type="{{ badge_type }}" hidden>{{ badge_type | trans({}, 'mediaType') }}</span>
+                    {% endfor %}
+                </button>
+            </div>
+        </template>
+
+        <div class="media-picker__selection" data-media-picker-target="selection" data-empty-text="{{ placeholder | trans }}">
             {% for element in selected %}
-                <div class="col-6 col-md-3" data-media-id="{{ element.id }}">
-                    <div class="border rounded p-2 position-relative">
-                        <button type="button" class="btn-close position-absolute top-0 end-0 m-1" data-action="media-picker#removeItem" aria-label="{{ 'Quitar archivo' | trans }}"></button>
+                <div class="media-picker__item" data-media-id="{{ element.id }}">
+                    <button type="button" class="media-picker__remove" data-action="media-picker#removeItem" aria-label="{{ 'Quitar archivo' | trans }}">
+                        <twig:Icon name="solar:close-square-line-duotone" size="md" />
+                    </button>
 
-                        {% if element.isImage %}
-                            <img src="{{ element.url }}" alt="" class="w-100 rounded mb-2" style="height: 96px; object-fit: cover;">
-                        {% else %}
-                            <div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 96px;">
-                                {{ element.type | trans({}, 'mediaType') }}
-                            </div>
-                        {% endif %}
+                    <twig:Library:Thumbnail size="md" :name="element.name" :type="element.type" :isImage="element.isImage" :url="element.url" />
 
-                        <div class="text-truncate fs-2">{{ element.name }}</div>
-                    </div>
+                    <div class="media-picker__name text-truncate">{{ element.name }}</div>
                 </div>
             {% else %}
-                <div class="col-12 text-muted">{{ placeholder | trans }}</div>
+                <div class="media-picker__empty">
+                    <twig:Icon name="{{ preview == 'avatar' ? 'solar:user-circle-line-duotone' : 'solar:gallery-wide-line-duotone' }}" size="xl" />
+
+                    <span class="fs-2 text-center">{{ placeholder | trans }}</span>
+                </div>
             {% endfor %}
         </div>
 
@@ -82,30 +137,46 @@
             {% endif %}
         </div>
 
-        <div class="d-flex gap-2 align-items-center">
-            <button type="button" class="btn btn-outline-primary" data-action="media-picker#openLibrary">
-                {% trans %}Seleccionar de la biblioteca{% endtrans %}
+        <div class="dropzone{% if preview == 'avatar' %} dropzone--compact{% endif %}"
+             data-media-picker-target="dropzone"
+             data-action="click->media-picker#browseFile dragover->media-picker#dragOver dragleave->media-picker#dragLeave drop->media-picker#drop">
+            <twig:Icon name="solar:cloud-upload-line-duotone" size="xl" class="dropzone__icon" />
+
+            <div>
+                <div class="dropzone__text">
+                    {% if multiple %}
+                        {% trans %}Arrastra aquí los archivos o pulsa para elegirlos{% endtrans %}
+                    {% else %}
+                        {% trans %}Arrastra aquí el archivo o pulsa para elegirlo{% endtrans %}
+                    {% endif %}
+                </div>
+
+                {% if visibility is not null and visibility.isAccessibleOutsideAccount %}
+                    <div class="dropzone__hint text-muted">
+                        {% trans with {'{visibility}': visibility.value | trans({}, 'mediaVisibility')} %}Los archivos de este campo son accesibles para: {visibility}{% endtrans %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="media-picker__actions d-flex gap-2 align-items-center mt-2">
+            <button type="button" class="btn btn-sm bg-primary-subtle text-primary" data-action="media-picker#openLibrary">
+                <twig:Icon name="solar:gallery-wide-line-duotone" size="md" class="me-1" />
+
+                {% trans %}Biblioteca{% endtrans %}
             </button>
 
-            <button type="button" class="btn btn-outline-secondary" data-action="media-picker#browseFile">
-                {% trans %}Subir archivo{% endtrans %}
-            </button>
+            <button type="button" class="btn btn-sm bg-danger-subtle text-danger{% if selected is empty %} d-none{% endif %}" data-media-picker-target="clear" data-action="media-picker#clear">
+                <twig:Icon name="solar:trash-bin-minimalistic-line-duotone" size="md" class="me-1" />
 
-            <button type="button" class="btn btn-link text-danger" data-action="media-picker#clear">
                 {% trans %}Quitar{% endtrans %}
             </button>
 
-            <span class="text-muted fs-2"
-                  data-media-picker-target="feedback"
-                  data-uploading-text="{{ 'Subiendo archivo...' | trans }}"
-                  data-error-text="{{ 'No se ha podido subir el archivo' | trans }}"></span>
+            <div class="media-picker__feedback fs-2"
+                 data-media-picker-target="feedback"
+                 data-uploading-text="{{ 'Subiendo archivo...' | trans }}"
+                 data-error-text="{{ 'No se ha podido subir el archivo' | trans }}"></div>
         </div>
-
-        {% if visibility is not null and visibility.isAccessibleOutsideAccount %}
-            <div class="form-text">
-                {% trans with {'{visibility}': visibility.value | trans({}, 'mediaVisibility')} %}Los archivos de este campo son accesibles para: {visibility}{% endtrans %}
-            </div>
-        {% endif %}
 
         <input type="file" class="d-none" data-media-picker-target="file" data-action="change->media-picker#upload"{% if multiple %} multiple{% endif %}>
 
@@ -118,29 +189,46 @@
                     </div>
 
                     <div class="modal-body">
-                        <div class="input-group mb-3">
-                            <input type="search"
-                                   class="form-control"
-                                   placeholder="{{ 'Buscar archivos' | trans }}"
-                                   data-media-picker-target="query"
-                                   data-action="input->media-picker#search">
+                        <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+                            <div class="input-group flex-grow-1">
+                                <span class="input-group-text">
+                                    <twig:Icon name="solar:magnifer-line-duotone" size="md" />
+                                </span>
+
+                                <input type="search"
+                                       class="form-control"
+                                       placeholder="{{ 'Buscar archivos' | trans }}"
+                                       data-media-picker-target="query"
+                                       data-action="input->media-picker#search">
+                            </div>
+
+                            <div class="form-check form-switch mb-0">
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       role="switch"
+                                       id="{{ id }}_include_shared"
+                                       data-media-picker-target="includeShared"
+                                       data-action="change->media-picker#search">
+
+                                <label class="form-check-label" for="{{ id }}_include_shared">
+                                    {% trans %}Ver archivos compartidos{% endtrans %}
+                                </label>
+                            </div>
                         </div>
 
-                        <div class="form-check mb-3">
-                            <input type="checkbox"
-                                   class="form-check-input"
-                                   id="{{ id }}_include_shared"
-                                   data-media-picker-target="includeShared"
-                                   data-action="change->media-picker#search">
+                        <div class="row g-3" data-media-picker-target="results"></div>
 
-                            <label class="form-check-label" for="{{ id }}_include_shared">
-                                {% trans %}Ver archivos compartidos{% endtrans %}
-                            </label>
+                        <div class="media-picker__empty d-none" data-media-picker-target="emptyResults">
+                            <twig:Icon name="solar:folder-with-files-line-duotone" size="xl" />
+
+                            <span>{% trans %}No hay archivos en la biblioteca{% endtrans %}</span>
                         </div>
+                    </div>
 
-                        <div class="row g-2"
-                             data-media-picker-target="results"
-                             data-empty-text="{{ 'No hay archivos en la biblioteca' | trans }}"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm bg-primary-subtle text-primary d-none" data-media-picker-target="loadMore" data-action="media-picker#loadMore">
+                            {% trans %}Cargar más{% endtrans %}
+                        </button>
                     </div>
                 </div>
             </div>

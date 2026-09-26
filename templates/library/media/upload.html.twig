@@ -7,3 +7,30 @@
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('library_media') }}" />
 {% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row g-4">
+                <div class="col-12 col-lg-7">
+                    {{ form_row(form.file) }}
+                </div>
+
+                <div class="col-12 col-lg-5">
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.alternativeText) }}
+                    {{ form_row(form.description) }}
+
+                    {{ form_row(form.visibility) }}
+                    {% if form.shared is defined %}
+                        {{ form_row(form.shared) }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.register" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

@@ -31,6 +31,7 @@ class ProfileType extends AbstractType
                 'accept' => 'image/*',
                 'visibility' => MediaVisibility::System,
                 'placeholder' => new TranslatableMessage('No tienes ninguna imagen de perfil'),
+                'preview' => 'avatar',
                 'data' => $options['picture_id'],
             ])
             ->add('preferredLocale', LocaleType::class, [
