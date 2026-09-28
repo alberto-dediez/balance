@@ -15,23 +15,17 @@
         <twig:Card>
             <div class="row">
                 <div class="col-12 col-md-4">
-                    {% if media.image %}
-                        <img src="{{ path('library_media_show', {'mediaId': media.id}) }}"
-                             alt="{{ media.alternativeText | default(media.name) }}"
-                             class="img-fluid rounded mb-3">
-                    {% else %}
-                        <div class="text-center mb-3">
-                            <twig:Icon name="solar:file-text-line-duotone" size="xl" />
-                        </div>
-                    {% endif %}
+                    <twig:Library:Thumbnail size="lg" :name="media.alternativeText | default(media.name)" :type="media.type.value" :isImage="media.image" :url="media.image ? path('library_media_show', {'mediaId': media.id}) : null" class="mb-3" />
 
                     <twig:View:Field label="{{ 'Archivo' | trans }}">{{ media.fileName }}</twig:View:Field>
                     <twig:View:Field label="{{ 'Tipo' | trans }}">{{ media.type.value | trans({}, 'mediaType') }}</twig:View:Field>
                     <twig:View:Field label="{{ 'Tamaño' | trans }}">{{ media.size | file_size }}</twig:View:Field>
 
-                    <a href="{{ path('library_media_show', {'mediaId': media.id, 'download': 1}) }}" class="btn btn-outline-primary w-100">
-                        {% trans %}Descargar{% endtrans %}
-                    </a>
+                    <twig:Link path="{{ path('library_media_show', {'mediaId': media.id, 'download': 1}) }}" color="primarySubtle" class="w-100 justify-content-center" title="{{ 'Descargar' | trans }}">
+                        <twig:Icon name="solar:download-square-line-duotone" size="lg" class="me-2" />
+
+                        {{ 'Descargar' | trans }}
+                    </twig:Link>
                 </div>
 
                 <div class="col-12 col-md-8">

@@ -36,6 +36,26 @@ Feature:
         Then I see a form
         Then I see a text "No es un enlace válido de YouTube"
 
+    Scenario: As admin I register an announcement with a manual from the library
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given document "manual.pdf" with id "22222222-2222-2222-2222-222222222222" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/announcements/register"
+        When I submit a form with "category:feature|date:2026-09-22|title:Con manual|summary:Resumen|manualId:22222222-2222-2222-2222-222222222222" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Novedad registrada correctamente: Con manual"
+
+    Scenario: A manual that is not a PDF is rejected
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given media "logo.png" with id "33333333-3333-3333-3333-333333333333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/announcements/register"
+        When I submit a form with "category:feature|date:2026-09-22|title:Con manual|summary:Resumen|manualId:33333333-3333-3333-3333-333333333333" and button "Registrar"
+        Then the response status should be 200
+        Then I see a form
+        Then I see a text "El manual debe ser un PDF"
+
     Scenario: The title is required
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         When I am logged as "admin@dediez.software"

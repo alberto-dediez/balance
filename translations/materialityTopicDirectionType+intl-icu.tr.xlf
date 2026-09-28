@@ -7,11 +7,11 @@
     <body>
       <trans-unit id="VRnURS7" resname="upstream">
         <source>upstream</source>
-        <target>NEW_upstream</target>
+        <target>Yukarı akış</target>
       </trans-unit>
       <trans-unit id="S3N0BFS" resname="downstream">
         <source>downstream</source>
-        <target>NEW_downstream</target>
+        <target>Aşağı akış</target>
       </trans-unit>
     </body>
   </file>

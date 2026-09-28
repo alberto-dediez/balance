@@ -15,7 +15,7 @@ use App\Changelog\Domain\Model\Announcement\AnnouncementTranslated;
 use App\Changelog\Domain\Model\Announcement\InvalidYouTubeUrlException;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
 use App\Changelog\Infrastructure\Persistence\InMemory\Repository\InMemoryAnnouncementRepository;
-use App\Changelog\Infrastructure\Storage\InMemoryAnnouncementManualStorage;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -29,8 +29,6 @@ class RegisterAnnouncementServiceTest extends TestCase
 {
     private InMemoryAnnouncementRepository $repository;
 
-    private InMemoryAnnouncementManualStorage $storage;
-
     private SpyDomainEventSubscriber $spy;
 
     private RegisterAnnouncementService $sut;
@@ -41,8 +39,7 @@ class RegisterAnnouncementServiceTest extends TestCase
         DomainEventPublisher::instance()->reset();
         $this->spy = new SpyDomainEventSubscriber();
         $this->repository = AnnouncementRepositoryMother::inMemory();
-        $this->storage = new InMemoryAnnouncementManualStorage();
-        $this->sut = new RegisterAnnouncementService($this->repository, $this->storage, new AnnouncementAuthorizer());
+        $this->sut = new RegisterAnnouncementService($this->repository, new AnnouncementAuthorizer());
     }
 
     protected function tearDown(): void
@@ -85,26 +82,31 @@ class RegisterAnnouncementServiceTest extends TestCase
         $this->assertInstanceOf(AnnouncementTranslated::class, $this->spy->lastEvent());
     }
 
-    public function testStoresTheUploadedManualForTheCurrentLocale(): void
+    public function testRegistersTheManualForTheCurrentLocale(): void
     {
-        $localPath = (string) tempnam(sys_get_temp_dir(), 'manual');
-        file_put_contents($localPath, '%PDF-1.4 manual');
+        $manualId = MediaId::generate();
 
-        $response = ($this->sut)(new RegisterAnnouncementRequest(
-            title: 'Título',
-            summary: 'Resumen',
-            manualLocalPath: $localPath,
-            manualFileName: 'guia.pdf',
-        ), UserMother::adminUser());
-
-        @unlink($localPath);
+        $response = ($this->sut)(new RegisterAnnouncementRequest(title: 'Título', summary: 'Resumen', manualId: $manualId), UserMother::adminUser());
 
         $announcement = $this->repository->find($response->announcementId);
 
         $this->assertInstanceOf(Announcement::class, $announcement);
-        $this->assertTrue($this->storage->exists(sprintf('%s/es.pdf', (string) $response->announcementId)));
-        $this->assertSame('guia.pdf', $announcement->manualFileName());
+        $this->assertEquals($manualId, $announcement->manualId());
         $this->assertTrue($announcement->hasManual());
+    }
+
+    public function testAManualRegisteredInAnotherLocaleBelongsToItsTranslation(): void
+    {
+        FakeLocaleSetter::set(Locale::English);
+        $manualId = MediaId::generate();
+
+        $response = ($this->sut)(new RegisterAnnouncementRequest(title: 'Title', summary: 'Summary', manualId: $manualId), UserMother::adminUser());
+
+        $announcement = $this->repository->find($response->announcementId);
+
+        $this->assertInstanceOf(Announcement::class, $announcement);
+        $this->assertEquals($manualId, $announcement->manualId(Locale::English));
+        $this->assertCount(1, $announcement->translations());
     }
 
     public function testExtractsTheYouTubeVideo(): void

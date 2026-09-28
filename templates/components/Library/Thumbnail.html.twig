@@ -1,0 +1,29 @@
+{% props name = '', type = 'Other', isImage = false, url = null, size = 'md', slots = false %}
+
+{% set icons = {
+    'Image': 'solar:gallery-wide-line-duotone',
+    'Document': 'solar:document-text-line-duotone',
+    'Video': 'solar:videocamera-line-duotone',
+    'Audio': 'solar:music-note-line-duotone',
+    'Other': 'solar:file-line-duotone'
+} %}
+
+{% set icon_size = size == 'sm' ? 'md' : 'xl' %}
+
+<div class="thumbnail thumbnail--{{ size }} {{ attributes.render('class') }}" {{ attributes.without('class') }}>
+    {% if slots %}
+        <img class="thumbnail__image" data-slot="preview" alt="" hidden>
+
+        {% for icon_type, icon in icons %}
+            <div class="thumbnail__icon" data-slot="icon" data-type="{{ icon_type }}" hidden>
+                <twig:Icon name="{{ icon }}" size="{{ icon_size }}" />
+            </div>
+        {% endfor %}
+    {% elseif isImage and url %}
+        <img class="thumbnail__image" src="{{ url }}" alt="{{ name }}">
+    {% else %}
+        <div class="thumbnail__icon">
+            <twig:Icon name="{{ icons[type] | default(icons['Other']) }}" size="{{ icon_size }}" />
+        </div>
+    {% endif %}
+</div>

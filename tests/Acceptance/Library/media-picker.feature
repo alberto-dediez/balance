@@ -108,3 +108,12 @@ Feature:
         }
         """
         Then the library contains 0 files
+
+    Scenario: The profile picker offers the library and a drop zone
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/profile"
+        Then the response status should be 200
+        Then I see a text "Biblioteca"
+        Then I see a text "Arrastra aquí el archivo o pulsa para elegirlo"
+        Then I do not see a text "Seleccionar de la biblioteca"

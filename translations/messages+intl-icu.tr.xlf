@@ -8423,175 +8423,195 @@
       </trans-unit>
       <trans-unit id="j8X3g.y" resname="La dirección es obligatoria en las categorías de alcance 3">
         <source>La dirección es obligatoria en las categorías de alcance 3</source>
-        <target>NEW_La dirección es obligatoria en las categorías de alcance 3</target>
+        <target>Kapsam 3 kategorilerinde yön zorunludur</target>
       </trans-unit>
       <trans-unit id="j_56a5n" resname="Ya existe una categoría con ese número">
         <source>Ya existe una categoría con ese número</source>
-        <target>NEW_Ya existe una categoría con ese número</target>
+        <target>Bu numaraya sahip bir kategori zaten mevcut</target>
       </trans-unit>
       <trans-unit id="v3oLICP" resname="Categoría de materialidad creada correctamente: {name}">
         <source>Categoría de materialidad creada correctamente: {name}</source>
-        <target>NEW_Categoría de materialidad creada correctamente: {name}</target>
+        <target>Önemlilik kategorisi başarıyla oluşturuldu: {name}</target>
       </trans-unit>
       <trans-unit id="Agm3Gpi" resname="Categoría de materialidad actualizada con éxito">
         <source>Categoría de materialidad actualizada con éxito</source>
-        <target>NEW_Categoría de materialidad actualizada con éxito</target>
+        <target>Önemlilik kategorisi başarıyla güncellendi</target>
       </trans-unit>
       <trans-unit id="Ouy3290" resname="Se ha eliminado la categoría de materialidad {name}">
         <source>Se ha eliminado la categoría de materialidad {name}</source>
-        <target>NEW_Se ha eliminado la categoría de materialidad {name}</target>
+        <target>{name} önemlilik kategorisi silindi</target>
       </trans-unit>
       <trans-unit id="wyfA_kf" resname="No se ha podido eliminar la categoría de materialidad {name}">
         <source>No se ha podido eliminar la categoría de materialidad {name}</source>
-        <target>NEW_No se ha podido eliminar la categoría de materialidad {name}</target>
+        <target>{name} önemlilik kategorisi silinemedi</target>
       </trans-unit>
       <trans-unit id="_V50mw7" resname="Se ha eliminado la categoría de materialidad {id}">
         <source>Se ha eliminado la categoría de materialidad {id}</source>
-        <target>NEW_Se ha eliminado la categoría de materialidad {id}</target>
+        <target>{id} önemlilik kategorisi silindi</target>
       </trans-unit>
       <trans-unit id="s3UAD0Y" resname="No se ha podido eliminar la categoría de materialidad {id}">
         <source>No se ha podido eliminar la categoría de materialidad {id}</source>
-        <target>NEW_No se ha podido eliminar la categoría de materialidad {id}</target>
+        <target>{id} önemlilik kategorisi silinemedi</target>
       </trans-unit>
       <trans-unit id="m4YHGDl" resname="Pregunta de materialidad creada correctamente: {text}">
         <source>Pregunta de materialidad creada correctamente: {text}</source>
-        <target>NEW_Pregunta de materialidad creada correctamente: {text}</target>
+        <target>Önemlilik sorusu başarıyla oluşturuldu: {text}</target>
       </trans-unit>
       <trans-unit id="LS8mlK6" resname="Pregunta de materialidad actualizada con éxito">
         <source>Pregunta de materialidad actualizada con éxito</source>
-        <target>NEW_Pregunta de materialidad actualizada con éxito</target>
+        <target>Önemlilik sorusu başarıyla güncellendi</target>
       </trans-unit>
       <trans-unit id=".oM7vKG" resname="Se ha eliminado la pregunta de materialidad {text}">
         <source>Se ha eliminado la pregunta de materialidad {text}</source>
-        <target>NEW_Se ha eliminado la pregunta de materialidad {text}</target>
+        <target>{text} önemlilik sorusu silindi</target>
       </trans-unit>
       <trans-unit id="MksrOph" resname="No se ha podido eliminar la pregunta de materialidad {text}">
         <source>No se ha podido eliminar la pregunta de materialidad {text}</source>
-        <target>NEW_No se ha podido eliminar la pregunta de materialidad {text}</target>
+        <target>{text} önemlilik sorusu silinemedi</target>
       </trans-unit>
       <trans-unit id="WpRZMbP" resname="Se ha eliminado la pregunta de materialidad {id}">
         <source>Se ha eliminado la pregunta de materialidad {id}</source>
-        <target>NEW_Se ha eliminado la pregunta de materialidad {id}</target>
+        <target>{id} önemlilik sorusu silindi</target>
       </trans-unit>
       <trans-unit id="qFCkZst" resname="No se ha podido eliminar la pregunta de materialidad {id}">
         <source>No se ha podido eliminar la pregunta de materialidad {id}</source>
-        <target>NEW_No se ha podido eliminar la pregunta de materialidad {id}</target>
+        <target>{id} önemlilik sorusu silinemedi</target>
       </trans-unit>
       <trans-unit id="jB4g42j" resname="Los maestros estándar ya estaban registrados">
         <source>Los maestros estándar ya estaban registrados</source>
-        <target>NEW_Los maestros estándar ya estaban registrados</target>
+        <target>Standart ana veriler zaten kayıtlıydı</target>
       </trans-unit>
       <trans-unit id="VjNGbil" resname="Se han registrado {topics} categorías y {questions} preguntas estándar">
         <source>Se han registrado {topics} categorías y {questions} preguntas estándar</source>
-        <target>NEW_Se han registrado {topics} categorías y {questions} preguntas estándar</target>
+        <target>{topics} standart kategori ve {questions} standart soru kaydedildi</target>
       </trans-unit>
       <trans-unit id="KwpHMH0" resname="Criterio">
         <source>Criterio</source>
-        <target>NEW_Criterio</target>
+        <target>Kriter</target>
       </trans-unit>
       <trans-unit id="i7uqZ6P" resname="Pregunta">
         <source>Pregunta</source>
-        <target>NEW_Pregunta</target>
+        <target>Soru</target>
       </trans-unit>
       <trans-unit id="kLm8ZBz" resname="Redacta la pregunta de modo que «Alto» o «Sí» signifique mayor relevancia de la categoría">
         <source>Redacta la pregunta de modo que «Alto» o «Sí» signifique mayor relevancia de la categoría</source>
-        <target>NEW_Redacta la pregunta de modo que «Alto» o «Sí» signifique mayor relevancia de la categoría</target>
+        <target>Soruyu, «Yüksek» veya «Evet» yanıtı kategorinin daha önemli olduğu anlamına gelecek şekilde yazın</target>
       </trans-unit>
       <trans-unit id="pL2.v48" resname="Ayuda">
         <source>Ayuda</source>
-        <target>NEW_Ayuda</target>
+        <target>Yardım</target>
       </trans-unit>
       <trans-unit id="7ZXaBKW" resname="Escala de respuesta">
         <source>Escala de respuesta</source>
-        <target>NEW_Escala de respuesta</target>
+        <target>Yanıt ölçeği</target>
       </trans-unit>
       <trans-unit id="eW7DKLb" resname="Peso">
         <source>Peso</source>
-        <target>NEW_Peso</target>
+        <target>Ağırlık</target>
       </trans-unit>
       <trans-unit id="HUgWLi9" resname="Posición">
         <source>Posición</source>
-        <target>NEW_Posición</target>
+        <target>Sıra</target>
       </trans-unit>
       <trans-unit id="QywjI3u" resname="Nº de categoría">
         <source>Nº de categoría</source>
-        <target>NEW_Nº de categoría</target>
+        <target>Kategori no.</target>
       </trans-unit>
       <trans-unit id="AxU6yDI" resname="Sin dirección">
         <source>Sin dirección</source>
-        <target>NEW_Sin dirección</target>
+        <target>Yön yok</target>
       </trans-unit>
       <trans-unit id="xdXAyW_" resname="Materialidad">
         <source>Materialidad</source>
-        <target>NEW_Materialidad</target>
+        <target>Önemlilik</target>
       </trans-unit>
       <trans-unit id="FvYRndq" resname="Preguntas">
         <source>Preguntas</source>
-        <target>NEW_Preguntas</target>
+        <target>Sorular</target>
       </trans-unit>
       <trans-unit id="lmIMsPo" resname="Sembrar maestros estándar">
         <source>Sembrar maestros estándar</source>
-        <target>NEW_Sembrar maestros estándar</target>
+        <target>Standart ana verileri yükle</target>
       </trans-unit>
       <trans-unit id="6Jrmpal" resname="Se ha actualizado la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
         <source>Se ha actualizado la pregunta de materialidad "{text}" por el usuario {user}</source>
-        <target>NEW_Se ha actualizado la pregunta de materialidad "{text}" por el usuario {user}</target>
+        <target>"{text}" önemlilik sorusu {user} kullanıcısı tarafından güncellendi</target>
       </trans-unit>
       <trans-unit id="arXHOqh" resname="Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}">
         <source>Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}</source>
-        <target>NEW_Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}</target>
+        <target>{user} kullanıcısı tarafından {materialityQuestion} önemlilik sorusu silindi</target>
       </trans-unit>
       <trans-unit id="pkExtvX" resname="Se ha traducido al {locale} la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
         <source>Se ha traducido al {locale} la pregunta de materialidad "{text}" por el usuario {user}</source>
-        <target>NEW_Se ha traducido al {locale} la pregunta de materialidad "{text}" por el usuario {user}</target>
+        <target>"{text}" önemlilik sorusu {user} kullanıcısı tarafından {locale} diline çevrildi</target>
       </trans-unit>
       <trans-unit id="0EchMIx" resname="Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}">
         <source>Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}</source>
-        <target>NEW_Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}</target>
+        <target>{user} kullanıcısı tarafından {materialityTopic} önemlilik kategorisi silindi</target>
       </trans-unit>
       <trans-unit id="jHIQugb" resname="Se ha traducido al {locale} la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
         <source>Se ha traducido al {locale} la categoría de materialidad "{name}" por el usuario {user}</source>
-        <target>NEW_Se ha traducido al {locale} la categoría de materialidad "{name}" por el usuario {user}</target>
+        <target>"{name}" önemlilik kategorisi {user} kullanıcısı tarafından {locale} diline çevrildi</target>
       </trans-unit>
       <trans-unit id="ZsutNKx" resname="Se ha actualizado la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
         <source>Se ha actualizado la categoría de materialidad "{name}" por el usuario {user}</source>
-        <target>NEW_Se ha actualizado la categoría de materialidad "{name}" por el usuario {user}</target>
+        <target>"{name}" önemlilik kategorisi {user} kullanıcısı tarafından güncellendi</target>
       </trans-unit>
       <trans-unit id="x2OB5NU" resname="Se ha registrado la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
         <source>Se ha registrado la pregunta de materialidad "{text}" por el usuario {user}</source>
-        <target>NEW_Se ha registrado la pregunta de materialidad "{text}" por el usuario {user}</target>
+        <target>"{text}" önemlilik sorusu {user} kullanıcısı tarafından kaydedildi</target>
       </trans-unit>
       <trans-unit id="YW_a6Gl" resname="Se ha registrado la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
         <source>Se ha registrado la categoría de materialidad "{name}" por el usuario {user}</source>
-        <target>NEW_Se ha registrado la categoría de materialidad "{name}" por el usuario {user}</target>
+        <target>"{name}" önemlilik kategorisi {user} kullanıcısı tarafından kaydedildi</target>
       </trans-unit>
       <trans-unit id="kHR7Bts" resname="Inactiva">
         <source>Inactiva</source>
-        <target>NEW_Inactiva</target>
+        <target>Pasif</target>
       </trans-unit>
       <trans-unit id="vTnnyKR" resname="No hay preguntas. Siembra los maestros estándar o registra una nueva.">
         <source>No hay preguntas. Siembra los maestros estándar o registra una nueva.</source>
-        <target>NEW_No hay preguntas. Siembra los maestros estándar o registra una nueva.</target>
+        <target>Soru yok. Standart ana verileri yükleyin veya yeni bir soru kaydedin.</target>
       </trans-unit>
       <trans-unit id="8SLJMPl" resname="Escala">
         <source>Escala</source>
-        <target>NEW_Escala</target>
+        <target>Ölçek</target>
       </trans-unit>
       <trans-unit id="Uo5lf1D" resname="No hay categorías. Siembra los maestros estándar o registra una nueva.">
         <source>No hay categorías. Siembra los maestros estándar o registra una nueva.</source>
-        <target>NEW_No hay categorías. Siembra los maestros estándar o registra una nueva.</target>
+        <target>Kategori yok. Standart ana verileri yükleyin veya yeni bir kategori kaydedin.</target>
       </trans-unit>
       <trans-unit id="h0Iyiqa" resname="Nº">
         <source>Nº</source>
-        <target>NEW_Nº</target>
+        <target>No.</target>
       </trans-unit>
       <trans-unit id="O71zJx7" resname="Estándar">
         <source>Estándar</source>
-        <target>NEW_Estándar</target>
+        <target>Standart</target>
       </trans-unit>
       <trans-unit id="sxFR_O." resname="Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?">
         <source>Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?</source>
-        <target>NEW_Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?</target>
+        <target>Eksik GHG Protocol standart kategorileri ve soru yoksa başlangıç soruları kaydedilecek. Devam etmek istiyor musunuz?</target>
+      </trans-unit>
+      <trans-unit id="R3gcJ2D" resname="Arrastra aquí los archivos o pulsa para elegirlos">
+        <source>Arrastra aquí los archivos o pulsa para elegirlos</source>
+        <target>Dosyaları buraya sürükleyin veya seçmek için tıklayın</target>
+      </trans-unit>
+      <trans-unit id="j0sBB5t" resname="Arrastra aquí el archivo o pulsa para elegirlo">
+        <source>Arrastra aquí el archivo o pulsa para elegirlo</source>
+        <target>Dosyayı buraya sürükleyin veya seçmek için tıklayın</target>
+      </trans-unit>
+      <trans-unit id="iGwrkiC" resname="Seleccionado">
+        <source>Seleccionado</source>
+        <target>Seçildi</target>
+      </trans-unit>
+      <trans-unit id="T.d0CAW" resname="Cargar más">
+        <source>Cargar más</source>
+        <target>Daha fazla yükle</target>
+      </trans-unit>
+      <trans-unit id="uvkf8x9" resname="Compartido">
+        <source>Compartido</source>
+        <target>Paylaşılan</target>
       </trans-unit>
     </body>
   </file>

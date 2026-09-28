@@ -81,6 +81,10 @@
         <source>Too many failed login attempts, please try again in %minutes% minutes.</source>
         <target>Çok fazla başarısız giriş denemesi, lütfen %minutes% dakika sonra tekrar deneyin.</target>
       </trans-unit>
+      <trans-unit id="Su86nQg" resname="Two-factor verification failed. Please sign in again.">
+        <source>Two-factor verification failed. Please sign in again.</source>
+        <target>İki adımlı doğrulama başarısız oldu. Lütfen tekrar giriş yapın.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

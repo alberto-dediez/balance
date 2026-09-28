@@ -10,6 +10,7 @@ use App\Changelog\Domain\Model\Announcement\AnnouncementRepository;
 use App\Changelog\Domain\Model\Announcement\AnnouncementStatus;
 use App\Changelog\Domain\Model\Announcement\YouTubeVideo;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -193,7 +194,8 @@ abstract class AnnouncementRepositoryTest extends KernelTestCase
         $found = $repository->find($announcement->id());
         $this->assertInstanceOf(Announcement::class, $found);
 
-        $found->translate('New title', 'New summary', 'New body', YouTubeVideo::fromId('dQw4w9WgXcQ'), 'manual.pdf', 'path/en.pdf', Locale::English);
+        $manualId = MediaId::generate();
+        $found->translate('New title', 'New summary', 'New body', YouTubeVideo::fromId('dQw4w9WgXcQ'), $manualId, Locale::English);
         $repository->add($found);
 
         $this->clearPersistence();
@@ -206,8 +208,7 @@ abstract class AnnouncementRepositoryTest extends KernelTestCase
         $this->assertSame('New summary', $updated->summary(Locale::English));
         $this->assertSame('New body', $updated->body(Locale::English));
         $this->assertSame('dQw4w9WgXcQ', (string) $updated->youtubeVideo(Locale::English));
-        $this->assertSame('manual.pdf', $updated->manualFileName(Locale::English));
-        $this->assertSame('path/en.pdf', $updated->manualPath(Locale::English));
+        $this->assertEquals($manualId, $updated->manualId(Locale::English));
         $this->assertSame('Título es', $updated->title(Locale::Spanish));
     }
 
@@ -216,7 +217,7 @@ abstract class AnnouncementRepositoryTest extends KernelTestCase
         $repository = $this->createSUT();
 
         $announcement = AnnouncementMother::fromTitle('Informes');
-        $announcement->translate('Reports', 'Brand NEW dashboards', '', null, null, null, Locale::English);
+        $announcement->translate('Reports', 'Brand NEW dashboards', '', null, null, Locale::English);
         $repository->add($announcement);
         $repository->add(AnnouncementMother::fromTitle('Otra cosa'));
 

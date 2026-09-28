@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Changelog\Domain\Model\Announcement;
 
 use App\Changelog\Domain\DomainEvent;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -19,8 +20,7 @@ final class AnnouncementTranslated extends DomainEvent
         private readonly string $summary,
         private readonly string $body,
         private readonly ?YouTubeVideo $youtubeVideo,
-        private readonly ?string $manualFileName,
-        private readonly ?string $manualPath,
+        private readonly ?MediaId $manualId,
         private readonly Locale $locale,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
@@ -58,14 +58,9 @@ final class AnnouncementTranslated extends DomainEvent
         return $this->youtubeVideo;
     }
 
-    public function manualFileName(): ?string
+    public function manualId(): ?MediaId
     {
-        return $this->manualFileName;
-    }
-
-    public function manualPath(): ?string
-    {
-        return $this->manualPath;
+        return $this->manualId;
     }
 
     public function aggregateRootId(): AggregateRootId
@@ -82,8 +77,7 @@ final class AnnouncementTranslated extends DomainEvent
             'summary' => $this->summary,
             'body' => $this->body,
             'youtubeVideoId' => $this->youtubeVideo?->id,
-            'manualFileName' => $this->manualFileName,
-            'manualPath' => $this->manualPath,
+            'manualId' => $this->manualId instanceof MediaId ? (string) $this->manualId : null,
         ];
     }
 
@@ -98,8 +92,7 @@ final class AnnouncementTranslated extends DomainEvent
             summary: $payload['summary'],
             body: $payload['body'],
             youtubeVideo: null !== $payload['youtubeVideoId'] ? YouTubeVideo::fromId($payload['youtubeVideoId']) : null,
-            manualFileName: $payload['manualFileName'],
-            manualPath: $payload['manualPath'],
+            manualId: null !== ($payload['manualId'] ?? null) ? new MediaId($payload['manualId']) : null,
             locale: Locale::from($payload['locale']),
             id: $id,
             occurredOn: $occurredOn,

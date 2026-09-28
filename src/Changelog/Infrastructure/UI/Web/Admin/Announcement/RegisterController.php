@@ -25,7 +25,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 class RegisterController extends AbstractController
 {
     use RegisterTrait;
-    use MapsManualUploadsTrait;
 
     public function __invoke(RegisterAnnouncementService $registerAnnouncement, LoggedUser $loggedUser, Request $request): Response
     {
@@ -38,8 +37,6 @@ class RegisterController extends AbstractController
         try {
             $needsRedirect = $this->register($request, $form, function ($form) use ($registerAnnouncement, $user): true {
                 $registerRequest = $form->getData();
-
-                $this->mapManualUpload($form, $registerRequest);
 
                 $response = $registerAnnouncement($registerRequest, $user);
 

@@ -14,8 +14,8 @@ use App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntry;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntrySlug;
 use App\Changelog\Infrastructure\Persistence\InMemory\InMemoryChangelogEntryRepository;
 use App\Changelog\Infrastructure\Persistence\InMemory\Repository\InMemoryAnnouncementRepository;
-use App\Changelog\Infrastructure\Storage\InMemoryAnnouncementManualStorage;
 use App\Changelog\Infrastructure\Storage\InMemoryManualStorage;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRepository;
@@ -51,7 +51,6 @@ final class ChangelogContext implements Context
         $this->getChangelogEntryRepository()->clear();
         $this->getManualStorage()->clear();
         $this->getAnnouncementRepository()->clear();
-        $this->getAnnouncementManualStorage()->clear();
         $this->getLowPriorityTransport()->reset();
         $this->client->reset();
     }
@@ -69,11 +68,6 @@ final class ChangelogContext implements Context
     private function getAnnouncementRepository(): InMemoryAnnouncementRepository
     {
         return $this->client->getContainer()->get(InMemoryAnnouncementRepository::class);
-    }
-
-    private function getAnnouncementManualStorage(): InMemoryAnnouncementManualStorage
-    {
-        return $this->client->getContainer()->get(InMemoryAnnouncementManualStorage::class);
     }
 
     private function getLowPriorityTransport(): InMemoryTransport
@@ -121,18 +115,19 @@ final class ChangelogContext implements Context
     #[Given('announcement :id is translated to :locale as :title')]
     public function announcementIsTranslatedTo(string $id, string $locale, string $title): void
     {
-        $this->getAnnouncement($id)->translate($title, $title . ' summary', '# ' . $title, null, null, null, Locale::from($locale));
+        $this->getAnnouncement($id)->translate($title, $title . ' summary', '# ' . $title, null, null, Locale::from($locale));
     }
 
     #[Given('announcement :id has a manual in :locale')]
     public function announcementHasAManualIn(string $id, string $locale): void
     {
-        $announcement = $this->getAnnouncement($id);
-        $path = sprintf('%s/%s.pdf', $id, $locale);
+        $this->retranslate($this->getAnnouncement($id), Locale::from($locale), manualId: MediaId::generate());
+    }
 
-        $this->retranslate($announcement, Locale::from($locale), manualFileName: 'manual.pdf', manualPath: $path);
-
-        $this->getAnnouncementManualStorage()->add($path, '%PDF-1.4 test contents');
+    #[Given('announcement :id has the manual :mediaId in :locale')]
+    public function announcementHasTheManualIn(string $id, string $mediaId, string $locale): void
+    {
+        $this->retranslate($this->getAnnouncement($id), Locale::from($locale), manualId: new MediaId($mediaId));
     }
 
     #[Given('announcement :id has the video :url in :locale')]
@@ -233,23 +228,21 @@ final class ChangelogContext implements Context
         Announcement $announcement,
         Locale $locale,
         ?YouTubeVideo $video = null,
-        ?string $manualFileName = null,
-        ?string $manualPath = null,
+        ?MediaId $manualId = null,
     ): void {
         $title = $announcement->title($locale);
         $summary = $announcement->summary($locale);
         $body = $announcement->body($locale);
         $video ??= $announcement->youtubeVideo($locale);
-        $manualFileName ??= $announcement->manualFileName($locale);
-        $manualPath ??= $announcement->manualPath($locale);
+        $manualId ??= $announcement->manualId($locale);
 
         if (LocaleGetter::default() === $locale) {
-            $announcement->update($announcement->category(), $announcement->date(), $announcement->version(), $title, $summary, $body, $video, $manualFileName, $manualPath);
+            $announcement->update($announcement->category(), $announcement->date(), $announcement->version(), $title, $summary, $body, $video, $manualId);
 
             return;
         }
 
-        $announcement->translate($title, $summary, $body, $video, $manualFileName, $manualPath, $locale);
+        $announcement->translate($title, $summary, $body, $video, $manualId, $locale);
     }
 
     #[Given('changelog entry :slug titled :title in category :category exists')]

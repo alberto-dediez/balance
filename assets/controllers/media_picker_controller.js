@@ -2,12 +2,8 @@ import { Controller } from '@hotwired/stimulus';
 
 import { Modal } from 'bootstrap';
 
-/**
- * Lets any form pick media already stored in the library or upload new ones
- * without leaving the page.
- */
 export default class extends Controller {
-    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared'];
+    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared', 'dropzone', 'clear', 'itemTemplate', 'resultTemplate', 'emptyResults', 'loadMore'];
 
     static values = {
         searchPath: String,
@@ -25,6 +21,13 @@ export default class extends Controller {
         if (this.acceptValue.length > 0) {
             this.fileTarget.setAttribute('accept', this.acceptValue);
         }
+
+        this.page = 0;
+        this.limit = 24;
+
+        const empty = this.selectionTarget.querySelector('.media-picker__empty');
+
+        this.emptyMarkup = empty ? empty.outerHTML : null;
     }
 
     disconnect() {
@@ -39,6 +42,8 @@ export default class extends Controller {
 
     openLibrary(event) {
         event.preventDefault();
+
+        this.page = 0;
 
         this.modal.show();
 
@@ -55,13 +60,62 @@ export default class extends Controller {
         event.preventDefault();
 
         this.resetInputs();
-        this.selectionTarget.innerHTML = '';
+        this.renderEmptySelection();
+        this.syncClearButton();
     }
 
-    /**
-     * In single mode the hidden input is always rendered, so that the field is
-     * submitted even when nothing is selected.
-     */
+    dragOver(event) {
+        event.preventDefault();
+
+        this.dropzoneTarget.classList.add('is-dragover');
+    }
+
+    dragLeave() {
+        this.dropzoneTarget.classList.remove('is-dragover');
+    }
+
+    drop(event) {
+        event.preventDefault();
+
+        this.dropzoneTarget.classList.remove('is-dragover');
+
+        const files = Array.from(event.dataTransfer.files);
+
+        if (0 === files.length) {
+            return;
+        }
+
+        this.uploadNext(this.isMultiple ? files : files.slice(0, 1));
+    }
+
+    loadMore(event) {
+        event.preventDefault();
+
+        this.page++;
+
+        this.search(true);
+    }
+
+    syncClearButton() {
+        const hasValue = Array.from(this.inputsTarget.querySelectorAll('input')).some(input => '' !== input.value);
+
+        this.clearTarget.classList.toggle('d-none', !hasValue);
+    }
+
+    renderEmptySelection() {
+        if (this.emptyMarkup) {
+            this.selectionTarget.innerHTML = this.emptyMarkup;
+
+            return;
+        }
+
+        const empty = document.createElement('div');
+        empty.className = 'media-picker__empty';
+        empty.textContent = this.selectionTarget.dataset.emptyText || '';
+
+        this.selectionTarget.replaceChildren(empty);
+    }
+
     resetInputs() {
         if (this.isMultiple) {
             this.inputsTarget.innerHTML = '';
@@ -72,49 +126,77 @@ export default class extends Controller {
         this.inputsTarget.querySelectorAll('input').forEach(input => input.value = '');
     }
 
-    search() {
+    search(append = false) {
+        if (true !== append) {
+            this.page = 0;
+        }
+
         const query = this.hasQueryTarget ? this.queryTarget.value : '';
 
         const includeShared = this.hasIncludeSharedTarget && this.includeSharedTarget.checked ? '1' : '';
 
-        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}&includeShared=${includeShared}`;
+        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}&includeShared=${includeShared}&page=${this.page}&limit=${this.limit}`;
 
         fetch(url, { headers: { 'Accept': 'application/json' } })
             .then(response => response.json())
-            .then(json => this.renderResults(json.elements || []))
-            .catch(() => this.renderResults([]));
+            .then(json => this.renderResults(json.elements || [], true === append, json.totalResults || 0))
+            .catch(() => this.renderResults([], true === append, 0));
     }
 
-    renderResults(elements) {
-        this.resultsTarget.innerHTML = '';
+    renderResults(elements, append, totalResults) {
+        if (!append) {
+            this.resultsTarget.innerHTML = '';
+        }
 
-        if (0 === elements.length) {
-            this.resultsTarget.innerHTML = `<div class="col-12 text-muted">${this.resultsTarget.dataset.emptyText}</div>`;
+        elements.forEach(element => {
+            const column = this.resultTemplateTarget.content.firstElementChild.cloneNode(true);
+            const card = column.querySelector('[data-media-id]');
+
+            card.dataset.mediaId = element.id;
+            card.classList.toggle('is-selected', this.alreadySelected(element.id));
+            card.addEventListener('click', () => this.select(element));
+
+            this.fillSlots(column, element);
+
+            this.resultsTarget.appendChild(column);
+        });
+
+        this.emptyResultsTarget.classList.toggle('d-none', 0 !== this.resultsTarget.children.length);
+        this.loadMoreTarget.classList.toggle('d-none', (this.page + 1) * this.limit >= totalResults);
+    }
+
+    fillSlots(node, element) {
+        const name = node.querySelector('[data-slot="name"]');
+
+        if (name) {
+            name.textContent = element.name;
+        }
+
+        const badges = Array.from(node.querySelectorAll('[data-slot="type"]'));
+        const badge = badges.find(candidate => candidate.dataset.type === element.type)
+            || badges.find(candidate => 'Other' === candidate.dataset.type);
+
+        if (badge) {
+            badge.hidden = false;
+        }
+
+        const preview = node.querySelector('[data-slot="preview"]');
+
+        if (preview && element.isImage && element.url) {
+            preview.src = element.url;
+            preview.alt = element.name;
+            preview.hidden = false;
 
             return;
         }
 
-        elements.forEach(element => {
-            const column = document.createElement('div');
-            column.className = 'col-6 col-md-3';
+        const icons = Array.from(node.querySelectorAll('[data-slot="icon"]'));
+        const icon = icons.find(candidate => candidate.dataset.type === element.type)
+            || icons.find(candidate => 'Other' === candidate.dataset.type);
 
-            const card = document.createElement('button');
-            card.type = 'button';
-            card.className = 'btn btn-outline-light border w-100 h-100 p-2 text-start';
-            card.innerHTML = this.previewMarkup(element);
-            card.addEventListener('click', () => this.select(element));
-
-            column.appendChild(card);
-            this.resultsTarget.appendChild(column);
-        });
-    }
-
-    previewMarkup(element) {
-        const preview = element.isImage
-            ? `<img src="${element.url}" alt="" class="w-100 rounded mb-2" style="height: 96px; object-fit: cover;">`
-            : `<div class="d-flex align-items-center justify-content-center bg-light rounded mb-2" style="height: 96px;">${element.type}</div>`;
-
-        return `${preview}<div class="text-truncate fs-2">${this.escape(element.name)}</div>`;
+        if (icon) {
+            icon.hidden = false;
+        }
     }
 
     select(element) {
@@ -126,10 +208,14 @@ export default class extends Controller {
             return;
         }
 
+        this.selectionTarget.querySelectorAll('.media-picker__empty').forEach(empty => empty.remove());
+
         this.appendInput(element.id);
         this.appendPreview(element);
 
         this.modal.hide();
+
+        this.syncClearButton();
     }
 
     alreadySelected(id) {
@@ -152,14 +238,11 @@ export default class extends Controller {
     }
 
     appendPreview(element) {
-        const item = document.createElement('div');
-        item.className = 'col-6 col-md-3';
+        const item = this.itemTemplateTarget.content.firstElementChild.cloneNode(true);
+
         item.dataset.mediaId = element.id;
-        item.innerHTML = `
-            <div class="border rounded p-2 position-relative">
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-1" data-action="media-picker#removeItem" aria-label="${this.escape(this.selectionTarget.dataset.removeText || '')}"></button>
-                ${this.previewMarkup(element)}
-            </div>`;
+
+        this.fillSlots(item, element);
 
         this.selectionTarget.appendChild(item);
     }
@@ -177,8 +260,10 @@ export default class extends Controller {
         item.remove();
 
         if (0 === this.selectionTarget.children.length) {
-            this.selectionTarget.innerHTML = `<div class="col-12 text-muted">${this.selectionTarget.dataset.emptyText || ''}</div>`;
+            this.renderEmptySelection();
         }
+
+        this.syncClearButton();
     }
 
     removeInput(id) {
@@ -205,11 +290,14 @@ export default class extends Controller {
         this.uploadNext(files);
     }
 
-    uploadNext(files) {
+    uploadNext(files, failed = false) {
         const [file, ...rest] = files;
 
         if (!file) {
-            this.setFeedback('');
+            if (!failed) {
+                this.setFeedback('');
+            }
+
             this.fileTarget.value = '';
 
             return;
@@ -221,31 +309,43 @@ export default class extends Controller {
         body.append('visibility', this.visibilityValue);
         body.append('_token', this.tokenValue);
 
-        this.setFeedback(this.feedbackTarget.dataset.uploadingText);
+        this.setFeedback(this.feedbackTarget.dataset.uploadingText, 'uploading');
+
+        let error = failed;
 
         fetch(this.uploadPathValue, { method: 'POST', body: body })
             .then(response => response.json())
             .then(json => {
                 if (json.error) {
-                    this.setFeedback(json.error);
+                    error = true;
+
+                    this.setFeedback(json.error, 'error');
 
                     return;
                 }
 
                 this.select(json.element);
             })
-            .catch(() => this.setFeedback(this.feedbackTarget.dataset.errorText))
-            .finally(() => this.uploadNext(rest));
+            .catch(() => {
+                error = true;
+
+                this.setFeedback(this.feedbackTarget.dataset.errorText, 'error');
+            })
+            .finally(() => this.uploadNext(rest, error));
     }
 
-    setFeedback(message) {
+    setFeedback(message, state = '') {
+        this.dropzoneTarget.classList.toggle('is-uploading', 'uploading' === state);
+        this.feedbackTarget.classList.toggle('text-danger', 'error' === state);
+
         this.feedbackTarget.textContent = message;
-    }
 
-    escape(value) {
-        const node = document.createElement('span');
-        node.textContent = value;
+        if ('uploading' === state) {
+            const spinner = document.createElement('span');
+            spinner.className = 'spinner-border spinner-border-sm me-1';
+            spinner.setAttribute('role', 'status');
 
-        return node.innerHTML;
+            this.feedbackTarget.prepend(spinner);
+        }
     }
 }

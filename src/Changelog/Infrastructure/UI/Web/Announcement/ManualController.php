@@ -12,8 +12,8 @@ use App\Changelog\Domain\Model\ChangelogEntry\ManualNotFoundException;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -21,9 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class ManualController extends AbstractController
 {
-    use StreamAnnouncementManualTrait;
-
-    public function __invoke(string $announcementId, Request $request, DownloadAnnouncementManualService $downloadManual, LoggedUser $loggedUser): StreamedResponse
+    public function __invoke(string $announcementId, Request $request, DownloadAnnouncementManualService $downloadManual, LoggedUser $loggedUser): RedirectResponse
     {
         try {
             $response = $downloadManual(new DownloadAnnouncementManualRequest(new AnnouncementId($announcementId)), $loggedUser());
@@ -31,6 +29,12 @@ class ManualController extends AbstractController
             throw $this->createNotFoundException($e->getMessage());
         }
 
-        return $this->streamManual($response, $request->query->getBoolean('download'));
+        $parameters = ['mediaId' => (string) $response->mediaId];
+
+        if ($request->query->getBoolean('download')) {
+            $parameters['download'] = 1;
+        }
+
+        return $this->redirectToRoute('library_media_show', $parameters);
     }
 }

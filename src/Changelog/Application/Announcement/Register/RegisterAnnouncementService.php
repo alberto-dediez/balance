@@ -7,7 +7,6 @@ namespace App\Changelog\Application\Announcement\Register;
 use App\Changelog\Application\Announcement\AnnouncementAuthorizer;
 use App\Changelog\Domain\Model\Announcement\Announcement;
 use App\Changelog\Domain\Model\Announcement\AnnouncementId;
-use App\Changelog\Domain\Model\Announcement\AnnouncementManualStorage;
 use App\Changelog\Domain\Model\Announcement\AnnouncementRepository;
 use App\Changelog\Domain\Model\Announcement\YouTubeVideo;
 use App\Security\Application\Action;
@@ -25,7 +24,6 @@ class RegisterAnnouncementService implements CommandHandler
 
     public function __construct(
         private readonly AnnouncementRepository $repository,
-        private readonly AnnouncementManualStorage $storage,
         private readonly AnnouncementAuthorizer $authorizer,
     ) {}
 
@@ -42,14 +40,6 @@ class RegisterAnnouncementService implements CommandHandler
             ? YouTubeVideo::fromUrl($request->youtubeUrl)
             : null;
 
-        $manualPath = null;
-        $manualFileName = null;
-
-        if (null !== $request->manualLocalPath) {
-            $manualPath = $this->storage->store($announcement->id(), $locale, $request->manualLocalPath);
-            $manualFileName = $request->manualFileName ?? basename($request->manualLocalPath);
-        }
-
         $announcement->register(
             category: $request->category,
             date: $request->date,
@@ -58,8 +48,7 @@ class RegisterAnnouncementService implements CommandHandler
             summary: trim($request->summary),
             body: $request->body,
             youtubeVideo: $youtubeVideo,
-            manualFileName: $manualFileName,
-            manualPath: $manualPath,
+            manualId: $request->manualId,
             registeredBy: $user->id(),
             locale: $isDefaultLocale ? null : $locale,
         );

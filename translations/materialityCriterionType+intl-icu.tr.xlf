@@ -7,31 +7,31 @@
     <body>
       <trans-unit id="ENEwl_M" resname="magnitude">
         <source>magnitude</source>
-        <target>NEW_magnitude</target>
+        <target>Büyüklük</target>
       </trans-unit>
       <trans-unit id="PNOCAf7" resname="influence">
         <source>influence</source>
-        <target>NEW_influence</target>
+        <target>Etki</target>
       </trans-unit>
       <trans-unit id="Wy.ETUT" resname="risk">
         <source>risk</source>
-        <target>NEW_risk</target>
+        <target>Risk</target>
       </trans-unit>
       <trans-unit id="ftMRre0" resname="stakeholder_interest">
         <source>stakeholder_interest</source>
-        <target>NEW_stakeholder_interest</target>
+        <target>Paydaş ilgisi</target>
       </trans-unit>
       <trans-unit id="_yv2y7d" resname="outsourcing">
         <source>outsourcing</source>
-        <target>NEW_outsourcing</target>
+        <target>Dış kaynak kullanımı</target>
       </trans-unit>
       <trans-unit id="XRPOzvm" resname="sector_guidance">
         <source>sector_guidance</source>
-        <target>NEW_sector_guidance</target>
+        <target>Sektörel rehber</target>
       </trans-unit>
       <trans-unit id="8aHe0YP" resname="other">
         <source>other</source>
-        <target>NEW_other</target>
+        <target>Diğer</target>
       </trans-unit>
     </body>
   </file>

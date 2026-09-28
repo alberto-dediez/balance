@@ -7,15 +7,15 @@
     <body>
       <trans-unit id="j16EUCq" resname="scope_1">
         <source>scope_1</source>
-        <target>NEW_scope_1</target>
+        <target>Kapsam 1</target>
       </trans-unit>
       <trans-unit id="8LfZNWi" resname="scope_2">
         <source>scope_2</source>
-        <target>NEW_scope_2</target>
+        <target>Kapsam 2</target>
       </trans-unit>
       <trans-unit id="aE.zhya" resname="scope_3">
         <source>scope_3</source>
-        <target>NEW_scope_3</target>
+        <target>Kapsam 3</target>
       </trans-unit>
     </body>
   </file>

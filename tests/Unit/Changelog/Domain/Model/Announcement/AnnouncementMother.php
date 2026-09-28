@@ -8,6 +8,7 @@ use App\Changelog\Domain\Model\Announcement\Announcement;
 use App\Changelog\Domain\Model\Announcement\AnnouncementId;
 use App\Changelog\Domain\Model\Announcement\YouTubeVideo;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 
@@ -77,7 +78,7 @@ class AnnouncementMother
                 continue;
             }
 
-            $announcement->translate('Título ' . $locale->value, 'Resumen ' . $locale->value, 'Contenido ' . $locale->value, null, null, null, $locale);
+            $announcement->translate('Título ' . $locale->value, 'Resumen ' . $locale->value, 'Contenido ' . $locale->value, null, null, $locale);
         }
 
         return $announcement;
@@ -85,15 +86,14 @@ class AnnouncementMother
 
     public static function withManual(Locale $locale, ?AnnouncementId $id = null): Announcement
     {
-        $id ??= AnnouncementId::generate();
-        $manualPath = sprintf('%s/%s.pdf', (string) $id, $locale->value);
+        $manualId = MediaId::generate();
 
         if (LocaleGetter::default() === $locale) {
-            return self::registered('Novedad con manual', $id, manualFileName: 'manual.pdf', manualPath: $manualPath);
+            return self::registered('Novedad con manual', $id, manualId: $manualId);
         }
 
         $announcement = self::registered('Novedad con manual', $id);
-        $announcement->translate('Novedad con manual', 'Resumen', 'Contenido', null, 'manual.pdf', $manualPath, $locale);
+        $announcement->translate('Novedad con manual', 'Resumen', 'Contenido', null, $manualId, $locale);
 
         return $announcement;
     }
@@ -107,7 +107,7 @@ class AnnouncementMother
         }
 
         $announcement = self::registered('Novedad con vídeo');
-        $announcement->translate('Novedad con vídeo', 'Resumen', 'Contenido', $video, null, null, $locale);
+        $announcement->translate('Novedad con vídeo', 'Resumen', 'Contenido', $video, null, $locale);
 
         return $announcement;
     }
@@ -125,8 +125,7 @@ class AnnouncementMother
         ?string $summary = null,
         ?string $body = null,
         ?YouTubeVideo $youtubeVideo = null,
-        ?string $manualFileName = null,
-        ?string $manualPath = null,
+        ?MediaId $manualId = null,
     ): Announcement {
         $announcement = new Announcement($id ?? AnnouncementId::generate());
         $announcement->register(
@@ -137,8 +136,7 @@ class AnnouncementMother
             summary: $summary ?? $title . ' resumen',
             body: $body ?? '# ' . $title,
             youtubeVideo: $youtubeVideo,
-            manualFileName: $manualFileName,
-            manualPath: $manualPath,
+            manualId: $manualId,
             registeredBy: null,
         );
 

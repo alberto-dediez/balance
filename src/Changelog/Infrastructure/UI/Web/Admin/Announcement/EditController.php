@@ -28,7 +28,6 @@ class EditController extends AbstractController
 {
     use EditTrait;
     use GetAnnouncementFromIdTrait;
-    use MapsManualUploadsTrait;
 
     public function __invoke(
         string $announcementId,
@@ -48,8 +47,6 @@ class EditController extends AbstractController
         try {
             $needsRedirect = $this->edit($request, $form, function ($form) use ($updateAnnouncement, $user): void {
                 $updateRequest = $form->getData();
-
-                $this->mapManualUpload($form, $updateRequest);
 
                 $updateAnnouncement($updateRequest, $user);
 
@@ -75,9 +72,9 @@ class EditController extends AbstractController
         $isDefaultLocale = LocaleGetter::default() === $locale;
         $translation = $announcement->translations()->getTranslationFor($locale);
 
-        $manualFileName = $isDefaultLocale
-            ? $announcement->manualFileName($locale)
-            : ($translation instanceof AnnouncementTranslation ? $translation->manualFileName() : null);
+        $manualId = $isDefaultLocale
+            ? $announcement->manualId($locale)
+            : ($translation instanceof AnnouncementTranslation ? $translation->manualId() : null);
 
         return new UpdateAnnouncementRequest(
             announcementId: $announcement->id(),
@@ -88,7 +85,7 @@ class EditController extends AbstractController
             summary: $announcement->summary(),
             body: $announcement->body(),
             youtubeUrl: $announcement->youtubeVideo()?->watchUrl(),
-            manualFileName: $manualFileName,
+            manualId: $manualId,
         );
     }
 }

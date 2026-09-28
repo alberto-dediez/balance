@@ -7,11 +7,11 @@
     <body>
       <trans-unit id="ZnOii4k" resname="level">
         <source>level</source>
-        <target>NEW_level</target>
+        <target>Düşük / Orta / Yüksek</target>
       </trans-unit>
       <trans-unit id="OQu3cwS" resname="yes_no">
         <source>yes_no</source>
-        <target>NEW_yes_no</target>
+        <target>Evet / Hayır</target>
       </trans-unit>
     </body>
   </file>

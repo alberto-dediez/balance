@@ -7,15 +7,15 @@
     <body>
       <trans-unit id="4xOP3pC" resname="event">
         <source>event</source>
-        <target>NEW_event</target>
+        <target>Etkinlik</target>
       </trans-unit>
       <trans-unit id="t.E7SN7" resname="property">
         <source>property</source>
-        <target>NEW_property</target>
+        <target>Mülk</target>
       </trans-unit>
       <trans-unit id="iQc1lJZ" resname="company">
         <source>company</source>
-        <target>NEW_company</target>
+        <target>Şirket</target>
       </trans-unit>
     </body>
   </file>

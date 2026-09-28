@@ -3,6 +3,9 @@
 {% set page_title = 'Biblioteca' | trans %}
 
 {% block table %}
+    {% set type_colors = {'Image': 'primary', 'Document': 'info', 'Video': 'warning', 'Audio': 'success', 'Other': 'secondary'} %}
+    {% set visibility_colors = {'Account': 'secondary', 'System': 'info', 'Public': 'warning'} %}
+
     {% set columns = [
         {
             'label': ''
@@ -32,15 +35,8 @@
     ]) %}
 
     <twig:List:Table :columns="columns" :elements="media" :bulkForm="bulkForm">
-        <td style="width: 64px;">
-            {% if element.image %}
-                <img src="{{ path('library_media_show', {'mediaId': element.id}) }}"
-                     alt="{{ element.alternativeText | default(element.name) }}"
-                     class="rounded"
-                     style="width: 48px; height: 48px; object-fit: cover;">
-            {% else %}
-                <twig:Icon name="solar:file-text-line-duotone" size="xl" />
-            {% endif %}
+        <td>
+            <twig:Library:Thumbnail size="sm" :name="element.alternativeText | default(element.name)" :type="element.type.value" :isImage="element.image" :url="element.image ? path('library_media_show', {'mediaId': element.id}) : null" />
         </td>
         <td>
             {{ element.name }}
@@ -49,15 +45,15 @@
                 {{ element.fileName }}
             </div>
         </td>
-        <td>{{ element.type.value | trans({}, 'mediaType') }}</td>
+        <td>
+            <span class="badge bg-{{ type_colors[element.type.value] }}-subtle text-{{ type_colors[element.type.value] }}">{{ element.type.value | trans({}, 'mediaType') }}</span>
+        </td>
 
         <td>
-            {{ element.visibility.value | trans({}, 'mediaVisibility') }}
+            <span class="badge bg-{{ visibility_colors[element.visibility.value] }}-subtle text-{{ visibility_colors[element.visibility.value] }}">{{ element.visibility.value | trans({}, 'mediaVisibility') }}</span>
 
             {% if element.shared %}
-                <div class="text-muted fs-2">
-                    {{ 'Compartido en la biblioteca' | trans }}
-                </div>
+                <span class="badge bg-success-subtle text-success">{{ 'Compartido' | trans }}</span>
             {% endif %}
         </td>
         <td>{{ element.size | file_size }}</td>

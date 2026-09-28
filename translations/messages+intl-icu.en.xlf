@@ -8535,7 +8535,7 @@
       </trans-unit>
       <trans-unit id="6Jrmpal" resname="Se ha actualizado la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
         <source>Se ha actualizado la pregunta de materialidad "{text}" por el usuario {user}</source>
-        <target>The materiality question &quot;{text}&quot; has been updated by the user {user}</target>
+        <target>The materiality question "{text}" has been updated by the user {user}</target>
       </trans-unit>
       <trans-unit id="arXHOqh" resname="Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}">
         <source>Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}</source>
@@ -8543,7 +8543,7 @@
       </trans-unit>
       <trans-unit id="pkExtvX" resname="Se ha traducido al {locale} la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
         <source>Se ha traducido al {locale} la pregunta de materialidad "{text}" por el usuario {user}</source>
-        <target>The materiality question &quot;{text}&quot; has been translated into {locale} by the user {user}</target>
+        <target>The materiality question "{text}" has been translated into {locale} by the user {user}</target>
       </trans-unit>
       <trans-unit id="0EchMIx" resname="Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}">
         <source>Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}</source>
@@ -8551,19 +8551,19 @@
       </trans-unit>
       <trans-unit id="jHIQugb" resname="Se ha traducido al {locale} la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
         <source>Se ha traducido al {locale} la categoría de materialidad "{name}" por el usuario {user}</source>
-        <target>The materiality topic &quot;{name}&quot; has been translated into {locale} by the user {user}</target>
+        <target>The materiality topic "{name}" has been translated into {locale} by the user {user}</target>
       </trans-unit>
       <trans-unit id="ZsutNKx" resname="Se ha actualizado la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
         <source>Se ha actualizado la categoría de materialidad "{name}" por el usuario {user}</source>
-        <target>The materiality topic &quot;{name}&quot; has been updated by the user {user}</target>
+        <target>The materiality topic "{name}" has been updated by the user {user}</target>
       </trans-unit>
       <trans-unit id="x2OB5NU" resname="Se ha registrado la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
         <source>Se ha registrado la pregunta de materialidad "{text}" por el usuario {user}</source>
-        <target>The materiality question &quot;{text}&quot; has been registered by the user {user}</target>
+        <target>The materiality question "{text}" has been registered by the user {user}</target>
       </trans-unit>
       <trans-unit id="YW_a6Gl" resname="Se ha registrado la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
         <source>Se ha registrado la categoría de materialidad "{name}" por el usuario {user}</source>
-        <target>The materiality topic &quot;{name}&quot; has been registered by the user {user}</target>
+        <target>The materiality topic "{name}" has been registered by the user {user}</target>
       </trans-unit>
       <trans-unit id="kHR7Bts" resname="Inactiva">
         <source>Inactiva</source>
@@ -8592,6 +8592,26 @@
       <trans-unit id="sxFR_O." resname="Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?">
         <source>Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?</source>
         <target>The missing GHG Protocol standard topics and, if there are no questions, the initial questions will be registered. Do you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="R3gcJ2D" resname="Arrastra aquí los archivos o pulsa para elegirlos">
+        <source>Arrastra aquí los archivos o pulsa para elegirlos</source>
+        <target>Drag the files here or click to choose them</target>
+      </trans-unit>
+      <trans-unit id="j0sBB5t" resname="Arrastra aquí el archivo o pulsa para elegirlo">
+        <source>Arrastra aquí el archivo o pulsa para elegirlo</source>
+        <target>Drag the file here or click to choose it</target>
+      </trans-unit>
+      <trans-unit id="iGwrkiC" resname="Seleccionado">
+        <source>Seleccionado</source>
+        <target>Selected</target>
+      </trans-unit>
+      <trans-unit id="T.d0CAW" resname="Cargar más">
+        <source>Cargar más</source>
+        <target>Load more</target>
+      </trans-unit>
+      <trans-unit id="uvkf8x9" resname="Compartido">
+        <source>Compartido</source>
+        <target>Shared</target>
       </trans-unit>
     </body>
   </file>

@@ -15,7 +15,7 @@ use App\Changelog\Domain\Model\Announcement\AnnouncementTranslated;
 use App\Changelog\Domain\Model\Announcement\AnnouncementUpdated;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
 use App\Changelog\Infrastructure\Persistence\InMemory\Repository\InMemoryAnnouncementRepository;
-use App\Changelog\Infrastructure\Storage\InMemoryAnnouncementManualStorage;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -31,8 +31,6 @@ class UpdateAnnouncementServiceTest extends TestCase
 {
     private InMemoryAnnouncementRepository $repository;
 
-    private InMemoryAnnouncementManualStorage $storage;
-
     private SpyDomainEventSubscriber $spy;
 
     private UpdateAnnouncementService $sut;
@@ -42,8 +40,7 @@ class UpdateAnnouncementServiceTest extends TestCase
         FakeLocaleSetter::reset();
         DomainEventPublisher::instance()->reset();
         $this->repository = AnnouncementRepositoryMother::inMemory();
-        $this->storage = new InMemoryAnnouncementManualStorage();
-        $this->sut = new UpdateAnnouncementService($this->repository, $this->storage, new AnnouncementAuthorizer());
+        $this->sut = new UpdateAnnouncementService($this->repository, new AnnouncementAuthorizer());
     }
 
     protected function tearDown(): void
@@ -81,41 +78,40 @@ class UpdateAnnouncementServiceTest extends TestCase
     public function testRemoveManualKeepsTheText(): void
     {
         $announcement = $this->given(AnnouncementMother::withManual(Locale::Spanish));
-        $manualPath = (string) $announcement->manualPath();
-        $this->storage->add($manualPath, '%PDF-1.4');
 
-        ($this->sut)($this->request($announcement, title: 'Con manual', removeManual: true), UserMother::adminUser());
+        ($this->sut)($this->request($announcement, title: 'Con manual'), UserMother::adminUser());
 
         $this->assertFalse($announcement->hasManual());
-        $this->assertNull($announcement->manualFileName());
+        $this->assertNull($announcement->manualId());
         $this->assertSame('Con manual', $announcement->title());
-        $this->assertFalse($this->storage->exists($manualPath));
+        $this->assertSame('Resumen', $announcement->summary());
+    }
+
+    public function testAnEmptyManualRemovesItForTheCurrentLocale(): void
+    {
+        $englishManual = MediaId::generate();
+        $announcement = $this->given(AnnouncementMother::withManual(Locale::Spanish));
+        $announcement->translate('Title', 'Summary', '', null, $englishManual, Locale::English);
+
+        ($this->sut)($this->request($announcement), UserMother::adminUser());
+
+        $this->assertFalse($announcement->hasManual(Locale::Spanish));
+        $this->assertEquals($englishManual, $announcement->manualId(Locale::English));
     }
 
     public function testANewManualReplacesThePreviousOne(): void
     {
-        $announcement = $this->given(AnnouncementMother::draft('Título'));
-        $announcement->update($announcement->category(), $announcement->date(), null, 'Título', 'Resumen', '', null, 'antiguo.pdf', 'old/es.pdf');
-        $this->storage->add('old/es.pdf', '%PDF-1.4 old');
+        $newManual = MediaId::generate();
+        $announcement = $this->given(AnnouncementMother::withManual(Locale::Spanish));
 
-        $localPath = (string) tempnam(sys_get_temp_dir(), 'manual');
-        file_put_contents($localPath, '%PDF-1.4 new');
+        ($this->sut)($this->request($announcement, manualId: $newManual), UserMother::adminUser());
 
-        ($this->sut)($this->request($announcement, manualLocalPath: $localPath, manualFileName: 'nuevo.pdf'), UserMother::adminUser());
-
-        @unlink($localPath);
-
-        $this->assertSame('nuevo.pdf', $announcement->manualFileName());
-        $this->assertSame(sprintf('%s/es.pdf', (string) $announcement->id()), $announcement->manualPath());
-        $this->assertFalse($this->storage->exists('old/es.pdf'));
-        $this->assertTrue($this->storage->exists((string) $announcement->manualPath()));
+        $this->assertEquals($newManual, $announcement->manualId());
     }
 
     public function testANewTranslationDoesNotInheritTheBaseManual(): void
     {
         $announcement = $this->given(AnnouncementMother::withManual(Locale::Spanish));
-        $manualPath = (string) $announcement->manualPath();
-        $this->storage->add($manualPath, '%PDF-1.4');
 
         FakeLocaleSetter::set(Locale::English);
 
@@ -123,21 +119,20 @@ class UpdateAnnouncementServiceTest extends TestCase
 
         $this->assertFalse($announcement->hasManual(Locale::English));
         $this->assertTrue($announcement->hasManual(Locale::Spanish));
-        $this->assertTrue($this->storage->exists($manualPath));
     }
 
-    public function testAManualSharedWithAnotherLocaleIsNotDeleted(): void
+    public function testChangingTheTranslationManualKeepsTheBaseOne(): void
     {
-        $announcement = $this->given(AnnouncementMother::draft('Título'));
-        $announcement->update($announcement->category(), $announcement->date(), null, 'Título', 'Resumen', '', null, 'manual.pdf', 'shared/en.pdf');
-        $announcement->translate('Title', 'Summary', '', null, 'manual.pdf', 'shared/en.pdf', Locale::English);
-        $this->storage->add('shared/en.pdf', '%PDF-1.4');
+        $englishManual = MediaId::generate();
+        $announcement = $this->given(AnnouncementMother::withManual(Locale::Spanish));
+        $baseManual = $announcement->manualId(Locale::Spanish);
 
-        ($this->sut)($this->request($announcement, removeManual: true), UserMother::adminUser());
+        FakeLocaleSetter::set(Locale::English);
 
-        $this->assertFalse($announcement->hasManual(Locale::Spanish));
-        $this->assertTrue($announcement->hasManual(Locale::English));
-        $this->assertTrue($this->storage->exists('shared/en.pdf'));
+        ($this->sut)($this->request($announcement, title: 'Title', manualId: $englishManual), UserMother::adminUser());
+
+        $this->assertEquals($englishManual, $announcement->manualId(Locale::English));
+        $this->assertEquals($baseManual, $announcement->manualId(Locale::Spanish));
     }
 
     public function testEditingAPublishedAnnouncementKeepsItsStatus(): void
@@ -178,9 +173,7 @@ class UpdateAnnouncementServiceTest extends TestCase
         ?string $title = null,
         ?ChangelogCategory $category = null,
         ?string $date = null,
-        ?string $manualLocalPath = null,
-        ?string $manualFileName = null,
-        bool $removeManual = false,
+        ?MediaId $manualId = null,
     ): UpdateAnnouncementRequest {
         return new UpdateAnnouncementRequest(
             announcementId: $announcement->id(),
@@ -189,9 +182,7 @@ class UpdateAnnouncementServiceTest extends TestCase
             version: $announcement->version(),
             title: $title ?? $announcement->title(),
             summary: 'Resumen',
-            manualLocalPath: $manualLocalPath,
-            manualFileName: $manualFileName,
-            removeManual: $removeManual,
+            manualId: $manualId,
         );
     }
 

@@ -7,31 +7,31 @@
     <body>
       <trans-unit id="jg7.vPY" resname="generating_texts">
         <source>generating_texts</source>
-        <target>NEW_generating_texts</target>
+        <target>Metinler oluşturuluyor</target>
       </trans-unit>
       <trans-unit id="dgdAkJu" resname="draft">
         <source>draft</source>
-        <target>NEW_draft</target>
+        <target>Taslak</target>
       </trans-unit>
       <trans-unit id="TVWcGVC" resname="pending_review">
         <source>pending_review</source>
-        <target>NEW_pending_review</target>
+        <target>İnceleme bekliyor</target>
       </trans-unit>
       <trans-unit id="mjaMVup" resname="generating_pdf">
         <source>generating_pdf</source>
-        <target>NEW_generating_pdf</target>
+        <target>PDF oluşturuluyor</target>
       </trans-unit>
       <trans-unit id="dxmND90" resname="generated">
         <source>generated</source>
-        <target>NEW_generated</target>
+        <target>Yayımlandı</target>
       </trans-unit>
       <trans-unit id="A5tRqrj" resname="rejected">
         <source>rejected</source>
-        <target>NEW_rejected</target>
+        <target>Reddedildi</target>
       </trans-unit>
       <trans-unit id="3LryKZc" resname="failed">
         <source>failed</source>
-        <target>NEW_failed</target>
+        <target>Başarısız</target>
       </trans-unit>
     </body>
   </file>
