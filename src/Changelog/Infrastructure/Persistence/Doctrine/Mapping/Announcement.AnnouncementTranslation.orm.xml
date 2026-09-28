@@ -13,8 +13,7 @@
         <field name="summary" type="text" nullable="false"/>
         <field name="body" type="text" nullable="false"/>
         <field name="youtubeVideo" type="youtube_video" column="youtube_video_id" length="11" nullable="true"/>
-        <field name="manualFileName" type="string" column="manual_file_name" length="255" nullable="true"/>
-        <field name="manualPath" type="string" column="manual_path" length="255" nullable="true"/>
+        <field name="manualId" type="media_id" column="manual_id" nullable="true"/>
 
         <many-to-one field="translatable" target-entity="App\Changelog\Domain\Model\Announcement\Announcement" inversed-by="translations">
             <join-column name="announcement_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>

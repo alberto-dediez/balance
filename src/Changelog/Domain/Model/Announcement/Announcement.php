@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Changelog\Domain\Model\Announcement;
 
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -34,8 +35,7 @@ class Announcement implements Translatable, \Stringable
         private string $summary = '',
         private string $body = '',
         private ?YouTubeVideo $youtubeVideo = null,
-        private ?string $manualFileName = null,
-        private ?string $manualPath = null,
+        private ?MediaId $manualId = null,
         private bool $published = false,
         private ?\DateTimeImmutable $publishedAt = null,
         private ?\DateTimeImmutable $scheduledAt = null,
@@ -93,18 +93,11 @@ class Announcement implements Translatable, \Stringable
         return $translation instanceof AnnouncementTranslation ? $translation->youtubeVideo() : $this->youtubeVideo;
     }
 
-    public function manualFileName(?Locale $locale = null): ?string
+    public function manualId(?Locale $locale = null): ?MediaId
     {
         $translation = $this->translationIn($locale);
 
-        return $translation instanceof AnnouncementTranslation ? $translation->manualFileName() : $this->manualFileName;
-    }
-
-    public function manualPath(?Locale $locale = null): ?string
-    {
-        $translation = $this->translationIn($locale);
-
-        return $translation instanceof AnnouncementTranslation ? $translation->manualPath() : $this->manualPath;
+        return $translation instanceof AnnouncementTranslation ? $translation->manualId() : $this->manualId;
     }
 
     public function hasVideo(?Locale $locale = null): bool
@@ -114,7 +107,7 @@ class Announcement implements Translatable, \Stringable
 
     public function hasManual(?Locale $locale = null): bool
     {
-        return null !== $this->manualPath($locale);
+        return $this->manualId($locale) instanceof MediaId;
     }
 
     public function isPublished(): bool
@@ -199,8 +192,7 @@ class Announcement implements Translatable, \Stringable
         string $summary,
         string $body,
         ?YouTubeVideo $youtubeVideo,
-        ?string $manualFileName,
-        ?string $manualPath,
+        ?MediaId $manualId,
         ?UserId $registeredBy,
         ?Locale $locale = null,
     ): void {
@@ -214,14 +206,13 @@ class Announcement implements Translatable, \Stringable
                 summary: $summary,
                 body: $body,
                 youtubeVideo: $youtubeVideo,
-                manualFileName: $manualFileName,
-                manualPath: $manualPath,
+                manualId: $manualId,
                 registeredBy: $registeredBy,
             ),
         );
 
         if ($locale instanceof Locale) {
-            $this->translate($title, $summary, $body, $youtubeVideo, $manualFileName, $manualPath, $locale);
+            $this->translate($title, $summary, $body, $youtubeVideo, $manualId, $locale);
         }
     }
 
@@ -233,8 +224,7 @@ class Announcement implements Translatable, \Stringable
         string $summary,
         string $body,
         ?YouTubeVideo $youtubeVideo,
-        ?string $manualFileName,
-        ?string $manualPath,
+        ?MediaId $manualId,
         ?Locale $locale = null,
     ): void {
         $this->recordApplyAndPublish(
@@ -247,13 +237,12 @@ class Announcement implements Translatable, \Stringable
                 summary: $locale instanceof Locale ? $this->summary : $summary,
                 body: $locale instanceof Locale ? $this->body : $body,
                 youtubeVideo: $locale instanceof Locale ? $this->youtubeVideo : $youtubeVideo,
-                manualFileName: $locale instanceof Locale ? $this->manualFileName : $manualFileName,
-                manualPath: $locale instanceof Locale ? $this->manualPath : $manualPath,
+                manualId: $locale instanceof Locale ? $this->manualId : $manualId,
             ),
         );
 
         if ($locale instanceof Locale) {
-            $this->translate($title, $summary, $body, $youtubeVideo, $manualFileName, $manualPath, $locale);
+            $this->translate($title, $summary, $body, $youtubeVideo, $manualId, $locale);
         }
     }
 
@@ -262,8 +251,7 @@ class Announcement implements Translatable, \Stringable
         string $summary,
         string $body,
         ?YouTubeVideo $youtubeVideo,
-        ?string $manualFileName,
-        ?string $manualPath,
+        ?MediaId $manualId,
         Locale $locale,
     ): void {
         $this->recordApplyAndPublish(
@@ -273,8 +261,7 @@ class Announcement implements Translatable, \Stringable
                 summary: $summary,
                 body: $body,
                 youtubeVideo: $youtubeVideo,
-                manualFileName: $manualFileName,
-                manualPath: $manualPath,
+                manualId: $manualId,
                 locale: $locale,
             ),
         );
@@ -341,8 +328,7 @@ class Announcement implements Translatable, \Stringable
         $this->summary = $event->summary();
         $this->body = $event->body();
         $this->youtubeVideo = $event->youtubeVideo();
-        $this->manualFileName = $event->manualFileName();
-        $this->manualPath = $event->manualPath();
+        $this->manualId = $event->manualId();
         $this->registeredBy = $event->registeredBy();
         $this->registeredAt = $event->occurredOn();
     }
@@ -356,8 +342,7 @@ class Announcement implements Translatable, \Stringable
         $this->summary = $event->summary();
         $this->body = $event->body();
         $this->youtubeVideo = $event->youtubeVideo();
-        $this->manualFileName = $event->manualFileName();
-        $this->manualPath = $event->manualPath();
+        $this->manualId = $event->manualId();
         $this->updatedAt = $event->occurredOn();
     }
 
@@ -368,8 +353,7 @@ class Announcement implements Translatable, \Stringable
             summary: $event->summary(),
             body: $event->body(),
             youtubeVideo: $event->youtubeVideo(),
-            manualFileName: $event->manualFileName(),
-            manualPath: $event->manualPath(),
+            manualId: $event->manualId(),
             locale: $event->locale(),
             translatable: $this,
         );

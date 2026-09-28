@@ -59,14 +59,24 @@ Feature:
         When I go to "/es/announcements/99999999-9999-9999-9999-999999999999"
         Then the response status should be 404
 
-    Scenario: The manual of a published announcement is downloadable
+    Scenario: The manual of a published announcement opens the library file
         Given user "user@dediez.software" with role "ROLE_USER" exists
+        Given document "manual.pdf" with id "22222222-2222-2222-2222-222222222222" exists
         Given published announcement "Con manual" with id "11111111-1111-1111-1111-111111111111" exists
+        Given announcement "11111111-1111-1111-1111-111111111111" has the manual "22222222-2222-2222-2222-222222222222" in "es"
+        When I am logged as "user@dediez.software"
+        When I go to "/es/announcements/11111111-1111-1111-1111-111111111111/manual"
+        Then I am redirected to "/es/library/media/22222222-2222-2222-2222-222222222222/show"
+        Then the response status should be 200
+        Then the response content type is "application/pdf"
+
+    Scenario: The manual of a draft announcement is not reachable by users
+        Given user "user@dediez.software" with role "ROLE_USER" exists
+        Given announcement "Borrador" with id "11111111-1111-1111-1111-111111111111" exists
         Given announcement "11111111-1111-1111-1111-111111111111" has a manual in "es"
         When I am logged as "user@dediez.software"
         When I go to "/es/announcements/11111111-1111-1111-1111-111111111111/manual"
-        Then the response status should be 200
-        Then the response content type is "application/pdf"
+        Then the response status should be 404
 
     Scenario: The manual of an announcement without manual returns 404
         Given user "user@dediez.software" with role "ROLE_USER" exists

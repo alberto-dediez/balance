@@ -73,6 +73,10 @@
     </div>
 {% endblock file_widget %}
 
+{% block media_picker_row %}
+    {{- block('form_row') -}}
+{% endblock media_picker_row %}
+
 {% block media_picker_widget %}
     {% set field_name = multiple ? full_name ~ '[]' : full_name %}
 

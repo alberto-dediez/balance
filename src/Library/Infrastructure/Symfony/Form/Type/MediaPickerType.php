@@ -141,6 +141,7 @@ class MediaPickerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'error_bubbling' => false,
             'multiple' => false,
             'types' => [],
             'accept' => '',

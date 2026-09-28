@@ -9,7 +9,6 @@ use App\Changelog\Application\Announcement\DownloadManual\DownloadAnnouncementMa
 use App\Changelog\Application\Announcement\DownloadManual\DownloadAnnouncementManualService;
 use App\Changelog\Domain\Model\Announcement\Announcement;
 use App\Changelog\Domain\Model\ChangelogEntry\ManualNotFoundException;
-use App\Changelog\Infrastructure\Storage\InMemoryAnnouncementManualStorage;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -22,26 +21,19 @@ use PHPUnit\Framework\TestCase;
 
 class DownloadAnnouncementManualServiceTest extends TestCase
 {
-    private InMemoryAnnouncementManualStorage $storage;
-
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
-        $this->storage = new InMemoryAnnouncementManualStorage();
     }
 
     public function testReturnsTheManual(): void
     {
         $announcement = AnnouncementMother::withManual(Locale::Spanish);
         $announcement->publish(false);
-        $this->storage->add((string) $announcement->manualPath(Locale::Spanish), '%PDF-1.4 manual');
 
         $response = $this->sut($announcement)(new DownloadAnnouncementManualRequest($announcement->id(), Locale::Spanish), $this->user());
 
-        $this->assertSame('%PDF-1.4 manual', stream_get_contents($response->stream));
-        $this->assertSame('manual.pdf', $response->fileName);
-        $this->assertSame('application/pdf', $response->mimeType);
-        $this->assertSame(strlen('%PDF-1.4 manual'), $response->size);
+        $this->assertEquals($announcement->manualId(Locale::Spanish), $response->mediaId);
     }
 
     public function testATranslationWithoutManual(): void
@@ -53,20 +45,9 @@ class DownloadAnnouncementManualServiceTest extends TestCase
         $this->sut($announcement)(new DownloadAnnouncementManualRequest($announcement->id(), Locale::Spanish), $this->user());
     }
 
-    public function testAManualMissingFromTheStorage(): void
-    {
-        $announcement = AnnouncementMother::withManual(Locale::Spanish);
-        $announcement->publish(false);
-
-        $this->expectException(ManualNotFoundException::class);
-
-        $this->sut($announcement)(new DownloadAnnouncementManualRequest($announcement->id(), Locale::Spanish), $this->user());
-    }
-
     public function testUsersCannotDownloadTheManualOfADraft(): void
     {
         $announcement = AnnouncementMother::withManual(Locale::Spanish);
-        $this->storage->add((string) $announcement->manualPath(Locale::Spanish), '%PDF-1.4 manual');
 
         $this->expectException(UnauthorizedActionException::class);
 
@@ -77,7 +58,6 @@ class DownloadAnnouncementManualServiceTest extends TestCase
     {
         return new DownloadAnnouncementManualService(
             AnnouncementRepositoryMother::withAnnouncements($announcement),
-            $this->storage,
             new AnnouncementAuthorizer(),
         );
     }

@@ -6,6 +6,7 @@ namespace App\Changelog\Domain\Model\Announcement;
 
 use App\Changelog\Domain\DomainEvent;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
 
@@ -22,8 +23,7 @@ final class AnnouncementUpdated extends DomainEvent
         private readonly string $summary,
         private readonly string $body,
         private readonly ?YouTubeVideo $youtubeVideo,
-        private readonly ?string $manualFileName,
-        private readonly ?string $manualPath,
+        private readonly ?MediaId $manualId,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -70,14 +70,9 @@ final class AnnouncementUpdated extends DomainEvent
         return $this->youtubeVideo;
     }
 
-    public function manualFileName(): ?string
+    public function manualId(): ?MediaId
     {
-        return $this->manualFileName;
-    }
-
-    public function manualPath(): ?string
-    {
-        return $this->manualPath;
+        return $this->manualId;
     }
 
     public function aggregateRootId(): AggregateRootId
@@ -96,8 +91,7 @@ final class AnnouncementUpdated extends DomainEvent
             'summary' => $this->summary,
             'body' => $this->body,
             'youtubeVideoId' => $this->youtubeVideo?->id,
-            'manualFileName' => $this->manualFileName,
-            'manualPath' => $this->manualPath,
+            'manualId' => $this->manualId instanceof MediaId ? (string) $this->manualId : null,
         ];
     }
 
@@ -115,8 +109,7 @@ final class AnnouncementUpdated extends DomainEvent
             summary: $payload['summary'],
             body: $payload['body'],
             youtubeVideo: null !== $payload['youtubeVideoId'] ? YouTubeVideo::fromId($payload['youtubeVideoId']) : null,
-            manualFileName: $payload['manualFileName'],
-            manualPath: $payload['manualPath'],
+            manualId: null !== ($payload['manualId'] ?? null) ? new MediaId($payload['manualId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

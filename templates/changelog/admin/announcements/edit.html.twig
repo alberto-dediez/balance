@@ -22,14 +22,7 @@
                     {{ form_row(form.summary) }}
                     {{ form_row(form.body) }}
                     {{ form_row(form.youtubeUrl) }}
-                    {{ form_row(form.manual) }}
-
-                    {% if form.vars.value.manualFileName is not empty %}
-                        <p class="text-muted">{{ 'Manual actual: {file}' | trans({'{file}': form.vars.value.manualFileName}) }}</p>
-                        {{ form_row(form.removeManual) }}
-                    {% else %}
-                        {% do form.removeManual.setRendered %}
-                    {% endif %}
+                    {{ form_row(form.manualId) }}
                 </div>
             </div>
 

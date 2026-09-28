@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Changelog\Application\Announcement\DownloadManual;
 
 use App\Changelog\Application\Announcement\AnnouncementAuthorizer;
-use App\Changelog\Domain\Model\Announcement\AnnouncementManualStorage;
 use App\Changelog\Domain\Model\Announcement\AnnouncementNotFoundException;
 use App\Changelog\Domain\Model\Announcement\AnnouncementRepository;
 use App\Changelog\Domain\Model\ChangelogEntry\ManualNotFoundException;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -24,7 +24,6 @@ class DownloadAnnouncementManualService implements CommandHandler
 
     public function __construct(
         private readonly AnnouncementRepository $repository,
-        private readonly AnnouncementManualStorage $storage,
         private readonly AnnouncementAuthorizer $authorizer,
     ) {}
 
@@ -38,19 +37,13 @@ class DownloadAnnouncementManualService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($announcement, Action::View, $user);
 
-        $locale = $request->locale ?? LocaleGetter::locale();
+        $mediaId = $announcement->manualId($request->locale ?? LocaleGetter::locale());
 
-        $path = $announcement->manualPath($locale);
-
-        if (null === $path || !$this->storage->exists($path)) {
-            throw new ManualNotFoundException($path ?? '');
+        if (!$mediaId instanceof MediaId) {
+            throw new ManualNotFoundException('');
         }
 
-        return new DownloadAnnouncementManualResponse(
-            stream: $this->storage->read($path),
-            fileName: $announcement->manualFileName($locale) ?? basename($path),
-            size: $this->storage->size($path),
-        );
+        return new DownloadAnnouncementManualResponse($mediaId);
     }
 
     public function isHandled(Command $command): bool

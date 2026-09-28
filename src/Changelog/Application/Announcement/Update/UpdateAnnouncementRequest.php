@@ -6,6 +6,7 @@ namespace App\Changelog\Application\Announcement\Update;
 
 use App\Changelog\Domain\Model\Announcement\AnnouncementId;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Application\CommandBus\Command;
 
 class UpdateAnnouncementRequest implements Command
@@ -19,8 +20,6 @@ class UpdateAnnouncementRequest implements Command
         public string $summary = '',
         public string $body = '',
         public ?string $youtubeUrl = null,
-        public ?string $manualLocalPath = null,
-        public ?string $manualFileName = null,
-        public bool $removeManual = false,
+        public ?MediaId $manualId = null,
     ) {}
 }

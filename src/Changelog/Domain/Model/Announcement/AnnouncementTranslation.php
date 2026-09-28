@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Changelog\Domain\Model\Announcement;
 
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translation;
 
@@ -14,8 +15,7 @@ class AnnouncementTranslation implements Translation
         private string $summary,
         private string $body,
         private ?YouTubeVideo $youtubeVideo,
-        private ?string $manualFileName,
-        private ?string $manualPath,
+        private ?MediaId $manualId,
         private Locale $locale,
         private Announcement $translatable,
     ) {}
@@ -40,14 +40,9 @@ class AnnouncementTranslation implements Translation
         return $this->youtubeVideo;
     }
 
-    public function manualFileName(): ?string
+    public function manualId(): ?MediaId
     {
-        return $this->manualFileName;
-    }
-
-    public function manualPath(): ?string
-    {
-        return $this->manualPath;
+        return $this->manualId;
     }
 
     public function locale(): Locale
@@ -68,7 +63,6 @@ class AnnouncementTranslation implements Translation
         $this->summary = $translation->summary();
         $this->body = $translation->body();
         $this->youtubeVideo = $translation->youtubeVideo();
-        $this->manualFileName = $translation->manualFileName();
-        $this->manualPath = $translation->manualPath();
+        $this->manualId = $translation->manualId();
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Changelog\Application\Announcement\Register;
 
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Application\CommandBus\Command;
 
 class RegisterAnnouncementRequest implements Command
@@ -17,7 +18,6 @@ class RegisterAnnouncementRequest implements Command
         public string $summary = '',
         public string $body = '',
         public ?string $youtubeUrl = null,
-        public ?string $manualLocalPath = null,
-        public ?string $manualFileName = null,
+        public ?MediaId $manualId = null,
     ) {}
 }

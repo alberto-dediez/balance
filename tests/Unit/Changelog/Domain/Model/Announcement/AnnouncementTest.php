@@ -15,6 +15,7 @@ use App\Changelog\Domain\Model\Announcement\AnnouncementUnpublished;
 use App\Changelog\Domain\Model\Announcement\AnnouncementUpdated;
 use App\Changelog\Domain\Model\Announcement\YouTubeVideo;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -41,7 +42,7 @@ class AnnouncementTest extends TestCase
     {
         $sut = new Announcement(AnnouncementId::generate(), registeredAt: new \DateTimeImmutable('2000-01-01'));
 
-        $sut->register(ChangelogCategory::Fix, new \DateTimeImmutable('2026-09-22'), '1.2.0', 'Título', 'Resumen', 'Contenido', null, null, null, null);
+        $sut->register(ChangelogCategory::Fix, new \DateTimeImmutable('2026-09-22'), '1.2.0', 'Título', 'Resumen', 'Contenido', null, null, null);
 
         $this->assertInstanceOf(AnnouncementRegistered::class, $this->spy->lastEvent());
         $this->assertSame(ChangelogCategory::Fix, $sut->category());
@@ -59,7 +60,7 @@ class AnnouncementTest extends TestCase
     {
         $sut = new Announcement(AnnouncementId::generate());
 
-        $sut->register(ChangelogCategory::Feature, new \DateTimeImmutable('today'), null, 'Title', 'Summary', 'Body', null, null, null, null, Locale::English);
+        $sut->register(ChangelogCategory::Feature, new \DateTimeImmutable('today'), null, 'Title', 'Summary', 'Body', null, null, null, Locale::English);
 
         $this->assertInstanceOf(AnnouncementTranslated::class, $this->spy->lastEvent());
         $this->assertCount(1, $sut->translations());
@@ -70,11 +71,11 @@ class AnnouncementTest extends TestCase
     {
         $sut = AnnouncementMother::draft('Título');
 
-        $sut->translate('Title', 'Summary', 'Body', null, null, null, Locale::English);
+        $sut->translate('Title', 'Summary', 'Body', null, null, Locale::English);
 
         $this->assertCount(1, $sut->translations());
 
-        $sut->translate('New title', 'Summary', 'Body', null, null, null, Locale::English);
+        $sut->translate('New title', 'Summary', 'Body', null, null, Locale::English);
 
         $this->assertCount(1, $sut->translations());
         $this->assertSame('New title', $sut->title(Locale::English));
@@ -99,12 +100,15 @@ class AnnouncementTest extends TestCase
 
     public function testVideoAndManualAreResolvedPerLocale(): void
     {
+        $manualId = MediaId::generate();
         $sut = AnnouncementMother::withManual(Locale::English);
-        $sut->translate('Novedad con manual', 'Resumen', 'Contenido', YouTubeVideo::fromId('dQw4w9WgXcQ'), 'manual.pdf', 'x/en.pdf', Locale::English);
+        $sut->translate('Novedad con manual', 'Resumen', 'Contenido', YouTubeVideo::fromId('dQw4w9WgXcQ'), $manualId, Locale::English);
 
         $this->assertTrue($sut->hasManual(Locale::English));
+        $this->assertEquals($manualId, $sut->manualId(Locale::English));
         $this->assertTrue($sut->hasVideo(Locale::English));
         $this->assertFalse($sut->hasManual(Locale::Spanish));
+        $this->assertNull($sut->manualId(Locale::Spanish));
         $this->assertFalse($sut->hasVideo(Locale::Spanish));
     }
 
@@ -112,7 +116,7 @@ class AnnouncementTest extends TestCase
     {
         $sut = AnnouncementMother::draft('Título');
 
-        $sut->update(ChangelogCategory::Security, new \DateTimeImmutable('2026-01-15'), '2.0', 'Nuevo', 'Resumen', 'Contenido', null, null, null);
+        $sut->update(ChangelogCategory::Security, new \DateTimeImmutable('2026-01-15'), '2.0', 'Nuevo', 'Resumen', 'Contenido', null, null);
 
         $this->assertInstanceOf(AnnouncementUpdated::class, $this->spy->lastEvent());
         $this->assertSame(ChangelogCategory::Security, $sut->category());
@@ -125,12 +129,25 @@ class AnnouncementTest extends TestCase
     {
         $sut = AnnouncementMother::draft('Título');
 
-        $sut->update(ChangelogCategory::Fix, new \DateTimeImmutable('2026-01-15'), null, 'Title', 'Summary', 'Body', null, null, null, Locale::English);
+        $sut->update(ChangelogCategory::Fix, new \DateTimeImmutable('2026-01-15'), null, 'Title', 'Summary', 'Body', null, null, Locale::English);
 
         $this->assertInstanceOf(AnnouncementTranslated::class, $this->spy->lastEvent());
         $this->assertSame(ChangelogCategory::Fix, $sut->category());
         $this->assertSame('Título', $sut->title(Locale::Spanish));
         $this->assertSame('Title', $sut->title(Locale::English));
+    }
+
+    public function testUpdateInAnotherLocaleKeepsTheBaseManual(): void
+    {
+        $baseManual = MediaId::generate();
+        $englishManual = MediaId::generate();
+        $sut = AnnouncementMother::draft('Título');
+        $sut->update($sut->category(), $sut->date(), null, 'Título', 'Resumen', 'Contenido', null, $baseManual);
+
+        $sut->update($sut->category(), $sut->date(), null, 'Title', 'Summary', 'Body', null, $englishManual, Locale::English);
+
+        $this->assertEquals($baseManual, $sut->manualId(Locale::Spanish));
+        $this->assertEquals($englishManual, $sut->manualId(Locale::English));
     }
 
     public function testScheduleSetsTheScheduleAndTheNotification(): void

@@ -7,11 +7,11 @@ namespace App\Changelog\Infrastructure\Symfony\Form;
 use App\Changelog\Application\Announcement\Register\RegisterAnnouncementRequest;
 use App\Changelog\Domain\Model\Announcement\YouTubeVideo;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
+use App\Library\Domain\Model\Media\MediaRepository;
 use App\Shared\Infrastructure\Symfony\Form\Type\MarkdownEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,7 +20,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
@@ -31,6 +30,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class RegisterAnnouncementType extends AbstractType
 {
+    use AddsManualFieldTrait;
+
+    public function __construct(private readonly MediaRepository $mediaRepository) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -94,18 +97,11 @@ class RegisterAnnouncementType extends AbstractType
                     }),
                 ],
             ])
-            ->add('manual', FileType::class, [
-                'label' => new TranslatableMessage('Manual (PDF)'),
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '20M',
-                        'mimeTypes' => ['application/pdf'],
-                        'mimeTypesMessage' => new TranslatableMessage('El manual debe ser un PDF'),
-                    ]),
-                ],
-            ])
+        ;
+
+        $this->addManualField($builder, $this->mediaRepository);
+
+        $builder
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),
             ])
