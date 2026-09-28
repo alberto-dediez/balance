@@ -1,0 +1,4 @@
+{% trans with {
+    '{name}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la categoría de materialidad "{name}" por el usuario {user}{% endtrans %}

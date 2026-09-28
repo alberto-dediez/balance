@@ -1,0 +1,11 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Materialidad' | trans)
+    ~ ' > '
+    ~ ('Preguntas' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_materiality_questions') }}" />
+{% endblock %}

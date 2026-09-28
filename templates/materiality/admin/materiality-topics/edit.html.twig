@@ -1,0 +1,51 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_materiality_topics') }}" />
+{% endblock %}
+
+{% set page_title = ('Materialidad' | trans)
+    ~ ' > '
+    ~ ('Categorías' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ materialityTopic.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Nº de categoría' | trans }}">{{ materialityTopic.number is not null ? materialityTopic.number : '---' }}</twig:View:Field>
+                </div>
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Estándar' | trans }}">{{ materialityTopic.standard | show_field_value | trans }}</twig:View:Field>
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.scope) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.direction) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.description) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.position) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.active) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

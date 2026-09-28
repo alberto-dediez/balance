@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion" table="materiality_questions">
+        <indexes>
+            <index name="idx_materiality_questions_topic" columns="topic_id"/>
+            <index name="idx_materiality_questions_listing" columns="removed,active,position"/>
+        </indexes>
+
+        <id name="id" type="materiality_question_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="criterion" type="string" length="32" enum-type="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion" nullable="false"/>
+        <field name="topicId" type="materiality_topic_id" column="topic_id" nullable="true"/>
+        <field name="text" type="text" nullable="false"/>
+        <field name="help" type="text" nullable="false"/>
+        <field name="answerScale" type="string" column="answer_scale" length="16" enum-type="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale" nullable="false"/>
+        <field name="weight" type="integer" nullable="false"/>
+        <field name="position" type="integer" nullable="false"/>
+        <field name="active" type="boolean" nullable="false"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <one-to-many field="translations"
+                     target-entity="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslation"
+                     mapped-by="translatable"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+</doctrine-mapping>

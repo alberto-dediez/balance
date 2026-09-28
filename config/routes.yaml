@@ -182,6 +182,17 @@ bioscore-web:
     defaults:
         _locale: '%app.locale_default%'
 
+materiality-web:
+    resource:
+        path: ../src/Materiality/Infrastructure/UI/Web/
+        namespace: App\Materiality\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 changelog-web:
     resource:
         path: ../src/Changelog/Infrastructure/UI/Web/

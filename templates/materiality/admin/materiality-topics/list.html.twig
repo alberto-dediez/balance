@@ -1,0 +1,78 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = ('Materialidad' | trans) ~ ' > ' ~ ('Categorías' | trans) %}
+
+{% block table %}
+    {% if materialityTopics is empty %}
+        <p class="mb-0">{% trans %}No hay categorías. Siembra los maestros estándar o registra una nueva.{% endtrans %}</p>
+    {% else %}
+        {% set columns = [
+            {
+                'label': 'Nº' | trans,
+                'sortable': true,
+                'sortableBy': 'number'
+            }, {
+                'label': 'Nombre' | trans,
+                'sortable': true,
+                'sortableBy': 'name'
+            }, {
+                'label': 'Alcance' | trans,
+                'sortable': false
+            }, {
+                'label': 'Dirección' | trans,
+                'sortable': false
+            }, {
+                'label': 'Estándar' | trans,
+                'sortable': false
+            }, {
+                'label': 'Activa' | trans,
+                'sortable': false
+            }, {
+                'label': 'Posición' | trans,
+                'sortable': false
+            }, {
+                'label': 'Fecha de registro' | trans,
+                'sortable': true,
+                'sortableBy': 'registeredAt'
+            }, {
+                'label': ''
+            },
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="materialityTopics" :bulkForm="bulkForm">
+            <td>{{ element.number is not null ? element.number : '---' }}</td>
+            <td>{{ element.name }}</td>
+            <td>{{ element.scope.value | trans({}, 'materialityScopeType') }}</td>
+            <td>{{ element.direction ? element.direction.value | trans({}, 'materialityTopicDirectionType') : '---' }}</td>
+            <td>{{ element.standard | show_field_value | trans }}</td>
+            <td>
+                {% if element.active %}
+                    <span class="badge bg-success">{% trans %}Activa{% endtrans %}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{% trans %}Inactiva{% endtrans %}</span>
+                {% endif %}
+            </td>
+            <td>{{ element.position }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('admin_materiality_topics_edit', {'materialityTopicId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('admin_materiality_topics_remove', {'materialityTopicId': element.id}) }}" />
+                {% endif %}
+            </td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Seed
+        path="{{ path('admin_materiality_seed', {'_token': csrf_token('materiality_seed')}) }}"
+        data-controller="confirm"
+        data-confirm-text-param="{{ 'Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?' | trans }}"
+        data-action="confirm#link:prevent"
+    />
+    <twig:Link:Register path="{{ path('admin_materiality_topics_register') }}" />
+{% endblock list_actions %}

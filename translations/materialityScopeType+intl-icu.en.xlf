@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="j16EUCq" resname="scope_1">
+        <source>scope_1</source>
+        <target>Scope 1</target>
+      </trans-unit>
+      <trans-unit id="8LfZNWi" resname="scope_2">
+        <source>scope_2</source>
+        <target>Scope 2</target>
+      </trans-unit>
+      <trans-unit id="aE.zhya" resname="scope_3">
+        <source>scope_3</source>
+        <target>Scope 3</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

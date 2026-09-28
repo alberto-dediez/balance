@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="ENEwl_M" resname="magnitude">
+        <source>magnitude</source>
+        <target>Size</target>
+      </trans-unit>
+      <trans-unit id="PNOCAf7" resname="influence">
+        <source>influence</source>
+        <target>Influence</target>
+      </trans-unit>
+      <trans-unit id="Wy.ETUT" resname="risk">
+        <source>risk</source>
+        <target>Risk</target>
+      </trans-unit>
+      <trans-unit id="ftMRre0" resname="stakeholder_interest">
+        <source>stakeholder_interest</source>
+        <target>Stakeholders</target>
+      </trans-unit>
+      <trans-unit id="_yv2y7d" resname="outsourcing">
+        <source>outsourcing</source>
+        <target>Outsourcing</target>
+      </trans-unit>
+      <trans-unit id="XRPOzvm" resname="sector_guidance">
+        <source>sector_guidance</source>
+        <target>Sector guidance</target>
+      </trans-unit>
+      <trans-unit id="8aHe0YP" resname="other">
+        <source>other</source>
+        <target>Other</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

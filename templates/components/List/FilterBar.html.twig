@@ -30,6 +30,8 @@
                             {% set value = value | company_name %}
                         {% elseif field == 'projectId' %}
                             {% set value = value | project_name %}
+                        {% elseif field == 'topicId' %}
+                            {% set value = value | materiality_topic_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% elseif field == 'status' or field == 'subjectType' %}
@@ -40,6 +42,12 @@
                             {% set value = value.value | trans({}, 'eventSectorType') %}
                         {% elseif field == 'typology' %}
                             {% set value = value.value | trans({}, 'eventTypologyType') %}
+                        {% elseif field == 'scope' %}
+                            {% set value = value.value | trans({}, 'materialityScopeType') %}
+                        {% elseif field == 'direction' %}
+                            {% set value = value.value | trans({}, 'materialityTopicDirectionType') %}
+                        {% elseif field == 'criterion' %}
+                            {% set value = value.value | trans({}, 'materialityCriterionType') %}
                         {% endif %}
 
                         <twig:List:FilterShow

@@ -352,6 +352,24 @@ class NodeLister
             ],
         );
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Materialidad'),
+            icon: 'solar:clipboard-check-line-duotone',
+            target: '#materiality',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Categorías'),
+                    icon: 'solar:list-check-line-duotone',
+                    target: $this->router->generate('admin_materiality_topics'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Preguntas'),
+                    icon: 'solar:question-circle-line-duotone',
+                    target: $this->router->generate('admin_materiality_questions'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',

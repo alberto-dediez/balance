@@ -96,6 +96,8 @@ doctrine:
             payment_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PaymentIdType
             payout_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PayoutIdType
             bioscore_catalog_item_id: App\Bioscore\Infrastructure\Persistence\Doctrine\Type\BioscoreCatalogItemIdType
+            materiality_topic_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityTopicIdType
+            materiality_question_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityQuestionIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -191,6 +193,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Bioscore/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Bioscore\Domain\Model'
                 alias: Bioscore
+
+            Materiality:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Materiality/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Materiality\Domain\Model'
+                alias: Materiality
 
             Shared:
                 type: xml

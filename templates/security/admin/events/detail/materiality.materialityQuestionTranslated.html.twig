@@ -1,0 +1,5 @@
+{% trans with {
+    '{text}': event.text,
+    '{locale}': event.locale.value,
+    '{user}': element.userId | user_name
+} %}Se ha traducido al {locale} la pregunta de materialidad "{text}" por el usuario {user}{% endtrans %}

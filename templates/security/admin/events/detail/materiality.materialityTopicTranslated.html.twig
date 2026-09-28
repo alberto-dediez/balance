@@ -1,0 +1,5 @@
+{% trans with {
+    '{name}': event.name,
+    '{locale}': event.locale.value,
+    '{user}': element.userId | user_name
+} %}Se ha traducido al {locale} la categoría de materialidad "{name}" por el usuario {user}{% endtrans %}

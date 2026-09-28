@@ -1,0 +1,75 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = ('Materialidad' | trans) ~ ' > ' ~ ('Preguntas' | trans) %}
+
+{% block table %}
+    {% if materialityQuestions is empty %}
+        <p class="mb-0">{% trans %}No hay preguntas. Siembra los maestros estándar o registra una nueva.{% endtrans %}</p>
+    {% else %}
+        {% set columns = [
+            {
+                'label': 'Pregunta' | trans,
+                'sortable': false
+            }, {
+                'label': 'Criterio' | trans,
+                'sortable': true,
+                'sortableBy': 'criterion'
+            }, {
+                'label': 'Categoría' | trans,
+                'sortable': false
+            }, {
+                'label': 'Escala' | trans,
+                'sortable': false
+            }, {
+                'label': 'Peso' | trans,
+                'sortable': false
+            }, {
+                'label': 'Activa' | trans,
+                'sortable': false
+            }, {
+                'label': 'Fecha de registro' | trans,
+                'sortable': true,
+                'sortableBy': 'registeredAt'
+            }, {
+                'label': ''
+            },
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="materialityQuestions" :bulkForm="bulkForm">
+            <td>{{ element.text }}</td>
+            <td>{{ element.criterion.value | trans({}, 'materialityCriterionType') }}</td>
+            <td>
+                {% if element.topicId is null %}
+                    {% trans %}Todas las categorías{% endtrans %}
+                {% elseif topicsById[element.topicId ~ ''] is defined %}
+                    {{ topicsById[element.topicId ~ ''].name }}
+                {% else %}
+                    ---
+                {% endif %}
+            </td>
+            <td>{{ element.answerScale.value | trans({}, 'materialityAnswerScaleType') }}</td>
+            <td>{{ element.weight }}</td>
+            <td>
+                {% if element.active %}
+                    <span class="badge bg-success">{% trans %}Activa{% endtrans %}</span>
+                {% else %}
+                    <span class="badge bg-secondary">{% trans %}Inactiva{% endtrans %}</span>
+                {% endif %}
+            </td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('admin_materiality_questions_edit', {'materialityQuestionId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('admin_materiality_questions_remove', {'materialityQuestionId': element.id}) }}" />
+                {% endif %}
+            </td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_materiality_questions_register') }}" />
+{% endblock list_actions %}

@@ -1,0 +1,51 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_materiality_questions') }}" />
+{% endblock %}
+
+{% set page_title = ('Materialidad' | trans)
+    ~ ' > '
+    ~ ('Preguntas' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ materialityQuestion.text %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.criterion) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.topicId) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.text) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.help) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.answerScale) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.weight) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.position) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.active) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

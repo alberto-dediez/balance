@@ -1,0 +1,4 @@
+{% trans with {
+    '{materialityTopic}': event.materialityTopicId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}{% endtrans %}

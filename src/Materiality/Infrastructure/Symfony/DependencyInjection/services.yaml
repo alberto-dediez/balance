@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Materiality\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Materiality\Application\Seed\SeedStandardMaterialityMastersService:
+        arguments:
+            $localeList: '%app.locale_list%'

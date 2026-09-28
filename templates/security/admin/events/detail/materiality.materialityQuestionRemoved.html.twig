@@ -1,0 +1,4 @@
+{% trans with {
+    '{materialityQuestion}': event.materialityQuestionId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}{% endtrans %}

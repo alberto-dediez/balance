@@ -12,6 +12,7 @@ imports:
     - { resource: '../src/Payments/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Changelog/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Bioscore/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+    - { resource: '../src/Materiality/Infrastructure/Symfony/DependencyInjection/services.yaml' }
 
 parameters:
     app.contribution.reservation_hours: 12

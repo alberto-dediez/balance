@@ -26,6 +26,7 @@ twig:
         'templates/themes': 'themes'
         'templates/changelog': 'changelog'
         'templates/bioscore': 'bioscore'
+        'templates/materiality': 'materiality'
         '%kernel.project_dir%/assets': assets
 
 when@test:

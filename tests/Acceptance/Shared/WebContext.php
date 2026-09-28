@@ -30,6 +30,9 @@ final class WebContext implements Context
     /** @var list<string> */
     private array $checkboxes = [];
 
+    /** @var list<string> */
+    private array $uncheckedBoxes = [];
+
     /** @var array<string, string> */
     private array $unprefixedFields = [];
 
@@ -179,6 +182,13 @@ final class WebContext implements Context
             $field->tick();
         }
 
+        foreach ($this->uncheckedBoxes as $checkbox) {
+            $field = $formData[$checkbox];
+            assert($field instanceof ChoiceFormField);
+
+            $field->untick();
+        }
+
         foreach ($this->files as $field => $path) {
             $key = '[' === $field[0] ? sprintf('%s%s', $formName, $field) : sprintf('%s[%s]', $formName, $field);
 
@@ -192,6 +202,7 @@ final class WebContext implements Context
 
         $this->files = [];
         $this->checkboxes = [];
+        $this->uncheckedBoxes = [];
         $this->unprefixedFields = [];
     }
 
@@ -219,6 +230,12 @@ final class WebContext implements Context
     public function iTickTheCheckbox(string $name): void
     {
         $this->checkboxes[] = $name;
+    }
+
+    #[When('I untick the checkbox :name')]
+    public function iUntickTheCheckbox(string $name): void
+    {
+        $this->uncheckedBoxes[] = $name;
     }
 
     #[When('I attach the file :path to :field')]

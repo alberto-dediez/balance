@@ -969,7 +969,7 @@
         <source>Código incorrecto.</source>
         <target>Incorrect code.</target>
       </trans-unit>
-      <trans-unit id="cXxD2Ir" resname="Te quedan {n} intentos.">
+      <trans-unit id="4S6RMyl" resname="Te quedan {n} intentos.">
         <source>Te quedan {n} intentos.</source>
         <target>You have {n} attempts remaining.</target>
       </trans-unit>
@@ -8381,23 +8381,23 @@
         <source>Desactivar segundo factor</source>
         <target>Disable second factor</target>
       </trans-unit>
-      <trans-unit id="tfApp05" resname="Aplicación de autenticación">
+      <trans-unit id="cGPKTAt" resname="Aplicación de autenticación">
         <source>Aplicación de autenticación</source>
         <target>Authenticator app</target>
       </trans-unit>
-      <trans-unit id="tfRel03" resname="Vincular otro dispositivo">
+      <trans-unit id="M3yw3xA" resname="Vincular otro dispositivo">
         <source>Vincular otro dispositivo</source>
         <target>Link another device</target>
       </trans-unit>
-      <trans-unit id="tfEml06" resname="¿Seguro que quieres usar el email como segundo factor?">
+      <trans-unit id="g019dUg" resname="¿Seguro que quieres usar el email como segundo factor?">
         <source>¿Seguro que quieres usar el email como segundo factor?</source>
         <target>Are you sure you want to use email as your second factor?</target>
       </trans-unit>
-      <trans-unit id="tfCsr07" resname="No se ha podido validar el formulario. Vuelve a introducir el código.">
+      <trans-unit id="R_GxXGM" resname="No se ha podido validar el formulario. Vuelve a introducir el código.">
         <source>No se ha podido validar el formulario. Vuelve a introducir el código.</source>
         <target>The form could not be validated. Please enter the code again.</target>
       </trans-unit>
-      <trans-unit id="tfKep04" resname="Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.">
+      <trans-unit id="rq2OKbi" resname="Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.">
         <source>Tu segundo factor actual seguirá activo hasta que verifiques el nuevo código. Si cancelas, no se modifica.</source>
         <target>Your current second factor stays enabled until you verify the new code. If you cancel, it is not changed.</target>
       </trans-unit>
@@ -8420,6 +8420,178 @@
       <trans-unit id="tHLKQnh" resname="¿Seguro que quieres restablecer el segundo factor de este usuario?">
         <source>¿Seguro que quieres restablecer el segundo factor de este usuario?</source>
         <target>Are you sure you want to reset the second factor of this user?</target>
+      </trans-unit>
+      <trans-unit id="j8X3g.y" resname="La dirección es obligatoria en las categorías de alcance 3">
+        <source>La dirección es obligatoria en las categorías de alcance 3</source>
+        <target>The direction is required for scope 3 topics</target>
+      </trans-unit>
+      <trans-unit id="j_56a5n" resname="Ya existe una categoría con ese número">
+        <source>Ya existe una categoría con ese número</source>
+        <target>A topic with that number already exists</target>
+      </trans-unit>
+      <trans-unit id="v3oLICP" resname="Categoría de materialidad creada correctamente: {name}">
+        <source>Categoría de materialidad creada correctamente: {name}</source>
+        <target>Materiality topic successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="Agm3Gpi" resname="Categoría de materialidad actualizada con éxito">
+        <source>Categoría de materialidad actualizada con éxito</source>
+        <target>Materiality topic successfully updated</target>
+      </trans-unit>
+      <trans-unit id="Ouy3290" resname="Se ha eliminado la categoría de materialidad {name}">
+        <source>Se ha eliminado la categoría de materialidad {name}</source>
+        <target>The materiality topic {name} has been removed</target>
+      </trans-unit>
+      <trans-unit id="wyfA_kf" resname="No se ha podido eliminar la categoría de materialidad {name}">
+        <source>No se ha podido eliminar la categoría de materialidad {name}</source>
+        <target>The materiality topic {name} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="_V50mw7" resname="Se ha eliminado la categoría de materialidad {id}">
+        <source>Se ha eliminado la categoría de materialidad {id}</source>
+        <target>The materiality topic {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="s3UAD0Y" resname="No se ha podido eliminar la categoría de materialidad {id}">
+        <source>No se ha podido eliminar la categoría de materialidad {id}</source>
+        <target>The materiality topic {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="m4YHGDl" resname="Pregunta de materialidad creada correctamente: {text}">
+        <source>Pregunta de materialidad creada correctamente: {text}</source>
+        <target>Materiality question successfully created: {text}</target>
+      </trans-unit>
+      <trans-unit id="LS8mlK6" resname="Pregunta de materialidad actualizada con éxito">
+        <source>Pregunta de materialidad actualizada con éxito</source>
+        <target>Materiality question successfully updated</target>
+      </trans-unit>
+      <trans-unit id=".oM7vKG" resname="Se ha eliminado la pregunta de materialidad {text}">
+        <source>Se ha eliminado la pregunta de materialidad {text}</source>
+        <target>The materiality question {text} has been removed</target>
+      </trans-unit>
+      <trans-unit id="MksrOph" resname="No se ha podido eliminar la pregunta de materialidad {text}">
+        <source>No se ha podido eliminar la pregunta de materialidad {text}</source>
+        <target>The materiality question {text} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="WpRZMbP" resname="Se ha eliminado la pregunta de materialidad {id}">
+        <source>Se ha eliminado la pregunta de materialidad {id}</source>
+        <target>The materiality question {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="qFCkZst" resname="No se ha podido eliminar la pregunta de materialidad {id}">
+        <source>No se ha podido eliminar la pregunta de materialidad {id}</source>
+        <target>The materiality question {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="jB4g42j" resname="Los maestros estándar ya estaban registrados">
+        <source>Los maestros estándar ya estaban registrados</source>
+        <target>The standard masters were already registered</target>
+      </trans-unit>
+      <trans-unit id="VjNGbil" resname="Se han registrado {topics} categorías y {questions} preguntas estándar">
+        <source>Se han registrado {topics} categorías y {questions} preguntas estándar</source>
+        <target>{topics} standard topics and {questions} standard questions have been registered</target>
+      </trans-unit>
+      <trans-unit id="KwpHMH0" resname="Criterio">
+        <source>Criterio</source>
+        <target>Criterion</target>
+      </trans-unit>
+      <trans-unit id="i7uqZ6P" resname="Pregunta">
+        <source>Pregunta</source>
+        <target>Question</target>
+      </trans-unit>
+      <trans-unit id="kLm8ZBz" resname="Redacta la pregunta de modo que «Alto» o «Sí» signifique mayor relevancia de la categoría">
+        <source>Redacta la pregunta de modo que «Alto» o «Sí» signifique mayor relevancia de la categoría</source>
+        <target>Word the question so that “High” or “Yes” means greater relevance of the topic</target>
+      </trans-unit>
+      <trans-unit id="pL2.v48" resname="Ayuda">
+        <source>Ayuda</source>
+        <target>Help</target>
+      </trans-unit>
+      <trans-unit id="7ZXaBKW" resname="Escala de respuesta">
+        <source>Escala de respuesta</source>
+        <target>Answer scale</target>
+      </trans-unit>
+      <trans-unit id="eW7DKLb" resname="Peso">
+        <source>Peso</source>
+        <target>Weight</target>
+      </trans-unit>
+      <trans-unit id="HUgWLi9" resname="Posición">
+        <source>Posición</source>
+        <target>Position</target>
+      </trans-unit>
+      <trans-unit id="QywjI3u" resname="Nº de categoría">
+        <source>Nº de categoría</source>
+        <target>Topic no.</target>
+      </trans-unit>
+      <trans-unit id="AxU6yDI" resname="Sin dirección">
+        <source>Sin dirección</source>
+        <target>No direction</target>
+      </trans-unit>
+      <trans-unit id="xdXAyW_" resname="Materialidad">
+        <source>Materialidad</source>
+        <target>Materiality</target>
+      </trans-unit>
+      <trans-unit id="FvYRndq" resname="Preguntas">
+        <source>Preguntas</source>
+        <target>Questions</target>
+      </trans-unit>
+      <trans-unit id="lmIMsPo" resname="Sembrar maestros estándar">
+        <source>Sembrar maestros estándar</source>
+        <target>Seed standard masters</target>
+      </trans-unit>
+      <trans-unit id="6Jrmpal" resname="Se ha actualizado la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
+        <source>Se ha actualizado la pregunta de materialidad "{text}" por el usuario {user}</source>
+        <target>The materiality question &quot;{text}&quot; has been updated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="arXHOqh" resname="Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}">
+        <source>Se ha eliminado la pregunta de materialidad {materialityQuestion} por el usuario {user}</source>
+        <target>The materiality question {materialityQuestion} has been removed by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="pkExtvX" resname="Se ha traducido al {locale} la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
+        <source>Se ha traducido al {locale} la pregunta de materialidad "{text}" por el usuario {user}</source>
+        <target>The materiality question &quot;{text}&quot; has been translated into {locale} by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="0EchMIx" resname="Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}">
+        <source>Se ha eliminado la categoría de materialidad {materialityTopic} por el usuario {user}</source>
+        <target>The materiality topic {materialityTopic} has been removed by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="jHIQugb" resname="Se ha traducido al {locale} la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha traducido al {locale} la categoría de materialidad "{name}" por el usuario {user}</source>
+        <target>The materiality topic &quot;{name}&quot; has been translated into {locale} by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="ZsutNKx" resname="Se ha actualizado la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado la categoría de materialidad "{name}" por el usuario {user}</source>
+        <target>The materiality topic &quot;{name}&quot; has been updated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="x2OB5NU" resname="Se ha registrado la pregunta de materialidad &quot;{text}&quot; por el usuario {user}">
+        <source>Se ha registrado la pregunta de materialidad "{text}" por el usuario {user}</source>
+        <target>The materiality question &quot;{text}&quot; has been registered by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="YW_a6Gl" resname="Se ha registrado la categoría de materialidad &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado la categoría de materialidad "{name}" por el usuario {user}</source>
+        <target>The materiality topic &quot;{name}&quot; has been registered by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="kHR7Bts" resname="Inactiva">
+        <source>Inactiva</source>
+        <target>Inactive</target>
+      </trans-unit>
+      <trans-unit id="vTnnyKR" resname="No hay preguntas. Siembra los maestros estándar o registra una nueva.">
+        <source>No hay preguntas. Siembra los maestros estándar o registra una nueva.</source>
+        <target>There are no questions. Seed the standard masters or register a new one.</target>
+      </trans-unit>
+      <trans-unit id="8SLJMPl" resname="Escala">
+        <source>Escala</source>
+        <target>Scale</target>
+      </trans-unit>
+      <trans-unit id="Uo5lf1D" resname="No hay categorías. Siembra los maestros estándar o registra una nueva.">
+        <source>No hay categorías. Siembra los maestros estándar o registra una nueva.</source>
+        <target>There are no topics. Seed the standard masters or register a new one.</target>
+      </trans-unit>
+      <trans-unit id="h0Iyiqa" resname="Nº">
+        <source>Nº</source>
+        <target>No.</target>
+      </trans-unit>
+      <trans-unit id="O71zJx7" resname="Estándar">
+        <source>Estándar</source>
+        <target>Standard</target>
+      </trans-unit>
+      <trans-unit id="sxFR_O." resname="Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?">
+        <source>Se registrarán las categorías estándar del GHG Protocol que falten y, si no hay preguntas, las preguntas iniciales. ¿Desea continuar?</source>
+        <target>The missing GHG Protocol standard topics and, if there are no questions, the initial questions will be registered. Do you want to continue?</target>
       </trans-unit>
     </body>
   </file>
