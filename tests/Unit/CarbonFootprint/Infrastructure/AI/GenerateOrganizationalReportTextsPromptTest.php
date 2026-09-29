@@ -58,4 +58,32 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringContainsString('- Hotel Sol: 2680', $text);
         $this->assertStringContainsString('- Sin asignar a propiedad: 1250', $text);
     }
+
+    public function testWithAMitigationPlanTheTextListsTheMeasuresAndAsksForTheSection(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
+
+        $text = $prompt->text();
+        $schema = $prompt->responseSchema();
+
+        $this->assertStringContainsString('Mitigation plan', $text);
+        $this->assertStringContainsString('- Measure: Caldera de condensación | base year 2025 | target year 2030', $text);
+        $this->assertStringContainsString('- Measure: Paneles fotovoltaicos', $text);
+        $this->assertStringContainsString('5. mitigationPlan:', $text);
+        $this->assertStringContainsString('list ALL the measures', $text);
+        $this->assertStringContainsString('"mitigationPlan": "string"', $text);
+        $this->assertSame('STRING', $schema['properties']['mitigationPlan']['type']);
+        $this->assertNotContains('mitigationPlan', $schema['required']);
+    }
+
+    public function testWithoutAMitigationPlanTheSectionIsNotRequested(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish);
+
+        $text = $prompt->text();
+
+        $this->assertStringNotContainsString('Mitigation plan', $text);
+        $this->assertStringNotContainsString('mitigationPlan', $text);
+        $this->assertArrayNotHasKey('mitigationPlan', $prompt->responseSchema()['properties']);
+    }
 }

@@ -1,0 +1,4 @@
+{% trans with {
+    '{footprint}': event.companyCarbonFootprintId,
+    '{user}': element.userId | user_name
+} %}Se ha iniciado el plan de mitigación de la huella de carbono {footprint} por el usuario {user}{% endtrans %}

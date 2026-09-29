@@ -80,7 +80,7 @@ class Scope2Controller extends AbstractController
                 return $this->redirectToRoute('company_carbon_footprints_scope_2', ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
             }
 
-            return $this->redirectToRoute('company_carbon_footprints_results', ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
+            return $this->redirectToRoute('company_carbon_footprints_mitigation_plan', ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
         }
 
         $response = $getScope(new GetCompanyCarbonFootprintScopeRequest($companyCarbonFootprint->id(), Scope::Scope2), $loggedUser());

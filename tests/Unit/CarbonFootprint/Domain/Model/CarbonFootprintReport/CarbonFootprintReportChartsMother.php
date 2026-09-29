@@ -19,6 +19,7 @@ class CarbonFootprintReportChartsMother
             'compensation' => $png,
             'byScope' => $png,
             'byProperty' => $png,
+            'mitigationProjection' => $png,
         ]);
     }
 }

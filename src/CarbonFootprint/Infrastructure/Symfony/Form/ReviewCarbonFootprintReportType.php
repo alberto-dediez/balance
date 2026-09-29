@@ -23,7 +23,7 @@ class ReviewCarbonFootprintReportType extends AbstractType
         $keys = $options['keys'];
 
         foreach ($keys as $key) {
-            $required = CarbonFootprintReportSectionKey::Compensation !== $key;
+            $required = !$key->isOptional();
 
             $builder->add($key->value, MarkdownEditorType::class, [
                 'label' => new TranslatableMessage($key->label()),

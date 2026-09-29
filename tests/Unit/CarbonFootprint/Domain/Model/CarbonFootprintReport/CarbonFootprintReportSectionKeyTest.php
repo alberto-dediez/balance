@@ -26,7 +26,7 @@ class CarbonFootprintReportSectionKeyTest extends TestCase
                 [CarbonFootprintReportSectionKey::Purpose, CarbonFootprintReportSectionKey::RegulatoryContext, CarbonFootprintReportSectionKey::SustainableDevelopmentGoals, CarbonFootprintReportSectionKey::Conclusion],
                 CarbonFootprintReportSectionKey::requiredFor($type),
             );
-            $this->assertSame([], CarbonFootprintReportSectionKey::optionalFor($type));
+            $this->assertSame([CarbonFootprintReportSectionKey::MitigationPlan], CarbonFootprintReportSectionKey::optionalFor($type));
         }
     }
 
@@ -34,6 +34,17 @@ class CarbonFootprintReportSectionKeyTest extends TestCase
     {
         foreach (CarbonFootprintReportSectionKey::cases() as $key) {
             $this->assertNotSame('', $key->label());
+        }
+    }
+
+    public function testOnlyCompensationAndMitigationPlanAreOptional(): void
+    {
+        foreach (CarbonFootprintReportSectionKey::cases() as $key) {
+            $this->assertSame(
+                in_array($key, [CarbonFootprintReportSectionKey::Compensation, CarbonFootprintReportSectionKey::MitigationPlan], true),
+                $key->isOptional(),
+                $key->value,
+            );
         }
     }
 }

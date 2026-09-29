@@ -14,7 +14,10 @@ class MarkdownExtension extends AbstractExtension
 
     public function __construct()
     {
-        $this->converter = new GithubFlavoredMarkdownConverter();
+        $this->converter = new GithubFlavoredMarkdownConverter([
+            'html_input'         => 'escape',
+            'allow_unsafe_links' => false,
+        ]);
     }
 
     public function getFilters(): array

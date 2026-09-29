@@ -31,6 +31,7 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         public readonly array $emissionsByProperty,
         public readonly array $activityLines,
         public readonly array $exclusionLines = [],
+        public readonly ?OrganizationalCarbonFootprintReportMitigationPlan $mitigationPlan = null,
     ) {}
 
     public function subjectType(): CarbonFootprintReportSubjectType

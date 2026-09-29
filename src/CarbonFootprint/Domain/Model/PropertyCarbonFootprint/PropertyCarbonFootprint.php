@@ -41,6 +41,7 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         private int $year = 0,
         private Emissions $totalEmissions = new Emissions(),
         private OrganizationalCarbonFootprintStatus $status = OrganizationalCarbonFootprintStatus::Started,
+        private bool $mitigationPlanStarted = false,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -87,6 +88,14 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
                 scope: $scope,
             ),
         );
+
+        if (Scope::Scope2 === $scope && !$this->mitigationPlanStarted) {
+            $this->recordApplyAndPublish(
+                new PropertyCarbonFootprintMitigationPlanStarted(
+                    propertyCarbonFootprintId: $this->id,
+                ),
+            );
+        }
     }
 
     public function addActivity(ActivityId $activityId, ActivityPlacement $placement): void
@@ -223,6 +232,12 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
     public function applyPropertyCarbonFootprintScopeAnswered(PropertyCarbonFootprintScopeAnswered $event): void
     {
         $this->status = $this->status->advancedTo($event->scope()->answeredStatus());
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintMitigationPlanStarted(PropertyCarbonFootprintMitigationPlanStarted $event): void
+    {
+        $this->mitigationPlanStarted = true;
         $this->updatedAt = $event->occurredOn();
     }
 

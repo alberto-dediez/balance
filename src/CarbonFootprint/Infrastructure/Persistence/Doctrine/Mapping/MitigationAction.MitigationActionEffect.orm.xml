@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionEffect" table="mitigation_action_effect">
+        <unique-constraints>
+            <unique-constraint columns="mitigation_action_id,source,item_id" name="uq_mitigation_action_effect_source_item"/>
+        </unique-constraints>
+
+        <id name="id" type="mitigation_action_effect_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\Source" nullable="false"/>
+        <field name="itemId" type="string" length="36" column="item_id" nullable="false"/>
+        <field name="itemName" type="string" length="255" column="item_name" nullable="false"/>
+        <field name="reduction" type="float" nullable="false"/>
+        <field name="minimumReduction" type="float" column="minimum_reduction" nullable="false"/>
+        <field name="maximumReduction" type="float" column="maximum_reduction" nullable="false"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+
+        <many-to-one field="action" target-entity="App\CarbonFootprint\Domain\Model\MitigationAction\MitigationAction" inversed-by="effects">
+            <join-column name="mitigation_action_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

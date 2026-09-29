@@ -66,7 +66,7 @@ final class ActivityItemNameResolver
         return $this->cache[$cacheKey] = $names;
     }
 
-    private function itemId(Activity $activity): ?string
+    public function itemId(Activity $activity): ?string
     {
         return match (true) {
             $activity instanceof MaterialActivity => (string) $activity->materialId(),

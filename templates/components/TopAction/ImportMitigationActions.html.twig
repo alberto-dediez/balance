@@ -1,0 +1,12 @@
+{% props path %}
+
+<twig:TopAction
+    :path="path"
+    data-controller="confirm"
+    data-confirm-text-param="{{ 'Esta acción sobrescribirá las medidas insertadas hasta ahora, ¿estás seguro de que quieres continuar?' | trans }}"
+    data-action="confirm#link:prevent"
+>
+    <twig:Icon name="solar:import-line-duotone" size="lg" class="me-2" />
+
+    {{ 'Importar acciones previas' | trans }}
+</twig:TopAction>

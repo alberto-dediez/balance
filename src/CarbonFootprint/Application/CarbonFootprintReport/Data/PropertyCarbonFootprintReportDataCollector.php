@@ -27,6 +27,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
         private EmissionFactorGroupRepository $emissionFactorGroupRepository,
         private EmissionsBreakdownBuilder $breakdownBuilder,
         private OrganizationalCarbonFootprintReportLinesBuilder $linesBuilder,
+        private MitigationPlanReportBuilder $mitigationPlanBuilder,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -76,6 +77,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             emissionsByProperty: [],
             activityLines: $this->linesBuilder->activityLines($propertyCarbonFootprint, []),
             exclusionLines: $this->linesBuilder->exclusionLines($propertyCarbonFootprint),
+            mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Property, $propertyCarbonFootprint, $report->baseLocale()),
         );
     }
 }

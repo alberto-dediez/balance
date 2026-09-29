@@ -49,4 +49,13 @@ final class ScopeTest extends TestCase
         $this->assertSame(OrganizationalCarbonFootprintStatus::Scope1Answered, Scope::Scope1->answeredStatus());
         $this->assertSame(OrganizationalCarbonFootprintStatus::Scope2Answered, Scope::Scope2->answeredStatus());
     }
+
+    public function testOfSource(): void
+    {
+        $this->assertSame(Scope::Scope1, Scope::ofSource(Source::FixedFacilities));
+        $this->assertSame(Scope::Scope1, Scope::ofSource(Source::OwnVehicles));
+        $this->assertSame(Scope::Scope1, Scope::ofSource(Source::RefrigerantLeaks));
+        $this->assertSame(Scope::Scope2, Scope::ofSource(Source::BuildingElectricity));
+        $this->assertNull(Scope::ofSource(Source::Materials));
+    }
 }

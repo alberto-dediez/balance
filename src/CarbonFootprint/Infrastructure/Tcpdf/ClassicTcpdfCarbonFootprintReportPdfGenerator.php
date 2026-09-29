@@ -82,7 +82,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
             match (true) {
                 $data instanceof EventCarbonFootprintReportData => $this->renderEventReport($pdf, $data, $texts, $locale),
-                $data instanceof OrganizationalCarbonFootprintReportData => $this->renderOrganizationalReport($pdf, $data, $texts, $locale),
+                $data instanceof OrganizationalCarbonFootprintReportData => $this->renderOrganizationalReport($pdf, $data, $texts, $charts, $locale),
                 default => throw new \InvalidArgumentException(sprintf('Unsupported report data "%s".', $data::class)),
             };
 
@@ -127,7 +127,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         }
     }
 
-    private function renderOrganizationalReport(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, Locale $locale): void
+    private function renderOrganizationalReport(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, CarbonFootprintReportCharts $charts, Locale $locale): void
     {
         $isCompany = CarbonFootprintReportSubjectType::Company === $data->subjectType;
 
@@ -182,8 +182,59 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
         $this->renderFootprintPage($pdf, $data, $locale);
         $this->renderOrganizationalResultsPages($pdf, $data, $locale);
+        $this->renderMitigationPlanPages($pdf, $data, $texts, $charts, $locale);
         $this->renderTextPage($pdf, $this->trans('Conclusión', $locale), $texts->get(CarbonFootprintReportSectionKey::Conclusion), 'purpose.jpg');
         $this->renderAnnexPage($pdf, $this->buildClassicTableHtml($this->organizationalAnnexHeader($locale, $isCompany), $this->organizationalAnnexRows($data, $locale, $isCompany)), $this->trans('Anexo: factores de emisión aplicados', $locale), $locale);
+    }
+
+    private function renderMitigationPlanPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, CarbonFootprintReportCharts $charts, Locale $locale): void
+    {
+        $mitigationPlan = $data->mitigationPlan;
+
+        if (null === $mitigationPlan) {
+            return;
+        }
+
+        if ($texts->has(CarbonFootprintReportSectionKey::MitigationPlan)) {
+            $this->renderTextPage($pdf, $this->trans('Medidas de reducción y mitigación', $locale), $texts->get(CarbonFootprintReportSectionKey::MitigationPlan), 'measures.jpg');
+        }
+
+        $title = $this->trans('Plan de mejora {year}', $locale, ['{year}' => (string) $data->calculationYear]);
+
+        [$header, $rows, $widths] = $this->mitigationRateRows($mitigationPlan->projection, $locale);
+        $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml($header, $rows, $widths), $this->trans('Reducción de emisiones esperada por año y fuente en %', $locale), count($rows), $locale, 9);
+
+        [$header, $rows, $widths] = $this->mitigationReductionRows($mitigationPlan->projection, $locale);
+        $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml($header, $rows, $widths), $this->trans('Reducción de emisiones esperada por año y fuente en kg CO₂ eq', $locale), count($rows), $locale, 9);
+
+        [$header, $rows, $widths] = $this->mitigationExpectedRows($mitigationPlan->projection, $locale);
+        $tableHtml = $this->buildClassicTableHtml($header, $rows, $widths, lastRowIsTotal: false, boldRows: [count($rows) - 2, count($rows) - 1]);
+        $this->renderDataPage($pdf, $title, null, $tableHtml, $this->trans('Emisiones esperadas por año en kg CO₂ eq', $locale), count($rows), $locale, 9);
+
+        $this->embedClassicChart($pdf, $charts->get('mitigationProjection'));
+    }
+
+    private function embedClassicChart(ReportTcpdf $pdf, ?string $png): void
+    {
+        if (null === $png) {
+            return;
+        }
+
+        $available = self::PAGE_HEIGHT - self::BREAK_MARGIN - $pdf->GetY() - 4;
+
+        if ($available < 60) {
+            $this->useDottedChrome($this->nextDotsOnLeft(), null);
+            $this->useDataMargins($pdf);
+            $pdf->AddPage();
+            $pdf->setY(self::TEXT_TOP + 20);
+            $available = self::PAGE_HEIGHT - self::BREAK_MARGIN - $pdf->GetY() - 4;
+        }
+
+        $height = min($available, 110);
+        $width = $height * 4 / 3;
+        $top = $pdf->GetY() + 4;
+
+        $this->withoutPageBreak($pdf, static fn() => $pdf->Image('@' . $png, (self::PAGE_WIDTH - $width) / 2, $top, $width, $height, 'PNG'));
     }
 
     private function renderClassicCover(ReportTcpdf $pdf, CarbonFootprintReportData $data, Locale $locale): void
@@ -545,8 +596,9 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
      * @param list<list<string>>       $rows
      * @param list<string>|null        $columnWidths
      * @param list<array{string, int}> $groupHeaderCells
+     * @param list<int>                $boldRows
      */
-    private function buildClassicTableHtml(array $headerCells, array $rows, ?array $columnWidths = null, array $groupHeaderCells = [], bool $lastRowIsTotal = false): string
+    private function buildClassicTableHtml(array $headerCells, array $rows, ?array $columnWidths = null, array $groupHeaderCells = [], bool $lastRowIsTotal = false, array $boldRows = []): string
     {
         $border = sprintf('border: 1px solid %s;', $this->pdfBranding()->primaryHex());
         $html = '<table cellpadding="6" cellspacing="0" bgcolor="white" style="width: 100%;"><thead>';
@@ -575,7 +627,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
                 $width = null !== $columnWidths ? sprintf(' width: %s;', $columnWidths[$cellIndex]) : '';
                 $color = $isTotal && 0 === $cellIndex ? $this->pdfBranding()->secondaryHex() : $this->pdfBranding()->primaryHex();
                 $content = htmlspecialchars($cell);
-                $html .= sprintf('<td style="%s color: %s;%s">%s</td>', $border, $color, $width, $isTotal ? '<b>' . $content . '</b>' : $content);
+                $html .= sprintf('<td style="%s color: %s;%s">%s</td>', $border, $color, $width, $isTotal || in_array($rowIndex, $boldRows, true) ? '<b>' . $content . '</b>' : $content);
             }
             $html .= '</tr>';
         }

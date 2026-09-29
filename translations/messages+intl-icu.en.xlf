@@ -8693,6 +8693,298 @@
         <source>No hay categorías que coincidan con los filtros.</source>
         <target>No categories match the filters.</target>
       </trans-unit>
+      <trans-unit id="bM2TSLK" resname="Plan de mejora {year}">
+        <source>Plan de mejora {year}</source>
+        <target>Improvement plan {year}</target>
+      </trans-unit>
+      <trans-unit id="Dn4iY48" resname="Reducción de emisiones esperada por año y fuente en %">
+        <source>Reducción de emisiones esperada por año y fuente en %</source>
+        <target>Expected emission reduction by year and source in %</target>
+      </trans-unit>
+      <trans-unit id="UMhJMF8" resname="Reducción de emisiones esperada por año y fuente en kg CO₂ eq">
+        <source>Reducción de emisiones esperada por año y fuente en kg CO₂ eq</source>
+        <target>Expected emission reduction by year and source in kg CO₂ eq</target>
+      </trans-unit>
+      <trans-unit id="OGapHok" resname="Emisiones esperadas por año en kg CO₂ eq">
+        <source>Emisiones esperadas por año en kg CO₂ eq</source>
+        <target>Expected emissions by year in kg CO₂ eq</target>
+      </trans-unit>
+      <trans-unit id="u9XjcAn" resname="Medidas de reducción y mitigación">
+        <source>Medidas de reducción y mitigación</source>
+        <target>Reduction and mitigation measures</target>
+      </trans-unit>
+      <trans-unit id="d3vaY.l" resname="Reducción interanual %">
+        <source>Reducción interanual %</source>
+        <target>Year-on-year reduction %</target>
+      </trans-unit>
+      <trans-unit id="hMryFlt" resname="Año base">
+        <source>Año base</source>
+        <target>Base year</target>
+      </trans-unit>
+      <trans-unit id="yE.UvzR" resname="No se ha podido completar la huella de carbono.">
+        <source>No se ha podido completar la huella de carbono.</source>
+        <target>The carbon footprint could not be completed.</target>
+      </trans-unit>
+      <trans-unit id="9AmcOhR" resname="Medida añadida al plan: {name}">
+        <source>Medida añadida al plan: {name}</source>
+        <target>Measure added to the plan: {name}</target>
+      </trans-unit>
+      <trans-unit id="tWJXUbl" resname="No se ha podido añadir la medida al plan">
+        <source>No se ha podido añadir la medida al plan</source>
+        <target>The measure could not be added to the plan</target>
+      </trans-unit>
+      <trans-unit id="rK7g7X." resname="Medida actualizada con éxito">
+        <source>Medida actualizada con éxito</source>
+        <target>Measure successfully updated</target>
+      </trans-unit>
+      <trans-unit id="YbjxJGA" resname="Se ha eliminado la medida {name}">
+        <source>Se ha eliminado la medida {name}</source>
+        <target>The measure {name} has been removed</target>
+      </trans-unit>
+      <trans-unit id="RdrOvYC" resname="Se han importado {count} medidas.">
+        <source>Se han importado {count} medidas.</source>
+        <target>{count} measures have been imported.</target>
+      </trans-unit>
+      <trans-unit id="mYDHw4R" resname="Categoría de medidas creada correctamente: {name}">
+        <source>Categoría de medidas creada correctamente: {name}</source>
+        <target>Measure category successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="loQ6B18" resname="Categoría de medidas actualizada con éxito">
+        <source>Categoría de medidas actualizada con éxito</source>
+        <target>Measure category successfully updated</target>
+      </trans-unit>
+      <trans-unit id="VvZkyk_" resname="Se ha eliminado la categoría de medidas {category}">
+        <source>Se ha eliminado la categoría de medidas {category}</source>
+        <target>The measure category {category} has been removed</target>
+      </trans-unit>
+      <trans-unit id="8MEfznm" resname="No se ha podido eliminar la categoría de medidas {category}">
+        <source>No se ha podido eliminar la categoría de medidas {category}</source>
+        <target>The measure category {category} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="NezcaFY" resname="Se ha eliminado la categoría de medidas {id}">
+        <source>Se ha eliminado la categoría de medidas {id}</source>
+        <target>The measure category {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="5QKlAzI" resname="No se ha podido eliminar la categoría de medidas {id}">
+        <source>No se ha podido eliminar la categoría de medidas {id}</source>
+        <target>The measure category {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="tKt2gkb" resname="Medida creada correctamente: {name}">
+        <source>Medida creada correctamente: {name}</source>
+        <target>Measure successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="4M_uxVE" resname="Se ha eliminado la medida {measure}">
+        <source>Se ha eliminado la medida {measure}</source>
+        <target>The measure {measure} has been removed</target>
+      </trans-unit>
+      <trans-unit id="y4XXHzt" resname="No se ha podido eliminar la medida {measure}">
+        <source>No se ha podido eliminar la medida {measure}</source>
+        <target>The measure {measure} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="qmqEBAb" resname="Se ha eliminado la medida {id}">
+        <source>Se ha eliminado la medida {id}</source>
+        <target>The measure {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="YUJvC_4" resname="No se ha podido eliminar la medida {id}">
+        <source>No se ha podido eliminar la medida {id}</source>
+        <target>The measure {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="MZ2rAhU" resname="Efectos">
+        <source>Efectos</source>
+        <target>Effects</target>
+      </trans-unit>
+      <trans-unit id="2Imn7RD" resname="Año objetivo">
+        <source>Año objetivo</source>
+        <target>Target year</target>
+      </trans-unit>
+      <trans-unit id="9Xef9BE" resname="Reducción mínima">
+        <source>Reducción mínima</source>
+        <target>Minimum reduction</target>
+      </trans-unit>
+      <trans-unit id="CJl_ktD" resname="Reducción máxima">
+        <source>Reducción máxima</source>
+        <target>Maximum reduction</target>
+      </trans-unit>
+      <trans-unit id="00rbFrO" resname="Fuente de emisión">
+        <source>Fuente de emisión</source>
+        <target>Emission source</target>
+      </trans-unit>
+      <trans-unit id="WUpBmmg" resname="Reducción esperada">
+        <source>Reducción esperada</source>
+        <target>Expected reduction</target>
+      </trans-unit>
+      <trans-unit id="aPnQ7vD" resname="Rango establecido entre {min} % y {max} %">
+        <source>Rango establecido entre {min} % y {max} %</source>
+        <target>Range set between {min} % and {max} %</target>
+      </trans-unit>
+      <trans-unit id="TyGihs." resname="Medida">
+        <source>Medida</source>
+        <target>Measure</target>
+      </trans-unit>
+      <trans-unit id="qXj..b8" resname="Crea una medida manual o escoge una de nuestras sugerencias">
+        <source>Crea una medida manual o escoge una de nuestras sugerencias</source>
+        <target>Create a manual measure or choose one of our suggestions</target>
+      </trans-unit>
+      <trans-unit id="W0_WTat" resname="Medidas de mitigación">
+        <source>Medidas de mitigación</source>
+        <target>Mitigation measures</target>
+      </trans-unit>
+      <trans-unit id="s9NJVGi" resname="Medidas">
+        <source>Medidas</source>
+        <target>Measures</target>
+      </trans-unit>
+      <trans-unit id="8vdGq4y" resname="Categorías de medidas">
+        <source>Categorías de medidas</source>
+        <target>Measure categories</target>
+      </trans-unit>
+      <trans-unit id="L0VTOC3" resname="Importar acciones previas">
+        <source>Importar acciones previas</source>
+        <target>Import previous actions</target>
+      </trans-unit>
+      <trans-unit id="gp.flFP" resname="Esta acción sobrescribirá las medidas insertadas hasta ahora, ¿estás seguro de que quieres continuar?">
+        <source>Esta acción sobrescribirá las medidas insertadas hasta ahora, ¿estás seguro de que quieres continuar?</source>
+        <target>This action will overwrite the measures entered so far. Are you sure you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="d3wXQz3" resname="Se ha eliminado la categoría de medidas {category} por el usuario {user}">
+        <source>Se ha eliminado la categoría de medidas {category} por el usuario {user}</source>
+        <target>The measure category {category} has been removed by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="WJu0rlN" resname="Se ha añadido la medida &quot;{name}&quot; al plan de mitigación por el usuario {user}">
+        <source>Se ha añadido la medida "{name}" al plan de mitigación por el usuario {user}</source>
+        <target>The measure "{name}" has been added to the mitigation plan by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="pKrBl.Y" resname="Se ha actualizado un efecto de la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha actualizado un efecto de la medida sugerida {measure} por el usuario {user}</source>
+        <target>An effect of the suggested measure {measure} has been updated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="6fPcBVR" resname="Se ha actualizado la medida sugerida &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado la medida sugerida "{name}" por el usuario {user}</source>
+        <target>The suggested measure "{name}" has been updated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="5uQdkSk" resname="Se ha traducido la categoría de medidas &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha traducido la categoría de medidas "{name}" por el usuario {user}</source>
+        <target>The measure category "{name}" has been translated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="_rDl.J9" resname="Se ha eliminado un efecto de la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha eliminado un efecto de la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>An effect of the measure {action} of the mitigation plan has been removed by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="pvoCReU" resname="Se ha añadido un efecto a la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha añadido un efecto a la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>An effect has been added to the measure {action} of the mitigation plan by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="sXWQxhu" resname="Se ha registrado la categoría de medidas &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado la categoría de medidas "{name}" por el usuario {user}</source>
+        <target>The measure category "{name}" has been registered by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="37qrxLD" resname="Se ha actualizado la medida &quot;{name}&quot; del plan de mitigación por el usuario {user}">
+        <source>Se ha actualizado la medida "{name}" del plan de mitigación por el usuario {user}</source>
+        <target>The measure "{name}" of the mitigation plan has been updated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="V2XQZsf" resname="Se ha traducido la medida &quot;{name}&quot; del plan de mitigación por el usuario {user}">
+        <source>Se ha traducido la medida "{name}" del plan de mitigación por el usuario {user}</source>
+        <target>The measure "{name}" of the mitigation plan has been translated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="zRP_XaD" resname="Se ha registrado la medida sugerida &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado la medida sugerida "{name}" por el usuario {user}</source>
+        <target>The suggested measure "{name}" has been registered by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="dLQvsxU" resname="Se ha traducido la medida sugerida &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha traducido la medida sugerida "{name}" por el usuario {user}</source>
+        <target>The suggested measure "{name}" has been translated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="f0wmAf8" resname="Se ha iniciado el plan de mitigación de la huella de carbono {footprint} por el usuario {user}">
+        <source>Se ha iniciado el plan de mitigación de la huella de carbono {footprint} por el usuario {user}</source>
+        <target>The mitigation plan of the carbon footprint {footprint} has been started by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="2g8223P" resname="Se ha eliminado un efecto de la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha eliminado un efecto de la medida sugerida {measure} por el usuario {user}</source>
+        <target>An effect of the suggested measure {measure} has been removed by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="SmvCcyG" resname="Se ha eliminado la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha eliminado la medida sugerida {measure} por el usuario {user}</source>
+        <target>The suggested measure {measure} has been removed by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="E62O6uc" resname="Se ha eliminado la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha eliminado la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>The measure {action} of the mitigation plan has been removed by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="DLmutxP" resname="Se ha actualizado la categoría de medidas &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado la categoría de medidas "{name}" por el usuario {user}</source>
+        <target>The measure category "{name}" has been updated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="VUEz14Z" resname="Se ha actualizado un efecto de la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha actualizado un efecto de la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>An effect of the measure {action} of the mitigation plan has been updated by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="tvnALaj" resname="Se ha añadido un efecto a la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha añadido un efecto a la medida sugerida {measure} por el usuario {user}</source>
+        <target>An effect has been added to the suggested measure {measure} by the user {user}</target>
+      </trans-unit>
+      <trans-unit id="u5bV6if" resname="Añadir medida al plan">
+        <source>Añadir medida al plan</source>
+        <target>Add measure to the plan</target>
+      </trans-unit>
+      <trans-unit id="yLHA4Zd" resname="Medidas de Reducción y Mitigación">
+        <source>Medidas de Reducción y Mitigación</source>
+        <target>Reduction and Mitigation Measures</target>
+      </trans-unit>
+      <trans-unit id="JmWNTZS" resname="El nombre es obligatorio si no se escoge una medida sugerida">
+        <source>El nombre es obligatorio si no se escoge una medida sugerida</source>
+        <target>The name is required when no suggested measure is chosen</target>
+      </trans-unit>
+      <trans-unit id="TFn8N6Q" resname="La reducción mínima no puede ser mayor que la máxima">
+        <source>La reducción mínima no puede ser mayor que la máxima</source>
+        <target>The minimum reduction cannot be greater than the maximum</target>
+      </trans-unit>
+      <trans-unit id="pSs82PK" resname="El valor de reducción de esta medida debe estar dentro del rango establecido">
+        <source>El valor de reducción de esta medida debe estar dentro del rango establecido</source>
+        <target>The reduction value of this measure must be within the established range</target>
+      </trans-unit>
+      <trans-unit id="CLRCDhr" resname="Manual">
+        <source>Manual</source>
+        <target>Manual</target>
+      </trans-unit>
+      <trans-unit id="VBSkRT2" resname="La huella no tiene emisiones sobre las que aplicar reducciones.">
+        <source>La huella no tiene emisiones sobre las que aplicar reducciones.</source>
+        <target>The footprint has no emissions to which reductions can be applied.</target>
+      </trans-unit>
+      <trans-unit id="erDszMj" resname="Emisiones base (kg CO₂eq)">
+        <source>Emisiones base (kg CO₂eq)</source>
+        <target>Base emissions (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="25raYIb" resname="Rango">
+        <source>Rango</source>
+        <target>Range</target>
+      </trans-unit>
+      <trans-unit id="Ch4JiTH" resname="Sin emisiones en esta huella">
+        <source>Sin emisiones en esta huella</source>
+        <target>No emissions in this footprint</target>
+      </trans-unit>
+      <trans-unit id="SFWr_Gl" resname="Editar medida &quot;{action}&quot;">
+        <source>Editar medida "{action}"</source>
+        <target>Edit measure "{action}"</target>
+      </trans-unit>
+      <trans-unit id="Cd6wQzW" resname="No hay medidas en el plan">
+        <source>No hay medidas en el plan</source>
+        <target>There are no measures in the plan</target>
+      </trans-unit>
+      <trans-unit id="qtcfybd" resname="Medida a realizar">
+        <source>Medida a realizar</source>
+        <target>Measure to carry out</target>
+      </trans-unit>
+      <trans-unit id="gfTXn9P" resname="Reducción esperada (kg CO₂eq)">
+        <source>Reducción esperada (kg CO₂eq)</source>
+        <target>Expected reduction (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="z9Vc51t" resname="¿Está seguro de que desea eliminar esta medida?">
+        <source>¿Está seguro de que desea eliminar esta medida?</source>
+        <target>Are you sure you want to remove this measure?</target>
+      </trans-unit>
+      <trans-unit id="T82NEy_" resname="Emisiones esperadas">
+        <source>Emisiones esperadas</source>
+        <target>Expected emissions</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

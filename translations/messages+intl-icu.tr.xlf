@@ -8693,6 +8693,298 @@
         <source>No hay categorías que coincidan con los filtros.</source>
         <target>Filtrelerle eşleşen kategori yok.</target>
       </trans-unit>
+      <trans-unit id="bM2TSLK" resname="Plan de mejora {year}">
+        <source>Plan de mejora {year}</source>
+        <target>İyileştirme planı {year}</target>
+      </trans-unit>
+      <trans-unit id="Dn4iY48" resname="Reducción de emisiones esperada por año y fuente en %">
+        <source>Reducción de emisiones esperada por año y fuente en %</source>
+        <target>Yıla ve kaynağa göre beklenen emisyon azaltımı (%)</target>
+      </trans-unit>
+      <trans-unit id="UMhJMF8" resname="Reducción de emisiones esperada por año y fuente en kg CO₂ eq">
+        <source>Reducción de emisiones esperada por año y fuente en kg CO₂ eq</source>
+        <target>Yıla ve kaynağa göre beklenen emisyon azaltımı (kg CO₂ eş.)</target>
+      </trans-unit>
+      <trans-unit id="OGapHok" resname="Emisiones esperadas por año en kg CO₂ eq">
+        <source>Emisiones esperadas por año en kg CO₂ eq</source>
+        <target>Yıllara göre beklenen emisyonlar (kg CO₂ eş.)</target>
+      </trans-unit>
+      <trans-unit id="u9XjcAn" resname="Medidas de reducción y mitigación">
+        <source>Medidas de reducción y mitigación</source>
+        <target>Azaltım ve hafifletme önlemleri</target>
+      </trans-unit>
+      <trans-unit id="d3vaY.l" resname="Reducción interanual %">
+        <source>Reducción interanual %</source>
+        <target>Yıllık azaltım %</target>
+      </trans-unit>
+      <trans-unit id="hMryFlt" resname="Año base">
+        <source>Año base</source>
+        <target>Baz yıl</target>
+      </trans-unit>
+      <trans-unit id="yE.UvzR" resname="No se ha podido completar la huella de carbono.">
+        <source>No se ha podido completar la huella de carbono.</source>
+        <target>Karbon ayak izi tamamlanamadı.</target>
+      </trans-unit>
+      <trans-unit id="9AmcOhR" resname="Medida añadida al plan: {name}">
+        <source>Medida añadida al plan: {name}</source>
+        <target>Plana önlem eklendi: {name}</target>
+      </trans-unit>
+      <trans-unit id="tWJXUbl" resname="No se ha podido añadir la medida al plan">
+        <source>No se ha podido añadir la medida al plan</source>
+        <target>Önlem plana eklenemedi</target>
+      </trans-unit>
+      <trans-unit id="rK7g7X." resname="Medida actualizada con éxito">
+        <source>Medida actualizada con éxito</source>
+        <target>Önlem başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="YbjxJGA" resname="Se ha eliminado la medida {name}">
+        <source>Se ha eliminado la medida {name}</source>
+        <target>{name} önlemi silindi</target>
+      </trans-unit>
+      <trans-unit id="RdrOvYC" resname="Se han importado {count} medidas.">
+        <source>Se han importado {count} medidas.</source>
+        <target>{count} önlem içe aktarıldı.</target>
+      </trans-unit>
+      <trans-unit id="mYDHw4R" resname="Categoría de medidas creada correctamente: {name}">
+        <source>Categoría de medidas creada correctamente: {name}</source>
+        <target>Önlem kategorisi başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="loQ6B18" resname="Categoría de medidas actualizada con éxito">
+        <source>Categoría de medidas actualizada con éxito</source>
+        <target>Önlem kategorisi başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="VvZkyk_" resname="Se ha eliminado la categoría de medidas {category}">
+        <source>Se ha eliminado la categoría de medidas {category}</source>
+        <target>{category} önlem kategorisi silindi</target>
+      </trans-unit>
+      <trans-unit id="8MEfznm" resname="No se ha podido eliminar la categoría de medidas {category}">
+        <source>No se ha podido eliminar la categoría de medidas {category}</source>
+        <target>{category} önlem kategorisi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="NezcaFY" resname="Se ha eliminado la categoría de medidas {id}">
+        <source>Se ha eliminado la categoría de medidas {id}</source>
+        <target>{id} önlem kategorisi silindi</target>
+      </trans-unit>
+      <trans-unit id="5QKlAzI" resname="No se ha podido eliminar la categoría de medidas {id}">
+        <source>No se ha podido eliminar la categoría de medidas {id}</source>
+        <target>{id} önlem kategorisi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="tKt2gkb" resname="Medida creada correctamente: {name}">
+        <source>Medida creada correctamente: {name}</source>
+        <target>Önlem başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="4M_uxVE" resname="Se ha eliminado la medida {measure}">
+        <source>Se ha eliminado la medida {measure}</source>
+        <target>{measure} önlemi silindi</target>
+      </trans-unit>
+      <trans-unit id="y4XXHzt" resname="No se ha podido eliminar la medida {measure}">
+        <source>No se ha podido eliminar la medida {measure}</source>
+        <target>{measure} önlemi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="qmqEBAb" resname="Se ha eliminado la medida {id}">
+        <source>Se ha eliminado la medida {id}</source>
+        <target>{id} önlemi silindi</target>
+      </trans-unit>
+      <trans-unit id="YUJvC_4" resname="No se ha podido eliminar la medida {id}">
+        <source>No se ha podido eliminar la medida {id}</source>
+        <target>{id} önlemi silinemedi</target>
+      </trans-unit>
+      <trans-unit id="MZ2rAhU" resname="Efectos">
+        <source>Efectos</source>
+        <target>Etkiler</target>
+      </trans-unit>
+      <trans-unit id="2Imn7RD" resname="Año objetivo">
+        <source>Año objetivo</source>
+        <target>Hedef yıl</target>
+      </trans-unit>
+      <trans-unit id="9Xef9BE" resname="Reducción mínima">
+        <source>Reducción mínima</source>
+        <target>Asgari azaltım</target>
+      </trans-unit>
+      <trans-unit id="CJl_ktD" resname="Reducción máxima">
+        <source>Reducción máxima</source>
+        <target>Azami azaltım</target>
+      </trans-unit>
+      <trans-unit id="00rbFrO" resname="Fuente de emisión">
+        <source>Fuente de emisión</source>
+        <target>Emisyon kaynağı</target>
+      </trans-unit>
+      <trans-unit id="WUpBmmg" resname="Reducción esperada">
+        <source>Reducción esperada</source>
+        <target>Beklenen azaltım</target>
+      </trans-unit>
+      <trans-unit id="aPnQ7vD" resname="Rango establecido entre {min} % y {max} %">
+        <source>Rango establecido entre {min} % y {max} %</source>
+        <target>Belirlenen aralık: %{min} ile %{max} arası</target>
+      </trans-unit>
+      <trans-unit id="TyGihs." resname="Medida">
+        <source>Medida</source>
+        <target>Önlem</target>
+      </trans-unit>
+      <trans-unit id="qXj..b8" resname="Crea una medida manual o escoge una de nuestras sugerencias">
+        <source>Crea una medida manual o escoge una de nuestras sugerencias</source>
+        <target>Manuel bir önlem oluşturun veya önerilerimizden birini seçin</target>
+      </trans-unit>
+      <trans-unit id="W0_WTat" resname="Medidas de mitigación">
+        <source>Medidas de mitigación</source>
+        <target>Hafifletme önlemleri</target>
+      </trans-unit>
+      <trans-unit id="s9NJVGi" resname="Medidas">
+        <source>Medidas</source>
+        <target>Önlemler</target>
+      </trans-unit>
+      <trans-unit id="8vdGq4y" resname="Categorías de medidas">
+        <source>Categorías de medidas</source>
+        <target>Önlem kategorileri</target>
+      </trans-unit>
+      <trans-unit id="L0VTOC3" resname="Importar acciones previas">
+        <source>Importar acciones previas</source>
+        <target>Önceki eylemleri içe aktar</target>
+      </trans-unit>
+      <trans-unit id="gp.flFP" resname="Esta acción sobrescribirá las medidas insertadas hasta ahora, ¿estás seguro de que quieres continuar?">
+        <source>Esta acción sobrescribirá las medidas insertadas hasta ahora, ¿estás seguro de que quieres continuar?</source>
+        <target>Bu işlem şimdiye kadar girilen önlemlerin üzerine yazacak. Devam etmek istediğinizden emin misiniz?</target>
+      </trans-unit>
+      <trans-unit id="d3wXQz3" resname="Se ha eliminado la categoría de medidas {category} por el usuario {user}">
+        <source>Se ha eliminado la categoría de medidas {category} por el usuario {user}</source>
+        <target>{category} önlem kategorisi {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="WJu0rlN" resname="Se ha añadido la medida &quot;{name}&quot; al plan de mitigación por el usuario {user}">
+        <source>Se ha añadido la medida "{name}" al plan de mitigación por el usuario {user}</source>
+        <target>"{name}" önlemi {user} kullanıcısı tarafından hafifletme planına eklendi</target>
+      </trans-unit>
+      <trans-unit id="pKrBl.Y" resname="Se ha actualizado un efecto de la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha actualizado un efecto de la medida sugerida {measure} por el usuario {user}</source>
+        <target>{measure} önerilen önleminin bir etkisi {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="6fPcBVR" resname="Se ha actualizado la medida sugerida &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado la medida sugerida "{name}" por el usuario {user}</source>
+        <target>"{name}" önerilen önlemi {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="5uQdkSk" resname="Se ha traducido la categoría de medidas &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha traducido la categoría de medidas "{name}" por el usuario {user}</source>
+        <target>"{name}" önlem kategorisi {user} kullanıcısı tarafından çevrildi</target>
+      </trans-unit>
+      <trans-unit id="_rDl.J9" resname="Se ha eliminado un efecto de la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha eliminado un efecto de la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>Hafifletme planındaki {action} önleminin bir etkisi {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="pvoCReU" resname="Se ha añadido un efecto a la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha añadido un efecto a la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>Hafifletme planındaki {action} önlemine {user} kullanıcısı tarafından bir etki eklendi</target>
+      </trans-unit>
+      <trans-unit id="sXWQxhu" resname="Se ha registrado la categoría de medidas &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado la categoría de medidas "{name}" por el usuario {user}</source>
+        <target>"{name}" önlem kategorisi {user} kullanıcısı tarafından kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="37qrxLD" resname="Se ha actualizado la medida &quot;{name}&quot; del plan de mitigación por el usuario {user}">
+        <source>Se ha actualizado la medida "{name}" del plan de mitigación por el usuario {user}</source>
+        <target>Hafifletme planındaki "{name}" önlemi {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="V2XQZsf" resname="Se ha traducido la medida &quot;{name}&quot; del plan de mitigación por el usuario {user}">
+        <source>Se ha traducido la medida "{name}" del plan de mitigación por el usuario {user}</source>
+        <target>Hafifletme planındaki "{name}" önlemi {user} kullanıcısı tarafından çevrildi</target>
+      </trans-unit>
+      <trans-unit id="zRP_XaD" resname="Se ha registrado la medida sugerida &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado la medida sugerida "{name}" por el usuario {user}</source>
+        <target>"{name}" önerilen önlemi {user} kullanıcısı tarafından kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="dLQvsxU" resname="Se ha traducido la medida sugerida &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha traducido la medida sugerida "{name}" por el usuario {user}</source>
+        <target>"{name}" önerilen önlemi {user} kullanıcısı tarafından çevrildi</target>
+      </trans-unit>
+      <trans-unit id="f0wmAf8" resname="Se ha iniciado el plan de mitigación de la huella de carbono {footprint} por el usuario {user}">
+        <source>Se ha iniciado el plan de mitigación de la huella de carbono {footprint} por el usuario {user}</source>
+        <target>{footprint} karbon ayak izinin hafifletme planı {user} kullanıcısı tarafından başlatıldı</target>
+      </trans-unit>
+      <trans-unit id="2g8223P" resname="Se ha eliminado un efecto de la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha eliminado un efecto de la medida sugerida {measure} por el usuario {user}</source>
+        <target>{measure} önerilen önleminin bir etkisi {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="SmvCcyG" resname="Se ha eliminado la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha eliminado la medida sugerida {measure} por el usuario {user}</source>
+        <target>{measure} önerilen önlemi {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="E62O6uc" resname="Se ha eliminado la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha eliminado la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>Hafifletme planındaki {action} önlemi {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="DLmutxP" resname="Se ha actualizado la categoría de medidas &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado la categoría de medidas "{name}" por el usuario {user}</source>
+        <target>"{name}" önlem kategorisi {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="VUEz14Z" resname="Se ha actualizado un efecto de la medida {action} del plan de mitigación por el usuario {user}">
+        <source>Se ha actualizado un efecto de la medida {action} del plan de mitigación por el usuario {user}</source>
+        <target>Hafifletme planındaki {action} önleminin bir etkisi {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="tvnALaj" resname="Se ha añadido un efecto a la medida sugerida {measure} por el usuario {user}">
+        <source>Se ha añadido un efecto a la medida sugerida {measure} por el usuario {user}</source>
+        <target>{measure} önerilen önlemine {user} kullanıcısı tarafından bir etki eklendi</target>
+      </trans-unit>
+      <trans-unit id="u5bV6if" resname="Añadir medida al plan">
+        <source>Añadir medida al plan</source>
+        <target>Plana önlem ekle</target>
+      </trans-unit>
+      <trans-unit id="yLHA4Zd" resname="Medidas de Reducción y Mitigación">
+        <source>Medidas de Reducción y Mitigación</source>
+        <target>Azaltım ve Hafifletme Önlemleri</target>
+      </trans-unit>
+      <trans-unit id="JmWNTZS" resname="El nombre es obligatorio si no se escoge una medida sugerida">
+        <source>El nombre es obligatorio si no se escoge una medida sugerida</source>
+        <target>Önerilen bir önlem seçilmediğinde ad zorunludur</target>
+      </trans-unit>
+      <trans-unit id="TFn8N6Q" resname="La reducción mínima no puede ser mayor que la máxima">
+        <source>La reducción mínima no puede ser mayor que la máxima</source>
+        <target>Asgari azaltım azami azaltımdan büyük olamaz</target>
+      </trans-unit>
+      <trans-unit id="pSs82PK" resname="El valor de reducción de esta medida debe estar dentro del rango establecido">
+        <source>El valor de reducción de esta medida debe estar dentro del rango establecido</source>
+        <target>Bu önlemin azaltım değeri belirlenen aralıkta olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="CLRCDhr" resname="Manual">
+        <source>Manual</source>
+        <target>Manuel</target>
+      </trans-unit>
+      <trans-unit id="VBSkRT2" resname="La huella no tiene emisiones sobre las que aplicar reducciones.">
+        <source>La huella no tiene emisiones sobre las que aplicar reducciones.</source>
+        <target>Ayak izinde azaltım uygulanabilecek emisyon yok.</target>
+      </trans-unit>
+      <trans-unit id="erDszMj" resname="Emisiones base (kg CO₂eq)">
+        <source>Emisiones base (kg CO₂eq)</source>
+        <target>Baz emisyonlar (kg CO₂eş.)</target>
+      </trans-unit>
+      <trans-unit id="25raYIb" resname="Rango">
+        <source>Rango</source>
+        <target>Aralık</target>
+      </trans-unit>
+      <trans-unit id="Ch4JiTH" resname="Sin emisiones en esta huella">
+        <source>Sin emisiones en esta huella</source>
+        <target>Bu ayak izinde emisyon yok</target>
+      </trans-unit>
+      <trans-unit id="SFWr_Gl" resname="Editar medida &quot;{action}&quot;">
+        <source>Editar medida "{action}"</source>
+        <target>"{action}" önlemini düzenle</target>
+      </trans-unit>
+      <trans-unit id="Cd6wQzW" resname="No hay medidas en el plan">
+        <source>No hay medidas en el plan</source>
+        <target>Planda önlem yok</target>
+      </trans-unit>
+      <trans-unit id="qtcfybd" resname="Medida a realizar">
+        <source>Medida a realizar</source>
+        <target>Uygulanacak önlem</target>
+      </trans-unit>
+      <trans-unit id="gfTXn9P" resname="Reducción esperada (kg CO₂eq)">
+        <source>Reducción esperada (kg CO₂eq)</source>
+        <target>Beklenen azaltım (kg CO₂eş.)</target>
+      </trans-unit>
+      <trans-unit id="z9Vc51t" resname="¿Está seguro de que desea eliminar esta medida?">
+        <source>¿Está seguro de que desea eliminar esta medida?</source>
+        <target>Bu önlemi silmek istediğinizden emin misiniz?</target>
+      </trans-unit>
+      <trans-unit id="T82NEy_" resname="Emisiones esperadas">
+        <source>Emisiones esperadas</source>
+        <target>Beklenen emisyonlar</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

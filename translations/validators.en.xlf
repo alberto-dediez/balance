@@ -737,6 +737,10 @@
         <source>Usa solo letras, números, espacios y guiones: no es un nombre de familia válido.</source>
         <target>Use only letters, numbers, spaces and hyphens: this is not a valid family name.</target>
       </trans-unit>
+      <trans-unit id="pSs82PK" resname="El valor de reducción de esta medida debe estar dentro del rango establecido">
+        <source>El valor de reducción de esta medida debe estar dentro del rango establecido</source>
+        <target>The reduction value of this measure must be within the established range</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -10,7 +10,9 @@ use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\RoadTransportCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Data\MitigationPlanReportBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\OrganizationalCarbonFootprintReportLinesBuilder;
+use App\CarbonFootprint\Application\MitigationAction\MitigationEmissionSourcesBuilder;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
@@ -25,6 +27,7 @@ use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationActionRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
@@ -37,10 +40,20 @@ use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 trait OrganizationalCollectorContextTrait
 {
     private InMemoryActivityRepository $activityRepository;
+    private InMemoryMitigationActionRepository $mitigationActionRepository;
 
     private function initActivities(): void
     {
         $this->activityRepository = ActivityRepositoryMother::inMemory();
+        $this->mitigationActionRepository = new InMemoryMitigationActionRepository();
+    }
+
+    private function mitigationPlanBuilder(): MitigationPlanReportBuilder
+    {
+        return new MitigationPlanReportBuilder(
+            $this->mitigationActionRepository,
+            new MitigationEmissionSourcesBuilder($this->activityRepository, $this->itemNameResolver()),
+        );
     }
 
     private function breakdownBuilder(): EmissionsBreakdownBuilder
@@ -52,14 +65,19 @@ trait OrganizationalCollectorContextTrait
     {
         return new OrganizationalCarbonFootprintReportLinesBuilder(
             $this->activityRepository,
-            new ActivityItemNameResolver(
-                new ActivityCatalogProviderRegistry([
-                    new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
-                    new RoadTransportCatalogProvider(RoadTransportRepositoryMother::inMemory()),
-                    new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
-                ]),
-                new FakeTranslator(),
-            ),
+            $this->itemNameResolver(),
+        );
+    }
+
+    private function itemNameResolver(): ActivityItemNameResolver
+    {
+        return new ActivityItemNameResolver(
+            new ActivityCatalogProviderRegistry([
+                new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
+                new RoadTransportCatalogProvider(RoadTransportRepositoryMother::inMemory()),
+                new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
+            ]),
+            new FakeTranslator(),
         );
     }
 

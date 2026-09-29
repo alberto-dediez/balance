@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\MitigationMeasure\MitigationMeasureEffect" table="mitigation_measure_effect">
+        <unique-constraints>
+            <unique-constraint columns="mitigation_measure_id,source" name="uq_mitigation_measure_effect_source"/>
+        </unique-constraints>
+
+        <id name="id" type="mitigation_measure_effect_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\Source" nullable="false"/>
+        <field name="minimumReduction" type="float" column="minimum_reduction" nullable="false"/>
+        <field name="maximumReduction" type="float" column="maximum_reduction" nullable="false"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+
+        <many-to-one field="measure" target-entity="App\CarbonFootprint\Domain\Model\MitigationMeasure\MitigationMeasure" inversed-by="effects">
+            <join-column name="mitigation_measure_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>

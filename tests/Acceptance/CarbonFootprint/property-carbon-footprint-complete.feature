@@ -1,7 +1,7 @@
 Feature:
-    I want a property carbon footprint to be completed when scope 2 is saved and to be reopened on demand
+    I want a property carbon footprint to be completed when its mitigation plan step is submitted and to be reopened on demand
 
-    Scenario: Saving scope 2 completes the footprint
+    Scenario: Saving scope 2 moves to the mitigation plan without completing
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
@@ -10,8 +10,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
-        Then I am redirected to route "property_carbon_footprints_results"
-        Then property carbon footprint "999" should be completed
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        Then property carbon footprint "999" should not be completed
 
     Scenario: Scope 1 of a completed footprint is shown without the save button
         Given account "MyCompany" with id "666" exists
@@ -22,6 +22,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        When I submit the mitigation plan step form
         Then I am redirected to route "property_carbon_footprints_results"
         When I go to "/es/property-carbon-footprints/999/step/scope-1"
         Then the response status should be 200
@@ -38,6 +40,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        When I submit the mitigation plan step form
         Then I am redirected to route "property_carbon_footprints_results"
         When I make a POST request to "/es/property-carbon-footprints/999/step/scope-1"
         Then I am redirected to route "property_carbon_footprints_results"
@@ -53,6 +57,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        When I submit the mitigation plan step form
         Then I am redirected to route "property_carbon_footprints_results"
         Then I see a text "Reabrir cálculo"
         When I submit a form with "" and button "Reabrir cálculo"
@@ -69,6 +75,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        When I submit the mitigation plan step form
         Then I am redirected to route "property_carbon_footprints_results"
         Then the report of property carbon footprint "999" should be "generating_texts"
         Then I see a text "Se están generando los textos del informe, te notificaremos cuando estén listos."

@@ -52,6 +52,11 @@ trait OrganizationalCarbonFootprintTrait
         return $this->status->isCompleted();
     }
 
+    public function isMitigationPlanStarted(): bool
+    {
+        return $this->mitigationPlanStarted;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed;

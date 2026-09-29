@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\MitigationAction\MitigationAction" table="mitigation_actions">
+        <indexes>
+            <index name="idx_mitigation_actions_subject" columns="subject_type,carbon_footprint_id"/>
+        </indexes>
+
+        <id name="id" type="mitigation_action_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="subjectType" type="string" length="20" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType" column="subject_type" nullable="false"/>
+        <field name="carbonFootprintId" type="string" length="36" column="carbon_footprint_id" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="true"/>
+        <field name="measureId" type="mitigation_measure_id" column="measure_id" nullable="true"/>
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="description" type="text" nullable="false"/>
+        <field name="baseYear" type="integer" column="base_year" nullable="false"/>
+        <field name="targetYear" type="integer" column="target_year" nullable="false"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <one-to-many field="translations"
+                     target-entity="App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionTranslation"
+                     mapped-by="translatable"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="effects"
+                     target-entity="App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionEffect"
+                     mapped-by="action"
+                     orphan-removal="true"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+</doctrine-mapping>

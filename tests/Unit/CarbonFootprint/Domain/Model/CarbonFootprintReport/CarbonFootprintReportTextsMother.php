@@ -35,6 +35,14 @@ class CarbonFootprintReportTextsMother
         ]);
     }
 
+    public static function forOrganizationWithMitigationPlan(): CarbonFootprintReportTexts
+    {
+        return new CarbonFootprintReportTexts([
+            ...self::forOrganization()->sections,
+            CarbonFootprintReportSectionKey::MitigationPlan->value => self::paragraphs('El plan de mejora persigue reducir las emisiones de los alcances 1 y 2 hasta el año objetivo.', "### Medidas\n\n- **Caldera de condensación** (2030): reduce el gas natural de las instalaciones fijas\n- **Paneles fotovoltaicos** (2030): reducen la electricidad adquirida", 'La proyección supone que el nivel de actividad se mantiene constante y que las reducciones proceden de mejoras de eficiencia.'),
+        ]);
+    }
+
     private static function paragraphs(string ...$paragraphs): string
     {
         return implode("\n\n", $paragraphs);

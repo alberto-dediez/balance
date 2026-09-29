@@ -1,0 +1,4 @@
+{% trans with {
+    '{category}': event.mitigationMeasureCategoryId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la categoría de medidas {category} por el usuario {user}{% endtrans %}

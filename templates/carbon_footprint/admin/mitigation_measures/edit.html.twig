@@ -1,0 +1,58 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_mitigation_measures') }}" />
+{% endblock %}
+
+{% set page_title = ('Medidas' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ mitigationMeasure.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.category) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.description) }}
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card>
+            <h6 class="fw-semibold mb-3">{{ 'Efectos' | trans }}</h6>
+
+            {% embed 'components/Collection/Table.html.twig' with {
+                elements: form.effects,
+                proto: form.effects.vars.prototype,
+                columns: [
+                    { label: 'Fuente' | trans },
+                    { label: 'Reducción mínima' | trans },
+                    { label: 'Reducción máxima' | trans },
+                ],
+            } %}
+                {% block content %}
+                    <td>{{ form_widget(element.source) }}{{ form_errors(element.source) }}</td>
+                    <td>{{ form_widget(element.minimumReduction) }}{{ form_errors(element.minimumReduction) }}</td>
+                    <td>{{ form_widget(element.maximumReduction) }}{{ form_errors(element.maximumReduction) }}</td>
+                {% endblock %}
+            {% endembed %}
+
+            {{ form_errors(form.effects) }}
+
+            {% do form.effects.setRendered %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

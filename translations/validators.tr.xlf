@@ -737,6 +737,10 @@
         <source>Usa solo letras, números, espacios y guiones: no es un nombre de familia válido.</source>
         <target>Yalnızca harf, rakam, boşluk ve tire kullanın: bu geçerli bir aile adı değil.</target>
       </trans-unit>
+      <trans-unit id="pSs82PK" resname="El valor de reducción de esta medida debe estar dentro del rango establecido">
+        <source>El valor de reducción de esta medida debe estar dentro del rango establecido</source>
+        <target>Bu önlemin azaltım değeri belirlenen aralıkta olmalıdır</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

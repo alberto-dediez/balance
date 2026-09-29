@@ -15,6 +15,9 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRe
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
+use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
@@ -33,7 +36,9 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSectionKey;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemRepository;
+use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
@@ -53,12 +58,21 @@ use App\CarbonFootprint\Domain\Model\Geo\TravelMode;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelRepository;
 use App\CarbonFootprint\Domain\Model\Material\MaterialRepository;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepository;
+use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionFilter;
+use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionId;
+use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionRepository;
+use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionTranslation;
+use App\CarbonFootprint\Domain\Model\MitigationMeasure\MitigationMeasureId;
+use App\CarbonFootprint\Domain\Model\MitigationMeasure\MitigationMeasureRepository;
+use App\CarbonFootprint\Domain\Model\MitigationMeasureCategory\MitigationMeasureCategoryId;
+use App\CarbonFootprint\Domain\Model\MitigationMeasureCategory\MitigationMeasureCategoryRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
@@ -110,6 +124,9 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationMeasure\MitigationMeasureMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationMeasureCategory\MitigationMeasureCategoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
@@ -1745,5 +1762,204 @@ final readonly class CarbonFootprintContext implements Context
     private function getCompanyCarbonFootprintRepository(): CompanyCarbonFootprintRepository
     {
         return $this->client->getContainer()->get(CompanyCarbonFootprintRepository::class);
+    }
+
+    #[Given('mitigation measure category :name with id :id exists')]
+    public function mitigationMeasureCategoryExists(string $name, string $id): void
+    {
+        $this->getMitigationMeasureCategoryRepository()->add(MitigationMeasureCategoryMother::fromNameAndId($name, $id));
+    }
+
+    #[Given('mitigation measure :name with id :id of category :categoryId reducing source :source between :min and :max exists')]
+    public function mitigationMeasureExists(string $name, string $id, string $categoryId, string $source, string $min, string $max): void
+    {
+        $measure = MitigationMeasureMother::from(name: $name, id: $id, categoryId: new MitigationMeasureCategoryId($categoryId));
+        $measure->setEffect(Source::from($source), (float) $min, (float) $max);
+
+        $this->getMitigationMeasureRepository()->add($measure);
+    }
+
+    #[Given('mitigation measure :id is translated to :locale as :name')]
+    public function mitigationMeasureIsTranslated(string $id, string $locale, string $name): void
+    {
+        $measure = $this->getMitigationMeasureRepository()->find(new MitigationMeasureId($id));
+        Assert::assertNotNull($measure);
+
+        $localeEnum = Locale::tryFrom($locale);
+        Assert::assertNotNull($localeEnum);
+
+        $measure->translate($name, $measure->defaultDescription(), $localeEnum);
+
+        $this->getMitigationMeasureRepository()->add($measure);
+    }
+
+    #[Given('mitigation action :name with id :id for :subjectType carbon footprint :carbonFootprintId of account :account with target year :year exists')]
+    public function mitigationActionExists(string $name, string $id, string $subjectType, string $carbonFootprintId, string $account, string $year): void
+    {
+        $carbonFootprint = $this->findCarbonFootprint($subjectType, $carbonFootprintId);
+
+        $this->getMitigationActionRepository()->add(MitigationActionMother::from(
+            id: $id,
+            carbonFootprintId: $carbonFootprintId,
+            name: $name,
+            baseYear: $carbonFootprint->calculationYear(),
+            targetYear: (int) $year,
+            subjectType: CarbonFootprintReportSubjectType::from($subjectType),
+            accountId: $account,
+        ));
+    }
+
+    #[Given('mitigation action :id reduces source :source item :itemId by :reduction')]
+    public function mitigationActionReducesSource(string $id, string $source, string $itemId, string $reduction): void
+    {
+        $action = $this->getMitigationActionRepository()->find(new MitigationActionId($id));
+        Assert::assertNotNull($action);
+
+        $action->setEffect(Source::from($source), $itemId, $itemId, (float) $reduction);
+
+        $this->getMitigationActionRepository()->add($action);
+    }
+
+    #[Given(':subjectType carbon footprint :id has a combustible :combustibleId activity of :co2eq kg')]
+    #[Given(':subjectType carbon footprint :id has a combustible :combustibleId activity of :co2eq kg for property :propertyId')]
+    public function carbonFootprintHasACombustibleActivity(string $subjectType, string $id, string $combustibleId, string $co2eq, ?string $propertyId = null): void
+    {
+        $carbonFootprint = $this->findCarbonFootprint($subjectType, $id);
+        $accountId = $carbonFootprint->accountId();
+        Assert::assertNotNull($accountId);
+
+        $activity = CombustibleActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId,
+            combustibleId: new CombustibleId($combustibleId),
+            emissionFactor: new EmissionFactor('1.5', '1.0', '0.2', '0.3', $carbonFootprint->calculationYear(), EmissionFactorGroupMother::default()->id(), Unit::Liter, 'IPCC'),
+            emissions: new Emissions($co2eq, $co2eq, '0', '0'),
+            quantity: new Quantity(100.0, Unit::Liter),
+        );
+        $this->getActivityRepository()->save($activity);
+
+        $carbonFootprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: null !== $propertyId ? new PropertyId($propertyId) : null));
+
+        match ($subjectType) {
+            'property' => $this->getPropertyCarbonFootprintRepository()->add($this->propertyCarbonFootprint($id)),
+            default => $this->getCompanyCarbonFootprintRepository()->add($this->companyCarbonFootprint($id)),
+        };
+    }
+
+    #[Given('property carbon footprint :id has its mitigation plan started')]
+    public function propertyCarbonFootprintHasItsMitigationPlanStarted(string $id): void
+    {
+        $propertyCarbonFootprint = $this->propertyCarbonFootprint($id);
+        $propertyCarbonFootprint->answerScope(Scope::Scope2);
+
+        $this->getPropertyCarbonFootprintRepository()->add($propertyCarbonFootprint);
+    }
+
+    #[Given('company carbon footprint :id has its mitigation plan started')]
+    public function companyCarbonFootprintHasItsMitigationPlanStarted(string $id): void
+    {
+        $companyCarbonFootprint = $this->companyCarbonFootprint($id);
+        $companyCarbonFootprint->answerScope(Scope::Scope2);
+
+        $this->getCompanyCarbonFootprintRepository()->add($companyCarbonFootprint);
+    }
+
+    #[When('I submit the mitigation plan step form')]
+    public function iSubmitTheMitigationPlanStepForm(): void
+    {
+        $this->client->submit($this->client->getCrawler()->selectButton('Siguiente')->form());
+    }
+
+    #[Then(':subjectType carbon footprint :id should have :count mitigation actions')]
+    public function carbonFootprintShouldHaveMitigationActions(string $subjectType, string $id, int $count): void
+    {
+        $actions = $this->getMitigationActionRepository()->findByFilter(new MitigationActionFilter(
+            subjectType: CarbonFootprintReportSubjectType::from($subjectType),
+            carbonFootprintId: $id,
+            limit: 0,
+        ));
+
+        Assert::assertCount($count, $actions);
+    }
+
+    #[Then('mitigation action :id should be named :name in :locale')]
+    public function mitigationActionShouldBeNamed(string $id, string $name, string $locale): void
+    {
+        $action = $this->getMitigationActionRepository()->find(new MitigationActionId($id));
+        Assert::assertNotNull($action);
+
+        $localeEnum = Locale::tryFrom($locale);
+        Assert::assertNotNull($localeEnum);
+
+        $translation = $action->translations()->getTranslationFor($localeEnum);
+        $translatedName = $translation instanceof MitigationActionTranslation ? $translation->name() : $action->defaultName();
+
+        Assert::assertSame($name, Locale::Spanish === $localeEnum ? $action->defaultName() : $translatedName);
+    }
+
+    #[Then('the only mitigation action of :subjectType carbon footprint :id should be named :name in :locale')]
+    public function theOnlyMitigationActionShouldBeNamed(string $subjectType, string $id, string $name, string $locale): void
+    {
+        $actions = $this->getMitigationActionRepository()->findByFilter(new MitigationActionFilter(
+            subjectType: CarbonFootprintReportSubjectType::from($subjectType),
+            carbonFootprintId: $id,
+            limit: 0,
+        ));
+
+        Assert::assertCount(1, $actions);
+
+        $this->mitigationActionShouldBeNamed((string) $actions[0]->id(), $name, $locale);
+    }
+
+    #[Then('the only mitigation action of :subjectType carbon footprint :id should reduce source :source item :itemId by :reduction')]
+    public function theOnlyMitigationActionShouldReduce(string $subjectType, string $id, string $source, string $itemId, string $reduction): void
+    {
+        $actions = $this->getMitigationActionRepository()->findByFilter(new MitigationActionFilter(
+            subjectType: CarbonFootprintReportSubjectType::from($subjectType),
+            carbonFootprintId: $id,
+            limit: 0,
+        ));
+
+        Assert::assertCount(1, $actions);
+
+        $effect = $actions[0]->effects()->forSourceAndItem(Source::from($source), $itemId);
+        Assert::assertNotNull($effect);
+        Assert::assertEqualsWithDelta((float) $reduction, $effect->reduction(), 0.0001);
+    }
+
+    private function propertyCarbonFootprint(string $id): PropertyCarbonFootprint
+    {
+        $propertyCarbonFootprint = $this->getPropertyCarbonFootprintRepository()->find(new PropertyCarbonFootprintId($id));
+        Assert::assertNotNull($propertyCarbonFootprint);
+
+        return $propertyCarbonFootprint;
+    }
+
+    private function companyCarbonFootprint(string $id): CompanyCarbonFootprint
+    {
+        $companyCarbonFootprint = $this->getCompanyCarbonFootprintRepository()->find(new CompanyCarbonFootprintId($id));
+        Assert::assertNotNull($companyCarbonFootprint);
+
+        return $companyCarbonFootprint;
+    }
+
+    private function getMitigationMeasureCategoryRepository(): MitigationMeasureCategoryRepository
+    {
+        return $this->client->getContainer()->get(MitigationMeasureCategoryRepository::class);
+    }
+
+    private function getMitigationMeasureRepository(): MitigationMeasureRepository
+    {
+        return $this->client->getContainer()->get(MitigationMeasureRepository::class);
+    }
+
+    private function getMitigationActionRepository(): MitigationActionRepository
+    {
+        return $this->client->getContainer()->get(MitigationActionRepository::class);
+    }
+
+    private function getActivityRepository(): ActivityRepository
+    {
+        return $this->client->getContainer()->get(ActivityRepository::class);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\PropertyCarbonFootprintReportDataCollector;
+use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -17,9 +18,11 @@ use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
@@ -75,6 +78,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $emissionFactorGroups,
             $this->breakdownBuilder(),
             $this->linesBuilder(),
+            $this->mitigationPlanBuilder(),
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
@@ -102,6 +106,49 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertCount(1, $data->exclusionLines);
         $this->assertSame(Source::RefrigerantLeaks, $data->exclusionLines[0]->source);
         $this->assertSame('Sin equipos', $data->exclusionLines[0]->comment);
+        $this->assertNull($data->mitigationPlan);
+    }
+
+    public function testIncludesTheMitigationPlan(): void
+    {
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel Sol', new AccountId('account-id'), new PropertyInfo(), null, null);
+        $properties = PropertyRepositoryMother::inMemory();
+        $properties->add($property);
+
+        $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroups->add(EmissionFactorGroupMother::default());
+
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $activity = $this->combustibleActivity('1000');
+        assert($activity instanceof CombustibleActivity);
+        $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $footprint->complete(new Emissions('1000', '1000', '0', '0'));
+
+        $footprints = PropertyCarbonFootprintRepositoryMother::inMemory();
+        $footprints->add($footprint);
+
+        $action = MitigationActionMother::withEffect(Source::FixedFacilities, (string) $activity->combustibleId(), 0.2, 2025, 2030, (string) $footprint->id());
+        $action->translate('Efficient boiler', 'Replace it', Locale::English);
+        $this->mitigationActionRepository->add($action);
+
+        $sut = new PropertyCarbonFootprintReportDataCollector(
+            $footprints,
+            $properties,
+            CompanyRepositoryMother::inMemory(),
+            CountryRepositoryMother::inMemory(),
+            $emissionFactorGroups,
+            $this->breakdownBuilder(),
+            $this->linesBuilder(),
+            $this->mitigationPlanBuilder(),
+        );
+
+        $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $data);
+        $this->assertNotNull($data->mitigationPlan);
+        $this->assertCount(1, $data->mitigationPlan->actions);
+        $this->assertSame('action-name', $data->mitigationPlan->actions[0]->name);
+        $this->assertEqualsWithDelta(800.0, $data->mitigationPlan->projection->totalByYear[2030], 0.001);
     }
 
     public function testSupportsOnlyProperties(): void
@@ -114,6 +161,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             EmissionFactorGroupRepositoryMother::inMemory(),
             $this->breakdownBuilder(),
             $this->linesBuilder(),
+            $this->mitigationPlanBuilder(),
         );
 
         $this->assertTrue($sut->supports(CarbonFootprintReportSubjectType::Property));
@@ -130,6 +178,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             EmissionFactorGroupRepositoryMother::inMemory(),
             $this->breakdownBuilder(),
             $this->linesBuilder(),
+            $this->mitigationPlanBuilder(),
         );
 
         $this->expectException(\RuntimeException::class);

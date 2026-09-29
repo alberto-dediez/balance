@@ -24,6 +24,8 @@
                             {% set value = value | country_name %}
                         {% elseif field == 'brandId' %}
                             {% set value = value | brand_name %}
+                        {% elseif field == 'categoryId' and 'mitigation_measure_category_choice' in formField.vars.block_prefixes %}
+                            {% set value = value | mitigation_measure_category_name %}
                         {% elseif field == 'categoryId' %}
                             {% set value = value | category_name %}
                         {% elseif field == 'companyId' %}

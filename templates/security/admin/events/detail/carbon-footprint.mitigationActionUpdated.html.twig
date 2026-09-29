@@ -1,0 +1,4 @@
+{% trans with {
+    '{name}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la medida "{name}" del plan de mitigación por el usuario {user}{% endtrans %}

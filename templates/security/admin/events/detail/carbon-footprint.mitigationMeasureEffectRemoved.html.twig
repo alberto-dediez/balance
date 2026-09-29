@@ -1,0 +1,4 @@
+{% trans with {
+    '{measure}': event.mitigationMeasureId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado un efecto de la medida sugerida {measure} por el usuario {user}{% endtrans %}

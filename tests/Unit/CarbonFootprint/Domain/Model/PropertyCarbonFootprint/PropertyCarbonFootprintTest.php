@@ -18,6 +18,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintActivityRemoved;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintCompleted;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMitigationPlanStarted;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRegistered;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintReopened;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintSourceExcluded;
@@ -231,5 +232,46 @@ final class PropertyCarbonFootprintTest extends TestCase
         $this->expectException(OrganizationalCarbonFootprintNotCompletedException::class);
 
         $footprint->reopen();
+    }
+
+    public function testAnsweringScope1DoesNotStartTheMitigationPlan(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope1Answered('property-1', 'footprint-1');
+
+        $started = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintMitigationPlanStarted);
+        $this->assertCount(0, $started);
+        $this->assertFalse($footprint->isMitigationPlanStarted());
+    }
+
+    public function testAnsweringScope2ForTheFirstTimeStartsTheMitigationPlan(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('property-1', 'footprint-1');
+
+        $started = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintMitigationPlanStarted);
+        $this->assertCount(1, $started);
+        $this->assertTrue($footprint->isMitigationPlanStarted());
+    }
+
+    public function testAnsweringScope2AgainDoesNotStartTheMitigationPlanAgain(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('property-1', 'footprint-1');
+
+        $footprint->answerScope(Scope::Scope2);
+
+        $started = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintMitigationPlanStarted);
+        $this->assertCount(1, $started);
+    }
+
+    public function testTheMitigationPlanStaysStartedAfterReopening(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMitigationPlanStarted('property-1', 'footprint-1');
+        $footprint->complete(new Emissions('100', '100', '0', '0'));
+
+        $footprint->reopen();
+        $footprint->answerScope(Scope::Scope2);
+
+        $started = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintMitigationPlanStarted);
+        $this->assertCount(1, $started);
+        $this->assertTrue($footprint->isMitigationPlanStarted());
     }
 }

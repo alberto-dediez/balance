@@ -59,6 +59,38 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $this->assertInstanceOf(GenerateOrganizationalReportTextsPrompt::class, $client->lastPrompt());
     }
 
+    public function testKeepsTheMitigationPlanSectionWhenItArrives(): void
+    {
+        $client = new InMemoryGeminiClient();
+        $client->setResponse([
+            'purpose' => 'Purpose text',
+            'regulatoryContext' => 'Context text',
+            'sustainableDevelopmentGoals' => 'SDG text',
+            'conclusion' => 'Conclusion text',
+            'mitigationPlan' => 'Plan text',
+        ]);
+
+        $texts = (new GeminiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
+
+        $this->assertSame('Plan text', $texts->sections['mitigationPlan']);
+    }
+
+    public function testOmitsAnEmptyMitigationPlanSection(): void
+    {
+        $client = new InMemoryGeminiClient();
+        $client->setResponse([
+            'purpose' => 'Purpose text',
+            'regulatoryContext' => 'Context text',
+            'sustainableDevelopmentGoals' => 'SDG text',
+            'conclusion' => 'Conclusion text',
+            'mitigationPlan' => '',
+        ]);
+
+        $texts = (new GeminiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
+
+        $this->assertArrayNotHasKey('mitigationPlan', $texts->sections);
+    }
+
     public function testTranslateSendsTranslatePromptAndMapsResponse(): void
     {
         $client = new InMemoryGeminiClient();

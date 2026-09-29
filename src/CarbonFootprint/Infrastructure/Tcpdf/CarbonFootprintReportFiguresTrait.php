@@ -14,6 +14,8 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonF
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjection;
+use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjectionSource;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Tcpdf\PdfKeyFigure;
@@ -601,5 +603,126 @@ trait CarbonFootprintReportFiguresTrait
         }
 
         return $rows;
+    }
+
+    /** @return list<int|null> */
+    private function mitigationYearColumns(MitigationProjection $projection): array
+    {
+        $years = $projection->years;
+
+        if (count($years) <= 6) {
+            return $years;
+        }
+
+        return [...array_slice($years, 0, 4), null, $years[count($years) - 1]];
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>} */
+    private function mitigationRateRows(MitigationProjection $projection, Locale $locale): array
+    {
+        $columns = $this->mitigationYearColumns($projection);
+        $rows = [];
+
+        foreach ($projection->sources as $projectionSource) {
+            $row = $this->mitigationSourceCells($projectionSource, $locale);
+
+            foreach ($columns as $year) {
+                $row[] = null === $year ? '…' : $this->number(($projectionSource->rateByYear[$year] ?? 0.0) * 100) . ' %';
+            }
+
+            $rows[] = $row;
+        }
+
+        return [$this->mitigationHeader($columns, $locale), $rows, $this->mitigationWidths(count($columns))];
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>} */
+    private function mitigationReductionRows(MitigationProjection $projection, Locale $locale): array
+    {
+        $columns = $this->mitigationYearColumns($projection);
+        $rows = [];
+
+        foreach ($projection->sources as $projectionSource) {
+            $row = $this->mitigationSourceCells($projectionSource, $locale);
+
+            foreach ($columns as $year) {
+                $row[] = null === $year ? '…' : $this->number($projectionSource->reductionByYear[$year] ?? 0.0);
+            }
+
+            $rows[] = $row;
+        }
+
+        return [$this->mitigationHeader($columns, $locale), $rows, $this->mitigationWidths(count($columns))];
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>} */
+    private function mitigationExpectedRows(MitigationProjection $projection, Locale $locale): array
+    {
+        $columns = [$projection->baseYear, ...$this->mitigationYearColumns($projection)];
+        $rows = [];
+
+        foreach ($projection->sources as $projectionSource) {
+            $row = $this->mitigationSourceCells($projectionSource, $locale);
+
+            foreach ($columns as $year) {
+                $row[] = null === $year ? '…' : $this->number($projectionSource->expectedByYear[$year] ?? 0.0);
+            }
+
+            $rows[] = $row;
+        }
+
+        $totalRow = [$this->trans('Total', $locale), '', ''];
+        $interannualRow = [$this->trans('Reducción interanual %', $locale), '', ''];
+
+        foreach ($columns as $index => $year) {
+            $totalRow[] = null === $year ? '…' : $this->number($projection->totalByYear[$year] ?? 0.0);
+            $interannualRow[] = match (true) {
+                null === $year => '…',
+                0 === $index => '-',
+                default => $this->number(($projection->interannualReductionByYear[$year] ?? 0.0) * 100) . ' %',
+            };
+        }
+
+        $rows[] = $totalRow;
+        $rows[] = $interannualRow;
+
+        $header = $this->mitigationHeader($this->mitigationYearColumns($projection), $locale);
+        array_splice($header, 3, 0, [sprintf('%d %s', $projection->baseYear, $this->trans('Año base', $locale))]);
+
+        return [$header, $rows, $this->mitigationWidths(count($columns))];
+    }
+
+    /** @return list<string> */
+    private function mitigationSourceCells(MitigationProjectionSource $projectionSource, Locale $locale): array
+    {
+        return [
+            $this->translator->trans($projectionSource->emissionSource->scope->value, [], 'scope', $locale->value),
+            $this->translator->trans($projectionSource->emissionSource->source->value, [], 'source', $locale->value),
+            $projectionSource->emissionSource->itemName,
+        ];
+    }
+
+    /**
+     * @param list<int|null> $columns
+     *
+     * @return list<string>
+     */
+    private function mitigationHeader(array $columns, Locale $locale): array
+    {
+        $header = [$this->trans('Alcance', $locale), $this->trans('Fuente', $locale), $this->trans('Elemento', $locale)];
+
+        foreach ($columns as $year) {
+            $header[] = null === $year ? '…' : (string) $year;
+        }
+
+        return $header;
+    }
+
+    /** @return list<string> */
+    private function mitigationWidths(int $yearColumns): array
+    {
+        $yearWidth = sprintf('%s%%', number_format(60 / max(1, $yearColumns), 2, '.', ''));
+
+        return ['10%', '14%', '16%', ...array_fill(0, $yearColumns, $yearWidth)];
     }
 }

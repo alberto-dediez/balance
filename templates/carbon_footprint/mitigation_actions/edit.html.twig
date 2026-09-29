@@ -1,0 +1,98 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ stepPath }}" />
+{% endblock %}
+
+{% set page_title = include('@carbon_footprint/mitigation_actions/_breadcrumb.html.twig')
+    ~ ' > '
+    ~ ('Medidas de Reducción y Mitigación' | trans)
+    ~ ' > '
+    ~ ('Editar medida "{action}"' | trans({'{action}': mitigationAction.name})) %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.description) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.targetYear) }}
+                </div>
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Año base' | trans }}">{{ mitigationAction.baseYear }}</twig:View:Field>
+                </div>
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Origen' | trans }}">{{ mitigationAction.isManual ? 'Manual' | trans : mitigationAction.measureId | mitigation_measure_name }}</twig:View:Field>
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card>
+            <h6 class="fw-semibold mb-3">{{ 'Efectos' | trans }}</h6>
+
+            {% if not hasEmissionSources %}
+                <twig:Alert:Alert type="info">{{ 'La huella no tiene emisiones sobre las que aplicar reducciones.' | trans }}</twig:Alert:Alert>
+            {% endif %}
+
+            {% if mitigationAction.isManual %}
+                {% embed 'components/Collection/Table.html.twig' with {
+                    elements: form.effects,
+                    proto: form.effects.vars.prototype,
+                    columns: [
+                        { label: 'Fuente de emisión' | trans },
+                        { label: 'Reducción esperada' | trans },
+                    ],
+                } %}
+                    {% block content %}
+                        <td>{{ form_widget(element.emissionSource) }}{{ form_errors(element.emissionSource) }}</td>
+                        <td>{{ form_widget(element.reduction) }}{{ form_errors(element.reduction) }}{{ form_errors(element) }}</td>
+                    {% endblock %}
+                {% endembed %}
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Fuente de emisión' | trans }}</th>
+                                <th class="text-end">{{ 'Emisiones base (kg CO₂eq)' | trans }}</th>
+                                <th>{{ 'Reducción esperada' | trans }}</th>
+                                <th>{{ 'Rango' | trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for effectForm in form.effects %}
+                                {% set row = effectRows[loop.index0] %}
+                                <tr>
+                                    <td>
+                                        {{ row.source | trans({}, 'source') }} — {{ row.itemName }}
+                                        {% if row.emissions is null %}
+                                            <span class="badge bg-warning text-dark">{{ 'Sin emisiones en esta huella' | trans }}</span>
+                                        {% endif %}
+                                        {{ form_widget(effectForm.emissionSource) }}
+                                    </td>
+                                    <td class="text-end">{{ row.emissions is null ? '—' : row.emissions | number_format(2, ',', '.') }}</td>
+                                    <td>{{ form_widget(effectForm.reduction) }}{{ form_errors(effectForm.reduction) }}{{ form_errors(effectForm) }}</td>
+                                    <td>{{ 'Rango establecido entre {min} % y {max} %' | trans({'{min}': (row.minimumReduction * 100) | number_format(2, ',', '.'), '{max}': (row.maximumReduction * 100) | number_format(2, ',', '.')}) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {{ form_errors(form.effects) }}
+
+            {% do form.effects.setRendered %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

@@ -111,6 +111,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $this->renderIncludedEmissionsSection($pdf, $data, $locale);
         $this->renderScopeSourceSections($pdf, $data, $locale);
         $this->renderOrganizationalResultsSection($pdf, $data, $charts, $locale);
+        $this->renderMitigationPlanSection($pdf, $data, $texts, $charts, $locale);
         $this->renderTextSection($pdf, $this->trans('Conclusión', $locale), $texts->get(CarbonFootprintReportSectionKey::Conclusion));
         $this->renderOrganizationalAnnexSection($pdf, $data, $locale);
     }
@@ -271,6 +272,39 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
             $this->setFont($pdf, 10.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
             $pdf->writeHTML($this->markdownToStyledHtml($texts->get(CarbonFootprintReportSectionKey::Compensation)), true, false, true, false, '');
         }
+    }
+
+    private function renderMitigationPlanSection(\TCPDF $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, CarbonFootprintReportCharts $charts, Locale $locale): void
+    {
+        $mitigationPlan = $data->mitigationPlan;
+
+        if (null === $mitigationPlan) {
+            return;
+        }
+
+        $pdf->AddPage();
+        $this->renderSectionTitle($pdf, $this->trans('Plan de mejora {year}', $locale, ['{year}' => (string) $data->calculationYear]));
+
+        if ($texts->has(CarbonFootprintReportSectionKey::MitigationPlan)) {
+            $this->setFont($pdf, 10.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->markdownToStyledHtml($texts->get(CarbonFootprintReportSectionKey::MitigationPlan)), true, false, true, false, '');
+        }
+
+        $tables = [
+            [$this->trans('Reducción de emisiones esperada por año y fuente en %', $locale), $this->mitigationRateRows($mitigationPlan->projection, $locale)],
+            [$this->trans('Reducción de emisiones esperada por año y fuente en kg CO₂ eq', $locale), $this->mitigationReductionRows($mitigationPlan->projection, $locale)],
+            [$this->trans('Emisiones esperadas por año en kg CO₂ eq', $locale), $this->mitigationExpectedRows($mitigationPlan->projection, $locale)],
+        ];
+
+        foreach ($tables as [$title, [$header, $rows, $widths]]) {
+            $pdf->Ln(4);
+            $this->setFont($pdf, 10.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->markdownToStyledHtml('**' . $title . '**'), true, false, true, false, '');
+            $this->setFont($pdf, 7, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->buildTableHtml($header, $rows, $widths), true, false, true, false, '');
+        }
+
+        $this->embedChart($pdf, $charts->get('mitigationProjection'));
     }
 
     private function renderCompensationAnnexSection(\TCPDF $pdf, EventCarbonFootprintReportData $data, Locale $locale): void

@@ -15,6 +15,7 @@ enum CarbonFootprintReportSectionKey: string
     case RegulatoryContext          = 'regulatoryContext';
     case SustainableDevelopmentGoals = 'sustainableDevelopmentGoals';
     case Conclusion                 = 'conclusion';
+    case MitigationPlan             = 'mitigationPlan';
 
     /** @return list<self> */
     public static function requiredFor(CarbonFootprintReportSubjectType $type): array
@@ -30,7 +31,7 @@ enum CarbonFootprintReportSectionKey: string
     {
         return match ($type) {
             CarbonFootprintReportSubjectType::Event => [self::Compensation],
-            CarbonFootprintReportSubjectType::Property, CarbonFootprintReportSubjectType::Company => [],
+            CarbonFootprintReportSubjectType::Property, CarbonFootprintReportSubjectType::Company => [self::MitigationPlan],
         };
     }
 
@@ -46,6 +47,15 @@ enum CarbonFootprintReportSectionKey: string
             self::RegulatoryContext => 'Contexto normativo',
             self::SustainableDevelopmentGoals => 'Relación con los ODS',
             self::Conclusion => 'Conclusión',
+            self::MitigationPlan => 'Medidas de reducción y mitigación',
+        };
+    }
+
+    public function isOptional(): bool
+    {
+        return match ($this) {
+            self::Compensation, self::MitigationPlan => true,
+            default => false,
         };
     }
 }

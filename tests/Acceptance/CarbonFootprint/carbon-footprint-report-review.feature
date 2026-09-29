@@ -64,6 +64,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        When I submit the mitigation plan step form
         Then property carbon footprint "999" should be completed
         Given property carbon footprint "999" has a report "pending_review" requested by "owner@dediez.software"
         When I am logged as "admin"

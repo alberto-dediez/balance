@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintR
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjection;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Chart\ApexChartClient;
@@ -66,6 +67,10 @@ final class ApexChartCarbonFootprintReportChartsGenerator implements CarbonFootp
 
         if ([] !== $data->emissionsByProperty) {
             $images['byProperty'] = $this->generateByProperty($data, $locale);
+        }
+
+        if (null !== $data->mitigationPlan) {
+            $images['mitigationProjection'] = $this->generateMitigationProjection($data->mitigationPlan->projection);
         }
 
         return new CarbonFootprintReportCharts($images);
@@ -191,6 +196,24 @@ final class ApexChartCarbonFootprintReportChartsGenerator implements CarbonFootp
         foreach (Scope::cases() as $scope) {
             $categories[] = $this->translator->trans($scope->value, [], 'scope', $locale->value);
             $values[] = round((float) ($data->emissionsByScope[$scope->value] ?? new Emissions())->co2eq(), 0);
+        }
+
+        return $this->chartClient->generate([
+            'chart' => ['type' => 'bar', 'animations' => ['enabled' => false], 'height' => 600, 'width' => 800],
+            'series' => [['name' => 'CO2eq', 'data' => $values]],
+            'xaxis' => ['categories' => $categories],
+            'colors' => [self::COLOR_TEAL],
+        ]);
+    }
+
+    private function generateMitigationProjection(MitigationProjection $projection): string
+    {
+        $categories = [];
+        $values = [];
+
+        foreach ([$projection->baseYear, ...$projection->years] as $year) {
+            $categories[] = (string) $year;
+            $values[] = round($projection->totalByYear[$year] ?? 0.0, 0);
         }
 
         return $this->chartClient->generate([

@@ -46,7 +46,7 @@ final class OrganizationalCarbonFootprintStatusTest extends TestCase
     {
         $this->assertSame('scope-1', Status::Started->activeStepKey());
         $this->assertSame('scope-2', Status::Scope1Answered->activeStepKey());
-        $this->assertSame('results', Status::Scope2Answered->activeStepKey());
+        $this->assertSame('mitigation-plan', Status::Scope2Answered->activeStepKey());
         $this->assertSame('results', Status::Completed->activeStepKey());
     }
 
@@ -55,6 +55,6 @@ final class OrganizationalCarbonFootprintStatusTest extends TestCase
         $this->assertSame(1, Status::Started->stepNumber());
         $this->assertSame(2, Status::Scope1Answered->stepNumber());
         $this->assertSame(3, Status::Scope2Answered->stepNumber());
-        $this->assertSame(3, Status::Completed->stepNumber());
+        $this->assertSame(4, Status::Completed->stepNumber());
     }
 }

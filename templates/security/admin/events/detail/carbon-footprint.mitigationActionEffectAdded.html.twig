@@ -1,0 +1,4 @@
+{% trans with {
+    '{action}': event.mitigationActionId,
+    '{user}': element.userId | user_name
+} %}Se ha añadido un efecto a la medida {action} del plan de mitigación por el usuario {user}{% endtrans %}

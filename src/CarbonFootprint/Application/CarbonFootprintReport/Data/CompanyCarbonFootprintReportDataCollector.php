@@ -28,6 +28,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
         private EmissionsBreakdownBuilder $breakdownBuilder,
         private OrganizationalCarbonFootprintReportLinesBuilder $linesBuilder,
         private TranslatorInterface $translator,
+        private MitigationPlanReportBuilder $mitigationPlanBuilder,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -94,6 +95,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
             emissionsByProperty: $emissionsByProperty,
             activityLines: $this->linesBuilder->activityLines($companyCarbonFootprint, $propertyNamesById),
             exclusionLines: $this->linesBuilder->exclusionLines($companyCarbonFootprint),
+            mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Company, $companyCarbonFootprint, $report->baseLocale()),
         );
     }
 }

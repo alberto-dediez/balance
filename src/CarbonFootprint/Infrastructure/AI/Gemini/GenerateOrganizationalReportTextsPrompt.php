@@ -78,12 +78,40 @@ final class GenerateOrganizationalReportTextsPrompt implements GeminiPrompt
             }
         }
 
+        $mitigationPlan = $this->data->mitigationPlan;
+
+        if (null !== $mitigationPlan) {
+            $lines[] = '';
+            $lines[] = 'Mitigation plan (reduction and mitigation measures the organization commits to):';
+            foreach ($mitigationPlan->actions as $action) {
+                $lines[] = sprintf('- Measure: %s | base year %d | target year %d', $action->name, $action->baseYear, $action->targetYear);
+
+                if ('' !== trim($action->description)) {
+                    $lines[] = sprintf('  Description: %s', str_replace("\n", ' ', trim($action->description)));
+                }
+
+                foreach ($action->effects as $effect) {
+                    $lines[] = sprintf('  Effect: %s | %s | %s | %s %% expected reduction at the target year', $effect['scope']->value, $effect['source']->value, $effect['itemName'], number_format($effect['reduction'] * 100, 2, '.', ''));
+                }
+            }
+
+            $lines[] = '';
+            $lines[] = 'Expected total emissions by year (kg CO2eq):';
+            foreach ($mitigationPlan->projection->totalByYear as $year => $total) {
+                $lines[] = sprintf('- %d: %s', $year, number_format($total, 2, '.', ''));
+            }
+        }
+
         $lines[] = '';
-        $lines[] = 'Write four sections:';
+        $lines[] = null !== $mitigationPlan ? 'Write five sections:' : 'Write four sections:';
         $lines[] = '1. purpose: the purpose of the report, presenting the carbon footprint as an environmental indicator of the activity and as the first step to reduce emissions, with a reference to the carbon footprint registry of the Spanish Ministry for the Ecological Transition (MITECO).';
         $lines[] = '2. regulatoryContext: the regulatory context: the GHG Protocol and its five principles (completeness, consistency, transparency, relevance and accuracy), the scope 1 and scope 2 boundaries, ISO 14064-1 as a reference and the MITECO carbon footprint registry; describe the limits of the calculation including the excluded sources.';
         $lines[] = '3. sustainableDevelopmentGoals: the relation of the footprint with the Sustainable Development Goals 13 (climate action), 7 (affordable and clean energy) and 12 (responsible consumption and production), applied to the activity of the subject.';
         $lines[] = '4. conclusion: the main results with the figures supplied above, the most relevant sources and concrete reduction lines, without relying on excluded sources.';
+
+        if (null !== $mitigationPlan) {
+            $lines[] = '5. mitigationPlan: present the improvement plan and its goal; list ALL the measures of the mitigation plan in a bullet list, each one with its exact name as supplied, its target year and the sources it reduces; explain that the projection assumes the activity level remains every year at the level of the calculated year and that the reductions come from an improvement in efficiency; do not invent figures nor measures.';
+        }
 
         if ([] !== $this->data->exclusionLines) {
             $lines[] = '';
@@ -97,7 +125,9 @@ final class GenerateOrganizationalReportTextsPrompt implements GeminiPrompt
         $lines[] = 'Format each section in Markdown using paragraphs, bold text and bullet lists (and ### subheadings where helpful); do not use tables, code blocks or links.';
         $lines[] = '';
         $lines[] = 'Respond strictly as a JSON object with this exact shape:';
-        $lines[] = '{"purpose": "string", "regulatoryContext": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string"}';
+        $lines[] = null !== $mitigationPlan
+            ? '{"purpose": "string", "regulatoryContext": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string", "mitigationPlan": "string"}'
+            : '{"purpose": "string", "regulatoryContext": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string"}';
 
         return implode("\n", $lines);
     }
@@ -128,14 +158,20 @@ final class GenerateOrganizationalReportTextsPrompt implements GeminiPrompt
 
     public function responseSchema(): array
     {
+        $properties = [
+            'purpose' => ['type' => 'STRING'],
+            'regulatoryContext' => ['type' => 'STRING'],
+            'sustainableDevelopmentGoals' => ['type' => 'STRING'],
+            'conclusion' => ['type' => 'STRING'],
+        ];
+
+        if (null !== $this->data->mitigationPlan) {
+            $properties['mitigationPlan'] = ['type' => 'STRING'];
+        }
+
         return [
             'type' => 'OBJECT',
-            'properties' => [
-                'purpose' => ['type' => 'STRING'],
-                'regulatoryContext' => ['type' => 'STRING'],
-                'sustainableDevelopmentGoals' => ['type' => 'STRING'],
-                'conclusion' => ['type' => 'STRING'],
-            ],
+            'properties' => $properties,
             'required' => ['purpose', 'regulatoryContext', 'sustainableDevelopmentGoals', 'conclusion'],
         ];
     }

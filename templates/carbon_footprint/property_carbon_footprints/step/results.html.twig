@@ -1,6 +1,6 @@
 {% extends '@carbon_footprint/property_carbon_footprints/wizard-layout.html.twig' %}
 
-{% set wizard_selected = 3 %}
+{% set wizard_selected = 4 %}
 
 {% block wizard_panels %}
     <div class="row">
@@ -119,7 +119,7 @@
             </twig:Card>
 
             <div class="d-flex justify-content-start mt-3">
-                <a href="{{ path('property_carbon_footprints_scope_2', {propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" class="btn btn-outline-primary">
+                <a href="{{ path('property_carbon_footprints_mitigation_plan', {propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" class="btn btn-outline-primary">
                     &larr; {{ 'Anterior' | trans }}
                 </a>
             </div>

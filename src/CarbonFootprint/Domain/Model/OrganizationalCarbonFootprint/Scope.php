@@ -34,6 +34,19 @@ enum Scope: string implements CalculationStage
         };
     }
 
+    public static function ofSource(Source $source): ?self
+    {
+        foreach (self::cases() as $scope) {
+            foreach ($scope->sections() as $section) {
+                if ($section->source === $source) {
+                    return $scope;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function stepNumber(): int
     {
         return match ($this) {

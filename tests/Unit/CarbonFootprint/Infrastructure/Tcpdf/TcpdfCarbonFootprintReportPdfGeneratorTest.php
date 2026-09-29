@@ -6,6 +6,7 @@ namespace App\Tests\Unit\CarbonFootprint\Infrastructure\Tcpdf;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
 use App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator;
@@ -30,6 +31,10 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             yield $theme . ' event en' => [$theme, 'event', Locale::English];
             yield $theme . ' property es' => [$theme, 'property', Locale::Spanish];
             yield $theme . ' company es' => [$theme, 'company', Locale::Spanish];
+            yield $theme . ' property mitigation es' => [$theme, 'property-mitigation', Locale::Spanish];
+            yield $theme . ' property mitigation en' => [$theme, 'property-mitigation', Locale::English];
+            yield $theme . ' company mitigation es' => [$theme, 'company-mitigation', Locale::Spanish];
+            yield $theme . ' property long mitigation es' => [$theme, 'property-long-mitigation', Locale::Spanish];
         }
     }
 
@@ -61,6 +66,9 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         return match ($type) {
             'event' => [EventCarbonFootprintReportDataMother::withCompensation(), CarbonFootprintReportTextsMother::forEvent()],
             'property' => [OrganizationalCarbonFootprintReportDataMother::forProperty(), CarbonFootprintReportTextsMother::forOrganization()],
+            'property-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
+            'company-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(CarbonFootprintReportSubjectType::Company), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
+            'property-long-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(targetYear: 2035), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             default => [OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), CarbonFootprintReportTextsMother::forOrganization()],
         };
     }

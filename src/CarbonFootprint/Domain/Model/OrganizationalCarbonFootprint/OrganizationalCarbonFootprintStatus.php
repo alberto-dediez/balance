@@ -37,7 +37,8 @@ enum OrganizationalCarbonFootprintStatus: string
         return match ($this) {
             self::Started        => 1,
             self::Scope1Answered => 2,
-            self::Scope2Answered, self::Completed => 3,
+            self::Scope2Answered => 3,
+            self::Completed      => 4,
         };
     }
 
@@ -46,7 +47,8 @@ enum OrganizationalCarbonFootprintStatus: string
         return match ($this) {
             self::Started        => 'scope-1',
             self::Scope1Answered => 'scope-2',
-            self::Scope2Answered, self::Completed => 'results',
+            self::Scope2Answered => 'mitigation-plan',
+            self::Completed      => 'results',
         };
     }
 

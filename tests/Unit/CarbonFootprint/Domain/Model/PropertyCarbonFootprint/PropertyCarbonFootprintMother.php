@@ -76,4 +76,14 @@ class PropertyCarbonFootprintMother
 
         return $propertyCarbonFootprint;
     }
+
+    public static function withMitigationPlanStarted(
+        string $propertyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): PropertyCarbonFootprint {
+        return self::withScope2Answered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
+    }
 }

@@ -297,6 +297,24 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Medidas de mitigación'),
+            icon: 'solar:leaf-line-duotone',
+            target: '#medidas-de-mitigacion',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Medidas'),
+                    icon: 'solar:checklist-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_mitigation_measures'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Categorías de medidas'),
+                    icon: 'solar:folder-line-duotone',
+                    target: $this->router->generate('admin_mitigation_measure_categories'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Transporte'),
             icon: 'solar:bus-line-duotone',
             target: '#transporte',

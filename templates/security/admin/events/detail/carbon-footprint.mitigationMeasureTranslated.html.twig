@@ -1,0 +1,4 @@
+{% trans with {
+    '{name}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha traducido la medida sugerida "{name}" por el usuario {user}{% endtrans %}

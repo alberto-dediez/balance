@@ -1,0 +1,128 @@
+{% if report is not null and report.status.isRejected %}
+    <twig:CarbonFootprint:ReportStatus :report="report" :canEdit="carbonFootprint | is_authorized('edit')" />
+{% endif %}
+
+<twig:Card title="{{ 'Medidas de Reducción y Mitigación' | trans }}">
+    {% if actions is empty %}
+        <p class="mb-0">{{ 'No hay medidas en el plan' | trans }}</p>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>{{ 'Medida a realizar' | trans }}</th>
+                        <th>{{ 'Origen' | trans }}</th>
+                        <th>{{ 'Año base' | trans }}</th>
+                        <th>{{ 'Año objetivo' | trans }}</th>
+                        <th>{{ 'Efectos' | trans }}</th>
+                        <th class="text-end">{{ 'Reducción esperada (kg CO₂eq)' | trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in actions %}
+                        <tr>
+                            <td>
+                                {{ row.action.name }}
+                                {% if row.action.description is not empty %}
+                                    <div class="text-muted">{{ row.action.description | md_to_html }}</div>
+                                {% endif %}
+                            </td>
+                            <td>{{ row.action.isManual ? 'Manual' | trans : row.action.measureId | mitigation_measure_name }}</td>
+                            <td>{{ row.action.baseYear }}</td>
+                            <td>{{ row.action.targetYear }}</td>
+                            <td>
+                                {% for effect in row.effects %}
+                                    <div>
+                                        {{ effect.source | trans({}, 'source') }} — {{ effect.itemName }}: {{ (effect.reduction * 100) | number_format(2, ',', '.') }} %
+                                        {% if effect.withoutEmissions %}
+                                            <span class="badge bg-warning text-dark">{{ 'Sin emisiones en esta huella' | trans }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </td>
+                            <td class="text-end">{{ row.expectedReduction | number_format(2, ',', '.') }}</td>
+                            <td>
+                                {% if not readOnly %}
+                                    <twig:List:Action:Edit path="{{ path('mitigation_actions_edit', {mitigationActionId: row.action.id}) }}" />
+                                    <twig:List:Action:Delete
+                                        path="{{ path('mitigation_actions_remove', {mitigationActionId: row.action.id}) }}"
+                                        confirmText="{{ '¿Está seguro de que desea eliminar esta medida?' | trans }}"
+                                    />
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</twig:Card>
+
+{% if projection is not null %}
+    <twig:Card title="{{ 'Emisiones esperadas por año en kg CO₂ eq' | trans }}">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>{{ 'Alcance' | trans }}</th>
+                        <th>{{ 'Fuente' | trans }}</th>
+                        <th>{{ 'Elemento' | trans }}</th>
+                        <th class="text-end">{{ projection.baseYear }} {{ 'Año base' | trans }}</th>
+                        {% for year in projection.years %}
+                            <th class="text-end">{{ year }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in projection.rows %}
+                        <tr>
+                            <td>{{ row.scope | trans({}, 'scope') }}</td>
+                            <td>{{ row.source | trans({}, 'source') }}</td>
+                            <td>{{ row.itemName }}</td>
+                            {% for value in row.values %}
+                                <td class="text-end">{{ value | number_format(2, ',', '.') }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    <tr class="fw-bold">
+                        <td colspan="3">{{ 'Total' | trans }}</td>
+                        {% for value in projection.totals %}
+                            <td class="text-end">{{ value | number_format(2, ',', '.') }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr class="fw-bold">
+                        <td colspan="3">{{ 'Reducción interanual %' | trans }}</td>
+                        {% for value in projection.interannual %}
+                            <td class="text-end">{{ value is null ? '—' : (value * 100) | number_format(2, ',', '.') }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <twig:Chart:Bar
+            title="{{ 'Emisiones esperadas' | trans }}"
+            :values="chart.values"
+            :categories="chart.categories"
+            :colors="['var(--bs-primary)']"
+            unit="kg"
+            :decimals="0"
+        />
+    </twig:Card>
+{% endif %}
+
+<form method="post">
+    <input type="hidden" name="_token" value="{{ csrf_token('mitigation_plan_' ~ carbonFootprint.id) }}">
+
+    <div class="d-flex justify-content-between mt-3">
+        <a href="{{ previousPath }}" class="btn btn-outline-primary">
+            &larr; {{ 'Anterior' | trans }}
+        </a>
+        {% if not readOnly %}
+            <button type="submit" class="btn btn-primary">
+                {{ 'Siguiente' | trans }} &rarr;
+            </button>
+        {% endif %}
+    </div>
+</form>

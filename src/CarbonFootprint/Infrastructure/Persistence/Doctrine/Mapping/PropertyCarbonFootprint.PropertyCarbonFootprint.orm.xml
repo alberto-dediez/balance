@@ -23,6 +23,11 @@
         <embedded name="totalEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="total_emissions_" />
 
         <field name="status" type="string" enum-type="App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus" nullable="false" />
+        <field name="mitigationPlanStarted" type="boolean" column="mitigation_plan_started" nullable="false">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
 
         <field name="removed" type="boolean" nullable="false" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
