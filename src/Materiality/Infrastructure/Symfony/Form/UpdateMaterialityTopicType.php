@@ -7,11 +7,11 @@ namespace App\Materiality\Infrastructure\Symfony\Form;
 use App\Materiality\Application\MaterialityTopic\Update\UpdateMaterialityTopicRequest;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityScopeType;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityTopicDirectionType;
+use App\Shared\Infrastructure\Symfony\Form\Type\MarkdownEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -42,10 +42,12 @@ class UpdateMaterialityTopicType extends AbstractType
                     new Assert\Length(max: 255),
                 ],
             ])
-            ->add('description', TextareaType::class, [
+            ->add('description', MarkdownEditorType::class, [
                 'label' => new TranslatableMessage('Descripción'),
                 'required' => false,
                 'empty_data' => '',
+                'height' => '220px',
+                'hide_link' => false,
             ])
             ->add('position', IntegerType::class, [
                 'label' => new TranslatableMessage('Posición'),

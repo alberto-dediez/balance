@@ -7,6 +7,7 @@ Feature:
         When I go to "/es/admin/materiality-questions/register"
         Then the response status should be 200
         Then I see a form
+        Then I see a form field "help"
 
     Scenario: As normal user I can't register new materiality questions
         Given user "user1@dediez.software" with role "ROLE_USER" exists
@@ -67,3 +68,19 @@ Feature:
         When I go to "/es/admin/materiality-questions"
         Then I see a text "¿Pregunta genérica?"
         Then I see a text "Todos los sectores"
+
+    Scenario: As an admin, I can register a materiality question with a formatted help
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-questions/register"
+        When I submit a form with "criterion:risk|topicId:|text:¿Pregunta con ayuda?|help:**Alto** significa mayor relevancia|answerScale:level|weight:1|position:1" and button "Registrar"
+        Then I am redirected to route "admin_materiality_questions"
+        Then materiality question with text "¿Pregunta con ayuda?" should have help "**Alto** significa mayor relevancia"
+
+    Scenario: A materiality question registered without help keeps an empty help
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-questions/register"
+        When I submit a form with "criterion:risk|topicId:|text:¿Pregunta sin ayuda?|answerScale:level|weight:1|position:1" and button "Registrar"
+        Then I am redirected to route "admin_materiality_questions"
+        Then materiality question with text "¿Pregunta sin ayuda?" should have help ""

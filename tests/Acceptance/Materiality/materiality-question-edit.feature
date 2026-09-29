@@ -59,3 +59,34 @@ Feature:
         Then the response status should be 200
         Then I see a text "Pregunta de materialidad actualizada con éxito"
         Then materiality question "q1" should have sectors "222"
+
+    Scenario: As an admin, I can edit the help of a materiality question
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality question "¿Pregunta?" with id "q1" for criterion "magnitude" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-questions/edit/q1"
+        When I submit a form with "help:**Bajo** significa marginal" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then materiality question "q1" should have help "**Bajo** significa marginal" in locale "es"
+
+    Scenario: Editing a materiality question without touching the help keeps it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality question "¿Pregunta?" with id "q1" for criterion "magnitude" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-questions/edit/q1"
+        When I submit a form with "text:¿Pregunta cambiada?" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then materiality question "q1" should have help "¿Pregunta? help" in locale "es"
+
+    Scenario: Editing the help in english keeps the spanish help
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality question "¿Pregunta?" with id "q1" for criterion "magnitude" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/en/admin/materiality-questions/edit/q1"
+        When I submit a form with "text:Question?|help:**High** means more relevance" and button "Save"
+        When I follow redirect
+        Then the response status should be 200
+        Then materiality question "q1" should have help "**High** means more relevance" in locale "en"
+        Then materiality question "q1" should have help "¿Pregunta? help" in locale "es"

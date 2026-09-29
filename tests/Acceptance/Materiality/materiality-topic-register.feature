@@ -7,6 +7,7 @@ Feature:
         When I go to "/es/admin/materiality-topics/register"
         Then the response status should be 200
         Then I see a form
+        Then I see a form field "description"
 
     Scenario: As normal user I can't register new materiality topics
         Given user "user1@dediez.software" with role "ROLE_USER" exists
@@ -39,3 +40,11 @@ Feature:
         When I submit a form with "number:6|name:Viajes|scope:scope_3|direction:upstream|position:6" and button "Registrar"
         Then the response status should be 200
         Then I see a text "Ya existe una categoría con ese número"
+
+    Scenario: As an admin, I can register a materiality topic with a formatted description
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-topics/register"
+        When I submit a form with "name:Lavandería externa|description:**Incluye** transporte subcontratado|scope:scope_3|direction:upstream|position:20" and button "Registrar"
+        Then I am redirected to route "admin_materiality_topics"
+        Then materiality topic with name "Lavandería externa" should have description "**Incluye** transporte subcontratado"

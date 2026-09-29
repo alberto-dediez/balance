@@ -187,6 +187,25 @@ class RegisterMaterialityQuestionServiceTest extends TestCase
         $this->assertSame(Locale::English, $lastEvent->locale());
     }
 
+    public function testRegisterKeepsMarkdownHelpVerbatim(): void
+    {
+        $help = "**Alto** significa que la categoría es previsiblemente una de las mayores fuentes de emisiones de la organización.\n\n"
+            . "- **Medio**: relevante, pero no entre las principales.\n"
+            . "- **Bajo**: marginal frente al resto de categorías.\n\n"
+            . 'Consulta la [guía del GHG Protocol](https://ghgprotocol.org/scope-3-calculation-guidance) para estimar la magnitud.';
+
+        $result = $this->createSUT(Locale::Spanish)(
+            new RegisterMaterialityQuestionRequest(text: '¿Pregunta?', help: $help),
+            UserMother::adminUser(),
+        );
+
+        $persisted = $this->repository->find($result->materialityQuestionId);
+
+        $this->assertGreaterThan(255, mb_strlen($help));
+        $this->assertNotNull($persisted);
+        $this->assertSame($help, $persisted->defaultHelp());
+    }
+
     public function testIsHandled(): void
     {
         $sut = $this->createSUT(Locale::Spanish);

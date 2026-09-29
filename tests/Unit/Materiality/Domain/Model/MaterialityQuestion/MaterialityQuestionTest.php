@@ -127,11 +127,14 @@ class MaterialityQuestionTest extends TestCase
             $this->assertNotEmpty($case->text(Locale::English));
             $this->assertNotEmpty($case->help(Locale::Spanish));
             $this->assertNotEmpty($case->help(Locale::English));
+            $this->assertStringContainsString('**', (string) $case->help(Locale::Spanish));
+            $this->assertStringContainsString('**', (string) $case->help(Locale::English));
             $this->assertNull($case->text(Locale::French));
             $this->assertGreaterThanOrEqual(1, $case->weight());
         }
 
         $this->assertSame(MaterialityAnswerScale::YesNo, StandardMaterialityQuestion::Outsourcing->answerScale());
         $this->assertSame(2, StandardMaterialityQuestion::Magnitude->weight());
+        $this->assertSame("- **Alto**: previsiblemente una de las mayores fuentes.\n- **Bajo**: marginal frente al resto.", StandardMaterialityQuestion::Magnitude->help(Locale::Spanish));
     }
 }

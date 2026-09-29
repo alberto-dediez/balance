@@ -60,7 +60,11 @@ final class Version20260918170000 extends AbstractMigration
             ALTER TABLE carbon_footprint_report_translation
               CHANGE event_carbon_footprint_report_id carbon_footprint_report_id VARCHAR(36) NOT NULL COMMENT '(DC2Type:carbon_footprint_report_id)'
             SQL);
-        $this->addSql('ALTER TABLE carbon_footprint_report_translation RENAME INDEX IDX_37BC76D6A465209A TO IDX_CARBON_FOOTPRINT_REPORT_TRANSLATION_REPORT');
+        $this->addSql(<<<'SQL'
+            ALTER TABLE carbon_footprint_report_translation
+              DROP INDEX IDX_37BC76D6A465209A,
+              ADD INDEX IDX_CARBON_FOOTPRINT_REPORT_TRANSLATION_REPORT (carbon_footprint_report_id)
+            SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE carbon_footprint_report_translation
               ADD CONSTRAINT FK_CARBON_FOOTPRINT_REPORT_TRANSLATION_REPORT FOREIGN KEY (carbon_footprint_report_id)
@@ -94,7 +98,11 @@ final class Version20260918170000 extends AbstractMigration
         $this->addSql("UPDATE carbon_footprint_reports SET status = 'failed' WHERE status = 'rejected'");
 
         $this->addSql('ALTER TABLE carbon_footprint_report_translation DROP FOREIGN KEY FK_CARBON_FOOTPRINT_REPORT_TRANSLATION_REPORT');
-        $this->addSql('ALTER TABLE carbon_footprint_report_translation RENAME INDEX IDX_CARBON_FOOTPRINT_REPORT_TRANSLATION_REPORT TO IDX_37BC76D6A465209A');
+        $this->addSql(<<<'SQL'
+            ALTER TABLE carbon_footprint_report_translation
+              DROP INDEX IDX_CARBON_FOOTPRINT_REPORT_TRANSLATION_REPORT,
+              ADD INDEX IDX_37BC76D6A465209A (carbon_footprint_report_id)
+            SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE carbon_footprint_report_translation
               CHANGE carbon_footprint_report_id event_carbon_footprint_report_id VARCHAR(36) NOT NULL COMMENT '(DC2Type:event_carbon_footprint_report_id)'

@@ -10,6 +10,7 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionFilter;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslation;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySector;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorFilter;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
@@ -175,6 +176,30 @@ final class MaterialityContext implements Context
         Assert::assertSame($name, $translation->name());
     }
 
+    #[Then('materiality topic :id should have description :description in locale :locale')]
+    public function materialityTopicShouldHaveDescriptionInLocale(string $id, string $description, string $locale): void
+    {
+        $materialityTopic = $this->topic($id);
+        $expectedLocale = Locale::from($locale);
+
+        if (LocaleGetter::default() === $expectedLocale) {
+            Assert::assertSame($description, $materialityTopic->defaultDescription());
+
+            return;
+        }
+
+        $translation = $materialityTopic->translations()->getTranslationFor($expectedLocale);
+
+        Assert::assertInstanceOf(MaterialityTopicTranslation::class, $translation);
+        Assert::assertSame($description, $translation->description());
+    }
+
+    #[Then('materiality topic with name :name should have description :description')]
+    public function materialityTopicWithNameShouldHaveDescription(string $name, string $description): void
+    {
+        Assert::assertSame($description, $this->topicByName($name)->defaultDescription());
+    }
+
     #[Then('materiality sector :id should be removed')]
     public function materialitySectorShouldBeRemoved(string $id): void
     {
@@ -209,6 +234,30 @@ final class MaterialityContext implements Context
     public function materialityQuestionShouldBeRemoved(string $id): void
     {
         Assert::assertTrue($this->question($id)->isRemoved());
+    }
+
+    #[Then('materiality question :id should have help :help in locale :locale')]
+    public function materialityQuestionShouldHaveHelpInLocale(string $id, string $help, string $locale): void
+    {
+        $materialityQuestion = $this->question($id);
+        $expectedLocale = Locale::from($locale);
+
+        if (LocaleGetter::default() === $expectedLocale) {
+            Assert::assertSame($help, $materialityQuestion->defaultHelp());
+
+            return;
+        }
+
+        $translation = $materialityQuestion->translations()->getTranslationFor($expectedLocale);
+
+        Assert::assertInstanceOf(MaterialityQuestionTranslation::class, $translation);
+        Assert::assertSame($help, $translation->help());
+    }
+
+    #[Then('materiality question with text :text should have help :help')]
+    public function materialityQuestionWithTextShouldHaveHelp(string $text, string $help): void
+    {
+        Assert::assertSame($help, $this->questionByText($text)->defaultHelp());
     }
 
     #[Then('materiality question :id should have topic :topicId')]
@@ -261,6 +310,17 @@ final class MaterialityContext implements Context
         throw new \RuntimeException(sprintf('Materiality topic "%s" not found', $id));
     }
 
+    private function topicByName(string $name): MaterialityTopic
+    {
+        foreach ($this->getTopicRepository()->findByFilter(new MaterialityTopicFilter(includeRemoved: true, limit: 0)) as $materialityTopic) {
+            if ($materialityTopic->defaultName() === $name) {
+                return $materialityTopic;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Materiality topic with name "%s" not found', $name));
+    }
+
     private function sector(string $id, bool $includeRemoved = false): MaterialitySector
     {
         foreach ($this->getSectorRepository()->findByFilter(new MaterialitySectorFilter(includeRemoved: $includeRemoved, limit: 0)) as $materialitySector) {
@@ -281,5 +341,16 @@ final class MaterialityContext implements Context
         }
 
         throw new \RuntimeException(sprintf('Materiality question "%s" not found', $id));
+    }
+
+    private function questionByText(string $text): MaterialityQuestion
+    {
+        foreach ($this->getQuestionRepository()->findByFilter(new MaterialityQuestionFilter(includeRemoved: true, limit: 0)) as $materialityQuestion) {
+            if ($materialityQuestion->defaultText() === $text) {
+                return $materialityQuestion;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Materiality question with text "%s" not found', $text));
     }
 }

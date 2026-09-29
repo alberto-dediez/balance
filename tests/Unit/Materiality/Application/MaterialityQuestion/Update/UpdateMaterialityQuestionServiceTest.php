@@ -13,6 +13,7 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionNotFoundException;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionSectorUnlinked;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslated;
+use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslation;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionUpdated;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorNotFoundException;
@@ -171,6 +172,26 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
         $this->assertInstanceOf(MaterialityQuestionTranslated::class, $this->spySubscriber->lastEvent());
     }
 
+    public function testUpdateInNonDefaultLocaleKeepsBaseMarkdownHelp(): void
+    {
+        $materialityQuestion = MaterialityQuestionMother::fromText('Texto base');
+        $this->repository->add($materialityQuestion);
+
+        $this->createSUT(Locale::English)(
+            $this->request($materialityQuestion->id(), 'English text', help: "- **High**: largest sources.\n- **Low**: marginal."),
+            UserMother::adminUser(),
+        );
+
+        $this->assertSame('Texto base help', $materialityQuestion->defaultHelp());
+
+        $translation = $materialityQuestion->translations()->getTranslationFor(Locale::English);
+
+        $this->assertInstanceOf(MaterialityQuestionTranslation::class, $translation);
+        $this->assertSame("- **High**: largest sources.\n- **Low**: marginal.", $translation->help());
+
+        FakeLocaleSetter::reset();
+    }
+
     public function testIsHandled(): void
     {
         $sut = $this->createSUT(Locale::Spanish);
@@ -179,14 +200,14 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
     }
 
     /** @param list<MaterialitySectorId> $sectorIds */
-    private function request(MaterialityQuestionId $id, string $text, ?MaterialityTopicId $topicId = null, array $sectorIds = []): UpdateMaterialityQuestionRequest
+    private function request(MaterialityQuestionId $id, string $text, ?MaterialityTopicId $topicId = null, array $sectorIds = [], string $help = 'help'): UpdateMaterialityQuestionRequest
     {
         return new UpdateMaterialityQuestionRequest(
             materialityQuestionId: $id,
             criterion: MaterialityCriterion::Outsourcing,
             topicId: $topicId,
             text: $text,
-            help: 'help',
+            help: $help,
             answerScale: MaterialityAnswerScale::YesNo,
             weight: 3,
             position: 2,

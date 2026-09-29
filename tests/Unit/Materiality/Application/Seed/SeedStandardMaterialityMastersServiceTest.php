@@ -12,7 +12,10 @@ use App\Materiality\Application\MaterialityTopic\Register\RegisterMaterialityTop
 use App\Materiality\Application\MaterialityTopic\Translate\TranslateMaterialityTopicService;
 use App\Materiality\Application\Seed\SeedStandardMaterialityMastersRequest;
 use App\Materiality\Application\Seed\SeedStandardMaterialityMastersService;
+use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionFilter;
+use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslation;
+use App\Materiality\Domain\Model\MaterialityQuestion\StandardMaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicFilter;
 use App\Materiality\Domain\Model\MaterialityTopic\StandardScope3Category;
@@ -84,6 +87,24 @@ class SeedStandardMaterialityMastersServiceTest extends TestCase
         FakeLocaleSetter::set(Locale::English);
 
         $this->assertSame('Business travel', $businessTravel->name());
+    }
+
+    public function testSeededQuestionsKeepMarkdownHelp(): void
+    {
+        $response = $this->createSUT('es|en')(new SeedStandardMaterialityMastersRequest(), UserMother::adminUser());
+
+        $magnitudeQuestions = array_values(array_filter(
+            $response->registeredQuestions,
+            static fn($question) => MaterialityCriterion::Magnitude === $question->criterion(),
+        ));
+
+        $this->assertCount(1, $magnitudeQuestions);
+        $this->assertSame(StandardMaterialityQuestion::Magnitude->help(Locale::Spanish), $magnitudeQuestions[0]->defaultHelp());
+
+        $translation = $magnitudeQuestions[0]->translations()->getTranslationFor(Locale::English);
+
+        $this->assertInstanceOf(MaterialityQuestionTranslation::class, $translation);
+        $this->assertSame(StandardMaterialityQuestion::Magnitude->help(Locale::English), $translation->help());
     }
 
     public function testDoesNotTranslateToLocalesWithoutText(): void

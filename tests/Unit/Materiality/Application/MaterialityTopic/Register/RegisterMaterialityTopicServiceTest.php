@@ -117,6 +117,26 @@ class RegisterMaterialityTopicServiceTest extends TestCase
         $this->assertSame(Locale::English, $lastEvent->locale());
     }
 
+    public function testRegisterKeepsMarkdownDescriptionVerbatim(): void
+    {
+        $repository = MaterialityTopicRepositoryMother::inMemory();
+        $description = "**Incluye** el transporte subcontratado de mercancías y el lavado externo de la ropa de cama y mantelería.\n\n"
+            . "- **Transporte**: camiones y furgonetas de terceros.\n"
+            . "- **Lavandería**: servicios de lavado industrial.\n\n"
+            . 'Más información en la [guía del GHG Protocol](https://ghgprotocol.org/scope-3-calculation-guidance).';
+
+        $result = $this->createSUT($repository, Locale::Spanish)(
+            new RegisterMaterialityTopicRequest(direction: MaterialityTopicDirection::Upstream, name: 'Lavandería externa', description: $description),
+            UserMother::adminUser(),
+        );
+
+        $persisted = $repository->find($result->materialityTopicId);
+
+        $this->assertGreaterThan(255, mb_strlen($description));
+        $this->assertNotNull($persisted);
+        $this->assertSame($description, $persisted->defaultDescription());
+    }
+
     public function testIsHandled(): void
     {
         $sut = $this->createSUT(MaterialityTopicRepositoryMother::inMemory(), Locale::Spanish);

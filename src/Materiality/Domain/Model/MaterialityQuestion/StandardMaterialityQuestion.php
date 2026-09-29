@@ -69,18 +69,18 @@ enum StandardMaterialityQuestion: string
     {
         return match ($locale) {
             Locale::Spanish => match ($this) {
-                self::Magnitude => 'Alto: previsiblemente una de las mayores fuentes; Bajo: marginal frente al resto.',
-                self::Influence => 'Alto: decisiones propias (compras, contratos, políticas) cambian las emisiones; Bajo: sin palanca real.',
-                self::Risk => 'Alto: riesgos identificados o previsibles a corto plazo; Bajo: sin riesgos relevantes.',
-                self::StakeholderInterest => 'Alto: peticiones o requisitos explícitos; Bajo: ningún interés manifestado.',
-                self::Outsourcing => 'Sí: la externalización desplaza emisiones de los alcances 1 y 2 al alcance 3 y la categoría gana relevancia.',
+                self::Magnitude => "- **Alto**: previsiblemente una de las mayores fuentes.\n- **Bajo**: marginal frente al resto.",
+                self::Influence => "- **Alto**: decisiones propias (compras, contratos, políticas) cambian las emisiones.\n- **Bajo**: sin palanca real.",
+                self::Risk => "- **Alto**: riesgos identificados o previsibles a corto plazo.\n- **Bajo**: sin riesgos relevantes.",
+                self::StakeholderInterest => "- **Alto**: peticiones o requisitos explícitos.\n- **Bajo**: ningún interés manifestado.",
+                self::Outsourcing => '**Sí**: la externalización desplaza emisiones de los alcances 1 y 2 al alcance 3 y la categoría gana relevancia.',
             },
             Locale::English => match ($this) {
-                self::Magnitude => 'High: foreseeably one of the largest sources; Low: marginal compared with the rest.',
-                self::Influence => 'High: the organisation\'s own decisions (purchasing, contracts, policies) change the emissions; Low: no real leverage.',
-                self::Risk => 'High: risks identified or foreseeable in the short term; Low: no relevant risks.',
-                self::StakeholderInterest => 'High: explicit requests or requirements; Low: no interest expressed.',
-                self::Outsourcing => 'Yes: outsourcing shifts emissions from scopes 1 and 2 to scope 3 and the category becomes more relevant.',
+                self::Magnitude => "- **High**: foreseeably one of the largest sources.\n- **Low**: marginal compared with the rest.",
+                self::Influence => "- **High**: the organisation's own decisions (purchasing, contracts, policies) change the emissions.\n- **Low**: no real leverage.",
+                self::Risk => "- **High**: risks identified or foreseeable in the short term.\n- **Low**: no relevant risks.",
+                self::StakeholderInterest => "- **High**: explicit requests or requirements.\n- **Low**: no interest expressed.",
+                self::Outsourcing => '**Yes**: outsourcing shifts emissions from scopes 1 and 2 to scope 3 and the category becomes more relevant.',
             },
             default => null,
         };

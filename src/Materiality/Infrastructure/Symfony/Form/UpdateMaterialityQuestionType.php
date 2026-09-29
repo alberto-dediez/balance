@@ -9,6 +9,7 @@ use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityAnswerScaleType;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityCriterionType;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialitySectorChoiceType;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityTopicChoiceType;
+use App\Shared\Infrastructure\Symfony\Form\Type\MarkdownEditorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -47,10 +48,12 @@ class UpdateMaterialityQuestionType extends AbstractType
                 'required' => true,
                 'constraints' => [new Assert\NotBlank()],
             ])
-            ->add('help', TextareaType::class, [
+            ->add('help', MarkdownEditorType::class, [
                 'label' => new TranslatableMessage('Ayuda'),
                 'required' => false,
                 'empty_data' => '',
+                'height' => '220px',
+                'hide_link' => false,
             ])
             ->add('answerScale', MaterialityAnswerScaleType::class, [
                 'label' => new TranslatableMessage('Escala de respuesta'),

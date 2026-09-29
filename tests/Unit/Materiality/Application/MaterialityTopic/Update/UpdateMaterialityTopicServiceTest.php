@@ -13,6 +13,7 @@ use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicNotFoundException;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicRepository;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicTranslated;
+use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicTranslation;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicUpdated;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
@@ -109,6 +110,27 @@ class UpdateMaterialityTopicServiceTest extends TestCase
         $this->assertTrue($persisted->id()->equals($lastEvent->materialityTopicId()));
     }
 
+    public function testUpdateInNonDefaultLocaleKeepsBaseMarkdownDescription(): void
+    {
+        $repository = MaterialityTopicRepositoryMother::inMemory();
+        $materialityTopic = MaterialityTopicMother::fromName('Nombre base');
+        $repository->add($materialityTopic);
+
+        $this->createSUT($repository, Locale::English)(
+            $this->request($materialityTopic->id(), 'English name', "**Includes** outsourced transport.\n\n- Trucks\n- Vans"),
+            UserMother::adminUser(),
+        );
+
+        $this->assertSame('Nombre base description', $materialityTopic->defaultDescription());
+
+        $translation = $materialityTopic->translations()->getTranslationFor(Locale::English);
+
+        $this->assertInstanceOf(MaterialityTopicTranslation::class, $translation);
+        $this->assertSame("**Includes** outsourced transport.\n\n- Trucks\n- Vans", $translation->description());
+
+        FakeLocaleSetter::reset();
+    }
+
     public function testIsHandled(): void
     {
         $sut = $this->createSUT(MaterialityTopicRepositoryMother::inMemory(), Locale::Spanish);
@@ -116,14 +138,14 @@ class UpdateMaterialityTopicServiceTest extends TestCase
         $this->assertTrue($sut->isHandled($this->request(MaterialityTopicId::generate(), 'name')));
     }
 
-    private function request(MaterialityTopicId $id, string $name): UpdateMaterialityTopicRequest
+    private function request(MaterialityTopicId $id, string $name, string $description = 'description'): UpdateMaterialityTopicRequest
     {
         return new UpdateMaterialityTopicRequest(
             materialityTopicId: $id,
             scope: MaterialityScope::Scope3,
             direction: MaterialityTopicDirection::Downstream,
             name: $name,
-            description: 'description',
+            description: $description,
             position: 4,
             active: false,
         );

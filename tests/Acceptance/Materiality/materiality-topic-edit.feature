@@ -41,3 +41,34 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/admin/materiality-topics/edit/111"
         Then the response status should be 403
+
+    Scenario: As an admin, I can edit the description of a materiality topic
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality topic "Lavandería externa" with id "111" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-topics/edit/111"
+        When I submit a form with "name:Lavandería externa|description:**Incluye** transporte subcontratado|scope:scope_3|direction:upstream|position:3" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then materiality topic "111" should have description "**Incluye** transporte subcontratado" in locale "es"
+
+    Scenario: Editing a materiality topic without touching the description keeps it
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality topic "Lavandería externa" with id "111" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-topics/edit/111"
+        When I submit a form with "name:Lavandería subcontratada|scope:scope_3|direction:downstream|position:3" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then materiality topic "111" should have description "Lavandería externa description" in locale "es"
+
+    Scenario: Editing the description in english keeps the spanish description
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality topic "Lavandería externa" with id "111" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/en/admin/materiality-topics/edit/111"
+        When I submit a form with "name:Outsourced laundry|description:**Includes** outsourced transport|scope:scope_3|direction:upstream|position:3" and button "Save"
+        When I follow redirect
+        Then the response status should be 200
+        Then materiality topic "111" should have description "**Includes** outsourced transport" in locale "en"
+        Then materiality topic "111" should have description "Lavandería externa description" in locale "es"
