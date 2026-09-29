@@ -4,7 +4,11 @@
 
 {% block table %}
     {% if materialityQuestions is empty %}
-        <p class="mb-0">{% trans %}No hay preguntas. Siembra los maestros estándar o registra una nueva.{% endtrans %}</p>
+        {% if form.vars.value | show_fields | filter(field => attribute(form, field) is defined) is empty %}
+            <p class="mb-0">{% trans %}No hay preguntas. Siembra los maestros estándar o registra una nueva.{% endtrans %}</p>
+        {% else %}
+            <p class="mb-0">{% trans %}No hay preguntas que coincidan con los filtros.{% endtrans %}</p>
+        {% endif %}
     {% else %}
         {% set columns = [
             {
@@ -16,6 +20,9 @@
                 'sortableBy': 'criterion'
             }, {
                 'label': 'Categoría' | trans,
+                'sortable': false
+            }, {
+                'label': 'Sectores' | trans,
                 'sortable': false
             }, {
                 'label': 'Escala' | trans,
@@ -30,6 +37,10 @@
                 'label': 'Fecha de registro' | trans,
                 'sortable': true,
                 'sortableBy': 'registeredAt'
+            }, {
+                'label': 'Fecha de actualización' | trans,
+                'sortable': true,
+                'sortableBy': 'updatedAt'
             }, {
                 'label': ''
             },
@@ -47,6 +58,17 @@
                     ---
                 {% endif %}
             </td>
+            <td>
+                {% if element.appliesToAllSectors %}
+                    {% trans %}Todos los sectores{% endtrans %}
+                {% else %}
+                    {% set sectorNames = [] %}
+                    {% for sectorId in element.sectorIds %}
+                        {% set sectorNames = sectorNames | merge([sectorsById[sectorId ~ ''] is defined ? sectorsById[sectorId ~ ''].name : '---']) %}
+                    {% endfor %}
+                    {{ sectorNames | join(', ') }}
+                {% endif %}
+            </td>
             <td>{{ element.answerScale.value | trans({}, 'materialityAnswerScaleType') }}</td>
             <td>{{ element.weight }}</td>
             <td>
@@ -57,6 +79,7 @@
                 {% endif %}
             </td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
             <td>
                 {% if element | is_authorized('edit') %}
                     <twig:List:Action:Edit path="{{ path('admin_materiality_questions_edit', {'materialityQuestionId': element.id}) }}" />

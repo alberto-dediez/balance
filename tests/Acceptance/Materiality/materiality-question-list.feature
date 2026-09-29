@@ -9,6 +9,7 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/materiality-questions"
         Then the response status should be 200
+        Then I see a table with 4 rows
         Then I see a text "¿Pregunta genérica?"
         Then I see a text "Todas las categorías"
         Then I see a text "¿Pregunta específica?"
@@ -56,3 +57,29 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/admin/materiality-questions"
         Then the response status should be 403
+
+    Scenario: As an admin, I can filter the materiality questions by sector
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality sector "Hoteles" with id "111" exists
+        Given materiality sector "Eventos" with id "222" exists
+        Given materiality question "¿Pregunta genérica?" with id "q1" for criterion "magnitude" exists
+        Given materiality question "¿Lavandería externa?" with id "q2" for criterion "risk" and sectors "111" exists
+        Given materiality question "¿Montaje?" with id "q3" for criterion "risk" and sectors "222" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-questions"
+        When I filter by "sectorId" with "111"
+        Then the response status should be 200
+        Then I see a text "¿Lavandería externa?"
+        Then I do not see a text "¿Pregunta genérica?"
+        Then I do not see a text "¿Montaje?"
+        Then I see a text "<b>Hoteles</b>"
+
+    Scenario: As an admin, I see a no results message when the filter matches no materiality question
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality question "¿Pregunta de magnitud?" with id "q1" for criterion "magnitude" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-questions"
+        When I filter by "criterion" with "risk"
+        Then the response status should be 200
+        Then I see a text "No hay preguntas que coincidan con los filtros."
+        Then I do not see a text "No hay preguntas. Siembra los maestros estándar o registra una nueva."

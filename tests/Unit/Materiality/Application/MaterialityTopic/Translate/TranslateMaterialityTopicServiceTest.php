@@ -101,6 +101,13 @@ class TranslateMaterialityTopicServiceTest extends TestCase
         );
     }
 
+    public function testIsHandled(): void
+    {
+        $sut = $this->createSUT(MaterialityTopicRepositoryMother::inMemory());
+
+        $this->assertTrue($sut->isHandled(new TranslateMaterialityTopicRequest(MaterialityTopicId::generate(), 'name', 'description', Locale::English)));
+    }
+
     private function createSUT(MaterialityTopicRepository $repository): TranslateMaterialityTopicService
     {
         return new TranslateMaterialityTopicService(

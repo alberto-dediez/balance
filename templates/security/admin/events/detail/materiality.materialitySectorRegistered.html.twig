@@ -1,0 +1,4 @@
+{% trans with {
+    '{name}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el sector de materialidad "{name}" por el usuario {user}{% endtrans %}

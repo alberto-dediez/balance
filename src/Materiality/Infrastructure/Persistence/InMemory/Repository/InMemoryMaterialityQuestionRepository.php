@@ -8,6 +8,7 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionFilter;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -77,6 +78,12 @@ class InMemoryMaterialityQuestionRepository implements MaterialityQuestionReposi
         return array_values($this->findByFilter(new MaterialityQuestionFilter(topicId: $topicId, limit: 0)));
     }
 
+    /** @return list<MaterialityQuestion> */
+    public function findBySectorId(MaterialitySectorId $sectorId): array
+    {
+        return array_values($this->findByFilter(new MaterialityQuestionFilter(sectorId: $sectorId, limit: 0)));
+    }
+
     private function matches(MaterialityQuestion $materialityQuestion, MaterialityQuestionFilter $filter): bool
     {
         if (!$filter->includeRemoved && false != $materialityQuestion->isRemoved()) {
@@ -92,6 +99,10 @@ class InMemoryMaterialityQuestionRepository implements MaterialityQuestionReposi
         }
 
         if (null !== $filter->topicId && (string) $materialityQuestion->topicId() !== (string) $filter->topicId) {
+            return false;
+        }
+
+        if (null !== $filter->sectorId && !$materialityQuestion->sectors()->has($filter->sectorId)) {
             return false;
         }
 
@@ -115,6 +126,7 @@ class InMemoryMaterialityQuestionRepository implements MaterialityQuestionReposi
             $comparison = match ($filter->orderBy) {
                 'criterion' => strcmp($a->criterion()->value, $b->criterion()->value),
                 'registeredAt' => $a->registeredAt() <=> $b->registeredAt(),
+                'updatedAt' => $a->updatedAt() <=> $b->updatedAt(),
                 default => 0 !== ($a->position() <=> $b->position()) ? $a->position() <=> $b->position() : $a->registeredAt() <=> $b->registeredAt(),
             };
 

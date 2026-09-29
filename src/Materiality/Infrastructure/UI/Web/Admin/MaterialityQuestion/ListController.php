@@ -54,6 +54,7 @@ class ListController extends AbstractController
             'bulkForm' => $bulkForm->createView(),
             'materialityQuestions' => $response->materialityQuestions,
             'topicsById' => $response->topicsById,
+            'sectorsById' => $response->sectorsById,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
         ]);

@@ -1,0 +1,5 @@
+{% trans with {
+    '{sector}': event.sectorId,
+    '{materialityQuestion}': event.materialityQuestionId,
+    '{user}': element.userId | user_name
+} %}Se ha desasociado el sector {sector} de la pregunta de materialidad {materialityQuestion} por el usuario {user}{% endtrans %}

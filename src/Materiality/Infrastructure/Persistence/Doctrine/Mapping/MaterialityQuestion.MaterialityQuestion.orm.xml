@@ -37,5 +37,16 @@
                 <cascade-remove/>
             </cascade>
         </one-to-many>
+
+        <one-to-many field="sectors"
+                     target-entity="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionSectorLink"
+                     mapped-by="materialityQuestion"
+                     orphan-removal="true"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
     </entity>
 </doctrine-mapping>

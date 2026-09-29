@@ -8,6 +8,7 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 
 class MaterialityQuestionMother
@@ -33,6 +34,7 @@ class MaterialityQuestionMother
         );
     }
 
+    /** @param list<MaterialitySectorId> $sectorIds */
     public static function from(
         string $text,
         string $id,
@@ -41,6 +43,7 @@ class MaterialityQuestionMother
         MaterialityAnswerScale $answerScale = MaterialityAnswerScale::Level,
         int $weight = 1,
         int $position = 0,
+        array $sectorIds = [],
     ): MaterialityQuestion {
         $materialityQuestion = new MaterialityQuestion(
             id: new MaterialityQuestionId($id),
@@ -53,6 +56,7 @@ class MaterialityQuestionMother
             answerScale: $answerScale,
             weight: $weight,
             position: $position,
+            sectorIds: $sectorIds,
         );
 
         return $materialityQuestion;
@@ -68,6 +72,18 @@ class MaterialityQuestionMother
             id: (string) MaterialityQuestionId::generate(),
             criterion: $criterion,
             topicId: $topicId,
+        );
+    }
+
+    /** @param list<MaterialitySectorId> $sectorIds */
+    public static function forSectors(
+        array $sectorIds,
+        string $text = 'materiality-question-text',
+    ): MaterialityQuestion {
+        return self::from(
+            text: $text,
+            id: (string) MaterialityQuestionId::generate(),
+            sectorIds: $sectorIds,
         );
     }
 

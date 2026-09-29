@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Materiality\Application\MaterialityTopic\Remove;
 use App\Materiality\Application\MaterialityTopic\MaterialityTopicAuthorizer;
 use App\Materiality\Application\MaterialityTopic\Remove\RemoveMaterialityTopicRequest;
 use App\Materiality\Application\MaterialityTopic\Remove\RemoveMaterialityTopicService;
+use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicRemoved;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicRepository;
 use App\Materiality\Domain\Model\MaterialityTopic\StandardScope3Category;
@@ -65,6 +66,13 @@ class RemoveMaterialityTopicServiceTest extends TestCase
             new RemoveMaterialityTopicRequest($materialityTopic->id()),
             UserMother::fromUsernameAndRole('owner', Role::Owner),
         );
+    }
+
+    public function testIsHandled(): void
+    {
+        $sut = $this->createSUT(MaterialityTopicRepositoryMother::inMemory());
+
+        $this->assertTrue($sut->isHandled(new RemoveMaterialityTopicRequest(MaterialityTopicId::generate())));
     }
 
     private function createSUT(MaterialityTopicRepository $repository): RemoveMaterialityTopicService

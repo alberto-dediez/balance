@@ -10,6 +10,11 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionFilter;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySector;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorFilter;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorRepository;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorTranslation;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopic;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicDirection;
@@ -22,6 +27,7 @@ use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialitySector\MaterialitySectorMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
@@ -47,6 +53,11 @@ final class MaterialityContext implements Context
     private function getQuestionRepository(): MaterialityQuestionRepository
     {
         return $this->client->getContainer()->get(MaterialityQuestionRepository::class);
+    }
+
+    private function getSectorRepository(): MaterialitySectorRepository
+    {
+        return $this->client->getContainer()->get(MaterialitySectorRepository::class);
     }
 
     #[Given('materiality topic :name with id :id exists')]
@@ -112,6 +123,26 @@ final class MaterialityContext implements Context
         ));
     }
 
+    #[Given('materiality question :text with id :id for criterion :criterion and sectors :sectorIds exists')]
+    public function materialityQuestionForSectorsExists(string $text, string $id, string $criterion, string $sectorIds): void
+    {
+        $this->getQuestionRepository()->add(MaterialityQuestionMother::from(
+            text: $text,
+            id: $id,
+            criterion: MaterialityCriterion::from($criterion),
+            sectorIds: array_map(
+                static fn(string $sectorId): MaterialitySectorId => new MaterialitySectorId(trim($sectorId)),
+                explode(',', $sectorIds),
+            ),
+        ));
+    }
+
+    #[Given('materiality sector :name with id :id exists')]
+    public function materialitySectorExists(string $name, string $id): void
+    {
+        $this->getSectorRepository()->add(MaterialitySectorMother::fromNameAndId($name, $id));
+    }
+
     #[Given('standard materiality masters are seeded')]
     public function standardMaterialityMastersAreSeeded(): void
     {
@@ -144,6 +175,36 @@ final class MaterialityContext implements Context
         Assert::assertSame($name, $translation->name());
     }
 
+    #[Then('materiality sector :id should be removed')]
+    public function materialitySectorShouldBeRemoved(string $id): void
+    {
+        Assert::assertTrue($this->sector($id, includeRemoved: true)->isRemoved());
+    }
+
+    #[Then('materiality sector :id should have name :name in locale :locale')]
+    public function materialitySectorShouldHaveNameInLocale(string $id, string $name, string $locale): void
+    {
+        $materialitySector = $this->sector($id);
+        $expectedLocale = Locale::from($locale);
+
+        if (LocaleGetter::default() === $expectedLocale) {
+            Assert::assertSame($name, $materialitySector->defaultName());
+
+            return;
+        }
+
+        $translation = $materialitySector->translations()->getTranslationFor($expectedLocale);
+
+        Assert::assertInstanceOf(MaterialitySectorTranslation::class, $translation);
+        Assert::assertSame($name, $translation->name());
+    }
+
+    #[Then('there should be :count materiality sectors')]
+    public function thereShouldBeMaterialitySectors(int $count): void
+    {
+        Assert::assertSame($count, $this->getSectorRepository()->totalResultsByFilter(new MaterialitySectorFilter()));
+    }
+
     #[Then('materiality question :id should be removed')]
     public function materialityQuestionShouldBeRemoved(string $id): void
     {
@@ -154,6 +215,27 @@ final class MaterialityContext implements Context
     public function materialityQuestionShouldHaveTopic(string $id, string $topicId): void
     {
         Assert::assertSame($topicId, (string) $this->question($id)->topicId());
+    }
+
+    #[Then('materiality question :id should have sectors :sectorIds')]
+    public function materialityQuestionShouldHaveSectors(string $id, string $sectorIds): void
+    {
+        $expected = array_map('trim', explode(',', $sectorIds));
+        $actual = array_map(
+            static fn(MaterialitySectorId $sectorId): string => (string) $sectorId,
+            $this->question($id)->sectorIds(),
+        );
+
+        sort($expected);
+        sort($actual);
+
+        Assert::assertSame($expected, $actual);
+    }
+
+    #[Then('materiality question :id should apply to all sectors')]
+    public function materialityQuestionShouldApplyToAllSectors(string $id): void
+    {
+        Assert::assertTrue($this->question($id)->appliesToAllSectors());
     }
 
     #[Then('there should be :count standard materiality topics')]
@@ -177,6 +259,17 @@ final class MaterialityContext implements Context
         }
 
         throw new \RuntimeException(sprintf('Materiality topic "%s" not found', $id));
+    }
+
+    private function sector(string $id, bool $includeRemoved = false): MaterialitySector
+    {
+        foreach ($this->getSectorRepository()->findByFilter(new MaterialitySectorFilter(includeRemoved: $includeRemoved, limit: 0)) as $materialitySector) {
+            if ((string) $materialitySector->id() === $id) {
+                return $materialitySector;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Materiality sector "%s" not found', $id));
     }
 
     private function question(string $id): MaterialityQuestion

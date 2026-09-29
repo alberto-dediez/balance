@@ -8613,6 +8613,86 @@
         <source>Compartido</source>
         <target>Paylaşılan</target>
       </trans-unit>
+      <trans-unit id="HQISjjZ" resname="Sector de materialidad creado correctamente: {name}">
+        <source>Sector de materialidad creado correctamente: {name}</source>
+        <target>Önemlilik sektörü başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="1dqvPzd" resname="Sector de materialidad actualizado con éxito">
+        <source>Sector de materialidad actualizado con éxito</source>
+        <target>Önemlilik sektörü başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="DwSGe8c" resname="Se ha eliminado el sector de materialidad {name}">
+        <source>Se ha eliminado el sector de materialidad {name}</source>
+        <target>{name} önemlilik sektörü silindi</target>
+      </trans-unit>
+      <trans-unit id="Ox5xAVT" resname="No se ha podido eliminar el sector de materialidad {name}">
+        <source>No se ha podido eliminar el sector de materialidad {name}</source>
+        <target>{name} önemlilik sektörü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="2txDaRd" resname="Se ha eliminado el sector de materialidad {id}">
+        <source>Se ha eliminado el sector de materialidad {id}</source>
+        <target>{id} önemlilik sektörü silindi</target>
+      </trans-unit>
+      <trans-unit id="l7vq_eI" resname="No se ha podido eliminar el sector de materialidad {id}">
+        <source>No se ha podido eliminar el sector de materialidad {id}</source>
+        <target>{id} önemlilik sektörü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="N6b3oJK" resname="Sectores">
+        <source>Sectores</source>
+        <target>Sektörler</target>
+      </trans-unit>
+      <trans-unit id="X8wc7E2" resname="Sin ninguno marcado, la pregunta aplica a todos los sectores">
+        <source>Sin ninguno marcado, la pregunta aplica a todos los sectores</source>
+        <target>Hiçbiri işaretlenmezse soru tüm sektörler için geçerlidir</target>
+      </trans-unit>
+      <trans-unit id="g76XJhV" resname="Todos los sectores">
+        <source>Todos los sectores</source>
+        <target>Tüm sektörler</target>
+      </trans-unit>
+      <trans-unit id="e13Kp8k" resname="Se ha registrado el sector de materialidad &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha registrado el sector de materialidad "{name}" por el usuario {user}</source>
+        <target>"{name}" önemlilik sektörü {user} kullanıcısı tarafından kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="le.4x7G" resname="Se ha eliminado el sector de materialidad {materialitySector} por el usuario {user}">
+        <source>Se ha eliminado el sector de materialidad {materialitySector} por el usuario {user}</source>
+        <target>{user} kullanıcısı tarafından {materialitySector} önemlilik sektörü silindi</target>
+      </trans-unit>
+      <trans-unit id="8bE2F_P" resname="Se ha traducido el sector de materialidad &quot;{name}&quot; al idioma {locale} por el usuario {user}">
+        <source>Se ha traducido el sector de materialidad "{name}" al idioma {locale} por el usuario {user}</source>
+        <target>"{name}" önemlilik sektörü {user} kullanıcısı tarafından {locale} diline çevrildi</target>
+      </trans-unit>
+      <trans-unit id="j58qwcV" resname="Se ha asociado el sector {sector} a la pregunta de materialidad {materialityQuestion} por el usuario {user}">
+        <source>Se ha asociado el sector {sector} a la pregunta de materialidad {materialityQuestion} por el usuario {user}</source>
+        <target>{sector} sektörü, {user} kullanıcısı tarafından {materialityQuestion} önemlilik sorusuyla ilişkilendirildi</target>
+      </trans-unit>
+      <trans-unit id="MjPbES3" resname="Se ha actualizado el sector de materialidad &quot;{name}&quot; por el usuario {user}">
+        <source>Se ha actualizado el sector de materialidad "{name}" por el usuario {user}</source>
+        <target>"{name}" önemlilik sektörü {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="865FK2k" resname="Se ha desasociado el sector {sector} de la pregunta de materialidad {materialityQuestion} por el usuario {user}">
+        <source>Se ha desasociado el sector {sector} de la pregunta de materialidad {materialityQuestion} por el usuario {user}</source>
+        <target>{sector} sektörünün {materialityQuestion} önemlilik sorusuyla ilişkisi {user} kullanıcısı tarafından kaldırıldı</target>
+      </trans-unit>
+      <trans-unit id="nzkRAM4" resname="Las preguntas que solo apliquen a este sector se eliminarán; las demás dejarán de aplicar a él. ¿Desea continuar?">
+        <source>Las preguntas que solo apliquen a este sector se eliminarán; las demás dejarán de aplicar a él. ¿Desea continuar?</source>
+        <target>Yalnızca bu sektör için geçerli olan sorular silinecek; diğerleri artık bu sektör için geçerli olmayacak. Devam etmek istiyor musunuz?</target>
+      </trans-unit>
+      <trans-unit id="hpskPeU" resname="No hay sectores. Registra el primero.">
+        <source>No hay sectores. Registra el primero.</source>
+        <target>Sektör yok. İlkini kaydedin.</target>
+      </trans-unit>
+      <trans-unit id="PTaebmJ" resname="No hay sectores que coincidan con los filtros.">
+        <source>No hay sectores que coincidan con los filtros.</source>
+        <target>Filtrelerle eşleşen sektör yok.</target>
+      </trans-unit>
+      <trans-unit id="L2cpURF" resname="No hay preguntas que coincidan con los filtros.">
+        <source>No hay preguntas que coincidan con los filtros.</source>
+        <target>Filtrelerle eşleşen soru yok.</target>
+      </trans-unit>
+      <trans-unit id="PKAzg0x" resname="No hay categorías que coincidan con los filtros.">
+        <source>No hay categorías que coincidan con los filtros.</source>
+        <target>Filtrelerle eşleşen kategori yok.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

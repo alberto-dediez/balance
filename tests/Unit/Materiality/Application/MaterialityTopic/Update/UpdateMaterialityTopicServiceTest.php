@@ -109,6 +109,13 @@ class UpdateMaterialityTopicServiceTest extends TestCase
         $this->assertTrue($persisted->id()->equals($lastEvent->materialityTopicId()));
     }
 
+    public function testIsHandled(): void
+    {
+        $sut = $this->createSUT(MaterialityTopicRepositoryMother::inMemory(), Locale::Spanish);
+
+        $this->assertTrue($sut->isHandled($this->request(MaterialityTopicId::generate(), 'name')));
+    }
+
     private function request(MaterialityTopicId $id, string $name): UpdateMaterialityTopicRequest
     {
         return new UpdateMaterialityTopicRequest(

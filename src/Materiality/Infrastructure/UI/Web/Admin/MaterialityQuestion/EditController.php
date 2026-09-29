@@ -45,6 +45,7 @@ class EditController extends AbstractController
             weight: $materialityQuestion->weight(),
             position: $materialityQuestion->position(),
             active: $materialityQuestion->isActive(),
+            sectorIds: $materialityQuestion->sectorIds(),
         );
 
         try {

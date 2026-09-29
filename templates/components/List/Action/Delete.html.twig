@@ -1,4 +1,4 @@
-{% props path %}
+{% props path, confirmText = null %}
 
 {% set separator = '?' in path ? '&' : '?' %}
 
@@ -6,7 +6,7 @@
     title="{{ 'Eliminar' | trans }}"
     class="text-danger"
     data-controller="confirm"
-    data-confirm-text-param="{{ '¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer' | trans }}"
+    data-confirm-text-param="{{ confirmText ?? ('¿Esta seguro de que desea eliminar este elemento? Esta acción no se puede deshacer' | trans) }}"
     data-action="confirm#link:prevent"
     :attributes="attributes"
 >

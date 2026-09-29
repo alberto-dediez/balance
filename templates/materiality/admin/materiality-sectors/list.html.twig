@@ -1,0 +1,53 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = ('Materialidad' | trans) ~ ' > ' ~ ('Sectores' | trans) %}
+
+{% block table %}
+    {% if materialitySectors is empty %}
+        {% if form.vars.value | show_fields | filter(field => attribute(form, field) is defined) is empty %}
+            <p class="mb-0">{% trans %}No hay sectores. Registra el primero.{% endtrans %}</p>
+        {% else %}
+            <p class="mb-0">{% trans %}No hay sectores que coincidan con los filtros.{% endtrans %}</p>
+        {% endif %}
+    {% else %}
+        {% set columns = [
+            {
+                'label': 'Nombre' | trans,
+                'sortable': true,
+                'sortableBy': 'name'
+            }, {
+                'label': 'Fecha de registro' | trans,
+                'sortable': true,
+                'sortableBy': 'registeredAt'
+            }, {
+                'label': 'Fecha de actualización' | trans,
+                'sortable': true,
+                'sortableBy': 'updatedAt'
+            }, {
+                'label': ''
+            },
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="materialitySectors" :bulkForm="bulkForm">
+            <td>{{ element.name }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+            <td>
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('admin_materiality_sectors_edit', {'materialitySectorId': element.id}) }}" />
+                {% endif %}
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete
+                        path="{{ path('admin_materiality_sectors_remove', {'materialitySectorId': element.id}) }}"
+                        confirmText="{{ 'Las preguntas que solo apliquen a este sector se eliminarán; las demás dejarán de aplicar a él. ¿Desea continuar?' | trans }}"
+                    />
+                {% endif %}
+            </td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_materiality_sectors_register') }}" />
+{% endblock list_actions %}

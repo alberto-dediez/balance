@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Materiality\Domain\Model\MaterialityQuestion;
 
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Shared\Domain\Model\AggregateRoot;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\Translatable;
 use App\Shared\Domain\Model\Locale\Translations;
+use Doctrine\Common\Collections\Collection;
 
 class MaterialityQuestion implements Translatable, \Stringable
 {
@@ -16,6 +18,9 @@ class MaterialityQuestion implements Translatable, \Stringable
 
     /** @var iterable<MaterialityQuestionTranslation>|Translations */
     private iterable $translations;
+
+    /** @var iterable<MaterialityQuestionSectorLink>|Collection<int, MaterialityQuestionSectorLink> */
+    private iterable $sectors;
 
     /** @param array<mixed> $events */
     public function __construct(
@@ -35,6 +40,7 @@ class MaterialityQuestion implements Translatable, \Stringable
         private ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->translations = new Translations();
+        $this->sectors = [];
         $this->events = $events;
     }
 
@@ -56,6 +62,22 @@ class MaterialityQuestion implements Translatable, \Stringable
     public function isGeneric(): bool
     {
         return null === $this->topicId;
+    }
+
+    public function sectors(): MaterialityQuestionSectors
+    {
+        return new MaterialityQuestionSectors($this->sectors);
+    }
+
+    /** @return list<MaterialitySectorId> */
+    public function sectorIds(): array
+    {
+        return $this->sectors()->ids();
+    }
+
+    public function appliesToAllSectors(): bool
+    {
+        return 0 === count($this->sectors());
     }
 
     public function text(): string
@@ -135,6 +157,7 @@ class MaterialityQuestion implements Translatable, \Stringable
         return $this->translations;
     }
 
+    /** @param list<MaterialitySectorId> $sectorIds */
     public function register(
         MaterialityCriterion $criterion,
         ?MaterialityTopicId $topicId,
@@ -143,6 +166,7 @@ class MaterialityQuestion implements Translatable, \Stringable
         MaterialityAnswerScale $answerScale,
         int $weight,
         int $position,
+        array $sectorIds = [],
         ?Locale $locale = null,
     ): void {
         $this->guardWeight($weight);
@@ -160,11 +184,14 @@ class MaterialityQuestion implements Translatable, \Stringable
             ),
         );
 
+        $this->syncSectors($sectorIds);
+
         if ($locale instanceof Locale) {
             $this->translate($text, $help, $locale);
         }
     }
 
+    /** @param list<MaterialitySectorId> $sectorIds */
     public function update(
         MaterialityCriterion $criterion,
         ?MaterialityTopicId $topicId,
@@ -174,6 +201,7 @@ class MaterialityQuestion implements Translatable, \Stringable
         int $weight,
         int $position,
         bool $active,
+        array $sectorIds = [],
         ?Locale $locale = null,
     ): void {
         $this->guardWeight($weight);
@@ -191,6 +219,8 @@ class MaterialityQuestion implements Translatable, \Stringable
                 active: $active,
             ),
         );
+
+        $this->syncSectors($sectorIds);
 
         if ($locale instanceof Locale) {
             $this->translate($text, $help, $locale);
@@ -220,6 +250,51 @@ class MaterialityQuestion implements Translatable, \Stringable
                 materialityQuestionId: $this->id(),
             ),
         );
+    }
+
+    public function linkSector(MaterialitySectorId $sectorId): void
+    {
+        if ($this->sectors()->has($sectorId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new MaterialityQuestionSectorLinked(
+                materialityQuestionId: $this->id(),
+                linkId: MaterialityQuestionSectorLinkId::generate(),
+                sectorId: $sectorId,
+            ),
+        );
+    }
+
+    public function unlinkSector(MaterialitySectorId $sectorId): void
+    {
+        if (!$this->sectors()->has($sectorId)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new MaterialityQuestionSectorUnlinked(
+                materialityQuestionId: $this->id(),
+                sectorId: $sectorId,
+            ),
+        );
+    }
+
+    /** @param list<MaterialitySectorId> $sectorIds */
+    private function syncSectors(array $sectorIds): void
+    {
+        foreach ($this->sectorIds() as $currentSectorId) {
+            $kept = array_filter($sectorIds, static fn(MaterialitySectorId $sectorId) => $sectorId->equals($currentSectorId));
+
+            if (0 === count($kept)) {
+                $this->unlinkSector($currentSectorId);
+            }
+        }
+
+        foreach ($sectorIds as $sectorId) {
+            $this->linkSector($sectorId);
+        }
     }
 
     private function guardWeight(int $weight): void
@@ -264,6 +339,22 @@ class MaterialityQuestion implements Translatable, \Stringable
                 translatable: $this,
             ),
         );
+    }
+
+    public function applyMaterialityQuestionSectorLinked(MaterialityQuestionSectorLinked $event): void
+    {
+        $this->sectors()->add(
+            new MaterialityQuestionSectorLink(
+                id: $event->linkId(),
+                materialityQuestion: $this,
+                sectorId: $event->sectorId(),
+            ),
+        );
+    }
+
+    public function applyMaterialityQuestionSectorUnlinked(MaterialityQuestionSectorUnlinked $event): void
+    {
+        $this->sectors()->removeById($event->sectorId());
     }
 
     public function applyMaterialityQuestionRemoved(MaterialityQuestionRemoved $event): void

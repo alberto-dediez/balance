@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion;
 
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
+use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionFilter;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
@@ -86,6 +88,62 @@ abstract class MaterialityQuestionRepositoryTest extends KernelTestCase
         $this->assertCount(2, $repository->findByTopicId($topicId));
     }
 
+    public function testFindBySectorId(): void
+    {
+        $repository = $this->createSUT();
+
+        $sectorId = MaterialitySectorId::generate();
+        $otherSectorId = MaterialitySectorId::generate();
+
+        $repository->add(MaterialityQuestionMother::forSectors([$sectorId]));
+        $repository->add(MaterialityQuestionMother::forSectors([$sectorId, $otherSectorId]));
+        $repository->add(MaterialityQuestionMother::forSectors([$otherSectorId]));
+        $repository->add(MaterialityQuestionMother::random());
+
+        $this->assertCount(2, $repository->findBySectorId($sectorId));
+        $this->assertCount(2, $repository->findBySectorId($otherSectorId));
+    }
+
+    public function testFindByFilterWithSectorOnlyReturnsLinkedQuestions(): void
+    {
+        $repository = $this->createSUT();
+
+        $sectorId = MaterialitySectorId::generate();
+        $otherSectorId = MaterialitySectorId::generate();
+
+        $twoSectors = MaterialityQuestionMother::forSectors([$sectorId, $otherSectorId]);
+        $repository->add($twoSectors);
+        $repository->add(MaterialityQuestionMother::forSectors([$otherSectorId]));
+        $repository->add(MaterialityQuestionMother::random());
+
+        $recovered = $repository->findByFilter(new MaterialityQuestionFilter(sectorId: $sectorId));
+
+        $this->assertCount(1, $recovered);
+        $this->assertEquals($twoSectors->id(), array_values($recovered)[0]->id());
+        $this->assertSame(1, $repository->totalResultsByFilter(new MaterialityQuestionFilter(sectorId: $sectorId)));
+        $this->assertSame(2, $repository->totalResultsByFilter(new MaterialityQuestionFilter(sectorId: $otherSectorId)));
+    }
+
+    public function testSectorsArePersisted(): void
+    {
+        $repository = $this->createSUT();
+
+        $sectorId = MaterialitySectorId::generate();
+        $otherSectorId = MaterialitySectorId::generate();
+
+        $materialityQuestion = MaterialityQuestionMother::forSectors([$sectorId, $otherSectorId]);
+        $repository->add($materialityQuestion);
+
+        $materialityQuestion->unlinkSector($sectorId);
+        $repository->add($materialityQuestion);
+
+        $recovered = $repository->find($materialityQuestion->id());
+
+        $this->assertNotNull($recovered);
+        $this->assertEquals([$otherSectorId], $recovered->sectorIds());
+        $this->assertCount(0, $repository->findBySectorId($sectorId));
+    }
+
     public function testFindByFilter(): void
     {
         $repository = $this->createSUT();
@@ -141,6 +199,26 @@ abstract class MaterialityQuestionRepositoryTest extends KernelTestCase
         );
 
         $this->assertSame(['A', 'B', 'C'], $texts);
+    }
+
+    public function testOrderByUpdatedAt(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(new MaterialityQuestion(id: MaterialityQuestionId::generate(), text: 'A', updatedAt: new \DateTimeImmutable('2026-03-01')));
+        $repository->add(new MaterialityQuestion(id: MaterialityQuestionId::generate(), text: 'B', updatedAt: new \DateTimeImmutable('2026-01-01')));
+        $repository->add(new MaterialityQuestion(id: MaterialityQuestionId::generate(), text: 'C', updatedAt: new \DateTimeImmutable('2026-02-01')));
+
+        $filter = new MaterialityQuestionFilter();
+        $filter->orderBy = 'updatedAt';
+        $filter->orderWay = 'DESC';
+
+        $texts = array_map(
+            static fn($materialityQuestion) => $materialityQuestion->text(),
+            $repository->findByFilter($filter),
+        );
+
+        $this->assertSame(['A', 'C', 'B'], $texts);
     }
 
     abstract protected function createSUT(Locale $locale = Locale::Spanish): MaterialityQuestionRepository;

@@ -17,6 +17,7 @@ use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicFilter;
 use App\Materiality\Domain\Model\MaterialityTopic\StandardScope3Category;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialityQuestionRepository;
+use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialitySectorRepository;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialityTopicRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
@@ -71,6 +72,7 @@ class SeedStandardMaterialityMastersServiceTest extends TestCase
 
         foreach ($response->registeredQuestions as $question) {
             $this->assertTrue($question->isGeneric());
+            $this->assertTrue($question->appliesToAllSectors());
             $this->assertCount(1, $question->translations());
         }
 
@@ -181,7 +183,7 @@ class SeedStandardMaterialityMastersServiceTest extends TestCase
             authorizer: $topicAuthorizer,
             registerMaterialityTopic: new RegisterMaterialityTopicService($this->topicRepository, $topicAuthorizer),
             translateMaterialityTopic: new TranslateMaterialityTopicService($this->topicRepository, $topicAuthorizer),
-            registerMaterialityQuestion: new RegisterMaterialityQuestionService($this->questionRepository, $this->topicRepository, $questionAuthorizer),
+            registerMaterialityQuestion: new RegisterMaterialityQuestionService($this->questionRepository, $this->topicRepository, new InMemoryMaterialitySectorRepository(), $questionAuthorizer),
             translateMaterialityQuestion: new TranslateMaterialityQuestionService($this->questionRepository, $questionAuthorizer),
             localeList: $localeList,
         );

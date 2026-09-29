@@ -4,7 +4,11 @@
 
 {% block table %}
     {% if materialityTopics is empty %}
-        <p class="mb-0">{% trans %}No hay categorías. Siembra los maestros estándar o registra una nueva.{% endtrans %}</p>
+        {% if form.vars.value | show_fields | filter(field => attribute(form, field) is defined) is empty %}
+            <p class="mb-0">{% trans %}No hay categorías. Siembra los maestros estándar o registra una nueva.{% endtrans %}</p>
+        {% else %}
+            <p class="mb-0">{% trans %}No hay categorías que coincidan con los filtros.{% endtrans %}</p>
+        {% endif %}
     {% else %}
         {% set columns = [
             {
@@ -35,6 +39,10 @@
                 'sortable': true,
                 'sortableBy': 'registeredAt'
             }, {
+                'label': 'Fecha de actualización' | trans,
+                'sortable': true,
+                'sortableBy': 'updatedAt'
+            }, {
                 'label': ''
             },
         ] %}
@@ -54,6 +62,7 @@
             </td>
             <td>{{ element.position }}</td>
             <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+            <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
             <td>
                 {% if element | is_authorized('edit') %}
                     <twig:List:Action:Edit path="{{ path('admin_materiality_topics_edit', {'materialityTopicId': element.id}) }}" />

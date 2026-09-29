@@ -14,12 +14,12 @@ Feature:
         When I go to "/es/admin/materiality-topics/register"
         Then the response status should be 403
 
-    Scenario: As an admin, I can register a new materiality topic and I am redirected to edit it
+    Scenario: As an admin, I can register a new materiality topic and I am redirected to the list
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/materiality-topics/register"
         When I submit a form with "name:Lavandería externa|scope:scope_3|direction:upstream|position:20" and button "Registrar"
-        Then I am redirected to route "admin_materiality_topics_edit"
+        Then I am redirected to route "admin_materiality_topics"
         Then the response status should be 200
         Then I see a text "Categoría de materialidad creada correctamente: Lavandería externa"
 

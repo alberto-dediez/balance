@@ -8,6 +8,7 @@ use App\Materiality\Application\MaterialityQuestion\MaterialityQuestionAuthorize
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorRepository;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
@@ -17,6 +18,7 @@ class ListMaterialityQuestionsService
     public function __construct(
         private MaterialityQuestionRepository $materialityQuestionRepository,
         private MaterialityTopicRepository $materialityTopicRepository,
+        private MaterialitySectorRepository $materialitySectorRepository,
         private MaterialityQuestionAuthorizer $authorizer,
     ) {}
 
@@ -46,10 +48,27 @@ class ListMaterialityQuestionsService
             }
         }
 
+        $sectorsById = [];
+
+        foreach ($materialityQuestions as $materialityQuestion) {
+            foreach ($materialityQuestion->sectorIds() as $sectorId) {
+                if (isset($sectorsById[(string) $sectorId])) {
+                    continue;
+                }
+
+                $sector = $this->materialitySectorRepository->find($sectorId);
+
+                if (null !== $sector) {
+                    $sectorsById[(string) $sectorId] = $sector;
+                }
+            }
+        }
+
         return new ListMaterialityQuestionsResponse(
             materialityQuestions: $materialityQuestions,
             totalResults: $this->materialityQuestionRepository->totalResultsByFilter($request),
             topicsById: $topicsById,
+            sectorsById: $sectorsById,
         );
     }
 }

@@ -9,6 +9,7 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionFilter;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslation;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use App\Shared\Infrastructure\Persistence\Doctrine\Repository\DoctrineTranslatableRepositoryTrait;
@@ -81,6 +82,12 @@ class DoctrineMaterialityQuestionRepository implements MaterialityQuestionReposi
         return array_values($this->findByFilter(new MaterialityQuestionFilter(topicId: $topicId, limit: 0)));
     }
 
+    /** @return list<MaterialityQuestion> */
+    public function findBySectorId(MaterialitySectorId $sectorId): array
+    {
+        return array_values($this->findByFilter(new MaterialityQuestionFilter(sectorId: $sectorId, limit: 0)));
+    }
+
     private function createQueryBuilderFromFilter(MaterialityQuestionFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();
@@ -124,6 +131,14 @@ class DoctrineMaterialityQuestionRepository implements MaterialityQuestionReposi
             ;
         }
 
+        if (null !== $filter->sectorId) {
+            $qb
+                ->innerJoin('q.sectors', 'sl')
+                ->andWhere($qb->expr()->eq('sl.sectorId', ':sectorId'))
+                ->setParameter('sectorId', (string) $filter->sectorId)
+            ;
+        }
+
         if ($filter->onlyGeneric) {
             $qb->andWhere($qb->expr()->isNull('q.topicId'));
         }
@@ -140,6 +155,7 @@ class DoctrineMaterialityQuestionRepository implements MaterialityQuestionReposi
         match ($filter->orderBy) {
             'criterion' => $qb->orderBy('q.criterion', $way),
             'registeredAt' => $qb->orderBy('q.registeredAt', $way),
+            'updatedAt' => $qb->orderBy('q.updatedAt', $way),
             default => $qb->orderBy('q.position', $way)->addOrderBy('q.registeredAt', $way),
         };
 

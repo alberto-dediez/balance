@@ -367,6 +367,11 @@ class NodeLister
                     icon: 'solar:question-circle-line-duotone',
                     target: $this->router->generate('admin_materiality_questions'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Sectores'),
+                    icon: 'solar:buildings-2-line-duotone',
+                    target: $this->router->generate('admin_materiality_sectors'),
+                ),
             ],
         );
 

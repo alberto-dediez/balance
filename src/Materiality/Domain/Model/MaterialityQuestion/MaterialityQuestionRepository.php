@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Materiality\Domain\Model\MaterialityQuestion;
 
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 
 interface MaterialityQuestionRepository
@@ -21,4 +22,7 @@ interface MaterialityQuestionRepository
 
     /** @return list<MaterialityQuestion> */
     public function findByTopicId(MaterialityTopicId $topicId): array;
+
+    /** @return list<MaterialityQuestion> */
+    public function findBySectorId(MaterialitySectorId $sectorId): array;
 }

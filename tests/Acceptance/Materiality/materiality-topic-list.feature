@@ -8,6 +8,7 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/materiality-topics"
         Then the response status should be 200
+        Then I see a table with 4 rows
         Then I see a text "Lavandería externa"
         Then I see a text "Consumo de gas"
 
@@ -47,6 +48,16 @@ Feature:
         When I go to "/es/admin/materiality-topics"
         Then the response status should be 200
         Then I see a text "No hay categorías. Siembra los maestros estándar o registra una nueva."
+
+    Scenario: As an admin, I see a no results message when the filter matches no materiality topic
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality topic "Lavandería externa" with id "111" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-topics"
+        When I filter by "name" with "Ferias"
+        Then the response status should be 200
+        Then I see a text "No hay categorías que coincidan con los filtros."
+        Then I do not see a text "No hay categorías. Siembra los maestros estándar o registra una nueva."
 
     Scenario: As an admin, I see the materiality group in the menu
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists

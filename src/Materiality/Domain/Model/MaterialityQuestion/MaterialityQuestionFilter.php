@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Materiality\Domain\Model\MaterialityQuestion;
 
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Shared\Domain\Model\Filter;
 
@@ -15,6 +16,7 @@ class MaterialityQuestionFilter
         public ?string $text = null,
         public ?MaterialityCriterion $criterion = null,
         public ?MaterialityTopicId $topicId = null,
+        public ?MaterialitySectorId $sectorId = null,
         public bool $onlyGeneric = false,
         public ?bool $active = null,
         public bool $includeRemoved = false,

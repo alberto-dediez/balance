@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Materiality\Infrastructure\UI\Web\Admin\MaterialityQuestion;
 
+use App\Materiality\Application\MaterialityQuestion\Register\RegisterMaterialityQuestionRequest;
 use App\Materiality\Application\MaterialityQuestion\Register\RegisterMaterialityQuestionService;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
@@ -27,15 +28,11 @@ class RegisterController extends AbstractController
     {
         $this->denyAccessUnlessGranted(SecurityAction::Register->value, new MaterialityQuestion(MaterialityQuestionId::generate()));
 
-        $form = $this->createForm(RegisterMaterialityQuestionType::class);
+        $form = $this->createForm(RegisterMaterialityQuestionType::class, new RegisterMaterialityQuestionRequest());
 
         try {
-            $materialityQuestionId = null;
-
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMaterialityQuestion, $loggedUser, &$materialityQuestionId) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMaterialityQuestion, $loggedUser) {
                 $response = $registerMaterialityQuestion($form->getData(), $loggedUser());
-
-                $materialityQuestionId = $response->materialityQuestionId;
 
                 $this->addFlash('success', new TranslatableMessage('Pregunta de materialidad creada correctamente: {text}', ['{text}' => $response->text]));
 
@@ -43,10 +40,6 @@ class RegisterController extends AbstractController
             });
 
             if ($needsRedirect) {
-                if ($materialityQuestionId instanceof MaterialityQuestionId) {
-                    return $this->redirectToRoute('admin_materiality_questions_edit', ['materialityQuestionId' => $materialityQuestionId]);
-                }
-
                 return $this->redirectToRoute('admin_materiality_questions');
             }
         } catch (UnauthorizedActionException $e) {

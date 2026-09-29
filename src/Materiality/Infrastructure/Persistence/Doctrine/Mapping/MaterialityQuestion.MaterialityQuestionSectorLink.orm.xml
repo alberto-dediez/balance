@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionSectorLink" table="materiality_question_sector_links">
+        <unique-constraints>
+            <unique-constraint name="uq_materiality_question_sector_link" columns="materiality_question_id,sector_id"/>
+        </unique-constraints>
+
+        <indexes>
+            <index name="idx_materiality_question_sector_links_sector" columns="sector_id"/>
+        </indexes>
+
+        <id name="id" type="materiality_question_sector_link_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="sectorId" type="materiality_sector_id" column="sector_id" nullable="false"/>
+
+        <many-to-one field="materialityQuestion" target-entity="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion" inversed-by="sectors">
+            <join-column name="materiality_question_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

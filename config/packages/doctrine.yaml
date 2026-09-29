@@ -98,6 +98,8 @@ doctrine:
             bioscore_catalog_item_id: App\Bioscore\Infrastructure\Persistence\Doctrine\Type\BioscoreCatalogItemIdType
             materiality_topic_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityTopicIdType
             materiality_question_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityQuestionIdType
+            materiality_sector_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialitySectorIdType
+            materiality_question_sector_link_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityQuestionSectorLinkIdType
 
     orm:
         auto_generate_proxy_classes: true

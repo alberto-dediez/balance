@@ -8,6 +8,8 @@ use App\Materiality\Application\MaterialityQuestion\MaterialityQuestionAuthorize
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorNotFoundException;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorRepository;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicNotFoundException;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -26,6 +28,7 @@ class RegisterMaterialityQuestionService implements CommandHandler
     public function __construct(
         private MaterialityQuestionRepository $materialityQuestionRepository,
         private MaterialityTopicRepository $materialityTopicRepository,
+        private MaterialitySectorRepository $materialitySectorRepository,
         private MaterialityQuestionAuthorizer $authorizer,
     ) {}
 
@@ -37,6 +40,12 @@ class RegisterMaterialityQuestionService implements CommandHandler
 
         if (null !== $request->topicId && null === $this->materialityTopicRepository->find($request->topicId)) {
             throw new MaterialityTopicNotFoundException($request->topicId);
+        }
+
+        foreach ($request->sectorIds as $sectorId) {
+            if (null === $this->materialitySectorRepository->find($sectorId)) {
+                throw new MaterialitySectorNotFoundException($sectorId);
+            }
         }
 
         $locale = LocaleGetter::locale();
@@ -51,6 +60,7 @@ class RegisterMaterialityQuestionService implements CommandHandler
             answerScale: $request->answerScale,
             weight: $request->weight,
             position: $request->position,
+            sectorIds: $request->sectorIds,
             locale: $isDefaultLocale ? null : $locale,
         );
 

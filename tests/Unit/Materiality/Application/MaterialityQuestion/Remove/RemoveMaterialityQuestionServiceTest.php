@@ -67,6 +67,13 @@ class RemoveMaterialityQuestionServiceTest extends TestCase
         );
     }
 
+    public function testIsHandled(): void
+    {
+        $sut = $this->createSUT(MaterialityQuestionRepositoryMother::inMemory());
+
+        $this->assertTrue($sut->isHandled(new RemoveMaterialityQuestionRequest(MaterialityQuestionId::generate())));
+    }
+
     private function createSUT(MaterialityQuestionRepository $repository): RemoveMaterialityQuestionService
     {
         return new RemoveMaterialityQuestionService(

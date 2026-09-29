@@ -45,3 +45,17 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/admin/materiality-questions/edit/q1"
         Then the response status should be 403
+
+    Scenario: As an admin, I can remove a sector from a materiality question
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given materiality sector "Hoteles" with id "111" exists
+        Given materiality sector "Eventos" with id "222" exists
+        Given materiality question "¿Catering externo?" with id "q1" for criterion "risk" and sectors "111,222" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/materiality-questions/edit/q1"
+        When I untick the checkbox "update_materiality_question[sectorIds][1]"
+        When I submit a form with "sectorIds:[222]" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Pregunta de materialidad actualizada con éxito"
+        Then materiality question "q1" should have sectors "222"

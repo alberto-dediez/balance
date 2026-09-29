@@ -156,6 +156,7 @@ class DoctrineMaterialityTopicRepository implements MaterialityTopicRepository
             'name' => $qb->orderBy('t.name', $way),
             'number' => $qb->orderBy('t.number', $way),
             'registeredAt' => $qb->orderBy('t.registeredAt', $way),
+            'updatedAt' => $qb->orderBy('t.updatedAt', $way),
             default => $qb->orderBy('t.position', $way)->addOrderBy('t.name', $way),
         };
 

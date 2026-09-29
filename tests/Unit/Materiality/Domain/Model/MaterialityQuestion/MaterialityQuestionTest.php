@@ -80,7 +80,7 @@ class MaterialityQuestionTest extends TestCase
     {
         $materialityQuestion = MaterialityQuestionMother::fromText('Texto base');
 
-        $materialityQuestion->update(MaterialityCriterion::Influence, null, 'English text', 'English help', MaterialityAnswerScale::Level, 1, 1, true, Locale::English);
+        $materialityQuestion->update(MaterialityCriterion::Influence, null, 'English text', 'English help', MaterialityAnswerScale::Level, 1, 1, true, locale: Locale::English);
 
         $this->assertSame('Texto base', $materialityQuestion->text());
         $this->assertSame('Texto base', $materialityQuestion->defaultText());

@@ -6,6 +6,7 @@ namespace App\Materiality\Infrastructure\Symfony\Form;
 
 use App\Materiality\Application\MaterialityQuestion\List\ListMaterialityQuestionsRequest;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityCriterionType;
+use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialitySectorChoiceType;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityTopicChoiceType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
@@ -31,6 +32,9 @@ class ListMaterialityQuestionsType extends BaseFilterType
             ->add('topicId', MaterialityTopicChoiceType::class, [
                 'label' => new TranslatableMessage('Categoría'),
                 'include_inactive' => true,
+            ])
+            ->add('sectorId', MaterialitySectorChoiceType::class, [
+                'label' => new TranslatableMessage('Sector'),
             ])
             ->add('active', BooleanType::class, [
                 'label' => new TranslatableMessage('Activa'),

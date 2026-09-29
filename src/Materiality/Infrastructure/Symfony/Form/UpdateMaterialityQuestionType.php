@@ -7,6 +7,7 @@ namespace App\Materiality\Infrastructure\Symfony\Form;
 use App\Materiality\Application\MaterialityQuestion\Update\UpdateMaterialityQuestionRequest;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityAnswerScaleType;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityCriterionType;
+use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialitySectorChoiceType;
 use App\Materiality\Infrastructure\Symfony\Form\Type\MaterialityTopicChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -32,6 +33,13 @@ class UpdateMaterialityQuestionType extends AbstractType
             ->add('topicId', MaterialityTopicChoiceType::class, [
                 'label' => new TranslatableMessage('Categoría'),
                 'include_inactive' => true,
+            ])
+            ->add('sectorIds', MaterialitySectorChoiceType::class, [
+                'label' => new TranslatableMessage('Sectores'),
+                'help' => new TranslatableMessage('Sin ninguno marcado, la pregunta aplica a todos los sectores'),
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
             ])
             ->add('text', TextareaType::class, [
                 'label' => new TranslatableMessage('Pregunta'),

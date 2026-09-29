@@ -32,6 +32,8 @@
                             {% set value = value | project_name %}
                         {% elseif field == 'topicId' %}
                             {% set value = value | materiality_topic_name %}
+                        {% elseif field == 'sectorId' %}
+                            {% set value = value | materiality_sector_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% elseif field == 'status' or field == 'subjectType' %}

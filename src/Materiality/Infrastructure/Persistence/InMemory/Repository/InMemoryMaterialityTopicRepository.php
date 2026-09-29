@@ -126,6 +126,7 @@ class InMemoryMaterialityTopicRepository implements MaterialityTopicRepository
                 'name' => strcmp($a->name(), $b->name()),
                 'number' => $a->number() <=> $b->number(),
                 'registeredAt' => $a->registeredAt() <=> $b->registeredAt(),
+                'updatedAt' => $a->updatedAt() <=> $b->updatedAt(),
                 default => 0 !== ($a->position() <=> $b->position()) ? $a->position() <=> $b->position() : strcmp($a->name(), $b->name()),
             };
 

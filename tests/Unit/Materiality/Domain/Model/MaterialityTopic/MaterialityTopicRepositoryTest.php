@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic;
 
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
+use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopic;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicDirection;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicFilter;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
@@ -185,6 +186,26 @@ abstract class MaterialityTopicRepositoryTest extends KernelTestCase
 
         $this->assertCount(1, $result);
         $this->assertEquals($active->id(), $result[0]->id());
+    }
+
+    public function testOrderByUpdatedAt(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(new MaterialityTopic(id: MaterialityTopicId::generate(), name: 'A', updatedAt: new \DateTimeImmutable('2026-03-01')));
+        $repository->add(new MaterialityTopic(id: MaterialityTopicId::generate(), name: 'B', updatedAt: new \DateTimeImmutable('2026-01-01')));
+        $repository->add(new MaterialityTopic(id: MaterialityTopicId::generate(), name: 'C', updatedAt: new \DateTimeImmutable('2026-02-01')));
+
+        $filter = new MaterialityTopicFilter();
+        $filter->orderBy = 'updatedAt';
+        $filter->orderWay = 'DESC';
+
+        $names = array_map(
+            static fn($materialityTopic) => $materialityTopic->name(),
+            $repository->findByFilter($filter),
+        );
+
+        $this->assertSame(['A', 'C', 'B'], $names);
     }
 
     abstract protected function createSUT(Locale $locale = Locale::Spanish): MaterialityTopicRepository;

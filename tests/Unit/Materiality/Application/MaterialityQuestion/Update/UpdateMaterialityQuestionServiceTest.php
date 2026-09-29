@@ -11,11 +11,15 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionNotFoundException;
+use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionSectorUnlinked;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslated;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionUpdated;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
+use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorNotFoundException;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicNotFoundException;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialityQuestionRepository;
+use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialitySectorRepository;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialityTopicRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
@@ -23,6 +27,8 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepositoryMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialitySector\MaterialitySectorMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialitySector\MaterialitySectorRepositoryMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -38,6 +44,8 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
 
     private InMemoryMaterialityTopicRepository $topicRepository;
 
+    private InMemoryMaterialitySectorRepository $sectorRepository;
+
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
@@ -46,6 +54,7 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
         $this->spySubscriber = new SpyDomainEventSubscriber();
         $this->repository = MaterialityQuestionRepositoryMother::inMemory();
         $this->topicRepository = MaterialityTopicRepositoryMother::inMemory();
+        $this->sectorRepository = MaterialitySectorRepositoryMother::inMemory();
     }
 
     protected function tearDown(): void
@@ -96,6 +105,44 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
         );
     }
 
+    public function testUpdateUnlinksRemovedSector(): void
+    {
+        $hotels = MaterialitySectorMother::fromName('Hoteles');
+        $events = MaterialitySectorMother::fromName('Eventos');
+        $this->sectorRepository->add($hotels);
+        $this->sectorRepository->add($events);
+        $materialityQuestion = MaterialityQuestionMother::forSectors([$hotels->id(), $events->id()]);
+        $this->repository->add($materialityQuestion);
+
+        $this->createSUT(Locale::Spanish)(
+            $this->request($materialityQuestion->id(), 'texto', sectorIds: [$events->id()]),
+            UserMother::adminUser(),
+        );
+
+        $this->assertEquals([$events->id()], $materialityQuestion->sectorIds());
+
+        $unlinkedEvents = array_values(array_filter(
+            $this->spySubscriber->events(),
+            static fn($event) => $event instanceof MaterialityQuestionSectorUnlinked,
+        ));
+
+        $this->assertCount(1, $unlinkedEvents);
+        $this->assertTrue($hotels->id()->equals($unlinkedEvents[0]->sectorId()));
+    }
+
+    public function testUnknownSectorThrows(): void
+    {
+        $materialityQuestion = MaterialityQuestionMother::random();
+        $this->repository->add($materialityQuestion);
+
+        $this->expectException(MaterialitySectorNotFoundException::class);
+
+        $this->createSUT(Locale::Spanish)(
+            $this->request($materialityQuestion->id(), 'texto', sectorIds: [MaterialitySectorId::generate()]),
+            UserMother::adminUser(),
+        );
+    }
+
     public function testOwnerCannotUpdate(): void
     {
         $materialityQuestion = MaterialityQuestionMother::random();
@@ -124,7 +171,15 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
         $this->assertInstanceOf(MaterialityQuestionTranslated::class, $this->spySubscriber->lastEvent());
     }
 
-    private function request(MaterialityQuestionId $id, string $text, ?MaterialityTopicId $topicId = null): UpdateMaterialityQuestionRequest
+    public function testIsHandled(): void
+    {
+        $sut = $this->createSUT(Locale::Spanish);
+
+        $this->assertTrue($sut->isHandled($this->request(MaterialityQuestionId::generate(), 'text')));
+    }
+
+    /** @param list<MaterialitySectorId> $sectorIds */
+    private function request(MaterialityQuestionId $id, string $text, ?MaterialityTopicId $topicId = null, array $sectorIds = []): UpdateMaterialityQuestionRequest
     {
         return new UpdateMaterialityQuestionRequest(
             materialityQuestionId: $id,
@@ -136,6 +191,7 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
             weight: 3,
             position: 2,
             active: false,
+            sectorIds: $sectorIds,
         );
     }
 
@@ -146,6 +202,7 @@ class UpdateMaterialityQuestionServiceTest extends TestCase
         return new UpdateMaterialityQuestionService(
             materialityQuestionRepository: $this->repository,
             materialityTopicRepository: $this->topicRepository,
+            materialitySectorRepository: $this->sectorRepository,
             authorizer: new MaterialityQuestionAuthorizer(),
         );
     }

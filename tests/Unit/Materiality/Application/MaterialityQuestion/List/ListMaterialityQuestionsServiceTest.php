@@ -11,6 +11,8 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepositoryMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialitySector\MaterialitySectorMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialitySector\MaterialitySectorRepositoryMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -31,7 +33,7 @@ class ListMaterialityQuestionsServiceTest extends TestCase
         $repository->add(MaterialityQuestionMother::random());
         $repository->add(MaterialityQuestionMother::random());
 
-        $response = (new ListMaterialityQuestionsService($repository, $topicRepository, new MaterialityQuestionAuthorizer()))(
+        $response = (new ListMaterialityQuestionsService($repository, $topicRepository, MaterialitySectorRepositoryMother::inMemory(), new MaterialityQuestionAuthorizer()))(
             new ListMaterialityQuestionsRequest(),
             UserMother::adminUser(),
         );
@@ -41,6 +43,32 @@ class ListMaterialityQuestionsServiceTest extends TestCase
         $this->assertSame([(string) $referenced->id()], array_keys($response->topicsById));
     }
 
+    public function testReturnsReferencedSectorsWithoutRepetition(): void
+    {
+        $sectorRepository = MaterialitySectorRepositoryMother::inMemory();
+        $hotels = MaterialitySectorMother::fromName('Hoteles');
+        $events = MaterialitySectorMother::fromName('Eventos');
+        $notReferenced = MaterialitySectorMother::fromName('Transporte');
+        $sectorRepository->add($hotels);
+        $sectorRepository->add($events);
+        $sectorRepository->add($notReferenced);
+
+        $repository = MaterialityQuestionRepositoryMother::inMemory();
+        $repository->add(MaterialityQuestionMother::forSectors([$hotels->id(), $events->id()]));
+        $repository->add(MaterialityQuestionMother::forSectors([$hotels->id()]));
+        $repository->add(MaterialityQuestionMother::random());
+
+        $response = (new ListMaterialityQuestionsService($repository, MaterialityTopicRepositoryMother::inMemory(), $sectorRepository, new MaterialityQuestionAuthorizer()))(
+            new ListMaterialityQuestionsRequest(),
+            UserMother::adminUser(),
+        );
+
+        $this->assertCount(2, $response->sectorsById);
+        $this->assertArrayHasKey((string) $hotels->id(), $response->sectorsById);
+        $this->assertArrayHasKey((string) $events->id(), $response->sectorsById);
+        $this->assertArrayNotHasKey((string) $notReferenced->id(), $response->sectorsById);
+    }
+
     public function testOwnerCannotList(): void
     {
         $this->expectException(UnauthorizedActionException::class);
@@ -48,6 +76,7 @@ class ListMaterialityQuestionsServiceTest extends TestCase
         (new ListMaterialityQuestionsService(
             MaterialityQuestionRepositoryMother::inMemory(),
             MaterialityTopicRepositoryMother::inMemory(),
+            MaterialitySectorRepositoryMother::inMemory(),
             new MaterialityQuestionAuthorizer(),
         ))(
             new ListMaterialityQuestionsRequest(),

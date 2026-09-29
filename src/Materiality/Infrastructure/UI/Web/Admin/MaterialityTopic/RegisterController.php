@@ -38,9 +38,7 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegisterMaterialityTopicType::class);
 
         try {
-            $materialityTopicId = null;
-
-            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMaterialityTopic, $loggedUser, $translator, &$materialityTopicId) {
+            $needsRedirect = $this->register($request, $form, function ($form) use ($registerMaterialityTopic, $loggedUser, $translator) {
                 try {
                     $response = $registerMaterialityTopic($form->getData(), $loggedUser());
                 } catch (MaterialityTopicDirectionRequiredException) {
@@ -53,18 +51,12 @@ class RegisterController extends AbstractController
                     return false;
                 }
 
-                $materialityTopicId = $response->materialityTopicId;
-
                 $this->addFlash('success', new TranslatableMessage('Categoría de materialidad creada correctamente: {name}', ['{name}' => $response->name]));
 
                 return true;
             });
 
             if ($needsRedirect) {
-                if ($materialityTopicId instanceof MaterialityTopicId) {
-                    return $this->redirectToRoute('admin_materiality_topics_edit', ['materialityTopicId' => $materialityTopicId]);
-                }
-
                 return $this->redirectToRoute('admin_materiality_topics');
             }
         } catch (UnauthorizedActionException $e) {
