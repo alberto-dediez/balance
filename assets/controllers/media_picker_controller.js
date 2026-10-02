@@ -3,7 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 import { Modal } from 'bootstrap';
 
 export default class extends Controller {
-    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared', 'dropzone', 'clear', 'itemTemplate', 'resultTemplate', 'emptyResults', 'loadMore'];
+    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared', 'dropzone', 'uploadToggle', 'clear', 'itemTemplate', 'resultTemplate', 'emptyResults', 'loadMore'];
 
     static values = {
         searchPath: String,
@@ -54,6 +54,18 @@ export default class extends Controller {
         event.preventDefault();
 
         this.fileTarget.click();
+    }
+
+    toggleDropzone(event) {
+        event.preventDefault();
+
+        this.showDropzone(this.dropzoneTarget.classList.contains('d-none'));
+    }
+
+    showDropzone(visible) {
+        this.dropzoneTarget.classList.toggle('d-none', !visible);
+        this.uploadToggleTarget.setAttribute('aria-expanded', visible ? 'true' : 'false');
+        this.uploadToggleTarget.classList.toggle('active', visible);
     }
 
     clear(event) {
@@ -296,6 +308,7 @@ export default class extends Controller {
         if (!file) {
             if (!failed) {
                 this.setFeedback('');
+                this.showDropzone(false);
             }
 
             this.fileTarget.value = '';

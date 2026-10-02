@@ -141,7 +141,7 @@
             {% endif %}
         </div>
 
-        <div class="dropzone{% if preview == 'avatar' %} dropzone--compact{% endif %}"
+        <div class="dropzone d-none{% if preview == 'avatar' %} dropzone--compact{% endif %}"
              data-media-picker-target="dropzone"
              data-action="click->media-picker#browseFile dragover->media-picker#dragOver dragleave->media-picker#dragLeave drop->media-picker#drop">
             <twig:Icon name="solar:cloud-upload-line-duotone" size="xl" class="dropzone__icon" />
@@ -168,6 +168,12 @@
                 <twig:Icon name="solar:gallery-wide-line-duotone" size="md" class="me-1" />
 
                 {% trans %}Biblioteca{% endtrans %}
+            </button>
+
+            <button type="button" class="btn btn-sm btn-light" aria-expanded="false" data-media-picker-target="uploadToggle" data-action="media-picker#toggleDropzone">
+                <twig:Icon name="solar:cloud-upload-line-duotone" size="md" class="me-1" />
+
+                {% trans %}Subir archivo{% endtrans %}
             </button>
 
             <button type="button" class="btn btn-sm bg-danger-subtle text-danger{% if selected is empty %} d-none{% endif %}" data-media-picker-target="clear" data-action="media-picker#clear">
