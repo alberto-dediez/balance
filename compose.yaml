@@ -45,6 +45,7 @@ services:
 ###> doctrine/doctrine-bundle ###
   database:
     image: mysql:${MYSQL_VERSION:-9.3.0}
+    restart: unless-stopped
     env_file:
       - path: ./.env
         required: true
