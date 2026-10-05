@@ -71,3 +71,7 @@ services:
     App\Shared\Domain\Model\Sms\SmsSender: '@App\Shared\Infrastructure\Sms\TwilioSmsSender'
 
     App\Shared\Domain\Model\WhatsApp\WhatsAppSender: '@App\Shared\Infrastructure\WhatsApp\TwilioWhatsAppSender'
+
+when@test:
+    parameters:
+        app.uploads_dir: '%kernel.project_dir%/var/uploads_test%env(default::TEST_TOKEN)%'

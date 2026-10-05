@@ -15,6 +15,20 @@ class SqliteImportationDataRepositoryTest extends TestCase
 {
     public const STORAGE_PATH = __DIR__ . '/../../../../../../../var/sqlite-test/';
 
+    public function testGivenANonExistentStoragePathWhenICreateTheRepositoryThenTheDirectoryIsCreated(): void
+    {
+        $path = __DIR__ . '/../../../../../../../var/sqlite-test-new-dir/';
+        if (is_dir($path)) {
+            rmdir($path);
+        }
+
+        new SqliteImportationDataRepository(storagePath: $path);
+
+        $this->assertDirectoryExists($path);
+
+        rmdir($path);
+    }
+
     public function testGivenAnImportationWhenICreateAnImportationDataThenDataIsAccessibleThroughAnSqlite(): void
     {
         $path = __DIR__ . '/file-to-import.csv';
