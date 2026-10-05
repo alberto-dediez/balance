@@ -109,12 +109,15 @@ test-acceptance: ## Execute acceptance tests
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
 	@$(PHP_TEST) vendor/bin/behat $(options)
 
+test-parallel: | test-acceptance-parallel test-unit
 
-test-this: ## Execute one test
-	@$(eval test ?=)
+test-acceptance-parallel: ## Execute acceptance tests in parallel, pass "processes=N" and/or "options="
+	@$(eval options ?=)
+	@$(eval processes ?=)
 	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
-	@$(PHP_TEST) bin/phpunit $(test)
+	@$(PHP_TEST) bin/console cache:warmup -e test -q
+	@$(TEST_CONT) bash bin/behat-parallel $(if $(processes),-j $(processes)) $(options)
 
 reset-test-cache: ## Clear testing cache
 	@$(PHP) bin/console cache:clear --env=test -q

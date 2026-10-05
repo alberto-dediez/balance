@@ -17,9 +17,9 @@ class InMemoryImportationRepository implements ImportationRepository
     private readonly ImportationDataRepository $dataRepository;
 
     /** @param array<string, Importation> $importations */
-    public function __construct(private array $importations = [])
+    public function __construct(private array $importations = [], ?ImportationDataRepository $dataRepository = null)
     {
-        $this->dataRepository = new SqliteImportationDataRepository(
+        $this->dataRepository = $dataRepository ?? new SqliteImportationDataRepository(
             __DIR__ . '/../../../../../../var/sqlite-test/',
         );
     }

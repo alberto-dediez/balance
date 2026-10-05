@@ -19,7 +19,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
     public function __construct(private readonly string $storagePath)
     {
-        if (!is_dir($this->storagePath) && mkdir($this->storagePath, 0755, true)) {
+        if (!is_dir($this->storagePath) && !mkdir($this->storagePath, 0755, true)) {
             throw new IOException(message: "Failed to create storage directory '{$this->storagePath}'", code: 503, path: $this->storagePath);
         }
     }

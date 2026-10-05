@@ -27,3 +27,8 @@ services:
     App\DataExchange\Application\Exportation\Register\RegisterExportationService:
         arguments:
             $validForDays: '%export.valid_for_days%'
+
+when@test:
+    parameters:
+        storage.path: '%kernel.project_dir%/var/sqlite_test%env(default::TEST_TOKEN)%/'
+        export.storage.path: '%kernel.project_dir%/var/export_test%env(default::TEST_TOKEN)%/'

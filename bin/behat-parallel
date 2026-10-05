@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+
+set -u
+export LC_ALL=C
+
+if [ "${BASH_VERSINFO[0]}" -lt 5 ] || { [ "${BASH_VERSINFO[0]}" -eq 5 ] && [ "${BASH_VERSINFO[1]}" -lt 1 ]; }; then
+    echo "bin/behat-parallel requires bash >= 5.1 (found $BASH_VERSION)" >&2
+    exit 1
+fi
+
+cd "$(dirname "$0")/.."
+
+work_dir=var/test-parallel
+template_db=var/data.db
+default_processes=8
+processes=
+paths=()
+flags=()
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -j)
+            processes="${2:-}"
+            shift 2 || shift
+            ;;
+        -j*)
+            processes="${1#-j}"
+            shift
+            ;;
+        *)
+            if [ -e "$1" ]; then
+                paths+=("$1")
+            else
+                flags+=("$1")
+            fi
+            shift
+            ;;
+    esac
+done
+
+if [ -n "$processes" ] && ! [[ "$processes" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Invalid number of processes: $processes" >&2
+    exit 1
+fi
+
+if [ ! -f "$template_db" ]; then
+    echo "Template database $template_db not found" >&2
+    exit 1
+fi
+
+if [ ${#paths[@]} -eq 0 ]; then
+    paths=(tests/Acceptance)
+fi
+
+mapfile -t features < <(
+    for path in "${paths[@]}"; do
+        if [ -f "$path" ]; then
+            case "$path" in
+                *.feature) echo "${path#./}" ;;
+            esac
+        else
+            find "$path" -type f -name '*.feature' | sed 's#^\./##'
+        fi
+    done | sort -u
+)
+
+if [ ${#features[@]} -eq 0 ]; then
+    echo "No .feature files found in: ${paths[*]}" >&2
+    exit 1
+fi
+
+if [ -z "$processes" ]; then
+    processes=$default_processes
+    cpus=$(nproc 2>/dev/null || echo 1)
+    if [ "$cpus" -lt "$processes" ]; then
+        processes=$cpus
+    fi
+fi
+
+if [ "${#features[@]}" -lt "$processes" ]; then
+    processes=${#features[@]}
+fi
+
+rm -rf "$work_dir"
+mkdir -p "$work_dir"
+
+mapfile -t weighted < <(
+    for feature in "${features[@]}"; do
+        weight=$(grep -c -E '^\s*(Scenario|Scenario Outline|Example):' "$feature")
+        if [ "${weight:-0}" -lt 1 ]; then
+            weight=1
+        fi
+        printf '%s\t%s\n' "$weight" "$feature"
+    done | sort -t $'\t' -k1,1nr -k2,2
+)
+
+declare -a loads files_count
+for ((i = 1; i <= processes; i++)); do
+    loads[i]=0
+    files_count[i]=0
+    : > "$work_dir/worker_$i.unsorted"
+done
+
+for line in "${weighted[@]}"; do
+    weight="${line%%$'\t'*}"
+    feature="${line#*$'\t'}"
+    target=1
+    for ((i = 2; i <= processes; i++)); do
+        if [ "${loads[i]}" -lt "${loads[target]}" ]; then
+            target=$i
+        fi
+    done
+    loads[target]=$((loads[target] + weight))
+    files_count[target]=$((files_count[target] + 1))
+    echo "$feature" >> "$work_dir/worker_$target.unsorted"
+done
+
+total_scenarios=0
+for ((i = 1; i <= processes; i++)); do
+    sort "$work_dir/worker_$i.unsorted" > "$work_dir/worker_$i.scenarios"
+    rm "$work_dir/worker_$i.unsorted"
+    total_scenarios=$((total_scenarios + loads[i]))
+done
+
+echo "Running ${#features[@]} feature files (${total_scenarios} scenarios) in ${processes} workers"
+for ((i = 1; i <= processes; i++)); do
+    echo "  worker $i: ${files_count[i]} files, ${loads[i]} scenarios"
+done
+echo
+
+start=$SECONDS
+declare -A worker_of
+declare -a codes
+
+for ((i = 1; i <= processes; i++)); do
+    cp "$template_db" "$work_dir/data_$i.db"
+    TEST_TOKEN=$i DATABASE_URL="sqlite:///./$work_dir/data_$i.db" \
+        php ${BEHAT_PHP_OPTIONS:-} vendor/bin/behat --no-interaction --colors "${flags[@]}" "$work_dir/worker_$i.scenarios" \
+        > "$work_dir/worker_$i.log" 2>&1 &
+    worker_of[$!]=$i
+done
+
+for ((n = 1; n <= processes; n++)); do
+    wait -n -p finished_pid
+    code=$?
+    i=${worker_of[$finished_pid]}
+    codes[i]=$code
+    if [ "$code" -eq 0 ]; then
+        echo "worker $i: OK"
+    else
+        echo "worker $i: FAILED ($code)"
+    fi
+done
+
+failed=0
+for ((i = 1; i <= processes; i++)); do
+    if [ "${codes[i]}" -ne 0 ]; then
+        failed=1
+        echo
+        echo "===== worker $i log ($work_dir/worker_$i.log) ====="
+        cat "$work_dir/worker_$i.log"
+    fi
+done
+
+echo
+echo "===== Summary ====="
+for ((i = 1; i <= processes; i++)); do
+    echo "worker $i:"
+    grep -E '[0-9]+ (scenarios?|steps?) \(|No scenarios|No steps|[0-9]+m[0-9.]+s \(' "$work_dir/worker_$i.log" | sed 's/^/  /'
+done
+echo
+echo "Total wall time: $((SECONDS - start))s"
+
+exit $failed
