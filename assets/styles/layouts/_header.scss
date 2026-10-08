@@ -6,7 +6,7 @@
     top: 0;
     width: 100%;
     background: var(--bs-body-bg);
-    z-index: 9999;
+    z-index: $zindex-fixed;
     padding: 0 25px;
 
     .navbar {

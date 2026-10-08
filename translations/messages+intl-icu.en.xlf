@@ -2013,6 +2013,22 @@
         <source>Compartido</source>
         <target>Shared</target>
       </trans-unit>
+      <trans-unit id="ZDBN3lP" resname="Buscar en la plataforma…">
+        <source>Buscar en la plataforma…</source>
+        <target>Search the platform…</target>
+      </trans-unit>
+      <trans-unit id="VEsYfPG" resname="Escribe al menos 2 caracteres">
+        <source>Escribe al menos 2 caracteres</source>
+        <target>Type at least 2 characters</target>
+      </trans-unit>
+      <trans-unit id="T8JpMMG" resname="Sin resultados">
+        <source>Sin resultados</source>
+        <target>No results</target>
+      </trans-unit>
+      <trans-unit id="VFJm21x" resname="Borrar búsqueda">
+        <source>Borrar búsqueda</source>
+        <target>Clear search</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

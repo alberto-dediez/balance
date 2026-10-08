@@ -1,0 +1,23 @@
+{% if response is null or not response.searched %}
+    <p class="global-search__empty mb-0 text-center text-body-secondary">{{ 'Escribe al menos 2 caracteres' | trans }}</p>
+{% elseif response.categories is empty %}
+    <p class="global-search__empty mb-0 text-center text-body-secondary">{{ 'Sin resultados' | trans }}</p>
+{% else %}
+    {% for categoryResults in response.categories %}
+        <div class="global-search__category" data-search-category="{{ categoryResults.category.key }}">
+            <h6 class="global-search__title mb-0 fs-2 fw-semibold text-uppercase text-body-secondary d-flex align-items-center gap-2">
+                <twig:Icon name="{{ categoryResults.category.icon }}" /> {{ categoryResults.category.label | trans }}
+            </h6>
+            <div class="list-group list-group-flush">
+                {% for result in categoryResults.results %}
+                    <a href="{{ path(result.route, result.routeParameters) }}" class="list-group-item list-group-item-action global-search__result" data-global-search-target="result">
+                        <span class="d-block fw-semibold text-truncate">{{ result.title }}</span>
+                        {% if result.subtitle %}
+                            <span class="d-block fs-2 text-body-secondary text-truncate">{{ result.subtitle }}</span>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}

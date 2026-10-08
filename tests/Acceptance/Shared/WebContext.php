@@ -61,6 +61,12 @@ final readonly class WebContext implements Context
         $this->client->request('GET', $path);
     }
 
+    #[When('I go to :path as an ajax request')]
+    public function iGoToAsAnAjaxRequest(string $path): void
+    {
+        $this->client->request('GET', $path, ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+    }
+
     #[When('I go to :path with csrf token :tokenId')]
     #[When('I go to :path with csrf token :tokenId as :parameter')]
     public function iGoToWithCsrfToken(string $path, string $tokenId, string $parameter = '_token'): void
@@ -252,5 +258,30 @@ final readonly class WebContext implements Context
         Assert::assertNotFalse($response);
 
         Assert::assertStringNotContainsString($text, $response);
+    }
+
+    #[Then('I see a text :first before a text :second')]
+    public function iSeeATextBeforeAText(string $first, string $second): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $firstPosition = strpos($response, $first);
+        $secondPosition = strpos($response, $second);
+
+        Assert::assertNotFalse($firstPosition, sprintf('Text "%s" not found', $first));
+        Assert::assertNotFalse($secondPosition, sprintf('Text "%s" not found', $second));
+        Assert::assertLessThan($secondPosition, $firstPosition);
+    }
+
+    #[Then('I see :count times the text :text')]
+    public function iSeeTimesTheText(int $count, string $text): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        Assert::assertSame($count, substr_count($response, $text));
     }
 }
