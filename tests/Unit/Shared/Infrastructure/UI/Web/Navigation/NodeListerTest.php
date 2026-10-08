@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Unit\Shared\Infrastructure\UI\Web\Navigation;
+namespace App\Tests\Unit\Shared\Infrastructure\UI\Web\Navigation;
 
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Infrastructure\UI\Web\Navigation\Node;

@@ -38,14 +38,72 @@ Feature:
         Then I do not see a text "acme-rival@dediez.software"
         Then I do not see a text 'data-search-category="accounts"'
 
-    Scenario: A user does not see the search and the search is forbidden
+    Scenario: A user finds its menu entries
         Given user "user@dediez.software" with role "ROLE_USER" exists
         When I am logged as "user@dediez.software"
         When I go to "/es/library/media"
         Then the response status should be 200
-        Then I do not see a text "global-search"
-        When I go to "/es/search?term=acme" as an ajax request
-        Then the response status should be 403
+        Then I see a text 'data-bs-target="#global-search"'
+        When I go to "/es/search?term=archivos" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'data-search-category="navigation"'
+        Then I see a text "/es/library/media"
+        Then I see a text "Archivos"
+        Then I do not see a text "/es/admin/"
+
+    Scenario: An admin finds every screen of a menu group
+        Given user "superadmin@dediez.software" with role "ROLE_SUPER_ADMIN" exists
+        When I am logged as "superadmin@dediez.software"
+        When I go to "/es/search?term=Seguridad" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'data-search-category="navigation"'
+        Then I see a text "Cuentas"
+        Then I see a text "Usuarios"
+        Then I see a text "Firma de documentos"
+        Then I see a text "Registro"
+        Then I see a text 'href="/es/admin/accounts"'
+        Then I see a text 'href="/es/admin/users"'
+        Then I see a text 'href="/es/admin/signature-requests"'
+        Then I see a text 'href="/es/admin/events"'
+        Then I see a text "Cuentas" before a text "Registro"
+        Then I do not see a text 'data-search-category="accounts"'
+
+    Scenario: The actions category comes first
+        Given account "Usuarios Demo" with id "a1" exists
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/search?term=usuarios" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'data-search-category="navigation"' before a text 'data-search-category="accounts"'
+        Then I see a text "/es/admin/accounts/edit/a1"
+
+    Scenario: An owner only finds the screens of its menu
+        Given account "Acme" with id "a1" exists
+        Given user "acme-owner@dediez.software" with role "ROLE_OWNER" of account "a1" exists
+        When I am logged as "acme-owner@dediez.software"
+        When I go to "/es/search?term=Seguridad" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'href="/es/users"'
+        Then I see a text "Usuarios"
+        Then I do not see a text "/es/admin/users"
+        Then I do not see a text "Cuentas"
+
+    Scenario: The menu is searched in the current language
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/en/search?term=Security" as an ajax request
+        Then the response status should be 200
+        Then I see a text "Users"
+        Then I see a text "Security"
+        Then I see a text 'href="/en/admin/users"'
+
+    Scenario: The match ignores accents and case
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/search?term=NOTIFICACION" as an ajax request
+        Then the response status should be 200
+        Then I see a text "Mis notificaciones"
+        Then I see a text 'href="/es/notifications"'
 
     Scenario: A short term does not search
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
@@ -84,3 +142,14 @@ Feature:
         Then I do not see a text "/es/admin/users/edit/"
         Then I do not see a text 'data-search-category="accounts"'
 
+    Scenario: An admin impersonating an account gets the owner menu
+        Given account "AdminAccount" with id "admin-account-id" exists
+        Given account "Acme" with id "a1" exists
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" of account "admin-account-id" exists
+        Given user "acme-owner@dediez.software" with role "ROLE_OWNER" of account "a1" exists
+        When I am logged as "admin@dediez.software"
+        When I impersonate account "Acme"
+        When I go to "/es/search?term=Seguridad" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'href="/es/users"'
+        Then I do not see a text 'href="/es/admin/users"'

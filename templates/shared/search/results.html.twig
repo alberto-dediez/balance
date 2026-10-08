@@ -10,8 +10,10 @@
             </h6>
             <div class="list-group list-group-flush">
                 {% for result in categoryResults.results %}
-                    <a href="{{ path(result.route, result.routeParameters) }}" class="list-group-item list-group-item-action global-search__result" data-global-search-target="result">
-                        <span class="d-block fw-semibold text-truncate">{{ result.title }}</span>
+                    <a href="{{ result.url ?? path(result.route, result.routeParameters) }}" class="list-group-item list-group-item-action global-search__result" data-global-search-target="result">
+                        <span class="d-block fw-semibold text-truncate">
+                            {% if result.icon %}<twig:Icon name="{{ result.icon }}" class="me-2" />{% endif %}{{ result.title }}
+                        </span>
                         {% if result.subtitle %}
                             <span class="d-block fs-2 text-body-secondary text-truncate">{{ result.subtitle }}</span>
                         {% endif %}

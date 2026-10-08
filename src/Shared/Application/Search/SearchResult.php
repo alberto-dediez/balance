@@ -10,7 +10,9 @@ final readonly class SearchResult
     public function __construct(
         public string $title,
         public ?string $subtitle,
-        public string $route,
-        public array $routeParameters,
+        public ?string $route = null,
+        public array $routeParameters = [],
+        public ?string $url = null,
+        public ?string $icon = null,
     ) {}
 }

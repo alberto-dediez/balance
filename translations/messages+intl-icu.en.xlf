@@ -2029,6 +2029,10 @@
         <source>Borrar búsqueda</source>
         <target>Clear search</target>
       </trans-unit>
+      <trans-unit id="sYsTeM1" resname="Sistema">
+        <source>Sistema</source>
+        <target>System</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
