@@ -2033,6 +2033,22 @@
         <source>Sistema</source>
         <target>System</target>
       </trans-unit>
+      <trans-unit id="KgcF1oX" resname="El almacenamiento de la biblioteca no está disponible">
+        <source>El almacenamiento de la biblioteca no está disponible</source>
+        <target>The library storage is unavailable</target>
+      </trans-unit>
+      <trans-unit id="0LwiJ43" resname="El almacenamiento de la biblioteca se ha recuperado">
+        <source>El almacenamiento de la biblioteca se ha recuperado</source>
+        <target>The library storage has recovered</target>
+      </trans-unit>
+      <trans-unit id="xcRYbVQ" resname="El almacenamiento de la biblioteca no responde. Los archivos nuevos se están guardando temporalmente en el servidor y se subirán automáticamente cuando vuelva a responder.">
+        <source>El almacenamiento de la biblioteca no responde. Los archivos nuevos se están guardando temporalmente en el servidor y se subirán automáticamente cuando vuelva a responder.</source>
+        <target>The library storage is not responding. New files are being kept temporarily on the server and will be uploaded automatically once it responds again.</target>
+      </trans-unit>
+      <trans-unit id="QZZYuBZ" resname="El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.">
+        <source>El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.</source>
+        <target>The library storage is responding again. {uploaded} files that were kept temporarily on the server have been uploaded.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

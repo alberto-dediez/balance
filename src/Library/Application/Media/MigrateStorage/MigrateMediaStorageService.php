@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Library\Application\Media\MigrateStorage;
 
-use App\Library\Domain\Model\Media\Media;
+use App\Library\Application\Media\MediaStorageFileCopier;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaRepository;
-use App\Library\Domain\Model\Media\MediaStorage;
-use App\Library\Domain\Model\Media\NotStoredMediaException;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -20,7 +18,10 @@ class MigrateMediaStorageService implements CommandHandler
     use RegisterHandlerTrait;
     use CommandInvokeHandlerTrait;
 
-    public function __construct(private readonly MediaRepository $mediaRepository) {}
+    public function __construct(
+        private readonly MediaRepository $mediaRepository,
+        private readonly MediaStorageFileCopier $copier,
+    ) {}
 
     public function __invoke(MigrateMediaStorageRequest $request, User $user): MigrateMediaStorageResponse
     {
@@ -69,7 +70,7 @@ class MigrateMediaStorageService implements CommandHandler
                         continue;
                     }
 
-                    $this->copy($media, $request->source, $request->target);
+                    $this->copier->copy($path, $request->source, $request->target);
                     ++$migrated;
 
                     if ($request->deleteSource) {
@@ -96,33 +97,5 @@ class MigrateMediaStorageService implements CommandHandler
     public function isHandled(Command $command): bool
     {
         return $command instanceof MigrateMediaStorageRequest;
-    }
-
-    private function copy(Media $media, MediaStorage $source, MediaStorage $target): void
-    {
-        $temporaryPath = tempnam(sys_get_temp_dir(), 'media-migrate');
-
-        if (false === $temporaryPath) {
-            throw new NotStoredMediaException('Unable to create a temporary file');
-        }
-
-        try {
-            $stream = $source->read($media->path());
-            $temporary = fopen($temporaryPath, 'wb');
-
-            if (false === $temporary) {
-                fclose($stream);
-
-                throw new NotStoredMediaException(sprintf('Unable to write the temporary file "%s"', $temporaryPath));
-            }
-
-            stream_copy_to_stream($stream, $temporary);
-            fclose($stream);
-            fclose($temporary);
-
-            $target->write($media->path(), $temporaryPath);
-        } finally {
-            @unlink($temporaryPath);
-        }
     }
 }

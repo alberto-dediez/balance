@@ -1,6 +1,7 @@
 parameters:
     app.media_dir: '%app.uploads_dir%/library'
     app.media_storage: '%env(MEDIA_STORAGE)%'
+    app.media_storage_fallback_enabled: '%env(bool:MEDIA_STORAGE_FALLBACK_ENABLED)%'
 
 services:
     _defaults:
@@ -32,13 +33,37 @@ services:
                 ovh: '@App\Library\Infrastructure\Storage\OvhMediaStorage'
             $defaultDriver: '%app.media_storage%'
 
-    App\Library\Domain\Model\Media\MediaStorage:
+    library.media_storage.primary:
+        class: App\Library\Domain\Model\Media\MediaStorage
         factory: ['@App\Library\Infrastructure\Storage\MediaStorageRegistry', 'default']
+
+    App\Library\Infrastructure\Storage\FallbackMediaStorage:
+        arguments:
+            $primary: '@library.media_storage.primary'
+            $fallback: '@App\Library\Infrastructure\Storage\LocalMediaStorage'
+
+    App\Library\Infrastructure\Storage\MediaStorageSelector:
+        arguments:
+            $primary: '@library.media_storage.primary'
+            $fallbackEnabled: '%app.media_storage_fallback_enabled%'
+
+    App\Library\Domain\Model\Media\MediaStorage:
+        factory: ['@App\Library\Infrastructure\Storage\MediaStorageSelector', 'select']
+
+    App\Library\Application\Media\SyncStorage\SyncMediaStorageService:
+        arguments:
+            $primary: '@library.media_storage.primary'
+            $fallback: '@App\Library\Infrastructure\Storage\LocalMediaStorage'
 
 when@test:
     services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
         App\Library\Domain\Model\Media\MediaStorage:
-            alias: App\Library\Infrastructure\Storage\InMemoryMediaStorage
+            alias: App\Library\Infrastructure\Storage\FallbackMediaStorage
+            public: true
 
         App\Library\Infrastructure\Storage\InMemoryMediaStorage:
             public: true
@@ -53,4 +78,25 @@ when@test:
                     local: '@App\Library\Infrastructure\Storage\InMemoryMediaStorage'
                     ovh: '@library.media_storage.ovh_in_memory'
                 $defaultDriver: 'local'
+            public: true
+
+        library.media_storage.fallback_in_memory:
+            class: App\Library\Infrastructure\Storage\InMemoryMediaStorage
+            public: true
+
+        library.media_storage.primary:
+            alias: App\Library\Infrastructure\Storage\InMemoryMediaStorage
+            public: true
+
+        App\Library\Infrastructure\Storage\FallbackMediaStorage:
+            arguments:
+                $primary: '@library.media_storage.primary'
+                $fallback: '@library.media_storage.fallback_in_memory'
+
+        App\Library\Application\Media\SyncStorage\SyncMediaStorageService:
+            arguments:
+                $primary: '@library.media_storage.primary'
+                $fallback: '@library.media_storage.fallback_in_memory'
+
+        App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryStorageSyncTaskRepository:
             public: true

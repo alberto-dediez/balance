@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Application\Media\MigrateStorage;
 
+use App\Library\Application\Media\MediaStorageFileCopier;
 use App\Library\Application\Media\MigrateStorage\MigrateMediaStorageRequest;
 use App\Library\Application\Media\MigrateStorage\MigrateMediaStorageService;
 use App\Library\Domain\Model\Media\Media;
@@ -218,7 +219,7 @@ class MigrateMediaStorageServiceTest extends TestCase
 
     private function createSUT(): MigrateMediaStorageService
     {
-        return new MigrateMediaStorageService($this->repository);
+        return new MigrateMediaStorageService($this->repository, new MediaStorageFileCopier());
     }
 
     private function addMedia(Media $media): Media

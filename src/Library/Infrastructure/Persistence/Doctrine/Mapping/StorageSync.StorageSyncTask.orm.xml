@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Library\Domain\Model\StorageSync\StorageSyncTask" table="media_storage_sync_tasks">
+        <id name="path" type="string" length="512" column="path">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="attempts" type="integer" column="attempts" nullable="false" />
+        <field name="lastAttemptAt" type="datetime_immutable" column="last_attempt_at" nullable="true" />
+        <field name="lastError" type="text" column="last_error" nullable="true" />
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+
+        <indexes>
+            <index name="IDX_media_storage_sync_tasks_registered_at" columns="registered_at" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

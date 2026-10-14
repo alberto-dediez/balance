@@ -6,6 +6,7 @@ namespace App\Shared\Application\CommandBus;
 
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
+use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
 /**
@@ -38,6 +39,11 @@ class CommandSchedule
             ScheduledCommand::everyMinutes(
                 id: 'changelog:publish-scheduled-announcements',
                 command: new PublishScheduledAnnouncementsRequest(new \DateTimeImmutable('NOW')),
+                minutes: 5,
+            ),
+            ScheduledCommand::everyMinutes(
+                id: 'library:sync-media-storage',
+                command: new SyncMediaStorageRequest(new \DateTimeImmutable('NOW')),
                 minutes: 5,
             ),
         ];

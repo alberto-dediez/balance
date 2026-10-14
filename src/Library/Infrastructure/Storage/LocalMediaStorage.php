@@ -32,11 +32,11 @@ class LocalMediaStorage implements MediaStorage
 
         $directory = dirname($absolutePath);
 
-        if (!is_dir($directory) && !mkdir($directory, 0o775, true) && !is_dir($directory)) {
+        if (!is_dir($directory) && !@mkdir($directory, 0o775, true) && !is_dir($directory)) {
             throw new NotStoredMediaException(sprintf('Unable to create media directory "%s"', $directory));
         }
 
-        if (false === copy($localPath, $absolutePath)) {
+        if (false === @copy($localPath, $absolutePath)) {
             throw new NotStoredMediaException(sprintf('Unable to store media file at "%s"', $absolutePath));
         }
     }

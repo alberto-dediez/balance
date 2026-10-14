@@ -19,6 +19,18 @@ class InMemoryMediaStorage implements MediaStorage
      */
     private array $contents = [];
 
+    private bool $available = true;
+
+    public function markUnavailable(): void
+    {
+        $this->available = false;
+    }
+
+    public function markAvailable(): void
+    {
+        $this->available = true;
+    }
+
     public function store(MediaId $mediaId, ?AccountId $accountId, string $extension, string $localPath): string
     {
         $relativePath = MediaPath::from($mediaId, $accountId, $extension);
@@ -30,6 +42,8 @@ class InMemoryMediaStorage implements MediaStorage
 
     public function write(string $path, string $localPath): void
     {
+        $this->assertAvailable($path);
+
         $contents = is_file($localPath) ? file_get_contents($localPath) : '';
 
         $this->contents[$path] = false === $contents ? '' : $contents;
@@ -37,6 +51,8 @@ class InMemoryMediaStorage implements MediaStorage
 
     public function read(string $path): mixed
     {
+        $this->assertAvailable($path);
+
         if (!$this->exists($path)) {
             throw new NotStoredMediaException(sprintf('Unable to read media file "%s"', $path));
         }
@@ -55,11 +71,22 @@ class InMemoryMediaStorage implements MediaStorage
 
     public function delete(string $path): void
     {
+        $this->assertAvailable($path);
+
         unset($this->contents[$path]);
     }
 
     public function exists(string $path): bool
     {
+        $this->assertAvailable($path);
+
         return isset($this->contents[$path]);
+    }
+
+    private function assertAvailable(string $path): void
+    {
+        if (!$this->available) {
+            throw new NotStoredMediaException(sprintf('Media storage unavailable for "%s"', $path));
+        }
     }
 }

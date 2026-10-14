@@ -56,4 +56,53 @@ class InMemoryMediaStorageTest extends TestCase
 
         MediaStorageMother::inMemory()->read('shared/unknown.txt');
     }
+
+    public function testUnavailableWrite(): void
+    {
+        $this->expectException(NotStoredMediaException::class);
+
+        $storage = MediaStorageMother::inMemory();
+        $storage->markUnavailable();
+
+        $storage->write('shared/file.txt', MediaStorageMother::localFile());
+    }
+
+    public function testUnavailableRead(): void
+    {
+        $this->expectException(NotStoredMediaException::class);
+
+        $storage = MediaStorageMother::inMemoryWith(['shared/file.txt' => 'hola']);
+        $storage->markUnavailable();
+
+        $storage->read('shared/file.txt');
+    }
+
+    public function testUnavailableDelete(): void
+    {
+        $this->expectException(NotStoredMediaException::class);
+
+        $storage = MediaStorageMother::inMemoryWith(['shared/file.txt' => 'hola']);
+        $storage->markUnavailable();
+
+        $storage->delete('shared/file.txt');
+    }
+
+    public function testUnavailableExists(): void
+    {
+        $this->expectException(NotStoredMediaException::class);
+
+        $storage = MediaStorageMother::inMemoryWith(['shared/file.txt' => 'hola']);
+        $storage->markUnavailable();
+
+        $storage->exists('shared/file.txt');
+    }
+
+    public function testMarkAvailableRestoresTheStorage(): void
+    {
+        $storage = MediaStorageMother::inMemoryWith(['shared/file.txt' => 'hola']);
+        $storage->markUnavailable();
+        $storage->markAvailable();
+
+        $this->assertTrue($storage->exists('shared/file.txt'));
+    }
 }
