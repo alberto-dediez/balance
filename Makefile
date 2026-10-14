@@ -16,7 +16,7 @@ COMPOSER_EXTERNAL = docker run --rm -v $(CURDIR):/app -w /app composer:latest
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : help build up start down logs sh composer vendor sf cc
+.PHONY        : help build bioscore-network up start down logs sh composer vendor sf cc
 
 ## —— 🎵 🐳 The Symfony Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -26,7 +26,10 @@ help: ## Outputs this help screen
 build: ## Builds the Docker images
 	@$(DOCKER_COMP) build --pull --no-cache
 
-up: ## Start the docker hub in detached mode (no logs) || For development: MYSQL_USER=app MYSQL_PASSWORD=123 MYSQL_DATABASE=hydra MYSQL_ROOT_PASSWORD=1234 docker compose up --detach
+bioscore-network: ## Create the shared Docker network used by Bioscore and the platforms
+	@docker network inspect bioscore >/dev/null 2>&1 || docker network create bioscore >/dev/null
+
+up: bioscore-network ## Start the docker hub in detached mode (no logs) || For development: MYSQL_USER=app MYSQL_PASSWORD=123 MYSQL_DATABASE=hydra MYSQL_ROOT_PASSWORD=1234 docker compose up --detach
 	@$(DOCKER_COMP) up --detach
 
 start: build up ## Build and start the containers
