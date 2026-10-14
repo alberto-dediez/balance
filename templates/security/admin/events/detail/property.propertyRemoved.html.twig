@@ -1,0 +1,4 @@
+{% trans with {
+    '{property}': event.propertyId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado la propiedad {property} por el usuario {user}{% endtrans %}

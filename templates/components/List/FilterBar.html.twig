@@ -12,8 +12,22 @@
 
                         {% if field == 'userId' or field == 'impersonatorId' %}
                             {% set value = value | user_name %}
-                        {% elseif field == 'accountId' %}
+                        {% elseif field == 'accountId' or field == 'consultantAccountId' %}
                             {% set value = value | account_name %}
+                        {% elseif field == 'propertyId' %}
+                            {% set value = value | property_name %}
+                        {% elseif field == 'properties' %}
+                            {% set value = value | map(v => v | property_name) | join(', ') %}
+                        {% elseif field == 'destinationId' %}
+                            {% set value = value | destination_name %}
+                        {% elseif field == 'countryId' %}
+                            {% set value = value | country_name %}
+                        {% elseif field == 'brandId' %}
+                            {% set value = value | brand_name %}
+                        {% elseif field == 'categoryId' %}
+                            {% set value = value | category_name %}
+                        {% elseif field == 'companyId' %}
+                            {% set value = value | company_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% endif %}

@@ -8,7 +8,7 @@ use OpenApi\Attributes as OA;
 
 class UserUngrantRoleResponse
 {
-    /** @param string[] $roles */
+    /** @param array<string> $roles */
     public function __construct(
         #[OA\Property(
             type: 'string',

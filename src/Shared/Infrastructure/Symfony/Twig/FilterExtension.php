@@ -22,7 +22,13 @@ class FilterExtension extends AbstractExtension
             new TwigFilter('show_field_value', $this->showFieldValue(...)),
             new TwigFilter('show_fields', $this->getShowFields(...)),
             new TwigFilter('file_size', $this->fileSize(...)),
+            new TwigFilter('enum_domain', $this->enumDomain(...)),
         ];
+    }
+
+    public function enumDomain(\BackedEnum $value): string
+    {
+        return lcfirst((new \ReflectionClass($value))->getShortName());
     }
 
     public function fileSize(int $bytes): string

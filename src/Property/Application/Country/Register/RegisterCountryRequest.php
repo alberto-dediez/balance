@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Property\Application\Country\Register;
+
+use App\Property\Domain\Model\Property\ExternalId;
+use App\Shared\Application\CommandBus\Command;
+
+class RegisterCountryRequest implements Command
+{
+    public function __construct(
+        public string $name = '',
+        public ?string $iso = null,
+        public ?ExternalId $externalId = null,
+        public ?float $vatRate = null,
+        public bool $europeanUnion = false,
+    ) {}
+}

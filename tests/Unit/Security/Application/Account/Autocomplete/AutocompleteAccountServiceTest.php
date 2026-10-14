@@ -7,8 +7,11 @@ namespace App\Tests\Unit\Security\Application\Account\Autocomplete;
 use App\Security\Application\Account\AccountAuthorizer;
 use App\Security\Application\Account\Autocomplete\AutocompleteAccountRequest;
 use App\Security\Application\Account\Autocomplete\AutocompleteAccountService;
+use App\Security\Application\Account\ImpersonationPolicy;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -89,6 +92,34 @@ class AutocompleteAccountServiceTest extends TestCase
         );
     }
 
+    public function testConsultantOwnerOnlyGetsAssignedAccounts(): void
+    {
+        $repository = $this->buildRepository();
+
+        $consultant = AccountMother::consultantAccount();
+        $assigned = AccountMother::fromNameWithConsultant('Assigned Account', $consultant->id());
+        $other = AccountMother::fromName('Other Account');
+
+        $repository->add($consultant);
+        $repository->add($assigned);
+        $repository->add($other);
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut(
+            new AutocompleteAccountRequest(query: ''),
+            $this->ownerOf($consultant),
+        );
+
+        $this->assertCount(1, $result->elements);
+        $this->assertSame((string) $assigned->id(), $result->elements[0]->value);
+    }
+
+    private function ownerOf(Account $account): User
+    {
+        return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id());
+    }
+
     private function buildRepository(): InMemoryAccountRepository
     {
         return new InMemoryAccountRepository();
@@ -96,6 +127,8 @@ class AutocompleteAccountServiceTest extends TestCase
 
     private function createSUT(InMemoryAccountRepository $repository): AutocompleteAccountService
     {
-        return new AutocompleteAccountService($repository, new AccountAuthorizer());
+        $policy = new ImpersonationPolicy($repository);
+
+        return new AutocompleteAccountService($repository, new AccountAuthorizer(impersonationPolicy: $policy), $policy);
     }
 }

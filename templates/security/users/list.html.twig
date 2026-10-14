@@ -39,5 +39,7 @@
 {% endblock %}
 
 {% block list_actions %}
-    <twig:Link:Register path="{{ path('users_register') }}" />
+    {% if canRegister %}
+        <twig:Link:Register path="{{ path('users_register') }}" />
+    {% endif %}
 {% endblock list_actions %}

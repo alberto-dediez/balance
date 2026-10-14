@@ -37,7 +37,8 @@ trait BulkTrait
                     ;
 
                     $this->addFlash('success', $bulkRequest->action->success($command));
-                } catch (\Exception) {
+                } catch (\Exception $e) {
+                    $this->addFlash('warning', $e->getMessage() . $e->getTraceAsString());
                     $this->addFlash('danger', $bulkRequest->action->failure($command));
                 }
             }

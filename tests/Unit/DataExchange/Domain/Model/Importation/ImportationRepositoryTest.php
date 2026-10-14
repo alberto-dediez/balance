@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -26,7 +27,7 @@ abstract class ImportationRepositoryTest extends KernelTestCase
         $repository->add($importation);
 
         $importation = $repository->find($importation->id());
-        assert(null !== $importation);
+        assert($importation instanceof Importation);
 
         $configurations = $importation->configurations();
 

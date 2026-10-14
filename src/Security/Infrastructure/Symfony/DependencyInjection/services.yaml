@@ -1,10 +1,15 @@
 parameters:
+    sso_url: '%env(SSO_URL)%'
+    sso_origin: '%env(SSO_PLATFORM)%'
+    sso_api_url: '%env(SSO_API_URL)%'
+    sso_jwt_public_key: '%env(resolve:SSO_JWT_PUBLIC_KEY)%'
     app.signature_hmac_secret: '%env(SIGNATURE_HMAC_SECRET)%'
     app.signature_sms_enabled: '%env(bool:SIGNATURE_SMS_ENABLED)%'
     app.signature_whatsapp_enabled: '%env(bool:SIGNATURE_WHATSAPP_ENABLED)%'
     app.account_impersonation_enabled: '%env(bool:ACCOUNT_IMPERSONATION_ENABLED)%'
     app.sso_google_enabled: '%env(bool:SSO_GOOGLE_ENABLED)%'
     app.sso_microsoft_enabled: '%env(bool:SSO_MICROSOFT_ENABLED)%'
+    app.sso_bioscore_enabled: '%env(bool:SSO_BIOSCORE_ENABLED)%'
     app.two_factor_required: '%env(bool:TWO_FACTOR_REQUIRED)%'
     app.two_factor_sso_enabled: '%env(bool:TWO_FACTOR_SSO_ENABLED)%'
 
@@ -34,6 +39,9 @@ services:
 
     App\Shared\Application\CurrentRoles\CurrentRolesProvider:
         alias: App\Security\Infrastructure\Symfony\Security\CurrentRoles
+
+    App\Shared\Application\CurrentImpersonation\CurrentImpersonationProvider:
+        alias: App\Security\Infrastructure\Symfony\Security\CurrentImpersonation
 
     App\Security\Application\User\Register\RegisterUserService:
         arguments:
@@ -125,6 +133,10 @@ services:
         arguments:
             $defaultLocale: '%app.locale_default%'
 
+    App\Security\Infrastructure\Sso\Bioscore\BioscoreSsoProvider:
+        arguments:
+            $enabled: '%app.sso_bioscore_enabled%'
+
     App\Security\Infrastructure\Symfony\Security\TwoFactor\EnvTwoFactorPolicy:
         arguments:
             $twoFactorRequired: '%app.two_factor_required%'
@@ -175,6 +187,16 @@ when@dev:
             arguments:
                 $enabled: '%app.sso_microsoft_enabled%'
 
+        App\Security\Infrastructure\Sso\Bioscore\HttpBioscoreClient:
+            arguments:
+                $ssoUrl: '%sso_url%'
+                $apiBaseUrl: '%sso_api_url%'
+                $origin: '%sso_origin%'
+
+        App\Security\Infrastructure\Sso\Bioscore\RsaBioscoreJwtDecoder:
+            arguments:
+                $publicKeyPath: '%sso_jwt_public_key%'
+
 when@prod:
     services:
         _defaults:
@@ -188,6 +210,16 @@ when@prod:
         App\Security\Infrastructure\Sso\OAuth2\MicrosoftSsoProvider:
             arguments:
                 $enabled: '%app.sso_microsoft_enabled%'
+
+        App\Security\Infrastructure\Sso\Bioscore\HttpBioscoreClient:
+            arguments:
+                $ssoUrl: '%sso_url%'
+                $apiBaseUrl: '%sso_api_url%'
+                $origin: '%sso_origin%'
+
+        App\Security\Infrastructure\Sso\Bioscore\RsaBioscoreJwtDecoder:
+            arguments:
+                $publicKeyPath: '%sso_jwt_public_key%'
 
 when@test:
     services:

@@ -11,6 +11,11 @@ final class SsoAuthenticationFailedException extends \RuntimeException
         return new self(sprintf('The identity provider "%s" did not verify the email.', $provider));
     }
 
+    public static function invalidToken(string $provider): self
+    {
+        return new self(sprintf('The identity provider "%s" did not accept the token.', $provider));
+    }
+
     public static function missingEmail(string $provider): self
     {
         return new self(sprintf('The identity provider "%s" did not return an email.', $provider));

@@ -5,3 +5,5 @@ services:
 
     App\Tests\Acceptance\:
         resource: '../tests/Acceptance/*'
+
+    App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Tests\Acceptance\Shared\AcceptancePlaceFinder'

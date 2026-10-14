@@ -13,12 +13,12 @@ final class UserAuthorizer extends AbstractAuthorizer
 {
     protected function canRegister(mixed $subject, User $user): bool
     {
-        return $this->canList($subject, $user);
+        return !$this->isImpersonatingAsConsultant($user) && $this->canList($subject, $user);
     }
 
     protected function canView(mixed $subject, User $user): bool
     {
-        return $this->canEdit($subject, $user);
+        return $this->canManage($subject, $user);
     }
 
     protected function canList(mixed $subject, User $user): bool
@@ -37,13 +37,11 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        $currentAccountId = $this->currentAccountId($user);
+        if ($this->isImpersonatingAsConsultant($user) && !$subject->id()->equals($user->id())) {
+            return false;
+        }
 
-        return $this->userHasRole($user, Role::Admin)
-            || $this->userHasRole($user, Role::SuperAdmin)
-            || ($this->userHasRole($user, Role::Owner) && ($currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId())))
-            || $subject->id()->equals($user->id())
-        ;
+        return $this->canManage($subject, $user);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
@@ -75,6 +73,9 @@ final class UserAuthorizer extends AbstractAuthorizer
 
     public function canChangeRole(User $subject, Role $role, User $user): bool
     {
+        if ($this->isImpersonatingAsConsultant($user)) {
+            return false;
+        }
         if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
@@ -94,5 +95,24 @@ final class UserAuthorizer extends AbstractAuthorizer
     public function supports(mixed $subject): bool
     {
         return $subject instanceof User;
+    }
+
+    private function canManage(mixed $subject, User $user): bool
+    {
+        $currentAccountId = $this->currentAccountId($user);
+
+        return $this->userHasRole($user, Role::Admin)
+            || $this->userHasRole($user, Role::SuperAdmin)
+            || ($this->userHasRole($user, Role::Owner) && ($currentAccountId instanceof AccountId && $currentAccountId->equals($subject->accountId())))
+            || $subject->id()->equals($user->id())
+        ;
+    }
+
+    private function isImpersonatingAsConsultant(User $user): bool
+    {
+        return $this->isImpersonating($user)
+            && !$user->hasRole(Role::Admin)
+            && !$user->hasRole(Role::SuperAdmin)
+        ;
     }
 }

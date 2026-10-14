@@ -16,10 +16,19 @@ doctrine:
             user_id: App\Security\Infrastructure\Persistence\Doctrine\Type\UserIdType
             account_id: App\Security\Infrastructure\Persistence\Doctrine\Type\AccountIdType
             recorded_event_id: App\Security\Infrastructure\Persistence\Doctrine\Type\RecordedEventIdType
+            country_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CountryIdType
+            destination_id: App\Property\Infrastructure\Persistence\Doctrine\Type\DestinationIdType
+            property_id: App\Property\Infrastructure\Persistence\Doctrine\Type\PropertyIdType
+            category_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CategoryIdType
+            brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
+            company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
             two_factor_method: App\Security\Infrastructure\Persistence\Doctrine\Type\TwoFactorMethodType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType
+            job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
+            job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
+            employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
             announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
             youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
 
@@ -46,6 +55,14 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Security/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Security\Domain\Model'
                 alias: Security
+
+            Property:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Property/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Property\Domain\Model'
+                alias: Property
+
             DataExchange:
                 type: xml
                 is_bundle: false
@@ -64,6 +81,14 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Library/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Library\Domain\Model'
                 alias: Library
+
+            HumanResources:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/HumanResources/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\HumanResources\Domain\Model'
+                alias: HumanResources
+
             Changelog:
                 type: xml
                 is_bundle: false

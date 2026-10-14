@@ -8,6 +8,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
+use App\Shared\Application\CurrentImpersonation\CurrentImpersonationProvider;
 use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
 
 abstract class AbstractAuthorizer implements Authorizer
@@ -15,11 +16,17 @@ abstract class AbstractAuthorizer implements Authorizer
     public function __construct(
         private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
         private readonly ?CurrentRolesProvider $currentRolesProvider = null,
+        private readonly ?CurrentImpersonationProvider $currentImpersonationProvider = null,
     ) {}
 
     protected function currentAccountId(User $user): ?AccountId
     {
         return $this->currentAccountIdProvider?->currentAccountId() ?? $user->accountId();
+    }
+
+    protected function isImpersonating(User $user): bool
+    {
+        return true === $this->currentImpersonationProvider?->isImpersonating($user);
     }
 
     protected function userHasRole(User $user, Role $role): bool

@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class NodeListerTest extends TestCase
 {
@@ -62,11 +63,26 @@ class NodeListerTest extends TestCase
 
         $result = $sut->nodes();
 
-        $items = $result[0]->items;
+        $adminNode = $this->findNodeByLabel($result, 'Administración');
 
-        $this->assertTrue($result[0]->selected);
-        $this->assertFalse($items[1]->selected);
-        $this->assertTrue($items[3]->selected);
+        $this->assertNotNull($adminNode);
+        $this->assertTrue($adminNode->selected);
+        $this->assertFalse($adminNode->items[2]->selected);
+        $this->assertTrue($adminNode->items[4]->selected);
+    }
+
+    /**
+     * @param list<Node> $nodes
+     */
+    private function findNodeByLabel(array $nodes, string $label): ?Node
+    {
+        foreach ($nodes as $node) {
+            if ($node->label instanceof TranslatableMessage && $label === $node->label->getMessage()) {
+                return $node;
+            }
+        }
+
+        return null;
     }
 
     public function testUsersAndOwnersSeeAnnouncementsWhenEnabled(): void

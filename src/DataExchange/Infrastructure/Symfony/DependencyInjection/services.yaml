@@ -22,7 +22,7 @@ services:
 
     App\DataExchange\Domain\Model\Exportation\ExportStorage: '@App\DataExchange\Infrastructure\Storage\FilesystemExportStorage'
 
-    App\DataExchange\Domain\Model\Exportation\ExportWriter: '@App\DataExchange\Infrastructure\Persistence\Writer\SpreadsheetWriter'
+    App\DataExchange\Domain\Model\Exportation\ExportWriter: '@App\DataExchange\Infrastructure\Persistence\Writer\DelegatingExportWriter'
 
     App\DataExchange\Application\Exportation\Register\RegisterExportationService:
         arguments:

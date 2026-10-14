@@ -6,11 +6,12 @@ namespace App\DataExchange\Infrastructure\Persistence\PDO\Tools;
 
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\NotImportedException;
+use OpenSpout\Common\Entity\Row;
 use OpenSpout\Reader\XLSX\Reader;
 
 class FileExtractor
 {
-    /** @var \Iterator<\OpenSpout\Common\Entity\Row> */
+    /** @var \Iterator<Row> */
     private readonly \Iterator $iterator;
 
     /** @var string[] */
@@ -41,7 +42,7 @@ class FileExtractor
 
         $row = $this->iterator->current();
 
-        if (null === $row) {
+        if (!$row instanceof Row) {
             throw new NotImportedException('Invalid file, no rows found.');
         }
 
@@ -70,7 +71,7 @@ class FileExtractor
 
         $iteratorRow = $this->iterator->current();
 
-        if (null === $iteratorRow) {
+        if (!$iteratorRow instanceof Row) {
             return null;
         }
 

@@ -13,7 +13,7 @@ use Behat\Step\When;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
  * This context class contains the definitions of the steps used by the demo
@@ -120,7 +120,7 @@ final readonly class ApiContext implements Context
         $actual = json_decode($response, true);
 
         foreach ($expected as $attr => $value) {
-            Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]));
+            Assert::assertTrue(isset($actual->$attr) || isset($actual[$attr]), $attr);
         }
     }
 
@@ -132,13 +132,27 @@ final readonly class ApiContext implements Context
         if (null == $exception) {
             $code = $this->client->getResponse()->getStatusCode();
         } else {
-            $code = match ($exception::class) {
-                NotFoundHttpException::class => 404,
+            $code = match (true) {
+                $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
                 default => $exception->getCode(),
             };
         }
 
         Assert::assertEquals($expectedCode, $code, $exception instanceof \Exception ? $exception->getMessage() : 'Sin excepcion');
+    }
+
+    #[Then('the response JSON attribute :attr should be null')]
+    public function theResponseJsonAttributeShouldBeNull(string $attr): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $actual = json_decode($response, true);
+
+        Assert::assertIsArray($actual);
+        Assert::assertArrayHasKey($attr, $actual);
+        Assert::assertNull($actual[$attr]);
     }
 
     #[Then('the response header :header should be :value')]

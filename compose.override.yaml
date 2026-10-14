@@ -20,7 +20,16 @@ services:
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
+      - bioscore.local:host-gateway
     tty: true
+    depends_on:
+      - bioscore-proxy
+
+  bioscore-proxy:
+    image: alpine/socat
+    command: TCP-LISTEN:8088,fork,reuseaddr TCP:127.0.0.1:80
+    network_mode: host
+    restart: unless-stopped
 
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###

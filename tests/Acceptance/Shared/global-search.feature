@@ -54,14 +54,16 @@ Feature:
     Scenario: An admin finds every screen of a menu group
         Given user "superadmin@dediez.software" with role "ROLE_SUPER_ADMIN" exists
         When I am logged as "superadmin@dediez.software"
-        When I go to "/es/search?term=Seguridad" as an ajax request
+        When I go to "/es/search?term=Administracion" as an ajax request
         Then the response status should be 200
         Then I see a text 'data-search-category="navigation"'
         Then I see a text "Cuentas"
+        Then I see a text "Empleados"
         Then I see a text "Usuarios"
         Then I see a text "Firma de documentos"
         Then I see a text "Registro"
         Then I see a text 'href="/es/admin/accounts"'
+        Then I see a text 'href="/es/admin/employees"'
         Then I see a text 'href="/es/admin/users"'
         Then I see a text 'href="/es/admin/signature-requests"'
         Then I see a text 'href="/es/admin/events"'
@@ -81,9 +83,11 @@ Feature:
         Given account "Acme" with id "a1" exists
         Given user "acme-owner@dediez.software" with role "ROLE_OWNER" of account "a1" exists
         When I am logged as "acme-owner@dediez.software"
-        When I go to "/es/search?term=Seguridad" as an ajax request
+        When I go to "/es/search?term=Administracion" as an ajax request
         Then the response status should be 200
+        Then I see a text 'href="/es/employees"'
         Then I see a text 'href="/es/users"'
+        Then I see a text "Empleados"
         Then I see a text "Usuarios"
         Then I do not see a text "/es/admin/users"
         Then I do not see a text "Cuentas"
@@ -91,10 +95,10 @@ Feature:
     Scenario: The menu is searched in the current language
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         When I am logged as "admin@dediez.software"
-        When I go to "/en/search?term=Security" as an ajax request
+        When I go to "/en/search?term=Administration" as an ajax request
         Then the response status should be 200
         Then I see a text "Users"
-        Then I see a text "Security"
+        Then I see a text "Administration"
         Then I see a text 'href="/en/admin/users"'
 
     Scenario: The match ignores accents and case
@@ -149,7 +153,7 @@ Feature:
         Given user "acme-owner@dediez.software" with role "ROLE_OWNER" of account "a1" exists
         When I am logged as "admin@dediez.software"
         When I impersonate account "Acme"
-        When I go to "/es/search?term=Seguridad" as an ajax request
+        When I go to "/es/search?term=Administracion" as an ajax request
         Then the response status should be 200
         Then I see a text 'href="/es/users"'
         Then I do not see a text 'href="/es/admin/users"'

@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #eff4fa;
   font-family: "Inter", sans-serif;
   font-size: 14px;
   font-weight: 500;
@@ -74,19 +74,19 @@ h6, .h6 {
 
 .btn-primary {
   color: #fff;
-  background-color: #f08023;
-  border-color: #f08023;
+  background-color: #3e7490;
+  border-color: #3e7490;
 }
 
 .btn-secondary {
-  color: #fff;
-  background-color: #333333;
-  border-color: #333333;
+  color: #000;
+  background-color: #c3d300;
+  border-color: #c3d300;
 }
 
 label {
   font-weight: 500;
-  color: #1c1c1c;
+  color: #111c2d;
 }
 
 button:focus {
@@ -94,20 +94,20 @@ button:focus {
 }
 
 pre {
-  background-color: #f9f9f9;
-  border: 1px solid #efefef;
+  background-color: #f6f9fc;
+  border: 1px solid #e7eff7;
   padding: 7px;
 }
 
 .blockquote {
   padding: 10px 20px;
   margin-bottom: 20px;
-  border-left: 4px solid #f4f4f4;
+  border-left: 4px solid #eff4fa;
   font-size: 16px;
 }
 .blockquote.blockquote-reverse {
   border-left: 0;
-  border-right: 4px solid #f4f4f4;
+  border-right: 4px solid #eff4fa;
   text-align: right;
 }
 
@@ -120,13 +120,13 @@ dt {
 }
 
 th.highlighted, tr.highlighted, td.highlighted {
-  background-color: rgba(240, 128, 35, 0.2);
+  background-color: rgba(62, 116, 144, 0.2);
 }
 th.highlighted-secondary, tr.highlighted-secondary, td.highlighted-secondary {
-  background-color: rgba(51, 51, 51, 0.2);
+  background-color: rgba(195, 211, 0, 0.2);
 }
 th.highlighted-terciary, tr.highlighted-terciary, td.highlighted-terciary {
-  background-color: rgba(32, 201, 151, 0.2);
+  background-color: rgba(0, 206, 182, 0.2);
 }
 
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
@@ -199,7 +199,7 @@ table.body-wrap tbody {
 }
 
 .top {
-  background: #e5e5e5;
+  background: #dfe5ef;
   text-align: center;
   padding: 20px 10px;
   display: block;

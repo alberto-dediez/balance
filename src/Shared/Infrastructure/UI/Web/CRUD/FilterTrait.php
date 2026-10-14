@@ -32,10 +32,11 @@ trait FilterTrait
 
     /**
      * @param class-string<FormTypeInterface<mixed>> $formClass
+     * @param array<string, mixed>                   $formOptions
      *
      * @return list<mixed>
      */
-    public function filter(Request $request, \Closure $createFilter, string $formClass): array
+    public function filter(Request $request, \Closure $createFilter, string $formClass, array $formOptions = []): array
     {
         $session = $request->getSession();
         $route = $request->attributes->get('_route');
@@ -50,7 +51,7 @@ trait FilterTrait
 
         $filter = null !== $filter ? $this->doctrineEntityReattacher->reattach($filter) : $createFilter();
 
-        $form = $this->createForm($formClass, $filter);
+        $form = $this->createForm($formClass, $filter, $formOptions);
 
         assert($form instanceof Form);
 
@@ -64,7 +65,7 @@ trait FilterTrait
             if ($clickedButton instanceof FormInterface && 'reset' === $clickedButton->getName()) {
                 $filter = $createFilter();
 
-                $form = $this->createForm($formClass, $filter);
+                $form = $this->createForm($formClass, $filter, $formOptions);
             }
 
             $session->set($key, $filter);

@@ -70,6 +70,7 @@ class ExecuteExportationServiceTest extends TestCase
         $this->assertNotNull($persisted->file());
 
         $this->assertSame(1, $storage->storeCalls);
+        $this->assertSame('Users', $writer->title);
         $this->assertTrue($writer->closed);
         $this->assertCount(3, $writer->rows);
         $this->assertSame(['Username', 'Roles'], $writer->rows[0]);
@@ -87,7 +88,7 @@ class ExecuteExportationServiceTest extends TestCase
         $repository->add($exportation);
 
         $throwingWriter = new class implements ExportWriter {
-            public function open(string $path, ExportationFormat $format): void
+            public function open(string $path, ExportationFormat $format, ?string $title = null): void
             {
                 throw new \RuntimeException('disk full');
             }

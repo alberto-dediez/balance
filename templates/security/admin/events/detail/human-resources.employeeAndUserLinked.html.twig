@@ -1,0 +1,5 @@
+{% trans with {
+    '{employee}': event.employeeId | employee_name,
+    '{linkedUser}': event.userId | user_name,
+    '{actor}': element.userId | user_name
+} %}Se ha vinculado el empleado {employee} con el usuario {linkedUser} por el usuario {actor}{% endtrans %}

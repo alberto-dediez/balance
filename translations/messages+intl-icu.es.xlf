@@ -2033,6 +2033,602 @@
         <source>Sistema</source>
         <target>Sistema</target>
       </trans-unit>
+      <trans-unit id="2uzk91V" resname="Asignar consultora">
+        <source>Asignar consultora</source>
+        <target>Asignar consultora</target>
+      </trans-unit>
+      <trans-unit id="dS7e6ES" resname="Se ha asignado la consultora seleccionada a la cuenta {id}">
+        <source>Se ha asignado la consultora seleccionada a la cuenta {id}</source>
+        <target>Se ha asignado la consultora seleccionada a la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="HpHuABR" resname="No se ha podido asignar la consultora seleccionada a la cuenta {id}">
+        <source>No se ha podido asignar la consultora seleccionada a la cuenta {id}</source>
+        <target>No se ha podido asignar la consultora seleccionada a la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="gnyvHh4" resname="Sin consultora">
+        <source>Sin consultora</source>
+        <target>Sin consultora</target>
+      </trans-unit>
+      <trans-unit id="meQ.Fn5" resname="Es consultora">
+        <source>Es consultora</source>
+        <target>Es consultora</target>
+      </trans-unit>
+      <trans-unit id="wIhm0DW" resname="Consultora">
+        <source>Consultora</source>
+        <target>Consultora</target>
+      </trans-unit>
+      <trans-unit id="7NDp8Lr" resname="Consultoras y no consultoras">
+        <source>Consultoras y no consultoras</source>
+        <target>Consultoras y no consultoras</target>
+      </trans-unit>
+      <trans-unit id="uKKRJ7A" resname="Todas las consultoras">
+        <source>Todas las consultoras</source>
+        <target>Todas las consultoras</target>
+      </trans-unit>
+      <trans-unit id="FEKO0T5" resname="Propiedades">
+        <source>Propiedades</source>
+        <target>Propiedades</target>
+      </trans-unit>
+      <trans-unit id="nAHrx2o" resname="Empresas">
+        <source>Empresas</source>
+        <target>Empresas</target>
+      </trans-unit>
+      <trans-unit id="KGKa4jq" resname="Categorías">
+        <source>Categorías</source>
+        <target>Categorías</target>
+      </trans-unit>
+      <trans-unit id="JtBXpvI" resname="Marcas">
+        <source>Marcas</source>
+        <target>Marcas</target>
+      </trans-unit>
+      <trans-unit id="1KMTGV1" resname="Países">
+        <source>Países</source>
+        <target>Países</target>
+      </trans-unit>
+      <trans-unit id="zzcPDy." resname="Destinos">
+        <source>Destinos</source>
+        <target>Destinos</target>
+      </trans-unit>
+      <trans-unit id="oHGi0.j" resname="Administración">
+        <source>Administración</source>
+        <target>Administración</target>
+      </trans-unit>
+      <trans-unit id="z4f8Sn." resname="Empleados">
+        <source>Empleados</source>
+        <target>Empleados</target>
+      </trans-unit>
+      <trans-unit id="A6LHGcR" resname="Datos exportados">
+        <source>Datos exportados</source>
+        <target>Datos exportados</target>
+      </trans-unit>
+      <trans-unit id="ZWmR.Pa" resname="Empresa creada correctamente: {name}">
+        <source>Empresa creada correctamente: {name}</source>
+        <target>Empresa creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="qhxubTB" resname="Empresa actualizada con éxito">
+        <source>Empresa actualizada con éxito</source>
+        <target>Empresa actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="pw1f_P_" resname="Se ha eliminado la empresa {company}">
+        <source>Se ha eliminado la empresa {company}</source>
+        <target>Se ha eliminado la empresa {company}</target>
+      </trans-unit>
+      <trans-unit id="52oT2Kk" resname="No se ha podido eliminar la empresa {company}">
+        <source>No se ha podido eliminar la empresa {company}</source>
+        <target>No se ha podido eliminar la empresa {company}</target>
+      </trans-unit>
+      <trans-unit id="huWlqsU" resname="Se ha eliminado la empresa {id}">
+        <source>Se ha eliminado la empresa {id}</source>
+        <target>Se ha eliminado la empresa {id}</target>
+      </trans-unit>
+      <trans-unit id="NI.e6fi" resname="No se ha podido eliminar la empresa {id}">
+        <source>No se ha podido eliminar la empresa {id}</source>
+        <target>No se ha podido eliminar la empresa {id}</target>
+      </trans-unit>
+      <trans-unit id="KM5QfVP" resname="País creado correctamente: {name}">
+        <source>País creado correctamente: {name}</source>
+        <target>País creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="runTJyx" resname="País actualizado con éxito">
+        <source>País actualizado con éxito</source>
+        <target>País actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="Dyg58SB" resname="Se ha eliminado el país {country}">
+        <source>Se ha eliminado el país {country}</source>
+        <target>Se ha eliminado el país {country}</target>
+      </trans-unit>
+      <trans-unit id="nuMmeX4" resname="No se ha podido eliminar el país {country}">
+        <source>No se ha podido eliminar el país {country}</source>
+        <target>No se ha podido eliminar el país {country}</target>
+      </trans-unit>
+      <trans-unit id="HNTWrpA" resname="Se ha eliminado el país {id}">
+        <source>Se ha eliminado el país {id}</source>
+        <target>Se ha eliminado el país {id}</target>
+      </trans-unit>
+      <trans-unit id="8VmMHaJ" resname="No se ha podido eliminar el país {id}">
+        <source>No se ha podido eliminar el país {id}</source>
+        <target>No se ha podido eliminar el país {id}</target>
+      </trans-unit>
+      <trans-unit id="d8pC_oo" resname="Destino creado correctamente: {name}">
+        <source>Destino creado correctamente: {name}</source>
+        <target>Destino creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="12DNpH5" resname="Destino actualizado con éxito">
+        <source>Destino actualizado con éxito</source>
+        <target>Destino actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="BQJ.6IG" resname="Se ha eliminado el destino {destination}">
+        <source>Se ha eliminado el destino {destination}</source>
+        <target>Se ha eliminado el destino {destination}</target>
+      </trans-unit>
+      <trans-unit id="_oktkiv" resname="No se ha podido eliminar el destino {destination}">
+        <source>No se ha podido eliminar el destino {destination}</source>
+        <target>No se ha podido eliminar el destino {destination}</target>
+      </trans-unit>
+      <trans-unit id="Q.F5kZu" resname="Se ha eliminado el destino {id}">
+        <source>Se ha eliminado el destino {id}</source>
+        <target>Se ha eliminado el destino {id}</target>
+      </trans-unit>
+      <trans-unit id="wIuKPIL" resname="No se ha podido eliminar el destino {id}">
+        <source>No se ha podido eliminar el destino {id}</source>
+        <target>No se ha podido eliminar el destino {id}</target>
+      </trans-unit>
+      <trans-unit id="nylhCg0" resname="Categoría creada correctamente: {name}">
+        <source>Categoría creada correctamente: {name}</source>
+        <target>Categoría creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="IYPzrmi" resname="Categoría actualizada con éxito">
+        <source>Categoría actualizada con éxito</source>
+        <target>Categoría actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="Y4d3l5i" resname="Se ha eliminado la categoría {category}">
+        <source>Se ha eliminado la categoría {category}</source>
+        <target>Se ha eliminado la categoría {category}</target>
+      </trans-unit>
+      <trans-unit id="Fos1KtJ" resname="No se ha podido eliminar la categoría {category}">
+        <source>No se ha podido eliminar la categoría {category}</source>
+        <target>No se ha podido eliminar la categoría {category}</target>
+      </trans-unit>
+      <trans-unit id="H5N9b9D" resname="La categoría no existe">
+        <source>La categoría no existe</source>
+        <target>La categoría no existe</target>
+      </trans-unit>
+      <trans-unit id="9C_6ig." resname="Se ha eliminado la categoría {id}">
+        <source>Se ha eliminado la categoría {id}</source>
+        <target>Se ha eliminado la categoría {id}</target>
+      </trans-unit>
+      <trans-unit id="_H1vk6y" resname="No se ha podido eliminar la categoría {id}">
+        <source>No se ha podido eliminar la categoría {id}</source>
+        <target>No se ha podido eliminar la categoría {id}</target>
+      </trans-unit>
+      <trans-unit id="OO9DDVv" resname="Marca creada correctamente: {name}">
+        <source>Marca creada correctamente: {name}</source>
+        <target>Marca creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="TZAI1eq" resname="Marca actualizada con éxito">
+        <source>Marca actualizada con éxito</source>
+        <target>Marca actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="2QKem0h" resname="Se ha eliminado la marca {brand}">
+        <source>Se ha eliminado la marca {brand}</source>
+        <target>Se ha eliminado la marca {brand}</target>
+      </trans-unit>
+      <trans-unit id="2mcekp0" resname="No se ha podido eliminar la marca {brand}">
+        <source>No se ha podido eliminar la marca {brand}</source>
+        <target>No se ha podido eliminar la marca {brand}</target>
+      </trans-unit>
+      <trans-unit id="_QfaRp8" resname="La marca no existe">
+        <source>La marca no existe</source>
+        <target>La marca no existe</target>
+      </trans-unit>
+      <trans-unit id="IxTU9cy" resname="Se ha eliminado la marca {id}">
+        <source>Se ha eliminado la marca {id}</source>
+        <target>Se ha eliminado la marca {id}</target>
+      </trans-unit>
+      <trans-unit id="S.PQYgo" resname="No se ha podido eliminar la marca {id}">
+        <source>No se ha podido eliminar la marca {id}</source>
+        <target>No se ha podido eliminar la marca {id}</target>
+      </trans-unit>
+      <trans-unit id="V8ehQ_Q" resname="Propiedad creada correctamente: {name}">
+        <source>Propiedad creada correctamente: {name}</source>
+        <target>Propiedad creada correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="gBwm9.E" resname="Propiedad actualizada con éxito">
+        <source>Propiedad actualizada con éxito</source>
+        <target>Propiedad actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id=".NWZJFk" resname="Se ha eliminado la propiedad {property}">
+        <source>Se ha eliminado la propiedad {property}</source>
+        <target>Se ha eliminado la propiedad {property}</target>
+      </trans-unit>
+      <trans-unit id="kdSLytn" resname="No se ha podido eliminar la propiedad {property}">
+        <source>No se ha podido eliminar la propiedad {property}</source>
+        <target>No se ha podido eliminar la propiedad {property}</target>
+      </trans-unit>
+      <trans-unit id="pHeK_TK" resname="Se ha eliminado la propiedad {id}">
+        <source>Se ha eliminado la propiedad {id}</source>
+        <target>Se ha eliminado la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="qvczJw3" resname="No se ha podido eliminar la propiedad {id}">
+        <source>No se ha podido eliminar la propiedad {id}</source>
+        <target>No se ha podido eliminar la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="chRKHBH" resname="Asignar cuenta">
+        <source>Asignar cuenta</source>
+        <target>Asignar cuenta</target>
+      </trans-unit>
+      <trans-unit id="KHUrBAA" resname="Se ha asignado la cuenta seleccionada a la propiedad {id}">
+        <source>Se ha asignado la cuenta seleccionada a la propiedad {id}</source>
+        <target>Se ha asignado la cuenta seleccionada a la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="kGiXazz" resname="Se ha eliminado la cuenta de la propiedad {id}">
+        <source>Se ha eliminado la cuenta de la propiedad {id}</source>
+        <target>Se ha eliminado la cuenta de la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="78iRgdD" resname="No se ha podido modificar la propiedad {id}">
+        <source>No se ha podido modificar la propiedad {id}</source>
+        <target>No se ha podido modificar la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="VGKzIKB" resname="Identificadores externos">
+        <source>Identificadores externos</source>
+        <target>Identificadores externos</target>
+      </trans-unit>
+      <trans-unit id="z_EeVDq" resname="ISO">
+        <source>ISO</source>
+        <target>ISO</target>
+      </trans-unit>
+      <trans-unit id="VnhbnVh" resname="Unión Europea">
+        <source>Unión Europea</source>
+        <target>Unión Europea</target>
+      </trans-unit>
+      <trans-unit id="TJ3QN60" resname="Tipo de IVA (%)">
+        <source>Tipo de IVA (%)</source>
+        <target>Tipo de IVA (%)</target>
+      </trans-unit>
+      <trans-unit id="tUcRTlF" resname="CIF">
+        <source>CIF</source>
+        <target>CIF</target>
+      </trans-unit>
+      <trans-unit id="cUMIhoK" resname="Calle">
+        <source>Calle</source>
+        <target>Calle</target>
+      </trans-unit>
+      <trans-unit id="sml34K." resname="Código postal">
+        <source>Código postal</source>
+        <target>Código postal</target>
+      </trans-unit>
+      <trans-unit id="nG27WsZ" resname="Ciudad">
+        <source>Ciudad</source>
+        <target>Ciudad</target>
+      </trans-unit>
+      <trans-unit id="4m.VV3Y" resname="País">
+        <source>País</source>
+        <target>País</target>
+      </trans-unit>
+      <trans-unit id="ltSGShh" resname="Información">
+        <source>Información</source>
+        <target>Información</target>
+      </trans-unit>
+      <trans-unit id="J92As0p" resname="Nº de empleados">
+        <source>Nº de empleados</source>
+        <target>Nº de empleados</target>
+      </trans-unit>
+      <trans-unit id="zrzeML1" resname="Nº de clientes diarios">
+        <source>Nº de clientes diarios</source>
+        <target>Nº de clientes diarios</target>
+      </trans-unit>
+      <trans-unit id="PwfpTDJ" resname="Empresa">
+        <source>Empresa</source>
+        <target>Empresa</target>
+      </trans-unit>
+      <trans-unit id="vOMbN2s" resname="Sin empresa">
+        <source>Sin empresa</source>
+        <target>Sin empresa</target>
+      </trans-unit>
+      <trans-unit id="AjWDJWW" resname="Sin cuenta">
+        <source>Sin cuenta</source>
+        <target>Sin cuenta</target>
+      </trans-unit>
+      <trans-unit id="w2bgSWD" resname="Todos los países">
+        <source>Todos los países</source>
+        <target>Todos los países</target>
+      </trans-unit>
+      <trans-unit id="0SZHsl5" resname="Hotelbeds ID">
+        <source>Hotelbeds ID</source>
+        <target>Hotelbeds ID</target>
+      </trans-unit>
+      <trans-unit id="qmKS9Da" resname="Restel ID">
+        <source>Restel ID</source>
+        <target>Restel ID</target>
+      </trans-unit>
+      <trans-unit id="2vr28qr" resname="Bioscore ID">
+        <source>Bioscore ID</source>
+        <target>Bioscore ID</target>
+      </trans-unit>
+      <trans-unit id="nGumR0E" resname="Ubicación exacta">
+        <source>Ubicación exacta</source>
+        <target>Ubicación exacta</target>
+      </trans-unit>
+      <trans-unit id="mMHQ_wk" resname="Sin ubicación">
+        <source>Sin ubicación</source>
+        <target>Sin ubicación</target>
+      </trans-unit>
+      <trans-unit id="9c5XaAC" resname="Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.">
+        <source>Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.</source>
+        <target>Punto exacto de la propiedad. Al seleccionarlo se sustituyen sus coordenadas.</target>
+      </trans-unit>
+      <trans-unit id="a_Trx3v" resname="Tipo de propiedad">
+        <source>Tipo de propiedad</source>
+        <target>Tipo de propiedad</target>
+      </trans-unit>
+      <trans-unit id="4qEgKNS" resname="Marca">
+        <source>Marca</source>
+        <target>Marca</target>
+      </trans-unit>
+      <trans-unit id="BvlrmlV" resname="Dirección">
+        <source>Dirección</source>
+        <target>Dirección</target>
+      </trans-unit>
+      <trans-unit id="_grJJIp" resname="Latitud">
+        <source>Latitud</source>
+        <target>Latitud</target>
+      </trans-unit>
+      <trans-unit id="eQ8eyl8" resname="Longitud">
+        <source>Longitud</source>
+        <target>Longitud</target>
+      </trans-unit>
+      <trans-unit id="9rlBSxd" resname="Habitaciones">
+        <source>Habitaciones</source>
+        <target>Habitaciones</target>
+      </trans-unit>
+      <trans-unit id="XjvvlPc" resname="Web">
+        <source>Web</source>
+        <target>Web</target>
+      </trans-unit>
+      <trans-unit id="IFpbEWO" resname="Zone">
+        <source>Zone</source>
+        <target>Zone</target>
+      </trans-unit>
+      <trans-unit id="CYjDz35" resname="Destino">
+        <source>Destino</source>
+        <target>Destino</target>
+      </trans-unit>
+      <trans-unit id="N2BY8Cc" resname="Todos los destinos">
+        <source>Todos los destinos</source>
+        <target>Todos los destinos</target>
+      </trans-unit>
+      <trans-unit id="ZY3FvAH" resname="Employee created successfully: {name}">
+        <source>Employee created successfully: {name}</source>
+        <target>Employee created successfully: {name}</target>
+      </trans-unit>
+      <trans-unit id="yTl7Wmy" resname="Employee updated successfully">
+        <source>Employee updated successfully</source>
+        <target>Employee updated successfully</target>
+      </trans-unit>
+      <trans-unit id="NW5i4fj" resname="Employee {name} has been deleted">
+        <source>Employee {name} has been deleted</source>
+        <target>Employee {name} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="7hKeBZ3" resname="Could not delete employee {name}">
+        <source>Could not delete employee {name}</source>
+        <target>Could not delete employee {name}</target>
+      </trans-unit>
+      <trans-unit id="ULm6hFS" resname="Employee {id} has been deleted">
+        <source>Employee {id} has been deleted</source>
+        <target>Employee {id} has been deleted</target>
+      </trans-unit>
+      <trans-unit id="9Wfx6zh" resname="Could not delete employee {id}">
+        <source>Could not delete employee {id}</source>
+        <target>Could not delete employee {id}</target>
+      </trans-unit>
+      <trans-unit id="OXsOU6E" resname="Nombre completo">
+        <source>Nombre completo</source>
+        <target>Nombre completo</target>
+      </trans-unit>
+      <trans-unit id="rvUXnKK" resname="Cancelar solicitud de firma">
+        <source>Cancelar solicitud de firma</source>
+        <target>Cancelar solicitud de firma</target>
+      </trans-unit>
+      <trans-unit id="sMG8bi7" resname="Descargar certificado de firma">
+        <source>Descargar certificado de firma</source>
+        <target>Descargar certificado de firma</target>
+      </trans-unit>
+      <trans-unit id="gF6gzny" resname="Solicitar firma">
+        <source>Solicitar firma</source>
+        <target>Solicitar firma</target>
+      </trans-unit>
+      <trans-unit id="esd9Dyc" resname="Descargar evidencia">
+        <source>Descargar evidencia</source>
+        <target>Descargar evidencia</target>
+      </trans-unit>
+      <trans-unit id="0KLoUr5" resname="La propiedad {property} ha sido desvinculada del establecimiento externo por el usuario {user}">
+        <source>La propiedad {property} ha sido desvinculada del establecimiento externo por el usuario {user}</source>
+        <target>La propiedad {property} ha sido desvinculada del establecimiento externo por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="ZlYvMHh" resname="Employee {name} ({email}) was registered by {actor}">
+        <source>Employee {name} ({email}) was registered by {actor}</source>
+        <target>Employee {name} ({email}) was registered by {actor}</target>
+      </trans-unit>
+      <trans-unit id="V7RK6_s" resname="Se ha vinculado el empleado {employee} con el usuario {linkedUser} por el usuario {actor}">
+        <source>Se ha vinculado el empleado {employee} con el usuario {linkedUser} por el usuario {actor}</source>
+        <target>Se ha vinculado el empleado {employee} con el usuario {linkedUser} por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="M18WB_l" resname="Se ha eliminado la empresa &quot;{company}&quot; por el usuario {user}">
+        <source>Se ha eliminado la empresa "{company}" por el usuario {user}</source>
+        <target>Se ha eliminado la empresa "{company}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="Mzv8twV" resname="Se ha registrado el destino {destination} por el usuario {user}">
+        <source>Se ha registrado el destino {destination} por el usuario {user}</source>
+        <target>Se ha registrado el destino {destination} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="LkIs1IL" resname="El trabajo {key} ha finalizado correctamente">
+        <source>El trabajo {key} ha finalizado correctamente</source>
+        <target>El trabajo {key} ha finalizado correctamente</target>
+      </trans-unit>
+      <trans-unit id="HystTxM" resname="Eliminado permiso &quot;{role}&quot; al usuario {user} por el usuario {actor}">
+        <source>Eliminado permiso "{role}" al usuario {user} por el usuario {actor}</source>
+        <target>Eliminado permiso "{role}" al usuario {user} por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="I6m4Q4J" resname="Se ha actualizado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}">
+        <source>Se ha actualizado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}</source>
+        <target>Se ha actualizado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="P7YRU6P" resname="Se ha actualizado la propiedad {property} sin cuenta asociada por el usuario {user}">
+        <source>Se ha actualizado la propiedad {property} sin cuenta asociada por el usuario {user}</source>
+        <target>Se ha actualizado la propiedad {property} sin cuenta asociada por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="fhF60PV" resname="Concedido permiso &quot;{role}&quot; al usuario {user} por el usuario {actor}">
+        <source>Concedido permiso "{role}" al usuario {user} por el usuario {actor}</source>
+        <target>Concedido permiso "{role}" al usuario {user} por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="tND3r3p" resname="La propiedad {property} ha sido vinculada a un establecimiento externo por el usuario {user}">
+        <source>La propiedad {property} ha sido vinculada a un establecimiento externo por el usuario {user}</source>
+        <target>La propiedad {property} ha sido vinculada a un establecimiento externo por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="IS4UX0i" resname="Se ha registrado la marca {brand} por el usuario {user}">
+        <source>Se ha registrado la marca {brand} por el usuario {user}</source>
+        <target>Se ha registrado la marca {brand} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="KXqcWVe" resname="Se ha eliminado la categoría {category} por el usuario {user}">
+        <source>Se ha eliminado la categoría {category} por el usuario {user}</source>
+        <target>Se ha eliminado la categoría {category} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="XwMVPB3" resname="Registrado el usuario {user} para la cuenta {account} por el usuario {actor}">
+        <source>Registrado el usuario {user} para la cuenta {account} por el usuario {actor}</source>
+        <target>Registrado el usuario {user} para la cuenta {account} por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="85t3XA4" resname="Registrado el usuario {user} sin cuenta por el usuario {actor}">
+        <source>Registrado el usuario {user} sin cuenta por el usuario {actor}</source>
+        <target>Registrado el usuario {user} sin cuenta por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="2BaNDDE" resname="Se ha enviado un email a {recipient} con el asunto &quot;{subject}&quot;">
+        <source>Se ha enviado un email a {recipient} con el asunto "{subject}"</source>
+        <target>Se ha enviado un email a {recipient} con el asunto "{subject}"</target>
+      </trans-unit>
+      <trans-unit id="sfW_CEy" resname="Se ha registrado la categoría {category} por el usuario {user}">
+        <source>Se ha registrado la categoría {category} por el usuario {user}</source>
+        <target>Se ha registrado la categoría {category} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="YN8..Xt" resname="Se ha actualizado el destino {destination} por el usuario {user}">
+        <source>Se ha actualizado el destino {destination} por el usuario {user}</source>
+        <target>Se ha actualizado el destino {destination} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="442KNg_" resname="Progreso del trabajo {key}: {current}/{total}">
+        <source>Progreso del trabajo {key}: {current}/{total}</source>
+        <target>Progreso del trabajo {key}: {current}/{total}</target>
+      </trans-unit>
+      <trans-unit id="JoyGFoY" resname="Employee was removed by {actor}">
+        <source>Employee was removed by {actor}</source>
+        <target>Employee was removed by {actor}</target>
+      </trans-unit>
+      <trans-unit id="D3hzGIs" resname="Se ha actualizado la empresa &quot;{company}&quot; por el usuario {user}">
+        <source>Se ha actualizado la empresa "{company}" por el usuario {user}</source>
+        <target>Se ha actualizado la empresa "{company}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="xfu6WXC" resname="La cuenta {account} ahora se llama {name}, realizado por el usuario {user}">
+        <source>La cuenta {account} ahora se llama {name}, realizado por el usuario {user}</source>
+        <target>La cuenta {account} ahora se llama {name}, realizado por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="c2iJaXA" resname="Se ha eliminado el destino {destination} por el usuario {user}">
+        <source>Se ha eliminado el destino {destination} por el usuario {user}</source>
+        <target>Se ha eliminado el destino {destination} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="qheh.zl" resname="Se ha registrado el país {country} ({iso}) por el usuario {user}">
+        <source>Se ha registrado el país {country} ({iso}) por el usuario {user}</source>
+        <target>Se ha registrado el país {country} ({iso}) por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="N2AIfqr" resname="Se ha eliminado el país {country} por el usuario {user}">
+        <source>Se ha eliminado el país {country} por el usuario {user}</source>
+        <target>Se ha eliminado el país {country} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="U2aMZHa" resname="Se ha desvinculado el empleado {employee} de su usuario por el usuario {actor}">
+        <source>Se ha desvinculado el empleado {employee} de su usuario por el usuario {actor}</source>
+        <target>Se ha desvinculado el empleado {employee} de su usuario por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="cEqVASw" resname="Se ha actualizado la categoría {category} por el usuario {user}">
+        <source>Se ha actualizado la categoría {category} por el usuario {user}</source>
+        <target>Se ha actualizado la categoría {category} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="wWrqOpN" resname="Eliminada la cuenta &quot;{account}&quot; por el usuario {user}">
+        <source>Eliminada la cuenta "{account}" por el usuario {user}</source>
+        <target>Eliminada la cuenta "{account}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="VQKLKH7" resname="Activada la cuenta {account} por el usuario {user}">
+        <source>Activada la cuenta {account} por el usuario {user}</source>
+        <target>Activada la cuenta {account} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="lm3zuS8" resname="Desactivada la cuenta &quot;{account}&quot; por el usuario {user}">
+        <source>Desactivada la cuenta "{account}" por el usuario {user}</source>
+        <target>Desactivada la cuenta "{account}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="t8ZvDqB" resname="Eliminado el usuario &quot;{user}&quot; por el usuario {actor}">
+        <source>Eliminado el usuario "{user}" por el usuario {actor}</source>
+        <target>Eliminado el usuario "{user}" por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="oSHNuVG" resname="Se ha registrado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}">
+        <source>Se ha registrado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}</source>
+        <target>Se ha registrado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="5l_Jinf" resname="Se ha registrado la propiedad {property} sin cuenta asociada por el usuario {user}">
+        <source>Se ha registrado la propiedad {property} sin cuenta asociada por el usuario {user}</source>
+        <target>Se ha registrado la propiedad {property} sin cuenta asociada por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="F7oLjU3" resname="Se ha registrado la empresa &quot;{company}&quot; por el usuario {user}">
+        <source>Se ha registrado la empresa "{company}" por el usuario {user}</source>
+        <target>Se ha registrado la empresa "{company}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="rfKaq2i" resname="Se ha eliminado la propiedad {property} por el usuario {user}">
+        <source>Se ha eliminado la propiedad {property} por el usuario {user}</source>
+        <target>Se ha eliminado la propiedad {property} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="OVmjm4y" resname="El trabajo {key} ha fallado">
+        <source>El trabajo {key} ha fallado</source>
+        <target>El trabajo {key} ha fallado</target>
+      </trans-unit>
+      <trans-unit id="5oApTq0" resname="Se ha actualizado la marca {brand} por el usuario {user}">
+        <source>Se ha actualizado la marca {brand} por el usuario {user}</source>
+        <target>Se ha actualizado la marca {brand} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="Wa4mRSP" resname="Employee {name} ({email}) was updated by {actor}">
+        <source>Employee {name} ({email}) was updated by {actor}</source>
+        <target>Employee {name} ({email}) was updated by {actor}</target>
+      </trans-unit>
+      <trans-unit id="4FNfgBk" resname="Se ha modificado la contraseña del usuario &quot;{user}&quot; por el usuario {actor}">
+        <source>Se ha modificado la contraseña del usuario "{user}" por el usuario {actor}</source>
+        <target>Se ha modificado la contraseña del usuario "{user}" por el usuario {actor}</target>
+      </trans-unit>
+      <trans-unit id="IVKWsP2" resname="Se ha eliminado la marca {brand} por el usuario {user}">
+        <source>Se ha eliminado la marca {brand} por el usuario {user}</source>
+        <target>Se ha eliminado la marca {brand} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="SScoDBD" resname="Registrada una nueva cuenta {account} en estado {status} por el usuario {user}">
+        <source>Registrada una nueva cuenta {account} en estado {status} por el usuario {user}</source>
+        <target>Registrada una nueva cuenta {account} en estado {status} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="DjP2z7A" resname="Se ha actualizado el país {country} ({iso}) por el usuario {user}">
+        <source>Se ha actualizado el país {country} ({iso}) por el usuario {user}</source>
+        <target>Se ha actualizado el país {country} ({iso}) por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="oiz3pTm" resname="UE">
+        <source>UE</source>
+        <target>UE</target>
+      </trans-unit>
+      <trans-unit id="gVFOjWe" resname="IVA %">
+        <source>IVA %</source>
+        <target>IVA %</target>
+      </trans-unit>
+      <trans-unit id="TNhLCa3" resname="Registrado">
+        <source>Registrado</source>
+        <target>Registrado</target>
+      </trans-unit>
+      <trans-unit id="M.l1CPU" resname="Edit">
+        <source>Edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="fGfBzt6" resname="Register">
+        <source>Register</source>
+        <target>Register</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

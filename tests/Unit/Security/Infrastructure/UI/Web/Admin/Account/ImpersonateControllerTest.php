@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Security\Infrastructure\UI\Web\Admin\Account;
 
 use App\Security\Application\Account\AccountAuthorizer;
+use App\Security\Application\Account\ImpersonationPolicy;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
@@ -107,6 +110,44 @@ class ImpersonateControllerTest extends TestCase
         $this->assertSame(['ok' => true, 'redirect' => '/es/'], json_decode((string) $response->getContent(), true));
     }
 
+    public function testConsultantOwnerImpersonatesAssignedAccount(): void
+    {
+        $sut = $this->buildSut(true, $this->csrfValid());
+
+        $consultant = AccountMother::consultantAccount();
+        $assigned = AccountMother::fromNameWithConsultant('AcmeAccount', $consultant->id());
+        $repository = $this->buildRepository($consultant, $assigned);
+
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $consultant->id());
+        $impersonated = $this->buildImpersonated($repository);
+
+        $response = $sut($this->buildRequest((string) $assigned->id(), 'valid'), $this->buildAuthorizer($repository), $repository, $impersonated, $this->buildLoggedUser($owner));
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame((string) $assigned->id(), (string) $impersonated->accountId());
+        $this->assertSame((string) $owner->id(), (string) $impersonated->impersonatorId());
+    }
+
+    public function testConsultantOwnerIsDeniedOnUnassignedAccount(): void
+    {
+        $sut = $this->buildSut(true, $this->csrfValid());
+
+        $consultant = AccountMother::consultantAccount();
+        $other = AccountMother::fromName('OtherAccount');
+        $repository = $this->buildRepository($consultant, $other);
+
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $consultant->id());
+
+        $this->expectException(AccessDeniedException::class);
+
+        $sut($this->buildRequest((string) $other->id(), 'valid'), $this->buildAuthorizer($repository), $repository, $this->buildImpersonated($repository), $this->buildLoggedUser($owner));
+    }
+
+    private function buildAuthorizer(InMemoryAccountRepository $repository): AccountAuthorizer
+    {
+        return new AccountAuthorizer(impersonationPolicy: new ImpersonationPolicy($repository));
+    }
+
     private function buildSut(bool $enabled, CsrfTokenManagerInterface $csrf): ImpersonateController
     {
         $router = $this->createMock(RouterInterface::class);
@@ -130,7 +171,7 @@ class ImpersonateControllerTest extends TestCase
         return $csrf;
     }
 
-    private function buildRepository(\App\Security\Domain\Model\Account\Account ...$accounts): InMemoryAccountRepository
+    private function buildRepository(Account ...$accounts): InMemoryAccountRepository
     {
         $repository = new InMemoryAccountRepository();
 

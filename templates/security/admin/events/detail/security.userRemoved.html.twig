@@ -1,3 +1,4 @@
 {% trans with {
-    '{user}': event.userId
-} %}Eliminado el usuario "{user}"{% endtrans %}
+    '{user}': event.userId,
+    '{actor}': element.userId | user_name
+} %}Eliminado el usuario "{user}" por el usuario {actor}{% endtrans %}

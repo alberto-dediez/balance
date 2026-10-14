@@ -11,6 +11,10 @@
         }, {
             'label': 'Activa' | trans
         }, {
+            'label': 'Es consultora' | trans
+        }, {
+            'label': 'Consultora' | trans
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -22,6 +26,8 @@
     <twig:List:Table :columns="columns" :elements="accounts" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
         <td>{{ element.active | show_field_value | trans }}</td>
+        <td>{{ element.consultant | show_field_value | trans }}</td>
+        <td>{{ element.consultantAccountId ? element.consultantAccountId | account_name : '—' }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element | is_authorized('edit') %}

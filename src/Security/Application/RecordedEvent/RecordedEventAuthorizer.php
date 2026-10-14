@@ -18,20 +18,20 @@ final class RecordedEventAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     protected function canList(mixed $subject, User $user): bool
     {
-        if ($user->hasRole(Role::SuperAdmin)) {
+        if ($this->userHasRole($user, Role::SuperAdmin)) {
             return true;
         }
 
-        return $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

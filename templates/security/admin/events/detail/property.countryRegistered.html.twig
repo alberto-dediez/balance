@@ -1,0 +1,5 @@
+{% trans with {
+    '{country}': event.name,
+    '{iso}': event.iso,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el país {country} ({iso}) por el usuario {user}{% endtrans %}

@@ -1,0 +1,21 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Propiedades' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans)  %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('properties') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            {% include '@property/properties/_form.html.twig' %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.register" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

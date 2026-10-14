@@ -1,0 +1,7 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Empleados' | trans) ~ ' > ' ~ ('Register' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('employees') }}" />
+{% endblock %}

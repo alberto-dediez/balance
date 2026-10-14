@@ -7,11 +7,10 @@ namespace App\Security\Infrastructure\UI\Web\Admin\Account;
 use App\Security\Application\Account\List\ListAccountsRequest;
 use App\Security\Application\Account\List\ListAccountsService;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Infrastructure\Symfony\Form\BulkAccountType;
 use App\Security\Infrastructure\Symfony\Form\ListAccountsType;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Security\Infrastructure\UI\Web\Admin\Account\Bulk\RemoveAccount;
-use App\Shared\Infrastructure\Symfony\Form\BulkType;
-use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Security\Infrastructure\UI\Web\Admin\Account\Bulk\BulkAccountRequest;
 use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,11 +36,8 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($exception->getMessage());
         }
 
-        $bulkForm = $this->createForm(BulkType::class, new BulkRequest(), [
+        $bulkForm = $this->createForm(BulkAccountType::class, new BulkAccountRequest(), [
             'elements' => $response->accounts,
-            'actions' => [
-                new RemoveAccount(),
-            ],
         ]);
 
         $needsRedirect = $this->bulkActions($request, $bulkForm, $loggedUser());

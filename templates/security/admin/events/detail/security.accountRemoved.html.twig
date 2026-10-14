@@ -1,3 +1,4 @@
 {% trans with {
-    '{account}': event.accountId
-} %}Eliminada la cuenta "{account}"{% endtrans %}
+    '{account}': event.accountId,
+    '{user}': element.userId | user_name
+} %}Eliminada la cuenta "{account}" por el usuario {user}{% endtrans %}

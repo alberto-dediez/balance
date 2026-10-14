@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Property\Application\Company;
+
+use App\Property\Domain\Model\Company\Company;
+use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
+
+final class CompanyAuthorizer extends AbstractAuthorizer
+{
+    protected function canRegister(mixed $subject, User $user): bool
+    {
+        $currentAccountId = $this->currentAccountId($user);
+
+        if ($this->userHasRole($user, Role::Owner)
+        && null != $currentAccountId
+        && null != $subject->accountId()
+        && $currentAccountId->equals($subject->accountId())) {
+            return true;
+        }
+
+        return $this->userHasRole($user, Role::Admin) || $this->userHasRole($user, Role::SuperAdmin);
+    }
+
+    protected function canView(mixed $subject, User $user): bool
+    {
+        return $this->canRegister($subject, $user);
+    }
+
+    protected function canList(mixed $subject, User $user): bool
+    {
+        return $this->canRegister($subject, $user);
+    }
+
+    protected function canEdit(mixed $subject, User $user): bool
+    {
+        return $this->canRegister($subject, $user);
+    }
+
+    protected function canRemove(mixed $subject, User $user): bool
+    {
+        return $this->canRegister($subject, $user);
+    }
+
+    public function supports(mixed $subject): bool
+    {
+        return $subject instanceof Company;
+    }
+}

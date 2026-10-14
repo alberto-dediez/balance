@@ -54,10 +54,43 @@ security-api:
     type: attribute
     prefix: '/api'
 
+property-api:
+    resource:
+        path: ../src/Property/Infrastructure/UI/Api/
+        namespace: App\Property\Infrastructure\UI\Api
+    type: attribute
+    prefix: /api/{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
+property-web:
+    resource:
+        path: ../src/Property/Infrastructure/UI/Web/
+        namespace: App\Property\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 data-exchange-web:
     resource:
         path: ../src/DataExchange/Infrastructure/UI/Web/
         namespace: App\DataExchange\Infrastructure\UI\Web
+    type: attribute
+    prefix: /{_locale}
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
+human-resources-web:
+    resource:
+        path: ../src/HumanResources/Infrastructure/UI/Web/
+        namespace: App\HumanResources\Infrastructure\UI\Web
     type: attribute
     prefix: /{_locale}
     requirements:

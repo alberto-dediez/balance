@@ -1,0 +1,24 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('properties') }}" />
+{% endblock %}
+
+{% set page_title = ('Propiedades' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ property.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            {% include '@property/properties/_form.html.twig' %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

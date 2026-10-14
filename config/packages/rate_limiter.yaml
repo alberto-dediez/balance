@@ -8,6 +8,10 @@ framework:
             policy: sliding_window
             limit: 10
             interval: '1 minute'
+        place_suggest:
+            policy: sliding_window
+            limit: 120
+            interval: '1 minute'
 
 when@test:
     framework:
@@ -17,6 +21,10 @@ when@test:
                 limit: 500
                 interval: '1 minute'
             two_factor_code:
+                policy: sliding_window
+                limit: 500
+                interval: '1 minute'
+            place_suggest:
                 policy: sliding_window
                 limit: 500
                 interval: '1 minute'

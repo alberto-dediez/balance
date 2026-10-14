@@ -16,11 +16,12 @@ class SpreadsheetWriter implements ExportWriter
 {
     private ?AbstractWriter $writer = null;
 
-    public function open(string $path, ExportationFormat $format): void
+    public function open(string $path, ExportationFormat $format, ?string $title = null): void
     {
         $writer = match ($format) {
             ExportationFormat::Xlsx => new XlsxWriter(),
             ExportationFormat::Csv => new CsvWriter(),
+            ExportationFormat::Pdf => throw new NotExportedException('PDF format is not supported by the spreadsheet writer'),
         };
 
         $writer->openToFile($path);

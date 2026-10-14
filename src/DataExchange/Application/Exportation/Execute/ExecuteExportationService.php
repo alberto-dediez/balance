@@ -87,7 +87,11 @@ class ExecuteExportationService implements CommandHandler
 
         $filter = $exportationType->hydrateFilter($exportation->filterCriteria());
 
-        $this->exportWriter->open($temporaryPath, $exportation->format());
+        $name = $exportationType->name();
+
+        $title = $name instanceof TranslatableMessage ? $name->trans($this->translator) : $name;
+
+        $this->exportWriter->open($temporaryPath, $exportation->format(), $title);
 
         try {
             $this->exportWriter->writeRow(array_values($columns));

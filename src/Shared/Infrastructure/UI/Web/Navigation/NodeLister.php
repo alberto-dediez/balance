@@ -153,14 +153,56 @@ class NodeLister
     {
         $nodes =  [];
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Propiedades'),
+            icon: 'solar:buildings-2-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Propiedades'),
+                    icon: 'solar:buildings-2-line-duotone',
+                    target: $this->router->generate('admin_properties'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Empresas'),
+                    icon: 'solar:case-line-duotone',
+                    target: $this->router->generate('admin_companies'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Categorías'),
+                    icon: 'solar:folder-favourite-star-line-duotone',
+                    target: $this->router->generate('admin_categories'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Marcas'),
+                    icon: 'solar:tag-line-duotone',
+                    target: $this->router->generate('admin_brands'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Países'),
+                    icon: 'solar:globus-line-duotone',
+                    target: $this->router->generate('admin_countries'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Destinos'),
+                    icon: 'solar:map-point-line-duotone',
+                    target: $this->router->generate('admin_destinations'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
-            label: new TranslatableMessage('Seguridad'),
+            label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
             items: [
                 new Node(
                     label: new TranslatableMessage('Cuentas'),
                     icon: 'solar:buildings-3-line-duotone',
                     target: $this->router->generate('admin_accounts'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Empleados'),
+                    icon: 'solar:user-id-line-duotone',
+                    target: $this->router->generate('admin_employees'),
                 ),
                 new Node(
                     label: new TranslatableMessage('Usuarios'),
@@ -238,10 +280,32 @@ class NodeLister
     {
         $nodes =  [];
 
+        $nodes[] = new Node(
+            label: new TranslatableMessage('Propiedades'),
+            icon: 'solar:buildings-2-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Propiedades'),
+                    icon: 'solar:buildings-2-line-duotone',
+                    target: $this->router->generate('properties'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Empresas'),
+                    icon: 'solar:case-line-duotone',
+                    target: $this->router->generate('companies'),
+                ),
+            ],
+        );
+
         $nodes[] =  new Node(
-            label: new TranslatableMessage('Seguridad'),
+            label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
             items: [
+                new Node(
+                    label: new TranslatableMessage('Empleados'),
+                    icon: 'solar:user-id-line-duotone',
+                    target: $this->router->generate('employees'),
+                ),
                 new Node(
                     label: new TranslatableMessage('Usuarios'),
                     icon: 'solar:users-group-rounded-line-duotone',

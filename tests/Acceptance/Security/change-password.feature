@@ -1,5 +1,5 @@
 Feature:
-  I want to make sure that the system allow to change my password
+    I want to make sure that the system allow to change my password
 
   Scenario: As normal user I can change my password
     Given user "user@dediez.software" with role "ROLE_USER" exists

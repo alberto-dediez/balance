@@ -9,6 +9,8 @@ nelmio_api_doc:
               description: 'Endpoints related to verifying the status and availability of the service.'
             - name: 'Security'
               description: 'Endpoints related to security, login and session.'
+            - name: 'Property'
+              description: 'Endpoints related to properties'
         components:
             securitySchemes:
                 Bearer:
@@ -52,6 +54,10 @@ nelmio_api_doc:
                             
     areas: # to filter documented areas
         default:
+            path_patterns:
+                - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            with_attribute: true
+        mobile:
             path_patterns:
                 - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
             with_attribute: true

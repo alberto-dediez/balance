@@ -10,3 +10,7 @@
         min-width: 400px;
     }
 }
+
+.ts-wrapper.is-invalid .ts-control {
+    border-color: $danger;
+}

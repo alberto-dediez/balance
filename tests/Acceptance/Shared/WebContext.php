@@ -9,23 +9,33 @@ use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Shared\Infrastructure\Timezone\CookieTimezoneProvider;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Security\Core\Exception\LogoutException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
-/**
- * This context class contains the definitions of the steps used by the demo
- * feature file. Learn how to get started with Behat and BDD on Behat's website.
- *
- * @see http://behat.org/en/latest/quick_start.html
- */
-final readonly class WebContext implements Context
+final class WebContext implements Context
 {
-    private AcceptanceClient $client;
+    private readonly AcceptanceClient $client;
+
+    /** @var array<string, string> */
+    private array $files = [];
+
+    /** @var list<string> */
+    private array $checkboxes = [];
+
+    /** @var list<string> */
+    private array $uncheckedBoxes = [];
+
+    /** @var array<string, string> */
+    private array $unprefixedFields = [];
 
     public function __construct(KernelBrowser $client)
     {
@@ -35,6 +45,11 @@ final readonly class WebContext implements Context
     private function getUserRepository(): UserRepository
     {
         return $this->client->getContainer()->get(UserRepository::class);
+    }
+
+    private function getPlaceFinder(): AcceptancePlaceFinder
+    {
+        return $this->client->getContainer()->get(AcceptancePlaceFinder::class);
     }
 
     #[When('I am logged as :username')]
@@ -53,6 +68,18 @@ final readonly class WebContext implements Context
     public function myBrowserTimezoneIs(string $timezone): void
     {
         $this->client->setCookie(CookieTimezoneProvider::COOKIE, $timezone);
+    }
+
+    #[Given('place :reference named :label at :latitude, :longitude exists')]
+    public function placeNamedAtExists(string $reference, string $label, string $latitude, string $longitude): void
+    {
+        $this->getPlaceFinder()->add($reference, $label, (float) $latitude, (float) $longitude);
+    }
+
+    #[Given('the places provider is disabled')]
+    public function thePlacesProviderIsDisabled(): void
+    {
+        $this->getPlaceFinder()->disable();
     }
 
     #[When('I go to :path')]
@@ -84,6 +111,32 @@ final readonly class WebContext implements Context
         $this->client->submit($this->client->getCrawler()->selectButton($text)->form());
     }
 
+    #[When('I make a POST request to :path')]
+    public function iMakeAPostRequestTo(string $path): void
+    {
+        $this->client->request('POST', $path);
+    }
+
+    #[When('I click on link :text')]
+    public function iClickOnLink(string $text): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $link = $crawler->selectLink($text)->link();
+
+        $this->client->click($link);
+    }
+
+    #[When('I click on the action :title')]
+    public function iClickOnTheAction(string $title): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $link = $crawler->filter(sprintf('a[title="%s"]', $title))->link();
+
+        $this->client->click($link);
+    }
+
     #[When('I follow redirect')]
     public function iFollowredirect(): void
     {
@@ -93,16 +146,31 @@ final readonly class WebContext implements Context
     #[When('I submit a form with :data and button :text')]
     public function iSubmitAFormWith(string $data, string $text): void
     {
+        $this->submitForm($data, $text);
+    }
+
+    #[When('I submit a form with :data and button :text as an ajax request')]
+    public function iSubmitAFormWithAsAnAjaxRequest(string $data, string $text): void
+    {
+        $this->submitForm($data, $text, ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+    }
+
+    /** @param array<string, string> $serverParameters */
+    private function submitForm(string $data, string $text, array $serverParameters = []): void
+    {
         $crawler = $this->client->getCrawler();
 
         $buttonCrawlerNode = $crawler->selectButton($text);
         $formData = $buttonCrawlerNode->form();
-
-        $formName = $formData->getFormNode()->getAttribute('name');
+        $formName = $formData->getNode()->getAttribute('name');
 
         $arguments = explode('|', $data);
 
         foreach ($arguments as $argument) {
+            if ('' === $argument) {
+                continue;
+            }
+
             [$name, $value] = explode(':', $argument);
 
             $key = '[' == $name[0] ? sprintf('%s%s', $formName, $name) : sprintf('%s[%s]', $formName, $name);
@@ -111,10 +179,93 @@ final readonly class WebContext implements Context
                 $value = explode(',', substr($value, 1, -1));
             }
 
-            $formData[$key] = $value;
+            $compoundField = $formData[$key];
+            try {
+                $formData[$key] = $value;
+            } catch (\InvalidArgumentException $e) {
+                if (!str_contains($e->getMessage(), 'compound field')) {
+                    throw $e;
+                }
+                $values = is_array($value) ? $value : [$value];
+                array_walk_recursive($compoundField, static function (mixed $field) use ($values): void {
+                    if ($field instanceof ChoiceFormField && [] !== array_intersect($field->availableOptionValues(), $values)) {
+                        $field->tick();
+                    }
+                });
+            }
         }
 
-        $this->client->submit($formData);
+        foreach ($this->unprefixedFields as $name => $value) {
+            $formData[$name] = $value;
+        }
+
+        foreach ($this->checkboxes as $checkbox) {
+            $field = $formData[$checkbox];
+            assert($field instanceof ChoiceFormField);
+
+            $field->tick();
+        }
+
+        foreach ($this->uncheckedBoxes as $checkbox) {
+            $field = $formData[$checkbox];
+            assert($field instanceof ChoiceFormField);
+
+            $field->untick();
+        }
+
+        foreach ($this->files as $field => $path) {
+            $key = '[' === $field[0] ? sprintf('%s%s', $formName, $field) : sprintf('%s[%s]', $formName, $field);
+
+            $fileField = $formData[$key];
+            assert($fileField instanceof FileFormField);
+
+            $fileField->upload($path);
+        }
+
+        $this->client->submit($formData, $serverParameters);
+
+        $this->files = [];
+        $this->checkboxes = [];
+        $this->uncheckedBoxes = [];
+        $this->unprefixedFields = [];
+    }
+
+    #[When('I pick :value in the autocomplete :field')]
+    public function iPickInTheAutocomplete(string $value, string $field): void
+    {
+        $select = $this->client->getCrawler()->filter(sprintf('select[name$="[%s]"]', $field))->getNode(0);
+
+        Assert::assertNotNull($select);
+        Assert::assertNotNull($select->ownerDocument);
+
+        $option = $select->ownerDocument->createElement('option', $value);
+        $option->setAttribute('value', $value);
+
+        $select->appendChild($option);
+    }
+
+    #[When('I fill the unprefixed field :name with :value')]
+    public function iFillTheUnprefixedField(string $name, string $value): void
+    {
+        $this->unprefixedFields[$name] = $value;
+    }
+
+    #[When('I tick the checkbox :name')]
+    public function iTickTheCheckbox(string $name): void
+    {
+        $this->checkboxes[] = $name;
+    }
+
+    #[When('I untick the checkbox :name')]
+    public function iUntickTheCheckbox(string $name): void
+    {
+        $this->uncheckedBoxes[] = $name;
+    }
+
+    #[When('I attach the file :path to :field')]
+    public function iAttachTheFileTo(string $path, string $field): void
+    {
+        $this->files[$field] = $path;
     }
 
     #[When('I filter by :field with :value')]
@@ -161,14 +312,34 @@ final readonly class WebContext implements Context
         Assert::assertEquals($path, $this->client->getRequest()->getPathInfo());
     }
 
+    #[Then('I am redirected to route :name')]
+    public function iAmRedirectedToRoute(string $name): void
+    {
+        $this->client->followRedirect();
+
+        Assert::assertEquals($name, $this->client->getRequest()->attributes->get('_route'));
+    }
+
     #[Then('I see a form')]
     public function iSeeAForm(): void
     {
         $crawler = $this->client->getCrawler();
 
-        $forms = $crawler->filter('form');
+        $forms = $crawler->filter('form')->reduce(
+            static fn(Crawler $form): bool => null === $form->closest('.cookie-consent'),
+        );
 
         Assert::assertCount(1, $forms);
+    }
+
+    #[Then('I see a form field :name')]
+    public function iSeeAFormField(string $name): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $field = $crawler->filter(sprintf('[name*="%s"]', $name));
+
+        Assert::assertGreaterThan(0, $field->count(), sprintf('Form field "%s" not found in the page', $name));
     }
 
     #[Then('I see a button with name :name')]

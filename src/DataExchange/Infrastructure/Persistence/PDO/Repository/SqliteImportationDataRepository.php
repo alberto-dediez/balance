@@ -45,12 +45,12 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $createTableSql = sprintf(
             'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `executed` BOOLEAN DEFAULT 0, `error` TEXT DEFAULT NULL)',
-            implode(', ', array_map(fn($col): string => "\"{$col}\" TEXT", $extractor->getColumns())),
+            implode(', ', array_map(fn(string $col): string => "\"{$col}\" TEXT", $extractor->getColumns())),
         );
 
         $insertSql = sprintf(
             'INSERT INTO importation_data (%s) VALUES ',
-            implode(', ', array_map(fn($col): string => "\"{$col}\"", $extractor->getColumns())),
+            implode(', ', array_map(fn(string $col): string => "\"{$col}\"", $extractor->getColumns())),
         );
 
         $connection = $this->connect($importation->id());
@@ -64,7 +64,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         while (null !== ($row = $extractor->getRow())) {
             $query .= sprintf(
                 '(%s),',
-                implode(', ', array_map(fn($col): string => ":{$col}_{$toInsert}", $extractor->getColumns())),
+                implode(', ', array_map(fn(string $col): string => ":{$col}_{$toInsert}", $extractor->getColumns())),
             );
 
             foreach ($extractor->getColumns() as $col) {
@@ -113,13 +113,13 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     {
         $createTableForFieldsSql = sprintf(
             'CREATE TABLE importation_fields (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s)',
-            implode(', ', array_map(fn($col): string => "\"{$col}\" VARCHAR(100)", $extractor->getColumns())),
+            implode(', ', array_map(fn(string $col): string => "\"{$col}\" VARCHAR(100)", $extractor->getColumns())),
         );
 
         $insertForFieldsSql = sprintf(
             'INSERT INTO importation_fields (%s) VALUES (%s)',
-            implode(', ', array_map(fn($col): string => "\"{$col}\"", $extractor->getColumns())),
-            implode(', ', array_map(fn($col): string => 'NULL', $extractor->getColumns())),
+            implode(', ', array_map(fn(string $col): string => "\"{$col}\"", $extractor->getColumns())),
+            implode(', ', array_map(fn(string $col): string => 'NULL', $extractor->getColumns())),
         );
 
         $connection = $this->connect($importation->id());
@@ -226,7 +226,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
      */
     private function getTranslations(ImportationId $importationId, string $columnName, array $values): array
     {
-        $translations = array_map(fn($value) => new ColumnValueTranslation(value: $value, translation: null), array_filter($values, fn($value): bool => null !== $value));
+        $translations = array_map(fn($value): ColumnValueTranslation => new ColumnValueTranslation(value: $value, translation: null), array_filter($values, fn($value): bool => null !== $value));
 
         $connection = $this->connect($importationId);
 
@@ -278,7 +278,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $columns = $this->getColumns($importationId);
         $sql = sprintf(
             'SELECT %s FROM importation_data WHERE row_id = ?',
-            implode(', ', array_map(fn($col): string => "\"{$col}\"", $columns)),
+            implode(', ', array_map(fn(string $col): string => "\"{$col}\"", $columns)),
         );
 
         $statement = $connection->prepare($sql);

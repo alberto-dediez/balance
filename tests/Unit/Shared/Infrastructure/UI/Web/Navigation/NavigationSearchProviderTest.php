@@ -26,12 +26,12 @@ class NavigationSearchProviderTest extends TestCase
     {
         $sut = $this->createSUT(Role::Admin, routes: ['admin_signature_requests' => '/es/admin/signature-requests']);
 
-        $results = $sut->search(new SearchTerm('Seguridad'), UserMother::adminUser(), 5);
+        $results = $sut->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['Cuentas', 'Usuarios', 'Firma de documentos', 'Registro'], $this->titles($results));
-        $this->assertSame(['Seguridad', 'Seguridad', 'Seguridad', 'Seguridad'], array_map(fn(SearchResult $result): ?string => $result->subtitle, $results));
+        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios', 'Firma de documentos', 'Registro'], $this->titles($results));
+        $this->assertSame(['Administración', 'Administración', 'Administración', 'Administración', 'Administración'], array_map(fn(SearchResult $result): ?string => $result->subtitle, $results));
         $this->assertSame(
-            ['/es/admin/accounts', '/es/admin/users', '/es/admin/signature-requests', '/es/admin/events'],
+            ['/es/admin/accounts', '/es/admin/employees', '/es/admin/users', '/es/admin/signature-requests', '/es/admin/events'],
             $this->urls($results),
         );
         $this->assertSame('solar:buildings-3-line-duotone', $results[0]->icon);
@@ -50,18 +50,18 @@ class NavigationSearchProviderTest extends TestCase
     {
         $sut = $this->createSUT(Role::Admin);
 
-        $this->assertSame(['Usuarios'], $this->titles($sut->search(new SearchTerm('segu usu'), UserMother::adminUser(), 5)));
-        $this->assertSame([], $sut->search(new SearchTerm('seguridad biblioteca'), UserMother::adminUser(), 5));
+        $this->assertSame(['Usuarios'], $this->titles($sut->search(new SearchTerm('admin usu'), UserMother::adminUser(), 5)));
+        $this->assertSame([], $sut->search(new SearchTerm('administracion biblioteca'), UserMother::adminUser(), 5));
     }
 
     public function testAnOwnerOnlySeesItsOwnMenu(): void
     {
         $sut = $this->createSUT(Role::Owner);
 
-        $results = $sut->search(new SearchTerm('Seguridad'), UserMother::adminUser(), 5);
+        $results = $sut->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['Usuarios'], $this->titles($results));
-        $this->assertSame(['/es/users'], $this->urls($results));
+        $this->assertSame(['Empleados', 'Usuarios'], $this->titles($results));
+        $this->assertSame(['/es/employees', '/es/users'], $this->urls($results));
         $this->assertSame([], $sut->search(new SearchTerm('Cuentas'), UserMother::adminUser(), 5));
     }
 
@@ -77,14 +77,14 @@ class NavigationSearchProviderTest extends TestCase
         $this->assertSame(['Archivos'], $this->titles($results));
         $this->assertSame(['/es/library/media'], $this->urls($results));
         $this->assertSame('Biblioteca', $results[0]->subtitle);
-        $this->assertSame([], $sut->search(new SearchTerm('Seguridad'), $user, 5));
+        $this->assertSame([], $sut->search(new SearchTerm('Administración'), $user, 5));
     }
 
     public function testGroupsWithoutTargetAreNotResults(): void
     {
-        $results = $this->createSUT(Role::Admin)->search(new SearchTerm('Seguridad'), UserMother::adminUser(), 5);
+        $results = $this->createSUT(Role::Admin)->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertNotContains('Seguridad', $this->titles($results));
+        $this->assertNotContains('Administración', $this->titles($results));
     }
 
     public function testDisabledFeaturesDisappear(): void
@@ -98,22 +98,22 @@ class NavigationSearchProviderTest extends TestCase
     {
         $results = $this->createSUT(Role::Admin)->search(new SearchTerm('ar'), UserMother::adminUser(), 1);
 
-        $this->assertSame(['Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
+        $this->assertSame(['Marcas', 'Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
     }
 
     public function testTranslatesTheEntriesToTheCurrentLocale(): void
     {
         $translator = new Translator('en');
         $translator->addLoader('array', new ArrayLoader());
-        $translator->addResource('array', ['Seguridad' => 'Security', 'Usuarios' => 'Users'], 'en');
+        $translator->addResource('array', ['Administración' => 'Administration', 'Empleados' => 'Employees', 'Usuarios' => 'Users'], 'en');
 
         $sut = $this->createSUT(Role::Owner, translator: $translator);
 
-        $results = $sut->search(new SearchTerm('security'), UserMother::adminUser(), 5);
+        $results = $sut->search(new SearchTerm('administration'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['Users'], $this->titles($results));
-        $this->assertSame('Security', $results[0]->subtitle);
-        $this->assertSame([], $sut->search(new SearchTerm('Seguridad'), UserMother::adminUser(), 5));
+        $this->assertSame(['Employees', 'Users'], $this->titles($results));
+        $this->assertSame('Administration', $results[0]->subtitle);
+        $this->assertSame([], $sut->search(new SearchTerm('Administración'), UserMother::adminUser(), 5));
     }
 
     public function testCategoryIsTheFirstOne(): void
@@ -126,9 +126,9 @@ class NavigationSearchProviderTest extends TestCase
 
     public function testIgnoresTheUserParameter(): void
     {
-        $results = $this->createSUT(Role::Owner)->search(new SearchTerm('Seguridad'), UserMother::adminUser(), 5);
+        $results = $this->createSUT(Role::Owner)->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['/es/users'], $this->urls($results));
+        $this->assertSame(['/es/employees', '/es/users'], $this->urls($results));
     }
 
     /**

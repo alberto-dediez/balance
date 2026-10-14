@@ -1,0 +1,5 @@
+{% trans with {
+    '{name}': element.payload['name'],
+    '{email}': element.payload['email'],
+    '{actor}': element.userId | user_name
+} %}Employee {name} ({email}) was registered by {actor}{% endtrans %}

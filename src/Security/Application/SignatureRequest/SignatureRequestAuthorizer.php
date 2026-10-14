@@ -18,12 +18,12 @@ final class SignatureRequestAuthorizer extends AbstractAuthorizer
 
     protected function canView(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
@@ -43,7 +43,7 @@ final class SignatureRequestAuthorizer extends AbstractAuthorizer
             return true;
         }
 
-        return $user->hasRole(Role::SuperAdmin) || $user->hasRole(Role::Admin);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin);
     }
 
     public function supports(mixed $subject): bool

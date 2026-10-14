@@ -1,0 +1,40 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Destinos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'País' | trans,
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="destinations" :bulkForm="bulkForm">
+        <td>{{ element.name }}</td>
+        <td>{{ element.countryId | country_name }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_destinations_edit', {'destinationId': element.id}) }}" />
+            {% endif %}
+            
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_destinations_remove', {'destinationId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('admin_destinations_register') }}" />
+{% endblock list_actions %}

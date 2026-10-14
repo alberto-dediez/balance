@@ -1,0 +1,5 @@
+{% trans with {
+    '{key}': event.key,
+    '{current}': event.current,
+    '{total}': event.total
+} %}Progreso del trabajo {key}: {current}/{total}{% endtrans %}

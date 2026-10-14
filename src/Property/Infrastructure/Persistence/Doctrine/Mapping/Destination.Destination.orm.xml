@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Property\Domain\Model\Destination\Destination" table="destinations">
+        <id name="id" type="destination_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+        
+        <embedded name="externalId" class="App\Property\Domain\Model\Property\ExternalId" use-column-prefix="false" />
+
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="countryId" type="country_id" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+
+</doctrine-mapping>

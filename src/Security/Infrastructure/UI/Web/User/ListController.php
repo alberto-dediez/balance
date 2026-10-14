@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\UI\Web\User;
 
+use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\List\ListUsersRequest;
 use App\Security\Application\User\List\ListUsersService;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserId;
 use App\Security\Infrastructure\Symfony\Form\BulkUserType;
 use App\Security\Infrastructure\Symfony\Form\ListUsersType;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
@@ -69,6 +72,7 @@ class ListController extends AbstractController
             'users' => $response->users,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
+            'canRegister' => $this->isGranted(Action::Register->value, new User(id: UserId::generate(), accountId: $account->id())),
         ]);
     }
 }

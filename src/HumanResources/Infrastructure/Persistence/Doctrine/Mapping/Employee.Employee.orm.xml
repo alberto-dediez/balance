@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\HumanResources\Domain\Model\Employee\Employee" table="employees">
+        <id name="id" type="employee_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="email" type="string" length="255" nullable="false"/>
+        <field name="phone" type="string" length="20" nullable="true"/>
+
+        <embedded name="address" class="App\Shared\Domain\Model\Address" use-column-prefix="false"/>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="userId" type="user_id" column="user_id" nullable="true"/>
+
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+    </entity>
+</doctrine-mapping>

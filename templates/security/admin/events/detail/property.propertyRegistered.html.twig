@@ -1,0 +1,12 @@
+{% if event.accountId is not null %}
+    {% trans with {
+        '{property}': event.name,
+        '{account}': event.accountId | account_name,
+        '{user}': element.userId | user_name
+    } %}Se ha registrado la propiedad {property} perteneciente a la cuenta {account} por el usuario {user}{% endtrans %}
+{% else %}
+    {% trans with {
+        '{property}': event.name,
+        '{user}': element.userId | user_name
+    } %}Se ha registrado la propiedad {property} sin cuenta asociada por el usuario {user}{% endtrans %}
+{% endif %}

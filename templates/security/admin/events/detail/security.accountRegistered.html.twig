@@ -1,4 +1,5 @@
 {% trans with {
     '{account}': event.name,
-    '{status}': event.active ? ('activo' | trans) : ('inactivo' | trans)
-} %}Registrada una nueva cuenta {account} en estado {status}{% endtrans %}
+    '{status}': event.active ? ('activo' | trans) : ('inactivo' | trans),
+    '{user}': element.userId | user_name
+} %}Registrada una nueva cuenta {account} en estado {status} por el usuario {user}{% endtrans %}

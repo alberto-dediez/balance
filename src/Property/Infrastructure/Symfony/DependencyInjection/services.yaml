@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Property\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Property\Infrastructure\UI\Console\:
+        resource: '../../../Infrastructure/UI/Console/'
+        tags: ['console.command']

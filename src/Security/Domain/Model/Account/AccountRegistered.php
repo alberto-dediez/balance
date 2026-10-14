@@ -16,6 +16,7 @@ final class AccountRegistered extends DomainEvent
         private readonly AccountId $accountId,
         private readonly string $name,
         private readonly bool $active,
+        private readonly bool $consultant = false,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -37,6 +38,11 @@ final class AccountRegistered extends DomainEvent
         return $this->active;
     }
 
+    public function consultant(): bool
+    {
+        return $this->consultant;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->accountId;
@@ -48,6 +54,7 @@ final class AccountRegistered extends DomainEvent
             'accountId' => (string) $this->accountId,
             'name' => $this->name,
             'active' => $this->active,
+            'consultant' => $this->consultant,
         ];
     }
 
@@ -60,6 +67,7 @@ final class AccountRegistered extends DomainEvent
             accountId: new AccountId($payload['accountId']),
             name: $payload['name'],
             active: $payload['active'],
+            consultant: (bool) ($payload['consultant'] ?? false),
             id: $id,
             occurredOn: $occurredOn,
         );

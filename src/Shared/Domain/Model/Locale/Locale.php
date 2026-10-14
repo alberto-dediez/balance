@@ -17,4 +17,15 @@ enum Locale: string
     case Turkish = 'tr';
 
     case German = 'de';
+
+    /** @return list<self> */
+    public static function listFrom(string $localeList): array
+    {
+        return array_values(
+            array_filter(
+                array_map(static fn(string $code) => self::tryFrom(trim($code)), explode('|', $localeList)),
+                static fn(?self $locale) => $locale instanceof self,
+            ),
+        );
+    }
 }

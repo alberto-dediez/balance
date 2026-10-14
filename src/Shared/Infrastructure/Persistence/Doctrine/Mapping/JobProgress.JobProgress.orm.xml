@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Shared\Domain\Model\JobProgress\JobProgress" table="job_progresses">
+
+        <id name="id" type="job_progress_id" column="id">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="key" type="job_progress_key" column="progress_key" length="500" nullable="false"/>
+        <field name="total" type="integer" nullable="false"/>
+        <field name="current" type="integer" column="current_count" nullable="false"/>
+        <field name="currentStep" type="string" column="current_step" length="255" nullable="false"/>
+        <field name="status" type="string" enum-type="App\Shared\Domain\Model\JobProgress\JobProgressStatus" nullable="false"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="false"/>
+
+    </entity>
+
+</doctrine-mapping>

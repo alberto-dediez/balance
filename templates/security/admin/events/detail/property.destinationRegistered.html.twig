@@ -1,0 +1,4 @@
+{% trans with {
+    '{destination}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el destino {destination} por el usuario {user}{% endtrans %}

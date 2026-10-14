@@ -24,7 +24,7 @@ class Translations extends ArrayCollection implements \Countable
 
     public function removeElement(mixed $element): bool
     {
-        if (0 == count($this)) {
+        if (0 === count($this)) {
             return false;
         }
 
@@ -44,7 +44,7 @@ class Translations extends ArrayCollection implements \Countable
             throw new \InvalidArgumentException('$element must be an instance of Translation');
         }
 
-        if (0 == count($this)) {
+        if (0 === count($this)) {
             return false;
         }
 

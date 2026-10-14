@@ -8,9 +8,11 @@ use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\DomCrawler\Link;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -58,13 +60,14 @@ final class AcceptanceClient
     }
 
     /**
-     * @param array<string, mixed> $parameters
-     * @param array<string, mixed> $files
+     * @param array<string, mixed>  $parameters
+     * @param array<string, mixed>  $files
+     * @param array<string, string> $server
      */
-    public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = []): void
+    public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = [], array $server = []): void
     {
         try {
-            $this->crawler = $this->client->request($method, $path, $parameters, $files, $this->server);
+            $this->crawler = $this->client->request($method, $path, $parameters, $files, array_merge($server, $this->server));
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -72,10 +75,22 @@ final class AcceptanceClient
         }
     }
 
-    public function submit(Form $formData): void
+    /** @param array<string, string> $server */
+    public function submit(Form $formData, array $server = []): void
     {
         try {
-            $this->crawler = $this->client->submit($formData);
+            $this->crawler = $this->client->submit($formData, [], array_merge($server, $this->server));
+
+            $this->exception = null;
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
+    }
+
+    public function click(Link $link): void
+    {
+        try {
+            $this->crawler = $this->client->click($link);
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -90,7 +105,7 @@ final class AcceptanceClient
 
     public function followRedirect(): void
     {
-        $this->client->followRedirect();
+        $this->crawler = $this->client->followRedirect();
     }
 
     public function getRequest(): Request
@@ -123,6 +138,11 @@ final class AcceptanceClient
     public function getContainer(): ContainerInterface
     {
         return $this->client->getContainer();
+    }
+
+    public function getCookieJar(): CookieJar
+    {
+        return $this->client->getCookieJar();
     }
 
     public function loginUser(SecurityUser $user): void
@@ -175,6 +195,11 @@ final class AcceptanceClient
     public function setBearerToken(string $token): void
     {
         $this->server['HTTP_AUTHORIZATION'] = sprintf('Bearer %s', $token);
+    }
+
+    public function getKernelBrowser(): KernelBrowser
+    {
+        return $this->client;
     }
 
     public function reset(): void

@@ -21,6 +21,8 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\TwoFactorMethod;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Security\Infrastructure\Sso\Bioscore\InMemory\InMemoryBioscoreClient;
+use App\Security\Infrastructure\Sso\Bioscore\InMemory\InMemoryBioscoreJwtDecoder;
 use App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider;
 use App\Security\Infrastructure\Sso\SsoProviderRegistry;
 use App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTotpAuthenticator;
@@ -70,6 +72,9 @@ final class SecurityContext implements Context
             }
         }
 
+        $this->getBioscoreClient()->reset();
+        $this->getBioscoreJwtDecoder()->reset();
+
         $this->getTwoFactorPolicy()->reset();
     }
 
@@ -109,6 +114,16 @@ final class SecurityContext implements Context
         Assert::assertInstanceOf(InMemorySsoProvider::class, $provider);
 
         return $provider;
+    }
+
+    private function getBioscoreClient(): InMemoryBioscoreClient
+    {
+        return $this->client->getContainer()->get(InMemoryBioscoreClient::class);
+    }
+
+    private function getBioscoreJwtDecoder(): InMemoryBioscoreJwtDecoder
+    {
+        return $this->client->getContainer()->get(InMemoryBioscoreJwtDecoder::class);
     }
 
     private function getTwoFactorPolicy(): InMemoryTwoFactorPolicy
@@ -245,9 +260,9 @@ final class SecurityContext implements Context
 
         $body = (string) ($lastMessage->getHtmlBody() ?? $lastMessage->getTextBody());
 
-        Assert::assertMatchesRegularExpression('/(?<![#\w])(\d{6})(?!\w)/', $body, 'El email no contiene un código de 6 dígitos');
+        $matched = preg_match('/(?<![#\w])(\d{6})(?!\w)/', $body, $matches);
 
-        preg_match('/(?<![#\w])(\d{6})(?!\w)/', $body, $matches);
+        Assert::assertSame(1, $matched, 'El email no contiene un código de 6 dígitos');
 
         $this->submitTwoFactorCode($matches[1]);
     }
@@ -405,6 +420,26 @@ final class SecurityContext implements Context
     public function theSsoProviderIsDisabled(string $key): void
     {
         $this->getInMemorySsoProvider($key)->disable();
+    }
+
+    #[Given('account :name with id :id is a consultant')]
+    public function accountWithIdIsAConsultant(string $name, string $id): void
+    {
+        $account = AccountMother::fromNameAndId($name, $id);
+        $account->changeConsultantStatus(true);
+
+        $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('account :accountId has consultant :consultantId')]
+    public function accountHasConsultant(string $accountId, string $consultantId): void
+    {
+        $account = $this->getAccountRepository()->find(new AccountId($accountId));
+        Assert::assertNotNull($account, sprintf('Account "%s" not found', $accountId));
+
+        $account->changeConsultant(new AccountId($consultantId));
+
+        $this->getAccountRepository()->add($account);
     }
 
     #[Given('user :username with role :role of account :account exists')]
@@ -739,5 +774,17 @@ final class SecurityContext implements Context
         $signatureRequest->sendOtp($challenge);
         $signatureRequest->verifyOtp($challenge->plainCode(), $appSecret);
         $this->getSignatureRequestRepository()->add($signatureRequest);
+    }
+
+    #[Given('Bioscore rejects all SSO tokens')]
+    public function bioscoreRejectsAllSsoTokens(): void
+    {
+        $this->getBioscoreClient()->setValidToken(false);
+    }
+
+    #[Given('the Bioscore SSO token decodes to email :email')]
+    public function theBioscoreSsoTokenDecodesToEmail(string $email): void
+    {
+        $this->getBioscoreJwtDecoder()->setEmail($email);
     }
 }

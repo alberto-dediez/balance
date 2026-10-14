@@ -8,6 +8,14 @@ parameters:
     error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
     error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
     error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
+    app.gemini_api_key: '%env(GEMINI_API_KEY)%'
+    app.gemini_model_low: '%env(GEMINI_MODEL_LOW)%'
+    app.gemini_model_medium: '%env(GEMINI_MODEL_MEDIUM)%'
+    app.gemini_model_high: '%env(GEMINI_MODEL_HIGH)%'
+    app.gemini_log_enabled: '%env(bool:GEMINI_LOG_ENABLED)%'
+    app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
+    app.google_maps_enabled: '%env(bool:GOOGLE_MAPS_ENABLED)%'
+    app.google_maps_region: '%env(GOOGLE_MAPS_REGION)%'
 
 services:
     _defaults:
@@ -72,6 +80,34 @@ services:
 
     App\Shared\Domain\Model\WhatsApp\WhatsAppSender: '@App\Shared\Infrastructure\WhatsApp\TwilioWhatsAppSender'
 
+    App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
+        arguments:
+            $apiKey: '%app.gemini_api_key%'
+            $modelLow: '%app.gemini_model_low%'
+            $modelMedium: '%app.gemini_model_medium%'
+            $modelHigh: '%app.gemini_model_high%'
+            $logEnabled: '%app.gemini_log_enabled%'
+            $logDir: '%kernel.project_dir%/var/gemini-logs'
+
+    App\Shared\Infrastructure\AI\Gemini\GeminiClient:
+        alias: App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient
+
+    App\Shared\Infrastructure\Geo\Google\GooglePlacesApiPlaceFinder:
+        arguments:
+            $apiKey: '%app.google_maps_api_key%'
+            $enabled: '%app.google_maps_enabled%'
+            $region: '%app.google_maps_region%'
+
+    App\Shared\Infrastructure\Geo\CachedPlaceFinder:
+        arguments:
+            $placeFinder: '@App\Shared\Infrastructure\Geo\Google\GooglePlacesApiPlaceFinder'
+            $cache: '@cache.app'
+
+    App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\CachedPlaceFinder'
+
 when@test:
     parameters:
         app.uploads_dir: '%kernel.project_dir%/var/uploads_test%env(default::TEST_TOKEN)%'
+
+    services:
+        App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\NullPlaceFinder'

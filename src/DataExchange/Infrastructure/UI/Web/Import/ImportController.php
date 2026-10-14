@@ -58,7 +58,7 @@ class ImportController extends AbstractController
             try {
                 $response = $registerImportation(
                     new RegisterImportationRequest(
-                        name: (string) $data->file->getClientOriginalName(),
+                        name: $data->file->getClientOriginalName(),
                         type: $importationType->code(),
                         path: (string) $data->file->getRealPath(),
                         offset: $data->offset,
@@ -72,12 +72,12 @@ class ImportController extends AbstractController
             }
 
             if (!$response instanceof RegisterImportationResponse) {
-                $this->addFlash('danger', new TranslatableMessage('Error importando el fichero {file}', ['{file}' => (string) $data->file->getClientOriginalName()]));
+                $this->addFlash('danger', new TranslatableMessage('Error importando el fichero {file}', ['{file}' => $data->file->getClientOriginalName()]));
 
                 return $this->redirectToRoute($importationType->returnRoute());
             }
 
-            $this->addFlash('success', new TranslatableMessage('Fichero {file} subido con éxito', ['{file}' => (string) $data->file->getClientOriginalName()]));
+            $this->addFlash('success', new TranslatableMessage('Fichero {file} subido con éxito', ['{file}' => $data->file->getClientOriginalName()]));
 
             return $this->redirectToRoute('import_pair_fields', ['code' => $importationType->code(), 'id' => (string) $response->importationId]);
         }

@@ -1,4 +1,5 @@
 {% trans with {
     '{user}': event.userId | user_name,
-    '{role}': event.role.value | trans({}, 'roles')
-} %}Concedido permiso "{role}" al usuario {user}{% endtrans %}
+    '{role}': event.role.value | trans({}, 'roles'),
+    '{actor}': element.userId | user_name
+} %}Concedido permiso "{role}" al usuario {user} por el usuario {actor}{% endtrans %}

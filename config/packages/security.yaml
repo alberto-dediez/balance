@@ -60,6 +60,7 @@ security:
         - { path: /health-check$, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/openapi/documentation, roles: ROLE_ADMIN }
+        - { path: ^/openapi/mobile/documentation, roles: ROLE_ADMIN }
         - { path: ^/openapi/admin/documentation, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: '^/[a-z]{2}/sign', roles: PUBLIC_ACCESS }

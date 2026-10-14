@@ -1,0 +1,31 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_brands') }}" />
+{% endblock %}
+
+{% set page_title = ('Marcas' | trans) 
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ brand.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.externalId) }}
+                </div>
+            </div>    
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

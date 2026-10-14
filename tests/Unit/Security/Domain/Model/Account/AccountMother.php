@@ -34,6 +34,22 @@ class AccountMother
         return $account;
     }
 
+    public static function consultantAccount(): Account
+    {
+        $account = new Account(AccountId::generate());
+        $account->register('consultant-' . random_int(100, 999), true, true);
+
+        return $account;
+    }
+
+    public static function fromNameWithConsultant(string $name, AccountId $consultantAccountId): Account
+    {
+        $account = self::fromName($name);
+        $account->changeConsultant($consultantAccountId);
+
+        return $account;
+    }
+
     public static function random(): Account
     {
         return self::fromName('account-' . random_int(100, 999));

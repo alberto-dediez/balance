@@ -16,12 +16,15 @@ class SpyExportWriter implements ExportWriter
 
     public ?ExportationFormat $format = null;
 
+    public ?string $title = null;
+
     public bool $closed = false;
 
-    public function open(string $path, ExportationFormat $format): void
+    public function open(string $path, ExportationFormat $format, ?string $title = null): void
     {
         $this->path = $path;
         $this->format = $format;
+        $this->title = $title;
 
         // Touch the file so the storage step finds content to persist.
         file_put_contents($path, '');

@@ -1,0 +1,82 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\Property\Application\Brand\Update;
+
+use App\Property\Application\Brand\BrandAuthorizer;
+use App\Property\Application\Brand\Update\UpdateBrandRequest;
+use App\Property\Application\Brand\Update\UpdateBrandService;
+use App\Property\Domain\Model\Brand\BrandUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryBrandRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
+use App\Tests\Unit\Property\Domain\Model\Brand\BrandRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use PHPUnit\Framework\TestCase;
+
+class UpdateBrandServiceTest extends TestCase
+{
+    private SpyDomainEventSubscriber $spySubscriber;
+
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+
+        $this->spySubscriber = new SpyDomainEventSubscriber();
+    }
+
+    public function testUseCase(): void
+    {
+        $repository = BrandRepositoryMother::inMemory();
+
+        $brand = BrandMother::fromName('MyBrand');
+
+        $repository->add($brand);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateBrandRequest(
+            brandId: $brand->id(),
+            name: '1 Estrella',
+        );
+
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
+        $result = $sut($request, $user);
+
+        $brandPersisted = $repository->find($result->brandId);
+
+        $this->assertNotNull($brandPersisted);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertNotNull($lastEvent);
+        $this->assertTrue($lastEvent instanceof BrandUpdated);
+        $this->assertEquals('1 Estrella', $lastEvent->name());
+        $this->assertTrue($brandPersisted->id()->equals($lastEvent->brandId()));
+    }
+
+    public function testIsHandle(): void
+    {
+        $repository = BrandRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $brand = BrandMother::random();
+
+        $result = $sut->isHandled(new UpdateBrandRequest(
+            brandId: $brand->id(),
+            name: '2 Stars',
+        ));
+
+        $this->assertTrue($result);
+    }
+
+    private function createSUT(InMemoryBrandRepository $repository): UpdateBrandService
+    {
+        return new UpdateBrandService($repository, new BrandAuthorizer());
+    }
+}

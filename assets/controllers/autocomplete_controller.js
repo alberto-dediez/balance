@@ -7,12 +7,14 @@ import 'tom-select/dist/css/tom-select.bootstrap5.min.css';
 export default class extends Controller {
     static values = {
         path: String,
+        selectedLabel: String,
         submitOnChange: Boolean
     }
 
     connect() {
         let options = {
             'create': false,
+            'maxItems': this.element.multiple ? null : 1,
         };
 
         if (this.pathValue.length > 0) {
@@ -22,7 +24,8 @@ export default class extends Controller {
             options.labelField = 'label';
             options.searchField = 'label';
             options.load = function(query, callback) {
-                var url = baseUrl + '?query=' + encodeURIComponent(query);
+                var separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
+                var url = baseUrl + separator + 'query=' + encodeURIComponent(query);
 
                 fetch(url)
                     .then(response => response.json())
@@ -33,6 +36,14 @@ export default class extends Controller {
                     });
 
             };
+
+            if (this.element.value && this.element.value.length > 0) {
+                options.options = [{
+                    value: this.element.value,
+                    label: this.selectedOptionLabel()
+                }];
+                options.items = [this.element.value];
+            }
         }
 
         if (this.submitOnChangeValue) {
@@ -44,5 +55,21 @@ export default class extends Controller {
         }
 
         new TomSelect(this.element, options);
+    }
+
+    selectedOptionLabel() {
+        if (this.selectedLabelValue.length > 0) {
+            return this.selectedLabelValue;
+        }
+
+        const selected = this.element.querySelector
+            ? this.element.querySelector('option[value="' + CSS.escape(this.element.value) + '"]')
+            : null;
+
+        if (selected && selected.textContent.trim().length > 0) {
+            return selected.textContent.trim();
+        }
+
+        return this.element.value;
     }
 }

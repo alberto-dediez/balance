@@ -17,6 +17,13 @@ framework:
         utf8: true
         default_uri: '%env(BASE_URL)%'
 
+when@dev:
+    framework:
+        http_client:
+            default_options:
+                verify_peer: false
+                verify_host: false
+
 when@test:
     framework:
         test: true

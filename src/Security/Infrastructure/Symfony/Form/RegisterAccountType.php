@@ -29,6 +29,10 @@ class RegisterAccountType extends AbstractType
                 'label' => new TranslatableMessage('Activa'),
                 'required' => true,
             ])
+            ->add('consultant', BooleanType::class, [
+                'label' => new TranslatableMessage('Es consultora'),
+                'required' => true,
+            ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),
             ])

@@ -143,9 +143,10 @@ class UserMother
     {
         $roles = [
             Role::Admin,
+            Role::Owner,
             Role::User,
         ];
 
-        return self::fromUsernameAndRole('user-' . random_int(100, 9999999), $roles[random_int(0, 1)]);
+        return self::fromUsernameAndRole('user-' . random_int(100, 9999999), $roles[random_int(0, 2)]);
     }
 }

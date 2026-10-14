@@ -11,6 +11,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
+use App\Tests\Unit\Shared\Application\CurrentImpersonation\StubCurrentImpersonationProvider;
 use App\Tests\Unit\Shared\Application\CurrentRoles\StubCurrentRolesProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -173,6 +174,72 @@ class UserAuthorizerTest extends TestCase
         $this->assertFalse($sut->canChangeRole($subject, Role::Admin, $admin));
     }
 
+    public function testImpersonatingConsultantListsAndViewsTheUsersOfTheImpersonatedAccount(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $impersonated);
+        $consultant = UserMother::fromUsernameAndRoleAndAccount('consultant', Role::Owner, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertTrue($sut->canDoThat($subject, Action::List, $consultant));
+        $this->assertTrue($sut->canDoThat($subject, Action::View, $consultant));
+        $this->assertTrue($sut->canDoThat($subject, Action::Export, $consultant));
+    }
+
+    public function testImpersonatingConsultantCannotModifyTheUsersOfTheImpersonatedAccount(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $impersonated);
+        $consultant = UserMother::fromUsernameAndRoleAndAccount('consultant', Role::Owner, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertFalse($sut->canDoThat($subject, Action::Register, $consultant));
+        $this->assertFalse($sut->canDoThat($subject, Action::Edit, $consultant));
+        $this->assertFalse($sut->canDoThat($subject, Action::Remove, $consultant));
+    }
+
+    public function testImpersonatingConsultantCannotChangeRolesOfTheImpersonatedAccount(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $impersonated);
+        $consultant = UserMother::fromUsernameAndRoleAndAccount('consultant', Role::Owner, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertFalse($sut->canChangeRole($subject, Role::Owner, $consultant));
+    }
+
+    public function testImpersonatingConsultantStillEditsItsOwnUser(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $consultant = UserMother::fromUsernameAndRoleAndAccount('consultant', Role::Owner, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertTrue($sut->canDoThat($consultant, Action::Edit, $consultant));
+    }
+
+    public function testImpersonatingAdminStillModifiesTheUsersOfTheImpersonatedAccount(): void
+    {
+        $impersonated = AccountMother::random();
+
+        $subject = UserMother::fromUsernameAndAccount('username', $impersonated);
+        $admin = UserMother::fromUsernameAndRoleAndAccount('admin', Role::Admin, AccountId::generate());
+
+        $sut = $this->createSUTWithImpersonation($impersonated->id());
+
+        $this->assertTrue($sut->canDoThat($subject, Action::Register, $admin));
+        $this->assertTrue($sut->canDoThat($subject, Action::Edit, $admin));
+        $this->assertTrue($sut->canDoThat($subject, Action::Remove, $admin));
+        $this->assertTrue($sut->canChangeRole($subject, Role::Owner, $admin));
+    }
+
     public function testAdminCannotChangeSuperAdminRole(): void
     {
         $sut = $this->createSUT();
@@ -215,6 +282,7 @@ class UserAuthorizerTest extends TestCase
         return new UserAuthorizer(
             new StubCurrentAccountIdProvider($impersonatedAccountId),
             new StubCurrentRolesProvider([Role::Owner, Role::User]),
+            new StubCurrentImpersonationProvider(true),
         );
     }
 }

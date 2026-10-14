@@ -1,0 +1,4 @@
+{% trans with {
+    '{recipient}': event.recipient,
+    '{subject}': event.subject
+} %}Se ha enviado un email a {recipient} con el asunto "{subject}"{% endtrans %}

@@ -11,7 +11,9 @@ default:
                 - App\Tests\Acceptance\Shared\ApiContext
                 - App\Tests\Acceptance\Shared\SystemContext
                 - App\Tests\Acceptance\Security\SecurityContext
+                - App\Tests\Acceptance\Property\PropertyContext
                 - App\Tests\Acceptance\DataExchange\DataExchangeContext
+                - App\Tests\Acceptance\HumanResources\HumanResourcesContext
                 - App\Tests\Acceptance\Notifications\NotificationsContext
                 - App\Tests\Acceptance\Library\LibraryContext
                 - App\Tests\Acceptance\Changelog\ChangelogContext
