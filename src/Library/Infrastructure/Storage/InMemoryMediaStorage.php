@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Library\Infrastructure\Storage;
 
 use App\Library\Domain\Model\Media\MediaId;
+use App\Library\Domain\Model\Media\MediaPath;
 use App\Library\Domain\Model\Media\MediaStorage;
 use App\Library\Domain\Model\Media\NotStoredMediaException;
 use App\Security\Domain\Model\Account\AccountId;
@@ -20,15 +21,18 @@ class InMemoryMediaStorage implements MediaStorage
 
     public function store(MediaId $mediaId, ?AccountId $accountId, string $extension, string $localPath): string
     {
-        $scope = $accountId instanceof AccountId ? (string) $accountId : 'shared';
+        $relativePath = MediaPath::from($mediaId, $accountId, $extension);
 
-        $relativePath = sprintf('%s/%s%s', $scope, (string) $mediaId, '' === $extension ? '' : '.' . $extension);
-
-        $contents = is_file($localPath) ? file_get_contents($localPath) : '';
-
-        $this->contents[$relativePath] = false === $contents ? '' : $contents;
+        $this->write($relativePath, $localPath);
 
         return $relativePath;
+    }
+
+    public function write(string $path, string $localPath): void
+    {
+        $contents = is_file($localPath) ? file_get_contents($localPath) : '';
+
+        $this->contents[$path] = false === $contents ? '' : $contents;
     }
 
     public function read(string $path): mixed

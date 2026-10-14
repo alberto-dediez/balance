@@ -8,6 +8,12 @@ parameters:
     error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
     error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
     error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
+    ovh.s3.endpoint: '%env(OVH_S3_ENDPOINT)%'
+    ovh.s3.region: '%env(OVH_S3_REGION)%'
+    ovh.s3.bucket: '%env(OVH_S3_BUCKET)%'
+    ovh.s3.access_key: '%env(OVH_S3_ACCESS_KEY)%'
+    ovh.s3.secret_key: '%env(OVH_S3_SECRET_KEY)%'
+    ovh.s3.prefix: '%env(OVH_S3_PREFIX)%'
 
 services:
     _defaults:
@@ -71,6 +77,18 @@ services:
     App\Shared\Domain\Model\Sms\SmsSender: '@App\Shared\Infrastructure\Sms\TwilioSmsSender'
 
     App\Shared\Domain\Model\WhatsApp\WhatsAppSender: '@App\Shared\Infrastructure\WhatsApp\TwilioWhatsAppSender'
+
+    App\Shared\Infrastructure\Storage\Ovh\OvhS3ClientFactory:
+        arguments:
+            $endpoint: '%ovh.s3.endpoint%'
+            $region: '%ovh.s3.region%'
+            $accessKey: '%ovh.s3.access_key%'
+            $secretKey: '%ovh.s3.secret_key%'
+            $httpClient: null
+
+    AsyncAws\S3\S3Client:
+        factory: ['@App\Shared\Infrastructure\Storage\Ovh\OvhS3ClientFactory', 'create']
+        lazy: true
 
 when@test:
     parameters:

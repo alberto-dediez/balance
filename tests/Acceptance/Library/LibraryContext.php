@@ -10,6 +10,7 @@ use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaStorage;
 use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Infrastructure\Storage\MediaStorageRegistry;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaMother;
@@ -208,6 +209,38 @@ final class LibraryContext implements Context
     public function theLibraryContainsFiles(int $total): void
     {
         Assert::assertCount($total, $this->getMediaRepository()->findByFilter(new MediaFilter(limit: 0)));
+    }
+
+    #[Then('media :id is stored in the :driver storage')]
+    public function mediaIsStoredInTheStorage(string $id, string $driver): void
+    {
+        Assert::assertTrue($this->getStorage($driver)->exists($this->getMedia($id)->path()));
+    }
+
+    #[Then('media :id is not stored in the :driver storage')]
+    public function mediaIsNotStoredInTheStorage(string $id, string $driver): void
+    {
+        Assert::assertFalse($this->getStorage($driver)->exists($this->getMedia($id)->path()));
+    }
+
+    #[Given('the file of media :id is missing in the :driver storage')]
+    public function theFileOfMediaIsMissingInTheStorage(string $id, string $driver): void
+    {
+        $this->getStorage($driver)->delete($this->getMedia($id)->path());
+    }
+
+    private function getStorage(string $driver): MediaStorage
+    {
+        return $this->client->getContainer()->get(MediaStorageRegistry::class)->get($driver);
+    }
+
+    private function getMedia(string $id): Media
+    {
+        $media = $this->getMediaRepository()->find(new MediaId($id));
+
+        Assert::assertNotNull($media);
+
+        return $media;
     }
 
     private function uploadThroughThePicker(string $fileName, string $token, string $types = '', string $visibility = ''): void

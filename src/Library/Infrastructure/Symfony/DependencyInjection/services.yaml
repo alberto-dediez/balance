@@ -1,5 +1,6 @@
 parameters:
     app.media_dir: '%app.uploads_dir%/library'
+    app.media_storage: '%env(MEDIA_STORAGE)%'
 
 services:
     _defaults:
@@ -11,12 +12,28 @@ services:
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
 
+    App\Library\Infrastructure\UI\Console\:
+        resource: '../../../Infrastructure/UI/Console/'
+        tags: ['console.command']
+
     App\Library\Infrastructure\Storage\LocalMediaStorage:
         arguments:
             $basePath: '%app.media_dir%'
 
+    App\Library\Infrastructure\Storage\OvhMediaStorage:
+        arguments:
+            $bucket: '%ovh.s3.bucket%'
+            $prefix: '%ovh.s3.prefix%'
+
+    App\Library\Infrastructure\Storage\MediaStorageRegistry:
+        arguments:
+            $storages:
+                local: '@App\Library\Infrastructure\Storage\LocalMediaStorage'
+                ovh: '@App\Library\Infrastructure\Storage\OvhMediaStorage'
+            $defaultDriver: '%app.media_storage%'
+
     App\Library\Domain\Model\Media\MediaStorage:
-        alias: App\Library\Infrastructure\Storage\LocalMediaStorage
+        factory: ['@App\Library\Infrastructure\Storage\MediaStorageRegistry', 'default']
 
 when@test:
     services:
@@ -24,4 +41,16 @@ when@test:
             alias: App\Library\Infrastructure\Storage\InMemoryMediaStorage
 
         App\Library\Infrastructure\Storage\InMemoryMediaStorage:
+            public: true
+
+        library.media_storage.ovh_in_memory:
+            class: App\Library\Infrastructure\Storage\InMemoryMediaStorage
+            public: true
+
+        App\Library\Infrastructure\Storage\MediaStorageRegistry:
+            arguments:
+                $storages:
+                    local: '@App\Library\Infrastructure\Storage\InMemoryMediaStorage'
+                    ovh: '@library.media_storage.ovh_in_memory'
+                $defaultDriver: 'local'
             public: true
