@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityService;
@@ -15,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MobilityActivityMother;
@@ -49,7 +49,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
         $entityRepo = MobilityRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MobilityEmissionFactorSelector($entityRepo);
-        $sut = new UpdateMobilityActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMobilityActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateMobilityActivityRequest(
             activityId: $activity->id(),
@@ -69,7 +69,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
         $repository->save($activity);
 
         $selector = new MobilityEmissionFactorSelector(MobilityRepositoryMother::inMemory());
-        $sut = new UpdateMobilityActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMobilityActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateMobilityActivityRequest(
@@ -84,7 +84,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new MobilityEmissionFactorSelector(MobilityRepositoryMother::inMemory());
-        $sut = new UpdateMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateMobilityActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
             mobilityId: MobilityId::generate(),

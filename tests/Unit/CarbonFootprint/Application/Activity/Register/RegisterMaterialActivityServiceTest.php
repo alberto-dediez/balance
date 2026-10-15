@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MaterialEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMaterialActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMaterialActivityService;
@@ -17,6 +16,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -45,7 +45,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
         $entityRepo = MaterialRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MaterialEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterMaterialActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMaterialActivityRequest(
@@ -64,7 +64,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
     public function testUnauthorizedAccess(): void
     {
         $selector = new MaterialEmissionFactorSelector(MaterialRepositoryMother::inMemory());
-        $sut = new RegisterMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMaterialActivityRequest(
             accountId: new AccountId('account-id'),
@@ -79,7 +79,7 @@ class RegisterMaterialActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new MaterialEmissionFactorSelector(MaterialRepositoryMother::inMemory());
-        $sut = new RegisterMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new RegisterMaterialActivityRequest(
             accountId: new AccountId('account-id'),
             materialId: MaterialId::generate(),

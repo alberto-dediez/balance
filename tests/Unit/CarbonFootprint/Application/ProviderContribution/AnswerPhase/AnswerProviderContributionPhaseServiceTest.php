@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\CombustibleAnswerHandler;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
 use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
@@ -48,6 +47,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
@@ -87,7 +87,7 @@ class AnswerProviderContributionPhaseServiceTest extends TestCase
         $combustibleRepository->add($this->combustible);
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $selector = new CombustibleEmissionFactorSelector($combustibleRepository);
 
         $handlers = new ActivityAnswerHandlerRegistry([

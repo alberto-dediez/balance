@@ -10,7 +10,6 @@ use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\MaterialAnswerHandler;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MaterialEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMaterialActivityService;
@@ -53,6 +52,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
@@ -92,7 +92,7 @@ class AnswerPhaseServiceTest extends TestCase
         $materialRepository->add($this->material);
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $materialSelector = new MaterialEmissionFactorSelector($materialRepository);
 
         $handlers = new ActivityAnswerHandlerRegistry([
@@ -313,7 +313,7 @@ class AnswerPhaseServiceTest extends TestCase
         ));
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $selector = new ElectricityEmissionFactorSelector($electricityMarketerRepository, GdOFactorRepositoryMother::inMemory());
         $mixResolver = new ElectricityMixEmissionsResolver($electricityMixRepository, $calculator);
 

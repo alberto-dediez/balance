@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\ProviderContribution\Calcul
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\ProviderContribution\CalculateEmissions\CalculateProviderContributionActivityEmissionsRequest;
 use App\CarbonFootprint\Application\ProviderContribution\CalculateEmissions\CalculateProviderContributionActivityEmissionsService;
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthenticator;
@@ -36,6 +35,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
@@ -73,7 +73,7 @@ class CalculateProviderContributionActivityEmissionsServiceTest extends TestCase
             $this->eventCarbonFootprintRepository,
             new ActivityEmissionsResolver(
                 new EmissionFactorSelectorRegistry([new CombustibleEmissionFactorSelector($combustibleRepository)]),
-                new EmissionsCalculator(),
+                EmissionsCalculatorMother::create(),
             ),
         );
     }

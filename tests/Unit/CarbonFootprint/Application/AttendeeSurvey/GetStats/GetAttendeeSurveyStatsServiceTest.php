@@ -9,7 +9,6 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetStats\GetAttendeeSurveyStatsResponse;
@@ -38,6 +37,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
@@ -79,7 +79,7 @@ class GetAttendeeSurveyStatsServiceTest extends TestCase
                 $mobilityRepository,
                 new ActivityEmissionsResolver(
                     new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($mobilityRepository)]),
-                    new EmissionsCalculator(),
+                    EmissionsCalculatorMother::create(),
                 ),
                 new InMemoryEmissionFactorGroupRepository(),
             ),
@@ -90,7 +90,7 @@ class GetAttendeeSurveyStatsServiceTest extends TestCase
                 new TripEmissionsCalculator(
                     new ActivityEmissionsResolver(
                         new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($mobilityRepository)]),
-                        new EmissionsCalculator(),
+                        EmissionsCalculatorMother::create(),
                     ),
                     new InMemoryOvernightStayRepository(),
                 ),

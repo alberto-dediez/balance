@@ -12,7 +12,6 @@ use App\CarbonFootprint\Application\Activity\Answer\RefrigerantGasAnswerHandler;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\RefrigerantGasEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
@@ -54,6 +53,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
@@ -114,7 +114,7 @@ class AnswerPropertyCarbonFootprintScopeServiceTest extends TestCase
         $electricityMixRepository->add($electricityMix);
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
 
         $combustibleSelector = new CombustibleEmissionFactorSelector($combustibleRepository);
         $refrigerantGasSelector = new RefrigerantGasEmissionFactorSelector($refrigerantGasRepository);

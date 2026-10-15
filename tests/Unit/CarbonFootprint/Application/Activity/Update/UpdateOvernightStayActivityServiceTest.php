@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityService;
@@ -15,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityMother;
@@ -49,7 +49,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
         $entityRepo = OvernightStayRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new OvernightStayEmissionFactorSelector($entityRepo);
-        $sut = new UpdateOvernightStayActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateOvernightStayActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateOvernightStayActivityRequest(
             activityId: $activity->id(),
@@ -78,7 +78,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
         $entityRepo = OvernightStayRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new OvernightStayEmissionFactorSelector($entityRepo);
-        $sut = new UpdateOvernightStayActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateOvernightStayActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateOvernightStayActivityRequest(
             activityId: $activity->id(),
@@ -106,7 +106,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
         $repository->save($activity);
 
         $selector = new OvernightStayEmissionFactorSelector(OvernightStayRepositoryMother::inMemory());
-        $sut = new UpdateOvernightStayActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateOvernightStayActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateOvernightStayActivityRequest(
@@ -121,7 +121,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new OvernightStayEmissionFactorSelector(OvernightStayRepositoryMother::inMemory());
-        $sut = new UpdateOvernightStayActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateOvernightStayActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateOvernightStayActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
             overnightStayId: OvernightStayId::generate(),

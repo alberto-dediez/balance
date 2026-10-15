@@ -36,7 +36,14 @@ final class Quantity implements \Stringable
             throw new IncompatibleUnitsException($this->unit, $unit);
         }
 
-        return new self($this->value * $this->unit->factorToBase() / $unit->factorToBase(), $unit);
+        $from = $this->unit->fixedFactorToBase();
+        $to = $unit->fixedFactorToBase();
+
+        if (null === $from || null === $to) {
+            throw new ExchangeRateRequiredException($this->unit, $unit);
+        }
+
+        return new self($this->value * $from / $to, $unit);
     }
 
     public function magnitude(): Magnitude

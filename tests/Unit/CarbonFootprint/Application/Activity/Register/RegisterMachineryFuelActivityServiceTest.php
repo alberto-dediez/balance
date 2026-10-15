@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MachineryFuelEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMachineryFuelActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMachineryFuelActivityService;
@@ -16,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -44,7 +44,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
         $entityRepo = MachineryFuelRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MachineryFuelEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterMachineryFuelActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMachineryFuelActivityRequest(
@@ -62,7 +62,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
     public function testUnauthorizedAccess(): void
     {
         $selector = new MachineryFuelEmissionFactorSelector(MachineryFuelRepositoryMother::inMemory());
-        $sut = new RegisterMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMachineryFuelActivityRequest(
             accountId: new AccountId('account-id'),
@@ -76,7 +76,7 @@ class RegisterMachineryFuelActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new MachineryFuelEmissionFactorSelector(MachineryFuelRepositoryMother::inMemory());
-        $sut = new RegisterMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new RegisterMachineryFuelActivityRequest(
             accountId: new AccountId('account-id'),
             machineryFuelId: MachineryFuelId::generate(),

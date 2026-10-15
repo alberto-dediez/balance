@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\Calculate\CalculateActivityEmissionsRequest;
 use App\CarbonFootprint\Application\Activity\Calculate\CalculateActivityEmissionsService;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MaterialEmissionFactorSelector;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
@@ -23,6 +22,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
@@ -53,7 +53,7 @@ class CalculateActivityEmissionsServiceTest extends TestCase
             new EventCarbonFootprintAuthorizer(),
             new ActivityEmissionsResolver(
                 new EmissionFactorSelectorRegistry([new MaterialEmissionFactorSelector($materialRepository)]),
-                new EmissionsCalculator(),
+                EmissionsCalculatorMother::create(),
             ),
         );
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\RefrigerantGasEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterRefrigerantGasActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterRefrigerantGasActivityService;
@@ -18,6 +17,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -52,7 +52,7 @@ class RegisterRefrigerantGasActivityServiceTest extends TestCase
     public function testUseCase(): void
     {
         $activityRepo = ActivityRepositoryMother::inMemory();
-        $sut = new RegisterRefrigerantGasActivityService($activityRepo, new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new RegisterRefrigerantGasActivityService($activityRepo, new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $result = $sut(new RegisterRefrigerantGasActivityRequest(
             accountId: new AccountId('account-id'),
@@ -72,7 +72,7 @@ class RegisterRefrigerantGasActivityServiceTest extends TestCase
     public function testConvertsTonnesToKilograms(): void
     {
         $activityRepo = ActivityRepositoryMother::inMemory();
-        $sut = new RegisterRefrigerantGasActivityService($activityRepo, new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new RegisterRefrigerantGasActivityService($activityRepo, new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $result = $sut(new RegisterRefrigerantGasActivityRequest(
             accountId: new AccountId('account-id'),
@@ -90,7 +90,7 @@ class RegisterRefrigerantGasActivityServiceTest extends TestCase
 
     public function testRejectsNonMassUnit(): void
     {
-        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $this->expectException(IncompatibleUnitsException::class);
         $sut(new RegisterRefrigerantGasActivityRequest(
@@ -104,7 +104,7 @@ class RegisterRefrigerantGasActivityServiceTest extends TestCase
 
     public function testThrowsWhenGasHasNoFactorForYear(): void
     {
-        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $this->expectException(\InvalidArgumentException::class);
         $sut(new RegisterRefrigerantGasActivityRequest(
@@ -118,7 +118,7 @@ class RegisterRefrigerantGasActivityServiceTest extends TestCase
 
     public function testUnauthorizedAccess(): void
     {
-        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $this->expectException(\Throwable::class);
         $sut(new RegisterRefrigerantGasActivityRequest(
@@ -132,7 +132,7 @@ class RegisterRefrigerantGasActivityServiceTest extends TestCase
 
     public function testIsHandled(): void
     {
-        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new RegisterRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $this->assertTrue($sut->isHandled(new RegisterRefrigerantGasActivityRequest(
             accountId: new AccountId('account-id'),

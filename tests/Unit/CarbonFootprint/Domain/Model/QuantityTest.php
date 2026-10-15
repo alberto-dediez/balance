@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model;
 
+use App\CarbonFootprint\Domain\Model\ExchangeRateRequiredException;
 use App\CarbonFootprint\Domain\Model\IncompatibleUnitsException;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -84,5 +85,21 @@ class QuantityTest extends TestCase
 
         $this->expectException(IncompatibleUnitsException::class);
         $quantity->convertTo(Unit::Liter);
+    }
+
+    public function testThrowsWhenConvertingBetweenCurrencies(): void
+    {
+        $quantity = new Quantity(10.0, Unit::UsDollar);
+
+        $this->expectException(ExchangeRateRequiredException::class);
+        $quantity->convertTo(Unit::Euro);
+    }
+
+    public function testThrowsWhenConvertingCurrencyToMass(): void
+    {
+        $quantity = new Quantity(10.0, Unit::UsDollar);
+
+        $this->expectException(IncompatibleUnitsException::class);
+        $quantity->convertTo(Unit::Kilogram);
     }
 }

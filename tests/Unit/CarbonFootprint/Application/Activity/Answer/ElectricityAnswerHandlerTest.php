@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
@@ -25,6 +24,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -56,7 +56,7 @@ class ElectricityAnswerHandlerTest extends TestCase
         $gdOFactorRepository->add($this->gdOFactor);
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $selector = new ElectricityEmissionFactorSelector($electricityMarketerRepository, $gdOFactorRepository);
         $mixResolver = new ElectricityMixEmissionsResolver(new InMemoryElectricityMixRepository(), $calculator);
 

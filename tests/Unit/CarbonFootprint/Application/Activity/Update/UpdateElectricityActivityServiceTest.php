@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
@@ -26,6 +25,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
@@ -70,7 +70,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
         $gdoFactorRepo->add($gdoFactor);
 
         $selector = new ElectricityEmissionFactorSelector($marketerRepo, $gdoFactorRepo);
-        $sut = new UpdateElectricityActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator(), $this->mixResolver());
+        $sut = new UpdateElectricityActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create(), $this->mixResolver());
 
         $sut(new UpdateElectricityActivityRequest(
             activityId: $activity->id(),
@@ -154,7 +154,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
             ElectricityMarketerRepositoryMother::inMemory(),
             GdOFactorRepositoryMother::inMemory(),
         );
-        $sut = new UpdateElectricityActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator(), $this->mixResolver());
+        $sut = new UpdateElectricityActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create(), $this->mixResolver());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateElectricityActivityRequest(
@@ -173,7 +173,7 @@ class UpdateElectricityActivityServiceTest extends TestCase
             ElectricityMarketerRepositoryMother::inMemory(),
             GdOFactorRepositoryMother::inMemory(),
         );
-        $sut = new UpdateElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator(), $this->mixResolver());
+        $sut = new UpdateElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create(), $this->mixResolver());
         $this->assertTrue($sut->isHandled(new UpdateElectricityActivityRequest(
             activityId: ActivityId::generate(),
             electricityMarketerId: ElectricityMarketerId::generate(),
@@ -206,8 +206,8 @@ class UpdateElectricityActivityServiceTest extends TestCase
             $activityRepository,
             new ActivityAuthorizer(),
             new ElectricityEmissionFactorSelector($marketerRepo, GdOFactorRepositoryMother::inMemory()),
-            new EmissionsCalculator(),
-            new ElectricityMixEmissionsResolver($electricityMixRepository, new EmissionsCalculator()),
+            EmissionsCalculatorMother::create(),
+            new ElectricityMixEmissionsResolver($electricityMixRepository, EmissionsCalculatorMother::create()),
         );
     }
 
@@ -244,6 +244,6 @@ class UpdateElectricityActivityServiceTest extends TestCase
 
     private function mixResolver(): ElectricityMixEmissionsResolver
     {
-        return new ElectricityMixEmissionsResolver(ElectricityMixRepositoryMother::inMemory(), new EmissionsCalculator());
+        return new ElectricityMixEmissionsResolver(ElectricityMixRepositoryMother::inMemory(), EmissionsCalculatorMother::create());
     }
 }

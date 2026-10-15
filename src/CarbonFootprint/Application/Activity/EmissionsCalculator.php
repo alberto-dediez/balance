@@ -7,12 +7,15 @@ namespace App\CarbonFootprint\Application\Activity;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
+use App\CarbonFootprint\Domain\Model\UnitConverter;
 
 final class EmissionsCalculator
 {
+    public function __construct(private readonly UnitConverter $converter) {}
+
     public function calculate(EmissionFactor $factor, Quantity $quantity): Emissions
     {
-        $converted = $quantity->convertTo($factor->unit());
+        $converted = $this->converter->convert($quantity, $factor->unit());
 
         return new Emissions(
             co2eq: (string) ((float) $factor->co2eq() * $converted->value()),

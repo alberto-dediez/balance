@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\AttendeeSurveyResponse\Regi
 
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\AttendeeSurveyResponse\Register\RegisterAttendeeSurveyResponseRequest;
@@ -44,6 +43,7 @@ use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryE
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
@@ -113,7 +113,7 @@ class RegisterAttendeeSurveyResponseServiceTest extends TestCase
                 new MobilityEmissionFactorSelector($this->mobilityRepository),
                 new OvernightStayEmissionFactorSelector($this->overnightStayRepository),
             ]),
-            new EmissionsCalculator(),
+            EmissionsCalculatorMother::create(),
         );
 
         return new RegisterAttendeeSurveyResponseService(

@@ -1,0 +1,9 @@
+<p>
+    {% trans with {'{date}': attemptedAt | date('d/m/Y H:i')} -%}
+        La descarga diaria de los tipos de cambio del BCE del {date} ha fallado. Los cálculos en divisa seguirán usando el último tipo disponible.
+    {%- endtrans %}
+</p>
+<p><code>{{ reason }}</code></p>
+<p>
+    <a href="{{ path('admin_exchange_rates') }}">{% trans %}Tipos de cambio{% endtrans %}</a>
+</p>

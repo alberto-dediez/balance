@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity;
 
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMix;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixId;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepository;
@@ -93,6 +92,6 @@ class ElectricityMixEmissionsResolverTest extends TestCase
 
     private function createSUT(ElectricityMixRepository $repository): ElectricityMixEmissionsResolver
     {
-        return new ElectricityMixEmissionsResolver($repository, new EmissionsCalculator());
+        return new ElectricityMixEmissionsResolver($repository, EmissionsCalculatorMother::create());
     }
 }

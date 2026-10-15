@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Answer;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\RefrigerantGasAnswerHandler;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\RefrigerantGasEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterRefrigerantGasActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateRefrigerantGasActivityService;
@@ -20,6 +19,7 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryA
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivityMother;
@@ -55,8 +55,8 @@ class RefrigerantGasAnswerHandlerTest extends TestCase
         $this->activityRepository = ActivityRepositoryMother::inMemory();
 
         $this->sut = new RefrigerantGasAnswerHandler(
-            new RegisterRefrigerantGasActivityService($this->activityRepository, new ActivityAuthorizer(), $selector, new EmissionsCalculator()),
-            new UpdateRefrigerantGasActivityService($this->activityRepository, new ActivityAuthorizer(), $selector, new EmissionsCalculator()),
+            new RegisterRefrigerantGasActivityService($this->activityRepository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create()),
+            new UpdateRefrigerantGasActivityService($this->activityRepository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create()),
         );
     }
 

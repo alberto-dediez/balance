@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\PropertyCarbonFootprint\Cal
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\CalculateEmissions\CalculatePropertyCarbonFootprintActivityEmissionsRequest;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\CalculateEmissions\CalculatePropertyCarbonFootprintActivityEmissionsService;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\PropertyCarbonFootprintAuthorizer;
@@ -23,6 +22,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -63,7 +63,7 @@ class CalculatePropertyCarbonFootprintActivityEmissionsServiceTest extends TestC
             new PropertyCarbonFootprintAuthorizer(),
             new ActivityEmissionsResolver(
                 new EmissionFactorSelectorRegistry([new CombustibleEmissionFactorSelector($combustibleRepository)]),
-                new EmissionsCalculator(),
+                EmissionsCalculatorMother::create(),
             ),
         );
     }

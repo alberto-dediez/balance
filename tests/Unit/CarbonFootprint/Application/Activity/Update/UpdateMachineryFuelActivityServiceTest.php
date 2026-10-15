@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MachineryFuelEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityService;
@@ -15,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityMother;
@@ -49,7 +49,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
         $entityRepo = MachineryFuelRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MachineryFuelEmissionFactorSelector($entityRepo);
-        $sut = new UpdateMachineryFuelActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMachineryFuelActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateMachineryFuelActivityRequest(
             activityId: $activity->id(),
@@ -69,7 +69,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
         $repository->save($activity);
 
         $selector = new MachineryFuelEmissionFactorSelector(MachineryFuelRepositoryMother::inMemory());
-        $sut = new UpdateMachineryFuelActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMachineryFuelActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateMachineryFuelActivityRequest(
@@ -84,7 +84,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new MachineryFuelEmissionFactorSelector(MachineryFuelRepositoryMother::inMemory());
-        $sut = new UpdateMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateMachineryFuelActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
             machineryFuelId: MachineryFuelId::generate(),

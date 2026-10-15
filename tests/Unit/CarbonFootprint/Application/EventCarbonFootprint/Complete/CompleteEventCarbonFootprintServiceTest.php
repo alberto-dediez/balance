@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\MobilityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\OvernightStayAnswerHandler;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
@@ -48,6 +47,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MaterialActivityMother;
@@ -102,7 +102,7 @@ class CompleteEventCarbonFootprintServiceTest extends TestCase
     {
         $overnightStayRepository = new InMemoryOvernightStayRepository();
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $mobilitySelector = new MobilityEmissionFactorSelector($this->mobilityRepository);
         $overnightStaySelector = new OvernightStayEmissionFactorSelector($overnightStayRepository);
 

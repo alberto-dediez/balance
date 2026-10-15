@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MerchandisingItemEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMerchandisingItemActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMerchandisingItemActivityService;
@@ -17,6 +16,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -45,7 +45,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
         $entityRepo = MerchandisingItemRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MerchandisingItemEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterMerchandisingItemActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMerchandisingItemActivityRequest(
@@ -64,7 +64,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
     public function testUnauthorizedAccess(): void
     {
         $selector = new MerchandisingItemEmissionFactorSelector(MerchandisingItemRepositoryMother::inMemory());
-        $sut = new RegisterMerchandisingItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMerchandisingItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMerchandisingItemActivityRequest(
             accountId: new AccountId('account-id'),
@@ -79,7 +79,7 @@ class RegisterMerchandisingItemActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new MerchandisingItemEmissionFactorSelector(MerchandisingItemRepositoryMother::inMemory());
-        $sut = new RegisterMerchandisingItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMerchandisingItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new RegisterMerchandisingItemActivityRequest(
             accountId: new AccountId('account-id'),
             merchandisingItemId: MerchandisingItemId::generate(),

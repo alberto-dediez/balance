@@ -8,7 +8,6 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\MobilityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\OvernightStayAnswerHandler;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRequest;
@@ -46,6 +45,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -90,7 +90,7 @@ class CloseEmployeeParticipationServiceTest extends TestCase
         $this->mobilityRepository->add($this->mobility);
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $mobilitySelector = new MobilityEmissionFactorSelector($this->mobilityRepository);
         $overnightStaySelector = new OvernightStayEmissionFactorSelector($this->overnightStayRepository);
 
@@ -278,7 +278,7 @@ class CloseEmployeeParticipationServiceTest extends TestCase
             $this->activityRepository,
             new ActivityAuthorizer(),
             new MobilityEmissionFactorSelector($this->mobilityRepository),
-            new EmissionsCalculator(),
+            EmissionsCalculatorMother::create(),
         ))(
             new RegisterMobilityActivityRequest(
                 accountId: new AccountId('account-id'),

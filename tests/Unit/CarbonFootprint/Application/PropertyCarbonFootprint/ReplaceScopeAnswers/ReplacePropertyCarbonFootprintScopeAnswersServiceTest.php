@@ -10,7 +10,6 @@ use App\CarbonFootprint\Application\Activity\Answer\CombustibleAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\RefrigerantGasAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\RoadTransportAnswerHandler;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\RefrigerantGasEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterRefrigerantGasActivityService;
@@ -51,6 +50,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
@@ -103,7 +103,7 @@ class ReplacePropertyCarbonFootprintScopeAnswersServiceTest extends TestCase
         $refrigerantGasRepository->add($this->refrigerantGas);
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
 
         $combustibleSelector = new CombustibleEmissionFactorSelector($combustibleRepository);
         $roadTransportSelector = new RoadTransportEmissionFactorSelector($roadTransportRepository);

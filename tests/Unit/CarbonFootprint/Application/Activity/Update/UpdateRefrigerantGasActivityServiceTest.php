@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\ActivityNotFoundException;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\RefrigerantGasEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateRefrigerantGasActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateRefrigerantGasActivityService;
@@ -18,6 +17,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
@@ -60,7 +60,7 @@ class UpdateRefrigerantGasActivityServiceTest extends TestCase
         DomainEventPublisher::instance()->reset();
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
-        $sut = new UpdateRefrigerantGasActivityService($repository, new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new UpdateRefrigerantGasActivityService($repository, new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateRefrigerantGasActivityRequest(
             activityId: $activity->id(),
@@ -80,7 +80,7 @@ class UpdateRefrigerantGasActivityServiceTest extends TestCase
         $repository = ActivityRepositoryMother::inMemory();
         $repository->save($activity);
 
-        $sut = new UpdateRefrigerantGasActivityService($repository, new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new UpdateRefrigerantGasActivityService($repository, new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $this->expectException(\Throwable::class);
         $sut(new UpdateRefrigerantGasActivityRequest(
@@ -98,7 +98,7 @@ class UpdateRefrigerantGasActivityServiceTest extends TestCase
         $repository = ActivityRepositoryMother::inMemory();
         $repository->save($activity);
 
-        $sut = new UpdateRefrigerantGasActivityService($repository, new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new UpdateRefrigerantGasActivityService($repository, new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $this->expectException(ActivityNotFoundException::class);
         $sut(new UpdateRefrigerantGasActivityRequest(
@@ -112,7 +112,7 @@ class UpdateRefrigerantGasActivityServiceTest extends TestCase
 
     public function testIsHandled(): void
     {
-        $sut = new UpdateRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, new EmissionsCalculator());
+        $sut = new UpdateRefrigerantGasActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $this->selector, EmissionsCalculatorMother::create());
 
         $this->assertTrue($sut->isHandled(new UpdateRefrigerantGasActivityRequest(
             activityId: ActivityId::generate(),

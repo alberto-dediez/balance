@@ -432,6 +432,11 @@ class NodeLister
                     icon: 'solar:test-tube-minimalistic-line-duotone',
                     target: $this->router->generate('admin_emission_factor_groups'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Tipos de cambio'),
+                    icon: 'solar:dollar-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_exchange_rates'),
+                ),
             ],
         );
 

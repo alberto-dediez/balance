@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
@@ -16,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
@@ -44,7 +44,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
         $entityRepo = CombustibleRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new CombustibleEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterCombustibleActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterCombustibleActivityRequest(
@@ -62,7 +62,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
     public function testUnauthorizedAccess(): void
     {
         $selector = new CombustibleEmissionFactorSelector(CombustibleRepositoryMother::inMemory());
-        $sut = new RegisterCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
         $sut(new RegisterCombustibleActivityRequest(
             accountId: new AccountId('account-id'),
@@ -76,7 +76,7 @@ class RegisterCombustibleActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new CombustibleEmissionFactorSelector(CombustibleRepositoryMother::inMemory());
-        $sut = new RegisterCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new RegisterCombustibleActivityRequest(
             accountId: new AccountId('account-id'),
             combustibleId: CombustibleId::generate(),

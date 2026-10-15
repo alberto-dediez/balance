@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Update\UpdateWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateWasteActivityService;
 use App\CarbonFootprint\Application\Activity\WasteEmissionFactorSelector;
@@ -17,6 +16,7 @@ use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\WasteActivityMother;
@@ -51,7 +51,7 @@ class UpdateWasteActivityServiceTest extends TestCase
         $entityRepo = WasteRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new WasteEmissionFactorSelector($entityRepo);
-        $sut = new UpdateWasteActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateWasteActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateWasteActivityRequest(
             activityId: $activity->id(),
@@ -78,7 +78,7 @@ class UpdateWasteActivityServiceTest extends TestCase
         $entityRepo = WasteRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new WasteEmissionFactorSelector($entityRepo);
-        $sut = new UpdateWasteActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateWasteActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateWasteActivityRequest(
             activityId: $activity->id(),
@@ -106,7 +106,7 @@ class UpdateWasteActivityServiceTest extends TestCase
         $repository->save($activity);
 
         $selector = new WasteEmissionFactorSelector(WasteRepositoryMother::inMemory());
-        $sut = new UpdateWasteActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateWasteActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateWasteActivityRequest(
@@ -121,7 +121,7 @@ class UpdateWasteActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new WasteEmissionFactorSelector(WasteRepositoryMother::inMemory());
-        $sut = new UpdateWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateWasteActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
             wasteId: WasteId::generate(),

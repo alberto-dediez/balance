@@ -8985,6 +8985,50 @@
         <source>Emisiones esperadas</source>
         <target>Beklenen emisyonlar</target>
       </trans-unit>
+      <trans-unit id="Y6Tj71L" resname="Sincronización de tipos de cambio encolada">
+        <source>Sincronización de tipos de cambio encolada</source>
+        <target>Döviz kuru senkronizasyonu kuyruğa alındı</target>
+      </trans-unit>
+      <trans-unit id="f3aUEbs" resname="Divisa">
+        <source>Divisa</source>
+        <target>Para birimi</target>
+      </trans-unit>
+      <trans-unit id="oeTGOKw" resname="No se pudieron descargar los tipos de cambio del BCE">
+        <source>No se pudieron descargar los tipos de cambio del BCE</source>
+        <target>ECB döviz kurları indirilemedi</target>
+      </trans-unit>
+      <trans-unit id="y8T36e0" resname="Tipos de cambio">
+        <source>Tipos de cambio</source>
+        <target>Döviz kurları</target>
+      </trans-unit>
+      <trans-unit id="jr.6nLk" resname="La descarga diaria de los tipos de cambio del BCE del {date} ha fallado. Los cálculos en divisa seguirán usando el último tipo disponible.">
+        <source>La descarga diaria de los tipos de cambio del BCE del {date} ha fallado. Los cálculos en divisa seguirán usando el último tipo disponible.</source>
+        <target>{date} tarihli günlük ECB döviz kuru indirmesi başarısız oldu. Döviz cinsinden hesaplamalar mevcut son kuru kullanmaya devam edecek.</target>
+      </trans-unit>
+      <trans-unit id="B_5VCsO" resname="Todavía no se ha descargado ningún tipo de cambio. Lanza una sincronización.">
+        <source>Todavía no se ha descargado ningún tipo de cambio. Lanza una sincronización.</source>
+        <target>Henüz hiçbir döviz kuru indirilmedi. Bir senkronizasyon başlatın.</target>
+      </trans-unit>
+      <trans-unit id="ECi9FuC" resname="Divisa por 1 EUR">
+        <source>Divisa por 1 EUR</source>
+        <target>1 EUR karşılığı</target>
+      </trans-unit>
+      <trans-unit id="cFBWtWL" resname="1 unidad en EUR">
+        <source>1 unidad en EUR</source>
+        <target>1 birimin EUR karşılığı</target>
+      </trans-unit>
+      <trans-unit id="7eb3n3F" resname="Fecha de publicación">
+        <source>Fecha de publicación</source>
+        <target>Yayın tarihi</target>
+      </trans-unit>
+      <trans-unit id="UB2raC8" resname="Descargado">
+        <source>Descargado</source>
+        <target>İndirildi</target>
+      </trans-unit>
+      <trans-unit id="xt6WUcj" resname="Se encolará la descarga de los tipos de cambio del BCE. ¿Desea continuar?">
+        <source>Se encolará la descarga de los tipos de cambio del BCE. ¿Desea continuar?</source>
+        <target>ECB döviz kurlarının indirilmesi kuyruğa alınacak. Devam etmek istiyor musunuz?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

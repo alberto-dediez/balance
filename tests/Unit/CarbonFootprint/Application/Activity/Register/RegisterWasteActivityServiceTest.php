@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityService;
 use App\CarbonFootprint\Application\Activity\WasteEmissionFactorSelector;
@@ -17,6 +16,7 @@ use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -45,7 +45,7 @@ class RegisterWasteActivityServiceTest extends TestCase
         $entityRepo = WasteRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new WasteEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterWasteActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterWasteActivityRequest(
@@ -69,7 +69,7 @@ class RegisterWasteActivityServiceTest extends TestCase
         $entityRepo = WasteRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new WasteEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterWasteActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterWasteActivityRequest(
@@ -94,7 +94,7 @@ class RegisterWasteActivityServiceTest extends TestCase
     public function testUnauthorizedAccess(): void
     {
         $selector = new WasteEmissionFactorSelector(WasteRepositoryMother::inMemory());
-        $sut = new RegisterWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
         $sut(new RegisterWasteActivityRequest(
             accountId: new AccountId('account-id'),
@@ -108,7 +108,7 @@ class RegisterWasteActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new WasteEmissionFactorSelector(WasteRepositoryMother::inMemory());
-        $sut = new RegisterWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new RegisterWasteActivityRequest(
             accountId: new AccountId('account-id'),
             wasteId: WasteId::generate(),

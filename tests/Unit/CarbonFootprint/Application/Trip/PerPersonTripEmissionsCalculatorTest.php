@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Trip;
 
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
@@ -24,6 +23,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOvernightStayRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -63,7 +63,7 @@ class PerPersonTripEmissionsCalculatorTest extends TestCase
                         new MobilityEmissionFactorSelector($this->mobilityRepository),
                         new OvernightStayEmissionFactorSelector($this->overnightStayRepository),
                     ]),
-                    new EmissionsCalculator(),
+                    EmissionsCalculatorMother::create(),
                 ),
                 $this->overnightStayRepository,
             ),

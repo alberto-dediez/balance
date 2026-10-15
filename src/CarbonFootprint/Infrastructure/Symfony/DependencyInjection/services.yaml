@@ -1,5 +1,6 @@
 parameters:
     app.trip_max_legs: 16
+    app.ecb_exchange_rates_url: '%env(ECB_EXCHANGE_RATES_URL)%'
 
 services:
     _defaults:
@@ -87,3 +88,23 @@ services:
 when@test:
     services:
         App\CarbonFootprint\Domain\Model\Geo\RouteDistanceCalculator: '@App\CarbonFootprint\Domain\Model\Geo\GreatCircleRouteDistanceCalculator'
+
+when@dev:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\CarbonFootprint\Infrastructure\Gateway\EcbHttpExchangeRateGateway:
+            arguments:
+                $url: '%app.ecb_exchange_rates_url%'
+
+when@prod:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\CarbonFootprint\Infrastructure\Gateway\EcbHttpExchangeRateGateway:
+            arguments:
+                $url: '%app.ecb_exchange_rates_url%'

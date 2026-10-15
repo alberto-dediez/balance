@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MaterialEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityService;
@@ -16,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MaterialActivityMother;
@@ -50,7 +50,7 @@ class UpdateMaterialActivityServiceTest extends TestCase
         $entityRepo = MaterialRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MaterialEmissionFactorSelector($entityRepo);
-        $sut = new UpdateMaterialActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMaterialActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateMaterialActivityRequest(
             activityId: $activity->id(),
@@ -71,7 +71,7 @@ class UpdateMaterialActivityServiceTest extends TestCase
         $repository->save($activity);
 
         $selector = new MaterialEmissionFactorSelector(MaterialRepositoryMother::inMemory());
-        $sut = new UpdateMaterialActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMaterialActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateMaterialActivityRequest(
@@ -87,7 +87,7 @@ class UpdateMaterialActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new MaterialEmissionFactorSelector(MaterialRepositoryMother::inMemory());
-        $sut = new UpdateMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateMaterialActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
             materialId: MaterialId::generate(),

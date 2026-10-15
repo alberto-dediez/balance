@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\CateringItemEmissionFactorSelector;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCateringItemActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCateringItemActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivity;
@@ -17,6 +16,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
@@ -45,7 +45,7 @@ class RegisterCateringItemActivityServiceTest extends TestCase
         $entityRepo = CateringItemRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new CateringItemEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterCateringItemActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterCateringItemActivityRequest(
@@ -64,7 +64,7 @@ class RegisterCateringItemActivityServiceTest extends TestCase
     public function testUnauthorizedAccess(): void
     {
         $selector = new CateringItemEmissionFactorSelector(CateringItemRepositoryMother::inMemory());
-        $sut = new RegisterCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
         $sut(new RegisterCateringItemActivityRequest(
             accountId: new AccountId('account-id'),
@@ -79,7 +79,7 @@ class RegisterCateringItemActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new CateringItemEmissionFactorSelector(CateringItemRepositoryMother::inMemory());
-        $sut = new RegisterCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new RegisterCateringItemActivityRequest(
             accountId: new AccountId('account-id'),
             cateringItemId: CateringItemId::generate(),

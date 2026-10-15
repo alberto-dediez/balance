@@ -8,7 +8,6 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
@@ -40,6 +39,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
@@ -80,7 +80,7 @@ class GetTripCalculationResultsServiceTest extends TestCase
                 $this->mobilityRepository,
                 new ActivityEmissionsResolver(
                     new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($this->mobilityRepository)]),
-                    new EmissionsCalculator(),
+                    EmissionsCalculatorMother::create(),
                 ),
                 new InMemoryEmissionFactorGroupRepository(),
             ),
@@ -93,7 +93,7 @@ class GetTripCalculationResultsServiceTest extends TestCase
                 new TripEmissionsCalculator(
                     new ActivityEmissionsResolver(
                         new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($this->mobilityRepository)]),
-                        new EmissionsCalculator(),
+                        EmissionsCalculatorMother::create(),
                     ),
                     new InMemoryOvernightStayRepository(),
                 ),

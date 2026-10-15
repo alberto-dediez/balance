@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\CateringItemEmissionFactorSelector;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCateringItemActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCateringItemActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivityUpdated;
@@ -16,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CateringItemActivityMother;
@@ -50,7 +50,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
         $entityRepo = CateringItemRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new CateringItemEmissionFactorSelector($entityRepo);
-        $sut = new UpdateCateringItemActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateCateringItemActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateCateringItemActivityRequest(
             activityId: $activity->id(),
@@ -71,7 +71,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
         $repository->save($activity);
 
         $selector = new CateringItemEmissionFactorSelector(CateringItemRepositoryMother::inMemory());
-        $sut = new UpdateCateringItemActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateCateringItemActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateCateringItemActivityRequest(
@@ -87,7 +87,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new CateringItemEmissionFactorSelector(CateringItemRepositoryMother::inMemory());
-        $sut = new UpdateCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateCateringItemActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
             cateringItemId: CateringItemId::generate(),

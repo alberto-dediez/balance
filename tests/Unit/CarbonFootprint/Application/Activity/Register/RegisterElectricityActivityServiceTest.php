@@ -7,7 +7,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
@@ -24,6 +23,7 @@ use App\Property\Domain\Model\Country\CountryId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
@@ -62,7 +62,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
         $gdoFactorRepo->add($gdoFactor);
 
         $selector = new ElectricityEmissionFactorSelector($marketerRepo, $gdoFactorRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterElectricityActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator, $this->mixResolver());
 
         $result = $sut(new RegisterElectricityActivityRequest(
@@ -142,7 +142,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
             ElectricityMarketerRepositoryMother::inMemory(),
             GdOFactorRepositoryMother::inMemory(),
         );
-        $sut = new RegisterElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator(), $this->mixResolver());
+        $sut = new RegisterElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create(), $this->mixResolver());
         $this->expectException(\Throwable::class);
         $sut(new RegisterElectricityActivityRequest(
             accountId: new AccountId('account-id'),
@@ -169,8 +169,8 @@ class RegisterElectricityActivityServiceTest extends TestCase
             $activityRepository,
             new ActivityAuthorizer(),
             new ElectricityEmissionFactorSelector($marketerRepo, GdOFactorRepositoryMother::inMemory()),
-            new EmissionsCalculator(),
-            new ElectricityMixEmissionsResolver($electricityMixRepository, new EmissionsCalculator()),
+            EmissionsCalculatorMother::create(),
+            new ElectricityMixEmissionsResolver($electricityMixRepository, EmissionsCalculatorMother::create()),
         );
     }
 
@@ -209,7 +209,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
 
     private function mixResolver(): ElectricityMixEmissionsResolver
     {
-        return new ElectricityMixEmissionsResolver(ElectricityMixRepositoryMother::inMemory(), new EmissionsCalculator());
+        return new ElectricityMixEmissionsResolver(ElectricityMixRepositoryMother::inMemory(), EmissionsCalculatorMother::create());
     }
 
     public function testIsHandled(): void
@@ -218,7 +218,7 @@ class RegisterElectricityActivityServiceTest extends TestCase
             ElectricityMarketerRepositoryMother::inMemory(),
             GdOFactorRepositoryMother::inMemory(),
         );
-        $sut = new RegisterElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator(), $this->mixResolver());
+        $sut = new RegisterElectricityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create(), $this->mixResolver());
         $this->assertTrue($sut->isHandled(new RegisterElectricityActivityRequest(
             accountId: new AccountId('account-id'),
             electricityMarketerId: ElectricityMarketerId::generate(),

@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Trip;
 
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\Trip\TripEmissions;
@@ -20,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOvernightStayRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +50,7 @@ class TripEmissionsCalculatorTest extends TestCase
                 new MobilityEmissionFactorSelector($this->mobilityRepository),
                 new OvernightStayEmissionFactorSelector($this->overnightStayRepository),
             ]),
-            new EmissionsCalculator(),
+            EmissionsCalculatorMother::create(),
         );
 
         $this->sut = new TripEmissionsCalculator($activityEmissionsResolver, $this->overnightStayRepository);

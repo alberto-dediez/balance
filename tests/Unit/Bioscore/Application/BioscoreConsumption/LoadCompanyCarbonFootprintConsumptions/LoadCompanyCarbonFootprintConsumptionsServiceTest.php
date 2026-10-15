@@ -17,7 +17,6 @@ use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistr
 use App\CarbonFootprint\Application\Activity\Answer\CombustibleAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\RefrigerantGasAnswerHandler;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\RefrigerantGasEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterRefrigerantGasActivityService;
@@ -55,6 +54,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemMother;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemRepositoryMother;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreConsumption\BioscoreConsumptionMother;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
@@ -122,7 +122,7 @@ class LoadCompanyCarbonFootprintConsumptionsServiceTest extends TestCase
         $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->refrigerantGasId, catalog: BioscoreCatalog::RefrigerantGas, bioscoreId: 9, name: 'R-410A', unit: 'kg'));
 
         $authorizer = new ActivityAuthorizer();
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $combustibleSelector = new CombustibleEmissionFactorSelector($combustibleRepository);
         $refrigerantGasSelector = new RefrigerantGasEmissionFactorSelector($refrigerantGasRepository);
 

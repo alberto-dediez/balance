@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\TripCalculation\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
 use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
@@ -40,6 +39,7 @@ use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryProperty
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
@@ -95,7 +95,7 @@ class RegisterTripCalculationServiceTest extends TestCase
                 new MobilityEmissionFactorSelector($this->mobilityRepository),
                 new OvernightStayEmissionFactorSelector($this->overnightStayRepository),
             ]),
-            new EmissionsCalculator(),
+            EmissionsCalculatorMother::create(),
         );
 
         $this->sut = new RegisterTripCalculationService(

@@ -6,7 +6,6 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Update;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivityUpdated;
@@ -15,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
@@ -49,7 +49,7 @@ class UpdateCombustibleActivityServiceTest extends TestCase
         $entityRepo = CombustibleRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new CombustibleEmissionFactorSelector($entityRepo);
-        $sut = new UpdateCombustibleActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateCombustibleActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
 
         $sut(new UpdateCombustibleActivityRequest(
             activityId: $activity->id(),
@@ -69,7 +69,7 @@ class UpdateCombustibleActivityServiceTest extends TestCase
         $repository->save($activity);
 
         $selector = new CombustibleEmissionFactorSelector(CombustibleRepositoryMother::inMemory());
-        $sut = new UpdateCombustibleActivityService($repository, new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateCombustibleActivityService($repository, new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
 
         $sut(new UpdateCombustibleActivityRequest(
@@ -84,7 +84,7 @@ class UpdateCombustibleActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new CombustibleEmissionFactorSelector(CombustibleRepositoryMother::inMemory());
-        $sut = new UpdateCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new UpdateCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateCombustibleActivityRequest(
             activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
             combustibleId: CombustibleId::generate(),

@@ -45,6 +45,126 @@
         <source>pernoctacion</source>
         <target>Overnight stay</target>
       </trans-unit>
+      <trans-unit id="cPDCjEC" resname="EUR">
+        <source>EUR</source>
+        <target>Euro</target>
+      </trans-unit>
+      <trans-unit id="int6Bd4" resname="USD">
+        <source>USD</source>
+        <target>US dollar</target>
+      </trans-unit>
+      <trans-unit id="J5.monq" resname="JPY">
+        <source>JPY</source>
+        <target>Japanese yen</target>
+      </trans-unit>
+      <trans-unit id="Bwlrn8k" resname="CZK">
+        <source>CZK</source>
+        <target>Czech koruna</target>
+      </trans-unit>
+      <trans-unit id="XmMYizN" resname="DKK">
+        <source>DKK</source>
+        <target>Danish krone</target>
+      </trans-unit>
+      <trans-unit id="v86ba4f" resname="GBP">
+        <source>GBP</source>
+        <target>Pound sterling</target>
+      </trans-unit>
+      <trans-unit id="W_V8eNI" resname="HUF">
+        <source>HUF</source>
+        <target>Hungarian forint</target>
+      </trans-unit>
+      <trans-unit id="pewWWEn" resname="PLN">
+        <source>PLN</source>
+        <target>Polish zloty</target>
+      </trans-unit>
+      <trans-unit id="W9m2gT7" resname="RON">
+        <source>RON</source>
+        <target>Romanian leu</target>
+      </trans-unit>
+      <trans-unit id="5HW8jkF" resname="SEK">
+        <source>SEK</source>
+        <target>Swedish krona</target>
+      </trans-unit>
+      <trans-unit id="qSNHH55" resname="CHF">
+        <source>CHF</source>
+        <target>Swiss franc</target>
+      </trans-unit>
+      <trans-unit id="r4AjD3T" resname="ISK">
+        <source>ISK</source>
+        <target>Icelandic krona</target>
+      </trans-unit>
+      <trans-unit id="iM_t9_9" resname="NOK">
+        <source>NOK</source>
+        <target>Norwegian krone</target>
+      </trans-unit>
+      <trans-unit id="vLbapi." resname="TRY">
+        <source>TRY</source>
+        <target>Turkish lira</target>
+      </trans-unit>
+      <trans-unit id="14ZA5rf" resname="AUD">
+        <source>AUD</source>
+        <target>Australian dollar</target>
+      </trans-unit>
+      <trans-unit id="JA6tQJc" resname="BRL">
+        <source>BRL</source>
+        <target>Brazilian real</target>
+      </trans-unit>
+      <trans-unit id="7p5rPPP" resname="CAD">
+        <source>CAD</source>
+        <target>Canadian dollar</target>
+      </trans-unit>
+      <trans-unit id="1_BCdCj" resname="CNY">
+        <source>CNY</source>
+        <target>Chinese yuan</target>
+      </trans-unit>
+      <trans-unit id="ZnWmka3" resname="HKD">
+        <source>HKD</source>
+        <target>Hong Kong dollar</target>
+      </trans-unit>
+      <trans-unit id="4b4Mxho" resname="IDR">
+        <source>IDR</source>
+        <target>Indonesian rupiah</target>
+      </trans-unit>
+      <trans-unit id="64_u2hU" resname="ILS">
+        <source>ILS</source>
+        <target>Israeli shekel</target>
+      </trans-unit>
+      <trans-unit id="A7IF0._" resname="INR">
+        <source>INR</source>
+        <target>Indian rupee</target>
+      </trans-unit>
+      <trans-unit id="3T0eEWP" resname="KRW">
+        <source>KRW</source>
+        <target>South Korean won</target>
+      </trans-unit>
+      <trans-unit id="UUDqsoU" resname="MXN">
+        <source>MXN</source>
+        <target>Mexican peso</target>
+      </trans-unit>
+      <trans-unit id="s6oyYpl" resname="MYR">
+        <source>MYR</source>
+        <target>Malaysian ringgit</target>
+      </trans-unit>
+      <trans-unit id="6GXLI_z" resname="NZD">
+        <source>NZD</source>
+        <target>New Zealand dollar</target>
+      </trans-unit>
+      <trans-unit id="FGaZRyH" resname="PHP">
+        <source>PHP</source>
+        <target>Philippine peso</target>
+      </trans-unit>
+      <trans-unit id="aeUKmys" resname="SGD">
+        <source>SGD</source>
+        <target>Singapore dollar</target>
+      </trans-unit>
+      <trans-unit id="07KjmOe" resname="THB">
+        <source>THB</source>
+        <target>Thai baht</target>
+      </trans-unit>
+      <trans-unit id="FtY7ofY" resname="ZAR">
+        <source>ZAR</source>
+        <target>South African rand</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

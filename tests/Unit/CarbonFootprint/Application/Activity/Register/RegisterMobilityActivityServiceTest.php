@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Activity\Register;
 
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
-use App\CarbonFootprint\Application\Activity\EmissionsCalculator;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
@@ -16,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -44,7 +44,7 @@ class RegisterMobilityActivityServiceTest extends TestCase
         $entityRepo = MobilityRepositoryMother::inMemory();
         $entityRepo->add($entity);
         $selector = new MobilityEmissionFactorSelector($entityRepo);
-        $calculator = new EmissionsCalculator();
+        $calculator = EmissionsCalculatorMother::create();
         $sut = new RegisterMobilityActivityService($activityRepo, new ActivityAuthorizer(), $selector, $calculator);
 
         $result = $sut(new RegisterMobilityActivityRequest(
@@ -62,7 +62,7 @@ class RegisterMobilityActivityServiceTest extends TestCase
     public function testUnauthorizedAccess(): void
     {
         $selector = new MobilityEmissionFactorSelector(MobilityRepositoryMother::inMemory());
-        $sut = new RegisterMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->expectException(\Throwable::class);
         $sut(new RegisterMobilityActivityRequest(
             accountId: new AccountId('account-id'),
@@ -76,7 +76,7 @@ class RegisterMobilityActivityServiceTest extends TestCase
     public function testIsHandled(): void
     {
         $selector = new MobilityEmissionFactorSelector(MobilityRepositoryMother::inMemory());
-        $sut = new RegisterMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, new EmissionsCalculator());
+        $sut = new RegisterMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new RegisterMobilityActivityRequest(
             accountId: new AccountId('account-id'),
             mobilityId: MobilityId::generate(),

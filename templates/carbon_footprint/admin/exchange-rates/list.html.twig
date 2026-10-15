@@ -1,0 +1,53 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Tipos de cambio' | trans %}
+
+{% block table %}
+    {% if exchangeRates is empty %}
+        <p class="mb-0">{% trans %}Todavía no se ha descargado ningún tipo de cambio. Lanza una sincronización.{% endtrans %}</p>
+    {% else %}
+        {% set columns = [
+            {
+                'label': 'Divisa' | trans,
+                'sortable': true,
+                'sortableBy': 'currency'
+            }, {
+                'label': 'Divisa por 1 EUR' | trans,
+                'sortable': true,
+                'sortableBy': 'rate'
+            }, {
+                'label': '1 unidad en EUR' | trans
+            }, {
+                'label': 'Fecha de publicación' | trans,
+                'sortable': true,
+                'sortableBy': 'date'
+            }, {
+                'label': 'Descargado' | trans
+            }, {
+                'label': ''
+            }
+        ] %}
+
+        <twig:List:Table :columns="columns" :elements="exchangeRates">
+            <td>
+                {{ element.currency.value | trans({}, 'unitType') }} <span class="text-muted">({{ element.currency.value }})</span>
+            </td>
+            <td>{{ element.rate | number_format(4, ',', '.') }}</td>
+            <td>{{ element.factorToEuro | number_format(4, ',', '.') }}</td>
+            <td>{{ element.date | date('d/m/Y') }}</td>
+            <td>{{ element.fetchedAt | date('d/m/Y H:i') }}</td>
+            <td></td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}
+
+{% block list_actions %}
+    {% if canSync %}
+        <twig:Link:Sync
+            path="{{ path('admin_exchange_rates_sync', {'_token': csrf_token('exchange_rates_sync')}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ 'Se encolará la descarga de los tipos de cambio del BCE. ¿Desea continuar?' | trans }}"
+            data-action="confirm#link:prevent"
+        />
+    {% endif %}
+{% endblock list_actions %}
