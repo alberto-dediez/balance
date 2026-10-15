@@ -274,6 +274,11 @@ class NodeLister
             target: '#productos-vendidos',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Procesos'),
+                    icon: 'solar:settings-line-duotone',
+                    target: $this->router->generate('admin_processes'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Perfiles de uso'),
                     icon: 'solar:tuning-3-line-duotone',
                     target: $this->router->generate('admin_use_profiles'),

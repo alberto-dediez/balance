@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.year,
+    '{process}': event.processId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el factor de emisión del año {year} del proceso {process} por el usuario {user}{% endtrans %}

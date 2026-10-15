@@ -149,6 +149,10 @@
         <source>useProfile</source>
         <target>Kullanım profili</target>
       </trans-unit>
+      <trans-unit id="nG619ZC" resname="process">
+        <source>process</source>
+        <target>Süreç</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,0 +1,4 @@
+{% trans with {
+    '{process}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha registrado el proceso "{process}" por el usuario {user}{% endtrans %}

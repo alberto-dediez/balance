@@ -9225,6 +9225,70 @@
         <source>Se ha traducido el perfil de uso "{useProfile}" por el usuario {user}</source>
         <target>"{useProfile}" kullanım profili {user} kullanıcısı tarafından çevrildi</target>
       </trans-unit>
+      <trans-unit id="5WA17qO" resname="Procesos">
+        <source>Procesos</source>
+        <target>Süreçler</target>
+      </trans-unit>
+      <trans-unit id="2SCJnd6" resname="Proceso creado correctamente: {name}">
+        <source>Proceso creado correctamente: {name}</source>
+        <target>Süreç başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="Qhny2dA" resname="Proceso actualizado con éxito">
+        <source>Proceso actualizado con éxito</source>
+        <target>Süreç başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="8E1F_Qp" resname="Se ha eliminado el proceso {process}">
+        <source>Se ha eliminado el proceso {process}</source>
+        <target>{process} süreci silindi</target>
+      </trans-unit>
+      <trans-unit id="k2UDmVF" resname="No se ha podido eliminar el proceso {process}">
+        <source>No se ha podido eliminar el proceso {process}</source>
+        <target>{process} süreci silinemedi</target>
+      </trans-unit>
+      <trans-unit id="HfjjmiR" resname="Proceso no encontrado">
+        <source>Proceso no encontrado</source>
+        <target>Süreç bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="Bo.cdTC" resname="Se ha eliminado el proceso {id}">
+        <source>Se ha eliminado el proceso {id}</source>
+        <target>{id} süreci silindi</target>
+      </trans-unit>
+      <trans-unit id="Ppma2xP" resname="No se ha podido eliminar el proceso {id}">
+        <source>No se ha podido eliminar el proceso {id}</source>
+        <target>{id} süreci silinemedi</target>
+      </trans-unit>
+      <trans-unit id="xY.Qymr" resname="Proceso">
+        <source>Proceso</source>
+        <target>Süreç</target>
+      </trans-unit>
+      <trans-unit id="7YorCes" resname="Se ha actualizado el factor de emisión del año {year} del proceso {process} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del proceso {process} por el usuario {user}</source>
+        <target>{process} sürecinin {year} yılı emisyon faktörü {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="q2L.3Vg" resname="Se ha eliminado el proceso {process} por el usuario {user}">
+        <source>Se ha eliminado el proceso {process} por el usuario {user}</source>
+        <target>{process} süreci {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="dkM4Ojj" resname="Se ha eliminado el factor de emisión del año {year} del proceso {process} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del proceso {process} por el usuario {user}</source>
+        <target>{process} sürecinin {year} yılı emisyon faktörü {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="078RYgG" resname="Se ha registrado el proceso &quot;{process}&quot; por el usuario {user}">
+        <source>Se ha registrado el proceso "{process}" por el usuario {user}</source>
+        <target>"{process}" süreci {user} kullanıcısı tarafından kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="Osv8gUa" resname="Se ha añadido el factor de emisión del año {year} al proceso {process} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al proceso {process} por el usuario {user}</source>
+        <target>{process} sürecine {year} yılı emisyon faktörü {user} kullanıcısı tarafından eklendi</target>
+      </trans-unit>
+      <trans-unit id="rr2n3_t" resname="Se ha traducido el proceso &quot;{process}&quot; por el usuario {user}">
+        <source>Se ha traducido el proceso "{process}" por el usuario {user}</source>
+        <target>"{process}" süreci {user} kullanıcısı tarafından çevrildi</target>
+      </trans-unit>
+      <trans-unit id="BZAz.lH" resname="Se ha actualizado el proceso &quot;{process}&quot; por el usuario {user}">
+        <source>Se ha actualizado el proceso "{process}" por el usuario {user}</source>
+        <target>"{process}" süreci {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

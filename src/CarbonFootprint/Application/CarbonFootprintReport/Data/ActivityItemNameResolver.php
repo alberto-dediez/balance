@@ -16,6 +16,7 @@ use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MobilityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity;
+use App\CarbonFootprint\Domain\Model\Activity\ProcessActivity;
 use App\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity;
@@ -78,6 +79,7 @@ final class ActivityItemNameResolver
             $activity instanceof PurchaseServiceActivity => (string) $activity->purchaseServiceId(),
             $activity instanceof CapitalGoodActivity => (string) $activity->capitalGoodId(),
             $activity instanceof UseProfileActivity => (string) $activity->useProfileId(),
+            $activity instanceof ProcessActivity => (string) $activity->processId(),
             $activity instanceof CombustibleActivity => (string) $activity->combustibleId(),
             $activity instanceof ElectricityActivity => null !== $activity->electricityMarketerId() ? (string) $activity->electricityMarketerId() : null,
             $activity instanceof MachineryFuelActivity => (string) $activity->machineryFuelId(),

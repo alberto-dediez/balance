@@ -73,6 +73,7 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
+use App\CarbonFootprint\Domain\Model\Process\ProcessRepository;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
@@ -133,6 +134,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationMeasure\MitigationMeas
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationMeasureCategory\MitigationMeasureCategoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Process\ProcessMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
@@ -181,6 +183,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getUseProfileRepository(): UseProfileRepository
     {
         return $this->client->getContainer()->get(UseProfileRepository::class);
+    }
+
+    public function getProcessRepository(): ProcessRepository
+    {
+        return $this->client->getContainer()->get(ProcessRepository::class);
     }
 
     public function getCateringItemRepository(): CateringItemRepository
@@ -412,6 +419,37 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getUseProfileRepository()->add($useProfile);
+    }
+
+    #[Given('process :name with id :id exists')]
+    public function processWithIdExists(string $name, string $id): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $process = ProcessMother::fromNameAndId($name, $id);
+
+        $this->getProcessRepository()->add($process);
+    }
+
+    #[Given('process :name with id :id and emission factor for year :year exists')]
+    public function processWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $process = ProcessMother::fromNameAndId($name, $id);
+
+        $process->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: $process->unit(),
+            source: 'IPCC',
+        ));
+
+        $this->getProcessRepository()->add($process);
     }
 
     #[Given('catering item :name with id :id exists')]

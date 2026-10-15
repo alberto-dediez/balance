@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{process}': event.processId,
+    '{user}': element.userId | user_name
+} %}Se ha añadido el factor de emisión del año {year} al proceso {process} por el usuario {user}{% endtrans %}
