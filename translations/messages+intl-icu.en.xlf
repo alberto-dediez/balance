@@ -9157,6 +9157,74 @@
         <source>Se ha actualizado el bien de capital "{capitalGood}" por el usuario {user}</source>
         <target>Capital good "{capitalGood}" has been updated by user {user}</target>
       </trans-unit>
+      <trans-unit id="pazT4nr" resname="Perfiles de uso">
+        <source>Perfiles de uso</source>
+        <target>Use profiles</target>
+      </trans-unit>
+      <trans-unit id="U7CkQJw" resname="Perfil de uso creado correctamente: {name}">
+        <source>Perfil de uso creado correctamente: {name}</source>
+        <target>Use profile successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="9WeNw0r" resname="Perfil de uso actualizado con éxito">
+        <source>Perfil de uso actualizado con éxito</source>
+        <target>Use profile successfully updated</target>
+      </trans-unit>
+      <trans-unit id="tVuC1uL" resname="Se ha eliminado el perfil de uso {useProfile}">
+        <source>Se ha eliminado el perfil de uso {useProfile}</source>
+        <target>Use profile {useProfile} has been removed</target>
+      </trans-unit>
+      <trans-unit id="ILBtxOB" resname="No se ha podido eliminar el perfil de uso {useProfile}">
+        <source>No se ha podido eliminar el perfil de uso {useProfile}</source>
+        <target>Use profile {useProfile} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="D2EXbv4" resname="Perfil de uso no encontrado">
+        <source>Perfil de uso no encontrado</source>
+        <target>Use profile not found</target>
+      </trans-unit>
+      <trans-unit id="s2TGF9s" resname="Se ha eliminado el perfil de uso {id}">
+        <source>Se ha eliminado el perfil de uso {id}</source>
+        <target>Use profile {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="QM0c5bW" resname="No se ha podido eliminar el perfil de uso {id}">
+        <source>No se ha podido eliminar el perfil de uso {id}</source>
+        <target>Use profile {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="ahN8DY_" resname="Productos vendidos">
+        <source>Productos vendidos</source>
+        <target>Sold products</target>
+      </trans-unit>
+      <trans-unit id="7doa_69" resname="Perfil de uso">
+        <source>Perfil de uso</source>
+        <target>Use profile</target>
+      </trans-unit>
+      <trans-unit id="QMn10mN" resname="Se ha actualizado el factor de emisión del año {year} del perfil de uso {useProfile} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del perfil de uso {useProfile} por el usuario {user}</source>
+        <target>The {year} emission factor of use profile {useProfile} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="ru__FXW" resname="Se ha eliminado el factor de emisión del año {year} del perfil de uso {useProfile} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del perfil de uso {useProfile} por el usuario {user}</source>
+        <target>The {year} emission factor of use profile {useProfile} has been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="dQkk6DD" resname="Se ha actualizado el perfil de uso &quot;{useProfile}&quot; por el usuario {user}">
+        <source>Se ha actualizado el perfil de uso "{useProfile}" por el usuario {user}</source>
+        <target>Use profile "{useProfile}" has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="YDQi0Ad" resname="Se ha registrado el perfil de uso &quot;{useProfile}&quot; por el usuario {user}">
+        <source>Se ha registrado el perfil de uso "{useProfile}" por el usuario {user}</source>
+        <target>Use profile "{useProfile}" has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="nCp1BE4" resname="Se ha añadido el factor de emisión del año {year} al perfil de uso {useProfile} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al perfil de uso {useProfile} por el usuario {user}</source>
+        <target>The {year} emission factor has been added to use profile {useProfile} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="yZx1xyx" resname="Se ha eliminado el perfil de uso {useProfile} por el usuario {user}">
+        <source>Se ha eliminado el perfil de uso {useProfile} por el usuario {user}</source>
+        <target>Use profile {useProfile} has been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Wc9WKAa" resname="Se ha traducido el perfil de uso &quot;{useProfile}&quot; por el usuario {user}">
+        <source>Se ha traducido el perfil de uso "{useProfile}" por el usuario {user}</source>
+        <target>Use profile "{useProfile}" has been translated by user {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

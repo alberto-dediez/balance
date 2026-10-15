@@ -96,6 +96,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\CarbonFootprint\Domain\Model\UseProfile\UseProfileRepository;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
 use App\CarbonFootprint\Domain\Model\Waste\WasteRepository;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -136,6 +137,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\Property
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\UseProfile\UseProfileMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
@@ -174,6 +176,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getCapitalGoodRepository(): CapitalGoodRepository
     {
         return $this->client->getContainer()->get(CapitalGoodRepository::class);
+    }
+
+    public function getUseProfileRepository(): UseProfileRepository
+    {
+        return $this->client->getContainer()->get(UseProfileRepository::class);
     }
 
     public function getCateringItemRepository(): CateringItemRepository
@@ -374,6 +381,37 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getCapitalGoodRepository()->add($capitalGood);
+    }
+
+    #[Given('use profile :name with id :id exists')]
+    public function useProfileWithIdExists(string $name, string $id): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $useProfile = UseProfileMother::fromNameAndId($name, $id);
+
+        $this->getUseProfileRepository()->add($useProfile);
+    }
+
+    #[Given('use profile :name with id :id and emission factor for year :year exists')]
+    public function useProfileWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $useProfile = UseProfileMother::fromNameAndId($name, $id);
+
+        $useProfile->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: $useProfile->unit(),
+            source: 'IPCC',
+        ));
+
+        $this->getUseProfileRepository()->add($useProfile);
     }
 
     #[Given('catering item :name with id :id exists')]

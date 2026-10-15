@@ -19,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity;
 use App\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity;
+use App\CarbonFootprint\Domain\Model\Activity\UseProfileActivity;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -76,6 +77,7 @@ final class ActivityItemNameResolver
             $activity instanceof MerchandisingItemActivity => (string) $activity->merchandisingItemId(),
             $activity instanceof PurchaseServiceActivity => (string) $activity->purchaseServiceId(),
             $activity instanceof CapitalGoodActivity => (string) $activity->capitalGoodId(),
+            $activity instanceof UseProfileActivity => (string) $activity->useProfileId(),
             $activity instanceof CombustibleActivity => (string) $activity->combustibleId(),
             $activity instanceof ElectricityActivity => null !== $activity->electricityMarketerId() ? (string) $activity->electricityMarketerId() : null,
             $activity instanceof MachineryFuelActivity => (string) $activity->machineryFuelId(),

@@ -269,6 +269,19 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Productos vendidos'),
+            icon: 'solar:box-line-duotone',
+            target: '#productos-vendidos',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Perfiles de uso'),
+                    icon: 'solar:tuning-3-line-duotone',
+                    target: $this->router->generate('admin_use_profiles'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Instalaciones'),
             icon: 'solar:buildings-3-line-duotone',
             target: '#instalaciones',

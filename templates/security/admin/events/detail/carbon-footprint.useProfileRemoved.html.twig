@@ -1,0 +1,4 @@
+{% trans with {
+    '{useProfile}': event.useProfileId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el perfil de uso {useProfile} por el usuario {user}{% endtrans %}

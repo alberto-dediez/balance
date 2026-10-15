@@ -46,6 +46,8 @@ doctrine:
             purchase_service_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PurchaseServiceEmissionFactorIdType
             capital_good_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CapitalGoodIdType
             capital_good_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CapitalGoodEmissionFactorIdType
+            use_profile_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\UseProfileIdType
+            use_profile_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\UseProfileEmissionFactorIdType
             combustible_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleIdType
             combustible_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleEmissionFactorIdType
             emission_factor_group_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmissionFactorGroupIdType

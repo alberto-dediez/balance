@@ -145,6 +145,10 @@
         <source>capitalGood</source>
         <target>Capital good</target>
       </trans-unit>
+      <trans-unit id="j_ZYEqh" resname="useProfile">
+        <source>useProfile</source>
+        <target>Use profile</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

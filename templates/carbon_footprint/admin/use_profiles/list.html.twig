@@ -1,0 +1,49 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Perfiles de uso' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Unidad' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': 'Fecha de actualización' | trans,
+            'sortable': true,
+            'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="useProfiles" :bulkForm="bulkForm">
+        <td>{{ element.name }}</td>
+        <td>{{ element.unit.value | trans({}, 'unitType') }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_use_profiles_edit', {'useProfileId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_use_profiles_remove', {'useProfileId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:EmissionFactors path="{{ path('admin_use_profiles_emission_factors') }}" />
+    <twig:Link:Import path="{{ path('import', {'code': 'use_profiles'}) }}" />
+    <twig:Link:Export path="{{ path('export', {'code': 'use_profiles'}) }}" />
+    <twig:Link:Register path="{{ path('admin_use_profiles_register') }}" />
+{% endblock list_actions %}
