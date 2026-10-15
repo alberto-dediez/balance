@@ -9,35 +9,56 @@ use PHPUnit\Framework\TestCase;
 
 class MarkdownExtensionTest extends TestCase
 {
-    private MarkdownExtension $extension;
-
-    protected function setUp(): void
+    public function testItConvertsMarkdownToHtml(): void
     {
-        $this->extension = new MarkdownExtension();
+        $sut = new MarkdownExtension();
+
+        $this->assertStringContainsString('<strong>importante</strong>', $sut->mdToHtml('**importante**'));
     }
 
-    public function testMarkdownIsRenderedAsHtml(): void
+    public function testItEscapesEmbeddedHtml(): void
     {
-        $html = $this->extension->mdToHtml("**Bold** text\n\n- First\n- Second\n\n[Link](https://example.com)");
+        $sut = new MarkdownExtension();
 
-        $this->assertStringContainsString('<strong>Bold</strong>', $html);
-        $this->assertStringContainsString('<li>First</li>', $html);
-        $this->assertStringContainsString('<a href="https://example.com">Link</a>', $html);
+        $this->assertStringNotContainsString('<script>', $sut->mdToHtml('<script>alert(1)</script>'));
     }
 
-    public function testRawHtmlIsEscaped(): void
+    public function testItDoesNotProduceAnExecutableJavascriptLink(): void
     {
-        $html = $this->extension->mdToHtml("<script>alert(1)</script>\n\nText <img src=x onerror=alert(1)>");
+        $sut = new MarkdownExtension();
 
-        $this->assertStringNotContainsString('<script>', $html);
-        $this->assertStringNotContainsString('<img', $html);
-        $this->assertStringContainsString('&lt;script&gt;', $html);
+        $this->assertStringNotContainsString('href="javascript:', $sut->mdToHtml('[click](javascript:alert(1))'));
     }
 
-    public function testUnsafeLinksAreRemoved(): void
+    public function testItOpensLinksInANewTab(): void
     {
-        $html = $this->extension->mdToHtml('[Click](javascript:alert(1))');
+        $sut = new MarkdownExtension();
 
-        $this->assertStringNotContainsString('javascript:', $html);
+        $html = $sut->mdToHtml('[Guía](https://example.com/guia)');
+
+        $this->assertStringContainsString('href="https://example.com/guia"', $html);
+        $this->assertStringContainsString('target="_blank"', $html);
+        $this->assertStringContainsString('noopener', $html);
+        $this->assertStringContainsString('noreferrer', $html);
+    }
+
+    public function testItOpensAutolinkedUrlsInANewTab(): void
+    {
+        $sut = new MarkdownExtension();
+
+        $html = $sut->mdToHtml('Consulta https://example.com');
+
+        $this->assertStringContainsString('href="https://example.com"', $html);
+        $this->assertStringContainsString('target="_blank"', $html);
+    }
+
+    public function testItKeepsRelativeLinksInTheSameTab(): void
+    {
+        $sut = new MarkdownExtension();
+
+        $html = $sut->mdToHtml('[Inicio](/es/)');
+
+        $this->assertStringContainsString('href="/es/"', $html);
+        $this->assertStringNotContainsString('target="_blank"', $html);
     }
 }

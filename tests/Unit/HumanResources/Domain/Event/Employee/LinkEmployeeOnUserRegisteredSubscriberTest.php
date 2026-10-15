@@ -138,6 +138,43 @@ class LinkEmployeeOnUserRegisteredSubscriberTest extends TestCase
         $this->assertCount(0, $this->spyCommandBus->commands());
     }
 
+    public function testHandleUserRegisteredDoesNothingWhenHumanResourcesDisabled(): void
+    {
+        $event = $this->makeUserRegisteredEvent('new@example.com', AccountId::generate());
+
+        $sut = $this->createSUT(EmployeeRepositoryMother::inMemory(), expectedLinkCalls: 0, humanResourcesEnabled: false);
+        $sut->handle($event);
+
+        $this->assertCount(0, $this->spyCommandBus->commands());
+    }
+
+    public function testHandleUserRegisteredDoesNotLinkExistingEmployeeWhenHumanResourcesDisabled(): void
+    {
+        $accountIdString = (string) AccountId::generate();
+
+        $employeeRepository = EmployeeRepositoryMother::inMemory();
+        $employeeRepository->add(EmployeeMother::from(
+            name: 'John Doe',
+            email: 'john@example.com',
+            id: (string) EmployeeId::generate(),
+            accountId: $accountIdString,
+        ));
+
+        $event = $this->makeUserRegisteredEvent('john@example.com', new AccountId($accountIdString));
+
+        $sut = $this->createSUT($employeeRepository, expectedLinkCalls: 0, humanResourcesEnabled: false);
+        $sut->handle($event);
+
+        $this->assertCount(0, $this->spyCommandBus->commands());
+    }
+
+    public function testIsSubscribedToUserRegisteredEvenWhenDisabled(): void
+    {
+        $sut = $this->createSUT(EmployeeRepositoryMother::inMemory(), humanResourcesEnabled: false);
+
+        $this->assertTrue($sut->isSubscribedTo($this->makeUserRegisteredEvent('john@example.com', AccountId::generate())));
+    }
+
     private function makeUserRegisteredEvent(string $username, AccountId $accountId): UserRegistered
     {
         return new UserRegistered(
@@ -148,8 +185,11 @@ class LinkEmployeeOnUserRegisteredSubscriberTest extends TestCase
         );
     }
 
-    private function createSUT(InMemoryEmployeeRepository $employeeRepository, int $expectedLinkCalls = 0): LinkEmployeeOnUserRegisteredSubscriber
-    {
+    private function createSUT(
+        InMemoryEmployeeRepository $employeeRepository,
+        int $expectedLinkCalls = 0,
+        bool $humanResourcesEnabled = true,
+    ): LinkEmployeeOnUserRegisteredSubscriber {
         /** @var LinkUserService&MockObject $linkUser */
         $linkUser = $this->createMock(LinkUserService::class);
         $linkUser->expects($this->exactly($expectedLinkCalls))->method('__invoke');
@@ -159,6 +199,7 @@ class LinkEmployeeOnUserRegisteredSubscriberTest extends TestCase
             new InMemoryUserRepository(),
             $linkUser,
             new FakeLoggedUser(UserMother::adminUser()),
+            $humanResourcesEnabled,
         );
     }
 }

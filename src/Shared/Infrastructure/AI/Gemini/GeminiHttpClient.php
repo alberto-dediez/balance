@@ -9,6 +9,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class GeminiHttpClient implements GeminiClient
 {
     private const string API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent';
+    private const float TIMEOUT = 300.0;
 
     private \DateTimeImmutable $requestedAt;
 
@@ -25,6 +26,8 @@ class GeminiHttpClient implements GeminiClient
     /** @return array<mixed> */
     public function send(GeminiPrompt $prompt): array
     {
+        $model = $this->model($prompt->modelTier());
+
         $request = [
             'contents' => [
                 ['parts' => [['text' => $prompt->text()]]],
@@ -33,6 +36,7 @@ class GeminiHttpClient implements GeminiClient
                 'responseMimeType' => 'application/json',
                 'responseSchema' => $prompt->responseSchema(),
                 'temperature' => $prompt->temperature(),
+                ...$this->thinkingConfig($model, $prompt->thinkingLevel()),
             ],
         ];
 
@@ -41,31 +45,74 @@ class GeminiHttpClient implements GeminiClient
             $this->writeLog($prompt, $request, [], []);
         }
 
-        $response = $this->httpClient->request('POST', $this->getApiUrl($prompt->modelTier()), [
-            'query' => ['key' => $this->apiKey],
+        $response = $this->httpClient->request('POST', str_replace('{model}', $model, self::API_URL), [
+            'headers' => ['x-goog-api-key' => $this->apiKey],
             'json' => $request,
+            'timeout' => self::TIMEOUT,
         ]);
 
         $data = $response->toArray();
-        $jsonText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '[]';
-        $result = json_decode($jsonText, true) ?? [];
+        $finishReason = $data['candidates'][0]['finishReason'] ?? $data['promptFeedback']['blockReason'] ?? 'NO_CANDIDATES';
+        $jsonText = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        $result = json_decode($jsonText, true);
+        $jsonError = JSON_ERROR_NONE !== json_last_error() ? json_last_error_msg() : 'the response is not a JSON object or array';
 
         if ($this->logEnabled) {
-            $this->writeLog($prompt, $request, $data, $result);
+            $this->writeLog($prompt, $request, $data, is_array($result) ? $result : []);
+        }
+
+        if ('STOP' !== $finishReason) {
+            throw GeminiResponseException::incomplete($model, (string) $finishReason, (int) ($data['usageMetadata']['candidatesTokenCount'] ?? 0), (int) ($data['usageMetadata']['thoughtsTokenCount'] ?? 0));
+        }
+
+        if (!is_array($result)) {
+            throw GeminiResponseException::invalidJson($model, $jsonError);
         }
 
         return $result;
     }
 
-    private function getApiUrl(GeminiModelTier $tier): string
+    private function model(GeminiModelTier $tier): string
     {
-        $model = match ($tier) {
+        return match ($tier) {
             GeminiModelTier::LOW => $this->modelLow,
             GeminiModelTier::MEDIUM => $this->modelMedium,
             GeminiModelTier::HIGH => $this->modelHigh,
         };
+    }
 
-        return str_replace('{model}', $model, self::API_URL);
+    /**
+     * @return array{thinkingConfig?: array{thinkingLevel?: string, thinkingBudget?: int}}
+     */
+    private function thinkingConfig(string $model, GeminiThinkingLevel $level): array
+    {
+        if (1 !== preg_match('/^gemini-(\d+)(?:\.(\d+))?/', $model, $matches)) {
+            return [];
+        }
+
+        $major = (int) $matches[1];
+        $minor = (int) ($matches[2] ?? 0);
+        $isPro = str_contains($model, '-pro');
+
+        if ($major >= 3) {
+            return ['thinkingConfig' => ['thinkingLevel' => match ($level) {
+                GeminiThinkingLevel::MINIMAL => $isPro ? 'low' : 'minimal',
+                GeminiThinkingLevel::LOW => 'low',
+                GeminiThinkingLevel::MEDIUM => $isPro ? 'high' : 'medium',
+                GeminiThinkingLevel::HIGH => 'high',
+            }]];
+        }
+
+        if (2 === $major && 5 === $minor) {
+            return ['thinkingConfig' => ['thinkingBudget' => match ($level) {
+                GeminiThinkingLevel::MINIMAL => $isPro ? 128 : 0,
+                GeminiThinkingLevel::LOW => 1024,
+                GeminiThinkingLevel::MEDIUM => 8192,
+                GeminiThinkingLevel::HIGH => 24576,
+            }]];
+        }
+
+        return [];
     }
 
     /**
@@ -84,11 +131,7 @@ class GeminiHttpClient implements GeminiClient
         $filename = sprintf('%s/%s_%s.json', $this->logDir, $timestamp, $promptClass);
 
         $tier = $prompt->modelTier();
-        $model = match ($tier) {
-            GeminiModelTier::LOW => $this->modelLow,
-            GeminiModelTier::MEDIUM => $this->modelMedium,
-            GeminiModelTier::HIGH => $this->modelHigh,
-        };
+        $model = $this->model($tier);
 
         $log = [
             'timestamp' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
@@ -98,6 +141,7 @@ class GeminiHttpClient implements GeminiClient
             'request' => [
                 'text' => $prompt->text(),
                 'temperature' => $prompt->temperature(),
+                'thinkingLevel' => $prompt->thinkingLevel()->name,
                 'responseSchema' => $prompt->responseSchema(),
             ],
             'raw_response' => $rawResponse,

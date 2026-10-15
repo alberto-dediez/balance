@@ -14,4 +14,6 @@ interface GeminiPrompt
     public function temperature(): float;
 
     public function modelTier(): GeminiModelTier;
+
+    public function thinkingLevel(): GeminiThinkingLevel;
 }

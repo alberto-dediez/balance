@@ -17,6 +17,7 @@ use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class LinkEmployeeOnUserRegisteredSubscriber implements DomainEventSubscriber
 {
@@ -27,6 +28,8 @@ class LinkEmployeeOnUserRegisteredSubscriber implements DomainEventSubscriber
         private UserRepository $userRepository,
         private LinkUserService $linkUser,
         private LoggedUser $loggedUser,
+        #[Autowire(param: 'app.human_resources_enabled')]
+        private bool $humanResourcesEnabled = true,
     ) {
         $this->register();
     }
@@ -43,6 +46,10 @@ class LinkEmployeeOnUserRegisteredSubscriber implements DomainEventSubscriber
 
     private function handleUserRegistered(UserRegistered $event): void
     {
+        if (!$this->humanResourcesEnabled) {
+            return;
+        }
+
         $accountId = $event->accountId();
 
         if (null === $accountId) {
