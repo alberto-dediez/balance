@@ -20,5 +20,6 @@ final class ActivityRowView
         public readonly ?float $fillPercentage = null,
         public readonly ?int $nights = null,
         public readonly ?int $people = null,
+        public readonly ?int $acquisitionYear = null,
     ) {}
 }

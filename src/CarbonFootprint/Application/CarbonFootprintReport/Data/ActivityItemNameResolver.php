@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\Activity\CapitalGoodActivity;
 use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivity;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
@@ -74,6 +75,7 @@ final class ActivityItemNameResolver
             $activity instanceof CateringItemActivity => (string) $activity->cateringItemId(),
             $activity instanceof MerchandisingItemActivity => (string) $activity->merchandisingItemId(),
             $activity instanceof PurchaseServiceActivity => (string) $activity->purchaseServiceId(),
+            $activity instanceof CapitalGoodActivity => (string) $activity->capitalGoodId(),
             $activity instanceof CombustibleActivity => (string) $activity->combustibleId(),
             $activity instanceof ElectricityActivity => null !== $activity->electricityMarketerId() ? (string) $activity->electricityMarketerId() : null,
             $activity instanceof MachineryFuelActivity => (string) $activity->machineryFuelId(),

@@ -165,6 +165,10 @@
         <source>ZAR</source>
         <target>South African rand</target>
       </trans-unit>
+      <trans-unit id="RdSxAj4" resname="m2">
+        <source>m2</source>
+        <target>Square meter</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -141,6 +141,10 @@
         <source>purchaseService</source>
         <target>Satın alınan mal veya hizmet</target>
       </trans-unit>
+      <trans-unit id="vFgKW2b" resname="capitalGood">
+        <source>capitalGood</source>
+        <target>Sermaye malı</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

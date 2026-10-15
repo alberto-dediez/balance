@@ -260,6 +260,11 @@ class NodeLister
                     icon: 'solar:cart-large-minimalistic-line-duotone',
                     target: $this->router->generate('admin_purchase_services'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Bienes de capital'),
+                    icon: 'solar:buildings-2-line-duotone',
+                    target: $this->router->generate('admin_capital_goods'),
+                ),
             ],
         );
 

@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{capitalGood}': event.capitalGoodId,
+    '{user}': element.userId | user_name
+} %}Se ha añadido el factor de emisión del año {year} al bien de capital {capitalGood} por el usuario {user}{% endtrans %}

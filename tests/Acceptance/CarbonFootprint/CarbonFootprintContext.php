@@ -26,6 +26,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
@@ -113,6 +114,7 @@ use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Acceptance\Shared\AcceptancePlaceFinder;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
@@ -167,6 +169,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getPurchaseServiceRepository(): PurchaseServiceRepository
     {
         return $this->client->getContainer()->get(PurchaseServiceRepository::class);
+    }
+
+    public function getCapitalGoodRepository(): CapitalGoodRepository
+    {
+        return $this->client->getContainer()->get(CapitalGoodRepository::class);
     }
 
     public function getCateringItemRepository(): CateringItemRepository
@@ -336,6 +343,37 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getPurchaseServiceRepository()->add($purchaseService);
+    }
+
+    #[Given('capital good :name with id :id exists')]
+    public function capitalGoodWithIdExists(string $name, string $id): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $capitalGood = CapitalGoodMother::fromNameAndId($name, $id);
+
+        $this->getCapitalGoodRepository()->add($capitalGood);
+    }
+
+    #[Given('capital good :name with id :id and emission factor for year :year exists')]
+    public function capitalGoodWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $capitalGood = CapitalGoodMother::fromNameAndId($name, $id);
+
+        $capitalGood->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: $capitalGood->unit(),
+            source: 'IPCC',
+        ));
+
+        $this->getCapitalGoodRepository()->add($capitalGood);
     }
 
     #[Given('catering item :name with id :id exists')]

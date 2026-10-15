@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="fgT0Pyp" resname="renovations">
+        <source>renovations</source>
+        <target>Tadilat ve yeni inşaat</target>
+      </trans-unit>
+      <trans-unit id="4Nktd5r" resname="furniture_and_equipment">
+        <source>furniture_and_equipment</source>
+        <target>Mobilya ve ekipman</target>
+      </trans-unit>
+      <trans-unit id="iT45P9c" resname="vehicles_and_machinery">
+        <source>vehicles_and_machinery</source>
+        <target>Araçlar ve makineler</target>
+      </trans-unit>
+      <trans-unit id="BcyPUqi" resname="others">
+        <source>others</source>
+        <target>Diğer</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

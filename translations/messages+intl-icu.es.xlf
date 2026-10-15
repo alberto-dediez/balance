@@ -9093,6 +9093,70 @@
         <source>Bien o servicio comprado</source>
         <target>Bien o servicio comprado</target>
       </trans-unit>
+      <trans-unit id="8_SXFfz" resname="Bienes de capital">
+        <source>Bienes de capital</source>
+        <target>Bienes de capital</target>
+      </trans-unit>
+      <trans-unit id="4Fa6vG8" resname="Bien de capital creado correctamente: {name}">
+        <source>Bien de capital creado correctamente: {name}</source>
+        <target>Bien de capital creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="6LQtiot" resname="Bien de capital actualizado con éxito">
+        <source>Bien de capital actualizado con éxito</source>
+        <target>Bien de capital actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="IBYVccO" resname="Se ha eliminado el bien de capital {capitalGood}">
+        <source>Se ha eliminado el bien de capital {capitalGood}</source>
+        <target>Se ha eliminado el bien de capital {capitalGood}</target>
+      </trans-unit>
+      <trans-unit id="jv_VEVO" resname="No se ha podido eliminar el bien de capital {capitalGood}">
+        <source>No se ha podido eliminar el bien de capital {capitalGood}</source>
+        <target>No se ha podido eliminar el bien de capital {capitalGood}</target>
+      </trans-unit>
+      <trans-unit id="5aUiDaC" resname="Se ha eliminado el bien de capital {id}">
+        <source>Se ha eliminado el bien de capital {id}</source>
+        <target>Se ha eliminado el bien de capital {id}</target>
+      </trans-unit>
+      <trans-unit id="MM86p8T" resname="No se ha podido eliminar el bien de capital {id}">
+        <source>No se ha podido eliminar el bien de capital {id}</source>
+        <target>No se ha podido eliminar el bien de capital {id}</target>
+      </trans-unit>
+      <trans-unit id="tb8A4Xi" resname="Bien de capital">
+        <source>Bien de capital</source>
+        <target>Bien de capital</target>
+      </trans-unit>
+      <trans-unit id="D.GIkLk" resname="Año de adquisición">
+        <source>Año de adquisición</source>
+        <target>Año de adquisición</target>
+      </trans-unit>
+      <trans-unit id="bVHQ1_Y" resname="Se ha eliminado el bien de capital {capitalGood} por el usuario {user}">
+        <source>Se ha eliminado el bien de capital {capitalGood} por el usuario {user}</source>
+        <target>Se ha eliminado el bien de capital {capitalGood} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="zaSRTtO" resname="Se ha añadido el factor de emisión del año {year} al bien de capital {capitalGood} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al bien de capital {capitalGood} por el usuario {user}</source>
+        <target>Se ha añadido el factor de emisión del año {year} al bien de capital {capitalGood} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="RHZdxkr" resname="Se ha eliminado el factor de emisión del año {year} del bien de capital {capitalGood} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del bien de capital {capitalGood} por el usuario {user}</source>
+        <target>Se ha eliminado el factor de emisión del año {year} del bien de capital {capitalGood} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="HM6bIya" resname="Se ha traducido el bien de capital &quot;{capitalGood}&quot; por el usuario {user}">
+        <source>Se ha traducido el bien de capital "{capitalGood}" por el usuario {user}</source>
+        <target>Se ha traducido el bien de capital "{capitalGood}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="DG3.E8Q" resname="Se ha actualizado el factor de emisión del año {year} del bien de capital {capitalGood} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del bien de capital {capitalGood} por el usuario {user}</source>
+        <target>Se ha actualizado el factor de emisión del año {year} del bien de capital {capitalGood} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="KdlhYkO" resname="Se ha registrado el bien de capital &quot;{capitalGood}&quot; por el usuario {user}">
+        <source>Se ha registrado el bien de capital "{capitalGood}" por el usuario {user}</source>
+        <target>Se ha registrado el bien de capital "{capitalGood}" por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="o5vRXQl" resname="Se ha actualizado el bien de capital &quot;{capitalGood}&quot; por el usuario {user}">
+        <source>Se ha actualizado el bien de capital "{capitalGood}" por el usuario {user}</source>
+        <target>Se ha actualizado el bien de capital "{capitalGood}" por el usuario {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

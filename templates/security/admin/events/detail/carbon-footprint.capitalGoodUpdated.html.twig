@@ -1,0 +1,4 @@
+{% trans with {
+    '{capitalGood}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el bien de capital "{capitalGood}" por el usuario {user}{% endtrans %}

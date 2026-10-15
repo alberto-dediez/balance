@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model;
 
+use App\CarbonFootprint\Domain\Model\IncompatibleUnitsException;
 use App\CarbonFootprint\Domain\Model\Magnitude;
+use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use PHPUnit\Framework\TestCase;
 
@@ -44,5 +46,20 @@ class UnitTest extends TestCase
     public function testEuroIsTheCurrencyBaseUnit(): void
     {
         $this->assertSame(Unit::Euro, Magnitude::Currency->baseUnit());
+    }
+
+    public function testSquareMeterBelongsToAreaMagnitude(): void
+    {
+        $this->assertSame(Magnitude::Area, Unit::SquareMeter->magnitude());
+        $this->assertFalse(Unit::SquareMeter->isCurrency());
+        $this->assertSame(1.0, Unit::SquareMeter->fixedFactorToBase());
+        $this->assertSame(Unit::SquareMeter, Magnitude::Area->baseUnit());
+    }
+
+    public function testSquareMeterCannotConvertToOtherMagnitudes(): void
+    {
+        $this->expectException(IncompatibleUnitsException::class);
+
+        (new Quantity(10, Unit::SquareMeter))->convertTo(Unit::Kilogram);
     }
 }

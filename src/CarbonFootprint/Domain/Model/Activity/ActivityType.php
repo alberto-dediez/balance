@@ -10,6 +10,7 @@ enum ActivityType: string
     case CateringItem      = 'catering_item';
     case MerchandisingItem = 'merchandising_item';
     case PurchaseService = 'purchase_service';
+    case CapitalGood = 'capital_good';
     case Combustible       = 'combustible';
     case Electricity       = 'electricity';
     case MachineryFuel     = 'machinery_fuel';
@@ -26,6 +27,7 @@ enum ActivityType: string
             $activity instanceof CateringItemActivity      => self::CateringItem,
             $activity instanceof MerchandisingItemActivity => self::MerchandisingItem,
             $activity instanceof PurchaseServiceActivity => self::PurchaseService,
+            $activity instanceof CapitalGoodActivity => self::CapitalGood,
             $activity instanceof CombustibleActivity       => self::Combustible,
             $activity instanceof ElectricityActivity       => self::Electricity,
             $activity instanceof MachineryFuelActivity     => self::MachineryFuel,
