@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{purchaseService}': event.purchaseServiceId,
+    '{user}': element.userId | user_name
+} %}Se ha añadido el factor de emisión del año {year} al bien o servicio comprado {purchaseService} por el usuario {user}{% endtrans %}

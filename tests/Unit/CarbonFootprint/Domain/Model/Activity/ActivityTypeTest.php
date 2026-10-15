@@ -20,6 +20,11 @@ class ActivityTypeTest extends TestCase
         $this->assertSame(ActivityType::RefrigerantGas, ActivityType::fromActivity(RefrigerantGasActivityMother::registered()));
     }
 
+    public function testFromActivityResolvesPurchaseService(): void
+    {
+        $this->assertSame(ActivityType::PurchaseService, ActivityType::fromActivity(PurchaseServiceActivityMother::registered()));
+    }
+
     public function testFromActivityResolvesCombustible(): void
     {
         $this->assertSame(ActivityType::Combustible, ActivityType::fromActivity(CombustibleActivityMother::registered()));

@@ -42,6 +42,8 @@ doctrine:
             merchandising_item_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MerchandisingItemEmissionFactorIdType
             catering_item_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CateringItemIdType
             catering_item_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CateringItemEmissionFactorIdType
+            purchase_service_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PurchaseServiceIdType
+            purchase_service_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PurchaseServiceEmissionFactorIdType
             combustible_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleIdType
             combustible_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleEmissionFactorIdType
             emission_factor_group_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmissionFactorGroupIdType

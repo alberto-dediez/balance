@@ -137,6 +137,10 @@
         <source>country</source>
         <target>País</target>
       </trans-unit>
+      <trans-unit id="hvIzHGF" resname="purchaseService">
+        <source>purchaseService</source>
+        <target>Bien o servicio comprado</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

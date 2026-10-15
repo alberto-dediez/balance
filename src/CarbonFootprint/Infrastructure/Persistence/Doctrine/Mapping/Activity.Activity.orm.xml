@@ -11,6 +11,7 @@
             <discriminator-mapping value="material" class="App\CarbonFootprint\Domain\Model\Activity\MaterialActivity" />
             <discriminator-mapping value="catering_item" class="App\CarbonFootprint\Domain\Model\Activity\CateringItemActivity" />
             <discriminator-mapping value="merchandising_item" class="App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivity" />
+            <discriminator-mapping value="purchase_service" class="App\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivity" />
             <discriminator-mapping value="combustible" class="App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity" />
             <discriminator-mapping value="electricity" class="App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity" />
             <discriminator-mapping value="machinery_fuel" class="App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity" />

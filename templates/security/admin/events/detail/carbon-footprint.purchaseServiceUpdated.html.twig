@@ -1,0 +1,4 @@
+{% trans with {
+    '{purchaseService}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el bien o servicio comprado "{purchaseService}" por el usuario {user}{% endtrans %}

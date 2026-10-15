@@ -1,0 +1,38 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_purchase_services') }}" />
+{% endblock %}
+
+{% set page_title = ('Bienes y servicios comprados' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ purchaseService.name %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.name) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.category) }}
+                </div>
+                <div class="col-12">
+                    {{ form_row(form.unit) }}
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card>
+            {% include '@carbon_footprint/admin/emission_factors/_form.simple.html.twig' %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form)}}
+{% endblock %}

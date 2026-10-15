@@ -137,6 +137,10 @@
         <source>country</source>
         <target>Ülke</target>
       </trans-unit>
+      <trans-unit id="hvIzHGF" resname="purchaseService">
+        <source>purchaseService</source>
+        <target>Satın alınan mal veya hizmet</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

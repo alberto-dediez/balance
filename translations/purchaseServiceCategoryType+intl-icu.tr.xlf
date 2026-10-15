@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id=".D4nVSY" resname="professional_services">
+        <source>professional_services</source>
+        <target>Profesyonel hizmetler</target>
+      </trans-unit>
+      <trans-unit id="Y27S1sx" resname="marketing">
+        <source>marketing</source>
+        <target>Pazarlama ve reklam</target>
+      </trans-unit>
+      <trans-unit id="YIPYpD5" resname="technology">
+        <source>technology</source>
+        <target>Teknoloji</target>
+      </trans-unit>
+      <trans-unit id="xzmQuwD" resname="logistics">
+        <source>logistics</source>
+        <target>Lojistik</target>
+      </trans-unit>
+      <trans-unit id="MbHtLhY" resname="facilities">
+        <source>facilities</source>
+        <target>Tesisler ve bakım</target>
+      </trans-unit>
+      <trans-unit id="BcyPUqi" resname="others">
+        <source>others</source>
+        <target>Diğer</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

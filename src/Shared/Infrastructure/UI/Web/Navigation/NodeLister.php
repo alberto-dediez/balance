@@ -255,6 +255,11 @@ class NodeLister
                     icon: 'solar:cup-hot-line-duotone',
                     target: $this->router->generate('admin_catering_items'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Bienes y servicios comprados'),
+                    icon: 'solar:cart-large-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_purchase_services'),
+                ),
             ],
         );
 

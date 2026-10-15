@@ -1,0 +1,4 @@
+{% trans with {
+    '{purchaseService}': event.purchaseServiceId,
+    '{user}': element.userId | user_name
+} %}Se ha eliminado el bien o servicio comprado {purchaseService} por el usuario {user}{% endtrans %}

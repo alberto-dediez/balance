@@ -82,6 +82,7 @@ use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLanding;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingId;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingOwnerType;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingRepository;
+use App\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepository;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepository;
 use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
@@ -130,6 +131,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationMeasureCategory\Mitiga
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
@@ -160,6 +162,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getMerchandisingItemRepository(): MerchandisingItemRepository
     {
         return $this->client->getContainer()->get(MerchandisingItemRepository::class);
+    }
+
+    public function getPurchaseServiceRepository(): PurchaseServiceRepository
+    {
+        return $this->client->getContainer()->get(PurchaseServiceRepository::class);
     }
 
     public function getCateringItemRepository(): CateringItemRepository
@@ -298,6 +305,37 @@ final readonly class CarbonFootprintContext implements Context
         $merchandisingItem = MerchandisingItemMother::fromNameAndId($name, $id);
 
         $this->getMerchandisingItemRepository()->add($merchandisingItem);
+    }
+
+    #[Given('purchase service :name with id :id exists')]
+    public function purchaseServiceWithIdExists(string $name, string $id): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $purchaseService = PurchaseServiceMother::fromNameAndId($name, $id);
+
+        $this->getPurchaseServiceRepository()->add($purchaseService);
+    }
+
+    #[Given('purchase service :name with id :id and emission factor for year :year exists')]
+    public function purchaseServiceWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $purchaseService = PurchaseServiceMother::fromNameAndId($name, $id);
+
+        $purchaseService->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: $purchaseService->unit(),
+            source: 'IPCC',
+        ));
+
+        $this->getPurchaseServiceRepository()->add($purchaseService);
     }
 
     #[Given('catering item :name with id :id exists')]

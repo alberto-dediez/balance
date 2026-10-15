@@ -9029,6 +9029,70 @@
         <source>Se encolará la descarga de los tipos de cambio del BCE. ¿Desea continuar?</source>
         <target>ECB döviz kurlarının indirilmesi kuyruğa alınacak. Devam etmek istiyor musunuz?</target>
       </trans-unit>
+      <trans-unit id="tTc5e8M" resname="Bienes y servicios comprados">
+        <source>Bienes y servicios comprados</source>
+        <target>Satın alınan mal ve hizmetler</target>
+      </trans-unit>
+      <trans-unit id="R29Qf35" resname="Bien o servicio comprado creado correctamente: {name}">
+        <source>Bien o servicio comprado creado correctamente: {name}</source>
+        <target>Satın alınan mal veya hizmet başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="R_CjqXn" resname="Bien o servicio comprado actualizado con éxito">
+        <source>Bien o servicio comprado actualizado con éxito</source>
+        <target>Satın alınan mal veya hizmet başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="CRF3AAn" resname="Se ha eliminado el bien o servicio comprado {purchaseService}">
+        <source>Se ha eliminado el bien o servicio comprado {purchaseService}</source>
+        <target>Satın alınan mal veya hizmet {purchaseService} silindi</target>
+      </trans-unit>
+      <trans-unit id="zw_ddMC" resname="No se ha podido eliminar el bien o servicio comprado {purchaseService}">
+        <source>No se ha podido eliminar el bien o servicio comprado {purchaseService}</source>
+        <target>Satın alınan mal veya hizmet {purchaseService} silinemedi</target>
+      </trans-unit>
+      <trans-unit id="q.EEvOD" resname="Se ha eliminado el bien o servicio comprado {id}">
+        <source>Se ha eliminado el bien o servicio comprado {id}</source>
+        <target>Satın alınan mal veya hizmet {id} silindi</target>
+      </trans-unit>
+      <trans-unit id="PFk6b6u" resname="No se ha podido eliminar el bien o servicio comprado {id}">
+        <source>No se ha podido eliminar el bien o servicio comprado {id}</source>
+        <target>Satın alınan mal veya hizmet {id} silinemedi</target>
+      </trans-unit>
+      <trans-unit id="PUowzn8" resname="Bien o servicio">
+        <source>Bien o servicio</source>
+        <target>Mal veya hizmet</target>
+      </trans-unit>
+      <trans-unit id="zrcABIu" resname="Se ha registrado el bien o servicio comprado &quot;{purchaseService}&quot; por el usuario {user}">
+        <source>Se ha registrado el bien o servicio comprado "{purchaseService}" por el usuario {user}</source>
+        <target>Satın alınan mal veya hizmet "{purchaseService}" {user} kullanıcısı tarafından kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="ZSSZcRb" resname="Se ha añadido el factor de emisión del año {year} al bien o servicio comprado {purchaseService} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al bien o servicio comprado {purchaseService} por el usuario {user}</source>
+        <target>{year} yılı emisyon faktörü, satın alınan mal veya hizmet {purchaseService} için {user} kullanıcısı tarafından eklendi</target>
+      </trans-unit>
+      <trans-unit id="YSQPcyG" resname="Se ha eliminado el factor de emisión del año {year} del bien o servicio comprado {purchaseService} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del bien o servicio comprado {purchaseService} por el usuario {user}</source>
+        <target>Satın alınan mal veya hizmet {purchaseService} için {year} yılı emisyon faktörü {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="8umz3DA" resname="Se ha traducido el bien o servicio comprado &quot;{purchaseService}&quot; por el usuario {user}">
+        <source>Se ha traducido el bien o servicio comprado "{purchaseService}" por el usuario {user}</source>
+        <target>Satın alınan mal veya hizmet "{purchaseService}" {user} kullanıcısı tarafından çevrildi</target>
+      </trans-unit>
+      <trans-unit id="qKVXysS" resname="Se ha actualizado el factor de emisión del año {year} del bien o servicio comprado {purchaseService} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del bien o servicio comprado {purchaseService} por el usuario {user}</source>
+        <target>Satın alınan mal veya hizmet {purchaseService} için {year} yılı emisyon faktörü {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="kolhU4y" resname="Se ha eliminado el bien o servicio comprado {purchaseService} por el usuario {user}">
+        <source>Se ha eliminado el bien o servicio comprado {purchaseService} por el usuario {user}</source>
+        <target>Satın alınan mal veya hizmet {purchaseService} {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="69wud5d" resname="Se ha actualizado el bien o servicio comprado &quot;{purchaseService}&quot; por el usuario {user}">
+        <source>Se ha actualizado el bien o servicio comprado "{purchaseService}" por el usuario {user}</source>
+        <target>Satın alınan mal veya hizmet "{purchaseService}" {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="GZ9Z3oA" resname="Bien o servicio comprado">
+        <source>Bien o servicio comprado</source>
+        <target>Satın alınan mal veya hizmet</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
