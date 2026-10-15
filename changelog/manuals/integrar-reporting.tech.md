@@ -72,8 +72,8 @@ Los otros suscriptores de los dos BCs (`LinkUserOnEmployeeEventSubscriber`, `Unl
 `GeminiHttpClient::send()` (`src/Shared/Infrastructure/AI/Gemini/GeminiHttpClient.php`):
 
 1. Resuelve el modelo por `GeminiModelTier` (`model()`).
-2. Construye `generationConfig` con `responseMimeType`, `responseSchema`, `temperature` y, mediante `thinkingConfig($model, $prompt->thinkingLevel())`, la configuración de razonamiento:
-   - Modelos `gemini-3*`: `thinkingLevel` = `minimal`/`low`/`medium`/`high`; en modelos `-pro`, `MINIMAL` → `low` y `MEDIUM` → `high`.
+2. Construye `generationConfig` con `responseMimeType`, `responseSchema` y, mediante `thinkingConfig($model, $prompt->thinkingLevel())`, la configuración de razonamiento:
+   - Modelos `gemini-3*` o superiores: `thinkingLevel` = `minimal`/`low`/`medium`/`high`, degradado solo cuando el modelo no soporta el nivel pedido: `MINIMAL` → `low` en modelos `-pro` y en los no-pro 3.7 o superiores (3.7, 3.8, 4+); `MEDIUM` → `high` solo en `gemini-3-pro` (3.0).
    - Modelos `gemini-2.5*`: `thinkingBudget` = 0/1024/8192/24576 (`MINIMAL` en `-pro` → 128).
    - Cualquier otro modelo: sin `thinkingConfig`.
 3. Envía `POST` con cabecera `x-goog-api-key` (antes la clave iba en la query `?key=`) y `timeout` de 300 s.
@@ -130,7 +130,7 @@ Sin cambios de mapping, repositorios, tipos ni migración. Con los flags en `fal
 - **Gatear otro BC opcional**: 1) añadir `X_ENABLED=true` a `.env` en su bloque; 2) declarar `app.x_enabled: '%env(bool:X_ENABLED)%'` en `parameters` del `services.yaml` del BC; 3) añadir `condition: "env('bool:X_ENABLED')"` a cada importación de rutas del BC en `config/routes.yaml`; 4) recibir el parámetro en `NodeLister` con `#[Autowire(param: 'app.x_enabled')]` y envolver sus nodos en `if`; 5) gatear con el mismo patrón los suscriptores que creen datos como efecto de eventos de otros BCs; 6) cubrirlo en `NodeListerTest`. Si un acceptance test necesitara el flag en un valor distinto del de `.env`, hay que añadirlo a `TEST_CONT` del `Makefile` (nota de `CLAUDE.md` sobre `env_file`).
 - **Nodos de menú por cuenta**: implementar `AccountNodeProvider` (una sola implementación; con dos, el autowiring falla por ambigüedad y hay que declarar alias). Sus nodos se anteponen al menú de owners y usuarios; los ítems que devuelva con `selected: true` se respetan.
 - **Supervisión en un agregado**: en su authorizer, sobrescribir `canSupervise()` usando `supervisesAccount($subject->accountId(), $user)` y, para listados, filtrar por `supervisedAccountIds($user)` (que devuelve `null` cuando el usuario no actúa como consultor). Si el authorizer tiene constructor propio, reenviar `?CurrentImpersonationProvider` y `?ConsultantSupervisionPolicy` a `parent::__construct()`.
-- **Nuevo prompt Gemini**: implementar `GeminiPrompt` con los cinco métodos, incluido `thinkingLevel()`. En events y food-loss, al mezclar biohydra, sus seis prompts existentes deben añadir ese método (PHPStan los señala).
+- **Nuevo prompt Gemini**: implementar `GeminiPrompt` con los cuatro métodos, incluido `thinkingLevel()`. En events y food-loss, al mezclar biohydra, sus seis prompts existentes deben añadir ese método (PHPStan los señala).
 - **Colecciones**: el elemento repetido debe ser hijo directo de `.collection`; para posiciones persistidas, un `input` con `data-collection-position`; para el número visible, un elemento con `data-collection-index`; para prototipos anidados, un `placeholder` distinto de `__name__` (`data-collection-placeholder-value`).
 - **Ficheros copia de reporting**: cualquier cambio en ellos debe hacerse primero en reporting y traerse byte a byte, o el siguiente merge volverá a dar conflicto.
 

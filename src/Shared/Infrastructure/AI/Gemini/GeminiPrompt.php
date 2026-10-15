@@ -11,8 +11,6 @@ interface GeminiPrompt
     /** @return array<mixed> */
     public function responseSchema(): array;
 
-    public function temperature(): float;
-
     public function modelTier(): GeminiModelTier;
 
     public function thinkingLevel(): GeminiThinkingLevel;

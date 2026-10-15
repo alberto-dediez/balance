@@ -42,10 +42,31 @@ class GeminiHttpClientTest extends TestCase
         yield 'gemini 3 flash medium' => ['gemini-3-flash-preview', GeminiThinkingLevel::MEDIUM, ['thinkingLevel' => 'medium']];
         yield 'gemini 3 pro minimal' => ['gemini-3-pro-preview', GeminiThinkingLevel::MINIMAL, ['thinkingLevel' => 'low']];
         yield 'gemini 3 pro medium' => ['gemini-3-pro-preview', GeminiThinkingLevel::MEDIUM, ['thinkingLevel' => 'high']];
+        yield 'gemini 3.1 pro medium' => ['gemini-3.1-pro-preview', GeminiThinkingLevel::MEDIUM, ['thinkingLevel' => 'medium']];
+        yield 'gemini 3.1 pro minimal' => ['gemini-3.1-pro-preview', GeminiThinkingLevel::MINIMAL, ['thinkingLevel' => 'low']];
+        yield 'gemini 3.5 flash lite minimal' => ['gemini-3.5-flash-lite', GeminiThinkingLevel::MINIMAL, ['thinkingLevel' => 'minimal']];
+        yield 'gemini 3.8 flash minimal' => ['gemini-3.8-flash', GeminiThinkingLevel::MINIMAL, ['thinkingLevel' => 'low']];
+        yield 'gemini 3.8 flash medium' => ['gemini-3.8-flash', GeminiThinkingLevel::MEDIUM, ['thinkingLevel' => 'medium']];
+        yield 'gemini 4 argon minimal' => ['gemini-4-argon', GeminiThinkingLevel::MINIMAL, ['thinkingLevel' => 'low']];
+        yield 'gemini 2.5 flash high' => ['gemini-2.5-flash', GeminiThinkingLevel::HIGH, ['thinkingBudget' => 24576]];
         yield 'gemini 2.5 flash minimal' => ['gemini-2.5-flash', GeminiThinkingLevel::MINIMAL, ['thinkingBudget' => 0]];
         yield 'gemini 2.5 flash low' => ['gemini-2.5-flash', GeminiThinkingLevel::LOW, ['thinkingBudget' => 1024]];
         yield 'gemini 2.5 pro minimal' => ['gemini-2.5-pro', GeminiThinkingLevel::MINIMAL, ['thinkingBudget' => 128]];
         yield 'gemini 2.0 flash' => ['gemini-2.0-flash', GeminiThinkingLevel::LOW, null];
+    }
+
+    public function testDoesNotSendSamplingParameters(): void
+    {
+        $response = $this->response(['candidates' => [['finishReason' => 'STOP', 'content' => ['parts' => [['text' => '{"content": "Texto"}']]]]]]);
+
+        $this->client($response, 'gemini-3-flash-preview')->send($this->prompt());
+
+        $request = json_decode((string) $response->getRequestOptions()['body'], true);
+
+        $this->assertIsArray($request);
+        $this->assertArrayNotHasKey('temperature', $request['generationConfig']);
+        $this->assertArrayNotHasKey('topP', $request['generationConfig']);
+        $this->assertArrayNotHasKey('topK', $request['generationConfig']);
     }
 
     public function testReturnsTheParsedJson(): void
@@ -114,11 +135,6 @@ class GeminiHttpClientTest extends TestCase
             public function responseSchema(): array
             {
                 return ['type' => 'OBJECT'];
-            }
-
-            public function temperature(): float
-            {
-                return 0.2;
             }
 
             public function modelTier(): GeminiModelTier

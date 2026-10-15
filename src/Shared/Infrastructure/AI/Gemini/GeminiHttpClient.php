@@ -35,7 +35,6 @@ class GeminiHttpClient implements GeminiClient
             'generationConfig' => [
                 'responseMimeType' => 'application/json',
                 'responseSchema' => $prompt->responseSchema(),
-                'temperature' => $prompt->temperature(),
                 ...$this->thinkingConfig($model, $prompt->thinkingLevel()),
             ],
         ];
@@ -95,12 +94,7 @@ class GeminiHttpClient implements GeminiClient
         $isPro = str_contains($model, '-pro');
 
         if ($major >= 3) {
-            return ['thinkingConfig' => ['thinkingLevel' => match ($level) {
-                GeminiThinkingLevel::MINIMAL => $isPro ? 'low' : 'minimal',
-                GeminiThinkingLevel::LOW => 'low',
-                GeminiThinkingLevel::MEDIUM => $isPro ? 'high' : 'medium',
-                GeminiThinkingLevel::HIGH => 'high',
-            }]];
+            return ['thinkingConfig' => ['thinkingLevel' => $this->thinkingLevelName($level, $this->supportsMinimal($major, $minor, $isPro), $this->supportsMedium($major, $minor, $isPro))]];
         }
 
         if (2 === $major && 5 === $minor) {
@@ -113,6 +107,26 @@ class GeminiHttpClient implements GeminiClient
         }
 
         return [];
+    }
+
+    private function thinkingLevelName(GeminiThinkingLevel $level, bool $supportsMinimal, bool $supportsMedium): string
+    {
+        return match ($level) {
+            GeminiThinkingLevel::MINIMAL => $supportsMinimal ? 'minimal' : 'low',
+            GeminiThinkingLevel::LOW => 'low',
+            GeminiThinkingLevel::MEDIUM => $supportsMedium ? 'medium' : 'high',
+            GeminiThinkingLevel::HIGH => 'high',
+        };
+    }
+
+    private function supportsMinimal(int $major, int $minor, bool $isPro): bool
+    {
+        return !$isPro && 3 === $major && $minor <= 6;
+    }
+
+    private function supportsMedium(int $major, int $minor, bool $isPro): bool
+    {
+        return !$isPro || $major > 3 || $minor >= 1;
     }
 
     /**
@@ -140,7 +154,6 @@ class GeminiHttpClient implements GeminiClient
             'prompt_class' => $prompt::class,
             'request' => [
                 'text' => $prompt->text(),
-                'temperature' => $prompt->temperature(),
                 'thinkingLevel' => $prompt->thinkingLevel()->name,
                 'responseSchema' => $prompt->responseSchema(),
             ],
