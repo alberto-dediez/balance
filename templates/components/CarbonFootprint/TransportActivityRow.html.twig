@@ -1,0 +1,100 @@
+{% props prefix, index, items, units, row = null, readOnly = false %}
+
+{% if readOnly %}
+    {% set selectedItem = null %}
+    {% for item in items %}
+        {% if row and row.itemId == item.id ~ '' %}{% set selectedItem = item %}{% endif %}
+    {% endfor %}
+    <tr>
+        <td>{{ row and row.source ? row.source : '' }}</td>
+        <td>{{ selectedItem ? (selectedItem.vehicle.value | trans({}, 'transportVehicleType')) ~ ' - ' ~ selectedItem.name : '—' }}</td>
+        <td>
+            {{ row ? row.quantity : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}
+            {% if row and row.weight is not null and row.distanceKm is not null %}
+                <small class="text-muted">({{ row.weight }} {{ row.weightUnit | trans({}, 'unitType') }} × {{ row.distanceKm }} km)</small>
+            {% endif %}
+        </td>
+        <td class="text-end text-nowrap">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</td>
+        <td></td>
+    </tr>
+{% else %}
+<tr class="collection-element">
+    <td>
+        <input type="text" name="{{ prefix }}[{{ index }}][source]" class="form-control" value="{{ row and row.source ? row.source : '' }}" data-field="source">
+    </td>
+    <td>
+        <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
+        <select name="{{ prefix }}[{{ index }}][itemId]" class="form-select" data-field="itemId" data-controller="autocomplete" data-action="activity-emissions#itemChanged" required="required">
+            <option value="">{{ 'Selecciona una opción' | trans }}</option>
+            {% for item in items %}
+                <option value="{{ item.id }}" data-unit="{{ item.unit.value }}" data-magnitude="{{ item.unit.magnitude.value }}"{{ row and row.itemId == item.id ~ '' ? ' selected' }}>{{ item.vehicle.value | trans({}, 'transportVehicleType') }} - {{ item.name }}</option>
+            {% endfor %}
+        </select>
+    </td>
+    {% set freight = row and row.weight is not null %}
+    <td>
+        <div class="input-group{{ freight ? ' d-none' }}" data-magnitude-panel="default">
+            <input
+                type="number"
+                name="{{ prefix }}[{{ index }}][quantity]"
+                class="form-control"
+                step="any"
+                min="0"
+                value="{{ row ? row.quantity : '0' }}"
+                data-field="quantity"
+                data-action="activity-emissions#recalculate"
+            >
+            <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit" data-action="activity-emissions#recalculate">
+                {% for unit in units %}
+                    <option value="{{ unit.value }}" data-magnitude="{{ unit.magnitude.value }}"{{ row and row.unit == unit.value ? ' selected' }}>{{ unit.value | trans({}, 'unitType') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="{{ not freight ? 'd-none' }}" data-magnitude-panel="freight">
+            <div class="input-group mb-1">
+                <input
+                    type="number"
+                    name="{{ prefix }}[{{ index }}][weight]"
+                    class="form-control"
+                    step="any"
+                    min="0"
+                    value="{{ freight ? row.weight : '' }}"
+                    placeholder="{{ 'Peso' | trans }}"
+                    aria-label="{{ 'Peso' | trans }}"
+                    data-field="weight"
+                    data-action="activity-emissions#recalculate"
+                >
+                <select name="{{ prefix }}[{{ index }}][weightUnit]" class="form-select" data-field="weightUnit" data-action="activity-emissions#recalculate">
+                    {% for weightUnit in ['kg', 't'] %}
+                        <option value="{{ weightUnit }}"{{ freight and row.weightUnit == weightUnit ? ' selected' }}>{{ weightUnit | trans({}, 'unitType') }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-group mb-1">
+                <input
+                    type="number"
+                    name="{{ prefix }}[{{ index }}][distanceKm]"
+                    class="form-control"
+                    step="any"
+                    min="0"
+                    value="{{ freight and row.distanceKm is not null ? row.distanceKm : '' }}"
+                    placeholder="{{ 'Distancia (km)' | trans }}"
+                    aria-label="{{ 'Distancia (km)' | trans }}"
+                    data-field="distanceKm"
+                    data-action="activity-emissions#recalculate"
+                >
+                <span class="input-group-text">{{ 'km' | trans({}, 'unitType') }}</span>
+            </div>
+            <small class="text-muted"><span data-field="quantityTotal">{{ freight ? row.quantity : '—' }}</span> {{ 'tkm' | trans({}, 'unitType') }}</small>
+        </div>
+    </td>
+    <td class="text-end text-nowrap">
+        <span data-field="emissions">{{ row ? row.co2eq | number_format(2, ',', '.') : '—' }}</span>
+    </td>
+    <td class="text-end">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+            <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+        </button>
+    </td>
+</tr>
+{% endif %}

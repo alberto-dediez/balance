@@ -98,7 +98,7 @@ class NavigationSearchProviderTest extends TestCase
     {
         $results = $this->createSUT(Role::Admin)->search(new SearchTerm('ar'), UserMother::adminUser(), 1);
 
-        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Transporte por carretera', 'Combustible de maquinaria', 'Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
+        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Combustible de maquinaria', 'Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
     }
 
     public function testTranslatesTheEntriesToTheCurrentLocale(): void

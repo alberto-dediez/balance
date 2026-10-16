@@ -8,7 +8,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegi
 use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\RefrigerantGasCatalogProvider;
-use App\CarbonFootprint\Application\Activity\Catalog\RoadTransportCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope\GetCompanyCarbonFootprintScopeRequest;
@@ -31,7 +31,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCa
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepositoryMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +49,7 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
 
         $catalogProviders = new ActivityCatalogProviderRegistry([
             new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
-            new RoadTransportCatalogProvider(RoadTransportRepositoryMother::inMemory()),
+            new TransportCatalogProvider(TransportRepositoryMother::inMemory()),
             new RefrigerantGasCatalogProvider(RefrigerantGasRepositoryMother::inMemory()),
             new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
         ]);

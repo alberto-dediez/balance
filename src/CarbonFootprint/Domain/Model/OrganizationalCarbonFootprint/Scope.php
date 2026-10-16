@@ -25,7 +25,7 @@ enum Scope: string implements CalculationStage
         return match ($this) {
             self::Scope1 => [
                 new SectionDefinition('combustibles', Source::FixedFacilities, ActivityType::Combustible),
-                new SectionDefinition('vehicles', Source::OwnVehicles, ActivityType::RoadTransport),
+                new SectionDefinition('vehicles', Source::OwnVehicles, ActivityType::Transport),
                 new SectionDefinition('refrigerantGases', Source::RefrigerantLeaks, ActivityType::RefrigerantGas),
             ],
             self::Scope2 => [

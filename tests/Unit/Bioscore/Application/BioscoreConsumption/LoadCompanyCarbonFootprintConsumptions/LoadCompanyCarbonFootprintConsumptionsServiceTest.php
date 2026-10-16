@@ -64,7 +64,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityM
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepositoryMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
@@ -154,7 +154,7 @@ class LoadCompanyCarbonFootprintConsumptionsServiceTest extends TestCase
             $this->gateway,
             new BioscoreConsumptionAnswersBuilder(
                 $this->catalogItems,
-                new CatalogTargetFinder($combustibleRepository, RoadTransportRepositoryMother::inMemory(), $refrigerantGasRepository, ElectricityMarketerRepositoryMother::inMemory()),
+                new CatalogTargetFinder($combustibleRepository, TransportRepositoryMother::inMemory(), $refrigerantGasRepository, ElectricityMarketerRepositoryMother::inMemory()),
             ),
             $this->replaceAnswers,
         );

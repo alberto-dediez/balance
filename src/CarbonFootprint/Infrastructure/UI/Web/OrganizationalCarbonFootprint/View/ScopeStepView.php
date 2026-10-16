@@ -27,13 +27,13 @@ final class ScopeStepView
 
         return [
             'combustibles' => null === $combustibles ? [] : $combustibles->catalog,
-            'roadTransports' => null === $vehicles ? [] : $vehicles->catalog,
+            'transports' => null === $vehicles ? [] : $vehicles->catalog,
             'refrigerantGases' => null === $refrigerantGases ? [] : $refrigerantGases->catalog,
             'electricityMarketers' => null === $electricity ? [] : $electricity->catalog,
             'gdOFactors' => null === $electricity ? [] : $electricity->secondaryCatalog,
             'units' => Unit::cases(),
             'combustibleRows' => $this->rows($combustibles),
-            'roadTransportRows' => $this->rows($vehicles),
+            'transportRows' => $this->rows($vehicles),
             'refrigerantGasRows' => $this->rows($refrigerantGases),
             'electricityRows' => $this->rows($electricity),
         ];

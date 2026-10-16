@@ -54,6 +54,8 @@
                             {% set value = value.value | trans({}, 'materialityCriterionType') %}
                         {% elseif field == 'currency' %}
                             {% set value = value.value | trans({}, 'unitType') %}
+                        {% elseif field == 'mode' %}
+                            {% set value = value.value | trans({}, 'transportModeType') %}
                         {% endif %}
 
                         <twig:List:FilterShow

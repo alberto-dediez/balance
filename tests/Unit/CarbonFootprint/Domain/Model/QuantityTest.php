@@ -102,4 +102,20 @@ class QuantityTest extends TestCase
         $this->expectException(IncompatibleUnitsException::class);
         $quantity->convertTo(Unit::Kilogram);
     }
+
+    public function testThrowsWhenConvertingTonneKilometreToKilogram(): void
+    {
+        $quantity = new Quantity(10.0, Unit::TonneKilometre);
+
+        $this->expectException(IncompatibleUnitsException::class);
+        $quantity->convertTo(Unit::Kilogram);
+    }
+
+    public function testThrowsWhenConvertingKilometreToTonneKilometre(): void
+    {
+        $quantity = new Quantity(10.0, Unit::Kilometer);
+
+        $this->expectException(IncompatibleUnitsException::class);
+        $quantity->convertTo(Unit::TonneKilometre);
+    }
 }

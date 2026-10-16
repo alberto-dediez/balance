@@ -62,4 +62,12 @@ class UnitTest extends TestCase
 
         (new Quantity(10, Unit::SquareMeter))->convertTo(Unit::Kilogram);
     }
+
+    public function testTonneKilometreBelongsToFreightMagnitude(): void
+    {
+        $this->assertSame(Magnitude::Freight, Unit::TonneKilometre->magnitude());
+        $this->assertSame(Unit::TonneKilometre, Magnitude::Freight->baseUnit());
+        $this->assertSame(1.0, Unit::TonneKilometre->fixedFactorToBase());
+        $this->assertFalse(Unit::TonneKilometre->isCurrency());
+    }
 }

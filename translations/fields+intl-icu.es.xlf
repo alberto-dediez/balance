@@ -105,10 +105,6 @@
         <source>machinery_type</source>
         <target>Tipo maquinaria</target>
       </trans-unit>
-      <trans-unit id="H.x9jS4" resname="road_transport">
-        <source>road_transport</source>
-        <target>Transporte por carretera</target>
-      </trans-unit>
       <trans-unit id="SQK8P2M" resname="vehicle">
         <source>vehicle</source>
         <target>Vehiculo</target>
@@ -160,6 +156,10 @@
       <trans-unit id="gK9OmOI" resname="classificationCode">
         <source>classificationCode</source>
         <target>Código CNAE/NACE</target>
+      </trans-unit>
+      <trans-unit id="Hlo_yJt" resname="transport">
+        <source>transport</source>
+        <target>Medio de transporte</target>
       </trans-unit>
     </body>
   </file>

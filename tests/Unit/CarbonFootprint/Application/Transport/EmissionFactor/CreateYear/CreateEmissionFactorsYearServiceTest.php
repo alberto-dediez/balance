@@ -1,0 +1,104 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Unit\CarbonFootprint\Application\Transport\EmissionFactor\CreateYear;
+
+use App\CarbonFootprint\Application\Transport\EmissionFactor\CreateYear\CreateEmissionFactorsYearRequest;
+use App\CarbonFootprint\Application\Transport\EmissionFactor\CreateYear\CreateEmissionFactorsYearService;
+use App\CarbonFootprint\Application\Transport\EmissionFactor\CreateYear\EmissionFactorYearAlreadyExistsException;
+use App\CarbonFootprint\Application\Transport\TransportAuthorizer;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\Transport\TransportRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use PHPUnit\Framework\TestCase;
+
+class CreateEmissionFactorsYearServiceTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+    }
+
+    public function testCopiesFactorsFromSourceYearToTargetYear(): void
+    {
+        $repository = TransportRepositoryMother::inMemory();
+
+        $transport = TransportMother::random();
+        $transport->setEmissionFactor(new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupMother::defaultId(), source: 'IPCC'));
+        $repository->add($transport);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new CreateEmissionFactorsYearRequest(sourceYear: 2024, emissionFactorGroupId: (string) EmissionFactorGroupMother::defaultId(), targetYear: 2025);
+
+        $response = $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $this->assertSame(2025, $response->targetYear);
+
+        $persisted = $repository->find($transport->id());
+        $this->assertNotNull($persisted);
+
+        $copied = $persisted->emissionFactorFor(2025, EmissionFactorGroupMother::defaultId());
+        $this->assertNotNull($copied);
+        $this->assertSame('1.5', $copied->co2eq());
+        $this->assertSame('IPCC', $copied->source());
+
+        $this->assertNotNull($persisted->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId()));
+    }
+
+    public function testThrowsWhenTargetYearAlreadyExists(): void
+    {
+        $repository = TransportRepositoryMother::inMemory();
+
+        $transport = TransportMother::random();
+        $transport->setEmissionFactor(new EmissionFactor('1', '1', '1', '1', 2024, emissionFactorGroupId: EmissionFactorGroupMother::defaultId()));
+        $transport->setEmissionFactor(new EmissionFactor('2', '2', '2', '2', 2025, emissionFactorGroupId: EmissionFactorGroupMother::defaultId()));
+        $repository->add($transport);
+
+        $sut = $this->createSUT($repository);
+
+        $this->expectException(EmissionFactorYearAlreadyExistsException::class);
+
+        $sut(
+            new CreateEmissionFactorsYearRequest(sourceYear: 2024, emissionFactorGroupId: (string) EmissionFactorGroupMother::defaultId(), targetYear: 2025),
+            UserMother::fromUsernameAndRole('admin', Role::Admin),
+        );
+    }
+
+    public function testThrowsWhenTargetYearIsFuture(): void
+    {
+        $repository = TransportRepositoryMother::inMemory();
+        $repository->add(TransportMother::random());
+
+        $sut = $this->createSUT($repository);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $sut(
+            new CreateEmissionFactorsYearRequest(
+                sourceYear: 2024,
+                targetYear: 9999,
+            ),
+            UserMother::fromUsernameAndRole('admin', Role::Admin),
+        );
+    }
+
+    public function testIsHandled(): void
+    {
+        $repository = TransportRepositoryMother::inMemory();
+        $sut = $this->createSUT($repository);
+
+        $this->assertTrue($sut->isHandled(new CreateEmissionFactorsYearRequest(sourceYear: 2024)));
+    }
+
+    private function createSUT(TransportRepository $repository): CreateEmissionFactorsYearService
+    {
+        return new CreateEmissionFactorsYearService($repository, new TransportAuthorizer());
+    }
+}

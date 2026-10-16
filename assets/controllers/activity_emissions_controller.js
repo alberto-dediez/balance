@@ -5,6 +5,7 @@ export default class extends Controller {
 
     connect() {
         this.element.querySelectorAll('tbody tr').forEach((row) => {
+            this.applyMagnitudePanel(row);
             this.restrictUnit(row);
             this.applyMode(row);
         });
@@ -23,6 +24,7 @@ export default class extends Controller {
     itemChanged(event) {
         const row = event.target.closest('tr');
 
+        this.applyMagnitudePanel(row);
         this.restrictUnit(row);
         this.calculate(row);
     }
@@ -94,6 +96,30 @@ export default class extends Controller {
         });
     }
 
+    applyMagnitudePanel(row) {
+        const panels = row.querySelectorAll('[data-magnitude-panel]');
+
+        if (panels.length === 0) return;
+
+        const option = row.querySelector('[data-field="itemId"]')?.selectedOptions[0];
+        const active = option?.dataset.magnitude === 'freight' ? 'freight' : 'default';
+
+        panels.forEach((panel) => {
+            const hidden = panel.dataset.magnitudePanel !== active;
+
+            panel.classList.toggle('d-none', hidden);
+            panel.querySelectorAll('input, select').forEach((field) => {
+                field.disabled = hidden;
+            });
+        });
+    }
+
+    isFreightPanelVisible(row) {
+        const panel = row.querySelector('[data-magnitude-panel="freight"]');
+
+        return Boolean(panel) && !panel.classList.contains('d-none');
+    }
+
     restrictUnit(row) {
         const itemSelect = row.querySelector('[data-field="itemId"]');
         const unitSelect = row.querySelector('[data-field="unit"]');
@@ -119,6 +145,24 @@ export default class extends Controller {
     }
 
     resolveQuantity(row) {
+        const weightField = row.querySelector('[data-field="weight"]');
+        const distanceField = row.querySelector('[data-field="distanceKm"]');
+
+        if (weightField && distanceField && this.isFreightPanelVisible(row)) {
+            const weight = parseFloat(weightField.value.replace(',', '.'));
+            const distanceKm = parseFloat(distanceField.value.replace(',', '.'));
+            const weightUnit = row.querySelector('[data-field="weightUnit"]')?.value;
+            const tonnes = weightUnit === 't' ? weight : weight / 1000;
+            const total = weight >= 0 && distanceKm >= 0 ? tonnes * distanceKm : null;
+            const totalOutput = row.querySelector('[data-field="quantityTotal"]');
+
+            if (totalOutput) {
+                totalOutput.textContent = total !== null ? total.toLocaleString(undefined, { maximumFractionDigits: 3 }) : '—';
+            }
+
+            return total !== null ? String(total) : null;
+        }
+
         const nightsField = row.querySelector('[data-field="nights"]');
         const peopleField = row.querySelector('[data-field="people"]');
 
@@ -169,7 +213,7 @@ export default class extends Controller {
 
             body = { type: this.typeValue, itemId, mode, containerCapacity, containerUnit, fillPercentage };
         } else {
-            const unit = row.querySelector('[data-field="unit"]')?.value;
+            const unit = this.isFreightPanelVisible(row) ? 'tkm' : row.querySelector('[data-field="unit"]')?.value;
             const quantity = this.resolveQuantity(row);
 
             if ((!itemId && !itemId2) || !quantity) {

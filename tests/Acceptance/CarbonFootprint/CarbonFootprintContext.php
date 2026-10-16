@@ -15,9 +15,11 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRe
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
+use App\CarbonFootprint\Domain\Model\Activity\TransportActivity;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
@@ -28,6 +30,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyRespon
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityReference;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -88,7 +91,8 @@ use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingRepository;
 use App\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepository;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepository;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
+use App\CarbonFootprint\Domain\Model\Transport\TransportRepository;
+use App\CarbonFootprint\Domain\Model\Transport\Vehicle;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
 use App\CarbonFootprint\Domain\Model\Trip\ResolvedLeg;
 use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
@@ -139,7 +143,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Process\ProcessMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\UseProfile\UseProfileMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -206,9 +210,9 @@ final readonly class CarbonFootprintContext implements Context
         return $this->client->getContainer()->get(CombustibleRepository::class);
     }
 
-    public function getRoadTransportRepository(): RoadTransportRepository
+    public function getTransportRepository(): TransportRepository
     {
-        return $this->client->getContainer()->get(RoadTransportRepository::class);
+        return $this->client->getContainer()->get(TransportRepository::class);
     }
 
     public function getEmissionFactorGroupRepository(): EmissionFactorGroupRepository
@@ -545,24 +549,24 @@ final readonly class CarbonFootprintContext implements Context
         $this->getEmissionFactorGroupRepository()->add($emissionFactorGroup);
     }
 
-    #[Given('road transport :name with id :id exists')]
-    public function roadTransportWithIdExists(string $name, string $id): void
+    #[Given('transport :name with id :id exists')]
+    public function transportWithIdExists(string $name, string $id): void
     {
         $this->ensureDefaultEmissionFactorGroupExists();
 
-        $roadTransport = RoadTransportMother::fromNameAndId($name, $id);
+        $transport = TransportMother::fromNameAndId($name, $id);
 
-        $this->getRoadTransportRepository()->add($roadTransport);
+        $this->getTransportRepository()->add($transport);
     }
 
-    #[Given('road transport :name with id :id and emission factor for year :year exists')]
-    public function roadTransportWithEmissionFactorExists(string $name, string $id, string $year): void
+    #[Given('transport :name with id :id and emission factor for year :year exists')]
+    public function transportWithEmissionFactorExists(string $name, string $id, string $year): void
     {
         $this->ensureDefaultEmissionFactorGroupExists();
 
-        $roadTransport = RoadTransportMother::fromNameAndId($name, $id);
+        $transport = TransportMother::fromNameAndId($name, $id);
 
-        $roadTransport->setEmissionFactor(new EmissionFactor(
+        $transport->setEmissionFactor(new EmissionFactor(
             co2eq: '1.5',
             co2: '1.0',
             ch4: '0.2',
@@ -572,7 +576,28 @@ final readonly class CarbonFootprintContext implements Context
             source: 'IPCC',
         ));
 
-        $this->getRoadTransportRepository()->add($roadTransport);
+        $this->getTransportRepository()->add($transport);
+    }
+
+    #[Given('transport :name with id :id in unit :unit with vehicle :vehicle and emission factor for year :year exists')]
+    public function transportWithUnitVehicleAndEmissionFactorExists(string $name, string $id, string $unit, string $vehicle, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $transport = TransportMother::from($name, $id, Unit::from($unit), Vehicle::from($vehicle));
+
+        $transport->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: $transport->unit(),
+            source: 'IPCC',
+        ));
+
+        $this->getTransportRepository()->add($transport);
     }
 
     #[Given('electricity marketer :name with id :id exists')]
@@ -1877,6 +1902,49 @@ final readonly class CarbonFootprintContext implements Context
         $uri = $this->client->getRequest()->getUri();
 
         $this->client->requestWithFiles('POST', $uri, $parameters, [], ['HTTP_REFERER' => $uri]);
+    }
+
+    #[When('I submit the company scope :scope step form with a transport :itemId of :weight :weightUnit over :distanceKm km for property :propertyId')]
+    public function iSubmitTheCompanyScopeStepFormWithATransportForProperty(string $scope, string $itemId, string $weight, string $weightUnit, string $distanceKm, string $propertyId): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $token = $crawler->filter('input[name="_token"]')->attr('value');
+        Assert::assertNotNull($token);
+
+        $row = ['vehicles' => [['itemId' => $itemId, 'weight' => $weight, 'weightUnit' => $weightUnit, 'distanceKm' => $distanceKm]]];
+
+        $parameters = ['_token' => $token]
+            + ('none' === $propertyId ? ['unassigned' => $row] : ['properties' => [$propertyId => $row]]);
+
+        $uri = $this->client->getRequest()->getUri();
+
+        $this->client->requestWithFiles('POST', $uri, $parameters, [], ['HTTP_REFERER' => $uri]);
+    }
+
+    #[Then('company carbon footprint :id activity of transport :transportId has quantity :quantity :unit')]
+    public function companyCarbonFootprintActivityOfTransportHasQuantity(string $id, string $transportId, float $quantity, string $unit): void
+    {
+        $footprint = $this->getCompanyCarbonFootprintRepository()->find(new CompanyCarbonFootprintId($id));
+
+        Assert::assertNotNull($footprint);
+
+        $activities = array_filter(
+            $this->getActivityRepository()->findByIds(array_map(
+                static fn(ActivityReference $reference): ActivityId => $reference->activityId,
+                $footprint->activityReferences(),
+            )),
+            static fn(Activity $activity): bool => $activity instanceof TransportActivity && (string) $activity->transportId() === $transportId,
+        );
+
+        Assert::assertCount(1, $activities);
+
+        $activity = array_values($activities)[0];
+        Assert::assertInstanceOf(TransportActivity::class, $activity);
+        Assert::assertEqualsWithDelta($quantity, $activity->quantity()->value(), 0.0001);
+        Assert::assertSame(Unit::from($unit), $activity->quantity()->unit());
+        Assert::assertNotNull($activity->weight());
+        Assert::assertNotNull($activity->distanceKm());
     }
 
     #[Then('property carbon footprint :id should have source :source excluded in scope :scope')]

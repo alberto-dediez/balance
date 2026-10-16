@@ -55,8 +55,8 @@ doctrine:
             combustible_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleIdType
             combustible_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CombustibleEmissionFactorIdType
             emission_factor_group_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmissionFactorGroupIdType
-            road_transport_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportIdType
-            road_transport_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RoadTransportEmissionFactorIdType
+            transport_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TransportIdType
+            transport_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TransportEmissionFactorIdType
             electricity_marketer_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerIdType
             electricity_marketer_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ElectricityMarketerEmissionFactorIdType
             refrigerant_gas_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\RefrigerantGasIdType

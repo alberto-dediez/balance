@@ -657,10 +657,6 @@
         <source>Combustible de maquinaria</source>
         <target>Makine yakıtı</target>
       </trans-unit>
-      <trans-unit id="8OxKCnI" resname="Transporte por carretera">
-        <source>Transporte por carretera</source>
-        <target>Karayolu taşımacılığı</target>
-      </trans-unit>
       <trans-unit id="N0cQFPs" resname="Catering">
         <source>Catering</source>
         <target>Catering</target>
@@ -1040,14 +1036,6 @@
       <trans-unit id="YIzdu7P" resname="No se ha podido eliminar el combustible de maquinaria {id}">
         <source>No se ha podido eliminar el combustible de maquinaria {id}</source>
         <target>{id} makine yakıtı silinemedi</target>
-      </trans-unit>
-      <trans-unit id="cJ_dq5i" resname="Transporte por carretera creado correctamente: {name}">
-        <source>Transporte por carretera creado correctamente: {name}</source>
-        <target>Karayolu taşımacılığı başarıyla oluşturuldu: {name}</target>
-      </trans-unit>
-      <trans-unit id=".4NeGY4" resname="Transporte por carretera actualizado con éxito">
-        <source>Transporte por carretera actualizado con éxito</source>
-        <target>Karayolu taşımacılığı başarıyla güncellendi</target>
       </trans-unit>
       <trans-unit id="YZ5zR71" resname="Se ha eliminado el transporte {name}">
         <source>Se ha eliminado el transporte {name}</source>
@@ -9368,6 +9356,50 @@
       <trans-unit id="VpQRsCq" resname="Se ha traducido el sector económico &quot;{economicSector}&quot; por el usuario {user}">
         <source>Se ha traducido el sector económico "{economicSector}" por el usuario {user}</source>
         <target>"{economicSector}" ekonomik sektörü {user} kullanıcısı tarafından çevrildi</target>
+      </trans-unit>
+      <trans-unit id="jfbi5SU" resname="Sistema">
+        <source>Sistema</source>
+        <target>Sistem</target>
+      </trans-unit>
+      <trans-unit id="1ZkNtZY" resname="Medios de transporte">
+        <source>Medios de transporte</source>
+        <target>Taşıma araçları</target>
+      </trans-unit>
+      <trans-unit id="Ccptu5D" resname="Medio de transporte creado correctamente: {name}">
+        <source>Medio de transporte creado correctamente: {name}</source>
+        <target>Taşıma aracı başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="u3YO04A" resname="Medio de transporte actualizado con éxito">
+        <source>Medio de transporte actualizado con éxito</source>
+        <target>Taşıma aracı başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="_sMs3r4" resname="Tipo de vehículo o medio">
+        <source>Tipo de vehículo o medio</source>
+        <target>Araç veya taşıma türü</target>
+      </trans-unit>
+      <trans-unit id="_ZqhVMj" resname="Modo">
+        <source>Modo</source>
+        <target>Mod</target>
+      </trans-unit>
+      <trans-unit id="5gQFM.t" resname="Cantidad / Peso y distancia">
+        <source>Cantidad / Peso y distancia</source>
+        <target>Miktar / Ağırlık ve mesafe</target>
+      </trans-unit>
+      <trans-unit id="ZDBN3lP" resname="Buscar en la plataforma…">
+        <source>Buscar en la plataforma…</source>
+        <target>Platformda ara…</target>
+      </trans-unit>
+      <trans-unit id="VFJm21x" resname="Borrar búsqueda">
+        <source>Borrar búsqueda</source>
+        <target>Aramayı temizle</target>
+      </trans-unit>
+      <trans-unit id="VEsYfPG" resname="Escribe al menos 2 caracteres">
+        <source>Escribe al menos 2 caracteres</source>
+        <target>En az 2 karakter yazın</target>
+      </trans-unit>
+      <trans-unit id="T8JpMMG" resname="Sin resultados">
+        <source>Sin resultados</source>
+        <target>Sonuç yok</target>
       </trans-unit>
     </body>
   </file>

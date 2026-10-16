@@ -21,7 +21,7 @@
             <discriminator-mapping value="machinery_fuel" class="App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity" />
             <discriminator-mapping value="mobility" class="App\CarbonFootprint\Domain\Model\Activity\MobilityActivity" />
             <discriminator-mapping value="overnight_stay" class="App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity" />
-            <discriminator-mapping value="road_transport" class="App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity" />
+            <discriminator-mapping value="transport" class="App\CarbonFootprint\Domain\Model\Activity\TransportActivity" />
             <discriminator-mapping value="waste" class="App\CarbonFootprint\Domain\Model\Activity\WasteActivity" />
             <discriminator-mapping value="refrigerant_gas" class="App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity" />
         </discriminator-map>

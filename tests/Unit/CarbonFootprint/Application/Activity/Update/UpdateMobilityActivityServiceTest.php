@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMobilityActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\MobilityActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -86,7 +87,7 @@ class UpdateMobilityActivityServiceTest extends TestCase
         $selector = new MobilityEmissionFactorSelector(MobilityRepositoryMother::inMemory());
         $sut = new UpdateMobilityActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateMobilityActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             mobilityId: MobilityId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilometer),
             year: 2024,

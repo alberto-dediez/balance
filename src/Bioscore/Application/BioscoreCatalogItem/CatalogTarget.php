@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bioscore\Application\BioscoreCatalogItem;
 
-use App\CarbonFootprint\Domain\Model\RoadTransport\Vehicle;
+use App\CarbonFootprint\Domain\Model\Transport\Vehicle;
 use App\CarbonFootprint\Domain\Model\Unit;
 
 final readonly class CatalogTarget

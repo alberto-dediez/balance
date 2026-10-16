@@ -48,7 +48,7 @@
             <td>
                 {% if element.targetId is not null and targetsById[element.targetId] is defined %}
                     {% set target = targetsById[element.targetId] %}
-                    {{ target.name }}{% if target.vehicle is not null %} - {{ target.vehicle.value | trans({}, 'roadTransportVehicleType') }}{% endif %}
+                    {{ target.name }}{% if target.vehicle is not null %} - {{ target.vehicle.value | trans({}, 'transportVehicleType') }}{% endif %}
                 {% else %}
                     ---
                 {% endif %}

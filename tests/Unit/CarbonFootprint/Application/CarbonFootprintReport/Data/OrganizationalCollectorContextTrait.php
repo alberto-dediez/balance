@@ -7,7 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
 use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
-use App\CarbonFootprint\Application\Activity\Catalog\RoadTransportCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\MitigationPlanReportBuilder;
@@ -17,14 +17,14 @@ use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
-use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity;
+use App\CarbonFootprint\Domain\Model\Activity\TransportActivity;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Quantity;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
+use App\CarbonFootprint\Domain\Model\Transport\TransportId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationActionRepository;
@@ -34,7 +34,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositor
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 
 trait OrganizationalCollectorContextTrait
@@ -74,7 +74,7 @@ trait OrganizationalCollectorContextTrait
         return new ActivityItemNameResolver(
             new ActivityCatalogProviderRegistry([
                 new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
-                new RoadTransportCatalogProvider(RoadTransportRepositoryMother::inMemory()),
+                new TransportCatalogProvider(TransportRepositoryMother::inMemory()),
                 new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
             ]),
             new FakeTranslator(),
@@ -93,12 +93,12 @@ trait OrganizationalCollectorContextTrait
         ));
     }
 
-    private function roadTransportActivity(string $co2eq): Activity
+    private function transportActivity(string $co2eq): Activity
     {
-        return $this->save(RoadTransportActivity::register(
+        return $this->save(TransportActivity::register(
             id: ActivityId::generate(),
             accountId: new AccountId('account-id'),
-            roadTransportId: RoadTransportId::generate(),
+            transportId: TransportId::generate(),
             emissionFactor: new EmissionFactor('0.25', '0.25', '0', '0', 2025, EmissionFactorGroupMother::defaultId(), Unit::Kilometer, 'MITECO'),
             emissions: new Emissions($co2eq, $co2eq, '0', '0'),
             quantity: new Quantity(5000.0, Unit::Kilometer),

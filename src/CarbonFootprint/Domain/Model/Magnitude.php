@@ -14,6 +14,7 @@ enum Magnitude: string
     case Stay     = 'stay';
     case Area     = 'area';
     case Currency = 'currency';
+    case Freight = 'freight';
 
     public function baseUnit(): Unit
     {
@@ -26,6 +27,7 @@ enum Magnitude: string
             self::Stay     => Unit::Pernoctacion,
             self::Area     => Unit::SquareMeter,
             self::Currency => Unit::Euro,
+            self::Freight => Unit::TonneKilometre,
         };
     }
 }

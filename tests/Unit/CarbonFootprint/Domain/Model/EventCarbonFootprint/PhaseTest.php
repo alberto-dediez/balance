@@ -33,7 +33,7 @@ class PhaseTest extends TestCase
 
         $this->assertCount(8, $sections);
         $this->assertSame(
-            ['combustibles', 'roadTransports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'wastes'],
+            ['combustibles', 'transports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'wastes'],
             array_map(static fn($s) => $s->key, $sections),
         );
     }
@@ -55,7 +55,7 @@ class PhaseTest extends TestCase
 
         $this->assertCount(10, $sections);
         $this->assertSame(
-            ['combustibles', 'roadTransports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'attendeesMobilities', 'attendeesOvernightStays', 'wastes'],
+            ['combustibles', 'transports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'attendeesMobilities', 'attendeesOvernightStays', 'wastes'],
             array_map(static fn($s) => $s->key, $sections),
         );
     }
@@ -66,7 +66,7 @@ class PhaseTest extends TestCase
 
         $this->assertCount(8, $sections);
         $this->assertSame(
-            ['combustibles', 'roadTransports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'wastes'],
+            ['combustibles', 'transports', 'machineryFuels', 'machineryElectricity', 'buildingElectricity', 'overnightStays', 'mobilities', 'wastes'],
             array_map(static fn($s) => $s->key, $sections),
         );
     }
@@ -111,7 +111,7 @@ class PhaseTest extends TestCase
             }
 
             $this->assertNotSame($sectionKeys, $providerSectionKeys);
-            $this->assertNotContains('roadTransports', $providerSectionKeys);
+            $this->assertNotContains('transports', $providerSectionKeys);
             $this->assertNotContains('machineryElectricity', $providerSectionKeys);
             $this->assertNotContains('buildingElectricity', $providerSectionKeys);
             $this->assertNotContains('wastes', $providerSectionKeys);

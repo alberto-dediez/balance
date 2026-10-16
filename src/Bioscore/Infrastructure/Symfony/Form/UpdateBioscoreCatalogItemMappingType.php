@@ -74,7 +74,7 @@ class UpdateBioscoreCatalogItemMappingType extends AbstractType
     private function label(CatalogTarget $target, array $choices): string
     {
         $label = null !== $target->vehicle
-            ? sprintf('%s - %s', $target->name, $this->translator->trans($target->vehicle->value, [], 'roadTransportVehicleType'))
+            ? sprintf('%s - %s', $target->name, $this->translator->trans($target->vehicle->value, [], 'transportVehicleType'))
             : $target->name;
 
         $candidate = $label;

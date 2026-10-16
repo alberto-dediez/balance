@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -86,7 +87,7 @@ class UpdateCombustibleActivityServiceTest extends TestCase
         $selector = new CombustibleEmissionFactorSelector(CombustibleRepositoryMother::inMemory());
         $sut = new UpdateCombustibleActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateCombustibleActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             combustibleId: CombustibleId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,

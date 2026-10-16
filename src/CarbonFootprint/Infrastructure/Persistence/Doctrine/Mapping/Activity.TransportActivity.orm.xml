@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Activity\TransportActivity" table="transport_activities">
+        <field name="transportId" type="transport_id" column="transport_id" nullable="false" />
+        <field name="source" type="string" length="255" nullable="true" />
+        <field name="weightValue" type="float" column="weight_value" nullable="true" />
+        <field name="weightUnit" type="string" enum-type="App\CarbonFootprint\Domain\Model\Unit" column="weight_unit" nullable="true" />
+        <field name="distanceKm" type="float" column="distance_km" nullable="true" />
+    </entity>
+
+</doctrine-mapping>

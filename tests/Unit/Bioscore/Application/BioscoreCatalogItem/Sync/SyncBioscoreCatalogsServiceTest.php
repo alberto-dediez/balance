@@ -16,17 +16,17 @@ use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogSyncCompleted;
 use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreMappingStatus;
 use App\Bioscore\Infrastructure\Gateway\InMemoryBioscoreCatalogGateway;
 use App\Bioscore\Infrastructure\Persistence\InMemory\Repository\InMemoryBioscoreCatalogItemRepository;
-use App\CarbonFootprint\Domain\Model\RoadTransport\Vehicle;
+use App\CarbonFootprint\Domain\Model\Transport\Vehicle;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCombustibleRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryElectricityMarketerRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRefrigerantGasRepository;
-use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRoadTransportRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTransportRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +38,7 @@ class SyncBioscoreCatalogsServiceTest extends TestCase
     private InMemoryBioscoreCatalogItemRepository $repository;
     private InMemoryBioscoreCatalogGateway $gateway;
     private InMemoryCombustibleRepository $combustibles;
-    private InMemoryRoadTransportRepository $roadTransports;
+    private InMemoryTransportRepository $transports;
     private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
@@ -48,7 +48,7 @@ class SyncBioscoreCatalogsServiceTest extends TestCase
         $this->repository = BioscoreCatalogItemRepositoryMother::inMemory();
         $this->gateway = new InMemoryBioscoreCatalogGateway();
         $this->combustibles = new InMemoryCombustibleRepository();
-        $this->roadTransports = new InMemoryRoadTransportRepository();
+        $this->transports = new InMemoryTransportRepository();
         $this->spySubscriber = new SpyDomainEventSubscriber();
     }
 
@@ -78,8 +78,8 @@ class SyncBioscoreCatalogsServiceTest extends TestCase
 
     public function testDoesNotAutoMapWithTwoCandidates(): void
     {
-        $this->roadTransports->add(RoadTransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::PassengerCars));
-        $this->roadTransports->add(RoadTransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::Vans));
+        $this->transports->add(TransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::PassengerCars));
+        $this->transports->add(TransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::Vans));
         $this->gateway->set(BioscoreCatalog::TransportFuel, [new BioscoreCatalogEntry(3, 'Gasoil', 'l')]);
 
         $response = $this->sync();
@@ -262,7 +262,7 @@ class SyncBioscoreCatalogsServiceTest extends TestCase
             gateway: $this->gateway,
             targetFinder: new CatalogTargetFinder(
                 $this->combustibles,
-                $this->roadTransports,
+                $this->transports,
                 new InMemoryRefrigerantGasRepository(),
                 new InMemoryElectricityMarketerRepository(),
             ),

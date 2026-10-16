@@ -24,7 +24,7 @@ final class AssemblyBreakdownStepView
     public function build(EventCarbonFootprint $eventCarbonFootprint, GetPhaseResponse $response): array
     {
         $combustibles = $this->section($response, 'combustibles');
-        $roadTransports = $this->section($response, 'roadTransports');
+        $transports = $this->section($response, 'transports');
         $machineryFuels = $this->section($response, 'machineryFuels');
         $machineryElectricity = $this->section($response, 'machineryElectricity');
         $buildingElectricity = $this->section($response, 'buildingElectricity');
@@ -35,7 +35,7 @@ final class AssemblyBreakdownStepView
         return [
             'eventCarbonFootprint' => $eventCarbonFootprint,
             'combustibles' => $combustibles->catalog,
-            'roadTransports' => $roadTransports->catalog,
+            'transports' => $transports->catalog,
             'machineryFuels' => $machineryFuels->catalog,
             'electricityMarketers' => $machineryElectricity->catalog,
             'gdOFactors' => $machineryElectricity->secondaryCatalog,
@@ -44,7 +44,7 @@ final class AssemblyBreakdownStepView
             'wastes' => $wastes->catalog,
             'units' => Unit::cases(),
             'combustibleRows' => $this->rows($combustibles),
-            'roadTransportRows' => $this->rows($roadTransports),
+            'transportRows' => $this->rows($transports),
             'machineryFuelRows' => $this->rows($machineryFuels),
             'machineryElectricityRows' => $this->rows($machineryElectricity),
             'buildingElectricityRows' => $this->rows($buildingElectricity),

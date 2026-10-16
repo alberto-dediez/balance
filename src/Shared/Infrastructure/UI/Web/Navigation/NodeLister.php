@@ -368,9 +368,9 @@ class NodeLister
             target: '#transporte',
             items: [
                 new Node(
-                    label: new TranslatableMessage('Transporte por carretera'),
+                    label: new TranslatableMessage('Medios de transporte'),
                     icon: 'solar:bus-line-duotone',
-                    target: $this->router->generate('admin_road_transports'),
+                    target: $this->router->generate('admin_transports'),
                 ),
                 new Node(
                     label: new TranslatableMessage('Combustible de maquinaria'),

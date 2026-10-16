@@ -15,14 +15,14 @@ use App\CarbonFootprint\Domain\Model\Activity\Answer\ActivityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\RefrigerantGasAnswer;
-use App\CarbonFootprint\Domain\Model\Activity\Answer\RoadTransportAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\Answer\TransportAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasId;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
+use App\CarbonFootprint\Domain\Model\Transport\TransportId;
 use App\Property\Domain\Model\Property\PropertyId;
 
 final class BioscoreConsumptionAnswersBuilder
@@ -128,7 +128,7 @@ final class BioscoreConsumptionAnswersBuilder
     {
         return match ($catalog) {
             BioscoreCatalog::FacilityFuel => new CombustibleAnswer(new CombustibleId($target->id), $quantity, source: self::SOURCE),
-            BioscoreCatalog::TransportFuel => new RoadTransportAnswer(new RoadTransportId($target->id), $quantity, source: self::SOURCE),
+            BioscoreCatalog::TransportFuel => new TransportAnswer(new TransportId($target->id), $quantity, source: self::SOURCE),
             BioscoreCatalog::RefrigerantGas => new RefrigerantGasAnswer(new RefrigerantGasId($target->id), $quantity, source: self::SOURCE),
             BioscoreCatalog::ElectricityMarketer => new ElectricityAnswer(new ElectricityMarketerId($target->id), null, $quantity, source: self::SOURCE),
         };

@@ -124,7 +124,7 @@ class OrganizationalCarbonFootprintReportDataMother
             emissionsByProperty: $emissionsByProperty ?? [],
             activityLines: [
                 new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::FixedFacilities, $isCompany ? 'Hotel Sol' : null, 'Gas natural', ActivityType::Combustible, 100.0, Unit::KWhPCS, '1.8', Unit::KWhPCS, 2025, 'MITECO', '180'),
-                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::OwnVehicles, null, 'Furgoneta diésel', ActivityType::RoadTransport, 5000.0, Unit::Kilometer, '0.25', Unit::Kilometer, 2025, 'MITECO', '1250'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::OwnVehicles, null, 'Furgoneta diésel', ActivityType::Transport, 5000.0, Unit::Kilometer, '0.25', Unit::Kilometer, 2025, 'MITECO', '1250'),
                 new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope2, Source::BuildingElectricity, $isCompany ? 'Hotel Sol' : null, 'Comercializadora Verde', ActivityType::Electricity, 10000.0, Unit::KWh, '0.25', Unit::KWh, 2025, 'Comercializadora', '2500', '2000'),
             ],
             exclusionLines: [

@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Update\UpdateWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateWasteActivityService;
 use App\CarbonFootprint\Application\Activity\WasteEmissionFactorSelector;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Quantity;
@@ -123,7 +124,7 @@ class UpdateWasteActivityServiceTest extends TestCase
         $selector = new WasteEmissionFactorSelector(WasteRepositoryMother::inMemory());
         $sut = new UpdateWasteActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateWasteActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             wasteId: WasteId::generate(),
             quantity: ActivityMother::quantity(Unit::Kilogram),
             year: 2024,

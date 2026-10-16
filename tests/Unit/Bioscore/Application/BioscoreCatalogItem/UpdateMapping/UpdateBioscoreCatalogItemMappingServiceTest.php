@@ -21,7 +21,7 @@ use App\Bioscore\Infrastructure\Persistence\InMemory\Repository\InMemoryBioscore
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCombustibleRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryElectricityMarketerRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRefrigerantGasRepository;
-use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRoadTransportRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTransportRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemMother;
@@ -157,7 +157,7 @@ class UpdateBioscoreCatalogItemMappingServiceTest extends TestCase
         $authorizer = new BioscoreCatalogItemAuthorizer();
         $targetFinder = new CatalogTargetFinder(
             $this->combustibles,
-            new InMemoryRoadTransportRepository(),
+            new InMemoryTransportRepository(),
             new InMemoryRefrigerantGasRepository(),
             new InMemoryElectricityMarketerRepository(),
         );

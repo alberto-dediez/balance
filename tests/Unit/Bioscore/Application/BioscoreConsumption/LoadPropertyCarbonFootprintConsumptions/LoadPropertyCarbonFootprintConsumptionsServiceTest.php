@@ -18,7 +18,7 @@ use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistr
 use App\CarbonFootprint\Application\Activity\Answer\CombustibleAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\RefrigerantGasAnswerHandler;
-use App\CarbonFootprint\Application\Activity\Answer\RoadTransportAnswerHandler;
+use App\CarbonFootprint\Application\Activity\Answer\TransportAnswerHandler;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
@@ -26,12 +26,12 @@ use App\CarbonFootprint\Application\Activity\RefrigerantGasEmissionFactorSelecto
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterRefrigerantGasActivityService;
-use App\CarbonFootprint\Application\Activity\Register\RegisterRoadTransportActivityService;
-use App\CarbonFootprint\Application\Activity\RoadTransportEmissionFactorSelector;
+use App\CarbonFootprint\Application\Activity\Register\RegisterTransportActivityService;
+use App\CarbonFootprint\Application\Activity\TransportEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateRefrigerantGasActivityService;
-use App\CarbonFootprint\Application\Activity\Update\UpdateRoadTransportActivityService;
+use App\CarbonFootprint\Application\Activity\Update\UpdateTransportActivityService;
 use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
@@ -41,7 +41,7 @@ use App\CarbonFootprint\Application\PropertyCarbonFootprint\ReplaceScopeAnswers\
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\RefrigerantGasAnswer;
-use App\CarbonFootprint\Domain\Model\Activity\Answer\RoadTransportAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\Answer\TransportAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
@@ -58,7 +58,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasId;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
+use App\CarbonFootprint\Domain\Model\Transport\TransportId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository;
@@ -88,8 +88,8 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\Property
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepositoryMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
@@ -108,7 +108,7 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
     private InMemoryBioscoreCatalogItemRepository $catalogItems;
     private InMemoryBioscoreConsumptionGateway $gateway;
     private string $combustibleId;
-    private string $roadTransportId;
+    private string $transportId;
     private string $refrigerantGasId;
     private string $electricityMarketerId;
     private ReplacePropertyCarbonFootprintScopeAnswersService $replaceAnswers;
@@ -125,7 +125,7 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
         $this->gateway = new InMemoryBioscoreConsumptionGateway();
 
         $this->combustibleId = (string) Uuid::v7();
-        $this->roadTransportId = (string) Uuid::v7();
+        $this->transportId = (string) Uuid::v7();
         $this->refrigerantGasId = (string) Uuid::v7();
         $this->electricityMarketerId = (string) Uuid::v7();
 
@@ -134,10 +134,10 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
         $combustibleRepository = CombustibleRepositoryMother::inMemory();
         $combustibleRepository->add($combustible);
 
-        $roadTransport = RoadTransportMother::from('Gasolina', $this->roadTransportId, Unit::Liter);
-        $roadTransport->setEmissionFactor($this->factor('2.3', Unit::Liter));
-        $roadTransportRepository = RoadTransportRepositoryMother::inMemory();
-        $roadTransportRepository->add($roadTransport);
+        $transport = TransportMother::from('Gasolina', $this->transportId, Unit::Liter);
+        $transport->setEmissionFactor($this->factor('2.3', Unit::Liter));
+        $transportRepository = TransportRepositoryMother::inMemory();
+        $transportRepository->add($transport);
 
         $refrigerantGas = RefrigerantGasMother::from('R-410A', $this->refrigerantGasId);
         $refrigerantGas->setEmissionFactor($this->factor('2088', Unit::Kilogram));
@@ -155,14 +155,14 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
         $electricityMixRepository->add($electricityMix);
 
         $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->combustibleId, catalog: BioscoreCatalog::FacilityFuel, bioscoreId: 7, name: 'Gas Natural'));
-        $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->roadTransportId, catalog: BioscoreCatalog::TransportFuel, bioscoreId: 8, name: 'Gasolina', unit: 'l'));
+        $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->transportId, catalog: BioscoreCatalog::TransportFuel, bioscoreId: 8, name: 'Gasolina', unit: 'l'));
         $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->refrigerantGasId, catalog: BioscoreCatalog::RefrigerantGas, bioscoreId: 9, name: 'R-410A', unit: 'kg'));
         $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->electricityMarketerId, catalog: BioscoreCatalog::ElectricityMarketer, bioscoreId: 3, name: 'Endesa', unit: 'kWh'));
 
         $authorizer = new ActivityAuthorizer();
         $calculator = EmissionsCalculatorMother::create();
         $combustibleSelector = new CombustibleEmissionFactorSelector($combustibleRepository);
-        $roadTransportSelector = new RoadTransportEmissionFactorSelector($roadTransportRepository);
+        $transportSelector = new TransportEmissionFactorSelector($transportRepository);
         $refrigerantGasSelector = new RefrigerantGasEmissionFactorSelector($refrigerantGasRepository);
         $electricitySelector = new ElectricityEmissionFactorSelector($electricityMarketerRepository, GdOFactorRepositoryMother::inMemory());
         $mixResolver = new ElectricityMixEmissionsResolver($electricityMixRepository, $calculator);
@@ -172,9 +172,9 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
                 new RegisterCombustibleActivityService($this->activityRepository, $authorizer, $combustibleSelector, $calculator),
                 new UpdateCombustibleActivityService($this->activityRepository, $authorizer, $combustibleSelector, $calculator),
             ),
-            new RoadTransportAnswerHandler(
-                new RegisterRoadTransportActivityService($this->activityRepository, $authorizer, $roadTransportSelector, $calculator),
-                new UpdateRoadTransportActivityService($this->activityRepository, $authorizer, $roadTransportSelector, $calculator),
+            new TransportAnswerHandler(
+                new RegisterTransportActivityService($this->activityRepository, $authorizer, $transportSelector, $calculator),
+                new UpdateTransportActivityService($this->activityRepository, $authorizer, $transportSelector, $calculator),
             ),
             new RefrigerantGasAnswerHandler(
                 new RegisterRefrigerantGasActivityService($this->activityRepository, $authorizer, $refrigerantGasSelector, $calculator),
@@ -201,7 +201,7 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
             $this->gateway,
             new BioscoreConsumptionAnswersBuilder(
                 $this->catalogItems,
-                new CatalogTargetFinder($combustibleRepository, $roadTransportRepository, $refrigerantGasRepository, $electricityMarketerRepository),
+                new CatalogTargetFinder($combustibleRepository, $transportRepository, $refrigerantGasRepository, $electricityMarketerRepository),
             ),
             $this->replaceAnswers,
         );
@@ -371,7 +371,7 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
 
         ($this->replaceAnswers)(new ReplacePropertyCarbonFootprintScopeAnswersRequest($footprint->id(), Scope::Scope1, [
             new SectionAnswer($sections[0], [new CombustibleAnswer(new CombustibleId($this->combustibleId), new Quantity(10.0, Unit::CubicMeter))]),
-            new SectionAnswer($sections[1], [new RoadTransportAnswer(new RoadTransportId($this->roadTransportId), new Quantity(10.0, Unit::Liter))]),
+            new SectionAnswer($sections[1], [new TransportAnswer(new TransportId($this->transportId), new Quantity(10.0, Unit::Liter))]),
             new SectionAnswer($sections[2], [new RefrigerantGasAnswer(new RefrigerantGasId($this->refrigerantGasId), new Quantity(1.0, Unit::Kilogram))]),
         ]), $this->ownerUser());
 

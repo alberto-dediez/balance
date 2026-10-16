@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateOvernightStayActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityUpdated;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayId;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -123,7 +124,7 @@ class UpdateOvernightStayActivityServiceTest extends TestCase
         $selector = new OvernightStayEmissionFactorSelector(OvernightStayRepositoryMother::inMemory());
         $sut = new UpdateOvernightStayActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateOvernightStayActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             overnightStayId: OvernightStayId::generate(),
             quantity: ActivityMother::quantity(Unit::Pernoctacion),
             year: 2024,

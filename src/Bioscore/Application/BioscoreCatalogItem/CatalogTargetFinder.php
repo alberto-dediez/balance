@@ -20,11 +20,11 @@ use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGas;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasFilter;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasId;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepository;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransport;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportFilter;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportId;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepository;
-use App\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportTranslation;
+use App\CarbonFootprint\Domain\Model\Transport\Transport;
+use App\CarbonFootprint\Domain\Model\Transport\TransportFilter;
+use App\CarbonFootprint\Domain\Model\Transport\TransportId;
+use App\CarbonFootprint\Domain\Model\Transport\TransportRepository;
+use App\CarbonFootprint\Domain\Model\Transport\TransportTranslation;
 use App\CarbonFootprint\Domain\Model\Unit;
 use Symfony\Component\Uid\Uuid;
 
@@ -32,7 +32,7 @@ final class CatalogTargetFinder
 {
     public function __construct(
         private CombustibleRepository $combustibleRepository,
-        private RoadTransportRepository $roadTransportRepository,
+        private TransportRepository $transportRepository,
         private RefrigerantGasRepository $refrigerantGasRepository,
         private ElectricityMarketerRepository $electricityMarketerRepository,
     ) {}
@@ -42,7 +42,7 @@ final class CatalogTargetFinder
     {
         $targets = match ($catalog) {
             BioscoreCatalog::FacilityFuel => $this->combustibles(),
-            BioscoreCatalog::TransportFuel => $this->roadTransports(),
+            BioscoreCatalog::TransportFuel => $this->transports(),
             BioscoreCatalog::RefrigerantGas => $this->refrigerantGases(),
             BioscoreCatalog::ElectricityMarketer => $this->electricityMarketers(),
         };
@@ -68,7 +68,7 @@ final class CatalogTargetFinder
 
         return match ($catalog) {
             BioscoreCatalog::FacilityFuel => $this->fromCombustible($this->combustibleRepository->find(new CombustibleId($targetId))),
-            BioscoreCatalog::TransportFuel => $this->fromRoadTransport($this->roadTransportRepository->find(new RoadTransportId($targetId))),
+            BioscoreCatalog::TransportFuel => $this->fromTransport($this->transportRepository->find(new TransportId($targetId))),
             BioscoreCatalog::RefrigerantGas => $this->fromRefrigerantGas($this->refrigerantGasRepository->find(new RefrigerantGasId($targetId))),
             BioscoreCatalog::ElectricityMarketer => $this->fromElectricityMarketer($this->electricityMarketerRepository->find(new ElectricityMarketerId($targetId))),
         };
@@ -110,12 +110,12 @@ final class CatalogTargetFinder
     }
 
     /** @return list<CatalogTarget> */
-    private function roadTransports(): array
+    private function transports(): array
     {
         $targets = [];
 
-        foreach ($this->roadTransportRepository->findByFilter(new RoadTransportFilter(limit: 0)) as $roadTransport) {
-            $targets[] = $this->fromRoadTransport($roadTransport);
+        foreach ($this->transportRepository->findByFilter(new TransportFilter(limit: 0)) as $transport) {
+            $targets[] = $this->fromTransport($transport);
         }
 
         return array_values(array_filter($targets));
@@ -167,26 +167,26 @@ final class CatalogTargetFinder
         );
     }
 
-    private function fromRoadTransport(?RoadTransport $roadTransport): ?CatalogTarget
+    private function fromTransport(?Transport $transport): ?CatalogTarget
     {
-        if (null === $roadTransport) {
+        if (null === $transport) {
             return null;
         }
 
-        $names = [$roadTransport->name()];
+        $names = [$transport->name()];
 
-        foreach ($roadTransport->translations() as $translation) {
-            assert($translation instanceof RoadTransportTranslation);
+        foreach ($transport->translations() as $translation) {
+            assert($translation instanceof TransportTranslation);
 
             $names[] = $translation->name();
         }
 
         return new CatalogTarget(
-            id: (string) $roadTransport->id(),
-            name: $roadTransport->name(),
+            id: (string) $transport->id(),
+            name: $transport->name(),
             names: array_values(array_unique($names)),
-            unit: $roadTransport->unit(),
-            vehicle: $roadTransport->vehicle(),
+            unit: $transport->unit(),
+            vehicle: $transport->vehicle(),
         );
     }
 

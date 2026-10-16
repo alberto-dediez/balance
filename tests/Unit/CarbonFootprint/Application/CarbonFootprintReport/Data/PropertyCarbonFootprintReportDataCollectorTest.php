@@ -63,7 +63,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $footprint = PropertyCarbonFootprintMother::withScope2Answered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
         $footprint->addActivity($this->combustibleActivity('180')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
         $footprint->addActivity($this->electricityActivity('2500', '2000')->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
-        $footprint->addActivity($this->roadTransportActivity('1250')->id(), new ActivityPlacement(Scope::Scope1, Source::OwnVehicles));
+        $footprint->addActivity($this->transportActivity('1250')->id(), new ActivityPlacement(Scope::Scope1, Source::OwnVehicles));
         $footprint->excludeSource(Scope::Scope1, Source::RefrigerantLeaks, ExclusionReason::NotApplicable, 'Sin equipos');
         $footprint->complete(new Emissions('3930', '3930', '0', '0'));
 

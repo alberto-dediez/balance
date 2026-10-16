@@ -6,31 +6,31 @@ namespace App\Tests\Unit\Bioscore\Application\BioscoreCatalogItem;
 
 use App\Bioscore\Application\BioscoreCatalogItem\CatalogTargetFinder;
 use App\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalog;
-use App\CarbonFootprint\Domain\Model\RoadTransport\Vehicle;
+use App\CarbonFootprint\Domain\Model\Transport\Vehicle;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCombustibleRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryElectricityMarketerRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRefrigerantGasRepository;
-use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRoadTransportRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTransportRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
 class CatalogTargetFinderTest extends TestCase
 {
     private InMemoryCombustibleRepository $combustibles;
-    private InMemoryRoadTransportRepository $roadTransports;
+    private InMemoryTransportRepository $transports;
     private InMemoryRefrigerantGasRepository $refrigerantGases;
     private InMemoryElectricityMarketerRepository $electricityMarketers;
 
     protected function setUp(): void
     {
         $this->combustibles = new InMemoryCombustibleRepository();
-        $this->roadTransports = new InMemoryRoadTransportRepository();
+        $this->transports = new InMemoryTransportRepository();
         $this->refrigerantGases = new InMemoryRefrigerantGasRepository();
         $this->electricityMarketers = new InMemoryElectricityMarketerRepository();
     }
@@ -38,7 +38,7 @@ class CatalogTargetFinderTest extends TestCase
     public function testAllReturnsTheTargetsOfEachCatalog(): void
     {
         $this->combustibles->add(CombustibleMother::fromName('Gas natural'));
-        $this->roadTransports->add(RoadTransportMother::fromName('Gasoil'));
+        $this->transports->add(TransportMother::fromName('Gasoil'));
         $this->refrigerantGases->add(RefrigerantGasMother::fromName('R-410A'));
         $this->electricityMarketers->add(ElectricityMarketerMother::fromName('Endesa'));
 
@@ -53,7 +53,7 @@ class CatalogTargetFinderTest extends TestCase
     public function testVehicleIsOnlyFilledForTransportFuels(): void
     {
         $this->combustibles->add(CombustibleMother::fromName('Gas natural'));
-        $this->roadTransports->add(RoadTransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::Vans));
+        $this->transports->add(TransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::Vans));
 
         $finder = $this->createSUT();
 
@@ -117,8 +117,8 @@ class CatalogTargetFinderTest extends TestCase
 
     public function testMatchingReturnsEveryCandidateWithTheSameName(): void
     {
-        $this->roadTransports->add(RoadTransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::PassengerCars));
-        $this->roadTransports->add(RoadTransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::Vans));
+        $this->transports->add(TransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::PassengerCars));
+        $this->transports->add(TransportMother::from('Gasoil', (string) Uuid::v7(), Unit::Liter, Vehicle::Vans));
 
         $this->assertCount(2, $this->createSUT()->matching(BioscoreCatalog::TransportFuel, 'Gasoil', 'l'));
     }
@@ -127,7 +127,7 @@ class CatalogTargetFinderTest extends TestCase
     {
         return new CatalogTargetFinder(
             combustibleRepository: $this->combustibles,
-            roadTransportRepository: $this->roadTransports,
+            transportRepository: $this->transports,
             refrigerantGasRepository: $this->refrigerantGases,
             electricityMarketerRepository: $this->electricityMarketers,
         );

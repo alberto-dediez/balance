@@ -19,12 +19,13 @@ use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\Ele
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MachineryFuelRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MobilityRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\OvernightStayRowViewFactory;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\RoadTransportRowViewFactory;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\TransportRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\WasteRowViewFactory;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\OvernightStayActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\TransportActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
@@ -41,7 +42,7 @@ class AssemblyBreakdownStepViewTest extends TestCase
 
         $this->sut = new AssemblyBreakdownStepView(new ActivityRowViewFactoryRegistry([
             new CombustibleRowViewFactory(),
-            new RoadTransportRowViewFactory(),
+            new TransportRowViewFactory(),
             new MachineryFuelRowViewFactory(),
             new ElectricityRowViewFactory(),
             new OvernightStayRowViewFactory(),
@@ -60,7 +61,7 @@ class AssemblyBreakdownStepViewTest extends TestCase
             [
                 'eventCarbonFootprint',
                 'combustibles',
-                'roadTransports',
+                'transports',
                 'machineryFuels',
                 'electricityMarketers',
                 'gdOFactors',
@@ -69,7 +70,7 @@ class AssemblyBreakdownStepViewTest extends TestCase
                 'wastes',
                 'units',
                 'combustibleRows',
-                'roadTransportRows',
+                'transportRows',
                 'machineryFuelRows',
                 'machineryElectricityRows',
                 'buildingElectricityRows',
@@ -192,7 +193,26 @@ class AssemblyBreakdownStepViewTest extends TestCase
         $this->assertSame(10.0, $row->quantity);
     }
 
+    public function testTransportRowsCarryWeightAndDistanceWhenTheActivityIsInTonneKilometre(): void
+    {
+        $activity = TransportActivityMother::registeredInTonneKilometre();
+
+        $view = $this->sut->build(
+            EventCarbonFootprintMother::registeredEventCarbonFootprint(),
+            $this->response(transportActivities: [$activity]),
+        );
+
+        $row = $view['transportRows'][0];
+        $this->assertInstanceOf(ActivityRowView::class, $row);
+        $this->assertSame(2500.0, $row->weight);
+        $this->assertSame('kg', $row->weightUnit);
+        $this->assertSame(350.0, $row->distanceKm);
+        $this->assertSame(875.0, $row->quantity);
+        $this->assertSame('tkm', $row->unit);
+    }
+
     /**
+     * @param list<Activity> $transportActivities
      * @param list<Activity> $machineryFuelActivities
      * @param list<Activity> $machineryElectricityActivities
      * @param list<object>   $electricityCatalog
@@ -201,6 +221,7 @@ class AssemblyBreakdownStepViewTest extends TestCase
      * @param list<Activity> $overnightStayActivities
      */
     private function response(
+        array $transportActivities = [],
         array $machineryFuelActivities = [],
         array $machineryElectricityActivities = [],
         array $electricityCatalog = [],
@@ -212,7 +233,7 @@ class AssemblyBreakdownStepViewTest extends TestCase
 
         return new GetPhaseResponse([
             new StageSection($sections[0], [], []),
-            new StageSection($sections[1], [], []),
+            new StageSection($sections[1], $transportActivities, []),
             new StageSection($sections[2], $machineryFuelActivities, []),
             new StageSection($sections[3], $machineryElectricityActivities, $electricityCatalog, $gdOFactorsCatalog),
             new StageSection($sections[4], [], $electricityCatalog, $gdOFactorsCatalog),

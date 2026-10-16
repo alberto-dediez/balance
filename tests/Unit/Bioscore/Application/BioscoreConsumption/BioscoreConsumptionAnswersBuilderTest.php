@@ -14,14 +14,14 @@ use App\Bioscore\Infrastructure\Persistence\InMemory\Repository\InMemoryBioscore
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\RefrigerantGasAnswer;
-use App\CarbonFootprint\Domain\Model\Activity\Answer\RoadTransportAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\Answer\TransportAnswer;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCombustibleRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryElectricityMarketerRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRefrigerantGasRepository;
-use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryRoadTransportRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTransportRepository;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemMother;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemRepositoryMother;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreConsumption\BioscoreConsumptionMother;
@@ -29,7 +29,7 @@ use App\Tests\Unit\Bioscore\Domain\Model\BioscoreConsumption\BioscorePropertyCon
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
@@ -39,11 +39,11 @@ class BioscoreConsumptionAnswersBuilderTest extends TestCase
 
     private InMemoryBioscoreCatalogItemRepository $catalogItems;
     private InMemoryCombustibleRepository $combustibles;
-    private InMemoryRoadTransportRepository $roadTransports;
+    private InMemoryTransportRepository $transports;
     private InMemoryRefrigerantGasRepository $refrigerantGases;
     private InMemoryElectricityMarketerRepository $electricityMarketers;
     private string $combustibleId;
-    private string $roadTransportId;
+    private string $transportId;
     private string $refrigerantGasId;
     private string $electricityMarketerId;
     private BioscoreConsumptionAnswersBuilder $sut;
@@ -52,28 +52,28 @@ class BioscoreConsumptionAnswersBuilderTest extends TestCase
     {
         $this->catalogItems = BioscoreCatalogItemRepositoryMother::inMemory();
         $this->combustibles = new InMemoryCombustibleRepository();
-        $this->roadTransports = new InMemoryRoadTransportRepository();
+        $this->transports = new InMemoryTransportRepository();
         $this->refrigerantGases = new InMemoryRefrigerantGasRepository();
         $this->electricityMarketers = new InMemoryElectricityMarketerRepository();
 
         $this->combustibleId = (string) Uuid::v7();
-        $this->roadTransportId = (string) Uuid::v7();
+        $this->transportId = (string) Uuid::v7();
         $this->refrigerantGasId = (string) Uuid::v7();
         $this->electricityMarketerId = (string) Uuid::v7();
 
         $this->combustibles->add(CombustibleMother::from('Gas natural', $this->combustibleId, Unit::CubicMeter));
-        $this->roadTransports->add(RoadTransportMother::from('Gasolina', $this->roadTransportId, Unit::Liter));
+        $this->transports->add(TransportMother::from('Gasolina', $this->transportId, Unit::Liter));
         $this->refrigerantGases->add(RefrigerantGasMother::from('R-410A', $this->refrigerantGasId));
         $this->electricityMarketers->add(ElectricityMarketerMother::from('Endesa', $this->electricityMarketerId));
 
         $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->combustibleId, catalog: BioscoreCatalog::FacilityFuel, bioscoreId: 7, name: 'Gas Natural'));
-        $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->roadTransportId, catalog: BioscoreCatalog::TransportFuel, bioscoreId: 8, name: 'Gasolina', unit: 'l'));
+        $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->transportId, catalog: BioscoreCatalog::TransportFuel, bioscoreId: 8, name: 'Gasolina', unit: 'l'));
         $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->refrigerantGasId, catalog: BioscoreCatalog::RefrigerantGas, bioscoreId: 9, name: 'R-410A', unit: 'kg'));
         $this->catalogItems->add(BioscoreCatalogItemMother::mapped($this->electricityMarketerId, catalog: BioscoreCatalog::ElectricityMarketer, bioscoreId: 3, name: 'Endesa', unit: 'kWh'));
 
         $this->sut = new BioscoreConsumptionAnswersBuilder(
             $this->catalogItems,
-            new CatalogTargetFinder($this->combustibles, $this->roadTransports, $this->refrigerantGases, $this->electricityMarketers),
+            new CatalogTargetFinder($this->combustibles, $this->transports, $this->refrigerantGases, $this->electricityMarketers),
         );
     }
 
@@ -103,7 +103,7 @@ class BioscoreConsumptionAnswersBuilderTest extends TestCase
         $this->assertInstanceOf(CombustibleAnswer::class, $answers->sectionAnswers[0]->answers[0]);
     }
 
-    public function testATransportOnlyFuelBecomesARoadTransportAnswer(): void
+    public function testATransportOnlyFuelBecomesATransportAnswer(): void
     {
         $answers = $this->build(Scope::Scope1, combustibles: [BioscoreConsumptionMother::transportFuel(8, 'Gasolina', 200.0, 'l')]);
 
@@ -111,8 +111,8 @@ class BioscoreConsumptionAnswersBuilderTest extends TestCase
         $this->assertSame('vehicles', $answers->sectionAnswers[0]->definition->key);
 
         $answer = $answers->sectionAnswers[0]->answers[0];
-        $this->assertInstanceOf(RoadTransportAnswer::class, $answer);
-        $this->assertSame($this->roadTransportId, (string) $answer->roadTransportId);
+        $this->assertInstanceOf(TransportAnswer::class, $answer);
+        $this->assertSame($this->transportId, (string) $answer->transportId);
         $this->assertSame(Unit::Liter, $answer->quantity->unit());
     }
 

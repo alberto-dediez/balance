@@ -169,6 +169,10 @@
         <source>m2</source>
         <target>Square meter</target>
       </trans-unit>
+      <trans-unit id="WgBBsXG" resname="tkm">
+        <source>tkm</source>
+        <target>Tonne-kilometre</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

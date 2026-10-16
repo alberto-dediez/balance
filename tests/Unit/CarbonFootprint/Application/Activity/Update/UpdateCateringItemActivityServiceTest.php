@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\CateringItemEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCateringItemActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCateringItemActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CateringItem\CateringItemId;
@@ -89,7 +90,7 @@ class UpdateCateringItemActivityServiceTest extends TestCase
         $selector = new CateringItemEmissionFactorSelector(CateringItemRepositoryMother::inMemory());
         $sut = new UpdateCateringItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateCateringItemActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             cateringItemId: CateringItemId::generate(),
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),

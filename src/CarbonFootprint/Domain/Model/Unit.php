@@ -15,6 +15,7 @@ enum Unit: string
     case KWhPCS    = 'kWhPCS';
     case KWh       = 'kWh';
     case Kilometer    = 'km';
+    case TonneKilometre = 'tkm';
     case Pernoctacion = 'pernoctacion';
     case SquareMeter = 'm2';
     case Euro = 'EUR';
@@ -60,6 +61,7 @@ enum Unit: string
             self::KWhPCS       => Magnitude::Energy,
             self::KWh          => Magnitude::Energy,
             self::Kilometer    => Magnitude::Distance,
+            self::TonneKilometre => Magnitude::Freight,
             self::Pernoctacion => Magnitude::Stay,
             self::SquareMeter  => Magnitude::Area,
             self::Euro,

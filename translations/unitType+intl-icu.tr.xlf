@@ -169,6 +169,10 @@
         <source>m2</source>
         <target>Metrekare</target>
       </trans-unit>
+      <trans-unit id="WgBBsXG" resname="tkm">
+        <source>tkm</source>
+        <target>Ton-kilometre</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

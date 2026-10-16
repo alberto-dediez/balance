@@ -14,8 +14,8 @@ Feature:
     Scenario: A new item with two matching masters stays pending
         Given I am the system
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
-        Given road transport "Gasoil" with id "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" exists
-        Given road transport "Gasoil" with id "cccccccc-cccc-cccc-cccc-cccccccccccc" exists
+        Given transport "Gasoil" with id "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" exists
+        Given transport "Gasoil" with id "cccccccc-cccc-cccc-cccc-cccccccccccc" exists
         Given Bioscore catalog "transport_fuel" contains item "3" named "Gasoil" with unit ""
         When command "bioscore:catalogs:sync" is executed with argument "username:admin@dediez.software"
         Then I expect status code "0"

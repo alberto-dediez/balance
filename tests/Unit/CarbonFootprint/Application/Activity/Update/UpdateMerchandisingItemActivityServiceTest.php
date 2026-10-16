@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\MerchandisingItemEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMerchandisingItemActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMerchandisingItemActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MerchandisingItemActivityUpdated;
 use App\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemId;
@@ -89,7 +90,7 @@ class UpdateMerchandisingItemActivityServiceTest extends TestCase
         $selector = new MerchandisingItemEmissionFactorSelector(MerchandisingItemRepositoryMother::inMemory());
         $sut = new UpdateMerchandisingItemActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateMerchandisingItemActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             merchandisingItemId: MerchandisingItemId::generate(),
             condition: ItemCondition::New,
             quantity: ActivityMother::quantity(Unit::Piece),

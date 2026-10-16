@@ -27,11 +27,11 @@
     :readOnly="readOnly"
 >
     {% for block in blocks %}
-        <twig:CarbonFootprint:RoadTransportActivityTable
+        <twig:CarbonFootprint:TransportActivityTable
             title="{{ block.property ? block.property.name : (unassignedLabel ?? ('Desplazamientos en vehículos' | trans)) }}"
             prefix="{{ block.prefixBase is empty ? 'vehicles' : block.prefixBase ~ '[vehicles]' }}"
-            :rows="block.roadTransportRows"
-            :items="block.roadTransports"
+            :rows="block.transportRows"
+            :items="block.transports"
             :units="block.units"
             :calculateUrl="calculateUrl"
             :readOnly="readOnly"

@@ -6,7 +6,7 @@ Feature:
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given company "Hotelera" with id "C1" of account "666" exists
         Given combustible "Gas natural" with id "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" and emission factor for year "2025" exists
-        Given road transport "Camión" with id "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" and emission factor for year "2025" exists
+        Given transport "Camión" with id "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" and emission factor for year "2025" exists
         Given refrigerant gas "R-410A" with id "99999999-9999-9999-9999-999999999999" and emission factor for year "2025" exists
         Given Bioscore catalog item "7" of catalog "facility_fuel" named "Gas Natural" with id "BI1" exists
         Given Bioscore catalog item "BI1" is mapped to "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"

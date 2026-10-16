@@ -7,7 +7,7 @@ Feature:
         Given property "Hotel" with id "1111" of account "666" exists
         Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" exists
         Given combustible "Gas natural" with id "C1" and emission factor for year "2025" exists
-        Given road transport "Camión" with id "RT1" and emission factor for year "2025" exists
+        Given transport "Camión" with id "RT1" and emission factor for year "2025" exists
         Given refrigerant gas "R-410A" with id "RG1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-1"
@@ -22,7 +22,7 @@ Feature:
         Given property "Hotel" with id "1111" of account "666" exists
         Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" exists
         Given combustible "Gas natural" with id "C1" and emission factor for year "2025" exists
-        Given road transport "Camión" with id "RT1" and emission factor for year "2025" exists
+        Given transport "Camión" with id "RT1" and emission factor for year "2025" exists
         Given refrigerant gas "R-410A" with id "RG1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-1"

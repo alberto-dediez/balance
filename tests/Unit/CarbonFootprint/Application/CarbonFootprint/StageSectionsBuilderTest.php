@@ -8,7 +8,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegi
 use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\RefrigerantGasCatalogProvider;
-use App\CarbonFootprint\Application\Activity\Catalog\RoadTransportCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
@@ -29,7 +29,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityM
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepositoryMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use PHPUnit\Framework\TestCase;
 
 class StageSectionsBuilderTest extends TestCase
@@ -116,7 +116,7 @@ class StageSectionsBuilderTest extends TestCase
     {
         $catalogProviders = new ActivityCatalogProviderRegistry([
             new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
-            new RoadTransportCatalogProvider(RoadTransportRepositoryMother::inMemory()),
+            new TransportCatalogProvider(TransportRepositoryMother::inMemory()),
             new RefrigerantGasCatalogProvider(RefrigerantGasRepositoryMother::inMemory()),
             new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
         ]);

@@ -32,11 +32,11 @@
             :reasons="exclusionReasons"
             :readOnly="readOnly"
         >
-            <twig:CarbonFootprint:RoadTransportActivityTable
+            <twig:CarbonFootprint:TransportActivityTable
                 title="{{ 'Transporte de mercancías' | trans }}"
-                prefix="roadTransports"
-                :rows="roadTransportRows"
-                :items="roadTransports"
+                prefix="transports"
+                :rows="transportRows"
+                :items="transports"
                 :units="units"
                 :eventId="eventId"
                 :readOnly="readOnly"

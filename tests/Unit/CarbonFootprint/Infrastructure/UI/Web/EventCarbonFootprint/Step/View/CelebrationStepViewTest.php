@@ -19,7 +19,7 @@ use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\Ele
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MachineryFuelRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\MobilityRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\OvernightStayRowViewFactory;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\RoadTransportRowViewFactory;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\TransportRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\WasteRowViewFactory;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
@@ -41,7 +41,7 @@ class CelebrationStepViewTest extends TestCase
 
         $this->sut = new CelebrationStepView(new ActivityRowViewFactoryRegistry([
             new CombustibleRowViewFactory(),
-            new RoadTransportRowViewFactory(),
+            new TransportRowViewFactory(),
             new MachineryFuelRowViewFactory(),
             new ElectricityRowViewFactory(),
             new OvernightStayRowViewFactory(),
@@ -60,7 +60,7 @@ class CelebrationStepViewTest extends TestCase
             [
                 'eventCarbonFootprint',
                 'combustibles',
-                'roadTransports',
+                'transports',
                 'machineryFuels',
                 'electricityMarketers',
                 'gdOFactors',
@@ -69,7 +69,7 @@ class CelebrationStepViewTest extends TestCase
                 'wastes',
                 'units',
                 'combustibleRows',
-                'roadTransportRows',
+                'transportRows',
                 'machineryFuelRows',
                 'machineryElectricityRows',
                 'buildingElectricityRows',

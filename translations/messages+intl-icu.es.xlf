@@ -2273,10 +2273,6 @@
         <source>Reciclado</source>
         <target>Reciclado</target>
       </trans-unit>
-      <trans-unit id="8OxKCnI" resname="Transporte por carretera">
-        <source>Transporte por carretera</source>
-        <target>Transporte por carretera</target>
-      </trans-unit>
       <trans-unit id="N0cQFPs" resname="Catering">
         <source>Catering</source>
         <target>Catering</target>
@@ -2284,14 +2280,6 @@
       <trans-unit id="x0m1cwE" resname="Merchandising">
         <source>Merchandising</source>
         <target>Merchandising</target>
-      </trans-unit>
-      <trans-unit id="cJ_dq5i" resname="Transporte por carretera creado correctamente: {name}">
-        <source>Transporte por carretera creado correctamente: {name}</source>
-        <target>Transporte por carretera creado correctamente: {name}</target>
-      </trans-unit>
-      <trans-unit id=".4NeGY4" resname="Transporte por carretera actualizado con éxito">
-        <source>Transporte por carretera actualizado con éxito</source>
-        <target>Transporte por carretera actualizado con éxito</target>
       </trans-unit>
       <trans-unit id="YZ5zR71" resname="Se ha eliminado el transporte {name}">
         <source>Se ha eliminado el transporte {name}</source>
@@ -9469,9 +9457,33 @@
         <source>Borrar búsqueda</source>
         <target>Borrar búsqueda</target>
       </trans-unit>
-      <trans-unit id="sYsTeM1" resname="Sistema">
+      <trans-unit id="jfbi5SU" resname="Sistema">
         <source>Sistema</source>
         <target>Sistema</target>
+      </trans-unit>
+      <trans-unit id="1ZkNtZY" resname="Medios de transporte">
+        <source>Medios de transporte</source>
+        <target>Medios de transporte</target>
+      </trans-unit>
+      <trans-unit id="Ccptu5D" resname="Medio de transporte creado correctamente: {name}">
+        <source>Medio de transporte creado correctamente: {name}</source>
+        <target>Medio de transporte creado correctamente: {name}</target>
+      </trans-unit>
+      <trans-unit id="u3YO04A" resname="Medio de transporte actualizado con éxito">
+        <source>Medio de transporte actualizado con éxito</source>
+        <target>Medio de transporte actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="_sMs3r4" resname="Tipo de vehículo o medio">
+        <source>Tipo de vehículo o medio</source>
+        <target>Tipo de vehículo o medio</target>
+      </trans-unit>
+      <trans-unit id="_ZqhVMj" resname="Modo">
+        <source>Modo</source>
+        <target>Modo</target>
+      </trans-unit>
+      <trans-unit id="5gQFM.t" resname="Cantidad / Peso y distancia">
+        <source>Cantidad / Peso y distancia</source>
+        <target>Cantidad / Peso y distancia</target>
       </trans-unit>
     </body>
   </file>

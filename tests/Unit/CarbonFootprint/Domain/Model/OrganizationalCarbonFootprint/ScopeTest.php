@@ -19,7 +19,7 @@ final class ScopeTest extends TestCase
         $this->assertCount(3, $sections);
         $this->assertSame(['combustibles', 'vehicles', 'refrigerantGases'], array_map(static fn($s) => $s->key, $sections));
         $this->assertSame([Source::FixedFacilities, Source::OwnVehicles, Source::RefrigerantLeaks], array_map(static fn($s) => $s->source, $sections));
-        $this->assertSame([ActivityType::Combustible, ActivityType::RoadTransport, ActivityType::RefrigerantGas], array_map(static fn($s) => $s->activityType, $sections));
+        $this->assertSame([ActivityType::Combustible, ActivityType::Transport, ActivityType::RefrigerantGas], array_map(static fn($s) => $s->activityType, $sections));
     }
 
     public function testScope2HasOnlyElectricity(): void

@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\MaterialEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMaterialActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivityUpdated;
 use App\CarbonFootprint\Domain\Model\Material\MaterialId;
@@ -89,7 +90,7 @@ class UpdateMaterialActivityServiceTest extends TestCase
         $selector = new MaterialEmissionFactorSelector(MaterialRepositoryMother::inMemory());
         $sut = new UpdateMaterialActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateMaterialActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             materialId: MaterialId::generate(),
             condition: ItemCondition::Recycled,
             quantity: ActivityMother::quantity(Unit::Kilogram),

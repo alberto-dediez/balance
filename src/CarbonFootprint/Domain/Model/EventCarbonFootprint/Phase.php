@@ -32,7 +32,7 @@ enum Phase: string implements CalculationStage
             ],
             self::Assembly => [
                 new SectionDefinition('combustibles', Source::FixedFacilities, ActivityType::Combustible),
-                new SectionDefinition('roadTransports', Source::FreightTransport, ActivityType::RoadTransport),
+                new SectionDefinition('transports', Source::FreightTransport, ActivityType::Transport),
                 new SectionDefinition('machineryFuels', Source::MachineryOperation, ActivityType::MachineryFuel),
                 new SectionDefinition('machineryElectricity', Source::MachineryOperation, ActivityType::Electricity),
                 new SectionDefinition('buildingElectricity', Source::BuildingElectricity, ActivityType::Electricity),
@@ -42,7 +42,7 @@ enum Phase: string implements CalculationStage
             ],
             self::Celebration => [
                 new SectionDefinition('combustibles', Source::FixedFacilities, ActivityType::Combustible),
-                new SectionDefinition('roadTransports', Source::FreightTransport, ActivityType::RoadTransport),
+                new SectionDefinition('transports', Source::FreightTransport, ActivityType::Transport),
                 new SectionDefinition('machineryFuels', Source::MachineryOperation, ActivityType::MachineryFuel),
                 new SectionDefinition('machineryElectricity', Source::MachineryOperation, ActivityType::Electricity),
                 new SectionDefinition('buildingElectricity', Source::BuildingElectricity, ActivityType::Electricity),
@@ -54,7 +54,7 @@ enum Phase: string implements CalculationStage
             ],
             self::Breakdown => [
                 new SectionDefinition('combustibles', Source::FixedFacilities, ActivityType::Combustible),
-                new SectionDefinition('roadTransports', Source::FreightTransport, ActivityType::RoadTransport),
+                new SectionDefinition('transports', Source::FreightTransport, ActivityType::Transport),
                 new SectionDefinition('machineryFuels', Source::MachineryOperation, ActivityType::MachineryFuel),
                 new SectionDefinition('machineryElectricity', Source::MachineryOperation, ActivityType::Electricity),
                 new SectionDefinition('buildingElectricity', Source::BuildingElectricity, ActivityType::Electricity),

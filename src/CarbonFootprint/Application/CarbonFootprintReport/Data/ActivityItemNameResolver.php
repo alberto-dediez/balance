@@ -20,7 +20,7 @@ use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ProcessActivity;
 use App\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity;
-use App\CarbonFootprint\Domain\Model\Activity\RoadTransportActivity;
+use App\CarbonFootprint\Domain\Model\Activity\TransportActivity;
 use App\CarbonFootprint\Domain\Model\Activity\UseProfileActivity;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -87,7 +87,7 @@ final class ActivityItemNameResolver
             $activity instanceof MachineryFuelActivity => (string) $activity->machineryFuelId(),
             $activity instanceof MobilityActivity => (string) $activity->mobilityId(),
             $activity instanceof OvernightStayActivity => (string) $activity->overnightStayId(),
-            $activity instanceof RoadTransportActivity => (string) $activity->roadTransportId(),
+            $activity instanceof TransportActivity => (string) $activity->transportId(),
             $activity instanceof WasteActivity => (string) $activity->wasteId(),
             $activity instanceof RefrigerantGasActivity => (string) $activity->refrigerantGasId(),
             default => null,

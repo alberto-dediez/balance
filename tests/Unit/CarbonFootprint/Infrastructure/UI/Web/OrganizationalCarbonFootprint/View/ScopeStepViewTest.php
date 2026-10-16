@@ -7,19 +7,21 @@ namespace App\Tests\Unit\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCar
 use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ActivityRowView;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ActivityRowViewFactoryRegistry;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\CombustibleRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\ElectricityRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\RefrigerantGasRowViewFactory;
-use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\RoadTransportRowViewFactory;
+use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\TransportRowViewFactory;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\ScopeStepView;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\TransportActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
 use PHPUnit\Framework\TestCase;
 
 class ScopeStepViewTest extends TestCase
@@ -30,7 +32,7 @@ class ScopeStepViewTest extends TestCase
     {
         $this->sut = new ScopeStepView(new ActivityRowViewFactoryRegistry([
             new CombustibleRowViewFactory(),
-            new RoadTransportRowViewFactory(),
+            new TransportRowViewFactory(),
             new RefrigerantGasRowViewFactory(),
             new ElectricityRowViewFactory(),
         ]));
@@ -41,21 +43,38 @@ class ScopeStepViewTest extends TestCase
         $activity = CombustibleActivityMother::registered(new AccountId('account-id'));
 
         $combustible = CombustibleMother::fromName('Gas natural');
-        $roadTransport = RoadTransportMother::fromName('Camión');
+        $transport = TransportMother::fromName('Camión');
         $refrigerantGas = RefrigerantGasMother::fromName('R-410A');
 
         $view = $this->sut->build([
             new StageSection(Scope::Scope1->sections()[0], [$activity], [$combustible]),
-            new StageSection(Scope::Scope1->sections()[1], [], [$roadTransport]),
+            new StageSection(Scope::Scope1->sections()[1], [], [$transport]),
             new StageSection(Scope::Scope1->sections()[2], [], [$refrigerantGas]),
         ]);
 
         $this->assertSame([$combustible], $view['combustibles']);
-        $this->assertSame([$roadTransport], $view['roadTransports']);
+        $this->assertSame([$transport], $view['transports']);
         $this->assertSame([$refrigerantGas], $view['refrigerantGases']);
         $this->assertCount(1, $view['combustibleRows']);
-        $this->assertCount(0, $view['roadTransportRows']);
+        $this->assertCount(0, $view['transportRows']);
         $this->assertSame(Unit::cases(), $view['units']);
+    }
+
+    public function testTransportRowsCarryWeightAndDistanceWhenTheActivityIsInTonneKilometre(): void
+    {
+        $activity = TransportActivityMother::registeredInTonneKilometre(new AccountId('account-id'));
+
+        $view = $this->sut->build([
+            new StageSection(Scope::Scope1->sections()[0], [], []),
+            new StageSection(Scope::Scope1->sections()[1], [$activity], []),
+            new StageSection(Scope::Scope1->sections()[2], [], []),
+        ]);
+
+        $row = $view['transportRows'][0];
+        $this->assertInstanceOf(ActivityRowView::class, $row);
+        $this->assertSame(2500.0, $row->weight);
+        $this->assertSame('kg', $row->weightUnit);
+        $this->assertSame(350.0, $row->distanceKm);
     }
 
     public function testMissingSectionsBecomeEmptyLists(): void
@@ -70,7 +89,7 @@ class ScopeStepViewTest extends TestCase
         $this->assertSame([$marketer], $view['electricityMarketers']);
         $this->assertSame([$gdOFactor], $view['gdOFactors']);
         $this->assertSame([], $view['combustibles']);
-        $this->assertSame([], $view['roadTransports']);
+        $this->assertSame([], $view['transports']);
         $this->assertSame([], $view['refrigerantGases']);
         $this->assertSame([], $view['combustibleRows']);
         $this->assertSame([], $view['refrigerantGasRows']);

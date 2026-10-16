@@ -9,7 +9,7 @@ Feature:
         Given property "1111" has company "C1" assigned
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" exists
         Given combustible "Gas natural" with id "GN1" and emission factor for year "2025" exists
-        Given road transport "Camión" with id "RT1" and emission factor for year "2025" exists
+        Given transport "Camión" with id "RT1" and emission factor for year "2025" exists
         Given refrigerant gas "R-410A" with id "RG1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-1"
@@ -25,7 +25,7 @@ Feature:
         Given property "1111" has company "C1" assigned
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" exists
         Given combustible "Gas natural" with id "GN1" and emission factor for year "2025" exists
-        Given road transport "Camión" with id "RT1" and emission factor for year "2025" exists
+        Given transport "Camión" with id "RT1" and emission factor for year "2025" exists
         Given refrigerant gas "R-410A" with id "RG1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-1"
@@ -35,6 +35,24 @@ Feature:
         Then company carbon footprint "999" should have 1 activities of source "fixed_facilities" in scope "scope_1" for property "1111"
         Then company carbon footprint "999" should have 0 activities of source "fixed_facilities" in scope "scope_1" for property "none"
 
+    Scenario: A transport in tonne-kilometre is calculated from weight and distance
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given company "Hotelera" with id "C1" of account "666" exists
+        Given property "Hotel" with id "1111" of account "666" exists
+        Given property "1111" has company "C1" assigned
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" exists
+        Given combustible "Gas natural" with id "GN1" and emission factor for year "2025" exists
+        Given transport "Tren" with id "TR1" in unit "tkm" with vehicle "freight_train" and emission factor for year "2025" exists
+        Given refrigerant gas "R-410A" with id "RG1" and emission factor for year "2025" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/company-carbon-footprints/999/step/scope-1"
+        Then the response status should be 200
+        When I submit the company scope "scope_1" step form with a transport "TR1" of 2500 "kg" over 350 km for property "1111"
+        Then I am redirected to route "company_carbon_footprints_scope_2"
+        Then company carbon footprint "999" should have 1 activities of source "own_vehicles" in scope "scope_1" for property "1111"
+        Then company carbon footprint "999" activity of transport "TR1" has quantity 875 "tkm"
+
     Scenario: A combustible introduced in the unassigned block stays unassigned
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
@@ -43,7 +61,7 @@ Feature:
         Given property "1111" has company "C1" assigned
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" exists
         Given combustible "Gas natural" with id "GN1" and emission factor for year "2025" exists
-        Given road transport "Camión" with id "RT1" and emission factor for year "2025" exists
+        Given transport "Camión" with id "RT1" and emission factor for year "2025" exists
         Given refrigerant gas "R-410A" with id "RG1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-1"

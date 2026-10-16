@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\MachineryFuelEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityService;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityUpdated;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -86,7 +87,7 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
         $selector = new MachineryFuelEmissionFactorSelector(MachineryFuelRepositoryMother::inMemory());
         $sut = new UpdateMachineryFuelActivityService(ActivityRepositoryMother::inMemory(), new ActivityAuthorizer(), $selector, EmissionsCalculatorMother::create());
         $this->assertTrue($sut->isHandled(new UpdateMachineryFuelActivityRequest(
-            activityId: \App\CarbonFootprint\Domain\Model\Activity\ActivityId::generate(),
+            activityId: ActivityId::generate(),
             machineryFuelId: MachineryFuelId::generate(),
             quantity: ActivityMother::quantity(Unit::Liter),
             year: 2024,

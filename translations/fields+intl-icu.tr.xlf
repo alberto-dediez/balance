@@ -97,10 +97,6 @@
         <source>machinery_type</source>
         <target>Makine türü</target>
       </trans-unit>
-      <trans-unit id="H.x9jS4" resname="road_transport">
-        <source>road_transport</source>
-        <target>Karayolu taşımacılığı</target>
-      </trans-unit>
       <trans-unit id="SQK8P2M" resname="vehicle">
         <source>vehicle</source>
         <target>Araç</target>
@@ -160,6 +156,10 @@
       <trans-unit id="gK9OmOI" resname="classificationCode">
         <source>classificationCode</source>
         <target>NACE/CNAE kodu</target>
+      </trans-unit>
+      <trans-unit id="Hlo_yJt" resname="transport">
+        <source>transport</source>
+        <target>Taşıma aracı</target>
       </trans-unit>
     </body>
   </file>

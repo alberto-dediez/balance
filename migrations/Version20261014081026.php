@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Exception\IrreversibleMigration;
@@ -22,14 +23,16 @@ final class Version20261014081026 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->createCountries($schema);
-        $this->createDestinations($schema);
-        $this->createBrands($schema);
-        $this->createCategories($schema);
-        $this->createCompanies($schema);
-        $this->createProperties($schema);
-        $this->createEmployees($schema);
-        $this->createJobProgresses($schema);
+        $schemaManager = $this->connection->createSchemaManager();
+
+        $this->createCountries($schemaManager);
+        $this->createDestinations($schemaManager);
+        $this->createBrands($schemaManager);
+        $this->createCategories($schemaManager);
+        $this->createCompanies($schemaManager);
+        $this->createProperties($schemaManager);
+        $this->createEmployees($schemaManager);
+        $this->createJobProgresses($schemaManager);
     }
 
     public function down(Schema $schema): void
@@ -37,9 +40,9 @@ final class Version20261014081026 extends AbstractMigration
         throw new IrreversibleMigration();
     }
 
-    private function createCountries(Schema $schema): void
+    private function createCountries(AbstractSchemaManager $schemaManager): void
     {
-        if (!$schema->hasTable('countries')) {
+        if (!$schemaManager->tablesExist(['countries'])) {
             $this->addSql(<<<'SQL'
                 CREATE TABLE countries (
                   id VARCHAR(36) NOT NULL COMMENT '(DC2Type:country_id)',
@@ -60,13 +63,13 @@ final class Version20261014081026 extends AbstractMigration
             return;
         }
 
-        $countries = $schema->getTable('countries');
+        $countries = $schemaManager->listTableColumns('countries');
 
-        if (!$countries->hasColumn('vat_rate')) {
+        if (!array_key_exists('vat_rate', $countries)) {
             $this->addSql('ALTER TABLE countries ADD vat_rate DOUBLE PRECISION DEFAULT NULL');
         }
 
-        if ($countries->hasColumn('european_union')) {
+        if (array_key_exists('european_union', $countries)) {
             return;
         }
 
@@ -98,9 +101,9 @@ final class Version20261014081026 extends AbstractMigration
         SQL, $isoList));
     }
 
-    private function createDestinations(Schema $schema): void
+    private function createDestinations(AbstractSchemaManager $schemaManager): void
     {
-        if ($schema->hasTable('destinations')) {
+        if ($schemaManager->tablesExist(['destinations'])) {
             return;
         }
 
@@ -120,9 +123,9 @@ final class Version20261014081026 extends AbstractMigration
         SQL);
     }
 
-    private function createBrands(Schema $schema): void
+    private function createBrands(AbstractSchemaManager $schemaManager): void
     {
-        if ($schema->hasTable('brands')) {
+        if ($schemaManager->tablesExist(['brands'])) {
             return;
         }
 
@@ -141,9 +144,9 @@ final class Version20261014081026 extends AbstractMigration
         SQL);
     }
 
-    private function createCategories(Schema $schema): void
+    private function createCategories(AbstractSchemaManager $schemaManager): void
     {
-        if ($schema->hasTable('categories')) {
+        if ($schemaManager->tablesExist(['categories'])) {
             return;
         }
 
@@ -162,9 +165,9 @@ final class Version20261014081026 extends AbstractMigration
         SQL);
     }
 
-    private function createCompanies(Schema $schema): void
+    private function createCompanies(AbstractSchemaManager $schemaManager): void
     {
-        if ($schema->hasTable('companies')) {
+        if ($schemaManager->tablesExist(['companies'])) {
             return;
         }
 
@@ -187,9 +190,9 @@ final class Version20261014081026 extends AbstractMigration
         SQL);
     }
 
-    private function createProperties(Schema $schema): void
+    private function createProperties(AbstractSchemaManager $schemaManager): void
     {
-        if (!$schema->hasTable('properties')) {
+        if (!$schemaManager->tablesExist(['properties'])) {
             $this->addSql(<<<'SQL'
                 CREATE TABLE properties (
                   id VARCHAR(36) NOT NULL COMMENT '(DC2Type:property_id)',
@@ -225,7 +228,7 @@ final class Version20261014081026 extends AbstractMigration
             return;
         }
 
-        $properties = $schema->getTable('properties');
+        $properties = $schemaManager->listTableColumns('properties');
 
         $columns = [
             'company_id' => "VARCHAR(36) DEFAULT NULL COMMENT '(DC2Type:company_id)'",
@@ -236,15 +239,15 @@ final class Version20261014081026 extends AbstractMigration
         ];
 
         foreach ($columns as $column => $definition) {
-            if (!$properties->hasColumn($column)) {
+            if (!array_key_exists($column, $properties)) {
                 $this->addSql(sprintf('ALTER TABLE properties ADD %s %s', $column, $definition));
             }
         }
     }
 
-    private function createEmployees(Schema $schema): void
+    private function createEmployees(AbstractSchemaManager $schemaManager): void
     {
-        if ($schema->hasTable('employees')) {
+        if ($schemaManager->tablesExist(['employees'])) {
             return;
         }
 
@@ -269,9 +272,9 @@ final class Version20261014081026 extends AbstractMigration
         SQL);
     }
 
-    private function createJobProgresses(Schema $schema): void
+    private function createJobProgresses(AbstractSchemaManager $schemaManager): void
     {
-        if ($schema->hasTable('job_progresses')) {
+        if ($schemaManager->tablesExist(['job_progresses'])) {
             return;
         }
 

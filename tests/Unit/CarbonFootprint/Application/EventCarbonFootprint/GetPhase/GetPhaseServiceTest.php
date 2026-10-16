@@ -13,7 +13,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\MaterialCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\MerchandisingItemCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\MobilityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\OvernightStayCatalogProvider;
-use App\CarbonFootprint\Application\Activity\Catalog\RoadTransportCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\WasteCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
@@ -54,7 +54,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMothe
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MerchandisingItem\MerchandisingItemRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\RoadTransport\RoadTransportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
@@ -79,7 +79,7 @@ class GetPhaseServiceTest extends TestCase
             new CateringItemCatalogProvider(CateringItemRepositoryMother::inMemory()),
             new MerchandisingItemCatalogProvider(MerchandisingItemRepositoryMother::inMemory()),
             new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
-            new RoadTransportCatalogProvider(RoadTransportRepositoryMother::inMemory()),
+            new TransportCatalogProvider(TransportRepositoryMother::inMemory()),
             new MachineryFuelCatalogProvider(MachineryFuelRepositoryMother::inMemory()),
             new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
             new OvernightStayCatalogProvider(OvernightStayRepositoryMother::inMemory()),
