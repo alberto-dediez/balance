@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="col-12">
+        {{ form_row(form.name) }}
+        {{ form_row(form.accountId) }}
+    </div>
+    {% if form.companyId is defined %}
+        <div class="col-12">
+            {{ form_row(form.companyId) }}
+        </div>
+    {% endif %}
+    <div class="col-12">
+        {{ form_row(form.info) }}
+    </div>
+    <div class="col-12">
+        {{ form_row(form.numberOfEmployees) }}
+    </div>
+    <div class="col-12">
+        {{ form_row(form.dailyClients) }}
+    </div>
+    <div class="col-12">
+        {{ form_row(form.externalId) }}
+    </div>
+</div>

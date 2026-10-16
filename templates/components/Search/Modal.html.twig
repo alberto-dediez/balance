@@ -1,0 +1,28 @@
+{% if this.enabled %}
+    <div class="modal fade" id="global-search" tabindex="-1" aria-label="{{ 'Buscar' | trans }}"
+         data-controller="global-search"
+         data-global-search-url-value="{{ path('search') }}"
+         data-action="shown.bs.modal->global-search#focus hidden.bs.modal->global-search#reset keydown@window->global-search#shortcut">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header global-search__header">
+                    <twig:Icon name="solar:magnifer-line-duotone" size="lg" class="global-search__icon" />
+                    <input type="search" class="form-control form-control-lg border-0 shadow-none global-search__input" placeholder="{{ 'Buscar en la plataforma…' | trans }}" aria-label="{{ 'Buscar' | trans }}" autocomplete="off"
+                           data-global-search-target="input"
+                           data-action="input->global-search#search keydown->global-search#navigate">
+                    <button type="button" class="btn btn-link p-0 global-search__clear d-none" title="{{ 'Borrar búsqueda' | trans }}" aria-label="{{ 'Borrar búsqueda' | trans }}"
+                            data-global-search-target="clear"
+                            data-action="global-search#clear">
+                        <twig:Icon name="solar:backspace-line-duotone" size="lg" />
+                    </button>
+                    <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="{{ 'Cerrar' | trans }}"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="global-search__results" data-global-search-target="results">
+                        {% include '@shared/search/results.html.twig' with {'response': null} %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

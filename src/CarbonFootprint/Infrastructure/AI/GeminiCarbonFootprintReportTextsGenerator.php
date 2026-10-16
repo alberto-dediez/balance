@@ -16,6 +16,7 @@ use App\CarbonFootprint\Infrastructure\AI\Gemini\TranslateReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
+use App\Shared\Infrastructure\AI\Gemini\GeminiResponseException;
 
 final class GeminiCarbonFootprintReportTextsGenerator implements CarbonFootprintReportTextsGenerator
 {
@@ -54,7 +55,15 @@ final class GeminiCarbonFootprintReportTextsGenerator implements CarbonFootprint
         $lastFailure = '';
 
         for ($attempt = 1; $attempt <= self::MAX_ATTEMPTS; ++$attempt) {
-            $texts = $this->textsFrom($this->geminiClient->send($prompt), $requiredKeys, $optionalKeys);
+            try {
+                $result = $this->geminiClient->send($prompt);
+            } catch (GeminiResponseException $exception) {
+                $lastFailure = $exception->getMessage();
+
+                continue;
+            }
+
+            $texts = $this->textsFrom($result, $requiredKeys, $optionalKeys);
 
             if ($this->hasCorruptedCharacters($texts)) {
                 $lastFailure = 'Gemini returned corrupted characters in the report texts';

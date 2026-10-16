@@ -9369,6 +9369,110 @@
         <source>Se ha traducido el sector económico "{economicSector}" por el usuario {user}</source>
         <target>Se ha traducido el sector económico "{economicSector}" por el usuario {user}</target>
       </trans-unit>
+      <trans-unit id="bh_k3kD" resname="Lista de usuarios">
+        <source>Lista de usuarios</source>
+        <target>Lista de usuarios</target>
+      </trans-unit>
+      <trans-unit id="lr8U4Rd" resname="Seguridad">
+        <source>Seguridad</source>
+        <target>Seguridad</target>
+      </trans-unit>
+      <trans-unit id="uI7Kwah" resname="Ha ocurrido un error inesperado al intentar registrar al usuario.">
+        <source>Ha ocurrido un error inesperado al intentar registrar al usuario.</source>
+        <target>Ha ocurrido un error inesperado al intentar registrar al usuario.</target>
+      </trans-unit>
+      <trans-unit id="OE.Waj_" resname="La cuenta no existe">
+        <source>La cuenta no existe</source>
+        <target>La cuenta no existe</target>
+      </trans-unit>
+      <trans-unit id="sKfBFDY" resname="Ha ocurrido un error inesperado al intentar registrar la cuenta.">
+        <source>Ha ocurrido un error inesperado al intentar registrar la cuenta.</source>
+        <target>Ha ocurrido un error inesperado al intentar registrar la cuenta.</target>
+      </trans-unit>
+      <trans-unit id="iYxSYBV" resname="Error inesperado. No se ha podido actualizar la cuenta">
+        <source>Error inesperado. No se ha podido actualizar la cuenta</source>
+        <target>Error inesperado. No se ha podido actualizar la cuenta</target>
+      </trans-unit>
+      <trans-unit id="gIzOsY6" resname="Eliminado el usuario &quot;{user}&quot;">
+        <source>Eliminado el usuario "{user}"</source>
+        <target>Eliminado el usuario "{user}"</target>
+      </trans-unit>
+      <trans-unit id="demL2sW" resname="Registrada una nueva cuenta {account} en estado {status}">
+        <source>Registrada una nueva cuenta {account} en estado {status}</source>
+        <target>Registrada una nueva cuenta {account} en estado {status}</target>
+      </trans-unit>
+      <trans-unit id="rZM4y9N" resname="Registrado el usuario {user} para la cuenta {account}">
+        <source>Registrado el usuario {user} para la cuenta {account}</source>
+        <target>Registrado el usuario {user} para la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="N8LNcr." resname="Registrado el usuario {user} sin cuenta">
+        <source>Registrado el usuario {user} sin cuenta</source>
+        <target>Registrado el usuario {user} sin cuenta</target>
+      </trans-unit>
+      <trans-unit id="oyqvcQF" resname="Activada la cuenta {account}">
+        <source>Activada la cuenta {account}</source>
+        <target>Activada la cuenta {account}</target>
+      </trans-unit>
+      <trans-unit id="1OaMllt" resname="Desactivada la cuenta &quot;{account}&quot;">
+        <source>Desactivada la cuenta "{account}"</source>
+        <target>Desactivada la cuenta "{account}"</target>
+      </trans-unit>
+      <trans-unit id="PoFfv4r" resname="Eliminada la cuenta &quot;{account}&quot;">
+        <source>Eliminada la cuenta "{account}"</source>
+        <target>Eliminada la cuenta "{account}"</target>
+      </trans-unit>
+      <trans-unit id="h5KEY1P" resname="La cuenta {account} ahora se llama {name}">
+        <source>La cuenta {account} ahora se llama {name}</source>
+        <target>La cuenta {account} ahora se llama {name}</target>
+      </trans-unit>
+      <trans-unit id="QgkN2aD" resname="Concedido permiso &quot;{role}&quot; al usuario {user}">
+        <source>Concedido permiso "{role}" al usuario {user}</source>
+        <target>Concedido permiso "{role}" al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="ZdviEtQ" resname="Eliminado permiso &quot;{role}&quot; al usuario {user}">
+        <source>Eliminado permiso "{role}" al usuario {user}</source>
+        <target>Eliminado permiso "{role}" al usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="86Bl9iH" resname="Se ha modificado la contraseña del usuario &quot;{user}&quot;">
+        <source>Se ha modificado la contraseña del usuario "{user}"</source>
+        <target>Se ha modificado la contraseña del usuario "{user}"</target>
+      </trans-unit>
+      <trans-unit id="6J2WB9A" resname="Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.">
+        <source>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</source>
+        <target>Por favor, lea el documento completo antes de firmarlo. Al firmar, acepta el contenido del documento.</target>
+      </trans-unit>
+      <trans-unit id="w7oPZNY" resname="El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.">
+        <source>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</source>
+        <target>El enlace de firma que ha utilizado no es válido, ha expirado o ya no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="Vt_CBrl" resname="Solicitud de firma {id} registrada por {user} para firmante {signer}">
+        <source>Solicitud de firma {id} registrada por {user} para firmante {signer}</source>
+        <target>Solicitud de firma {id} registrada por {user} para firmante {signer}</target>
+      </trans-unit>
+      <trans-unit id="dGb3Ep8" resname="Volver a la novedad">
+        <source>Volver a la novedad</source>
+        <target>Volver a la novedad</target>
+      </trans-unit>
+      <trans-unit id="ZDBN3lP" resname="Buscar en la plataforma…">
+        <source>Buscar en la plataforma…</source>
+        <target>Buscar en la plataforma…</target>
+      </trans-unit>
+      <trans-unit id="VEsYfPG" resname="Escribe al menos 2 caracteres">
+        <source>Escribe al menos 2 caracteres</source>
+        <target>Escribe al menos 2 caracteres</target>
+      </trans-unit>
+      <trans-unit id="T8JpMMG" resname="Sin resultados">
+        <source>Sin resultados</source>
+        <target>Sin resultados</target>
+      </trans-unit>
+      <trans-unit id="VFJm21x" resname="Borrar búsqueda">
+        <source>Borrar búsqueda</source>
+        <target>Borrar búsqueda</target>
+      </trans-unit>
+      <trans-unit id="sYsTeM1" resname="Sistema">
+        <source>Sistema</source>
+        <target>Sistema</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -46,8 +46,12 @@ class UserExtension extends AbstractExtension
         return new UserId((string) $userId);
     }
 
-    public function userName(UserId $userId): string|TranslatableMessage
+    public function userName(?UserId $userId): string|TranslatableMessage
     {
+        if (null === $userId) {
+            return new TranslatableMessage('Sistema');
+        }
+
         if (!isset($this->users[(string) $userId])) {
             $user = $this->userRepository->find($userId);
 

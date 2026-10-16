@@ -115,7 +115,6 @@ use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
-use App\Tests\Acceptance\Shared\AcceptancePlaceFinder;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
@@ -1205,23 +1204,6 @@ final readonly class CarbonFootprintContext implements Context
         $event->setVenueLocation('venue-' . $id, $label, (float) $latitude, (float) $longitude);
 
         $eventRepository->add($event);
-    }
-
-    #[Given('place :reference named :label at :latitude, :longitude exists')]
-    public function placeNamedAtExists(string $reference, string $label, string $latitude, string $longitude): void
-    {
-        $this->getPlaceFinder()->add($reference, $label, (float) $latitude, (float) $longitude);
-    }
-
-    #[Given('the places provider is disabled')]
-    public function thePlacesProviderIsDisabled(): void
-    {
-        $this->getPlaceFinder()->disable();
-    }
-
-    private function getPlaceFinder(): AcceptancePlaceFinder
-    {
-        return $this->client->getContainer()->get(AcceptancePlaceFinder::class);
     }
 
     #[Given('attendee survey response with id :id for attendee survey :attendeeSurveyId using mobility :mobilityId exists')]

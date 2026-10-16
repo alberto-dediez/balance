@@ -22,6 +22,11 @@ class NodeLister
         private readonly ?CurrentRolesProvider $currentRolesProvider = null,
         #[Autowire(param: 'app.announcements_enabled')]
         private readonly bool $announcementsEnabled = true,
+        private readonly ?AccountNodeProvider $accountNodeProvider = null,
+        #[Autowire(param: 'app.properties_enabled')]
+        private readonly bool $propertiesEnabled = true,
+        #[Autowire(param: 'app.human_resources_enabled')]
+        private readonly bool $humanResourcesEnabled = true,
     ) {}
 
     /**
@@ -71,7 +76,7 @@ class NodeLister
             $node->selected = null !== $bestTarget && $node->target === $bestTarget;
 
             foreach ($node->items as $item) {
-                $item->selected = null !== $bestTarget && $item->target === $bestTarget;
+                $item->selected = $item->selected || (null !== $bestTarget && $item->target === $bestTarget);
                 $node->selected = $node->selected || $item->selected;
             }
         }
@@ -150,42 +155,44 @@ class NodeLister
     {
         $nodes =  [];
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Propiedades'),
-            icon: 'solar:buildings-2-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Propiedades'),
-                    icon: 'solar:buildings-2-line-duotone',
-                    target: $this->router->generate('admin_properties'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Empresas'),
-                    icon: 'solar:case-line-duotone',
-                    target: $this->router->generate('admin_companies'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Categorías'),
-                    icon: 'solar:folder-favourite-star-line-duotone',
-                    target: $this->router->generate('admin_categories'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Marcas'),
-                    icon: 'solar:tag-line-duotone',
-                    target: $this->router->generate('admin_brands'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Países'),
-                    icon: 'solar:globus-line-duotone',
-                    target: $this->router->generate('admin_countries'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Destinos'),
-                    icon: 'solar:map-point-line-duotone',
-                    target: $this->router->generate('admin_destinations'),
-                ),
-            ],
-        );
+        if ($this->propertiesEnabled) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Propiedades'),
+                icon: 'solar:buildings-2-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Propiedades'),
+                        icon: 'solar:buildings-2-line-duotone',
+                        target: $this->router->generate('admin_properties'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Empresas'),
+                        icon: 'solar:case-line-duotone',
+                        target: $this->router->generate('admin_companies'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Categorías'),
+                        icon: 'solar:folder-favourite-star-line-duotone',
+                        target: $this->router->generate('admin_categories'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Marcas'),
+                        icon: 'solar:tag-line-duotone',
+                        target: $this->router->generate('admin_brands'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Países'),
+                        icon: 'solar:globus-line-duotone',
+                        target: $this->router->generate('admin_countries'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Destinos'),
+                        icon: 'solar:map-point-line-duotone',
+                        target: $this->router->generate('admin_destinations'),
+                    ),
+                ],
+            );
+        }
 
         $nodes[] = new Node(
             label: new TranslatableMessage('Proyectos'),
@@ -434,51 +441,57 @@ class NodeLister
             ],
         );
 
+        $administrationItems = [
+            new Node(
+                label: new TranslatableMessage('Cuentas'),
+                icon: 'solar:buildings-3-line-duotone',
+                target: $this->router->generate('admin_accounts'),
+            ),
+        ];
+
+        if ($this->humanResourcesEnabled) {
+            $administrationItems[] = new Node(
+                label: new TranslatableMessage('Empleados'),
+                icon: 'solar:user-id-line-duotone',
+                target: $this->router->generate('admin_employees'),
+            );
+        }
+
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Usuarios'),
+            icon: 'solar:users-group-rounded-line-duotone',
+            target: $this->router->generate('admin_users'),
+        );
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Firma de documentos'),
+            icon: 'solar:verified-check-line-duotone',
+            target: $this->router->generate('admin_signature_requests'),
+        );
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Informes de huella'),
+            icon: 'solar:document-text-line-duotone',
+            target: $this->router->generate('admin_carbon_footprint_reports'),
+        );
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Registro'),
+            icon: 'solar:record-minimalistic-line-duotone',
+            target: $this->router->generate('admin_events'),
+        );
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Grupos de coeficientes'),
+            icon: 'solar:test-tube-minimalistic-line-duotone',
+            target: $this->router->generate('admin_emission_factor_groups'),
+        );
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Tipos de cambio'),
+            icon: 'solar:dollar-minimalistic-line-duotone',
+            target: $this->router->generate('admin_exchange_rates'),
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Cuentas'),
-                    icon: 'solar:buildings-3-line-duotone',
-                    target: $this->router->generate('admin_accounts'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Empleados'),
-                    icon: 'solar:user-id-line-duotone',
-                    target: $this->router->generate('admin_employees'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Usuarios'),
-                    icon: 'solar:users-group-rounded-line-duotone',
-                    target: $this->router->generate('admin_users'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Firma de documentos'),
-                    icon: 'solar:verified-check-line-duotone',
-                    target: $this->router->generate('admin_signature_requests'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Informes de huella'),
-                    icon: 'solar:document-text-line-duotone',
-                    target: $this->router->generate('admin_carbon_footprint_reports'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Registro'),
-                    icon: 'solar:record-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_events'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Grupos de coeficientes'),
-                    icon: 'solar:test-tube-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_emission_factor_groups'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Tipos de cambio'),
-                    icon: 'solar:dollar-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_exchange_rates'),
-                ),
-            ],
+            items: $administrationItems,
         );
 
         $nodes[] = $this->libraryNode();
@@ -537,41 +550,43 @@ class NodeLister
      */
     private function toOwners(): array
     {
-        $nodes =  [];
+        $nodes = $this->accountNodeProvider?->nodes() ?? [];
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Propiedades'),
-            icon: 'solar:buildings-2-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Propiedades'),
-                    icon: 'solar:buildings-2-line-duotone',
-                    target: $this->router->generate('properties'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Huellas de Carbono'),
-                    icon: 'carbon:sustainability',
-                    target: $this->router->generate('property_carbon_footprints'),
-                ),
-            ],
-        );
+        if ($this->propertiesEnabled) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Propiedades'),
+                icon: 'solar:buildings-2-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Propiedades'),
+                        icon: 'solar:buildings-2-line-duotone',
+                        target: $this->router->generate('properties'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Huellas de Carbono'),
+                        icon: 'carbon:sustainability',
+                        target: $this->router->generate('property_carbon_footprints'),
+                    ),
+                ],
+            );
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Empresas'),
-            icon: 'solar:case-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Empresas'),
-                    icon: 'solar:case-line-duotone',
-                    target: $this->router->generate('companies'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Huellas de Carbono'),
-                    icon: 'carbon:sustainability',
-                    target: $this->router->generate('company_carbon_footprints'),
-                ),
-            ],
-        );
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Empresas'),
+                icon: 'solar:case-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Empresas'),
+                        icon: 'solar:case-line-duotone',
+                        target: $this->router->generate('companies'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Huellas de Carbono'),
+                        icon: 'carbon:sustainability',
+                        target: $this->router->generate('company_carbon_footprints'),
+                    ),
+                ],
+            );
+        }
 
         $nodes[] = new Node(
             label: new TranslatableMessage('Eventos'),
@@ -622,26 +637,31 @@ class NodeLister
             ],
         );
 
+        $administrationItems = [];
+
+        if ($this->humanResourcesEnabled) {
+            $administrationItems[] = new Node(
+                label: new TranslatableMessage('Empleados'),
+                icon: 'solar:user-id-line-duotone',
+                target: $this->router->generate('employees'),
+            );
+        }
+
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Usuarios'),
+            icon: 'solar:users-group-rounded-line-duotone',
+            target: $this->router->generate('users'),
+        );
+        $administrationItems[] = new Node(
+            label: new TranslatableMessage('Marca y colores'),
+            icon: 'solar:palette-round-line-duotone',
+            target: $this->router->generate('branding_edit'),
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Empleados'),
-                    icon: 'solar:user-id-line-duotone',
-                    target: $this->router->generate('employees'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Usuarios'),
-                    icon: 'solar:users-group-rounded-line-duotone',
-                    target: $this->router->generate('users'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Marca y colores'),
-                    icon: 'solar:palette-round-line-duotone',
-                    target: $this->router->generate('branding_edit'),
-                ),
-            ],
+            items: $administrationItems,
         );
 
         $nodes[] = $this->libraryNode();
@@ -672,7 +692,7 @@ class NodeLister
      */
     private function toUsers(): array
     {
-        $nodes = [];
+        $nodes = $this->accountNodeProvider?->nodes() ?? [];
 
         $nodes[] = $this->libraryNode();
 

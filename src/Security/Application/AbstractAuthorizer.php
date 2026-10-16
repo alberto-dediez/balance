@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Application;
 
+use App\Security\Application\Account\ConsultantSupervisionPolicy;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -17,6 +18,7 @@ abstract class AbstractAuthorizer implements Authorizer
         private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
         private readonly ?CurrentRolesProvider $currentRolesProvider = null,
         private readonly ?CurrentImpersonationProvider $currentImpersonationProvider = null,
+        private readonly ?ConsultantSupervisionPolicy $consultantSupervisionPolicy = null,
     ) {}
 
     protected function currentAccountId(User $user): ?AccountId
@@ -58,6 +60,7 @@ abstract class AbstractAuthorizer implements Authorizer
             Action::Export => $this->canExport($subject, $user),
             Action::History => $this->canHistory($subject, $user),
             Action::Impersonate => $this->canImpersonate($subject, $user),
+            Action::Supervise => $this->canSupervise($subject, $user),
         };
     }
 
@@ -90,6 +93,44 @@ abstract class AbstractAuthorizer implements Authorizer
     protected function canImpersonate(mixed $subject, User $user): bool
     {
         return false;
+    }
+
+    protected function canSupervise(mixed $subject, User $user): bool
+    {
+        return false;
+    }
+
+    protected function supervisesAccount(?AccountId $accountId, User $user): bool
+    {
+        if (!$accountId instanceof AccountId || !$this->consultantSupervisionPolicy instanceof ConsultantSupervisionPolicy) {
+            return false;
+        }
+
+        $currentAccountId = $this->currentAccountId($user);
+
+        if (!$currentAccountId instanceof AccountId || !$this->userHasRole($user, Role::Owner)) {
+            return false;
+        }
+
+        return $this->consultantSupervisionPolicy->supervises($currentAccountId, $accountId);
+    }
+
+    /**
+     * @return list<AccountId>|null
+     */
+    public function supervisedAccountIds(User $user): ?array
+    {
+        if (!$this->consultantSupervisionPolicy instanceof ConsultantSupervisionPolicy || !$this->userHasRole($user, Role::Owner)) {
+            return null;
+        }
+
+        $currentAccountId = $this->currentAccountId($user);
+
+        if (!$currentAccountId instanceof AccountId || !$this->consultantSupervisionPolicy->isActiveConsultant($currentAccountId)) {
+            return null;
+        }
+
+        return $this->consultantSupervisionPolicy->supervisedAccountIds($currentAccountId);
     }
 
     protected function canImport(mixed $subject, User $user): bool

@@ -1,3 +1,6 @@
+parameters:
+    app.human_resources_enabled: '%env(bool:HUMAN_RESOURCES_ENABLED)%'
+
 services:
     _defaults:
         autowire: true

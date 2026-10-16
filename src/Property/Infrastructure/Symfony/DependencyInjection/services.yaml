@@ -1,3 +1,6 @@
+parameters:
+    app.properties_enabled: '%env(bool:PROPERTIES_ENABLED)%'
+
 services:
     _defaults:
         autowire: true

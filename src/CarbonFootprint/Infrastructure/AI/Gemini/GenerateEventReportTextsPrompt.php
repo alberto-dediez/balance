@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintR
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
+use App\Shared\Infrastructure\AI\Gemini\GeminiThinkingLevel;
 
 final class GenerateEventReportTextsPrompt implements GeminiPrompt
 {
@@ -16,7 +17,6 @@ final class GenerateEventReportTextsPrompt implements GeminiPrompt
     public function __construct(
         private readonly EventCarbonFootprintReportData $data,
         private readonly Locale $locale,
-        private readonly float $temperature = 0.3,
     ) {}
 
     public function text(): string
@@ -181,9 +181,9 @@ final class GenerateEventReportTextsPrompt implements GeminiPrompt
         return $schema;
     }
 
-    public function temperature(): float
+    public function thinkingLevel(): GeminiThinkingLevel
     {
-        return $this->temperature;
+        return GeminiThinkingLevel::MEDIUM;
     }
 
     public function modelTier(): GeminiModelTier

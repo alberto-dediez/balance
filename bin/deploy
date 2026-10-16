@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+#
+# Despliegue en producción (Plesk + Supervisor).
+# Plesk Git ya ha actualizado el código: se lanza como acción de despliegue adicional.
+# Se ejecuta como el system user de Plesk, nunca como root.
+# Requiere /etc/sudoers.d/<grupo>-supervisor (ver infra/supervisor/README.md).
+#
+# Cada plataforma fija en SUPERVISOR_GROUP el [group:...] de su infra/supervisor/<grupo>-workers.ini.
+#
+# Variables opcionales: PHP, COMPOSER_BIN, SUPERVISORCTL, SUPERVISOR_GROUP.
+
+set -euo pipefail
+
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PHP="${PHP:-/opt/plesk/php/8.4/bin/php}"
+COMPOSER_BIN="${COMPOSER_BIN:-/usr/lib64/plesk-9.0/composer.phar}"
+SUPERVISORCTL="${SUPERVISORCTL:-/usr/bin/supervisorctl}"
+SUPERVISOR_GROUP="${SUPERVISOR_GROUP:-hydra}"
+
+export APP_ENV=prod
+export APP_DEBUG=0
+export COMPOSER_MEMORY_LIMIT=-1
+
+step() {
+    printf '\n\033[32m==> %s\033[0m\n' "$1"
+}
+
+fail() {
+    printf '\n\033[31m!! %s\033[0m\n' "$1" >&2
+    exit 1
+}
+
+supervisor() {
+    sudo -n "$SUPERVISORCTL" "$@"
+}
+
+console() {
+    "$PHP" -d memory_limit=512M bin/console "$@" --env=prod --no-interaction
+}
+
+main() {
+    [ "$(id -u)" -ne 0 ] || fail "No ejecutes el deploy como root: usa el system user de Plesk."
+    [ -x "$PHP" ] || fail "No se encuentra el PHP CLI en $PHP."
+    [ -f "$COMPOSER_BIN" ] || fail "No se encuentra Composer en $COMPOSER_BIN."
+
+    cd "$PROJECT_DIR"
+
+    trap 'fail "El deploy ha fallado. Los workers siguen parados: corrige el error y vuelve a lanzar bin/deploy (o sudo $SUPERVISORCTL start \"$SUPERVISOR_GROUP:*\")."' ERR
+
+    step "Parando los workers (esperan a terminar el mensaje en curso)"
+    supervisor stop "$SUPERVISOR_GROUP:*"
+
+    step "Instalando dependencias"
+    "$PHP" "$COMPOSER_BIN" install --optimize-autoloader --no-scripts --no-interaction
+
+    step "Limpiando la caché"
+    rm -rf var/cache/prod
+    console cache:clear --no-warmup
+
+    step "Calentando la caché"
+    console cache:warmup
+
+    step "Ejecutando las migraciones"
+    console doctrine:migrations:migrate --allow-no-migration
+
+    step "Compilando los assets"
+    console assets:install public
+    console importmap:install
+    console sass:build
+    console asset-map:compile
+
+    step "Aplicando los cambios de la configuración de Supervisor"
+    supervisor reread
+    supervisor update "$SUPERVISOR_GROUP"
+
+    step "Lanzando los workers"
+    supervisor start "$SUPERVISOR_GROUP:*"
+    supervisor status "$SUPERVISOR_GROUP:*" || true
+
+    trap - ERR
+    step "Deploy completado"
+}
+
+main "$@"
+exit

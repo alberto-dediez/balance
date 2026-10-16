@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
 use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
+use App\Shared\Infrastructure\AI\Gemini\GeminiThinkingLevel;
 
 final class TranslateReportTextsPrompt implements GeminiPrompt
 {
@@ -15,7 +16,6 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
         private readonly CarbonFootprintReportTexts $texts,
         private readonly Locale $from,
         private readonly Locale $to,
-        private readonly float $temperature = 0.2,
     ) {}
 
     public function text(): string
@@ -73,9 +73,9 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
         ];
     }
 
-    public function temperature(): float
+    public function thinkingLevel(): GeminiThinkingLevel
     {
-        return $this->temperature;
+        return GeminiThinkingLevel::MINIMAL;
     }
 
     public function modelTier(): GeminiModelTier

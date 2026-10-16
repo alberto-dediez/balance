@@ -272,9 +272,9 @@ final class SecurityContext implements Context
 
         $body = (string) ($lastMessage->getHtmlBody() ?? $lastMessage->getTextBody());
 
-        if (1 !== preg_match('/(?<![#\w])(\d{6})(?!\w)/', $body, $matches)) {
-            Assert::fail('El email no contiene un código de 6 dígitos');
-        }
+        $matched = preg_match('/(?<![#\w])(\d{6})(?!\w)/', $body, $matches);
+
+        Assert::assertSame(1, $matched, 'El email no contiene un código de 6 dígitos');
 
         $this->submitTwoFactorCode($matches[1]);
     }

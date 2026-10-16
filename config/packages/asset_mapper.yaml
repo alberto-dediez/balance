@@ -7,6 +7,8 @@ framework:
         excluded_patterns:
             - '*/assets/styles/_*.scss'
             - '*/assets/styles/**/_*.scss'
+            - '*/assets/styles/email.scss'
+            - '*/assets/fonts/font-awesome/scss/*'
         missing_import_mode: warn
 
 when@prod:

@@ -31,11 +31,11 @@ doctrine:
             two_factor_method: App\Security\Infrastructure\Persistence\Doctrine\Type\TwoFactorMethodType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType
-            announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
-            youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
+            announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
+            youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
             material_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialIdType
             material_emission_factor_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialEmissionFactorIdType
             merchandising_item_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MerchandisingItemIdType
@@ -141,7 +141,7 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Property/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Property\Domain\Model'
                 alias: Property
-                
+
             DataExchange:
                 type: xml
                 is_bundle: false
@@ -162,13 +162,6 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Library/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Library\Domain\Model'
                 alias: Library
-                
-            Changelog:
-                type: xml
-                is_bundle: false
-                dir: '%kernel.project_dir%/src/Changelog/Infrastructure/Persistence/Doctrine/Mapping'
-                prefix: 'App\Changelog\Domain\Model'
-                alias: Changelog
 
             HumanResources:
                 type: xml
@@ -176,6 +169,13 @@ doctrine:
                 dir: '%kernel.project_dir%/src/HumanResources/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\HumanResources\Domain\Model'
                 alias: HumanResources
+
+            Changelog:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Changelog/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Changelog\Domain\Model'
+                alias: Changelog
 
             CarbonFootprint:
                 type: xml

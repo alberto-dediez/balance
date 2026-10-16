@@ -27,4 +27,6 @@ enum Action: string
     case Export = 'export';
 
     case Admin = 'admin';
+
+    case Supervise = 'supervise';
 }

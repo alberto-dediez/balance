@@ -9,6 +9,7 @@ use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use App\Shared\Infrastructure\Timezone\CookieTimezoneProvider;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
@@ -46,6 +47,11 @@ final class WebContext implements Context
         return $this->client->getContainer()->get(UserRepository::class);
     }
 
+    private function getPlaceFinder(): AcceptancePlaceFinder
+    {
+        return $this->client->getContainer()->get(AcceptancePlaceFinder::class);
+    }
+
     #[When('I am logged as :username')]
     public function iAmLoggedAs(string $username): void
     {
@@ -64,10 +70,28 @@ final class WebContext implements Context
         $this->client->setCookie(CookieTimezoneProvider::COOKIE, $timezone);
     }
 
+    #[Given('place :reference named :label at :latitude, :longitude exists')]
+    public function placeNamedAtExists(string $reference, string $label, string $latitude, string $longitude): void
+    {
+        $this->getPlaceFinder()->add($reference, $label, (float) $latitude, (float) $longitude);
+    }
+
+    #[Given('the places provider is disabled')]
+    public function thePlacesProviderIsDisabled(): void
+    {
+        $this->getPlaceFinder()->disable();
+    }
+
     #[When('I go to :path')]
     public function iGoTo(string $path): void
     {
         $this->client->request('GET', $path);
+    }
+
+    #[When('I go to :path as an ajax request')]
+    public function iGoToAsAnAjaxRequest(string $path): void
+    {
+        $this->client->request('GET', $path, ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
     }
 
     #[When('I go to :path with csrf token :tokenId')]
@@ -85,6 +109,16 @@ final class WebContext implements Context
     public function iPress(string $text): void
     {
         $this->client->submit($this->client->getCrawler()->selectButton($text)->form());
+    }
+
+    #[When('I click the link :name')]
+    public function iClickTheLink(string $name): void
+    {
+        $link = $this->client->getCrawler()->selectLink($name);
+
+        Assert::assertGreaterThan(0, $link->count());
+
+        $this->client->request('GET', (string) $link->first()->attr('href'));
     }
 
     #[When('I make a POST request to :path')]
@@ -318,6 +352,44 @@ final class WebContext implements Context
         Assert::assertGreaterThan(0, $field->count(), sprintf('Form field "%s" not found in the page', $name));
     }
 
+    #[Then('I see a form field :name with value :value')]
+    public function iSeeAFormFieldWithValue(string $name, string $value): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $field = $crawler->filter(sprintf('[name*="%s"]', $name));
+
+        Assert::assertGreaterThan(0, $field->count(), sprintf('Form field "%s" not found in the page', $name));
+
+        $hasValue = 'select' === $field->nodeName()
+            ? $field->filter(sprintf('option[selected][value="%s"]', $value))->count() > 0
+            : $field->attr('value') === $value;
+
+        Assert::assertTrue($hasValue, sprintf('Form field "%s" does not have value "%s"', $name, $value));
+    }
+
+    #[Then('I see an option :value in form field :name with attribute :attribute :attributeValue')]
+    public function iSeeAnOptionInFormFieldWithAttribute(string $value, string $name, string $attribute, string $attributeValue): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $option = $crawler->filter(sprintf('[name*="%s"] option[value="%s"]', $name, $value));
+
+        Assert::assertGreaterThan(0, $option->count(), sprintf('Option "%s" not found in form field "%s"', $value, $name));
+        Assert::assertSame($attributeValue, $option->attr($attribute), sprintf('Option "%s" of form field "%s" does not have attribute "%s" with value "%s"', $value, $name, $attribute, $attributeValue));
+    }
+
+    #[Then('I see an option :value in form field :name without attribute :attribute')]
+    public function iSeeAnOptionInFormFieldWithoutAttribute(string $value, string $name, string $attribute): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $option = $crawler->filter(sprintf('[name*="%s"] option[value="%s"]', $name, $value));
+
+        Assert::assertGreaterThan(0, $option->count(), sprintf('Option "%s" not found in form field "%s"', $value, $name));
+        Assert::assertNull($option->attr($attribute), sprintf('Option "%s" of form field "%s" has attribute "%s"', $value, $name, $attribute));
+    }
+
     #[Then('I see a button with name :name')]
     public function iSeeAButtonWithName(string $name): void
     {
@@ -328,6 +400,12 @@ final class WebContext implements Context
         Assert::assertCount(1, $button);
     }
 
+    #[Then('I do not see a button with name :name')]
+    public function iDoNotSeeAButtonWithName(string $name): void
+    {
+        Assert::assertCount(0, $this->client->getCrawler()->selectButton($name));
+    }
+
     #[Then('I see a link with name :name')]
     public function iSeeALinkWithName(string $name): void
     {
@@ -336,6 +414,12 @@ final class WebContext implements Context
         $button = $crawler->selectLink($name);
 
         Assert::assertCount(1, $button);
+    }
+
+    #[Then('I see a link to :href')]
+    public function iSeeALinkTo(string $href): void
+    {
+        Assert::assertGreaterThan(0, $this->client->getCrawler()->filterXPath(sprintf('//a[@href="%s"]', $href))->count());
     }
 
     #[Then('I do not see a link with name :name')]
@@ -405,5 +489,45 @@ final class WebContext implements Context
         Assert::assertNotFalse($response);
 
         Assert::assertStringNotContainsString($text, $response);
+    }
+
+    #[Then('I see a text :first before a text :second')]
+    public function iSeeATextBeforeAText(string $first, string $second): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $firstPosition = strpos($response, $first);
+        $secondPosition = strpos($response, $second);
+
+        Assert::assertNotFalse($firstPosition, sprintf('Text "%s" not found', $first));
+        Assert::assertNotFalse($secondPosition, sprintf('Text "%s" not found', $second));
+        Assert::assertLessThan($secondPosition, $firstPosition);
+    }
+
+    #[Then('I see :first before :second')]
+    public function iSeeBefore(string $first, string $second): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $firstPosition = strpos($response, $first);
+        $secondPosition = strpos($response, $second);
+
+        Assert::assertNotFalse($firstPosition, sprintf('Text "%s" not found', $first));
+        Assert::assertNotFalse($secondPosition, sprintf('Text "%s" not found', $second));
+        Assert::assertLessThan($secondPosition, $firstPosition);
+    }
+
+    #[Then('I see :count times the text :text')]
+    public function iSeeTimesTheText(int $count, string $text): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        Assert::assertSame($count, substr_count($response, $text));
     }
 }

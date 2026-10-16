@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Unit\Shared\Infrastructure\UI\Web\Component\Sidebar;
+namespace App\Tests\Unit\Shared\Infrastructure\UI\Web\Component\Sidebar;
 
 use App\Shared\Infrastructure\UI\Web\Component\Sidebar\Left;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
