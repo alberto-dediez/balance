@@ -42,6 +42,7 @@ use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
@@ -121,6 +122,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFoot
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CateringItem\CateringItemMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -188,6 +190,11 @@ final readonly class CarbonFootprintContext implements Context
     public function getProcessRepository(): ProcessRepository
     {
         return $this->client->getContainer()->get(ProcessRepository::class);
+    }
+
+    public function getEconomicSectorRepository(): EconomicSectorRepository
+    {
+        return $this->client->getContainer()->get(EconomicSectorRepository::class);
     }
 
     public function getCateringItemRepository(): CateringItemRepository
@@ -419,6 +426,47 @@ final readonly class CarbonFootprintContext implements Context
         ));
 
         $this->getUseProfileRepository()->add($useProfile);
+    }
+
+    #[Given('economic sector :name with id :id exists')]
+    public function economicSectorWithIdExists(string $name, string $id): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $economicSector = EconomicSectorMother::fromNameAndId($name, $id);
+
+        $this->getEconomicSectorRepository()->add($economicSector);
+    }
+
+    #[Given('economic sector :name with id :id and classification code :code exists')]
+    public function economicSectorWithClassificationCodeExists(string $name, string $id, string $code): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $economicSector = EconomicSectorMother::from(name: $name, id: $id, classificationCode: $code);
+
+        $this->getEconomicSectorRepository()->add($economicSector);
+    }
+
+    #[Given('economic sector :name with id :id and emission factor for year :year exists')]
+    public function economicSectorWithEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $economicSector = EconomicSectorMother::fromNameAndId($name, $id);
+
+        $economicSector->setEmissionFactor(new EmissionFactor(
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.2',
+            n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            unit: $economicSector->unit(),
+            source: 'IPCC',
+        ));
+
+        $this->getEconomicSectorRepository()->add($economicSector);
     }
 
     #[Given('process :name with id :id exists')]

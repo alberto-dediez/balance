@@ -15,6 +15,7 @@
             <discriminator-mapping value="capital_good" class="App\CarbonFootprint\Domain\Model\Activity\CapitalGoodActivity" />
             <discriminator-mapping value="use_profile" class="App\CarbonFootprint\Domain\Model\Activity\UseProfileActivity" />
             <discriminator-mapping value="process" class="App\CarbonFootprint\Domain\Model\Activity\ProcessActivity" />
+            <discriminator-mapping value="economic_sector" class="App\CarbonFootprint\Domain\Model\Activity\EconomicSectorActivity" />
             <discriminator-mapping value="combustible" class="App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity" />
             <discriminator-mapping value="electricity" class="App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity" />
             <discriminator-mapping value="machinery_fuel" class="App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity" />

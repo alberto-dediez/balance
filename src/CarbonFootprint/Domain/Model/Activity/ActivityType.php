@@ -13,6 +13,7 @@ enum ActivityType: string
     case CapitalGood = 'capital_good';
     case UseProfile = 'use_profile';
     case Process = 'process';
+    case EconomicSector = 'economic_sector';
     case Combustible       = 'combustible';
     case Electricity       = 'electricity';
     case MachineryFuel     = 'machinery_fuel';
@@ -32,6 +33,7 @@ enum ActivityType: string
             $activity instanceof CapitalGoodActivity => self::CapitalGood,
             $activity instanceof UseProfileActivity => self::UseProfile,
             $activity instanceof ProcessActivity => self::Process,
+            $activity instanceof EconomicSectorActivity => self::EconomicSector,
             $activity instanceof CombustibleActivity       => self::Combustible,
             $activity instanceof ElectricityActivity       => self::Electricity,
             $activity instanceof MachineryFuelActivity     => self::MachineryFuel,

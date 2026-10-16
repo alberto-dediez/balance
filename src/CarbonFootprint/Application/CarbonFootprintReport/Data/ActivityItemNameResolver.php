@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\CapitalGoodActivity;
 use App\CarbonFootprint\Domain\Model\Activity\CateringItemActivity;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
+use App\CarbonFootprint\Domain\Model\Activity\EconomicSectorActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MaterialActivity;
@@ -80,6 +81,7 @@ final class ActivityItemNameResolver
             $activity instanceof CapitalGoodActivity => (string) $activity->capitalGoodId(),
             $activity instanceof UseProfileActivity => (string) $activity->useProfileId(),
             $activity instanceof ProcessActivity => (string) $activity->processId(),
+            $activity instanceof EconomicSectorActivity => (string) $activity->economicSectorId(),
             $activity instanceof CombustibleActivity => (string) $activity->combustibleId(),
             $activity instanceof ElectricityActivity => null !== $activity->electricityMarketerId() ? (string) $activity->electricityMarketerId() : null,
             $activity instanceof MachineryFuelActivity => (string) $activity->machineryFuelId(),

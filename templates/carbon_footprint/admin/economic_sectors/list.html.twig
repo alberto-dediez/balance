@@ -1,0 +1,54 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Sectores económicos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Código CNAE/NACE' | trans,
+            'sortable': true,
+            'sortableBy': 'classificationCode'
+        }, {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Divisa' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': 'Fecha de actualización' | trans,
+            'sortable': true,
+            'sortableBy': 'updatedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="economicSectors" :bulkForm="bulkForm">
+        <td>{{ element.classificationCode ?? '---' }}</td>
+        <td>{{ element.name }}</td>
+        <td>{{ element.unit.value | trans({}, 'unitType') }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>{{ element.updatedAt ? element.updatedAt | date('d/m/Y') : '' }}</td>
+        <td>
+            {% if element | is_authorized('edit') %}
+                <twig:List:Action:Edit path="{{ path('admin_economic_sectors_edit', {'economicSectorId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_economic_sectors_remove', {'economicSectorId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:EmissionFactors path="{{ path('admin_economic_sectors_emission_factors') }}" />
+    <twig:Link:Import path="{{ path('import', {'code': 'economic_sectors'}) }}" />
+    <twig:Link:Export path="{{ path('export', {'code': 'economic_sectors'}) }}" />
+    <twig:Link:Register path="{{ path('admin_economic_sectors_register') }}" />
+{% endblock list_actions %}

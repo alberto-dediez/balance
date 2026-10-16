@@ -1,0 +1,101 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_economic_sectors') }}" />
+{% endblock %}
+
+{% set page_title = ('Sectores económicos' | trans)
+    ~ ' > '
+    ~ ('Factores de emisión' | trans) %}
+
+{% block content %}
+    <twig:Card>
+        <div class="d-flex align-items-center justify-content-between">
+            <a class="btn btn-outline-primary" href="{{ path('admin_economic_sectors_emission_factors', {'emissionFactorGroup': emissionFactorGroup.id ~ '', 'year': year - 1}) }}">
+                <twig:Icon name="solar:alt-arrow-left-line-duotone" />
+                {% trans %}Año anterior{% endtrans %}
+            </a>
+
+            <div class="d-flex align-items-center gap-2">
+                <twig:EmissionFactorGroup:Selector
+                    route="admin_economic_sectors_emission_factors"
+                    :emissionFactorGroup="emissionFactorGroup"
+                    :emissionFactorGroups="emissionFactorGroups"
+                    :year="year"
+                />
+                <h4 class="mb-0">{{ year }}</h4>
+            </div>
+
+            {% if canGoNext %}
+                <a class="btn btn-outline-primary" href="{{ path('admin_economic_sectors_emission_factors', {'emissionFactorGroup': emissionFactorGroup.id ~ '', 'year': year + 1}) }}">
+                    {% trans %}Año siguiente{% endtrans %}
+                    <twig:Icon name="solar:alt-arrow-right-line-duotone" />
+                </a>
+            {% else %}
+                <span class="btn btn-outline-primary disabled">
+                    {% trans %}Año siguiente{% endtrans %}
+                    <twig:Icon name="solar:alt-arrow-right-line-duotone" />
+                </span>
+            {% endif %}
+        </div>
+    </twig:Card>
+
+    <twig:Card>
+        {{ form_start(createYearForm) }}
+        <div class="row align-items-end">
+            <div class="col-md-3 col-lg-2">
+                <twig:View:Field label="{{ 'Año de origen' | trans }}">{{ year }}</twig:View:Field>
+            </div>
+            <div class="col-md-3 col-lg-2">
+                {{ form_row(createYearForm.targetYear) }}
+            </div>
+            <div class="col-md-3 col-lg-2 mb-3">
+                {{ form_widget(createYearForm.create, {'attr': {'class': 'btn btn-primary'}}) }}
+            </div>
+        </div>
+        {{ form_widget(createYearForm.emissionFactorGroupId) }}
+        {{ form_end(createYearForm) }}
+    </twig:Card>
+
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>{% trans %}Sector económico{% endtrans %}</th>
+                            <th>{% trans %}Kg CO2eq{% endtrans %}</th>
+                            <th>{% trans %}Kg CO2{% endtrans %}</th>
+                            <th>{% trans %}g CH4{% endtrans %}</th>
+                            <th>{% trans %}g N2O{% endtrans %}</th>
+                            <th>{% trans %}Fuente{% endtrans %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in form.rows %}
+                            <tr>
+                                <td>
+                                    {{ row.vars.data.classificationCode ? row.vars.data.classificationCode ~ ' · ' : '' }}{{ row.vars.data.economicSectorName }}
+                                    {{ form_widget(row.economicSectorId) }}
+                                    {{ form_widget(row.emissionFactorGroupId) }}
+                                </td>
+                                <td>{{ form_widget(row.co2eq) }}{{ form_errors(row.co2eq) }}</td>
+                                <td>{{ form_widget(row.co2) }}{{ form_errors(row.co2) }}</td>
+                                <td>{{ form_widget(row.ch4) }}{{ form_errors(row.ch4) }}</td>
+                                <td>{{ form_widget(row.n2o) }}{{ form_errors(row.n2o) }}</td>
+                                <td>{{ form_widget(row.source) }}{{ form_errors(row.source) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% do form.rows.setRendered %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

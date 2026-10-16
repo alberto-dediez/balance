@@ -9289,6 +9289,86 @@
         <source>Se ha actualizado el proceso "{process}" por el usuario {user}</source>
         <target>"{process}" süreci {user} kullanıcısı tarafından güncellendi</target>
       </trans-unit>
+      <trans-unit id="KiRQHOj" resname="Sectores económicos">
+        <source>Sectores económicos</source>
+        <target>Ekonomik sektörler</target>
+      </trans-unit>
+      <trans-unit id="1Vio5.O" resname="Ya existe un sector económico con ese código">
+        <source>Ya existe un sector económico con ese código</source>
+        <target>Bu koda sahip bir ekonomik sektör zaten var</target>
+      </trans-unit>
+      <trans-unit id="JcCDuCD" resname="Sector económico creado correctamente: {name}">
+        <source>Sector económico creado correctamente: {name}</source>
+        <target>Ekonomik sektör başarıyla oluşturuldu: {name}</target>
+      </trans-unit>
+      <trans-unit id="PSGQAxN" resname="Sector económico actualizado con éxito">
+        <source>Sector económico actualizado con éxito</source>
+        <target>Ekonomik sektör başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="kpWXQK8" resname="Se ha eliminado el sector económico {economicSector}">
+        <source>Se ha eliminado el sector económico {economicSector}</source>
+        <target>{economicSector} ekonomik sektörü silindi</target>
+      </trans-unit>
+      <trans-unit id="UWYv3.d" resname="No se ha podido eliminar el sector económico {economicSector}">
+        <source>No se ha podido eliminar el sector económico {economicSector}</source>
+        <target>{economicSector} ekonomik sektörü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="1ct6kgG" resname="Sector económico no encontrado">
+        <source>Sector económico no encontrado</source>
+        <target>Ekonomik sektör bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="u2MR0t4" resname="Se ha eliminado el sector económico {id}">
+        <source>Se ha eliminado el sector económico {id}</source>
+        <target>{id} ekonomik sektörü silindi</target>
+      </trans-unit>
+      <trans-unit id="L1tEyKd" resname="No se ha podido eliminar el sector económico {id}">
+        <source>No se ha podido eliminar el sector económico {id}</source>
+        <target>{id} ekonomik sektörü silinemedi</target>
+      </trans-unit>
+      <trans-unit id=".MF_L5B" resname="Código CNAE/NACE">
+        <source>Código CNAE/NACE</source>
+        <target>NACE/CNAE kodu</target>
+      </trans-unit>
+      <trans-unit id="SCJKe84" resname="Código CNAE 2009 o NACE Rev. 2, opcional. Debe ser único.">
+        <source>Código CNAE 2009 o NACE Rev. 2, opcional. Debe ser único.</source>
+        <target>İsteğe bağlı CNAE 2009 veya NACE Rev. 2 kodu. Benzersiz olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="bRtAwIu" resname="Inversiones">
+        <source>Inversiones</source>
+        <target>Yatırımlar</target>
+      </trans-unit>
+      <trans-unit id="ipMB57J" resname="Sector económico">
+        <source>Sector económico</source>
+        <target>Ekonomik sektör</target>
+      </trans-unit>
+      <trans-unit id="gCAd56V" resname="Se ha eliminado el sector económico {economicSector} por el usuario {user}">
+        <source>Se ha eliminado el sector económico {economicSector} por el usuario {user}</source>
+        <target>{economicSector} ekonomik sektörü {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="Cqte8ke" resname="Se ha eliminado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}</source>
+        <target>{economicSector} ekonomik sektörünün {year} yılı emisyon faktörü {user} kullanıcısı tarafından silindi</target>
+      </trans-unit>
+      <trans-unit id="pKeHilT" resname="Se ha actualizado el sector económico &quot;{economicSector}&quot; por el usuario {user}">
+        <source>Se ha actualizado el sector económico "{economicSector}" por el usuario {user}</source>
+        <target>"{economicSector}" ekonomik sektörü {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="ga3DLY6" resname="Se ha registrado el sector económico &quot;{economicSector}&quot; por el usuario {user}">
+        <source>Se ha registrado el sector económico "{economicSector}" por el usuario {user}</source>
+        <target>"{economicSector}" ekonomik sektörü {user} kullanıcısı tarafından kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="AsAZsSz" resname="Se ha actualizado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}</source>
+        <target>{economicSector} ekonomik sektörünün {year} yılı emisyon faktörü {user} kullanıcısı tarafından güncellendi</target>
+      </trans-unit>
+      <trans-unit id="cFuKG64" resname="Se ha añadido el factor de emisión del año {year} al sector económico {economicSector} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al sector económico {economicSector} por el usuario {user}</source>
+        <target>{economicSector} ekonomik sektörüne {year} yılı emisyon faktörü {user} kullanıcısı tarafından eklendi</target>
+      </trans-unit>
+      <trans-unit id="VpQRsCq" resname="Se ha traducido el sector económico &quot;{economicSector}&quot; por el usuario {user}">
+        <source>Se ha traducido el sector económico "{economicSector}" por el usuario {user}</source>
+        <target>"{economicSector}" ekonomik sektörü {user} kullanıcısı tarafından çevrildi</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

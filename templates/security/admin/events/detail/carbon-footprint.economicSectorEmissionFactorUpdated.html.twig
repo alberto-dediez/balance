@@ -1,0 +1,5 @@
+{% trans with {
+    '{year}': event.emissionFactor.year,
+    '{economicSector}': event.economicSectorId,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}{% endtrans %}

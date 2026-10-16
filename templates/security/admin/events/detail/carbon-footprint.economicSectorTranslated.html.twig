@@ -1,0 +1,4 @@
+{% trans with {
+    '{economicSector}': event.name,
+    '{user}': element.userId | user_name
+} %}Se ha traducido el sector económico "{economicSector}" por el usuario {user}{% endtrans %}

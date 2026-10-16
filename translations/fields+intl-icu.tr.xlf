@@ -153,6 +153,14 @@
         <source>process</source>
         <target>Süreç</target>
       </trans-unit>
+      <trans-unit id="YYcLn0U" resname="economicSector">
+        <source>economicSector</source>
+        <target>Ekonomik sektör</target>
+      </trans-unit>
+      <trans-unit id="gK9OmOI" resname="classificationCode">
+        <source>classificationCode</source>
+        <target>NACE/CNAE kodu</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

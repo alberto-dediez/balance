@@ -9289,6 +9289,86 @@
         <source>Se ha actualizado el proceso "{process}" por el usuario {user}</source>
         <target>Process "{process}" has been updated by user {user}</target>
       </trans-unit>
+      <trans-unit id="KiRQHOj" resname="Sectores económicos">
+        <source>Sectores económicos</source>
+        <target>Economic sectors</target>
+      </trans-unit>
+      <trans-unit id="1Vio5.O" resname="Ya existe un sector económico con ese código">
+        <source>Ya existe un sector económico con ese código</source>
+        <target>An economic sector with that code already exists</target>
+      </trans-unit>
+      <trans-unit id="JcCDuCD" resname="Sector económico creado correctamente: {name}">
+        <source>Sector económico creado correctamente: {name}</source>
+        <target>Economic sector successfully created: {name}</target>
+      </trans-unit>
+      <trans-unit id="PSGQAxN" resname="Sector económico actualizado con éxito">
+        <source>Sector económico actualizado con éxito</source>
+        <target>Economic sector successfully updated</target>
+      </trans-unit>
+      <trans-unit id="kpWXQK8" resname="Se ha eliminado el sector económico {economicSector}">
+        <source>Se ha eliminado el sector económico {economicSector}</source>
+        <target>Economic sector {economicSector} has been removed</target>
+      </trans-unit>
+      <trans-unit id="UWYv3.d" resname="No se ha podido eliminar el sector económico {economicSector}">
+        <source>No se ha podido eliminar el sector económico {economicSector}</source>
+        <target>Economic sector {economicSector} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="1ct6kgG" resname="Sector económico no encontrado">
+        <source>Sector económico no encontrado</source>
+        <target>Economic sector not found</target>
+      </trans-unit>
+      <trans-unit id="u2MR0t4" resname="Se ha eliminado el sector económico {id}">
+        <source>Se ha eliminado el sector económico {id}</source>
+        <target>Economic sector {id} has been removed</target>
+      </trans-unit>
+      <trans-unit id="L1tEyKd" resname="No se ha podido eliminar el sector económico {id}">
+        <source>No se ha podido eliminar el sector económico {id}</source>
+        <target>Economic sector {id} could not be removed</target>
+      </trans-unit>
+      <trans-unit id=".MF_L5B" resname="Código CNAE/NACE">
+        <source>Código CNAE/NACE</source>
+        <target>NACE/CNAE code</target>
+      </trans-unit>
+      <trans-unit id="SCJKe84" resname="Código CNAE 2009 o NACE Rev. 2, opcional. Debe ser único.">
+        <source>Código CNAE 2009 o NACE Rev. 2, opcional. Debe ser único.</source>
+        <target>Optional CNAE 2009 or NACE Rev. 2 code. It must be unique.</target>
+      </trans-unit>
+      <trans-unit id="bRtAwIu" resname="Inversiones">
+        <source>Inversiones</source>
+        <target>Investments</target>
+      </trans-unit>
+      <trans-unit id="ipMB57J" resname="Sector económico">
+        <source>Sector económico</source>
+        <target>Economic sector</target>
+      </trans-unit>
+      <trans-unit id="gCAd56V" resname="Se ha eliminado el sector económico {economicSector} por el usuario {user}">
+        <source>Se ha eliminado el sector económico {economicSector} por el usuario {user}</source>
+        <target>Economic sector {economicSector} has been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="Cqte8ke" resname="Se ha eliminado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}">
+        <source>Se ha eliminado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}</source>
+        <target>The {year} emission factor of economic sector {economicSector} has been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="pKeHilT" resname="Se ha actualizado el sector económico &quot;{economicSector}&quot; por el usuario {user}">
+        <source>Se ha actualizado el sector económico "{economicSector}" por el usuario {user}</source>
+        <target>Economic sector "{economicSector}" has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="ga3DLY6" resname="Se ha registrado el sector económico &quot;{economicSector}&quot; por el usuario {user}">
+        <source>Se ha registrado el sector económico "{economicSector}" por el usuario {user}</source>
+        <target>Economic sector "{economicSector}" has been registered by user {user}</target>
+      </trans-unit>
+      <trans-unit id="AsAZsSz" resname="Se ha actualizado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}">
+        <source>Se ha actualizado el factor de emisión del año {year} del sector económico {economicSector} por el usuario {user}</source>
+        <target>The {year} emission factor of economic sector {economicSector} has been updated by user {user}</target>
+      </trans-unit>
+      <trans-unit id="cFuKG64" resname="Se ha añadido el factor de emisión del año {year} al sector económico {economicSector} por el usuario {user}">
+        <source>Se ha añadido el factor de emisión del año {year} al sector económico {economicSector} por el usuario {user}</source>
+        <target>The {year} emission factor has been added to economic sector {economicSector} by user {user}</target>
+      </trans-unit>
+      <trans-unit id="VpQRsCq" resname="Se ha traducido el sector económico &quot;{economicSector}&quot; por el usuario {user}">
+        <source>Se ha traducido el sector económico "{economicSector}" por el usuario {user}</source>
+        <target>Economic sector "{economicSector}" has been translated by user {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

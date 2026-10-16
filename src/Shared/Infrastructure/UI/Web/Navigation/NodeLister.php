@@ -287,6 +287,19 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Inversiones'),
+            icon: 'solar:pie-chart-2-line-duotone',
+            target: '#inversiones',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Sectores económicos'),
+                    icon: 'solar:graph-up-line-duotone',
+                    target: $this->router->generate('admin_economic_sectors'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Instalaciones'),
             icon: 'solar:buildings-3-line-duotone',
             target: '#instalaciones',
