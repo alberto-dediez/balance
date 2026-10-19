@@ -1,5 +1,10 @@
 {% extends '@shared/base.html.twig' %}
 
 {% block body %}
-    <h1>ok</h1>
+    <h1>{{ report.isHealthy ? 'ok' : 'error' }}</h1>
+    <ul>
+        {% for result in report.results %}
+            <li>{{ result.name }}: {{ result.healthy ? 'ok' : 'error' }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}
