@@ -49,3 +49,24 @@ Feature:
         Then the response status should be 200
         Then I do not see a text "#8A2432"
         Then I do not see a text "family=Poppins"
+
+    Scenario: Public pages show the language switch in the top bar without the three-dots menu
+        Given account "MyCompany" with id "666" exists
+        Given event "Evento A" with id "333" of account "666" exists
+        Given attendee survey with id "AS1" and token "token-abc" for event "333" of account "666" exists
+        Given attendee survey "AS1" has venue location "IFEMA, Madrid" at "40.4680", "-3.6160"
+        When I go to "/es/carbon-footprint/attendee-survey/token-abc/intercity"
+        Then the response status should be 200
+        Then I do not see a text 'data-bs-target="#navbarNav"'
+        Then I do not see a text 'id="navbarNav"'
+        Then I see a link to "/en/carbon-footprint/attendee-survey/token-abc/intercity"
+        Then I see a text "Idioma"
+
+    Scenario: The backoffice keeps the three-dots menu with the language switch inside
+        Given user "admin" with role "ROLE_ADMIN" exists
+        When I am logged as "admin"
+        When I go to "/es/"
+        Then the response status should be 200
+        Then I see a text 'data-bs-target="#navbarNav"'
+        Then I see a text 'id="navbarNav"'
+        Then I see a link to "/en/"

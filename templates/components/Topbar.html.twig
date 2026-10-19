@@ -22,15 +22,21 @@
                 {% endif %}
             </div>
             <twig:Topbar:AccountSwitch></twig:Topbar:AccountSwitch>
-            <a class="navbar-toggler p-0 border-0 nav-icon-hover" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="p-2">
-                    <twig:Icon name="ph:dots-three" class="icon" />
-                </span>
-            </a>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <div class="d-flex align-items-center justify-content-between">
-                    <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
-                        {% if not public %}
+            {% if public %}
+                <ul class="navbar-nav flex-row ms-auto align-items-center">
+                    <li class="nav-item nav-icon-hover dropdown">
+                        <twig:Topbar:LanguageSwitch></twig:Topbar:LanguageSwitch>
+                    </li>
+                </ul>
+            {% else %}
+                <a class="navbar-toggler p-0 border-0 nav-icon-hover" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="p-2">
+                        <twig:Icon name="ph:dots-three" class="icon" />
+                    </span>
+                </a>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
                             {% if is_granted('IS_IMPERSONATOR') %}
                                 <li class="nav-item me-2">
                                     <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="badge bg-warning-subtle text-warning d-flex align-items-center gap-1">
@@ -49,20 +55,18 @@
                                     <twig:Icon name="solar:sun-2-line-duotone" class="sun" />
                                 </a>
                             </li>
-                        {% endif %}
 
-                        <li class="nav-item nav-icon-hover dropdown">
-                            <twig:Topbar:LanguageSwitch></twig:Topbar:LanguageSwitch>
-                        </li>
-                        {% if not public %}
+                            <li class="nav-item nav-icon-hover dropdown">
+                                <twig:Topbar:LanguageSwitch></twig:Topbar:LanguageSwitch>
+                            </li>
                             <twig:Topbar:Notifications></twig:Topbar:Notifications>
                             <li class="nav-item dropdown">
                                 <twig:Topbar:Profile></twig:Topbar:Profile>
                             </li>
-                        {% endif %}
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
         </nav>
     </div>
 </header>
