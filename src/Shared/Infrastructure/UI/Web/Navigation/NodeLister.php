@@ -153,31 +153,42 @@ class NodeLister
     {
         $nodes =  [];
 
+        $securityItems = [
+            new Node(
+                label: new TranslatableMessage('Cuentas'),
+                icon: 'solar:buildings-3-line-duotone',
+                target: $this->router->generate('admin_accounts'),
+            ),
+            new Node(
+                label: new TranslatableMessage('Usuarios'),
+                icon: 'solar:users-group-rounded-line-duotone',
+                target: $this->router->generate('admin_users'),
+            ),
+            new Node(
+                label: new TranslatableMessage('Firma de documentos'),
+                icon: 'solar:verified-check-line-duotone',
+                target: $this->router->generate('admin_signature_requests'),
+            ),
+        ];
+
+        if ($this->hasRole(Role::SuperAdmin)) {
+            $securityItems[] = new Node(
+                label: new TranslatableMessage('Emails enviados'),
+                icon: 'solar:letter-opened-line-duotone',
+                target: $this->router->generate('admin_emails'),
+            );
+        }
+
+        $securityItems[] = new Node(
+            label: new TranslatableMessage('Registro'),
+            icon: 'solar:record-minimalistic-line-duotone',
+            target: $this->router->generate('admin_events'),
+        );
+
         $nodes[] =  new Node(
             label: new TranslatableMessage('Seguridad'),
             icon: 'solar:shield-user-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Cuentas'),
-                    icon: 'solar:buildings-3-line-duotone',
-                    target: $this->router->generate('admin_accounts'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Usuarios'),
-                    icon: 'solar:users-group-rounded-line-duotone',
-                    target: $this->router->generate('admin_users'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Firma de documentos'),
-                    icon: 'solar:verified-check-line-duotone',
-                    target: $this->router->generate('admin_signature_requests'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Registro'),
-                    icon: 'solar:record-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_events'),
-                ),
-            ],
+            items: $securityItems,
         );
 
         $nodes[] = $this->libraryNode();

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Security\Domain\Model\EmailLog\EmailLog" table="email_log">
+        <id name="id" type="email_log_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <indexes>
+            <index columns="sent_at" name="idx_email_log_sent_at"/>
+            <index columns="recipient_email" name="idx_email_log_recipient"/>
+            <index columns="status" name="idx_email_log_status"/>
+        </indexes>
+
+        <field name="recipientEmail" type="string" length="255" column="recipient_email" nullable="false"/>
+        <field name="recipientName" type="string" length="255" column="recipient_name" nullable="false"/>
+        <field name="subject" type="string" length="255" nullable="false"/>
+        <field name="template" type="string" length="255" nullable="false"/>
+        <field name="provider" type="string" length="50" nullable="false"/>
+        <field name="providerMessageId" type="string" length="255" column="provider_message_id" nullable="true"/>
+        <field name="status" type="string" enum-type="App\Security\Domain\Model\EmailLog\EmailLogStatus" nullable="false"/>
+        <field name="statusReason" type="text" column="status_reason" nullable="true"/>
+        <field name="sentAt" type="datetime_immutable" column="sent_at" nullable="false"/>
+        <field name="deliveredAt" type="datetime_immutable" column="delivered_at" nullable="true"/>
+        <field name="firstOpenedAt" type="datetime_immutable" column="first_opened_at" nullable="true"/>
+        <field name="lastOpenedAt" type="datetime_immutable" column="last_opened_at" nullable="true"/>
+        <field name="openCount" type="integer" column="open_count" nullable="false"/>
+        <field name="firstClickedAt" type="datetime_immutable" column="first_clicked_at" nullable="true"/>
+        <field name="clickCount" type="integer" column="click_count" nullable="false"/>
+        <field name="spamReportedAt" type="datetime_immutable" column="spam_reported_at" nullable="true"/>
+        <field name="lastEventAt" type="datetime_immutable" column="last_event_at" nullable="true"/>
+    </entity>
+
+</doctrine-mapping>

@@ -23,6 +23,7 @@ security-web:
         exclude:
             - '../src/Security/Infrastructure/UI/Web/Public/'
             - '../src/Security/Infrastructure/UI/Web/Sso/'
+            - '../src/Security/Infrastructure/UI/Web/Webhook/'
     type: attribute
     prefix: /{_locale}
     requirements:
@@ -45,6 +46,12 @@ security-sso:
     resource:
         path: ../src/Security/Infrastructure/UI/Web/Sso/
         namespace: App\Security\Infrastructure\UI\Web\Sso
+    type: attribute
+
+security-webhook:
+    resource:
+        path: ../src/Security/Infrastructure/UI/Web/Webhook/
+        namespace: App\Security\Infrastructure\UI\Web\Webhook
     type: attribute
 
 security-api:

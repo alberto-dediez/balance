@@ -50,6 +50,7 @@ services:
         public: true
         arguments:
             $mailerFrom: '%mailer.from%'
+            $mailerDsn: '%env(MAILER_DSN)%'
 
     App\Shared\Infrastructure\Symfony\Event\EmailListener:
         public: true

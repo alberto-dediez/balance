@@ -1,0 +1,4 @@
+{% trans with {
+    '{date}': event.droppedAt | date('d/m/Y H:i'),
+    '{reason}': event.reason
+} %}Email descartado el {date}: {reason}{% endtrans %}

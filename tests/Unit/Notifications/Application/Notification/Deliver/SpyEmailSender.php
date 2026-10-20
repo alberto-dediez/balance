@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Notifications\Application\Notification\Deliver;
 
 use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Model\Email\EmailSender;
+use App\Shared\Domain\Model\Email\EmailTrackingId;
 
 class SpyEmailSender implements EmailSender
 {
@@ -14,7 +15,7 @@ class SpyEmailSender implements EmailSender
 
     public function __construct(private readonly bool $shouldFail = false) {}
 
-    public function __invoke(EmailRecipient $recipient, string $subject, string $template, ?array $params = null): void
+    public function __invoke(EmailRecipient $recipient, string $subject, string $template, ?array $params = null): EmailTrackingId
     {
         if ($this->shouldFail) {
             throw new \RuntimeException('email transport failure');
@@ -26,6 +27,8 @@ class SpyEmailSender implements EmailSender
             'template' => $template,
             'params' => $params,
         ];
+
+        return EmailTrackingId::generate();
     }
 
     /** @return list<array{recipient: EmailRecipient, subject: string, template: string, params: ?array<string,mixed>}> */

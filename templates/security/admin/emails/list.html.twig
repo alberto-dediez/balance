@@ -1,0 +1,66 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Emails enviados' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Destinatario' | trans,
+            'sortable': true,
+            'sortableBy': 'recipient'
+        }, {
+            'label': 'Asunto' | trans
+        }, {
+            'label': 'Proveedor' | trans
+        }, {
+            'label': 'Estado' | trans,
+            'sortable': true,
+            'sortableBy': 'status'
+        }, {
+            'label': 'Enviado' | trans,
+            'sortable': true,
+            'sortableBy': 'default'
+        }, {
+            'label': 'Entregado' | trans,
+            'sortable': true,
+            'sortableBy': 'deliveredAt'
+        }, {
+            'label': 'Abierto' | trans,
+            'sortable': true,
+            'sortableBy': 'firstOpenedAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    <twig:List:Table :columns="columns" :elements="emailLogs">
+        <td>
+            {{ element.recipientName }}
+            <div class="text-muted small">{{ element.recipientEmail }}</div>
+        </td>
+        <td>{{ element.subject }}</td>
+        <td>{{ element.provider }}</td>
+        <td>{% include '@security/admin/emails/_status_badge.html.twig' with {'emailLog': element} %}</td>
+        <td>{{ element.sentAt | date('d/m/Y H:i') }}</td>
+        <td>{{ element.deliveredAt ? element.deliveredAt | date('d/m/Y H:i') : '---' }}</td>
+        <td>
+            {% if element.hasBeenOpened %}
+                {{ element.firstOpenedAt | date('d/m/Y H:i') }}
+                {% if element.openCount > 1 %}
+                    <span class="badge bg-secondary-subtle text-secondary">{{ element.openCount }}</span>
+                {% endif %}
+            {% else %}
+                ---
+            {% endif %}
+        </td>
+        <td>
+            {% if element | is_authorized('view') %}
+                <twig:List:Action:View path="{{ path('admin_emails_show', {'emailLogId': element.id}) }}" />
+            {% endif %}
+
+            {% if element | is_authorized('history') %}
+                <twig:List:Action:History path="{{ path('admin_emails_history', {'emailLogId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

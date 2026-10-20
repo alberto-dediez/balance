@@ -1,0 +1,5 @@
+{% trans with {
+    '{subject}': event.subject,
+    '{recipient}': event.recipientEmail,
+    '{status}': event.status.value | trans({}, 'emailLogStatus')
+} %}Registrado email con asunto "{subject}" a {recipient} ({status}){% endtrans %}

@@ -2049,6 +2049,122 @@
         <source>El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.</source>
         <target>The library storage is responding again. {uploaded} files that were kept temporarily on the server have been uploaded.</target>
       </trans-unit>
+      <trans-unit id="UrMdEi5" resname="Proveedor">
+        <source>Proveedor</source>
+        <target>Provider</target>
+      </trans-unit>
+      <trans-unit id="8ctFa1g" resname="Enviado desde">
+        <source>Enviado desde</source>
+        <target>Sent from</target>
+      </trans-unit>
+      <trans-unit id="eFp5x_9" resname="Enviado hasta">
+        <source>Enviado hasta</source>
+        <target>Sent until</target>
+      </trans-unit>
+      <trans-unit id="ZRfRwWL" resname="Emails enviados">
+        <source>Emails enviados</source>
+        <target>Sent emails</target>
+      </trans-unit>
+      <trans-unit id="3UQ0bPx" resname="Email rebotado el {date}: {reason}">
+        <source>Email rebotado el {date}: {reason}</source>
+        <target>Email bounced on {date}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="2skzMgT" resname="Email descartado el {date}: {reason}">
+        <source>Email descartado el {date}: {reason}</source>
+        <target>Email dropped on {date}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="xvROq.s" resname="Email abierto el {date}">
+        <source>Email abierto el {date}</source>
+        <target>Email opened on {date}</target>
+      </trans-unit>
+      <trans-unit id="lQquOJE" resname="Email entregado el {date}">
+        <source>Email entregado el {date}</source>
+        <target>Email delivered on {date}</target>
+      </trans-unit>
+      <trans-unit id="T60y_bC" resname="Email diferido el {date}: {reason}">
+        <source>Email diferido el {date}: {reason}</source>
+        <target>Email deferred on {date}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="i37LJZd" resname="Clic en el email el {date}">
+        <source>Clic en el email el {date}</source>
+        <target>Email clicked on {date}</target>
+      </trans-unit>
+      <trans-unit id="5G64Hl9" resname="Email marcado como spam el {date}">
+        <source>Email marcado como spam el {date}</source>
+        <target>Email reported as spam on {date}</target>
+      </trans-unit>
+      <trans-unit id="eS9kZZT" resname="Registro de email eliminado">
+        <source>Registro de email eliminado</source>
+        <target>Email log removed</target>
+      </trans-unit>
+      <trans-unit id="7hyzOUY" resname="Registrado email con asunto &quot;{subject}&quot; a {recipient} ({status})">
+        <source>Registrado email con asunto "{subject}" a {recipient} ({status})</source>
+        <target>Logged email with subject "{subject}" to {recipient} ({status})</target>
+      </trans-unit>
+      <trans-unit id="WxLMWQI" resname="Enviado">
+        <source>Enviado</source>
+        <target>Sent</target>
+      </trans-unit>
+      <trans-unit id="QBu1HSr" resname="Entregado">
+        <source>Entregado</source>
+        <target>Delivered</target>
+      </trans-unit>
+      <trans-unit id="P5qL7DG" resname="Abierto">
+        <source>Abierto</source>
+        <target>Opened</target>
+      </trans-unit>
+      <trans-unit id="3AuZCzA" resname="Ver auditoría">
+        <source>Ver auditoría</source>
+        <target>View audit log</target>
+      </trans-unit>
+      <trans-unit id="0aT_lZO" resname="El proveedor configurado no envía información de entrega ni de apertura">
+        <source>El proveedor configurado no envía información de entrega ni de apertura</source>
+        <target>The configured provider does not report delivery or open information</target>
+      </trans-unit>
+      <trans-unit id="1zZk2us" resname="Origen">
+        <source>Origen</source>
+        <target>Source</target>
+      </trans-unit>
+      <trans-unit id="6e0qfui" resname="Id del proveedor">
+        <source>Id del proveedor</source>
+        <target>Provider id</target>
+      </trans-unit>
+      <trans-unit id="Lbtl2Fb" resname="Seguimiento">
+        <source>Seguimiento</source>
+        <target>Tracking</target>
+      </trans-unit>
+      <trans-unit id="5Tqo5nC" resname="Motivo">
+        <source>Motivo</source>
+        <target>Reason</target>
+      </trans-unit>
+      <trans-unit id="Uv01ULU" resname="Primera apertura">
+        <source>Primera apertura</source>
+        <target>First opened</target>
+      </trans-unit>
+      <trans-unit id="5rU.Lbv" resname="Última apertura">
+        <source>Última apertura</source>
+        <target>Last opened</target>
+      </trans-unit>
+      <trans-unit id=".1ImJxS" resname="Aperturas">
+        <source>Aperturas</source>
+        <target>Opens</target>
+      </trans-unit>
+      <trans-unit id="Or7xTnD" resname="Primer clic">
+        <source>Primer clic</source>
+        <target>First click</target>
+      </trans-unit>
+      <trans-unit id="4GzWMKK" resname="Clics">
+        <source>Clics</source>
+        <target>Clicks</target>
+      </trans-unit>
+      <trans-unit id="19zOP0f" resname="Marcado como spam">
+        <source>Marcado como spam</source>
+        <target>Reported as spam</target>
+      </trans-unit>
+      <trans-unit id="W3YpzE2" resname="Último evento">
+        <source>Último evento</source>
+        <target>Last event</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -8,6 +8,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Email\EmailRecipient;
 use App\Shared\Domain\Model\Email\EmailSender;
 use App\Shared\Domain\Model\Email\EmailSent;
+use App\Shared\Domain\Model\Email\EmailTrackingId;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -28,13 +29,16 @@ abstract class EmailSenderTest extends KernelTestCase
 
         $recipient = new EmailRecipient('name of recipient', 'recipient@email.com');
 
-        $sut($recipient, 'about email', '@shared/layout/email.html.twig');
+        $trackingId = $sut($recipient, 'about email', '@shared/layout/email.html.twig');
 
         $lastEvent = $this->spySubscriber->lastEvent();
 
+        $this->assertInstanceOf(EmailTrackingId::class, $trackingId);
         $this->assertNotNull($lastEvent);
         $this->assertTrue($lastEvent instanceof EmailSent);
         $this->assertEquals($recipient, $lastEvent->recipient());
+        $this->assertTrue($trackingId->equals($lastEvent->trackingId()));
+        $this->assertNotEmpty($lastEvent->provider());
     }
 
     abstract public function createSUT(): EmailSender;

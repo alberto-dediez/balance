@@ -7,6 +7,7 @@ namespace App\Shared\Application\CommandBus;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
+use App\Security\Application\EmailLog\Purge\PurgeEmailLogsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
 /**
@@ -35,6 +36,11 @@ class CommandSchedule
                 id: 'security:purge-expired-signature-requests',
                 command: new PurgeExpiredSignatureRequestsRequest(new \DateTimeImmutable('NOW')),
                 time: '02:00',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'security:purge-email-logs',
+                command: new PurgeEmailLogsRequest(new \DateTimeImmutable('NOW')),
+                time: '03:00',
             ),
             ScheduledCommand::everyMinutes(
                 id: 'changelog:publish-scheduled-announcements',
