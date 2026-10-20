@@ -92,7 +92,7 @@ notify_webhook() {
     if curl -fsS --max-time 15 -X POST -H 'Content-Type: application/json' --data "$payload" "$DEPLOY_WEBHOOK_URL" > /dev/null; then
         printf 'Webhook de deploy notificado (%s).\n' "$status"
     else
-        printf 'No se ha podido notificar el webhook de deploy (%s).\n' "$DEPLOY_WEBHOOK_URL" >&2
+        printf 'No se ha podido notificar el webhook de deploy (%s).\n' "$(printf '%s' "$DEPLOY_WEBHOOK_URL" | sed -E 's#^(https?://[^/]+).*#\1#')" >&2
     fi
 }
 

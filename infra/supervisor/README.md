@@ -216,7 +216,9 @@ Si `DEPLOY_WEBHOOK_URL` está definida (como variable de entorno o como línea `
 }
 ```
 
-`step` es el último paso iniciado (en un fallo, el que ha roto) y `log_tail` trae las últimas 40 líneas del log solo cuando `status` es `failed`. Un fallo del webhook (timeout de 15 s, HTTP de error, sin `curl`) solo deja un aviso: nunca cambia el resultado del despliegue.
+`step` es el último paso iniciado (en un fallo, el que ha roto) y `log_tail` trae las últimas 40 líneas del log solo cuando `status` es `failed`. Un fallo del webhook (timeout de 15 s, HTTP de error, sin `curl`) solo deja un aviso: nunca cambia el resultado del despliegue. El aviso solo muestra `scheme://host` de la URL, para no dejar su token en el registro de Plesk ni en `var/log/deploy.log`.
+
+Las plataformas con ERP obtienen la URL en «Configuración de desarrollo → Acciones → Generar URL de resultado» y la copian como `DEPLOY_WEBHOOK_URL=<URL>` en el `.env.local` del proyecto en el servidor.
 
 Para relanzar solo los pasos posteriores al código (por ejemplo, tras corregir un fallo) sin volver a desplegar, desde `root`:
 
