@@ -66,6 +66,91 @@ class UpdateEmissionFactorsServiceTest extends TestCase
         $this->assertSame('1.5', $factor->co2eq());
     }
 
+    public function testAddsWellToTankFactorForYear(): void
+    {
+        $repository = CombustibleRepositoryMother::inMemory();
+
+        $combustible = CombustibleMother::random();
+        $repository->add($combustible);
+
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
+
+        $request = new UpdateEmissionFactorsRequest(
+            year: 2025,
+            rows: [
+                new EmissionFactorRow(
+                    combustibleId: (string) $combustible->id(),
+                    combustibleName: $combustible->name(),
+                    co2eq: '1.5',
+                    co2: '1.0',
+                    ch4: '0.2',
+                    n2o: '0.3',
+                    wellToTankCo2eq: '0.61',
+                    wellToTankCo2: '0.6',
+                    wellToTankCh4: '0.01',
+                    wellToTankN2o: '0.01',
+                    wellToTankSource: 'DEFRA',
+                    source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
+                ),
+            ],
+        );
+
+        $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $persisted = $repository->find($combustible->id());
+
+        $this->assertNotNull($persisted);
+        $factor = $persisted->wellToTankFactorFor(2025, $emissionFactorGroup->id());
+        $this->assertNotNull($factor);
+        $this->assertSame('0.61', $factor->co2eq());
+        $this->assertSame('DEFRA', $factor->source());
+    }
+
+    public function testStoresZeroWellToTankWhenRowHasNoWellToTank(): void
+    {
+        $repository = CombustibleRepositoryMother::inMemory();
+
+        $combustible = CombustibleMother::random();
+        $repository->add($combustible);
+
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
+
+        $request = new UpdateEmissionFactorsRequest(
+            year: 2025,
+            rows: [
+                new EmissionFactorRow(
+                    combustibleId: (string) $combustible->id(),
+                    combustibleName: $combustible->name(),
+                    co2eq: '1.5',
+                    co2: '1.0',
+                    ch4: '0.2',
+                    n2o: '0.3',
+                    source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
+                ),
+            ],
+        );
+
+        $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $persisted = $repository->find($combustible->id());
+
+        $this->assertNotNull($persisted);
+        $factor = $persisted->wellToTankFactorFor(2025, $emissionFactorGroup->id());
+        $this->assertNotNull($factor);
+        $this->assertSame('0', $factor->co2eq());
+        $this->assertNull($factor->source());
+    }
+
     public function testRemovesEmissionFactorWhenRowIsEmpty(): void
     {
         $repository = CombustibleRepositoryMother::inMemory();

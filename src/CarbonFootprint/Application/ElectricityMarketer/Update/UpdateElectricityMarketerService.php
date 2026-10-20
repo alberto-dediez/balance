@@ -6,7 +6,6 @@ namespace App\CarbonFootprint\Application\ElectricityMarketer\Update;
 
 use App\CarbonFootprint\Application\ElectricityMarketer\ElectricityMarketerAuthorizer;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
-use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
@@ -42,13 +41,17 @@ class UpdateElectricityMarketerService implements CommandHandler
         $electricityMarketer->update(name: $request->name);
 
         $electricityMarketer->syncEmissionFactors(
-            array_map(
-                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
-                    Unit::KWh,
-                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
-                ),
+            array_values(array_map(
+                function (EmissionFactorData $data): array {
+                    $emissionFactorGroup = $this->resolveEmissionFactorGroup($data->emissionFactorGroupId);
+
+                    return [
+                        'factor' => $data->toEmissionFactor(Unit::KWh, $emissionFactorGroup),
+                        'wellToTank' => $data->wellToTankEmissionFactor(Unit::KWh, $emissionFactorGroup),
+                    ];
+                },
                 $request->emissionFactors,
-            ),
+            )),
         );
 
         $this->electricityMarketerRepository->add($electricityMarketer);

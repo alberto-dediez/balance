@@ -128,4 +128,20 @@ class EmissionFactorTest extends TestCase
         $this->assertFalse($emissionFactor->equals($sameFactorDifferentGroup));
         $this->assertTrue($emissionFactor->equals($sameFactorSameGroup));
     }
+
+    public function testZeroForBuildsZeroFactorWithGivenYearGroupAndUnit(): void
+    {
+        $emissionFactorGroupId = EmissionFactorGroupMother::default()->id();
+
+        $emissionFactor = EmissionFactor::zeroFor(2024, $emissionFactorGroupId, Unit::Liter);
+
+        $this->assertSame('0', $emissionFactor->co2eq());
+        $this->assertSame('0', $emissionFactor->co2());
+        $this->assertSame('0', $emissionFactor->ch4());
+        $this->assertSame('0', $emissionFactor->n2o());
+        $this->assertSame(2024, $emissionFactor->year());
+        $this->assertTrue($emissionFactorGroupId->equals($emissionFactor->emissionFactorGroupId()));
+        $this->assertSame(Unit::Liter, $emissionFactor->unit());
+        $this->assertNull($emissionFactor->source());
+    }
 }

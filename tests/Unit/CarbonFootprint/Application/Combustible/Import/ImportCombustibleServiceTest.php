@@ -61,6 +61,77 @@ class ImportCombustibleServiceTest extends TestCase
         $this->assertEquals(Unit::Kilogram, $emissionFactor->unit());
     }
 
+    public function testImportsWellToTankFactor(): void
+    {
+        $repository = CombustibleRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportCombustibleRequest(
+            name: 'Diésel',
+            unit: Unit::Kilogram->value,
+            year: '2024',
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.3',
+            n2o: '0.2',
+            source: 'IPCC',
+            wellToTankCo2eq: '0,61',
+            wellToTankCo2: '0,6',
+            wellToTankCh4: '0,01',
+            wellToTankN2o: '0,01',
+            wellToTankSource: 'DEFRA',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $combustible = $repository->find($result->combustibleId);
+
+        $this->assertNotNull($combustible);
+        $this->assertEquals('Diésel', $combustible->name());
+
+        $wellToTankFactor = $combustible->wellToTankFactorFor(2024, EmissionFactorGroupMother::defaultId());
+
+        $this->assertNotNull($wellToTankFactor);
+        $this->assertSame('0.61', $wellToTankFactor->co2eq());
+        $this->assertSame('0.6', $wellToTankFactor->co2());
+        $this->assertSame('DEFRA', $wellToTankFactor->source());
+    }
+
+    public function testImportsZeroWellToTankWhenColumnsAreMissing(): void
+    {
+        $repository = CombustibleRepositoryMother::inMemory(Locale::Spanish);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportCombustibleRequest(
+            name: 'Diésel',
+            unit: Unit::Kilogram->value,
+            year: '2024',
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.3',
+            n2o: '0.2',
+            source: 'IPCC',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $combustible = $repository->find($result->combustibleId);
+
+        $this->assertNotNull($combustible);
+        $this->assertEquals('Diésel', $combustible->name());
+
+        $wellToTankFactor = $combustible->wellToTankFactorFor(2024, EmissionFactorGroupMother::defaultId());
+
+        $this->assertNotNull($wellToTankFactor);
+        $this->assertSame('0', $wellToTankFactor->co2eq());
+        $this->assertSame('0', $wellToTankFactor->ch4());
+        $this->assertNull($wellToTankFactor->source());
+    }
+
     public function testExplicitCombustibleOnlyUpdatesEmissionFactor(): void
     {
         $repository = CombustibleRepositoryMother::inMemory(Locale::Spanish);

@@ -6,10 +6,12 @@ namespace App\CarbonFootprint\Application\Activity;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
+use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerEmissionFactor;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorEmissionFactor;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorId;
 use App\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepository;
 
@@ -26,6 +28,16 @@ final class ElectricityEmissionFactorSelector implements EmissionFactorSelector
     }
 
     public function select(string $itemId, int $year, ?ItemCondition $condition, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor
+    {
+        return $this->emissionFactorRowFor($itemId, $year, $groupId, $secondaryItemId)->emissionFactor();
+    }
+
+    public function selectWellToTank(string $itemId, int $year, EmissionFactorGroupId $groupId, ?string $secondaryItemId = null): EmissionFactor
+    {
+        return $this->emissionFactorRowFor($itemId, $year, $groupId, $secondaryItemId)->wellToTankFactor();
+    }
+
+    private function emissionFactorRowFor(string $itemId, int $year, EmissionFactorGroupId $groupId, ?string $secondaryItemId): GdOFactorEmissionFactor|ElectricityMarketerEmissionFactor
     {
         $marketerId = '' !== $itemId ? new ElectricityMarketerId($itemId) : null;
         $gdOFactorId = null !== $secondaryItemId && '' !== $secondaryItemId ? new GdOFactorId($secondaryItemId) : null;
@@ -48,19 +60,19 @@ final class ElectricityEmissionFactorSelector implements EmissionFactorSelector
                 throw new \InvalidArgumentException(sprintf('GdOFactor "%s" not found.', $gdOFactorId));
             }
 
-            $factor = $gdOFactor->emissionFactorFor($year, $groupId);
-            if (null === $factor) {
+            $row = $gdOFactor->emissionFactors()->forYearAndGroup($year, $groupId);
+            if (null === $row) {
                 throw new \InvalidArgumentException(sprintf('No emission factor for GdO factor "%s" in year %d.', $gdOFactorId, $year));
             }
 
-            return $factor;
+            return $row;
         }
 
-        $factor = $marketer->emissionFactorFor($year, $groupId);
-        if (null === $factor) {
+        $row = $marketer->emissionFactors()->forYearAndGroup($year, $groupId);
+        if (null === $row) {
             throw new \InvalidArgumentException(sprintf('No emission factor for electricity marketer "%s" in year %d.', $marketerId, $year));
         }
 
-        return $factor;
+        return $row;
     }
 }

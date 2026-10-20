@@ -44,6 +44,11 @@ final class EmissionFactor implements \Stringable
         $this->source = $source;
     }
 
+    public static function zeroFor(int $year, EmissionFactorGroupId $emissionFactorGroupId, Unit $unit): self
+    {
+        return new self('0', '0', '0', '0', $year, $emissionFactorGroupId, $unit, null);
+    }
+
     public function co2eq(): string
     {
         return $this->co2eq;

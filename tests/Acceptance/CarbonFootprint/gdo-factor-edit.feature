@@ -18,6 +18,7 @@ Feature:
         When I go to "/es/admin/gdo-factors/edit/333"
         Then the response status should be 200
         Then I see a text "Factores de emisión"
+        Then I see a text "Well-to-tank"
 
     Scenario: As an owner, I can't access to edit gdo factors
         Given account "MyCompany" with id "mycompany" exists

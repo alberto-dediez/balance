@@ -49,6 +49,13 @@ class UpdateElectricityActivityService implements CommandHandler
             null !== $request->gdOFactorId ? (string) $request->gdOFactorId : null,
         );
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
+        $wellToTankEmissionFactor = $this->factorSelector->selectWellToTank(
+            null !== $request->electricityMarketerId ? (string) $request->electricityMarketerId : '',
+            $request->year,
+            $request->emissionFactorGroupId,
+            null !== $request->gdOFactorId ? (string) $request->gdOFactorId : null,
+        );
+        $wellToTankEmissions = $this->calculator->calculate($wellToTankEmissionFactor, $request->quantity);
 
         $mix = $this->mixResolver->resolve($request->countryId, $request->year, $request->emissionFactorGroupId, $request->quantity);
 
@@ -62,6 +69,10 @@ class UpdateElectricityActivityService implements CommandHandler
             electricityMixId: $mix?->electricityMixId,
             locationBasedEmissionFactor: $mix?->emissionFactor,
             locationBasedEmissions: $mix?->emissions,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: $wellToTankEmissions,
+            locationBasedWellToTankEmissionFactor: $mix?->wellToTankEmissionFactor,
+            locationBasedWellToTankEmissions: $mix?->wellToTankEmissions,
         );
 
         $this->activityRepository->save($activity);

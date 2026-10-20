@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\MachineryFuel\Update;
 
 use App\CarbonFootprint\Application\MachineryFuel\MachineryFuelAuthorizer;
-use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
@@ -52,13 +51,17 @@ class UpdateMachineryFuelService implements CommandHandler
         $unit = $machineryFuel->unit();
 
         $machineryFuel->syncEmissionFactors(
-            array_map(
-                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
-                    $unit,
-                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
-                ),
+            array_values(array_map(
+                function (EmissionFactorData $data) use ($unit): array {
+                    $emissionFactorGroup = $this->resolveEmissionFactorGroup($data->emissionFactorGroupId);
+
+                    return [
+                        'factor' => $data->toEmissionFactor($unit, $emissionFactorGroup),
+                        'wellToTank' => $data->wellToTankEmissionFactor($unit, $emissionFactorGroup),
+                    ];
+                },
                 $request->emissionFactors,
-            ),
+            )),
         );
 
         $this->machineryFuelRepository->add($machineryFuel);

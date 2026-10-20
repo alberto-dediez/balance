@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivit
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivityRegistered;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -84,5 +85,46 @@ class RegisterCombustibleActivityServiceTest extends TestCase
             year: 2024,
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
+    }
+
+    public function testStoresWellToTankEmissions(): void
+    {
+        $activity = $this->registerWith(ActivityMother::wellToTankEmissionFactor()->withUnit(Unit::Liter));
+
+        $this->assertSame('0.61', $activity->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame('610', $activity->wellToTankEmissions()->co2eq());
+        $this->assertSame('1500', $activity->emissions()->co2eq());
+    }
+
+    public function testStoresZeroWellToTankEmissionsWhenMasterHasNoWellToTank(): void
+    {
+        $activity = $this->registerWith(null);
+
+        $this->assertSame('0', $activity->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame('0', $activity->wellToTankEmissions()->co2eq());
+    }
+
+    private function registerWith(?EmissionFactor $wellToTankFactor): CombustibleActivity
+    {
+        $activityRepo = ActivityRepositoryMother::inMemory();
+
+        $entity = CombustibleMother::registeredCombustible();
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Liter), $wellToTankFactor);
+        $entityRepo = CombustibleRepositoryMother::inMemory();
+        $entityRepo->add($entity);
+        $sut = new RegisterCombustibleActivityService($activityRepo, new ActivityAuthorizer(), new CombustibleEmissionFactorSelector($entityRepo), EmissionsCalculatorMother::create());
+
+        $result = $sut(new RegisterCombustibleActivityRequest(
+            accountId: new AccountId('account-id'),
+            combustibleId: $entity->id(),
+            quantity: ActivityMother::quantity(Unit::Liter, 1000.0),
+            year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
+        ), UserMother::adminUser());
+
+        $activity = $activityRepo->findById($result->activityId);
+        $this->assertInstanceOf(CombustibleActivity::class, $activity);
+
+        return $activity;
     }
 }

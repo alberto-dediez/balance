@@ -17,6 +17,11 @@ class ImportElectricityMixRequest implements Command
         public ?string $ch4 = null,
         public ?string $n2o = null,
         public ?string $source = null,
+        public ?string $wellToTankCo2eq = null,
+        public ?string $wellToTankCo2 = null,
+        public ?string $wellToTankCh4 = null,
+        public ?string $wellToTankN2o = null,
+        public ?string $wellToTankSource = null,
         public ?string $emissionFactorGroup = null,
     ) {}
 }

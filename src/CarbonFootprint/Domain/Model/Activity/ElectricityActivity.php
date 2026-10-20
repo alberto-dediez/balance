@@ -28,6 +28,17 @@ final class ElectricityActivity extends Activity
     private ?string $locationBasedEmissionsCo2 = null;
     private ?string $locationBasedEmissionsCh4 = null;
     private ?string $locationBasedEmissionsN2o = null;
+    private EmissionFactor $wellToTankEmissionFactor;
+    private Emissions $wellToTankEmissions;
+    private ?string $locationBasedWellToTankEmissionFactorCo2eq = null;
+    private ?string $locationBasedWellToTankEmissionFactorCo2 = null;
+    private ?string $locationBasedWellToTankEmissionFactorCh4 = null;
+    private ?string $locationBasedWellToTankEmissionFactorN2o = null;
+    private ?string $locationBasedWellToTankEmissionFactorSource = null;
+    private ?string $locationBasedWellToTankEmissionsCo2eq = null;
+    private ?string $locationBasedWellToTankEmissionsCo2 = null;
+    private ?string $locationBasedWellToTankEmissionsCh4 = null;
+    private ?string $locationBasedWellToTankEmissionsN2o = null;
 
     public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
@@ -47,9 +58,22 @@ final class ElectricityActivity extends Activity
         ?ElectricityMixId $electricityMixId = null,
         ?EmissionFactor $locationBasedEmissionFactor = null,
         ?Emissions $locationBasedEmissions = null,
+        ?EmissionFactor $wellToTankEmissionFactor = null,
+        ?Emissions $wellToTankEmissions = null,
+        ?EmissionFactor $locationBasedWellToTankEmissionFactor = null,
+        ?Emissions $locationBasedWellToTankEmissions = null,
     ): static {
         self::assertHasMarketerOrGdOFactor($electricityMarketerId, $gdOFactorId);
-        self::assertLocationBasedResultIsComplete($electricityMixId, $locationBasedEmissionFactor, $locationBasedEmissions);
+        self::assertLocationBasedResultIsComplete(
+            $electricityMixId,
+            $locationBasedEmissionFactor,
+            $locationBasedEmissions,
+            $locationBasedWellToTankEmissionFactor,
+            $locationBasedWellToTankEmissions,
+        );
+
+        $wellToTankEmissionFactor ??= EmissionFactor::zeroFor($emissionFactor->year(), $emissionFactor->emissionFactorGroupId(), $emissionFactor->unit());
+        $wellToTankEmissions ??= new Emissions();
 
         $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new ElectricityActivityRegistered(
@@ -61,9 +85,13 @@ final class ElectricityActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: $wellToTankEmissions,
             electricityMixId: $electricityMixId,
             locationBasedEmissionFactor: $locationBasedEmissionFactor,
             locationBasedEmissions: $locationBasedEmissions,
+            locationBasedWellToTankEmissionFactor: $locationBasedWellToTankEmissionFactor,
+            locationBasedWellToTankEmissions: $locationBasedWellToTankEmissions,
         ));
 
         return $activity;
@@ -79,9 +107,22 @@ final class ElectricityActivity extends Activity
         ?ElectricityMixId $electricityMixId = null,
         ?EmissionFactor $locationBasedEmissionFactor = null,
         ?Emissions $locationBasedEmissions = null,
+        ?EmissionFactor $wellToTankEmissionFactor = null,
+        ?Emissions $wellToTankEmissions = null,
+        ?EmissionFactor $locationBasedWellToTankEmissionFactor = null,
+        ?Emissions $locationBasedWellToTankEmissions = null,
     ): void {
         self::assertHasMarketerOrGdOFactor($electricityMarketerId, $gdOFactorId);
-        self::assertLocationBasedResultIsComplete($electricityMixId, $locationBasedEmissionFactor, $locationBasedEmissions);
+        self::assertLocationBasedResultIsComplete(
+            $electricityMixId,
+            $locationBasedEmissionFactor,
+            $locationBasedEmissions,
+            $locationBasedWellToTankEmissionFactor,
+            $locationBasedWellToTankEmissions,
+        );
+
+        $wellToTankEmissionFactor ??= EmissionFactor::zeroFor($emissionFactor->year(), $emissionFactor->emissionFactorGroupId(), $emissionFactor->unit());
+        $wellToTankEmissions ??= new Emissions();
 
         $this->recordApplyAndPublish(new ElectricityActivityUpdated(
             activityId: $this->id,
@@ -91,9 +132,13 @@ final class ElectricityActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: $wellToTankEmissions,
             electricityMixId: $electricityMixId,
             locationBasedEmissionFactor: $locationBasedEmissionFactor,
             locationBasedEmissions: $locationBasedEmissions,
+            locationBasedWellToTankEmissionFactor: $locationBasedWellToTankEmissionFactor,
+            locationBasedWellToTankEmissions: $locationBasedWellToTankEmissions,
         ));
     }
 
@@ -108,14 +153,16 @@ final class ElectricityActivity extends Activity
         ?ElectricityMixId $electricityMixId,
         ?EmissionFactor $locationBasedEmissionFactor,
         ?Emissions $locationBasedEmissions,
+        ?EmissionFactor $locationBasedWellToTankEmissionFactor,
+        ?Emissions $locationBasedWellToTankEmissions,
     ): void {
         $provided = count(array_filter(
-            [$electricityMixId, $locationBasedEmissionFactor, $locationBasedEmissions],
+            [$electricityMixId, $locationBasedEmissionFactor, $locationBasedEmissions, $locationBasedWellToTankEmissionFactor, $locationBasedWellToTankEmissions],
             static fn(?object $value): bool => null !== $value,
         ));
 
-        if (0 !== $provided && 3 !== $provided) {
-            throw new \InvalidArgumentException('Location-based result requires electricity mix, emission factor and emissions.');
+        if (0 !== $provided && 5 !== $provided) {
+            throw new \InvalidArgumentException('Location-based result requires electricity mix, emission factor, emissions, well-to-tank emission factor and well-to-tank emissions.');
         }
     }
 
@@ -178,10 +225,54 @@ final class ElectricityActivity extends Activity
         );
     }
 
+    public function wellToTankEmissionFactor(): EmissionFactor
+    {
+        return $this->wellToTankEmissionFactor;
+    }
+
+    public function wellToTankEmissions(): Emissions
+    {
+        return $this->wellToTankEmissions;
+    }
+
+    public function locationBasedWellToTankEmissionFactor(): ?EmissionFactor
+    {
+        if (null === $this->locationBasedWellToTankEmissionFactorCo2eq) {
+            return null;
+        }
+
+        return new EmissionFactor(
+            co2eq: $this->locationBasedWellToTankEmissionFactorCo2eq,
+            co2: (string) $this->locationBasedWellToTankEmissionFactorCo2,
+            ch4: (string) $this->locationBasedWellToTankEmissionFactorCh4,
+            n2o: (string) $this->locationBasedWellToTankEmissionFactorN2o,
+            year: $this->emissionFactor->year(),
+            emissionFactorGroupId: $this->emissionFactor->emissionFactorGroupId(),
+            unit: Unit::KWh,
+            source: $this->locationBasedWellToTankEmissionFactorSource,
+        );
+    }
+
+    public function locationBasedWellToTankEmissions(): ?Emissions
+    {
+        if (null === $this->locationBasedWellToTankEmissionsCo2eq) {
+            return null;
+        }
+
+        return new Emissions(
+            co2eq: $this->locationBasedWellToTankEmissionsCo2eq,
+            co2: (string) $this->locationBasedWellToTankEmissionsCo2,
+            ch4: (string) $this->locationBasedWellToTankEmissionsCh4,
+            n2o: (string) $this->locationBasedWellToTankEmissionsN2o,
+        );
+    }
+
     private function applyLocationBasedResult(
         ?ElectricityMixId $electricityMixId,
         ?EmissionFactor $locationBasedEmissionFactor,
         ?Emissions $locationBasedEmissions,
+        ?EmissionFactor $locationBasedWellToTankEmissionFactor,
+        ?Emissions $locationBasedWellToTankEmissions,
     ): void {
         $this->electricityMixId = $electricityMixId;
         $this->locationBasedEmissionFactorCo2eq = $locationBasedEmissionFactor?->co2eq();
@@ -193,6 +284,15 @@ final class ElectricityActivity extends Activity
         $this->locationBasedEmissionsCo2 = $locationBasedEmissions?->co2();
         $this->locationBasedEmissionsCh4 = $locationBasedEmissions?->ch4();
         $this->locationBasedEmissionsN2o = $locationBasedEmissions?->n2o();
+        $this->locationBasedWellToTankEmissionFactorCo2eq = $locationBasedWellToTankEmissionFactor?->co2eq();
+        $this->locationBasedWellToTankEmissionFactorCo2 = $locationBasedWellToTankEmissionFactor?->co2();
+        $this->locationBasedWellToTankEmissionFactorCh4 = $locationBasedWellToTankEmissionFactor?->ch4();
+        $this->locationBasedWellToTankEmissionFactorN2o = $locationBasedWellToTankEmissionFactor?->n2o();
+        $this->locationBasedWellToTankEmissionFactorSource = $locationBasedWellToTankEmissionFactor?->source();
+        $this->locationBasedWellToTankEmissionsCo2eq = $locationBasedWellToTankEmissions?->co2eq();
+        $this->locationBasedWellToTankEmissionsCo2 = $locationBasedWellToTankEmissions?->co2();
+        $this->locationBasedWellToTankEmissionsCh4 = $locationBasedWellToTankEmissions?->ch4();
+        $this->locationBasedWellToTankEmissionsN2o = $locationBasedWellToTankEmissions?->n2o();
     }
 
     public function applyElectricityActivityRegistered(ElectricityActivityRegistered $event): void
@@ -204,7 +304,15 @@ final class ElectricityActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
-        $this->applyLocationBasedResult($event->electricityMixId(), $event->locationBasedEmissionFactor(), $event->locationBasedEmissions());
+        $this->wellToTankEmissionFactor = $event->wellToTankEmissionFactor();
+        $this->wellToTankEmissions = $event->wellToTankEmissions();
+        $this->applyLocationBasedResult(
+            $event->electricityMixId(),
+            $event->locationBasedEmissionFactor(),
+            $event->locationBasedEmissions(),
+            $event->locationBasedWellToTankEmissionFactor(),
+            $event->locationBasedWellToTankEmissions(),
+        );
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -216,7 +324,15 @@ final class ElectricityActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
-        $this->applyLocationBasedResult($event->electricityMixId(), $event->locationBasedEmissionFactor(), $event->locationBasedEmissions());
+        $this->wellToTankEmissionFactor = $event->wellToTankEmissionFactor();
+        $this->wellToTankEmissions = $event->wellToTankEmissions();
+        $this->applyLocationBasedResult(
+            $event->electricityMixId(),
+            $event->locationBasedEmissionFactor(),
+            $event->locationBasedEmissions(),
+            $event->locationBasedWellToTankEmissionFactor(),
+            $event->locationBasedWellToTankEmissions(),
+        );
         $this->updatedAt = $event->occurredOn();
     }
 }

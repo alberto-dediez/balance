@@ -19,6 +19,7 @@ final class MachineryFuelEmissionFactorAdded extends DomainEvent
         private MachineryFuelId $machineryFuelId,
         private MachineryFuelEmissionFactorId $emissionFactorId,
         private EmissionFactor $emissionFactor,
+        private EmissionFactor $wellToTankFactor,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -40,6 +41,11 @@ final class MachineryFuelEmissionFactorAdded extends DomainEvent
         return $this->emissionFactor;
     }
 
+    public function wellToTankFactor(): EmissionFactor
+    {
+        return $this->wellToTankFactor;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->machineryFuelId();
@@ -57,6 +63,11 @@ final class MachineryFuelEmissionFactorAdded extends DomainEvent
             'year' => $this->emissionFactor->year(),
             'unit' => $this->emissionFactor->unit()->value,
             'source' => $this->emissionFactor->source(),
+            'wellToTankCo2eq' => $this->wellToTankFactor->co2eq(),
+            'wellToTankCo2' => $this->wellToTankFactor->co2(),
+            'wellToTankCh4' => $this->wellToTankFactor->ch4(),
+            'wellToTankN2o' => $this->wellToTankFactor->n2o(),
+            'wellToTankSource' => $this->wellToTankFactor->source(),
             'emissionFactorGroupId' => (string) $this->emissionFactor->emissionFactorGroupId(),
         ];
     }
@@ -66,21 +77,38 @@ final class MachineryFuelEmissionFactorAdded extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
+        $unit = Unit::from($payload['unit']);
+        $emissionFactorGroupId = new EmissionFactorGroupId($payload['emissionFactorGroupId']);
+
+        $wellToTankFactor = isset($payload['wellToTankCo2eq'])
+            ? new EmissionFactor(
+                co2eq: $payload['wellToTankCo2eq'],
+                co2: $payload['wellToTankCo2'],
+                ch4: $payload['wellToTankCh4'],
+                n2o: $payload['wellToTankN2o'],
+                year: $payload['year'],
+                emissionFactorGroupId: $emissionFactorGroupId,
+                unit: $unit,
+                source: $payload['wellToTankSource'] ?? null,
+            )
+            : EmissionFactor::zeroFor($payload['year'], $emissionFactorGroupId, $unit);
+
         return new MachineryFuelEmissionFactorAdded(
             machineryFuelId: new MachineryFuelId($payload['machineryFuelId']),
             emissionFactorId: isset($payload['emissionFactorId'])
                 ? new MachineryFuelEmissionFactorId($payload['emissionFactorId'])
                 : MachineryFuelEmissionFactorId::generate(),
             emissionFactor: new EmissionFactor(
-                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
+                emissionFactorGroupId: $emissionFactorGroupId,
                 co2eq: $payload['co2eq'],
                 co2: $payload['co2'],
                 ch4: $payload['ch4'],
                 n2o: $payload['n2o'],
                 year: $payload['year'],
-                unit: Unit::from($payload['unit']),
+                unit: $unit,
                 source: $payload['source'],
             ),
+            wellToTankFactor: $wellToTankFactor,
             id: $id,
             occurredOn: $occurredOn,
         );

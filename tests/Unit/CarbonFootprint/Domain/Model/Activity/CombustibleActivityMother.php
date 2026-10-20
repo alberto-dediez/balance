@@ -23,4 +23,18 @@ class CombustibleActivityMother
             quantity: ActivityMother::quantity(Unit::Liter, 200.0),
         );
     }
+
+    public static function registeredWithWellToTank(?AccountId $accountId = null): CombustibleActivity
+    {
+        return CombustibleActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId ?? new AccountId('account-id'),
+            combustibleId: CombustibleId::generate(),
+            emissionFactor: ActivityMother::emissionFactor(),
+            emissions: ActivityMother::emissions(),
+            quantity: ActivityMother::quantity(Unit::Liter, 200.0),
+            wellToTankEmissionFactor: ActivityMother::wellToTankEmissionFactor(),
+            wellToTankEmissions: ActivityMother::wellToTankEmissions(),
+        );
+    }
 }

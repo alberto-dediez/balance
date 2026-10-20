@@ -71,6 +71,11 @@ class ElectricityMarketer implements \Stringable
         return $this->emissionFactors()->forYearAndGroup($year, $groupId)?->emissionFactor();
     }
 
+    public function wellToTankFactorFor(int $year, EmissionFactorGroupId $groupId): ?EmissionFactor
+    {
+        return $this->emissionFactors()->forYearAndGroup($year, $groupId)?->wellToTankFactor();
+    }
+
     public function register(string $name): void
     {
         $this->recordApplyAndPublish(
@@ -100,8 +105,18 @@ class ElectricityMarketer implements \Stringable
         );
     }
 
-    public function setEmissionFactor(EmissionFactor $emissionFactor): void
+    public function setEmissionFactor(EmissionFactor $emissionFactor, ?EmissionFactor $wellToTankFactor = null): void
     {
+        $wellToTankFactor ??= EmissionFactor::zeroFor($emissionFactor->year(), $emissionFactor->emissionFactorGroupId(), $emissionFactor->unit());
+
+        if ($emissionFactor->year() !== $wellToTankFactor->year()) {
+            throw new \InvalidArgumentException('Emission factor and well-to-tank factor must share the same year');
+        }
+
+        if (!$emissionFactor->emissionFactorGroupId()->equals($wellToTankFactor->emissionFactorGroupId())) {
+            throw new \InvalidArgumentException('Emission factor and well-to-tank factor must share the same emission factor group');
+        }
+
         $current = $this->emissionFactors()->forYearAndGroup($emissionFactor->year(), $emissionFactor->emissionFactorGroupId());
 
         if (null === $current) {
@@ -110,13 +125,14 @@ class ElectricityMarketer implements \Stringable
                     electricityMarketerId: $this->id(),
                     emissionFactorId: ElectricityMarketerEmissionFactorId::generate(),
                     emissionFactor: $emissionFactor,
+                    wellToTankFactor: $wellToTankFactor,
                 ),
             );
 
             return;
         }
 
-        if ($current->emissionFactor()->equals($emissionFactor)) {
+        if ($current->emissionFactor()->equals($emissionFactor) && $current->wellToTankFactor()->equals($wellToTankFactor)) {
             return;
         }
 
@@ -124,6 +140,7 @@ class ElectricityMarketer implements \Stringable
             new ElectricityMarketerEmissionFactorUpdated(
                 electricityMarketerId: $this->id(),
                 emissionFactor: $emissionFactor,
+                wellToTankFactor: $wellToTankFactor,
             ),
         );
     }
@@ -143,25 +160,21 @@ class ElectricityMarketer implements \Stringable
         );
     }
 
-    /**
-     * Reconciles the stored emission factors with the provided list: adds new ones,
-     * updates changed ones and removes the years no longer present.
-     *
-     * @param EmissionFactor[] $emissionFactors
-     */
-    public function syncEmissionFactors(array $emissionFactors): void
+    /** @param list<array{factor: EmissionFactor, wellToTank: EmissionFactor}> $factors */
+    public function syncEmissionFactors(array $factors): void
     {
         $newKeys = [];
 
-        foreach ($emissionFactors as $emissionFactor) {
-            $key = $emissionFactor->year() . '|' . $emissionFactor->emissionFactorGroupId();
+        foreach ($factors as $pair) {
+            $year = $pair['factor']->year();
+            $key = $year . '|' . $pair['factor']->emissionFactorGroupId();
 
             if (in_array($key, $newKeys, true)) {
-                throw new \InvalidArgumentException(sprintf('Duplicate emission factor for year %d', $emissionFactor->year()));
+                throw new \InvalidArgumentException(sprintf('Duplicate emission factor for year %d', $year));
             }
 
             $newKeys[] = $key;
-            $this->setEmissionFactor($emissionFactor);
+            $this->setEmissionFactor($pair['factor'], $pair['wellToTank']);
         }
 
         foreach ($this->emissionFactors() as $existingFactor) {
@@ -198,6 +211,7 @@ class ElectricityMarketer implements \Stringable
                 id: $event->emissionFactorId(),
                 electricityMarketer: $this,
                 emissionFactor: $event->emissionFactor()->withUnit(Unit::KWh),
+                wellToTankFactor: $event->wellToTankFactor()->withUnit(Unit::KWh),
                 createdAt: $event->occurredOn(),
             ),
         );
@@ -207,7 +221,7 @@ class ElectricityMarketer implements \Stringable
     {
         $this->emissionFactors()
             ->forYearAndGroup($event->emissionFactor()->year(), $event->emissionFactor()->emissionFactorGroupId())
-            ?->update($event->emissionFactor()->withUnit(Unit::KWh), $event->occurredOn());
+            ?->update($event->emissionFactor()->withUnit(Unit::KWh), $event->wellToTankFactor()->withUnit(Unit::KWh), $event->occurredOn());
     }
 
     public function applyElectricityMarketerEmissionFactorRemoved(ElectricityMarketerEmissionFactorRemoved $event): void

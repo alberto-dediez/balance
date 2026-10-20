@@ -52,4 +52,36 @@ class CombustibleEmissionFactorSelectorTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $sut->select((string) $entity->id(), 2024, null, EmissionFactorGroupMother::random()->id());
     }
+
+    public function testSelectWellToTankReturnsWellToTankFactor(): void
+    {
+        $groupId = EmissionFactorGroupMother::default()->id();
+
+        $entity = CombustibleMother::registeredCombustible();
+        $entity->setEmissionFactor(ActivityMother::emissionFactor($groupId), ActivityMother::wellToTankEmissionFactor($groupId));
+
+        $repository = CombustibleRepositoryMother::inMemory();
+        $repository->add($entity);
+
+        $sut = new CombustibleEmissionFactorSelector($repository);
+
+        $factor = $sut->selectWellToTank((string) $entity->id(), 2024, $groupId);
+
+        $this->assertSame('0.61', $factor->co2eq());
+        $this->assertSame('DEFRA', $factor->source());
+    }
+
+    public function testSelectWellToTankThrowsWhenNoFactorForRequestedGroup(): void
+    {
+        $entity = CombustibleMother::registeredCombustible();
+        $entity->setEmissionFactor(ActivityMother::emissionFactor(EmissionFactorGroupMother::default()->id()));
+
+        $repository = CombustibleRepositoryMother::inMemory();
+        $repository->add($entity);
+
+        $sut = new CombustibleEmissionFactorSelector($repository);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $sut->selectWellToTank((string) $entity->id(), 2024, EmissionFactorGroupMother::random()->id());
+    }
 }

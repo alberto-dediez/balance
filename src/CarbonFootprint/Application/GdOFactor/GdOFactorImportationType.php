@@ -55,6 +55,11 @@ class GdOFactorImportationType implements ImportationType
             (string) new TranslatableMessage('ch4', [], 'fields'),
             (string) new TranslatableMessage('n2o', [], 'fields'),
             (string) new TranslatableMessage('source', [], 'fields'),
+            (string) new TranslatableMessage('wellToTankCo2eq', [], 'fields'),
+            (string) new TranslatableMessage('wellToTankCo2', [], 'fields'),
+            (string) new TranslatableMessage('wellToTankCh4', [], 'fields'),
+            (string) new TranslatableMessage('wellToTankN2o', [], 'fields'),
+            (string) new TranslatableMessage('wellToTankSource', [], 'fields'),
             (string) new TranslatableMessage('emissionFactorGroup', [], 'fields'),
         ];
     }
@@ -78,6 +83,11 @@ class GdOFactorImportationType implements ImportationType
             'ch4' => new FieldDefinition(fieldType: TextType::class),
             'n2o' => new FieldDefinition(fieldType: TextType::class),
             'source' => new FieldDefinition(fieldType: TextType::class),
+            'wellToTankCo2eq' => new FieldDefinition(fieldType: TextType::class),
+            'wellToTankCo2' => new FieldDefinition(fieldType: TextType::class),
+            'wellToTankCh4' => new FieldDefinition(fieldType: TextType::class),
+            'wellToTankN2o' => new FieldDefinition(fieldType: TextType::class),
+            'wellToTankSource' => new FieldDefinition(fieldType: TextType::class),
             'emissionFactorGroup' => new FieldDefinition(fieldType: EmissionFactorGroupChoiceType::class),
         ];
     }
@@ -93,6 +103,11 @@ class GdOFactorImportationType implements ImportationType
             ch4: $this->stringOrNull($data['ch4'] ?? null),
             n2o: $this->stringOrNull($data['n2o'] ?? null),
             source: $this->stringOrNull($data['source'] ?? null),
+            wellToTankCo2eq: $this->stringOrNull($data['wellToTankCo2eq'] ?? null),
+            wellToTankCo2: $this->stringOrNull($data['wellToTankCo2'] ?? null),
+            wellToTankCh4: $this->stringOrNull($data['wellToTankCh4'] ?? null),
+            wellToTankN2o: $this->stringOrNull($data['wellToTankN2o'] ?? null),
+            wellToTankSource: $this->stringOrNull($data['wellToTankSource'] ?? null),
             emissionFactorGroup: $this->stringOrNull($data['emissionFactorGroup'] ?? null),
         );
     }

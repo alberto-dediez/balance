@@ -38,7 +38,7 @@ class EditController extends AbstractController
 
         $emissionFactors = [];
         foreach ($combustible->emissionFactors() as $combustibleEmissionFactor) {
-            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($combustibleEmissionFactor->emissionFactor());
+            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($combustibleEmissionFactor);
         }
 
         $combustibleRequest = new UpdateCombustibleRequest(

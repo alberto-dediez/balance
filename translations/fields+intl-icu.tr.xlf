@@ -161,6 +161,26 @@
         <source>transport</source>
         <target>Taşıma aracı</target>
       </trans-unit>
+      <trans-unit id="eEG.NTq" resname="wellToTankCo2eq">
+        <source>wellToTankCo2eq</source>
+        <target>WTT CO2eq</target>
+      </trans-unit>
+      <trans-unit id="p9p6oou" resname="wellToTankCo2">
+        <source>wellToTankCo2</source>
+        <target>WTT CO2</target>
+      </trans-unit>
+      <trans-unit id="Gt9FTag" resname="wellToTankCh4">
+        <source>wellToTankCh4</source>
+        <target>WTT CH4</target>
+      </trans-unit>
+      <trans-unit id="MnV.liX" resname="wellToTankN2o">
+        <source>wellToTankN2o</source>
+        <target>WTT N2O</target>
+      </trans-unit>
+      <trans-unit id="VvKRt3k" resname="wellToTankSource">
+        <source>wellToTankSource</source>
+        <target>WTT kaynağı</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -56,6 +56,75 @@ class ImportGdOFactorServiceTest extends TestCase
         $this->assertEquals(Unit::KWh, $emissionFactor->unit());
     }
 
+    public function testImportsWellToTankFactor(): void
+    {
+        $repository = GdOFactorRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportGdOFactorRequest(
+            name: 'Factor GdO Solar',
+            year: '2024',
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.3',
+            n2o: '0.2',
+            source: 'IPCC',
+            wellToTankCo2eq: '0,61',
+            wellToTankCo2: '0,6',
+            wellToTankCh4: '0,01',
+            wellToTankN2o: '0,01',
+            wellToTankSource: 'DEFRA',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $gdOFactor = $repository->find($result->gdOFactorId);
+
+        $this->assertNotNull($gdOFactor);
+        $this->assertEquals('Factor GdO Solar', $gdOFactor->name());
+
+        $wellToTankFactor = $gdOFactor->wellToTankFactorFor(2024, EmissionFactorGroupMother::defaultId());
+
+        $this->assertNotNull($wellToTankFactor);
+        $this->assertSame('0.61', $wellToTankFactor->co2eq());
+        $this->assertSame('0.6', $wellToTankFactor->co2());
+        $this->assertSame('DEFRA', $wellToTankFactor->source());
+    }
+
+    public function testImportsZeroWellToTankWhenColumnsAreMissing(): void
+    {
+        $repository = GdOFactorRepositoryMother::inMemory();
+
+        $sut = $this->createSUT($repository);
+
+        $request = new ImportGdOFactorRequest(
+            name: 'Factor GdO Solar',
+            year: '2024',
+            co2eq: '1.5',
+            co2: '1.0',
+            ch4: '0.3',
+            n2o: '0.2',
+            source: 'IPCC',
+            emissionFactorGroup: (string) EmissionFactorGroupMother::defaultId(),
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $gdOFactor = $repository->find($result->gdOFactorId);
+
+        $this->assertNotNull($gdOFactor);
+        $this->assertEquals('Factor GdO Solar', $gdOFactor->name());
+
+        $wellToTankFactor = $gdOFactor->wellToTankFactorFor(2024, EmissionFactorGroupMother::defaultId());
+
+        $this->assertNotNull($wellToTankFactor);
+        $this->assertSame('0', $wellToTankFactor->co2eq());
+        $this->assertSame('0', $wellToTankFactor->ch4());
+        $this->assertNull($wellToTankFactor->source());
+    }
+
     public function testExplicitGdOFactorOnlyUpdatesEmissionFactor(): void
     {
         $repository = GdOFactorRepositoryMother::inMemory();

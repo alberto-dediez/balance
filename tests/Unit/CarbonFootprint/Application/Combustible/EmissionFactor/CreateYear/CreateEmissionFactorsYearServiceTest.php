@@ -49,8 +49,35 @@ class CreateEmissionFactorsYearServiceTest extends TestCase
         $this->assertSame('1.5', $copied->co2eq());
         $this->assertSame('IPCC', $copied->source());
 
-        // The source year is preserved untouched.
         $this->assertNotNull($persisted->emissionFactorFor(2024, EmissionFactorGroupMother::defaultId()));
+    }
+
+    public function testCopiesWellToTankFactorToTargetYear(): void
+    {
+        $repository = CombustibleRepositoryMother::inMemory();
+
+        $combustible = CombustibleMother::random();
+        $combustible->setEmissionFactor(
+            new EmissionFactor('1.5', '1.0', '0.2', '0.3', 2024, emissionFactorGroupId: EmissionFactorGroupMother::defaultId(), source: 'IPCC'),
+            new EmissionFactor('0.61', '0.6', '0.01', '0.01', 2024, emissionFactorGroupId: EmissionFactorGroupMother::defaultId(), source: 'DEFRA'),
+        );
+        $repository->add($combustible);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new CreateEmissionFactorsYearRequest(sourceYear: 2024, emissionFactorGroupId: (string) EmissionFactorGroupMother::defaultId(), targetYear: 2025);
+
+        $response = $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $this->assertSame(2025, $response->targetYear);
+
+        $persisted = $repository->find($combustible->id());
+        $this->assertNotNull($persisted);
+
+        $copied = $persisted->wellToTankFactorFor(2025, EmissionFactorGroupMother::defaultId());
+        $this->assertNotNull($copied);
+        $this->assertSame('0.61', $copied->co2eq());
+        $this->assertSame('DEFRA', $copied->source());
     }
 
     public function testThrowsWhenTargetYearAlreadyExists(): void

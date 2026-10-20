@@ -43,6 +43,23 @@ class ElectricityActivityMother
             electricityMixId: ElectricityMixId::generate(),
             locationBasedEmissionFactor: self::locationBasedEmissionFactor(),
             locationBasedEmissions: self::locationBasedEmissions(),
+            locationBasedWellToTankEmissionFactor: self::locationBasedWellToTankEmissionFactor(),
+            locationBasedWellToTankEmissions: self::locationBasedWellToTankEmissions(),
+        );
+    }
+
+    public static function registeredWithWellToTank(?AccountId $accountId = null): ElectricityActivity
+    {
+        return ElectricityActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId ?? new AccountId('account-id'),
+            electricityMarketerId: ElectricityMarketerId::generate(),
+            gdOFactorId: GdOFactorId::generate(),
+            emissionFactor: ActivityMother::emissionFactor(),
+            emissions: ActivityMother::emissions(),
+            quantity: ActivityMother::quantity(Unit::KWh, 1000.0),
+            wellToTankEmissionFactor: ActivityMother::wellToTankEmissionFactor(),
+            wellToTankEmissions: ActivityMother::wellToTankEmissions(),
         );
     }
 
@@ -54,5 +71,15 @@ class ElectricityActivityMother
     public static function locationBasedEmissions(): Emissions
     {
         return new Emissions('180.0', '180.0', '0', '0');
+    }
+
+    public static function locationBasedWellToTankEmissionFactor(): EmissionFactor
+    {
+        return new EmissionFactor('0.03', '0.03', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'DEFRA');
+    }
+
+    public static function locationBasedWellToTankEmissions(): Emissions
+    {
+        return new Emissions('30.0', '30.0', '0', '0');
     }
 }

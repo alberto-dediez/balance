@@ -19,6 +19,17 @@
         <field name="locationBasedEmissionsCo2" type="string" column="location_based_emissions_co2" nullable="true" />
         <field name="locationBasedEmissionsCh4" type="string" column="location_based_emissions_ch4" nullable="true" />
         <field name="locationBasedEmissionsN2o" type="string" column="location_based_emissions_n2o" nullable="true" />
+        <field name="locationBasedWellToTankEmissionFactorCo2eq" type="string" column="location_based_well_to_tank_emission_factor_co2eq" nullable="true" />
+        <field name="locationBasedWellToTankEmissionFactorCo2" type="string" column="location_based_well_to_tank_emission_factor_co2" nullable="true" />
+        <field name="locationBasedWellToTankEmissionFactorCh4" type="string" column="location_based_well_to_tank_emission_factor_ch4" nullable="true" />
+        <field name="locationBasedWellToTankEmissionFactorN2o" type="string" column="location_based_well_to_tank_emission_factor_n2o" nullable="true" />
+        <field name="locationBasedWellToTankEmissionFactorSource" type="string" length="255" column="location_based_well_to_tank_emission_factor_source" nullable="true" />
+        <field name="locationBasedWellToTankEmissionsCo2eq" type="string" column="location_based_well_to_tank_emissions_co2eq" nullable="true" />
+        <field name="locationBasedWellToTankEmissionsCo2" type="string" column="location_based_well_to_tank_emissions_co2" nullable="true" />
+        <field name="locationBasedWellToTankEmissionsCh4" type="string" column="location_based_well_to_tank_emissions_ch4" nullable="true" />
+        <field name="locationBasedWellToTankEmissionsN2o" type="string" column="location_based_well_to_tank_emissions_n2o" nullable="true" />
+        <embedded name="wellToTankEmissionFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" use-column-prefix="true" column-prefix="well_to_tank_emission_factor_"/>
+        <embedded name="wellToTankEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="well_to_tank_emissions_"/>
     </entity>
 
 </doctrine-mapping>

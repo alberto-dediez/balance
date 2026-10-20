@@ -246,4 +246,51 @@ class UpdateElectricityActivityServiceTest extends TestCase
     {
         return new ElectricityMixEmissionsResolver(ElectricityMixRepositoryMother::inMemory(), EmissionsCalculatorMother::create());
     }
+
+    public function testUpdateStoresContractualAndLocationBasedWellToTankEmissions(): void
+    {
+        $activity = ElectricityActivityMother::registered();
+        $repository = ActivityRepositoryMother::inMemory();
+        $repository->save($activity);
+
+        $sut = $this->wellToTankSUT($repository);
+
+        $sut($this->request($activity->id(), new CountryId('C-ES')), $this->ownerOfTheActivity());
+
+        $updated = $repository->findById($activity->id());
+
+        $this->assertInstanceOf(ElectricityActivity::class, $updated);
+        $this->assertSame('0.05', $updated->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame(50.0, (float) $updated->wellToTankEmissions()->co2eq());
+        $this->assertSame(30.0, (float) $updated->locationBasedWellToTankEmissions()?->co2eq());
+    }
+
+    private function wellToTankSUT(ActivityRepository $activityRepository): UpdateElectricityActivityService
+    {
+        $marketer = ElectricityMarketerMother::registeredElectricityMarketer();
+        $marketer->setEmissionFactor(
+            ActivityMother::emissionFactor(),
+            new EmissionFactor('0.05', '0.05', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'DEFRA'),
+        );
+        $marketerRepo = ElectricityMarketerRepositoryMother::inMemory();
+        $marketerRepo->add($marketer);
+
+        $this->electricityMarketerId = $marketer->id();
+
+        $electricityMix = ElectricityMixMother::fromCountryAndId('C-ES', (string) ElectricityMixId::generate());
+        $electricityMix->setEmissionFactor(
+            new EmissionFactor('0.18', '0.18', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'REE'),
+            new EmissionFactor('0.03', '0.03', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'DEFRA'),
+        );
+        $electricityMixRepo = ElectricityMixRepositoryMother::inMemory();
+        $electricityMixRepo->add($electricityMix);
+
+        return new UpdateElectricityActivityService(
+            $activityRepository,
+            new ActivityAuthorizer(),
+            new ElectricityEmissionFactorSelector($marketerRepo, GdOFactorRepositoryMother::inMemory()),
+            EmissionsCalculatorMother::create(),
+            new ElectricityMixEmissionsResolver($electricityMixRepo, EmissionsCalculatorMother::create()),
+        );
+    }
 }

@@ -34,7 +34,9 @@ final class ElectricityMixEmissionsResolver
 
         $emissionFactor = $electricityMix->emissionFactorFor($year, $emissionFactorGroupId);
 
-        if (null === $emissionFactor) {
+        $wellToTankEmissionFactor = $electricityMix->wellToTankFactorFor($year, $emissionFactorGroupId);
+
+        if (null === $emissionFactor || null === $wellToTankEmissionFactor) {
             return null;
         }
 
@@ -42,6 +44,8 @@ final class ElectricityMixEmissionsResolver
             electricityMixId: $electricityMix->id(),
             emissionFactor: $emissionFactor,
             emissions: $this->emissionsCalculator->calculate($emissionFactor, $quantity),
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: $this->emissionsCalculator->calculate($wellToTankEmissionFactor, $quantity),
         );
     }
 }

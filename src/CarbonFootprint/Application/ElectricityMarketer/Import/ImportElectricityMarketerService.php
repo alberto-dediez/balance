@@ -39,7 +39,10 @@ class ImportElectricityMarketerService implements CommandHandler
 
         $group = $this->resolveEmissionFactorGroup($request->emissionFactorGroup);
 
-        $electricityMarketer->setEmissionFactor($this->buildEmissionFactor($request, $year, $group));
+        $electricityMarketer->setEmissionFactor(
+            $this->buildEmissionFactor($request, $year, $group),
+            $this->buildWellToTankEmissionFactor($request, $year, $group),
+        );
 
         $this->electricityMarketerRepository->add($electricityMarketer);
 
@@ -90,6 +93,17 @@ class ImportElectricityMarketerService implements CommandHandler
         $n2o = $this->decimal($request->n2o);
         $co2eq = $this->decimal($request->co2eq);
         $source = '' === trim((string) $request->source) ? null : $request->source;
+
+        return $group->buildEmissionFactor($co2eq, $co2, $ch4, $n2o, $year, Unit::KWh, $source);
+    }
+
+    private function buildWellToTankEmissionFactor(ImportElectricityMarketerRequest $request, int $year, EmissionFactorGroup $group): EmissionFactor
+    {
+        $co2 = $this->decimal($request->wellToTankCo2);
+        $ch4 = $this->decimal($request->wellToTankCh4);
+        $n2o = $this->decimal($request->wellToTankN2o);
+        $co2eq = $this->decimal($request->wellToTankCo2eq);
+        $source = '' === trim((string) $request->wellToTankSource) ? null : $request->wellToTankSource;
 
         return $group->buildEmissionFactor($co2eq, $co2, $ch4, $n2o, $year, Unit::KWh, $source);
     }

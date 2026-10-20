@@ -112,6 +112,58 @@ class UpdateElectricityMixServiceTest extends TestCase
         $this->assertSame(Unit::KWh, $persistedFactor->unit());
     }
 
+    public function testUpdateSyncsWellToTankFactors(): void
+    {
+        $repository = ElectricityMixRepositoryMother::inMemory();
+
+        $electricityMix = ElectricityMixMother::random();
+
+        $repository->add($electricityMix);
+
+        $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
+
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
+
+        $request = new UpdateElectricityMixRequest(
+            electricityMixId: $electricityMix->id(),
+            countryId: $electricityMix->countryId(),
+            emissionFactors: [
+                new EmissionFactorData(
+                    year: 2024,
+                    co2eq: '1.5',
+                    co2: '1.0',
+                    ch4: '0.2',
+                    n2o: '0.3',
+                    wellToTankCo2eq: '0.61',
+                    wellToTankCo2: '0.6',
+                    wellToTankCh4: '0.01',
+                    wellToTankN2o: '0.01',
+                    wellToTankSource: 'DEFRA',
+                    source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
+                ),
+            ],
+        );
+
+        $result = $sut($request, $user);
+
+        $electricityMixPersisted = $repository->find($result->electricityMixId);
+
+        $this->assertNotNull($electricityMixPersisted);
+        $this->assertCount(1, $electricityMixPersisted->emissionFactors());
+
+        $persistedFactor = $electricityMixPersisted->wellToTankFactorFor(2024, $emissionFactorGroup->id());
+
+        $this->assertNotNull($persistedFactor);
+        $this->assertSame('0.61', $persistedFactor->co2eq());
+        $this->assertSame('DEFRA', $persistedFactor->source());
+        $this->assertSame(Unit::KWh, $persistedFactor->unit());
+    }
+
     public function testUpdateToCountryOfAnotherMixThrows(): void
     {
         $repository = ElectricityMixRepositoryMother::inMemory();

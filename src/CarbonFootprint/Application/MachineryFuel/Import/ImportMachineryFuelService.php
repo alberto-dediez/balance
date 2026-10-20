@@ -41,7 +41,10 @@ class ImportMachineryFuelService implements CommandHandler
 
         $group = $this->resolveEmissionFactorGroup($request->emissionFactorGroup);
 
-        $machineryFuel->setEmissionFactor($this->buildEmissionFactor($request, $machineryFuel->unit(), $year, $group));
+        $machineryFuel->setEmissionFactor(
+            $this->buildEmissionFactor($request, $machineryFuel->unit(), $year, $group),
+            $this->buildWellToTankEmissionFactor($request, $machineryFuel->unit(), $year, $group),
+        );
 
         $this->machineryFuelRepository->add($machineryFuel);
 
@@ -100,6 +103,17 @@ class ImportMachineryFuelService implements CommandHandler
         $n2o = $this->decimal($request->n2o);
         $co2eq = $this->decimal($request->co2eq);
         $source = '' === trim((string) $request->source) ? null : $request->source;
+
+        return $group->buildEmissionFactor($co2eq, $co2, $ch4, $n2o, $year, $unit, $source);
+    }
+
+    private function buildWellToTankEmissionFactor(ImportMachineryFuelRequest $request, Unit $unit, int $year, EmissionFactorGroup $group): EmissionFactor
+    {
+        $co2 = $this->decimal($request->wellToTankCo2);
+        $ch4 = $this->decimal($request->wellToTankCh4);
+        $n2o = $this->decimal($request->wellToTankN2o);
+        $co2eq = $this->decimal($request->wellToTankCo2eq);
+        $source = '' === trim((string) $request->wellToTankSource) ? null : $request->wellToTankSource;
 
         return $group->buildEmissionFactor($co2eq, $co2, $ch4, $n2o, $year, $unit, $source);
     }

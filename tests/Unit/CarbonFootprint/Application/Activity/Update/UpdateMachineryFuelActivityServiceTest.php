@@ -9,7 +9,9 @@ use App\CarbonFootprint\Application\Activity\MachineryFuelEmissionFactorSelector
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityRequest;
 use App\CarbonFootprint\Application\Activity\Update\UpdateMachineryFuelActivityService;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
+use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivity;
 use App\CarbonFootprint\Domain\Model\Activity\MachineryFuelActivityUpdated;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuelId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Security\Domain\Model\Account\AccountId;
@@ -93,5 +95,47 @@ class UpdateMachineryFuelActivityServiceTest extends TestCase
             year: 2024,
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
+    }
+
+    public function testStoresWellToTankEmissions(): void
+    {
+        $activity = $this->updateWith(ActivityMother::wellToTankEmissionFactor()->withUnit(Unit::Liter));
+
+        $this->assertSame('0.61', $activity->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame('610', $activity->wellToTankEmissions()->co2eq());
+    }
+
+    public function testStoresZeroWellToTankEmissionsWhenMasterHasNoWellToTank(): void
+    {
+        $activity = $this->updateWith(null);
+
+        $this->assertSame('0', $activity->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame('0', $activity->wellToTankEmissions()->co2eq());
+    }
+
+    private function updateWith(?EmissionFactor $wellToTankFactor): MachineryFuelActivity
+    {
+        $activity = MachineryFuelActivityMother::registeredWithWellToTank();
+        $repository = ActivityRepositoryMother::inMemory();
+        $repository->save($activity);
+
+        $entity = MachineryFuelMother::registeredMachineryFuel();
+        $entity->setEmissionFactor(ActivityMother::emissionFactor()->withUnit(Unit::Liter), $wellToTankFactor);
+        $entityRepo = MachineryFuelRepositoryMother::inMemory();
+        $entityRepo->add($entity);
+        $sut = new UpdateMachineryFuelActivityService($repository, new ActivityAuthorizer(), new MachineryFuelEmissionFactorSelector($entityRepo), EmissionsCalculatorMother::create());
+
+        $sut(new UpdateMachineryFuelActivityRequest(
+            activityId: $activity->id(),
+            machineryFuelId: $entity->id(),
+            quantity: ActivityMother::quantity(Unit::Liter, 1000.0),
+            year: 2024,
+            emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
+        ), UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')));
+
+        $updated = $repository->findById($activity->id());
+        $this->assertInstanceOf(MachineryFuelActivity::class, $updated);
+
+        return $updated;
     }
 }

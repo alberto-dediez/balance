@@ -6,7 +6,6 @@ namespace App\CarbonFootprint\Application\Combustible\Update;
 
 use App\CarbonFootprint\Application\Combustible\CombustibleAuthorizer;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
-use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
@@ -51,13 +50,17 @@ class UpdateCombustibleService implements CommandHandler
         $unit = $combustible->unit();
 
         $combustible->syncEmissionFactors(
-            array_map(
-                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
-                    $unit,
-                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
-                ),
+            array_values(array_map(
+                function (EmissionFactorData $data) use ($unit): array {
+                    $emissionFactorGroup = $this->resolveEmissionFactorGroup($data->emissionFactorGroupId);
+
+                    return [
+                        'factor' => $data->toEmissionFactor($unit, $emissionFactorGroup),
+                        'wellToTank' => $data->wellToTankEmissionFactor($unit, $emissionFactorGroup),
+                    ];
+                },
                 $request->emissionFactors,
-            ),
+            )),
         );
 
         $this->combustibleRepository->add($combustible);

@@ -148,8 +148,61 @@ class UpdateMachineryFuelServiceTest extends TestCase
         $persistedFactor = $persisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        // co2eq is respected as provided by the user (non-zero), not recomputed from co2/ch4/n2o.
         $this->assertSame('1.5', $persistedFactor->co2eq());
+        $this->assertSame(Unit::Liter, $persistedFactor->unit());
+    }
+
+    public function testUpdateSyncsWellToTankFactors(): void
+    {
+        $repository = MachineryFuelRepositoryMother::inMemory();
+
+        $machineryFuel = MachineryFuelMother::random();
+
+        $repository->add($machineryFuel);
+
+        $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
+
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, Locale::Spanish, $emissionFactorGroupRepository);
+
+        $request = new UpdateMachineryFuelRequest(
+            machineryFuelId: $machineryFuel->id(),
+            name: 'changedName',
+            unit: Unit::Liter,
+            machineryType: MachineryType::Agricultural,
+            emissionFactors: [
+                new EmissionFactorData(
+                    year: 2024,
+                    co2eq: '1.5',
+                    co2: '1.0',
+                    ch4: '0.2',
+                    n2o: '0.3',
+                    wellToTankCo2eq: '0.61',
+                    wellToTankCo2: '0.6',
+                    wellToTankCh4: '0.01',
+                    wellToTankN2o: '0.01',
+                    wellToTankSource: 'DEFRA',
+                    source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
+                ),
+            ],
+        );
+
+        $result = $sut($request, $user);
+
+        $persisted = $repository->find($result->machineryFuelId);
+
+        $this->assertNotNull($persisted);
+        $this->assertCount(1, $persisted->emissionFactors());
+
+        $persistedFactor = $persisted->wellToTankFactorFor(2024, $emissionFactorGroup->id());
+
+        $this->assertNotNull($persistedFactor);
+        $this->assertSame('0.61', $persistedFactor->co2eq());
+        $this->assertSame('DEFRA', $persistedFactor->source());
         $this->assertSame(Unit::Liter, $persistedFactor->unit());
     }
 

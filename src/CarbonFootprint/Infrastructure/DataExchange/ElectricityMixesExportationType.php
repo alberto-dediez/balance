@@ -56,6 +56,11 @@ class ElectricityMixesExportationType implements ExportationType
             new ExportColumnDefinition('ch4', new TranslatableMessage('CH4')),
             new ExportColumnDefinition('n2o', new TranslatableMessage('N2O')),
             new ExportColumnDefinition('source', new TranslatableMessage('Fuente')),
+            new ExportColumnDefinition('wellToTankCo2eq', new TranslatableMessage('CO2eq WTT')),
+            new ExportColumnDefinition('wellToTankCo2', new TranslatableMessage('CO2 WTT')),
+            new ExportColumnDefinition('wellToTankCh4', new TranslatableMessage('CH4 WTT')),
+            new ExportColumnDefinition('wellToTankN2o', new TranslatableMessage('N2O WTT')),
+            new ExportColumnDefinition('wellToTankSource', new TranslatableMessage('Fuente WTT')),
             new ExportColumnDefinition('emissionFactorGroup', new TranslatableMessage('Grupo')),
         ];
     }
@@ -150,6 +155,7 @@ class ElectricityMixesExportationType implements ExportationType
     private function factorRow(ElectricityMixEmissionFactor $electricityMixEmissionFactor): array
     {
         $emissionFactor = $electricityMixEmissionFactor->emissionFactor();
+        $wellToTankFactor = $electricityMixEmissionFactor->wellToTankFactor();
 
         return [
             'emissionFactorGroup' => $this->groupName($emissionFactor->emissionFactorGroupId()),
@@ -159,6 +165,11 @@ class ElectricityMixesExportationType implements ExportationType
             'ch4' => $emissionFactor->ch4(),
             'n2o' => $emissionFactor->n2o(),
             'source' => $emissionFactor->source() ?? '',
+            'wellToTankCo2eq' => $wellToTankFactor->co2eq(),
+            'wellToTankCo2' => $wellToTankFactor->co2(),
+            'wellToTankCh4' => $wellToTankFactor->ch4(),
+            'wellToTankN2o' => $wellToTankFactor->n2o(),
+            'wellToTankSource' => $wellToTankFactor->source() ?? '',
         ];
     }
 
@@ -173,6 +184,11 @@ class ElectricityMixesExportationType implements ExportationType
             'ch4' => '',
             'n2o' => '',
             'source' => '',
+            'wellToTankCo2eq' => '',
+            'wellToTankCo2' => '',
+            'wellToTankCh4' => '',
+            'wellToTankN2o' => '',
+            'wellToTankSource' => '',
         ];
     }
 

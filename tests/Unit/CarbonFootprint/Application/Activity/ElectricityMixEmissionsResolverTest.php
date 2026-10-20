@@ -67,6 +67,40 @@ class ElectricityMixEmissionsResolverTest extends TestCase
         $this->assertSame(180.0, (float) $result->emissions->co2eq());
     }
 
+    public function testCalculatesTheLocationBasedWellToTankResult(): void
+    {
+        $electricityMix = ElectricityMixMother::fromCountryAndId('C-ES', (string) ElectricityMixId::generate());
+        $electricityMix->setEmissionFactor(
+            new EmissionFactor('0.18', '0.18', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'REE'),
+            new EmissionFactor('0.03', '0.03', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'DEFRA'),
+        );
+
+        $repository = ElectricityMixRepositoryMother::inMemory();
+        $repository->add($electricityMix);
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->resolve(new CountryId('C-ES'), 2024, EmissionFactorGroupMother::defaultId(), $this->quantity());
+
+        $this->assertNotNull($result);
+        $this->assertSame('0.03', $result->wellToTankEmissionFactor->co2eq());
+        $this->assertSame('DEFRA', $result->wellToTankEmissionFactor->source());
+        $this->assertSame(30.0, (float) $result->wellToTankEmissions->co2eq());
+    }
+
+    public function testMixWithoutWellToTankYieldsZeroWellToTankEmissions(): void
+    {
+        $repository = ElectricityMixRepositoryMother::inMemory();
+        $repository->add($this->spanishMixWithFactorForYear(2024));
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut->resolve(new CountryId('C-ES'), 2024, EmissionFactorGroupMother::defaultId(), $this->quantity());
+
+        $this->assertNotNull($result);
+        $this->assertSame(0.0, (float) $result->wellToTankEmissions->co2eq());
+    }
+
     private function spanishMixWithFactorForYear(int $year): ElectricityMix
     {
         $electricityMix = ElectricityMixMother::fromCountryAndId('C-ES', (string) ElectricityMixId::generate());

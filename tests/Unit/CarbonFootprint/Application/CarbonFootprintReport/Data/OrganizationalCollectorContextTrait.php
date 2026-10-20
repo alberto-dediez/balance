@@ -118,6 +118,8 @@ trait OrganizationalCollectorContextTrait
             electricityMixId: null !== $locationBasedCo2eq ? ElectricityMixId::generate() : null,
             locationBasedEmissionFactor: null !== $locationBasedCo2eq ? new EmissionFactor('0.2', '0.2', '0', '0', 2025, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'REE') : null,
             locationBasedEmissions: null !== $locationBasedCo2eq ? new Emissions($locationBasedCo2eq, $locationBasedCo2eq, '0', '0') : null,
+            locationBasedWellToTankEmissionFactor: null !== $locationBasedCo2eq ? EmissionFactor::zeroFor(2025, EmissionFactorGroupMother::defaultId(), Unit::KWh) : null,
+            locationBasedWellToTankEmissions: null !== $locationBasedCo2eq ? new Emissions() : null,
         ));
     }
 

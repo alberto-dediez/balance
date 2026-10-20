@@ -6,6 +6,7 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/gdo_factors/export"
         Then the response status should be 200
+        Then I see a text "CO2eq WTT"
 
     Scenario: As a normal user I cannot access the gdo factors export screen
         Given account "MyCompany" with id "mycompany" exists

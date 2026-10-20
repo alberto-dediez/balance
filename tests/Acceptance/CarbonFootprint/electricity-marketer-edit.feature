@@ -18,6 +18,7 @@ Feature:
         When I go to "/es/admin/electricity-marketers/edit/333"
         Then the response status should be 200
         Then I see a text "Factores de emisión"
+        Then I see a text "Well-to-tank"
 
     Scenario: As an owner, I can't access to edit electricity marketers
         Given account "MyCompany" with id "mycompany" exists

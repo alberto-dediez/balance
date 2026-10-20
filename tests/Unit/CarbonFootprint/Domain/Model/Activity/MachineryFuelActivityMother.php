@@ -23,4 +23,18 @@ class MachineryFuelActivityMother
             quantity: ActivityMother::quantity(Unit::Liter, 50.0),
         );
     }
+
+    public static function registeredWithWellToTank(?AccountId $accountId = null): MachineryFuelActivity
+    {
+        return MachineryFuelActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId ?? new AccountId('account-id'),
+            machineryFuelId: MachineryFuelId::generate(),
+            emissionFactor: ActivityMother::emissionFactor(),
+            emissions: ActivityMother::emissions(),
+            quantity: ActivityMother::quantity(Unit::Liter, 50.0),
+            wellToTankEmissionFactor: ActivityMother::wellToTankEmissionFactor(),
+            wellToTankEmissions: ActivityMother::wellToTankEmissions(),
+        );
+    }
 }

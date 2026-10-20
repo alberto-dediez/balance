@@ -37,6 +37,8 @@ class RegisterMachineryFuelActivityService implements CommandHandler
 
         $emissionFactor = $this->factorSelector->select((string) $request->machineryFuelId, $request->year, null, $request->emissionFactorGroupId);
         $emissions = $this->calculator->calculate($emissionFactor, $request->quantity);
+        $wellToTankEmissionFactor = $this->factorSelector->selectWellToTank((string) $request->machineryFuelId, $request->year, $request->emissionFactorGroupId);
+        $wellToTankEmissions = $this->calculator->calculate($wellToTankEmissionFactor, $request->quantity);
 
         $activity = MachineryFuelActivity::register(
             id: $id,
@@ -46,6 +48,8 @@ class RegisterMachineryFuelActivityService implements CommandHandler
             emissions: $emissions,
             quantity: $request->quantity,
             source: $request->source,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: $wellToTankEmissions,
         );
 
         $this->activityRepository->save($activity);

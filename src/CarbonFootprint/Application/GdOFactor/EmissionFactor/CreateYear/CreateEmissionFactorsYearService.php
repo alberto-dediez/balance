@@ -52,13 +52,16 @@ class CreateEmissionFactorsYearService implements CommandHandler
         }
 
         foreach ($gdOFactors as $gdOFactor) {
-            $sourceFactor = $gdOFactor->emissionFactorFor($request->sourceYear, $emissionFactorGroupId);
+            $sourceFactor = $gdOFactor->emissionFactors()->forYearAndGroup($request->sourceYear, $emissionFactorGroupId);
 
             if (null === $sourceFactor) {
                 continue;
             }
 
-            $gdOFactor->setEmissionFactor($sourceFactor->withYear($targetYear));
+            $gdOFactor->setEmissionFactor(
+                $sourceFactor->emissionFactor()->withYear($targetYear),
+                $sourceFactor->wellToTankFactor()->withYear($targetYear),
+            );
 
             $this->gdOFactorRepository->add($gdOFactor);
         }

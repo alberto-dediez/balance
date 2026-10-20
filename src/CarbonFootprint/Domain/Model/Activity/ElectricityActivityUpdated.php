@@ -27,10 +27,14 @@ final class ElectricityActivityUpdated extends DomainEvent
         private EmissionFactor $emissionFactor,
         private Emissions $emissions,
         private Quantity $quantity,
-        private ?string $source = null,
+        private ?string $source,
+        private EmissionFactor $wellToTankEmissionFactor,
+        private Emissions $wellToTankEmissions,
         private ?ElectricityMixId $electricityMixId = null,
         private ?EmissionFactor $locationBasedEmissionFactor = null,
         private ?Emissions $locationBasedEmissions = null,
+        private ?EmissionFactor $locationBasedWellToTankEmissionFactor = null,
+        private ?Emissions $locationBasedWellToTankEmissions = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -82,9 +86,29 @@ final class ElectricityActivityUpdated extends DomainEvent
         return $this->locationBasedEmissionFactor;
     }
 
+    public function wellToTankEmissionFactor(): EmissionFactor
+    {
+        return $this->wellToTankEmissionFactor;
+    }
+
+    public function wellToTankEmissions(): Emissions
+    {
+        return $this->wellToTankEmissions;
+    }
+
     public function locationBasedEmissions(): ?Emissions
     {
         return $this->locationBasedEmissions;
+    }
+
+    public function locationBasedWellToTankEmissionFactor(): ?EmissionFactor
+    {
+        return $this->locationBasedWellToTankEmissionFactor;
+    }
+
+    public function locationBasedWellToTankEmissions(): ?Emissions
+    {
+        return $this->locationBasedWellToTankEmissions;
     }
 
     public function aggregateRootId(): AggregateRootId
@@ -113,6 +137,15 @@ final class ElectricityActivityUpdated extends DomainEvent
             'quantityValue' => $this->quantity->value(),
             'quantityUnit' => $this->quantity->unit()->value,
             'source' => $this->source,
+            'wellToTankEmissionFactorCo2eq' => $this->wellToTankEmissionFactor->co2eq(),
+            'wellToTankEmissionFactorCo2' => $this->wellToTankEmissionFactor->co2(),
+            'wellToTankEmissionFactorCh4' => $this->wellToTankEmissionFactor->ch4(),
+            'wellToTankEmissionFactorN2o' => $this->wellToTankEmissionFactor->n2o(),
+            'wellToTankEmissionFactorSource' => $this->wellToTankEmissionFactor->source(),
+            'wellToTankEmissionsCo2eq' => $this->wellToTankEmissions->co2eq(),
+            'wellToTankEmissionsCo2' => $this->wellToTankEmissions->co2(),
+            'wellToTankEmissionsCh4' => $this->wellToTankEmissions->ch4(),
+            'wellToTankEmissionsN2o' => $this->wellToTankEmissions->n2o(),
             'electricityMixId' => null !== $this->electricityMixId ? (string) $this->electricityMixId : null,
             'locationBasedEmissionFactorCo2eq' => $this->locationBasedEmissionFactor?->co2eq(),
             'locationBasedEmissionFactorCo2' => $this->locationBasedEmissionFactor?->co2(),
@@ -123,6 +156,15 @@ final class ElectricityActivityUpdated extends DomainEvent
             'locationBasedEmissionsCo2' => $this->locationBasedEmissions?->co2(),
             'locationBasedEmissionsCh4' => $this->locationBasedEmissions?->ch4(),
             'locationBasedEmissionsN2o' => $this->locationBasedEmissions?->n2o(),
+            'locationBasedWellToTankEmissionFactorCo2eq' => $this->locationBasedWellToTankEmissionFactor?->co2eq(),
+            'locationBasedWellToTankEmissionFactorCo2' => $this->locationBasedWellToTankEmissionFactor?->co2(),
+            'locationBasedWellToTankEmissionFactorCh4' => $this->locationBasedWellToTankEmissionFactor?->ch4(),
+            'locationBasedWellToTankEmissionFactorN2o' => $this->locationBasedWellToTankEmissionFactor?->n2o(),
+            'locationBasedWellToTankEmissionFactorSource' => $this->locationBasedWellToTankEmissionFactor?->source(),
+            'locationBasedWellToTankEmissionsCo2eq' => $this->locationBasedWellToTankEmissions?->co2eq(),
+            'locationBasedWellToTankEmissionsCo2' => $this->locationBasedWellToTankEmissions?->co2(),
+            'locationBasedWellToTankEmissionsCh4' => $this->locationBasedWellToTankEmissions?->ch4(),
+            'locationBasedWellToTankEmissionsN2o' => $this->locationBasedWellToTankEmissions?->n2o(),
         ];
     }
 
@@ -137,19 +179,56 @@ final class ElectricityActivityUpdated extends DomainEvent
         $emissionFactorUnit = Unit::tryFrom($payload['emissionFactorUnit']);
         assert(null !== $emissionFactorUnit);
 
+        $emissionFactorYear = (int) $payload['emissionFactorYear'];
+        $emissionFactorGroupId = new EmissionFactorGroupId($payload['emissionFactorGroupId']);
         $hasLocationBasedResult = null !== ($payload['locationBasedEmissionFactorCo2eq'] ?? null);
+
+        $wellToTankEmissionFactor = isset($payload['wellToTankEmissionFactorCo2eq'])
+            ? new EmissionFactor(
+                co2eq: $payload['wellToTankEmissionFactorCo2eq'],
+                co2: $payload['wellToTankEmissionFactorCo2'],
+                ch4: $payload['wellToTankEmissionFactorCh4'],
+                n2o: $payload['wellToTankEmissionFactorN2o'],
+                year: $emissionFactorYear,
+                emissionFactorGroupId: $emissionFactorGroupId,
+                unit: $emissionFactorUnit,
+                source: $payload['wellToTankEmissionFactorSource'] ?? null,
+            )
+            : EmissionFactor::zeroFor($emissionFactorYear, $emissionFactorGroupId, $emissionFactorUnit);
+
+        $locationBasedWellToTankEmissionFactor = $hasLocationBasedResult
+            ? new EmissionFactor(
+                co2eq: $payload['locationBasedWellToTankEmissionFactorCo2eq'] ?? '0',
+                co2: $payload['locationBasedWellToTankEmissionFactorCo2'] ?? '0',
+                ch4: $payload['locationBasedWellToTankEmissionFactorCh4'] ?? '0',
+                n2o: $payload['locationBasedWellToTankEmissionFactorN2o'] ?? '0',
+                year: $emissionFactorYear,
+                emissionFactorGroupId: $emissionFactorGroupId,
+                unit: Unit::KWh,
+                source: $payload['locationBasedWellToTankEmissionFactorSource'] ?? null,
+            )
+            : null;
+
+        $locationBasedWellToTankEmissions = $hasLocationBasedResult
+            ? new Emissions(
+                co2eq: $payload['locationBasedWellToTankEmissionsCo2eq'] ?? '0',
+                co2: $payload['locationBasedWellToTankEmissionsCo2'] ?? '0',
+                ch4: $payload['locationBasedWellToTankEmissionsCh4'] ?? '0',
+                n2o: $payload['locationBasedWellToTankEmissionsN2o'] ?? '0',
+            )
+            : null;
 
         return new self(
             activityId: new ActivityId($payload['activityId']),
             electricityMarketerId: null !== ($payload['electricityMarketerId'] ?? null) ? new ElectricityMarketerId($payload['electricityMarketerId']) : null,
             gdOFactorId: null !== ($payload['gdOFactorId'] ?? null) ? new GdOFactorId($payload['gdOFactorId']) : null,
             emissionFactor: new EmissionFactor(
-                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
+                emissionFactorGroupId: $emissionFactorGroupId,
                 co2eq: $payload['emissionFactorCo2eq'],
                 co2: $payload['emissionFactorCo2'],
                 ch4: $payload['emissionFactorCh4'],
                 n2o: $payload['emissionFactorN2o'],
-                year: (int) $payload['emissionFactorYear'],
+                year: $emissionFactorYear,
                 unit: $emissionFactorUnit,
                 source: $payload['emissionFactorSource'] ?? null,
             ),
@@ -161,14 +240,21 @@ final class ElectricityActivityUpdated extends DomainEvent
             ),
             quantity: new Quantity((float) $payload['quantityValue'], $quantityUnit),
             source: $payload['source'] ?? null,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: new Emissions(
+                co2eq: $payload['wellToTankEmissionsCo2eq'] ?? '0',
+                co2: $payload['wellToTankEmissionsCo2'] ?? '0',
+                ch4: $payload['wellToTankEmissionsCh4'] ?? '0',
+                n2o: $payload['wellToTankEmissionsN2o'] ?? '0',
+            ),
             electricityMixId: null !== ($payload['electricityMixId'] ?? null) ? new ElectricityMixId($payload['electricityMixId']) : null,
             locationBasedEmissionFactor: $hasLocationBasedResult ? new EmissionFactor(
-                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
+                emissionFactorGroupId: $emissionFactorGroupId,
                 co2eq: $payload['locationBasedEmissionFactorCo2eq'],
                 co2: $payload['locationBasedEmissionFactorCo2'] ?? '0',
                 ch4: $payload['locationBasedEmissionFactorCh4'] ?? '0',
                 n2o: $payload['locationBasedEmissionFactorN2o'] ?? '0',
-                year: (int) $payload['emissionFactorYear'],
+                year: $emissionFactorYear,
                 unit: Unit::KWh,
                 source: $payload['locationBasedEmissionFactorSource'] ?? null,
             ) : null,
@@ -178,6 +264,8 @@ final class ElectricityActivityUpdated extends DomainEvent
                 ch4: $payload['locationBasedEmissionsCh4'] ?? '0',
                 n2o: $payload['locationBasedEmissionsN2o'] ?? '0',
             ) : null,
+            locationBasedWellToTankEmissionFactor: $locationBasedWellToTankEmissionFactor,
+            locationBasedWellToTankEmissions: $locationBasedWellToTankEmissions,
             id: $id,
             occurredOn: $occurredOn,
         );

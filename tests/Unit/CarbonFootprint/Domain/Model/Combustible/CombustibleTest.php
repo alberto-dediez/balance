@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible;
 
 use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
+use App\CarbonFootprint\Domain\Model\Combustible\CombustibleEmissionFactorUpdated;
 use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Shared\Infrastructure\Locale\FakeLocaleSetter;
 use PHPUnit\Framework\TestCase;
 
@@ -99,8 +102,8 @@ class CombustibleTest extends TestCase
         $combustible->setEmissionFactor($this->emissionFactor(2024, '2.0'));
 
         $combustible->syncEmissionFactors([
-            $this->emissionFactor(2024, '2.5'),
-            $this->emissionFactor(2025, '3.0'),
+            ['factor' => $this->emissionFactor(2024, '2.5'), 'wellToTank' => $this->wellToTankFactor(2024, '0.5')],
+            ['factor' => $this->emissionFactor(2025, '3.0'), 'wellToTank' => $this->wellToTankFactor(2025, '0.5')],
         ]);
 
         $this->assertCount(2, $combustible->emissionFactors());
@@ -116,8 +119,8 @@ class CombustibleTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $combustible->syncEmissionFactors([
-            $this->emissionFactor(2024, '1.0'),
-            $this->emissionFactor(2024, '2.0'),
+            ['factor' => $this->emissionFactor(2024, '1.0'), 'wellToTank' => $this->wellToTankFactor(2024, '0.5')],
+            ['factor' => $this->emissionFactor(2024, '2.0'), 'wellToTank' => $this->wellToTankFactor(2024, '0.5')],
         ]);
     }
 
@@ -138,7 +141,6 @@ class CombustibleTest extends TestCase
         $this->assertNotNull($factor2024);
         $this->assertSame(Unit::Piece, $factor2023->unit());
         $this->assertSame(Unit::Piece, $factor2024->unit());
-        // Other fields are preserved.
         $this->assertSame('1.0', $factor2023->co2eq());
     }
 
@@ -150,6 +152,117 @@ class CombustibleTest extends TestCase
         $combustible->removeEmissionFactor(2024, $this->groupId());
 
         $this->assertCount(0, $combustible->emissionFactors());
+    }
+
+    public function testSetEmissionFactorWithoutWellToTankStoresZeroWellToTank(): void
+    {
+        $combustible = $this->combustible();
+
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'));
+
+        $wellToTankFactor = $combustible->wellToTankFactorFor(2024, $this->groupId());
+
+        $this->assertNotNull($wellToTankFactor);
+        $this->assertSame('0', $wellToTankFactor->co2eq());
+        $this->assertSame('0', $wellToTankFactor->co2());
+        $this->assertSame('0', $wellToTankFactor->ch4());
+        $this->assertSame('0', $wellToTankFactor->n2o());
+        $this->assertSame(2024, $wellToTankFactor->year());
+        $this->assertNull($wellToTankFactor->source());
+    }
+
+    public function testSetEmissionFactorWithWellToTankStoresIt(): void
+    {
+        $combustible = $this->combustible();
+
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->wellToTankFactor(2024, '0.61'));
+
+        $wellToTankFactor = $combustible->wellToTankFactorFor(2024, $this->groupId());
+
+        $this->assertNotNull($wellToTankFactor);
+        $this->assertSame('0.61', $wellToTankFactor->co2eq());
+        $this->assertSame('DEFRA', $wellToTankFactor->source());
+        $this->assertSame('1.5', $combustible->emissionFactorFor(2024, $this->groupId())?->co2eq());
+    }
+
+    public function testWellToTankFactorForReturnsNullWhenMissing(): void
+    {
+        $combustible = $this->combustible();
+
+        $this->assertNull($combustible->wellToTankFactorFor(1999, $this->groupId()));
+    }
+
+    public function testSetEmissionFactorThrowsWhenWellToTankHasDifferentYear(): void
+    {
+        $combustible = $this->combustible();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->wellToTankFactor(2023, '0.61'));
+    }
+
+    public function testSetEmissionFactorThrowsWhenWellToTankHasDifferentGroup(): void
+    {
+        $combustible = $this->combustible();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $combustible->setEmissionFactor(
+            $this->emissionFactor(2024, '1.5'),
+            $this->wellToTankFactor(2024, '0.61')->withEmissionFactorGroup(EmissionFactorGroupMother::random()->id()),
+        );
+    }
+
+    public function testChangingOnlyWellToTankPublishesEmissionFactorUpdated(): void
+    {
+        $combustible = $this->combustible();
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->wellToTankFactor(2024, '0.61'));
+
+        DomainEventPublisher::instance()->reset();
+        $spySubscriber = new SpyDomainEventSubscriber();
+
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->wellToTankFactor(2024, '0.7'));
+
+        $this->assertInstanceOf(CombustibleEmissionFactorUpdated::class, $spySubscriber->lastEvent());
+        $this->assertSame('0.7', $combustible->wellToTankFactorFor(2024, $this->groupId())?->co2eq());
+    }
+
+    public function testSettingSameFactorsPublishesNothing(): void
+    {
+        $combustible = $this->combustible();
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->wellToTankFactor(2024, '0.61'));
+
+        DomainEventPublisher::instance()->reset();
+        $spySubscriber = new SpyDomainEventSubscriber();
+
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '1.5'), $this->wellToTankFactor(2024, '0.61'));
+
+        $this->assertCount(0, $spySubscriber->events());
+    }
+
+    public function testSyncEmissionFactorsStoresWellToTank(): void
+    {
+        $combustible = $this->combustible();
+
+        $combustible->syncEmissionFactors([
+            ['factor' => $this->emissionFactor(2024, '2.5'), 'wellToTank' => $this->wellToTankFactor(2024, '0.61')],
+        ]);
+
+        $this->assertSame('0.61', $combustible->wellToTankFactorFor(2024, $this->groupId())?->co2eq());
+    }
+
+    public function testUpdatingUnitRestampsWellToTankFactors(): void
+    {
+        $combustible = $this->combustible();
+        $combustible->setEmissionFactor($this->emissionFactor(2024, '2.0'), $this->wellToTankFactor(2024, '0.61'));
+
+        $combustible->update('combustible-name', Unit::Piece);
+
+        $wellToTankFactor = $combustible->wellToTankFactorFor(2024, $this->groupId());
+
+        $this->assertNotNull($wellToTankFactor);
+        $this->assertSame(Unit::Piece, $wellToTankFactor->unit());
+        $this->assertSame('0.61', $wellToTankFactor->co2eq());
     }
 
     private function combustible(): Combustible
@@ -172,6 +285,20 @@ class CombustibleTest extends TestCase
             emissionFactorGroupId: $this->groupId(),
             unit: Unit::Kilogram,
             source: 'test-source',
+        );
+    }
+
+    private function wellToTankFactor(int $year, string $co2eq, Unit $unit = Unit::Kilogram): EmissionFactor
+    {
+        return new EmissionFactor(
+            co2eq: $co2eq,
+            co2: '0.6',
+            ch4: '0.01',
+            n2o: '0.01',
+            year: $year,
+            emissionFactorGroupId: $this->groupId(),
+            unit: $unit,
+            source: 'DEFRA',
         );
     }
 

@@ -65,6 +65,56 @@ class ElectricityActivityTest extends TestCase
         );
     }
 
+    public function testRegisterWithoutWellToTankStoresZeroWellToTank(): void
+    {
+        $activity = ElectricityActivityMother::registered();
+
+        $this->assertSame('0', $activity->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame($activity->emissionFactor()->year(), $activity->wellToTankEmissionFactor()->year());
+        $this->assertSame('0', $activity->wellToTankEmissions()->co2eq());
+    }
+
+    public function testRegisterWithWellToTankExposesIt(): void
+    {
+        $activity = ElectricityActivityMother::registeredWithWellToTank();
+
+        $this->assertSame('0.61', $activity->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame('122.0', $activity->wellToTankEmissions()->co2eq());
+        $this->assertSame('15.0', $activity->emissions()->co2eq());
+    }
+
+    public function testRegisterWithElectricityMixStoresLocationBasedWellToTank(): void
+    {
+        $activity = ElectricityActivityMother::registeredWithLocationBasedResult();
+
+        $locationBasedWellToTankEmissionFactor = $activity->locationBasedWellToTankEmissionFactor();
+
+        $this->assertNotNull($locationBasedWellToTankEmissionFactor);
+        $this->assertSame('0.03', $locationBasedWellToTankEmissionFactor->co2eq());
+        $this->assertSame(Unit::KWh, $locationBasedWellToTankEmissionFactor->unit());
+        $this->assertSame('DEFRA', $locationBasedWellToTankEmissionFactor->source());
+        $this->assertSame($activity->emissionFactor()->year(), $locationBasedWellToTankEmissionFactor->year());
+        $this->assertSame('30.0', $activity->locationBasedWellToTankEmissions()?->co2eq());
+    }
+
+    public function testRegisterWithLocationBasedResultWithoutWellToTankThrows(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        ElectricityActivity::register(
+            id: ActivityId::generate(),
+            accountId: new AccountId('account-id'),
+            electricityMarketerId: ElectricityMarketerId::generate(),
+            gdOFactorId: null,
+            emissionFactor: ActivityMother::emissionFactor(),
+            emissions: ActivityMother::emissions(),
+            quantity: ActivityMother::quantity(Unit::KWh, 1000.0),
+            electricityMixId: ElectricityMixId::generate(),
+            locationBasedEmissionFactor: ElectricityActivityMother::locationBasedEmissionFactor(),
+            locationBasedEmissions: ElectricityActivityMother::locationBasedEmissions(),
+        );
+    }
+
     public function testUpdateAddsAndRemovesTheLocationBasedResult(): void
     {
         $activity = ElectricityActivityMother::registered();
@@ -78,9 +128,12 @@ class ElectricityActivityTest extends TestCase
             electricityMixId: ElectricityMixId::generate(),
             locationBasedEmissionFactor: ElectricityActivityMother::locationBasedEmissionFactor(),
             locationBasedEmissions: ElectricityActivityMother::locationBasedEmissions(),
+            locationBasedWellToTankEmissionFactor: ElectricityActivityMother::locationBasedWellToTankEmissionFactor(),
+            locationBasedWellToTankEmissions: ElectricityActivityMother::locationBasedWellToTankEmissions(),
         );
 
         $this->assertNotNull($activity->locationBasedEmissions());
+        $this->assertSame('30.0', $activity->locationBasedWellToTankEmissions()?->co2eq());
 
         $activity->update(
             electricityMarketerId: ElectricityMarketerId::generate(),
@@ -93,6 +146,8 @@ class ElectricityActivityTest extends TestCase
         $this->assertNull($activity->electricityMixId());
         $this->assertNull($activity->locationBasedEmissionFactor());
         $this->assertNull($activity->locationBasedEmissions());
+        $this->assertNull($activity->locationBasedWellToTankEmissionFactor());
+        $this->assertNull($activity->locationBasedWellToTankEmissions());
     }
 
     public function testRebuildFromPayloadWithoutLocationBasedKeys(): void
@@ -145,9 +200,14 @@ class ElectricityActivityTest extends TestCase
             emissionFactor: ActivityMother::emissionFactor(),
             emissions: ActivityMother::emissions(),
             quantity: ActivityMother::quantity(Unit::KWh, 1000.0),
+            source: null,
+            wellToTankEmissionFactor: ActivityMother::wellToTankEmissionFactor(),
+            wellToTankEmissions: ActivityMother::wellToTankEmissions(),
             electricityMixId: $withLocationBasedResult ? ElectricityMixId::generate() : null,
             locationBasedEmissionFactor: $withLocationBasedResult ? ElectricityActivityMother::locationBasedEmissionFactor() : null,
             locationBasedEmissions: $withLocationBasedResult ? ElectricityActivityMother::locationBasedEmissions() : null,
+            locationBasedWellToTankEmissionFactor: $withLocationBasedResult ? ElectricityActivityMother::locationBasedWellToTankEmissionFactor() : null,
+            locationBasedWellToTankEmissions: $withLocationBasedResult ? ElectricityActivityMother::locationBasedWellToTankEmissions() : null,
         );
     }
 }

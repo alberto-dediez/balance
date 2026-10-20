@@ -70,7 +70,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromGdOFactor(
                     $gdOFactor->id(),
                     $gdOFactor->name(),
-                    $gdOFactor->emissionFactorFor($year, $group->id()),
+                    $gdOFactor->emissionFactors()->forYearAndGroup($year, $group->id()),
                     $group->id(),
                 );
             }

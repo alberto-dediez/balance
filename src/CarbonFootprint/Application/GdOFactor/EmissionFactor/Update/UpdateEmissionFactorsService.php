@@ -44,7 +44,10 @@ class UpdateEmissionFactorsService implements CommandHandler
             } else {
                 $emissionFactorGroup = $this->resolveEmissionFactorGroup($row->emissionFactorGroupId);
 
-                $gdOFactor->setEmissionFactor($row->toEmissionFactor($request->year, Unit::KWh, $emissionFactorGroup));
+                $gdOFactor->setEmissionFactor(
+                    $row->toEmissionFactor($request->year, Unit::KWh, $emissionFactorGroup),
+                    $row->wellToTankEmissionFactor($request->year, Unit::KWh, $emissionFactorGroup),
+                );
             }
 
             $this->gdOFactorRepository->add($gdOFactor);

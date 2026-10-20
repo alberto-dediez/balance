@@ -9401,6 +9401,50 @@
         <source>Sin resultados</source>
         <target>Sonuç yok</target>
       </trans-unit>
+      <trans-unit id="CFsxHuR" resname="Kg CO2eq (WTT)">
+        <source>Kg CO2eq (WTT)</source>
+        <target>Kg CO2eq (WTT)</target>
+      </trans-unit>
+      <trans-unit id="88rwDXm" resname="Kg CO2 (WTT)">
+        <source>Kg CO2 (WTT)</source>
+        <target>Kg CO2 (WTT)</target>
+      </trans-unit>
+      <trans-unit id="JPcTXWr" resname="g CH4 (WTT)">
+        <source>g CH4 (WTT)</source>
+        <target>g CH4 (WTT)</target>
+      </trans-unit>
+      <trans-unit id="1ef4og." resname="g N2O (WTT)">
+        <source>g N2O (WTT)</source>
+        <target>g N2O (WTT)</target>
+      </trans-unit>
+      <trans-unit id="wP7orX6" resname="Fuente (WTT)">
+        <source>Fuente (WTT)</source>
+        <target>Kaynak (WTT)</target>
+      </trans-unit>
+      <trans-unit id="dcVOtlv" resname="CO2eq WTT">
+        <source>CO2eq WTT</source>
+        <target>WTT CO2eq</target>
+      </trans-unit>
+      <trans-unit id="zr0NY0j" resname="CO2 WTT">
+        <source>CO2 WTT</source>
+        <target>WTT CO2</target>
+      </trans-unit>
+      <trans-unit id="uYMk429" resname="CH4 WTT">
+        <source>CH4 WTT</source>
+        <target>WTT CH4</target>
+      </trans-unit>
+      <trans-unit id="8oof1ym" resname="N2O WTT">
+        <source>N2O WTT</source>
+        <target>WTT N2O</target>
+      </trans-unit>
+      <trans-unit id="56271sT" resname="Fuente WTT">
+        <source>Fuente WTT</source>
+        <target>WTT kaynağı</target>
+      </trans-unit>
+      <trans-unit id="uxuWik6" resname="Well-to-tank">
+        <source>Well-to-tank</source>
+        <target>Well-to-tank</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

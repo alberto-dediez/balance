@@ -52,13 +52,16 @@ class CreateEmissionFactorsYearService implements CommandHandler
         }
 
         foreach ($electricityMixes as $electricityMix) {
-            $sourceFactor = $electricityMix->emissionFactorFor($request->sourceYear, $emissionFactorGroupId);
+            $sourceFactor = $electricityMix->emissionFactors()->forYearAndGroup($request->sourceYear, $emissionFactorGroupId);
 
             if (null === $sourceFactor) {
                 continue;
             }
 
-            $electricityMix->setEmissionFactor($sourceFactor->withYear($targetYear));
+            $electricityMix->setEmissionFactor(
+                $sourceFactor->emissionFactor()->withYear($targetYear),
+                $sourceFactor->wellToTankFactor()->withYear($targetYear),
+            );
 
             $this->electricityMixRepository->add($electricityMix);
         }

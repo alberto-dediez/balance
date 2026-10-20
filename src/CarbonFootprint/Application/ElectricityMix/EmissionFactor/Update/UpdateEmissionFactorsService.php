@@ -44,7 +44,10 @@ class UpdateEmissionFactorsService implements CommandHandler
             } else {
                 $emissionFactorGroup = $this->resolveEmissionFactorGroup($row->emissionFactorGroupId);
 
-                $electricityMix->setEmissionFactor($row->toEmissionFactor($request->year, Unit::KWh, $emissionFactorGroup));
+                $electricityMix->setEmissionFactor(
+                    $row->toEmissionFactor($request->year, Unit::KWh, $emissionFactorGroup),
+                    $row->wellToTankEmissionFactor($request->year, Unit::KWh, $emissionFactorGroup),
+                );
             }
 
             $this->electricityMixRepository->add($electricityMix);

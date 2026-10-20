@@ -161,6 +161,26 @@
         <source>transport</source>
         <target>Medio de transporte</target>
       </trans-unit>
+      <trans-unit id="eEG.NTq" resname="wellToTankCo2eq">
+        <source>wellToTankCo2eq</source>
+        <target>CO2eq WTT</target>
+      </trans-unit>
+      <trans-unit id="p9p6oou" resname="wellToTankCo2">
+        <source>wellToTankCo2</source>
+        <target>CO2 WTT</target>
+      </trans-unit>
+      <trans-unit id="Gt9FTag" resname="wellToTankCh4">
+        <source>wellToTankCh4</source>
+        <target>CH4 WTT</target>
+      </trans-unit>
+      <trans-unit id="MnV.liX" resname="wellToTankN2o">
+        <source>wellToTankN2o</source>
+        <target>N2O WTT</target>
+      </trans-unit>
+      <trans-unit id="VvKRt3k" resname="wellToTankSource">
+        <source>wellToTankSource</source>
+        <target>Fuente WTT</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

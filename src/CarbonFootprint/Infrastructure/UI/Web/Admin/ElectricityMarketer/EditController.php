@@ -38,7 +38,7 @@ class EditController extends AbstractController
 
         $emissionFactors = [];
         foreach ($electricityMarketer->emissionFactors() as $electricityMarketerEmissionFactor) {
-            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($electricityMarketerEmissionFactor->emissionFactor());
+            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($electricityMarketerEmissionFactor);
         }
 
         $electricityMarketerRequest = new UpdateElectricityMarketerRequest(

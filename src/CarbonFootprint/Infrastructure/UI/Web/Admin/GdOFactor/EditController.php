@@ -38,7 +38,7 @@ class EditController extends AbstractController
 
         $emissionFactors = [];
         foreach ($gdOFactor->emissionFactors() as $gdOFactorEmissionFactor) {
-            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($gdOFactorEmissionFactor->emissionFactor());
+            $emissionFactors[] = EmissionFactorData::fromEmissionFactor($gdOFactorEmissionFactor);
         }
 
         $gdOFactorRequest = new UpdateGdOFactorRequest(

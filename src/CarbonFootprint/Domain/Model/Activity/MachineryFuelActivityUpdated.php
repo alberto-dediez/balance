@@ -24,7 +24,9 @@ final class MachineryFuelActivityUpdated extends DomainEvent
         private EmissionFactor $emissionFactor,
         private Emissions $emissions,
         private Quantity $quantity,
-        private ?string $source = null,
+        private ?string $source,
+        private EmissionFactor $wellToTankEmissionFactor,
+        private Emissions $wellToTankEmissions,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -61,6 +63,16 @@ final class MachineryFuelActivityUpdated extends DomainEvent
         return $this->source;
     }
 
+    public function wellToTankEmissionFactor(): EmissionFactor
+    {
+        return $this->wellToTankEmissionFactor;
+    }
+
+    public function wellToTankEmissions(): Emissions
+    {
+        return $this->wellToTankEmissions;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->activityId;
@@ -86,6 +98,15 @@ final class MachineryFuelActivityUpdated extends DomainEvent
             'quantityValue' => $this->quantity->value(),
             'quantityUnit' => $this->quantity->unit()->value,
             'source' => $this->source,
+            'wellToTankEmissionFactorCo2eq' => $this->wellToTankEmissionFactor->co2eq(),
+            'wellToTankEmissionFactorCo2' => $this->wellToTankEmissionFactor->co2(),
+            'wellToTankEmissionFactorCh4' => $this->wellToTankEmissionFactor->ch4(),
+            'wellToTankEmissionFactorN2o' => $this->wellToTankEmissionFactor->n2o(),
+            'wellToTankEmissionFactorSource' => $this->wellToTankEmissionFactor->source(),
+            'wellToTankEmissionsCo2eq' => $this->wellToTankEmissions->co2eq(),
+            'wellToTankEmissionsCo2' => $this->wellToTankEmissions->co2(),
+            'wellToTankEmissionsCh4' => $this->wellToTankEmissions->ch4(),
+            'wellToTankEmissionsN2o' => $this->wellToTankEmissions->n2o(),
         ];
     }
 
@@ -100,16 +121,32 @@ final class MachineryFuelActivityUpdated extends DomainEvent
         $emissionFactorUnit = Unit::tryFrom($payload['emissionFactorUnit']);
         assert(null !== $emissionFactorUnit);
 
+        $emissionFactorYear = (int) $payload['emissionFactorYear'];
+        $emissionFactorGroupId = new EmissionFactorGroupId($payload['emissionFactorGroupId']);
+
+        $wellToTankEmissionFactor = isset($payload['wellToTankEmissionFactorCo2eq'])
+            ? new EmissionFactor(
+                co2eq: $payload['wellToTankEmissionFactorCo2eq'],
+                co2: $payload['wellToTankEmissionFactorCo2'],
+                ch4: $payload['wellToTankEmissionFactorCh4'],
+                n2o: $payload['wellToTankEmissionFactorN2o'],
+                year: $emissionFactorYear,
+                emissionFactorGroupId: $emissionFactorGroupId,
+                unit: $emissionFactorUnit,
+                source: $payload['wellToTankEmissionFactorSource'] ?? null,
+            )
+            : EmissionFactor::zeroFor($emissionFactorYear, $emissionFactorGroupId, $emissionFactorUnit);
+
         return new self(
             activityId: new ActivityId($payload['activityId']),
             machineryFuelId: new MachineryFuelId($payload['machineryFuelId']),
             emissionFactor: new EmissionFactor(
-                emissionFactorGroupId: new EmissionFactorGroupId($payload['emissionFactorGroupId']),
+                emissionFactorGroupId: $emissionFactorGroupId,
                 co2eq: $payload['emissionFactorCo2eq'],
                 co2: $payload['emissionFactorCo2'],
                 ch4: $payload['emissionFactorCh4'],
                 n2o: $payload['emissionFactorN2o'],
-                year: (int) $payload['emissionFactorYear'],
+                year: $emissionFactorYear,
                 unit: $emissionFactorUnit,
                 source: $payload['emissionFactorSource'] ?? null,
             ),
@@ -121,6 +158,13 @@ final class MachineryFuelActivityUpdated extends DomainEvent
             ),
             quantity: new Quantity((float) $payload['quantityValue'], $quantityUnit),
             source: $payload['source'] ?? null,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: new Emissions(
+                co2eq: $payload['wellToTankEmissionsCo2eq'] ?? '0',
+                co2: $payload['wellToTankEmissionsCo2'] ?? '0',
+                ch4: $payload['wellToTankEmissionsCh4'] ?? '0',
+                n2o: $payload['wellToTankEmissionsN2o'] ?? '0',
+            ),
             id: $id,
             occurredOn: $occurredOn,
         );

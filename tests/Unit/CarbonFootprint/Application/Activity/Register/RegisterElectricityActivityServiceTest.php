@@ -228,4 +228,66 @@ class RegisterElectricityActivityServiceTest extends TestCase
             emissionFactorGroupId: EmissionFactorGroupMother::defaultId(),
         )));
     }
+
+    public function testRegisterStoresContractualAndLocationBasedWellToTankEmissions(): void
+    {
+        $activityRepo = ActivityRepositoryMother::inMemory();
+
+        $sut = $this->wellToTankSUT($activityRepo);
+
+        $result = $sut($this->request(new CountryId('C-ES')), UserMother::adminUser());
+
+        $activity = $activityRepo->findById($result->activityId);
+
+        $this->assertInstanceOf(ElectricityActivity::class, $activity);
+        $this->assertSame('0.05', $activity->wellToTankEmissionFactor()->co2eq());
+        $this->assertSame(50.0, (float) $activity->wellToTankEmissions()->co2eq());
+        $this->assertSame('0.03', $activity->locationBasedWellToTankEmissionFactor()?->co2eq());
+        $this->assertSame(30.0, (float) $activity->locationBasedWellToTankEmissions()?->co2eq());
+        $this->assertSame('1500', $activity->emissions()->co2eq());
+    }
+
+    public function testRegisterWithoutCountryLeavesLocationBasedWellToTankEmpty(): void
+    {
+        $activityRepo = ActivityRepositoryMother::inMemory();
+
+        $sut = $this->wellToTankSUT($activityRepo);
+
+        $result = $sut($this->request(), UserMother::adminUser());
+
+        $activity = $activityRepo->findById($result->activityId);
+
+        $this->assertInstanceOf(ElectricityActivity::class, $activity);
+        $this->assertSame(50.0, (float) $activity->wellToTankEmissions()->co2eq());
+        $this->assertNull($activity->locationBasedWellToTankEmissions());
+    }
+
+    private function wellToTankSUT(ActivityRepository $activityRepository): RegisterElectricityActivityService
+    {
+        $marketer = ElectricityMarketerMother::registeredElectricityMarketer();
+        $marketer->setEmissionFactor(
+            ActivityMother::emissionFactor(),
+            new EmissionFactor('0.05', '0.05', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'DEFRA'),
+        );
+        $marketerRepo = ElectricityMarketerRepositoryMother::inMemory();
+        $marketerRepo->add($marketer);
+
+        $this->electricityMarketerId = $marketer->id();
+
+        $electricityMix = ElectricityMixMother::fromCountryAndId('C-ES', (string) ElectricityMixId::generate());
+        $electricityMix->setEmissionFactor(
+            new EmissionFactor('0.18', '0.18', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'REE'),
+            new EmissionFactor('0.03', '0.03', '0', '0', 2024, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'DEFRA'),
+        );
+        $electricityMixRepo = ElectricityMixRepositoryMother::inMemory();
+        $electricityMixRepo->add($electricityMix);
+
+        return new RegisterElectricityActivityService(
+            $activityRepository,
+            new ActivityAuthorizer(),
+            new ElectricityEmissionFactorSelector($marketerRepo, GdOFactorRepositoryMother::inMemory()),
+            EmissionsCalculatorMother::create(),
+            new ElectricityMixEmissionsResolver($electricityMixRepo, EmissionsCalculatorMother::create()),
+        );
+    }
 }

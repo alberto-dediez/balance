@@ -7,7 +7,6 @@ namespace App\CarbonFootprint\Application\ElectricityMix\Update;
 use App\CarbonFootprint\Application\ElectricityMix\ElectricityMixAuthorizer;
 use App\CarbonFootprint\Application\ElectricityMix\ElectricityMixCountryAlreadyRegisteredException;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepository;
-use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroup;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
@@ -55,13 +54,17 @@ class UpdateElectricityMixService implements CommandHandler
         $electricityMix->update($countryId);
 
         $electricityMix->syncEmissionFactors(
-            array_map(
-                fn(EmissionFactorData $data): EmissionFactor => $data->toEmissionFactor(
-                    Unit::KWh,
-                    $this->resolveEmissionFactorGroup($data->emissionFactorGroupId),
-                ),
+            array_values(array_map(
+                function (EmissionFactorData $data): array {
+                    $emissionFactorGroup = $this->resolveEmissionFactorGroup($data->emissionFactorGroupId);
+
+                    return [
+                        'factor' => $data->toEmissionFactor(Unit::KWh, $emissionFactorGroup),
+                        'wellToTank' => $data->wellToTankEmissionFactor(Unit::KWh, $emissionFactorGroup),
+                    ];
+                },
                 $request->emissionFactors,
-            ),
+            )),
         );
 
         $this->electricityMixRepository->add($electricityMix);

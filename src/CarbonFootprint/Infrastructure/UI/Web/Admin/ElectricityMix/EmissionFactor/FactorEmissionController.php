@@ -72,7 +72,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromElectricityMix(
                     $electricityMix->id(),
                     (string) $countryRepository->find($electricityMix->countryId())?->name(),
-                    $electricityMix->emissionFactorFor($year, $group->id()),
+                    $electricityMix->emissionFactors()->forYearAndGroup($year, $group->id()),
                     $group->id(),
                 );
             }

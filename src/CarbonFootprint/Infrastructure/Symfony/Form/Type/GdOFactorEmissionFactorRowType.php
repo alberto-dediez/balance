@@ -48,6 +48,35 @@ class GdOFactorEmissionFactorRowType extends AbstractType
                 'attr' => $numberAttr,
                 'constraints' => [new Assert\Type(type: 'numeric')],
             ])
+            ->add('wellToTankCo2eq', TextType::class, [
+                'label' => new TranslatableMessage('Kg CO2eq (WTT)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('wellToTankCo2', TextType::class, [
+                'label' => new TranslatableMessage('Kg CO2 (WTT)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('wellToTankCh4', TextType::class, [
+                'label' => new TranslatableMessage('g CH4 (WTT)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('wellToTankN2o', TextType::class, [
+                'label' => new TranslatableMessage('g N2O (WTT)'),
+                'required' => false,
+                'attr' => $numberAttr,
+                'constraints' => [new Assert\Type(type: 'numeric')],
+            ])
+            ->add('wellToTankSource', TextType::class, [
+                'label' => new TranslatableMessage('Fuente (WTT)'),
+                'required' => false,
+                'constraints' => [new Assert\Length(max: 255)],
+            ])
             ->add('source', TextType::class, [
                 'label' => new TranslatableMessage('Fuente'),
                 'required' => false,
@@ -66,13 +95,19 @@ class GdOFactorEmissionFactorRowType extends AbstractType
 
     public static function validateAllOrNothing(?EmissionFactorRow $row, ExecutionContextInterface $context): void
     {
-        if (!$row instanceof EmissionFactorRow || $row->isEmpty()) {
+        if (!$row instanceof EmissionFactorRow || ($row->isEmpty() && $row->isWellToTankEmpty())) {
             return;
         }
 
-        foreach (['co2eq', 'co2', 'ch4', 'n2o'] as $field) {
+        $fields = ['co2eq', 'co2', 'ch4', 'n2o'];
+
+        if (!$row->isWellToTankEmpty()) {
+            $fields = [...$fields, 'wellToTankCo2eq', 'wellToTankCo2', 'wellToTankCh4', 'wellToTankN2o'];
+        }
+
+        foreach ($fields as $field) {
             if ('' === (string) $row->{$field}) {
-                $context->buildViolation('Este valor no debería estar vacío.')
+                $context->buildViolation('This value should not be blank.')
                     ->atPath($field)
                     ->addViolation()
                 ;

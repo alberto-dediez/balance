@@ -14,6 +14,8 @@ final class MachineryFuelActivity extends Activity
 {
     private MachineryFuelId $machineryFuelId;
     private ?string $source = null;
+    private EmissionFactor $wellToTankEmissionFactor;
+    private Emissions $wellToTankEmissions;
 
     public function __construct(ActivityId $id, ?AccountId $accountId = null)
     {
@@ -29,7 +31,12 @@ final class MachineryFuelActivity extends Activity
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
+        ?EmissionFactor $wellToTankEmissionFactor = null,
+        ?Emissions $wellToTankEmissions = null,
     ): static {
+        $wellToTankEmissionFactor ??= EmissionFactor::zeroFor($emissionFactor->year(), $emissionFactor->emissionFactorGroupId(), $emissionFactor->unit());
+        $wellToTankEmissions ??= new Emissions();
+
         $activity = new static($id, $accountId);
         $activity->recordApplyAndPublish(new MachineryFuelActivityRegistered(
             activityId: $id,
@@ -39,6 +46,8 @@ final class MachineryFuelActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: $wellToTankEmissions,
         ));
 
         return $activity;
@@ -50,7 +59,12 @@ final class MachineryFuelActivity extends Activity
         Emissions $emissions,
         Quantity $quantity,
         ?string $source = null,
+        ?EmissionFactor $wellToTankEmissionFactor = null,
+        ?Emissions $wellToTankEmissions = null,
     ): void {
+        $wellToTankEmissionFactor ??= EmissionFactor::zeroFor($emissionFactor->year(), $emissionFactor->emissionFactorGroupId(), $emissionFactor->unit());
+        $wellToTankEmissions ??= new Emissions();
+
         $this->recordApplyAndPublish(new MachineryFuelActivityUpdated(
             activityId: $this->id,
             machineryFuelId: $machineryFuelId,
@@ -58,6 +72,8 @@ final class MachineryFuelActivity extends Activity
             emissions: $emissions,
             quantity: $quantity,
             source: $source,
+            wellToTankEmissionFactor: $wellToTankEmissionFactor,
+            wellToTankEmissions: $wellToTankEmissions,
         ));
     }
 
@@ -78,6 +94,16 @@ final class MachineryFuelActivity extends Activity
         return $this->source;
     }
 
+    public function wellToTankEmissionFactor(): EmissionFactor
+    {
+        return $this->wellToTankEmissionFactor;
+    }
+
+    public function wellToTankEmissions(): Emissions
+    {
+        return $this->wellToTankEmissions;
+    }
+
     public function applyMachineryFuelActivityRegistered(MachineryFuelActivityRegistered $event): void
     {
         $this->accountId = $event->accountId();
@@ -86,6 +112,8 @@ final class MachineryFuelActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
+        $this->wellToTankEmissionFactor = $event->wellToTankEmissionFactor();
+        $this->wellToTankEmissions = $event->wellToTankEmissions();
         $this->registeredAt = $event->occurredOn();
     }
 
@@ -96,6 +124,8 @@ final class MachineryFuelActivity extends Activity
         $this->emissions = $event->emissions();
         $this->quantity = $event->quantity();
         $this->source = $event->source();
+        $this->wellToTankEmissionFactor = $event->wellToTankEmissionFactor();
+        $this->wellToTankEmissions = $event->wellToTankEmissions();
         $this->updatedAt = $event->occurredOn();
     }
 }

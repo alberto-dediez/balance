@@ -18,6 +18,7 @@
         <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
 
         <embedded name="emissionFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" use-column-prefix="false"/>
+        <embedded name="wellToTankFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" column-prefix="well_to_tank_"/>
 
         <many-to-one field="machineryFuel" target-entity="App\CarbonFootprint\Domain\Model\MachineryFuel\MachineryFuel" inversed-by="emissionFactors">
             <join-column name="machinery_fuel_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>

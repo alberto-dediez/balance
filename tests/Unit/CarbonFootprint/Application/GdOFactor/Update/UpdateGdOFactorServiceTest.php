@@ -106,8 +106,59 @@ class UpdateGdOFactorServiceTest extends TestCase
         $persistedFactor = $gdOFactorPersisted->emissionFactorFor(2024, $emissionFactorGroup->id());
 
         $this->assertNotNull($persistedFactor);
-        // co2eq is respected as provided by the user (non-zero), not recomputed from co2/ch4/n2o.
         $this->assertSame('1.5', $persistedFactor->co2eq());
+        $this->assertSame(Unit::KWh, $persistedFactor->unit());
+    }
+
+    public function testUpdateSyncsWellToTankFactors(): void
+    {
+        $repository = GdOFactorRepositoryMother::inMemory();
+
+        $gdOFactor = GdOFactorMother::random();
+
+        $repository->add($gdOFactor);
+
+        $user = UserMother::fromUsernameAndRole('admin', Role::Admin);
+
+        $emissionFactorGroup = EmissionFactorGroupMother::default();
+        $emissionFactorGroupRepository = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroupRepository->add($emissionFactorGroup);
+
+        $sut = $this->createSUT($repository, $emissionFactorGroupRepository);
+
+        $request = new UpdateGdOFactorRequest(
+            gdOFactorId: $gdOFactor->id(),
+            name: 'changedName',
+            emissionFactors: [
+                new EmissionFactorData(
+                    year: 2024,
+                    co2eq: '1.5',
+                    co2: '1.0',
+                    ch4: '0.2',
+                    n2o: '0.3',
+                    wellToTankCo2eq: '0.61',
+                    wellToTankCo2: '0.6',
+                    wellToTankCh4: '0.01',
+                    wellToTankN2o: '0.01',
+                    wellToTankSource: 'DEFRA',
+                    source: 'IPCC',
+                    emissionFactorGroupId: (string) $emissionFactorGroup->id(),
+                ),
+            ],
+        );
+
+        $result = $sut($request, $user);
+
+        $gdOFactorPersisted = $repository->find($result->gdOFactorId);
+
+        $this->assertNotNull($gdOFactorPersisted);
+        $this->assertCount(1, $gdOFactorPersisted->emissionFactors());
+
+        $persistedFactor = $gdOFactorPersisted->wellToTankFactorFor(2024, $emissionFactorGroup->id());
+
+        $this->assertNotNull($persistedFactor);
+        $this->assertSame('0.61', $persistedFactor->co2eq());
+        $this->assertSame('DEFRA', $persistedFactor->source());
         $this->assertSame(Unit::KWh, $persistedFactor->unit());
     }
 

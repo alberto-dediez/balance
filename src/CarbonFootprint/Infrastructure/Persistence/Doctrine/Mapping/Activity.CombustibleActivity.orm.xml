@@ -8,6 +8,8 @@
     <entity name="App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity" table="combustible_activities">
         <field name="combustibleId" type="combustible_id" column="combustible_id" nullable="false" />
         <field name="source" type="string" length="255" nullable="true" />
+        <embedded name="wellToTankEmissionFactor" class="App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor" use-column-prefix="true" column-prefix="well_to_tank_emission_factor_"/>
+        <embedded name="wellToTankEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="well_to_tank_emissions_"/>
     </entity>
 
 </doctrine-mapping>

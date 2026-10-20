@@ -19,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
+use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\TransportActivity;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
@@ -110,6 +111,7 @@ use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -541,6 +543,29 @@ final readonly class CarbonFootprintContext implements Context
         $this->getCombustibleRepository()->add($combustible);
     }
 
+    #[Given('combustible :name with id :id and emission factor with well-to-tank for year :year exists')]
+    public function combustibleWithWellToTankEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $combustible = CombustibleMother::fromNameAndId($name, $id);
+
+        $combustible->setEmissionFactor(
+            new EmissionFactor(
+                co2eq: '1.5',
+                co2: '1.0',
+                ch4: '0.2',
+                n2o: '0.3',
+                year: (int) $year,
+                emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+                source: 'IPCC',
+            ),
+            $this->wellToTankEmissionFactor((int) $year),
+        );
+
+        $this->getCombustibleRepository()->add($combustible);
+    }
+
     #[Given('emission factor group :name with id :id exists')]
     public function emissionFactorGroupWithIdExists(string $name, string $id): void
     {
@@ -630,6 +655,29 @@ final readonly class CarbonFootprintContext implements Context
         $this->getElectricityMarketerRepository()->add($electricityMarketer);
     }
 
+    #[Given('electricity marketer :name with id :id and emission factor with well-to-tank for year :year exists')]
+    public function electricityMarketerWithWellToTankEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $electricityMarketer = ElectricityMarketerMother::fromNameAndId($name, $id);
+
+        $electricityMarketer->setEmissionFactor(
+            new EmissionFactor(
+                co2eq: '1.5',
+                co2: '1.0',
+                ch4: '0.2',
+                n2o: '0.3',
+                year: (int) $year,
+                emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+                source: 'IPCC',
+            ),
+            $this->wellToTankEmissionFactor((int) $year),
+        );
+
+        $this->getElectricityMarketerRepository()->add($electricityMarketer);
+    }
+
     #[Given('electricity mix for country :country with id :id exists')]
     public function electricityMixWithIdExists(string $country, string $id): void
     {
@@ -656,6 +704,29 @@ final readonly class CarbonFootprintContext implements Context
             emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
+
+        $this->getElectricityMixRepository()->add($electricityMix);
+    }
+
+    #[Given('electricity mix for country :country with id :id and emission factor with well-to-tank for year :year exists')]
+    public function electricityMixWithWellToTankEmissionFactorExists(string $country, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $electricityMix = ElectricityMixMother::fromCountryAndId($country, $id);
+
+        $electricityMix->setEmissionFactor(
+            new EmissionFactor(
+                co2eq: '1.5',
+                co2: '1.0',
+                ch4: '0.2',
+                n2o: '0.3',
+                year: (int) $year,
+                emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+                source: 'IPCC',
+            ),
+            $this->wellToTankEmissionFactor((int) $year),
+        );
 
         $this->getElectricityMixRepository()->add($electricityMix);
     }
@@ -720,6 +791,29 @@ final readonly class CarbonFootprintContext implements Context
         $this->getGdOFactorRepository()->add($gdOFactor);
     }
 
+    #[Given('gdo factor :name with id :id and emission factor with well-to-tank for year :year exists')]
+    public function gdOFactorWithWellToTankEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $gdOFactor = GdOFactorMother::fromNameAndId($name, $id);
+
+        $gdOFactor->setEmissionFactor(
+            new EmissionFactor(
+                co2eq: '1.5',
+                co2: '1.0',
+                ch4: '0.2',
+                n2o: '0.3',
+                year: (int) $year,
+                emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+                source: 'IPCC',
+            ),
+            $this->wellToTankEmissionFactor((int) $year),
+        );
+
+        $this->getGdOFactorRepository()->add($gdOFactor);
+    }
+
     #[Given('machinery fuel :name with id :id exists')]
     public function machineryFuelWithIdExists(string $name, string $id): void
     {
@@ -746,6 +840,29 @@ final readonly class CarbonFootprintContext implements Context
             emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
         ));
+
+        $this->getMachineryFuelRepository()->add($machineryFuel);
+    }
+
+    #[Given('machinery fuel :name with id :id and emission factor with well-to-tank for year :year exists')]
+    public function machineryFuelWithWellToTankEmissionFactorExists(string $name, string $id, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $machineryFuel = MachineryFuelMother::fromNameAndId($name, $id);
+
+        $machineryFuel->setEmissionFactor(
+            new EmissionFactor(
+                co2eq: '1.5',
+                co2: '1.0',
+                ch4: '0.2',
+                n2o: '0.3',
+                year: (int) $year,
+                emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+                source: 'IPCC',
+            ),
+            $this->wellToTankEmissionFactor((int) $year),
+        );
 
         $this->getMachineryFuelRepository()->add($machineryFuel);
     }
@@ -1588,6 +1705,23 @@ final readonly class CarbonFootprintContext implements Context
         $propertyRepository->add($property);
     }
 
+    #[Given('property :id is in country :countryId')]
+    public function propertyIsInCountry(string $id, string $countryId): void
+    {
+        $propertyRepository = $this->client->getContainer()->get(PropertyRepository::class);
+        $property = $propertyRepository->find(new PropertyId($id));
+
+        Assert::assertNotNull($property);
+
+        $property->update(
+            name: $property->name(),
+            accountId: $property->accountId(),
+            info: new PropertyInfo(countryId: new CountryId($countryId)),
+        );
+
+        $propertyRepository->add($property);
+    }
+
     #[Then('trip calculation link :id should have :count trip calculations')]
     public function tripCalculationLinkShouldHaveTripCalculations(string $id, int $count): void
     {
@@ -1886,6 +2020,29 @@ final readonly class CarbonFootprintContext implements Context
         $this->client->submit($form);
     }
 
+    #[When('I submit the scope :scope step form with a combustible :itemId of :quantity :unit')]
+    public function iSubmitTheScopeStepFormWithACombustible(string $scope, string $itemId, string $quantity, string $unit): void
+    {
+        $this->submitScopeStepRow('combustibles', ['itemId' => $itemId, 'quantity' => $quantity, 'unit' => $unit]);
+    }
+
+    #[When('I submit the scope :scope step form with an electricity marketer :itemId of :quantity :unit')]
+    public function iSubmitTheScopeStepFormWithAnElectricityMarketer(string $scope, string $itemId, string $quantity, string $unit): void
+    {
+        $this->submitScopeStepRow('electricity', ['itemId' => $itemId, 'quantity' => $quantity, 'unit' => $unit]);
+    }
+
+    /** @param array<string, string> $row */
+    private function submitScopeStepRow(string $sectionKey, array $row): void
+    {
+        $token = $this->client->getCrawler()->filter('input[name="_token"]')->attr('value');
+        Assert::assertNotNull($token);
+
+        $uri = $this->client->getRequest()->getUri();
+
+        $this->client->requestWithFiles('POST', $uri, ['_token' => $token, $sectionKey => [$row]], [], ['HTTP_REFERER' => $uri]);
+    }
+
     #[When('I submit the company scope :scope step form with a combustible :itemId of :quantity :unit for property :propertyId')]
     public function iSubmitTheCompanyScopeStepFormWithACombustibleForProperty(string $scope, string $itemId, string $quantity, string $unit, string $propertyId): void
     {
@@ -1988,6 +2145,68 @@ final readonly class CarbonFootprintContext implements Context
     public function carbonFootprintShouldNotBeCompleted(string $subjectType, string $id): void
     {
         Assert::assertFalse($this->findCarbonFootprint($subjectType, $id)->isCompleted());
+    }
+
+    #[Then('the combustible activity of :subjectType carbon footprint :id has well-to-tank emissions of :value kg co2eq')]
+    public function theCombustibleActivityHasWellToTankEmissions(string $subjectType, string $id, float $value): void
+    {
+        $activity = $this->singleActivityOf($subjectType, $id, CombustibleActivity::class);
+
+        Assert::assertEqualsWithDelta($value, (float) $activity->wellToTankEmissions()->co2eq(), 0.0001);
+    }
+
+    #[Then('the electricity activity of :subjectType carbon footprint :id has well-to-tank emissions of :value kg co2eq')]
+    public function theElectricityActivityHasWellToTankEmissions(string $subjectType, string $id, float $value): void
+    {
+        $activity = $this->singleActivityOf($subjectType, $id, ElectricityActivity::class);
+
+        Assert::assertEqualsWithDelta($value, (float) $activity->wellToTankEmissions()->co2eq(), 0.0001);
+    }
+
+    #[Then('the electricity activity of :subjectType carbon footprint :id has location-based well-to-tank emissions of :value kg co2eq')]
+    public function theElectricityActivityHasLocationBasedWellToTankEmissions(string $subjectType, string $id, float $value): void
+    {
+        $activity = $this->singleActivityOf($subjectType, $id, ElectricityActivity::class);
+
+        $locationBasedWellToTankEmissions = $activity->locationBasedWellToTankEmissions();
+        Assert::assertNotNull($locationBasedWellToTankEmissions);
+        Assert::assertEqualsWithDelta($value, (float) $locationBasedWellToTankEmissions->co2eq(), 0.0001);
+    }
+
+    /**
+     * @template T of Activity
+     *
+     * @param class-string<T> $activityClass
+     *
+     * @return T
+     */
+    private function singleActivityOf(string $subjectType, string $id, string $activityClass): Activity
+    {
+        $activities = array_values(array_filter(
+            $this->getActivityRepository()->findByIds(array_map(
+                static fn(ActivityReference $reference): ActivityId => $reference->activityId,
+                $this->findCarbonFootprint($subjectType, $id)->activityReferences(),
+            )),
+            static fn(Activity $activity): bool => $activity instanceof $activityClass,
+        ));
+
+        Assert::assertCount(1, $activities);
+        Assert::assertInstanceOf($activityClass, $activities[0]);
+
+        return $activities[0];
+    }
+
+    private function wellToTankEmissionFactor(int $year): EmissionFactor
+    {
+        return new EmissionFactor(
+            co2eq: '0.61',
+            co2: '0.6',
+            ch4: '0.01',
+            n2o: '0.01',
+            year: $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            source: 'DEFRA',
+        );
     }
 
     private function findCarbonFootprint(string $subjectType, string $id): CarbonFootprint

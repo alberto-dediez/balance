@@ -72,7 +72,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromMachineryFuel(
                     $machineryFuel->id(),
                     sprintf('%s - %s', $machineryFuel->name(), $translator->trans($machineryFuel->machineryType()->value, [], 'machineryFuelMachineryType')),
-                    $machineryFuel->emissionFactorFor($year, $group->id()),
+                    $machineryFuel->emissionFactors()->forYearAndGroup($year, $group->id()),
                     $group->id(),
                 );
             }

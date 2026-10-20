@@ -13,9 +13,12 @@ class CombustibleEmissionFactor
         private CombustibleEmissionFactorId $id,
         private Combustible $combustible,
         private EmissionFactor $emissionFactor,
+        private EmissionFactor $wellToTankFactor,
         private \DateTimeImmutable $createdAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $updatedAt = null,
-    ) {}
+    ) {
+        self::assertSameYearAndGroup($emissionFactor, $wellToTankFactor);
+    }
 
     public function id(): CombustibleEmissionFactorId
     {
@@ -30,6 +33,11 @@ class CombustibleEmissionFactor
     public function emissionFactor(): EmissionFactor
     {
         return $this->emissionFactor;
+    }
+
+    public function wellToTankFactor(): EmissionFactor
+    {
+        return $this->wellToTankFactor;
     }
 
     public function emissionFactorGroupId(): EmissionFactorGroupId
@@ -52,9 +60,23 @@ class CombustibleEmissionFactor
         return $this->updatedAt;
     }
 
-    public function update(EmissionFactor $emissionFactor, \DateTimeImmutable $updatedAt): void
+    public function update(EmissionFactor $emissionFactor, EmissionFactor $wellToTankFactor, \DateTimeImmutable $updatedAt): void
     {
+        self::assertSameYearAndGroup($emissionFactor, $wellToTankFactor);
+
         $this->emissionFactor = $emissionFactor;
+        $this->wellToTankFactor = $wellToTankFactor;
         $this->updatedAt = $updatedAt;
+    }
+
+    private static function assertSameYearAndGroup(EmissionFactor $emissionFactor, EmissionFactor $wellToTankFactor): void
+    {
+        if ($emissionFactor->year() !== $wellToTankFactor->year()) {
+            throw new \InvalidArgumentException('Emission factor and well-to-tank factor must share the same year');
+        }
+
+        if (!$emissionFactor->emissionFactorGroupId()->equals($wellToTankFactor->emissionFactorGroupId())) {
+            throw new \InvalidArgumentException('Emission factor and well-to-tank factor must share the same emission factor group');
+        }
     }
 }

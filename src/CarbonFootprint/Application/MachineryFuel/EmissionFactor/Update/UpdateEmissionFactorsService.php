@@ -43,7 +43,10 @@ class UpdateEmissionFactorsService implements CommandHandler
             } else {
                 $emissionFactorGroup = $this->resolveEmissionFactorGroup($row->emissionFactorGroupId);
 
-                $machineryFuel->setEmissionFactor($row->toEmissionFactor($request->year, $machineryFuel->unit(), $emissionFactorGroup));
+                $machineryFuel->setEmissionFactor(
+                    $row->toEmissionFactor($request->year, $machineryFuel->unit(), $emissionFactorGroup),
+                    $row->wellToTankEmissionFactor($request->year, $machineryFuel->unit(), $emissionFactorGroup),
+                );
             }
 
             $this->machineryFuelRepository->add($machineryFuel);

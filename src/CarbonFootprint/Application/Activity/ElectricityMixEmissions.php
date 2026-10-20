@@ -14,5 +14,7 @@ final class ElectricityMixEmissions
         public ElectricityMixId $electricityMixId,
         public EmissionFactor $emissionFactor,
         public Emissions $emissions,
+        public EmissionFactor $wellToTankEmissionFactor,
+        public Emissions $wellToTankEmissions,
     ) {}
 }

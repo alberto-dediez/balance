@@ -113,6 +113,8 @@ class GetPropertyCarbonFootprintResultsServiceTest extends TestCase
             $activity->electricityMixId(),
             ElectricityActivityMother::locationBasedEmissionFactor(),
             new Emissions($locationBased, $locationBased, '0', '0'),
+            locationBasedWellToTankEmissionFactor: ElectricityActivityMother::locationBasedWellToTankEmissionFactor(),
+            locationBasedWellToTankEmissions: ElectricityActivityMother::locationBasedWellToTankEmissions(),
         );
         $this->activityRepository->save($activity);
 

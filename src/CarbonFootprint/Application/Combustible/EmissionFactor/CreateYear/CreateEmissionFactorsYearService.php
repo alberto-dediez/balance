@@ -52,13 +52,16 @@ class CreateEmissionFactorsYearService implements CommandHandler
         }
 
         foreach ($combustibles as $combustible) {
-            $sourceFactor = $combustible->emissionFactorFor($request->sourceYear, $emissionFactorGroupId);
+            $sourceFactor = $combustible->emissionFactors()->forYearAndGroup($request->sourceYear, $emissionFactorGroupId);
 
             if (null === $sourceFactor) {
                 continue;
             }
 
-            $combustible->setEmissionFactor($sourceFactor->withYear($targetYear));
+            $combustible->setEmissionFactor(
+                $sourceFactor->emissionFactor()->withYear($targetYear),
+                $sourceFactor->wellToTankFactor()->withYear($targetYear),
+            );
 
             $this->combustibleRepository->add($combustible);
         }

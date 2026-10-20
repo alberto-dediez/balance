@@ -70,7 +70,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromElectricityMarketer(
                     $electricityMarketer->id(),
                     $electricityMarketer->name(),
-                    $electricityMarketer->emissionFactorFor($year, $group->id()),
+                    $electricityMarketer->emissionFactors()->forYearAndGroup($year, $group->id()),
                     $group->id(),
                 );
             }

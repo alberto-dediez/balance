@@ -70,7 +70,7 @@ class FactorEmissionController extends AbstractController
                 $rows[] = EmissionFactorRow::fromCombustible(
                     $combustible->id(),
                     $combustible->name(),
-                    $combustible->emissionFactorFor($year, $group->id()),
+                    $combustible->emissionFactors()->forYearAndGroup($year, $group->id()),
                     $group->id(),
                 );
             }

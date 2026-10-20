@@ -63,7 +63,16 @@
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>{% trans %}Comercializadora{% endtrans %}</th>
+                            <th rowspan="2">{% trans %}Comercializadora{% endtrans %}</th>
+                            <th colspan="5" class="text-center">{% trans %}Factor{% endtrans %}</th>
+                            <th colspan="5" class="text-center">{% trans %}Well-to-tank{% endtrans %}</th>
+                        </tr>
+                        <tr>
+                            <th>{% trans %}Kg CO2eq{% endtrans %}</th>
+                            <th>{% trans %}Kg CO2{% endtrans %}</th>
+                            <th>{% trans %}g CH4{% endtrans %}</th>
+                            <th>{% trans %}g N2O{% endtrans %}</th>
+                            <th>{% trans %}Fuente{% endtrans %}</th>
                             <th>{% trans %}Kg CO2eq{% endtrans %}</th>
                             <th>{% trans %}Kg CO2{% endtrans %}</th>
                             <th>{% trans %}g CH4{% endtrans %}</th>
@@ -84,6 +93,11 @@
                                 <td>{{ form_widget(row.ch4) }}{{ form_errors(row.ch4) }}</td>
                                 <td>{{ form_widget(row.n2o) }}{{ form_errors(row.n2o) }}</td>
                                 <td>{{ form_widget(row.source) }}{{ form_errors(row.source) }}</td>
+                                <td>{{ form_widget(row.wellToTankCo2eq) }}{{ form_errors(row.wellToTankCo2eq) }}</td>
+                                <td>{{ form_widget(row.wellToTankCo2) }}{{ form_errors(row.wellToTankCo2) }}</td>
+                                <td>{{ form_widget(row.wellToTankCh4) }}{{ form_errors(row.wellToTankCh4) }}</td>
+                                <td>{{ form_widget(row.wellToTankN2o) }}{{ form_errors(row.wellToTankN2o) }}</td>
+                                <td>{{ form_widget(row.wellToTankSource) }}{{ form_errors(row.wellToTankSource) }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
