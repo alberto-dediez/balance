@@ -58,7 +58,8 @@ Así los mensajes `high` siempre tienen capacidad dedicada y ninguna cola queda 
 Opciones clave de cada `command`:
 
 - `--time-limit=3600`: el worker termina solo cada hora y Supervisor lo reinicia (libera memoria).
-- `--memory-limit=128M`: corta antes si la memoria crece demasiado.
+- `-d memory_limit=256M`: el PHP CLI de Plesk trae 128M, insuficientes para arrancar el worker si la caché no está caliente.
+- `--memory-limit=192M`: Messenger para el worker de forma limpia antes de alcanzar el límite de PHP (la comprobación se hace tras cada mensaje, así que debe quedar por debajo del `memory_limit`).
 - `--limit=200`: máximo de mensajes procesados antes de salir (defensa adicional).
 - `stopwaitsecs=3600` + `stopsignal=TERM`: al parar, el worker termina el mensaje en curso antes de morir (sin pérdida ni duplicado).
 
@@ -253,7 +254,9 @@ Si un paso falla, el script se detiene, indica en qué paso ha fallado, notifica
 | `/usr/bin/env: bad interpreter: No such file or directory` al desplegar | El usuario tiene shell `/bin/false` o `chrootsh` y Plesk ejecuta la acción en una jaula chroot | Shell `/bin/bash` (paso 2) |
 | Las migraciones (u otro paso) no se ejecutan en el despliegue pero sí a mano | El script abortó antes (p. ej. `supervisorctl stop` con los workers ya parados, `sudo` sin permiso) o Plesk no llegó a lanzarlo | Revisar `var/log/deploy.log` y el registro de Plesk Git; configurar `DEPLOY_WEBHOOK_URL` para enterarse de los fallos |
 | `sudo: a password is required` | Falta alguna regla de sudoers o está mal escrita (comillas, `reread ""`, espacios tras `\`) | Revisar el paso 5 y probar cada comando con el paso 7 |
-| `Allowed memory size of 134217728 bytes exhausted` | `memory_limit` de 128M del PHP CLI de Plesk | Ya resuelto en `bin/deploy` (`-d memory_limit=512M`) |
+| `Allowed memory size of 134217728 bytes exhausted` | `memory_limit` de 128M del PHP CLI de Plesk | Ya resuelto en `bin/deploy` (`-d memory_limit=512M`) y en los `command=` del `.ini` (`-d memory_limit=256M`) |
+| `rm: cannot remove 'var/cache/prod': Directory not empty` al desplegar | PHP-FPM regeneraba la caché mientras se borraba | Ya resuelto en `bin/deploy`: renombra `var/cache/prod` antes de borrarlo |
+| Los workers no arrancan tras el deploy (`ERROR (spawn error)` en todos) | El worker muere al arrancar, normalmente por memoria (`messenger-*.log`) o caché a medias | Revisar `/var/log/supervisor/<GRUPO>/messenger-*.log` y `grep spawnerr /var/log/supervisord.log`; relanzar `bin/deploy` |
 | `Permission denied` / `Cannot open file` en `var/` o `public/assets/` | Ficheros creados por `root` al ejecutar comandos a mano | `chown -R <PROJECT_USER>:psacln <PROJECT_DIR>` (comprobar el grupo con `ls -ld <PROJECT_DIR>`) y `rm -rf <PROJECT_DIR>/public/assets` |
 | La web falla con funciones o clases de paquetes recién añadidos (`Unknown "xxx" function`) | Un Composer distinto del de Plesk (p. ej. `/usr/bin/composer`) no instala bien el `composer.lock` | Usar `/usr/lib64/plesk-9.0/composer.phar` (valor por defecto de `COMPOSER_BIN`) |
 | `550 The from address does not match a verified Sender Identity` | `MAILER_FROM` sin definir en el servidor (se usa el de ejemplo de `.env`) o remitente no verificado en el proveedor de correo | Verificar el remitente o el dominio en el proveedor y definir `MAILER_FROM` en `.env.local` |

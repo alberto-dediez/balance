@@ -132,7 +132,8 @@ main() {
     "$PHP" "$COMPOSER_BIN" install --optimize-autoloader --no-scripts --no-interaction
 
     step "Limpiando la caché"
-    rm -rf var/cache/prod
+    [ ! -d var/cache/prod ] || mv var/cache/prod "var/cache/prod.old.$$"
+    rm -rf var/cache/prod.old.* || true
     console cache:clear --no-warmup
 
     step "Calentando la caché"
