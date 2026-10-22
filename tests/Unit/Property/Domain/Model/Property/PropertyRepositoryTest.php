@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Property\Domain\Model\Property;
 
+use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyFilter;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -84,6 +87,19 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $result = $repository->findByFilter($filter);
 
         $this->assertCount(1, $result);
+    }
+
+    public function testFindByFilterWithOperatingRegime(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(PropertyMother::random());
+        $repository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Franquicia', CompanyId::generate(), PropertyId::generate(), OperatingRegime::Franchised));
+
+        $result = $repository->findByFilter(new PropertyFilter(operatingRegime: OperatingRegime::Franchised));
+
+        $this->assertCount(1, $result);
+        $this->assertSame('Franquicia', $result[0]->name());
     }
 
     public function testFindByFilterWithLimitZeroReturnAllElements(): void

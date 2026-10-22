@@ -18,6 +18,8 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\UI\Web\CarbonFootprint\StageAnswerHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\CarbonFootprint\StageExclusionHttpMapper;
 use App\CarbonFootprint\Infrastructure\UI\Web\CompanyCarbonFootprint\GetCompanyCarbonFootprintFromIdTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\CompanyCarbonFootprint\NonConsolidatedPropertyHttpMapper;
+use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\NonConsolidatedPropertiesView;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\ScopeStepView;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\StepExclusionsView;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -40,6 +42,7 @@ class Scope3Controller extends AbstractController
         CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
         StageAnswerHttpMapper $answerMapper,
         StageExclusionHttpMapper $exclusionMapper,
+        NonConsolidatedPropertyHttpMapper $nonConsolidatedMapper,
         AnswerCompanyCarbonFootprintScopeService $answerScope,
         GetCompanyCarbonFootprintScopeService $getScope,
         ScopeStepView $stepView,
@@ -76,6 +79,7 @@ class Scope3Controller extends AbstractController
                         $this->answersByProperty($request, $answerMapper, Scope::Scope3),
                         $exclusionMapper->map($request, Scope::Scope3),
                         $exclusionMapper->mapStage($request, Scope::Scope3),
+                        $nonConsolidatedMapper->map($request),
                     ),
                     $loggedUser(),
                 );
@@ -116,6 +120,7 @@ class Scope3Controller extends AbstractController
                 ],
                 'derivedEmissions' => $response->derivedEmissions,
                 'derivedLines' => $response->derivedLines,
+                'nonConsolidated' => NonConsolidatedPropertiesView::build($response->nonConsolidatedProperties),
                 'currencies' => Unit::currencies(),
                 'upstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->upstreamSources()),
                 'downstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->downstreamSources()),

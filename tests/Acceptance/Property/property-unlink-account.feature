@@ -10,6 +10,17 @@ Feature:
         Then the status code should be 200
         And the response JSON attribute "account_id" should be null
 
+    Scenario: Unlinking a property from its account keeps its operating regime
+        Given account "MyCompany" with id "mycompany" exists
+        Given property "Hotel" with id "333" of account "mycompany" exists
+        Given property "333" has operating regime "franchised"
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am authenticated in API as "admin@dediez.software"
+        And I send a "DELETE" request to "/api/es/properties/333/account"
+        Then the status code should be 200
+        And the response JSON attribute "account_id" should be null
+        And property "333" should have operating regime "franchised"
+
     Scenario: As an owner, I can unlink a property from my own account via API
         Given account "MyCompany" with id "mycompany" exists
         Given property "Hotel" with id "333" of account "mycompany" exists

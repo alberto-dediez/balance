@@ -14,7 +14,9 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 
@@ -37,7 +39,29 @@ final class DerivedSourceEmissionsCalculator
             $emissions[$line->source->value] = ($emissions[$line->source->value] ?? new Emissions())->add($line->emissions);
         }
 
+        foreach ($this->nonConsolidatedPropertyLines($carbonFootprint, $stage) as $line) {
+            $emissions[$line->source->value] = ($emissions[$line->source->value] ?? new Emissions())->add($line->emissions);
+        }
+
         return $emissions;
+    }
+
+    /** @return list<NonConsolidatedPropertyLine> */
+    public function nonConsolidatedPropertyLines(CarbonFootprint $carbonFootprint, CalculationStage $stage): array
+    {
+        if (!$carbonFootprint instanceof CompanyCarbonFootprint || Scope::Scope3->key() !== $stage->key()) {
+            return [];
+        }
+
+        $lines = [];
+
+        foreach ($carbonFootprint->nonConsolidatedPropertyLines() as $line) {
+            if ($this->isCalculated($carbonFootprint, $stage, $line->source)) {
+                $lines[] = $line;
+            }
+        }
+
+        return $lines;
     }
 
     /** @return list<DerivedSourceLine> */

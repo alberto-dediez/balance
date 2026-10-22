@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationEmissionSource;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\Property\Domain\Model\Property\PropertyRepository;
 
 final class MitigationEmissionSourcesBuilder
 {
@@ -19,6 +20,7 @@ final class MitigationEmissionSourcesBuilder
         private ActivityRepository $activityRepository,
         private ActivityItemNameResolver $itemNameResolver,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
+        private PropertyRepository $propertyRepository,
     ) {}
 
     /** @return list<MitigationEmissionSource> */
@@ -80,6 +82,22 @@ final class MitigationEmissionSourcesBuilder
                 itemId: $group['itemId'],
                 itemName: $group['itemName'],
                 emissions: $group['emissions'],
+            );
+        }
+
+        foreach ($this->derivedSourceEmissionsCalculator->nonConsolidatedPropertyLines($carbonFootprint, Scope::Scope3) as $line) {
+            $emissions = (float) $line->emissions->co2eq();
+
+            if ($emissions <= 0.0) {
+                continue;
+            }
+
+            $emissionSources[] = new MitigationEmissionSource(
+                scope: Scope::Scope3,
+                source: $line->source,
+                itemId: (string) $line->propertyId,
+                itemName: $this->propertyRepository->find($line->propertyId)?->name() ?? (string) $line->propertyId,
+                emissions: $emissions,
             );
         }
 

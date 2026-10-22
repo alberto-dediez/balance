@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CompanyCarbonFootprint\GetR
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults\GetCompanyCarbonFootprintResultsRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults\GetCompanyCarbonFootprintResultsService;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
@@ -48,7 +49,7 @@ class GetCompanyCarbonFootprintResultsServiceTest extends TestCase
 
         $this->sut = new GetCompanyCarbonFootprintResultsService(
             $this->repository,
-            PropertyRepositoryMother::inMemory(),
+            new CompanyProperties(PropertyRepositoryMother::inMemory()),
             new CompanyCarbonFootprintAuthorizer(),
             new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
         );

@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
@@ -168,6 +169,26 @@ class EmissionsBreakdownBuilderTest extends TestCase
             (float) $breakdown->total->co2eq(),
             array_sum(array_map(static fn($emissions): float => (float) $emissions->co2eq(), $breakdown->byPropertyId)),
         );
+    }
+
+    public function testIncludesTheNonConsolidatedPropertiesOfACompanyFootprint(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, new Emissions('5000', '5000'));
+        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, new Emissions('300'), '4500');
+
+        $combustible = CombustibleActivityMother::registered();
+        $this->activityRepository->save($combustible);
+        $footprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+
+        $breakdown = $this->createSUT()->build($footprint, Scope::cases());
+
+        $this->assertSame(9515.0, (float) $breakdown->total->co2eq());
+        $this->assertSame(9515.0, (float) $breakdown->byStage[Scope::Scope3->key()]->co2eq());
+        $this->assertSame(5000.0, (float) $breakdown->byStageAndSource[Scope::Scope3->key()][Source::Franchises->value]->co2eq());
+        $this->assertSame(4500.0, (float) $breakdown->byStageAndSource[Scope::Scope3->key()][Source::DownstreamLeasedAssets->value]->co2eq());
+        $this->assertSame(4500.0, (float) $breakdown->bySource[Source::DownstreamLeasedAssets->value]->co2eq());
+        $this->assertSame(5000.0, (float) $breakdown->byPropertyId['franchised-1']->co2eq());
+        $this->assertSame(4500.0, (float) $breakdown->byPropertyId['leased-out-1']->co2eq());
     }
 
     private function createSUT(): EmissionsBreakdownBuilder

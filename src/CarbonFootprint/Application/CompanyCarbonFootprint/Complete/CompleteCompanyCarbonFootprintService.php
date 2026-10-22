@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\Complete;
 
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Security\Application\Action as SecurityAction;
@@ -23,6 +24,7 @@ class CompleteCompanyCarbonFootprintService implements CommandHandler
         private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private EmissionsBreakdownBuilder $breakdownBuilder,
+        private NonConsolidatedPropertiesSynchronizer $nonConsolidatedPropertiesSynchronizer,
     ) {}
 
     public function __invoke(CompleteCompanyCarbonFootprintRequest $request, User $user): void
@@ -34,6 +36,10 @@ class CompleteCompanyCarbonFootprintService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::Edit, $user);
+
+        if (!$companyCarbonFootprint->isStageExcluded(Scope::Scope3)) {
+            $this->nonConsolidatedPropertiesSynchronizer->sync($companyCarbonFootprint, null);
+        }
 
         $total = $this->breakdownBuilder->build($companyCarbonFootprint, Scope::cases())->total;
 

@@ -101,6 +101,17 @@ final class EmissionsBreakdownBuilder
                 $byStageAndSource[$stage->key()][$sourceValue] = $byStageAndSource[$stage->key()][$sourceValue]->add($line->emissions);
                 $byPropertyId[$propertyKey] = ($byPropertyId[$propertyKey] ?? new Emissions())->add($line->emissions);
             }
+
+            foreach ($this->derivedSourceEmissionsCalculator->nonConsolidatedPropertyLines($carbonFootprint, $stage) as $line) {
+                $sourceValue = $line->source->value;
+                $propertyKey = (string) $line->propertyId;
+
+                $total = $total->add($line->emissions);
+                $bySource[$sourceValue] = $bySource[$sourceValue]->add($line->emissions);
+                $byStage[$stage->key()] = $byStage[$stage->key()]->add($line->emissions);
+                $byStageAndSource[$stage->key()][$sourceValue] = $byStageAndSource[$stage->key()][$sourceValue]->add($line->emissions);
+                $byPropertyId[$propertyKey] = ($byPropertyId[$propertyKey] ?? new Emissions())->add($line->emissions);
+            }
         }
 
         return new EmissionsBreakdown(

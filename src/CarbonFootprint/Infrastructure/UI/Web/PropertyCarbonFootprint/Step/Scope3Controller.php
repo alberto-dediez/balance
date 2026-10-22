@@ -108,7 +108,13 @@ class Scope3Controller extends AbstractController
                 'derivedLines' => $response->derivedLines,
                 'currencies' => Unit::currencies(),
                 'upstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->upstreamSources()),
-                'downstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->downstreamSources()),
+                'downstreamSources' => array_map(
+                    static fn(Source $source) => $source->value,
+                    array_values(array_filter(
+                        Scope::Scope3->downstreamSources(),
+                        static fn(Source $source) => !in_array($source, Scope::Scope3->companyOnlySources(), true),
+                    )),
+                ),
             ],
         );
     }

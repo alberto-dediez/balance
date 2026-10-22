@@ -235,6 +235,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
             [$header, $rows, $widths] = match ($source) {
                 Source::BuildingElectricity => $this->electricityTable($data, $locale, $isCompany),
                 Source::FuelAndEnergyRelated => $this->derivedSourceTable($data, $locale),
+                Source::DownstreamLeasedAssets, Source::Franchises => $this->nonConsolidatedPropertyTable($data, $source, $locale),
                 default => $this->sourceTable($data, $scope, $source, $locale, $isCompany),
             };
 

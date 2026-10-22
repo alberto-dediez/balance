@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Property\Domain\Model\Property;
 
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
@@ -90,6 +91,14 @@ class PropertyMother
     {
         $property = new Property(id: $propertyId);
         $property->register(name: $name, accountId: null, companyId: $companyId);
+
+        return $property;
+    }
+
+    public static function fromNameAndCompanyIdAndIdAndRegime(string $name, CompanyId $companyId, PropertyId $propertyId, OperatingRegime $regime): Property
+    {
+        $property = new Property(id: $propertyId);
+        $property->register(name: $name, accountId: null, companyId: $companyId, operatingRegime: $regime);
 
         return $property;
     }

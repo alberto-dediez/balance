@@ -125,6 +125,17 @@ final class PropertyCarbonFootprintTest extends TestCase
         $this->assertTrue($footprint->isSourceExcluded(Scope::Scope1, Source::FixedFacilities));
     }
 
+    public function testExcludeCompanyOnlySourceIsIgnored(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::registered();
+        $footprint->clearEvents();
+
+        $footprint->excludeSource(Scope::Scope3, Source::Franchises, ExclusionReason::NotApplicable);
+
+        $this->assertSame([], $footprint->recordedEvents());
+        $this->assertFalse($footprint->isSourceExcluded(Scope::Scope3, Source::Franchises));
+    }
+
     public function testIncludeSourceRemovesTheExclusion(): void
     {
         $footprint = PropertyCarbonFootprintMother::registered();
@@ -134,6 +145,21 @@ final class PropertyCarbonFootprintTest extends TestCase
 
         $this->assertFalse($footprint->isSourceExcluded(Scope::Scope1, Source::FixedFacilities));
         $this->assertCount(0, $footprint->allExclusions());
+    }
+
+    public function testChangingTheReasonOfAnExclusionKeepsTheSameRow(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::registered();
+        $footprint->excludeSource(Scope::Scope1, Source::FixedFacilities, ExclusionReason::NoDataAvailable);
+        $exclusion = $footprint->exclusionFor(Scope::Scope1, Source::FixedFacilities);
+        $this->assertNotNull($exclusion);
+
+        $footprint->excludeSource(Scope::Scope1, Source::FixedFacilities, ExclusionReason::NotApplicable, 'comment');
+
+        $this->assertCount(1, $footprint->allExclusions());
+        $this->assertSame($exclusion, $footprint->exclusionFor(Scope::Scope1, Source::FixedFacilities));
+        $this->assertSame(ExclusionReason::NotApplicable, $exclusion->reason());
+        $this->assertSame('comment', $exclusion->comment());
     }
 
     public function testExclusionsForIndexesBySource(): void

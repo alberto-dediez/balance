@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Domain\Model\CarbonFootprintReport;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\Emissions;
 
 final class OrganizationalCarbonFootprintReportData implements CarbonFootprintReportData
@@ -18,6 +19,7 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
      * @param list<OrganizationalCarbonFootprintReportActivityLine>                $activityLines
      * @param list<OrganizationalCarbonFootprintReportExclusionLine>               $exclusionLines
      * @param list<DerivedSourceLine>                                              $derivedLines
+     * @param list<NonConsolidatedPropertyLine>                                    $nonConsolidatedPropertyLines
      */
     public function __construct(
         public readonly CarbonFootprintReportSubjectType $subjectType,
@@ -39,6 +41,7 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         public readonly ?ExclusionReason $scope3ExclusionReason = null,
         public readonly ?string $scope3ExclusionComment = null,
         public readonly array $derivedLines = [],
+        public readonly array $nonConsolidatedPropertyLines = [],
     ) {}
 
     public function subjectType(): CarbonFootprintReportSubjectType

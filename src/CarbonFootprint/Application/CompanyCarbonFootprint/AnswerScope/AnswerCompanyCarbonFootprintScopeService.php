@@ -7,9 +7,11 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -23,10 +25,11 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
 
     public function __construct(
         private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
-        private PropertyRepository $propertyRepository,
+        private CompanyProperties $companyProperties,
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private StageAnswersProcessor $answersProcessor,
         private StageAnswersSynchronizer $answersSynchronizer,
+        private NonConsolidatedPropertiesSynchronizer $nonConsolidatedPropertiesSynchronizer,
     ) {}
 
     public function __invoke(AnswerCompanyCarbonFootprintScopeRequest $request, User $user): void
@@ -40,10 +43,9 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::Edit, $user);
 
         $companyId = $companyCarbonFootprint->companyId();
-        $companyProperties = null !== $companyId ? $this->propertyRepository->findByCompanyId($companyId) : [];
 
         $companyPropertyIds = [];
-        foreach ($companyProperties as $property) {
+        foreach ($this->companyProperties->consolidated($companyId) as $property) {
             $companyPropertyIds[(string) $property->id()] = $property->id();
         }
 
@@ -82,6 +84,14 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
                 $validated = $this->answersProcessor->validate($request->scope, null !== $block ? $block->sectionAnswers : [], $request->exclusions);
 
                 $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, propertyId: $propertyId);
+            }
+
+            foreach ($this->companyProperties->nonConsolidated($companyId) as $property) {
+                $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, [], $user, propertyId: $property->id());
+            }
+
+            if (Scope::Scope3 === $request->scope) {
+                $this->nonConsolidatedPropertiesSynchronizer->sync($companyCarbonFootprint, $request->nonConsolidatedProperties);
             }
         }
 

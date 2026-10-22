@@ -24,6 +24,7 @@ use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -96,6 +97,7 @@ class PropertyRegisterController extends AbstractController
                 accountId: new AccountId($request->accountId),
                 info: $info,
                 externalId: $externalId,
+                operatingRegime: OperatingRegime::tryFrom((string) $request->operatingRegime) ?? OperatingRegime::Owned,
             ),
             $user,
         );

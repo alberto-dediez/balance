@@ -8,6 +8,7 @@ use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Application\Property\Register\RegisterPropertyRequest;
 use App\Property\Application\Property\Register\RegisterPropertyService;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyRegistered;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -59,6 +60,29 @@ class RegisterPropertyServiceTest extends TestCase
         $this->assertTrue($lastEvent instanceof PropertyRegistered);
         $this->assertEquals('Hotel Abaco', $lastEvent->name());
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
+        $this->assertSame(OperatingRegime::Owned, $propertyPersisted->operatingRegime());
+        $this->assertSame(OperatingRegime::Owned, $result->operatingRegime);
+    }
+
+    public function testRegisterWithOperatingRegime(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, AccountId::generate());
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut(new RegisterPropertyRequest(
+            name: 'Hotel Franquiciado',
+            accountId: $user->accountId(),
+            operatingRegime: OperatingRegime::Franchised,
+        ), $user);
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertSame(OperatingRegime::Franchised, $propertyPersisted->operatingRegime());
+        $this->assertSame(OperatingRegime::Franchised, $result->operatingRegime);
     }
 
     public function testIsHandle(): void

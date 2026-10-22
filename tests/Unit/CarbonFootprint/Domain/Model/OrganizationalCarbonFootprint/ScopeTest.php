@@ -6,8 +6,10 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalCarbonFootpr
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use PHPUnit\Framework\TestCase;
 
 final class ScopeTest extends TestCase
@@ -112,6 +114,8 @@ final class ScopeTest extends TestCase
             Source::SoldProductsProcessing,
             Source::SoldProductsUse,
             Source::SoldProductsEndOfLife,
+            Source::DownstreamLeasedAssets,
+            Source::Franchises,
             Source::Investments,
         ] as $source) {
             $this->assertSame(Scope::Scope3, Scope::ofSource($source), $source->value);
@@ -122,8 +126,8 @@ final class ScopeTest extends TestCase
     {
         $this->assertSame([], Scope::Scope1->derivedSources());
         $this->assertSame([], Scope::Scope2->derivedSources());
-        $this->assertSame([Source::FuelAndEnergyRelated], Scope::Scope3->derivedSources());
-        $this->assertCount(12, Scope::Scope3->allSources());
+        $this->assertSame([Source::FuelAndEnergyRelated, Source::DownstreamLeasedAssets, Source::Franchises], Scope::Scope3->derivedSources());
+        $this->assertCount(14, Scope::Scope3->allSources());
         $this->assertContains(Source::FuelAndEnergyRelated, Scope::Scope3->allSources());
     }
 
@@ -152,7 +156,44 @@ final class ScopeTest extends TestCase
             Source::SoldProductsProcessing,
             Source::SoldProductsUse,
             Source::SoldProductsEndOfLife,
+            Source::DownstreamLeasedAssets,
+            Source::Franchises,
             Source::Investments,
         ], Scope::Scope3->downstreamSources());
+    }
+
+    public function testCompanyOnlySources(): void
+    {
+        $this->assertSame([], Scope::Scope1->companyOnlySources());
+        $this->assertSame([], Scope::Scope2->companyOnlySources());
+        $this->assertSame([Source::DownstreamLeasedAssets, Source::Franchises], Scope::Scope3->companyOnlySources());
+    }
+
+    public function testSourcesForSubjectType(): void
+    {
+        $propertySources = Scope::Scope3->sourcesFor(CarbonFootprintReportSubjectType::Property);
+        $companySources = Scope::Scope3->sourcesFor(CarbonFootprintReportSubjectType::Company);
+
+        $this->assertNotContains(Source::DownstreamLeasedAssets, $propertySources);
+        $this->assertNotContains(Source::Franchises, $propertySources);
+        $this->assertContains(Source::FuelAndEnergyRelated, $propertySources);
+        $this->assertCount(12, $propertySources);
+        $this->assertSame(Scope::Scope3->allSources(), $companySources);
+        $this->assertSame(Scope::Scope1->allSources(), Scope::Scope1->sourcesFor(CarbonFootprintReportSubjectType::Property));
+    }
+
+    public function testSourceForOperatingRegime(): void
+    {
+        $this->assertNull(Scope::sourceForOperatingRegime(OperatingRegime::Owned));
+        $this->assertNull(Scope::sourceForOperatingRegime(OperatingRegime::Leased));
+        $this->assertNull(Scope::sourceForOperatingRegime(OperatingRegime::Managed));
+        $this->assertSame(Source::Franchises, Scope::sourceForOperatingRegime(OperatingRegime::Franchised));
+        $this->assertSame(Source::DownstreamLeasedAssets, Scope::sourceForOperatingRegime(OperatingRegime::LeasedOut));
+    }
+
+    public function testNonConsolidatedSourcesBelongToScope3(): void
+    {
+        $this->assertSame(Scope::Scope3, Scope::ofSource(Source::DownstreamLeasedAssets));
+        $this->assertSame(Scope::Scope3, Scope::ofSource(Source::Franchises));
     }
 }

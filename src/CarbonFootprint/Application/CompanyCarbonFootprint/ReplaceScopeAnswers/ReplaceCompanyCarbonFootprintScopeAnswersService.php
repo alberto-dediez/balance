@@ -7,10 +7,10 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAns
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -24,7 +24,7 @@ class ReplaceCompanyCarbonFootprintScopeAnswersService implements CommandHandler
 
     public function __construct(
         private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
-        private PropertyRepository $propertyRepository,
+        private CompanyProperties $companyProperties,
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private StageAnswersProcessor $answersProcessor,
         private StageAnswersSynchronizer $answersSynchronizer,
@@ -40,11 +40,8 @@ class ReplaceCompanyCarbonFootprintScopeAnswersService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::Edit, $user);
 
-        $companyId = $companyCarbonFootprint->companyId();
-        $companyProperties = null !== $companyId ? $this->propertyRepository->findByCompanyId($companyId) : [];
-
         $companyPropertyIds = [];
-        foreach ($companyProperties as $property) {
+        foreach ($this->companyProperties->consolidated($companyCarbonFootprint->companyId()) as $property) {
             $companyPropertyIds[(string) $property->id()] = $property->id();
         }
 

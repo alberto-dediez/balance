@@ -9,6 +9,7 @@ use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -169,6 +170,10 @@ class InMemoryPropertyRepository implements PropertyRepository
             }
 
             if ($filter->countryId instanceof CountryId && (null == $property->info()->countryId() || false === $filter->countryId->equals($property->info()->countryId()))) {
+                continue;
+            }
+
+            if ($filter->operatingRegime instanceof OperatingRegime && $filter->operatingRegime !== $property->operatingRegime()) {
                 continue;
             }
 

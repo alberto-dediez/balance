@@ -29,5 +29,7 @@ enum Source: string
     case SoldProductsProcessing       = 'sold_products_processing';
     case SoldProductsUse              = 'sold_products_use';
     case SoldProductsEndOfLife        = 'sold_products_end_of_life';
+    case DownstreamLeasedAssets       = 'downstream_leased_assets';
+    case Franchises                   = 'franchises';
     case Investments                  = 'investments';
 }

@@ -7,6 +7,7 @@ namespace App\Property\Infrastructure\Symfony\Form;
 use App\Property\Application\Property\List\ListPropertiesRequest;
 use App\Property\Infrastructure\Symfony\Form\Type\CountryIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\DestinationIdType;
+use App\Property\Infrastructure\Symfony\Form\Type\OperatingRegimeType;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -32,6 +33,11 @@ class ListPropertiesType extends BaseFilterType
                 'label' => new TranslatableMessage('País'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos los países'),
+            ])
+            ->add('operatingRegime', OperatingRegimeType::class, [
+                'label' => new TranslatableMessage('Régimen de explotación'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos los regímenes'),
             ])
         ;
 

@@ -61,12 +61,12 @@ class GetResultsServiceTest extends TestCase
 
         $response = ($this->sut)(new GetResultsRequest($eventCarbonFootprint->id()), $this->ownerUser());
 
-        $this->assertCount(24, $response->emissionsBySource);
+        $this->assertCount(26, $response->emissionsBySource);
         $this->assertCount(4, $response->emissionsByPhase);
         $this->assertCount(4, $response->emissionsByPhaseAndSource);
 
         foreach ($response->emissionsByPhaseAndSource as $sources) {
-            $this->assertCount(24, $sources);
+            $this->assertCount(26, $sources);
         }
 
         $this->assertSame('12', $response->emissionsBySource[Source::Materials->value]->co2eq());

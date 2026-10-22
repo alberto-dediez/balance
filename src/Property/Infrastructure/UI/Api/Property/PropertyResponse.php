@@ -55,5 +55,10 @@ class PropertyResponse
             nullable: true,
         )]
         public ?string $countryId,
+        #[OA\Property(
+            type: 'string',
+            example: 'owned',
+        )]
+        public string $operatingRegime,
     ) {}
 }

@@ -34,6 +34,19 @@ Feature:
         Then the response status should be 200
         Then I see a text "Propiedad creada correctamente"
 
+    Scenario: As an owner, I can register a franchised property
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/register"
+        When I submit a form with "name:Hotel Franquiciado|[operatingRegime]:franchised" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Propiedad creada correctamente"
+        When I go to "/es/properties"
+        When I filter by "operatingRegime" with "franchised"
+        Then I see a text "Hotel Franquiciado"
+
     Scenario: As an owner, the exact location I pick sets the coordinates of the property
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
@@ -62,9 +75,45 @@ Feature:
         """
         {
             "name": "Hotel Test",
-            "account_id": "mycompany"
+            "account_id": "mycompany",
+            "operating_regime": "owned"
         }
         """
+
+    Scenario: As an owner, I can register a property leased out to third parties via API
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" with id "owner" of account "mycompany" exists
+        When I am authenticated in API as "owner@dediez.software"
+        And I send a POST request to "/api/es/properties" with body:
+        """
+        {
+            "name": "Hotel Arrendado",
+            "account_id": "mycompany",
+            "operating_regime": "leased_out"
+        }
+        """
+        Then the status code should be 200
+        And the response JSON should be similar to:
+        """
+        {
+            "name": "Hotel Arrendado",
+            "operating_regime": "leased_out"
+        }
+        """
+
+    Scenario: As an owner, I cannot register a property with an unknown operating regime via API
+        Given account "MyCompany" with id "mycompany" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" with id "owner" of account "mycompany" exists
+        When I am authenticated in API as "owner@dediez.software"
+        And I send a POST request to "/api/es/properties" with body:
+        """
+        {
+            "name": "Hotel Test",
+            "account_id": "mycompany",
+            "operating_regime": "rented"
+        }
+        """
+        Then the status code should be 422
 
     Scenario: As an owner, I cannot register a property for another account via API
         Given account "MyCompany" with id "mycompany" exists

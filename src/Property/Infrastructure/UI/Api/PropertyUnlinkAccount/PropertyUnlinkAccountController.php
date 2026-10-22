@@ -51,6 +51,9 @@ class PropertyUnlinkAccountController extends AbstractController
                 accountId: null,
                 info: $property->info(),
                 externalId: $property->externalId(),
+                numberOfEmployees: $property->numberOfEmployees(),
+                dailyClients: $property->dailyClients(),
+                operatingRegime: $property->operatingRegime(),
             ),
             $user,
         );

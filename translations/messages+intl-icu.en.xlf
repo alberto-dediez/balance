@@ -9625,6 +9625,54 @@
         <source>Fin de vida de productos vendidos</source>
         <target>End of life of sold products</target>
       </trans-unit>
+      <trans-unit id="TKLpwjT" resname="Valor manual">
+        <source>Valor manual</source>
+        <target>Manual value</target>
+      </trans-unit>
+      <trans-unit id="mjji6QE" resname="Huella de la propiedad">
+        <source>Huella de la propiedad</source>
+        <target>Property footprint</target>
+      </trans-unit>
+      <trans-unit id=".Tm9Cm_" resname="Sin datos">
+        <source>Sin datos</source>
+        <target>No data</target>
+      </trans-unit>
+      <trans-unit id="yBIfsFC" resname="Régimen de explotación">
+        <source>Régimen de explotación</source>
+        <target>Operating regime</target>
+      </trans-unit>
+      <trans-unit id="w4xjzUO" resname="Las propiedades franquiciadas o arrendadas a terceros no se incluyen en los alcances 1 y 2 de la huella de empresa: se calculan en su alcance 3.">
+        <source>Las propiedades franquiciadas o arrendadas a terceros no se incluyen en los alcances 1 y 2 de la huella de empresa: se calculan en su alcance 3.</source>
+        <target>Franchised properties and properties leased out to third parties are not included in scopes 1 and 2 of the company footprint: they are calculated in its scope 3.</target>
+      </trans-unit>
+      <trans-unit id="iV2QT2D" resname="Todos los regímenes">
+        <source>Todos los regímenes</source>
+        <target>All regimes</target>
+      </trans-unit>
+      <trans-unit id="AHetpxZ" resname="No hay propiedades de la empresa con este régimen de explotación.">
+        <source>No hay propiedades de la empresa con este régimen de explotación.</source>
+        <target>There are no company properties with this operating regime.</target>
+      </trans-unit>
+      <trans-unit id="UAq3Hux" resname="Emisiones calculadas (kg CO₂eq)">
+        <source>Emisiones calculadas (kg CO₂eq)</source>
+        <target>Calculated emissions (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="Ijnb6nF" resname="Emisiones a aplicar (kg CO₂eq)">
+        <source>Emisiones a aplicar (kg CO₂eq)</source>
+        <target>Emissions to apply (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="Hrz_nhL" resname="Huella {year} completada">
+        <source>Huella {year} completada</source>
+        <target>{year} footprint completed</target>
+      </trans-unit>
+      <trans-unit id="lHt7S0O" resname="Propiedades franquiciadas">
+        <source>Propiedades franquiciadas</source>
+        <target>Franchised properties</target>
+      </trans-unit>
+      <trans-unit id="71S1fF6" resname="Propiedades arrendadas a terceros">
+        <source>Propiedades arrendadas a terceros</source>
+        <target>Properties leased out to third parties</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

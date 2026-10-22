@@ -163,14 +163,16 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
             $isElectricity = Source::BuildingElectricity === $source;
             $isDerived = Source::FuelAndEnergyRelated === $source;
+            $isNonConsolidated = in_array($source, [Source::DownstreamLeasedAssets, Source::Franchises], true);
 
             [$header, $rows, $widths, $hasTotal] = match (true) {
                 $isElectricity => $this->electricityTable($data, $locale, $isCompany),
                 $isDerived => $this->derivedSourceTable($data, $locale),
+                $isNonConsolidated => $this->nonConsolidatedPropertyTable($data, $source, $locale),
                 default => $this->sourceTable($data, $scope, $source, $locale, $isCompany),
             };
 
-            $groupHeaderCells = $isDerived ? [] : [
+            $groupHeaderCells = $isDerived || $isNonConsolidated ? [] : [
                 ['', $isCompany ? 2 : 1],
                 [$this->trans('Factores', $locale), $isElectricity ? 2 : 4],
                 [$this->trans('Emisiones', $locale), $isElectricity ? 2 : 1],
@@ -371,7 +373,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
             if (Scope::Scope3 === $scope && $data->scope3Excluded) {
                 $labels[] = $this->trans('Alcance completo', $locale) . ' ' . $this->trans('(excluido)', $locale);
             } else {
-                foreach ($this->stageSources([$scope]) as $source) {
+                foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
                     $labels[] = $this->translator->trans($source->value, [], 'source', $locale->value)
                         . (isset($excluded[$scope->value . '|' . $source->value]) ? ' ' . $this->trans('(excluida)', $locale) : '');
                 }

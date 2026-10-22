@@ -7,6 +7,7 @@ namespace App\Property\Infrastructure\Symfony\Form;
 use App\Property\Application\Property\Register\RegisterPropertyRequest;
 use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\ExternalIdType;
+use App\Property\Infrastructure\Symfony\Form\Type\OperatingRegimeType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyInfoType;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
@@ -41,6 +42,11 @@ class RegisterPropertyType extends AbstractType
             ->add('dailyClients', IntegerType::class, [
                 'label' => new TranslatableMessage('Nº de clientes diarios'),
                 'required' => false,
+            ])
+            ->add('operatingRegime', OperatingRegimeType::class, [
+                'label' => new TranslatableMessage('Régimen de explotación'),
+                'required' => true,
+                'help' => new TranslatableMessage('Las propiedades franquiciadas o arrendadas a terceros no se incluyen en los alcances 1 y 2 de la huella de empresa: se calculan en su alcance 3.'),
             ])
         ;
 

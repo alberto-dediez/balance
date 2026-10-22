@@ -8,6 +8,8 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\Property\Domain\Model\Property\OperatingRegime;
 
 enum Scope: string implements CalculationStage
 {
@@ -54,7 +56,40 @@ enum Scope: string implements CalculationStage
     {
         return match ($this) {
             self::Scope1, self::Scope2 => [],
-            self::Scope3 => [Source::FuelAndEnergyRelated],
+            self::Scope3 => [Source::FuelAndEnergyRelated, Source::DownstreamLeasedAssets, Source::Franchises],
+        };
+    }
+
+    /** @return list<Source> */
+    public function companyOnlySources(): array
+    {
+        return match ($this) {
+            self::Scope1, self::Scope2 => [],
+            self::Scope3 => [Source::DownstreamLeasedAssets, Source::Franchises],
+        };
+    }
+
+    /** @return list<Source> */
+    public function sourcesFor(CarbonFootprintReportSubjectType $subjectType): array
+    {
+        if (CarbonFootprintReportSubjectType::Company === $subjectType) {
+            return $this->allSources();
+        }
+
+        $companyOnlySources = $this->companyOnlySources();
+
+        return array_values(array_filter(
+            $this->allSources(),
+            static fn(Source $source): bool => !in_array($source, $companyOnlySources, true),
+        ));
+    }
+
+    public static function sourceForOperatingRegime(OperatingRegime $regime): ?Source
+    {
+        return match ($regime) {
+            OperatingRegime::Franchised => Source::Franchises,
+            OperatingRegime::LeasedOut => Source::DownstreamLeasedAssets,
+            OperatingRegime::Owned, OperatingRegime::Leased, OperatingRegime::Managed => null,
         };
     }
 
@@ -104,6 +139,8 @@ enum Scope: string implements CalculationStage
                 Source::SoldProductsProcessing,
                 Source::SoldProductsUse,
                 Source::SoldProductsEndOfLife,
+                Source::DownstreamLeasedAssets,
+                Source::Franchises,
                 Source::Investments,
             ],
         };

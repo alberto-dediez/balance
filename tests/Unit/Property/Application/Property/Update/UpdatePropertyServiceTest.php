@@ -8,6 +8,7 @@ use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
 use App\Property\Application\Property\Update\UpdatePropertyService;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyUpdated;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -63,6 +64,65 @@ class UpdatePropertyServiceTest extends TestCase
         $this->assertEquals('Hotel', $lastEvent->name());
         $this->assertEquals('6666', (string) $lastEvent->accountId());
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
+        $this->assertSame(OperatingRegime::Owned, $propertyPersisted->operatingRegime());
+        $this->assertSame(OperatingRegime::Owned, $result->operatingRegime);
+    }
+
+    public function testUpdateOperatingRegime(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $property = PropertyMother::fromName('MyProperty');
+
+        $repository->add($property);
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
+        $result = $sut(new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: 'MyProperty',
+            accountId: null,
+            operatingRegime: OperatingRegime::LeasedOut,
+        ), $user);
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertSame(OperatingRegime::LeasedOut, $propertyPersisted->operatingRegime());
+        $this->assertSame(OperatingRegime::LeasedOut, $result->operatingRegime);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(PropertyUpdated::class, $lastEvent);
+        $this->assertSame(OperatingRegime::LeasedOut, $lastEvent->operatingRegime());
+    }
+
+    public function testUpdateWithoutOperatingRegimeKeepsTheCurrentOne(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $property = PropertyMother::fromName('MyProperty');
+        $property->update(name: 'MyProperty', accountId: null, operatingRegime: OperatingRegime::Franchised);
+
+        $repository->add($property);
+
+        $sut = $this->createSUT($repository);
+
+        $user = UserMother::fromUsernameAndRole('user', Role::Admin);
+
+        $result = $sut(new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: 'MyProperty',
+            accountId: new AccountId('6666'),
+        ), $user);
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertSame(OperatingRegime::Franchised, $propertyPersisted->operatingRegime());
+        $this->assertSame(OperatingRegime::Franchised, $result->operatingRegime);
     }
 
     public function testIsHandle(): void

@@ -148,6 +148,10 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         $scope = $stage;
         assert($scope instanceof Scope);
 
+        if (in_array($source, $scope->companyOnlySources(), true)) {
+            return;
+        }
+
         if ($this->isStageExcluded($scope)) {
             return;
         }
@@ -320,17 +324,21 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
 
     public function applyPropertyCarbonFootprintSourceExcluded(PropertyCarbonFootprintSourceExcluded $event): void
     {
-        $this->detachExclusion($event->scope(), $event->source());
+        $existing = $this->exclusionFor($event->scope(), $event->source());
 
-        $this->attachExclusion(new PropertyCarbonFootprintExclusion(
-            id: PropertyCarbonFootprintExclusionId::generate(),
-            propertyCarbonFootprint: $this,
-            scope: $event->scope(),
-            source: $event->source(),
-            reason: $event->reason(),
-            comment: $event->comment(),
-            excludedAt: $event->occurredOn(),
-        ));
+        if ($existing instanceof PropertyCarbonFootprintExclusion) {
+            $existing->update($event->reason(), $event->comment(), $event->occurredOn());
+        } else {
+            $this->attachExclusion(new PropertyCarbonFootprintExclusion(
+                id: PropertyCarbonFootprintExclusionId::generate(),
+                propertyCarbonFootprint: $this,
+                scope: $event->scope(),
+                source: $event->source(),
+                reason: $event->reason(),
+                comment: $event->comment(),
+                excludedAt: $event->occurredOn(),
+            ));
+        }
 
         $this->updatedAt = $event->occurredOn();
     }

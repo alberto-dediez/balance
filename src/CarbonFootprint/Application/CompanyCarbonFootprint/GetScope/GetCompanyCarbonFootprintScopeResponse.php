@@ -12,10 +12,11 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 final class GetCompanyCarbonFootprintScopeResponse
 {
     /**
-     * @param list<PropertyStageSections>    $blocks
-     * @param array<string, SourceExclusion> $exclusions
-     * @param array<string, Emissions>       $derivedEmissions
-     * @param list<DerivedSourceLine>        $derivedLines
+     * @param list<PropertyStageSections>      $blocks
+     * @param array<string, SourceExclusion>   $exclusions
+     * @param array<string, Emissions>         $derivedEmissions
+     * @param list<DerivedSourceLine>          $derivedLines
+     * @param list<NonConsolidatedPropertyRow> $nonConsolidatedProperties
      */
     public function __construct(
         public readonly array $blocks,
@@ -23,5 +24,6 @@ final class GetCompanyCarbonFootprintScopeResponse
         public readonly ?StageExclusionAnswer $stageExclusion = null,
         public readonly array $derivedEmissions = [],
         public readonly array $derivedLines = [],
+        public readonly array $nonConsolidatedProperties = [],
     ) {}
 }

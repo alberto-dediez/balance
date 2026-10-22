@@ -15,6 +15,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRe
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityService;
+use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
@@ -2126,6 +2127,23 @@ final readonly class CarbonFootprintContext implements Context
         $row = ['purchasedGoodsAndServices' => [['itemId' => $itemId, 'quantity' => $quantity, 'unit' => $unit]]];
 
         $this->submitScopeStep('none' === $propertyId ? ['unassigned' => $row] : ['properties' => [$propertyId => $row]]);
+    }
+
+    #[When('I submit the company scope 3 step form with manual emissions :co2eq for property :propertyId')]
+    public function iSubmitTheCompanyScope3StepFormWithManualEmissionsForProperty(string $co2eq, string $propertyId): void
+    {
+        $this->submitScopeStep(['nonConsolidated' => [$propertyId => ['co2eq' => $co2eq]]]);
+    }
+
+    #[Then('company carbon footprint :id should have :co2eq kg in source :source')]
+    public function companyCarbonFootprintShouldHaveEmissionsInSource(string $id, string $co2eq, string $source): void
+    {
+        /** @var EmissionsBreakdownBuilder $breakdownBuilder */
+        $breakdownBuilder = $this->client->getContainer()->get(EmissionsBreakdownBuilder::class);
+
+        $breakdown = $breakdownBuilder->build($this->companyCarbonFootprint($id), Scope::cases());
+
+        Assert::assertEqualsWithDelta((float) $co2eq, (float) $breakdown->bySource[Source::from($source)->value]->co2eq(), 0.0001);
     }
 
     #[Then(':subjectType carbon footprint :id should have status :status')]

@@ -9,6 +9,7 @@ use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -217,6 +218,15 @@ class DoctrinePropertyRepository implements PropertyRepository
                     $qb->expr()->eq('p.accountId', ':accountId'),
                 )
                 ->setParameter('accountId', $filter->accountId)
+            ;
+        }
+
+        if ($filter->operatingRegime instanceof OperatingRegime) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('p.operatingRegime', ':operatingRegime'),
+                )
+                ->setParameter('operatingRegime', $filter->operatingRegime->value)
             ;
         }
 

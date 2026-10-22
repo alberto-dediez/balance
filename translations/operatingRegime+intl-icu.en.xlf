@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="bv6ILwU" resname="owned">
+        <source>owned</source>
+        <target>Owned</target>
+      </trans-unit>
+      <trans-unit id="Z3roLsp" resname="leased">
+        <source>leased</source>
+        <target>Leased (operated by the company)</target>
+      </trans-unit>
+      <trans-unit id="829NCDY" resname="managed">
+        <source>managed</source>
+        <target>Managed</target>
+      </trans-unit>
+      <trans-unit id="n.1A4lI" resname="franchised">
+        <source>franchised</source>
+        <target>Franchised</target>
+      </trans-unit>
+      <trans-unit id="9_fB13S" resname="leased_out">
+        <source>leased_out</source>
+        <target>Leased out</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

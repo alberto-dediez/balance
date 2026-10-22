@@ -66,6 +66,54 @@
                             </table>
                         </div>
                     </twig:Card>
+                {% elseif source in ['downstream_leased_assets', 'franchises'] %}
+                    {% set nonConsolidatedSource = (nonConsolidated | default({}))[source] ?? {rows: [], total: '0'} %}
+                    <twig:Card title="{{ source == 'franchises' ? 'Propiedades franquiciadas' | trans : 'Propiedades arrendadas a terceros' | trans }}">
+                        {% if nonConsolidatedSource.rows is empty %}
+                            <p class="mb-0">{{ 'No hay propiedades de la empresa con este régimen de explotación.' | trans }}</p>
+                        {% else %}
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ 'Propiedad' | trans }}</th>
+                                            <th>{{ 'Origen' | trans }}</th>
+                                            <th class="text-end">{{ 'Emisiones calculadas (kg CO₂eq)' | trans }}</th>
+                                            <th>{{ 'Emisiones a aplicar (kg CO₂eq)' | trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in nonConsolidatedSource.rows %}
+                                            <tr>
+                                                <td>{{ row.propertyName }}</td>
+                                                <td>
+                                                    {% if row.hasOrigin %}
+                                                        {{ 'Huella {year} completada' | trans({'{year}': row.year}) }}
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ 'Sin datos' | trans }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-end">{{ row.calculated | number_format(2, ',', '.') }}</td>
+                                                <td{% if readOnly %} class="text-end"{% endif %}>
+                                                    {% if readOnly %}
+                                                        {{ row.applied | number_format(2, ',', '.') }}
+                                                    {% else %}
+                                                        <input type="number" step="0.01" min="0" class="form-control" name="nonConsolidated[{{ row.propertyId }}][co2eq]" value="{{ row.manual }}" placeholder="{{ row.calculated }}">
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3">{{ 'Total' | trans }}</th>
+                                            <th class="text-end">{{ nonConsolidatedSource.total | number_format(2, ',', '.') }}</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        {% endif %}
+                    </twig:Card>
                 {% else %}
                     {% for table in scope3Tables[source] %}
                         {% for block in blocks %}

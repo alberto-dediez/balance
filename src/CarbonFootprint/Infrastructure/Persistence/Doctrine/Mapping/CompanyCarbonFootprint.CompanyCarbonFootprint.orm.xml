@@ -52,6 +52,12 @@
                 <cascade-persist />
             </cascade>
         </one-to-many>
+
+        <one-to-many field="nonConsolidatedProperties" target-entity="App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedProperty" mapped-by="companyCarbonFootprint" orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
     </entity>
 
 </doctrine-mapping>

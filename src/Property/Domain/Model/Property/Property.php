@@ -29,6 +29,7 @@ class Property implements \Stringable
         private ?\DateTimeImmutable $removedAt = null,
         private ?int $numberOfEmployees = null,
         private ?int $dailyClients = null,
+        private OperatingRegime $operatingRegime = OperatingRegime::Owned,
     ) {
         $this->events = $events;
     }
@@ -81,6 +82,11 @@ class Property implements \Stringable
         return $this->dailyClients;
     }
 
+    public function operatingRegime(): OperatingRegime
+    {
+        return $this->operatingRegime;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed ?? false;
@@ -96,7 +102,7 @@ class Property implements \Stringable
         return $this->removedAt;
     }
 
-    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null): void
+    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null, OperatingRegime $operatingRegime = OperatingRegime::Owned): void
     {
         $this->recordApplyAndPublish(
             new PropertyRegistered(
@@ -108,11 +114,12 @@ class Property implements \Stringable
                 companyId: $companyId,
                 numberOfEmployees: $numberOfEmployees,
                 dailyClients: $dailyClients,
+                operatingRegime: $operatingRegime,
             ),
         );
     }
 
-    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null): void
+    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null, ?OperatingRegime $operatingRegime = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyUpdated(
@@ -124,6 +131,7 @@ class Property implements \Stringable
                 companyId: $companyId,
                 numberOfEmployees: $numberOfEmployees,
                 dailyClients: $dailyClients,
+                operatingRegime: $operatingRegime ?? $this->operatingRegime,
             ),
         );
     }
@@ -173,6 +181,7 @@ class Property implements \Stringable
 
         $this->numberOfEmployees = $event->numberOfEmployees();
         $this->dailyClients = $event->dailyClients();
+        $this->operatingRegime = $event->operatingRegime();
 
         $this->registeredAt = $event->occurredOn();
     }
@@ -190,6 +199,10 @@ class Property implements \Stringable
                     info: $this->info()->combine($eventInfo),
                     externalId: $this->externalId()->combine($eventExternalId),
                     accountId: $this->accountId(),
+                    companyId: $this->companyId(),
+                    numberOfEmployees: $this->numberOfEmployees(),
+                    dailyClients: $this->dailyClients(),
+                    operatingRegime: $this->operatingRegime(),
                 ),
             );
         }
@@ -206,6 +219,7 @@ class Property implements \Stringable
 
         $this->numberOfEmployees = $event->numberOfEmployees();
         $this->dailyClients = $event->dailyClients();
+        $this->operatingRegime = $event->operatingRegime();
     }
 
     public function applyPropertyAccountReleased(PropertyAccountReleased $event): void

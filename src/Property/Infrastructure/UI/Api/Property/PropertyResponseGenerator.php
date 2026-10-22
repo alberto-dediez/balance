@@ -22,6 +22,7 @@ class PropertyResponseGenerator
             postalCode: $info->postalCode(),
             destinationId: null !== $info->destinationId() ? (string) $info->destinationId() : null,
             countryId: null !== $info->countryId() ? (string) $info->countryId() : null,
+            operatingRegime: $model->operatingRegime()->value,
         );
     }
 }

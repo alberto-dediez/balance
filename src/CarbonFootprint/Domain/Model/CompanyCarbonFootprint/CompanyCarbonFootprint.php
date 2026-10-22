@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -18,9 +19,12 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Organizationa
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintTrait;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
+use Doctrine\Common\Collections\Collection;
 
 class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
 {
@@ -32,6 +36,9 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
 
     /** @var iterable<CompanyCarbonFootprintExclusion> */
     private iterable $exclusions = [];
+
+    /** @var iterable<CompanyCarbonFootprintNonConsolidatedProperty> */
+    private iterable $nonConsolidatedProperties = [];
 
     /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
     public function __construct(
@@ -169,6 +176,14 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         );
 
         $this->removeActivitiesOfSource($scope, $source);
+
+        if (in_array($source, $scope->companyOnlySources(), true)) {
+            foreach ($this->nonConsolidatedPropertiesOf() as $nonConsolidatedProperty) {
+                if ($nonConsolidatedProperty->source() === $source) {
+                    $this->removeNonConsolidatedProperty($nonConsolidatedProperty->propertyId());
+                }
+            }
+        }
     }
 
     private function removeActivitiesOfSource(Scope $scope, Source $source): void
@@ -231,6 +246,10 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         foreach ($this->exclusionsFor($scope) as $exclusion) {
             $this->includeSource($scope, $exclusion->source());
         }
+
+        foreach ($this->nonConsolidatedPropertiesOf() as $nonConsolidatedProperty) {
+            $this->removeNonConsolidatedProperty($nonConsolidatedProperty->propertyId());
+        }
     }
 
     public function includeStage(CalculationStage $stage): void
@@ -250,6 +269,150 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
                 scope: $scope,
             ),
         );
+    }
+
+    public function recordNonConsolidatedProperty(PropertyId $propertyId, Source $source, ?PropertyCarbonFootprintId $propertyCarbonFootprintId, Emissions $calculatedEmissions, ?string $manualCo2eq): void
+    {
+        $this->ensureIsEditable();
+
+        if (!in_array($source, Scope::Scope3->companyOnlySources(), true)) {
+            throw new \InvalidArgumentException(sprintf('Source "%s" is not a non-consolidated property source', $source->value));
+        }
+
+        if (null !== $manualCo2eq && (!is_numeric($manualCo2eq) || (float) $manualCo2eq < 0)) {
+            throw new \InvalidArgumentException('Manual emissions must be a non-negative number');
+        }
+
+        $existing = $this->nonConsolidatedPropertyOf($propertyId);
+
+        if ($this->isStageExcluded(Scope::Scope3) || $this->isSourceExcluded(Scope::Scope3, $source)) {
+            if ($existing instanceof CompanyCarbonFootprintNonConsolidatedProperty) {
+                $this->removeNonConsolidatedProperty($propertyId);
+            }
+
+            return;
+        }
+
+        if (
+            $existing instanceof CompanyCarbonFootprintNonConsolidatedProperty
+            && $existing->source() === $source
+            && $this->sameOrigin($existing->propertyCarbonFootprintId(), $propertyCarbonFootprintId)
+            && $existing->calculatedEmissions()->equals($calculatedEmissions)
+            && $existing->manualCo2eq() === $manualCo2eq
+        ) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintNonConsolidatedPropertyRecorded(
+                companyCarbonFootprintId: $this->id,
+                propertyId: $propertyId,
+                source: $source,
+                propertyCarbonFootprintId: $propertyCarbonFootprintId,
+                calculatedEmissions: $calculatedEmissions,
+                manualCo2eq: $manualCo2eq,
+            ),
+        );
+    }
+
+    /** @param list<PropertyId> $propertyIds */
+    public function retainNonConsolidatedProperties(array $propertyIds): void
+    {
+        $this->ensureIsEditable();
+
+        foreach ($this->nonConsolidatedPropertiesOf() as $nonConsolidatedProperty) {
+            $kept = false;
+            foreach ($propertyIds as $propertyId) {
+                if ($propertyId->equals($nonConsolidatedProperty->propertyId())) {
+                    $kept = true;
+
+                    break;
+                }
+            }
+
+            if (!$kept) {
+                $this->removeNonConsolidatedProperty($nonConsolidatedProperty->propertyId());
+            }
+        }
+    }
+
+    /** @return list<NonConsolidatedPropertyLine> */
+    public function nonConsolidatedPropertyLines(): array
+    {
+        $lines = [];
+
+        foreach ($this->nonConsolidatedPropertiesOf() as $nonConsolidatedProperty) {
+            $lines[] = $nonConsolidatedProperty->toLine();
+        }
+
+        return $lines;
+    }
+
+    private function removeNonConsolidatedProperty(PropertyId $propertyId): void
+    {
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintNonConsolidatedPropertyRemoved(
+                companyCarbonFootprintId: $this->id,
+                propertyId: $propertyId,
+            ),
+        );
+    }
+
+    /** @return list<CompanyCarbonFootprintNonConsolidatedProperty> */
+    private function nonConsolidatedPropertiesOf(): array
+    {
+        $nonConsolidatedProperties = [];
+
+        foreach ($this->nonConsolidatedProperties as $nonConsolidatedProperty) {
+            $nonConsolidatedProperties[] = $nonConsolidatedProperty;
+        }
+
+        return $nonConsolidatedProperties;
+    }
+
+    private function nonConsolidatedPropertyOf(PropertyId $propertyId): ?CompanyCarbonFootprintNonConsolidatedProperty
+    {
+        foreach ($this->nonConsolidatedProperties as $nonConsolidatedProperty) {
+            if ($nonConsolidatedProperty->propertyId()->equals($propertyId)) {
+                return $nonConsolidatedProperty;
+            }
+        }
+
+        return null;
+    }
+
+    private function sameOrigin(?PropertyCarbonFootprintId $current, ?PropertyCarbonFootprintId $other): bool
+    {
+        if (null === $current || null === $other) {
+            return null === $current && null === $other;
+        }
+
+        return $current->equals($other);
+    }
+
+    private function detachNonConsolidatedProperty(PropertyId $propertyId): void
+    {
+        foreach ($this->nonConsolidatedProperties as $key => $nonConsolidatedProperty) {
+            if (!$nonConsolidatedProperty->propertyId()->equals($propertyId)) {
+                continue;
+            }
+            if (is_array($this->nonConsolidatedProperties)) {
+                unset($this->nonConsolidatedProperties[$key]);
+            } elseif ($this->nonConsolidatedProperties instanceof Collection) {
+                $this->nonConsolidatedProperties->removeElement($nonConsolidatedProperty);
+            }
+
+            return;
+        }
+    }
+
+    private function attachNonConsolidatedProperty(CompanyCarbonFootprintNonConsolidatedProperty $nonConsolidatedProperty): void
+    {
+        if (is_array($this->nonConsolidatedProperties)) {
+            $this->nonConsolidatedProperties[] = $nonConsolidatedProperty;
+        } elseif ($this->nonConsolidatedProperties instanceof Collection) {
+            $this->nonConsolidatedProperties->add($nonConsolidatedProperty);
+        }
     }
 
     public function complete(Emissions $totalEmissions): void
@@ -331,17 +494,21 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
 
     public function applyCompanyCarbonFootprintSourceExcluded(CompanyCarbonFootprintSourceExcluded $event): void
     {
-        $this->detachExclusion($event->scope(), $event->source());
+        $existing = $this->exclusionFor($event->scope(), $event->source());
 
-        $this->attachExclusion(new CompanyCarbonFootprintExclusion(
-            id: CompanyCarbonFootprintExclusionId::generate(),
-            companyCarbonFootprint: $this,
-            scope: $event->scope(),
-            source: $event->source(),
-            reason: $event->reason(),
-            comment: $event->comment(),
-            excludedAt: $event->occurredOn(),
-        ));
+        if ($existing instanceof CompanyCarbonFootprintExclusion) {
+            $existing->update($event->reason(), $event->comment(), $event->occurredOn());
+        } else {
+            $this->attachExclusion(new CompanyCarbonFootprintExclusion(
+                id: CompanyCarbonFootprintExclusionId::generate(),
+                companyCarbonFootprint: $this,
+                scope: $event->scope(),
+                source: $event->source(),
+                reason: $event->reason(),
+                comment: $event->comment(),
+                excludedAt: $event->occurredOn(),
+            ));
+        }
 
         $this->updatedAt = $event->occurredOn();
     }
@@ -365,6 +532,40 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         $this->scope3Excluded = false;
         $this->scope3ExclusionReason = null;
         $this->scope3ExclusionComment = null;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintNonConsolidatedPropertyRecorded(CompanyCarbonFootprintNonConsolidatedPropertyRecorded $event): void
+    {
+        $existing = $this->nonConsolidatedPropertyOf($event->propertyId());
+
+        if (null !== $existing) {
+            $existing->update(
+                source: $event->source(),
+                propertyCarbonFootprintId: $event->propertyCarbonFootprintId(),
+                calculatedEmissions: $event->calculatedEmissions(),
+                manualCo2eq: $event->manualCo2eq(),
+                recordedAt: $event->occurredOn(),
+            );
+        } else {
+            $this->attachNonConsolidatedProperty(new CompanyCarbonFootprintNonConsolidatedProperty(
+                id: CompanyCarbonFootprintNonConsolidatedPropertyId::generate(),
+                companyCarbonFootprint: $this,
+                propertyId: $event->propertyId(),
+                source: $event->source(),
+                propertyCarbonFootprintId: $event->propertyCarbonFootprintId(),
+                calculatedEmissions: $event->calculatedEmissions(),
+                manualCo2eq: $event->manualCo2eq(),
+                recordedAt: $event->occurredOn(),
+            ));
+        }
+
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintNonConsolidatedPropertyRemoved(CompanyCarbonFootprintNonConsolidatedPropertyRemoved $event): void
+    {
+        $this->detachNonConsolidatedProperty($event->propertyId());
         $this->updatedAt = $event->occurredOn();
     }
 

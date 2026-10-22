@@ -244,4 +244,17 @@ class MitigationProjectorTest extends TestCase
 
         $this->assertNull($projection);
     }
+
+    public function testAnEffectOnAFranchiseReducesIt(): void
+    {
+        $projection = (new MitigationProjector())->project(
+            2025,
+            [MitigationEmissionSourceMother::from(Source::Franchises, 'franchised-1', 5000.0, 'Hotel Franquiciado')],
+            [MitigationActionMother::withEffect(Source::Franchises, 'franchised-1', 0.2)],
+        );
+
+        $this->assertNotNull($projection);
+        $this->assertTrue($projection->sources[0]->hasReductions);
+        $this->assertEqualsWithDelta(4000.0, $projection->totalByYear[2030], 0.001);
+    }
 }

@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportActivityLine;
@@ -20,7 +21,9 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationEmissionSource;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjector;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionMother;
 
 class OrganizationalCarbonFootprintReportDataMother
@@ -47,6 +50,51 @@ class OrganizationalCarbonFootprintReportDataMother
                 ['propertyId' => null, 'name' => 'Sin asignar a propiedad', 'emissions' => new Emissions('1250', '1250', '0', '0')],
             ], scope3: true)
             : self::build($subjectType, 'Hotel Sol', 'Hotelera del Sur', 'España', null, scope3: true);
+    }
+
+    public static function withNonConsolidatedProperties(): OrganizationalCarbonFootprintReportData
+    {
+        $data = self::withScope3(CarbonFootprintReportSubjectType::Company);
+
+        $franchise = new Emissions('5000', '5000', '0', '0');
+        $leasedOut = new Emissions('4500');
+
+        $emissionsBySource = $data->emissionsBySource;
+        $emissionsBySource[Source::Franchises->value] = $franchise;
+        $emissionsBySource[Source::DownstreamLeasedAssets->value] = $leasedOut;
+
+        $emissionsByScope = $data->emissionsByScope;
+        $emissionsByScope[Scope::Scope3->value] = $emissionsByScope[Scope::Scope3->value]->add($franchise)->add($leasedOut);
+
+        $emissionsByScopeAndSource = $data->emissionsByScopeAndSource;
+        $emissionsByScopeAndSource[Scope::Scope3->value][Source::Franchises->value] = $franchise;
+        $emissionsByScopeAndSource[Scope::Scope3->value][Source::DownstreamLeasedAssets->value] = $leasedOut;
+
+        return new OrganizationalCarbonFootprintReportData(
+            subjectType: $data->subjectType,
+            subjectName: $data->subjectName,
+            companyName: $data->companyName,
+            countryName: $data->countryName,
+            emissionFactorGroupName: $data->emissionFactorGroupName,
+            calculationYear: $data->calculationYear,
+            totalEmissions: $data->totalEmissions->add($franchise)->add($leasedOut),
+            locationBasedElectricityEmissions: $data->locationBasedElectricityEmissions,
+            emissionsBySource: $emissionsBySource,
+            emissionsByScope: $emissionsByScope,
+            emissionsByScopeAndSource: $emissionsByScopeAndSource,
+            emissionsByProperty: [
+                ['propertyId' => 'property-franquicia', 'name' => 'Hotel Franquicia', 'emissions' => $franchise],
+                ['propertyId' => 'property-arrendada', 'name' => 'Hotel Arrendado', 'emissions' => $leasedOut],
+                ...$data->emissionsByProperty,
+            ],
+            activityLines: $data->activityLines,
+            exclusionLines: $data->exclusionLines,
+            derivedLines: $data->derivedLines,
+            nonConsolidatedPropertyLines: [
+                new NonConsolidatedPropertyLine(Source::Franchises, new PropertyId('property-franquicia'), PropertyCarbonFootprintId::generate(), $franchise, null, $franchise),
+                new NonConsolidatedPropertyLine(Source::DownstreamLeasedAssets, new PropertyId('property-arrendada'), null, new Emissions(), '4500', $leasedOut),
+            ],
+        );
     }
 
     public static function withScope3OnlyInPurchasedGoodsAndServices(?Source $excludedSource = null): OrganizationalCarbonFootprintReportData

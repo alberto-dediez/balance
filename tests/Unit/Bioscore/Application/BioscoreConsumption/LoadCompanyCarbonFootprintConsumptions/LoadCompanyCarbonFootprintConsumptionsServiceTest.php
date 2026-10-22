@@ -27,6 +27,7 @@ use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\PropertySectionAnswers;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersService;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
@@ -44,6 +45,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCompanyCarbonFootprintRepository;
 use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
@@ -139,9 +141,11 @@ class LoadCompanyCarbonFootprintConsumptionsServiceTest extends TestCase
 
         $footprintAuthorizer = new CompanyCarbonFootprintAuthorizer();
 
+        $companyProperties = new CompanyProperties($this->propertyRepository);
+
         $this->replaceAnswers = new ReplaceCompanyCarbonFootprintScopeAnswersService(
             $this->repository,
-            $this->propertyRepository,
+            $companyProperties,
             $footprintAuthorizer,
             new StageAnswersProcessor(),
             new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), $this->propertyRepository)),
@@ -149,7 +153,7 @@ class LoadCompanyCarbonFootprintConsumptionsServiceTest extends TestCase
 
         $this->sut = new LoadCompanyCarbonFootprintConsumptionsService(
             $this->repository,
-            $this->propertyRepository,
+            $companyProperties,
             $footprintAuthorizer,
             $this->gateway,
             new BioscoreConsumptionAnswersBuilder(
@@ -209,6 +213,21 @@ class LoadCompanyCarbonFootprintConsumptionsServiceTest extends TestCase
         $this->assertFalse($response->isResolved());
         $this->assertSame(2, $response->totalProperties);
         $this->assertSame(0, $response->activities);
+    }
+
+    public function testAFranchisedPropertyIsNotQueried(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Hotel Franquiciado', new CompanyId(self::COMPANY_ID), new PropertyId('property-3'), OperatingRegime::Franchised));
+
+        $this->gateway->add(new PropertyId('property-3'), 'combustibles', BioscoreConsumptionMother::facilityFuel(7, 'Gas Natural', 100.0));
+
+        $response = ($this->sut)(new LoadCompanyCarbonFootprintConsumptionsRequest($footprint->id(), Scope::Scope1), $this->ownerUser());
+
+        $this->assertSame(2, $response->totalProperties);
+        $this->assertSame(0, $response->activities);
+        $this->assertNotContains('property-3', array_map('strval', $this->gateway->queries()[0]->propertyIds));
+        $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: new PropertyId('property-3'))));
     }
 
     public function testACompanyWithoutPropertiesDoesNotCallBioscore(): void

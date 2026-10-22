@@ -41,8 +41,8 @@ Feature:
                 And the response JSON should be equal to:
                 """
                 [
-                    {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null},
-                    {"property_id": "222", "name": "Rural", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null}
+                    {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"},
+                    {"property_id": "222", "name": "Rural", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"}
                 ]
                 """
 
@@ -58,7 +58,7 @@ Feature:
             And the response JSON should be equal to:
             """
             [
-                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null}
+                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"}
             ]
             """
 
@@ -74,10 +74,42 @@ Feature:
             And the response JSON should be equal to:
             """
             [
-                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null}
+                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"}
             ]
             """
 
       Scenario: Not authenticated user cannot list properties via API
             When I send a GET request to "/api/es/properties"
             Then the status code should be 403
+
+
+        Scenario: As owner I can see and filter properties by operating regime
+                Given account "MyCompany" with id "666" exists
+                Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+                Given property "Hotel Propio" with id "1111" of account "666" exists
+                Given property "Hotel Franquiciado" with id "2222" of account "666" exists
+                Given property "2222" has operating regime "franchised"
+                When I am logged as "owner@dediez.software"
+                When I go to "/es/properties"
+                Then the response status should be 200
+                Then I see a text "Régimen de explotación"
+                Then I see a table with 4 rows
+                When I filter by "operatingRegime" with "franchised"
+                Then the response status should be 200
+                Then I see a table with 3 rows
+                Then I see a text "Hotel Franquiciado"
+                Then I do not see a text "Hotel Propio"
+                Then I see a text "<b>Franquiciada</b>"
+                Then I do not see a text "<b>franchised</b>"
+
+        Scenario: As admin I can filter properties by operating regime
+                Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+                Given property "Hotel Propio" with id "1111" exists
+                Given property "Hotel Arrendado" with id "2222" exists
+                Given property "2222" has operating regime "leased_out"
+                When I am logged as "admin@dediez.software"
+                When I go to "/es/admin/properties"
+                When I filter by "operatingRegime" with "leased_out"
+                Then I see a table with 3 rows
+                Then I see a text "Hotel Arrendado"
+                Then I do not see a text "Hotel Propio"

@@ -7,10 +7,16 @@ namespace App\Tests\Unit\CarbonFootprint\Application\MitigationAction;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
+use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MobilityActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use PHPUnit\Framework\TestCase;
 
 class MitigationEmissionSourcesBuilderTest extends TestCase
@@ -130,6 +136,30 @@ class MitigationEmissionSourcesBuilderTest extends TestCase
         $this->assertCount(2, $sources);
         $this->assertFalse($sources[0]->isDerived());
         $this->assertFalse($sources[1]->isDerived());
+    }
+
+    public function testANonConsolidatedPropertyProducesAReducibleScope3Source(): void
+    {
+        $this->properties->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Hotel Franquiciado', new CompanyId('company-id'), new PropertyId('franchised-1'), OperatingRegime::Franchised));
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, new Emissions('5000'));
+
+        $sources = $this->emissionSourcesBuilder()->build($footprint);
+
+        $this->assertCount(1, $sources);
+        $this->assertSame(Scope::Scope3, $sources[0]->scope);
+        $this->assertSame(Source::Franchises, $sources[0]->source);
+        $this->assertSame('franchised-1', $sources[0]->itemId);
+        $this->assertSame('Hotel Franquiciado', $sources[0]->itemName);
+        $this->assertSame(5000.0, $sources[0]->emissions);
+        $this->assertNull($sources[0]->originKey);
+        $this->assertFalse($sources[0]->isDerived());
+    }
+
+    public function testANonConsolidatedPropertyWithoutEmissionsProducesNothing(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, new Emissions());
+
+        $this->assertSame([], $this->emissionSourcesBuilder()->build($footprint));
     }
 
     private function propertyFootprintWithWellToTank(): PropertyCarbonFootprint

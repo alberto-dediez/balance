@@ -13,6 +13,9 @@ use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootpri
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintCompleted;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMitigationPlanStarted;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedProperty;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedPropertyRecorded;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedPropertyRemoved;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRegistered;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintReopened;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintScopeExcluded;
@@ -25,6 +28,7 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Organizationa
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\Property\Domain\Model\Property\PropertyId;
 use PHPUnit\Framework\TestCase;
 
@@ -135,6 +139,21 @@ final class CompanyCarbonFootprintTest extends TestCase
 
         $this->assertFalse($footprint->isSourceExcluded(Scope::Scope1, Source::FixedFacilities));
         $this->assertCount(0, $footprint->allExclusions());
+    }
+
+    public function testChangingTheReasonOfAnExclusionKeepsTheSameRow(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::registered();
+        $footprint->excludeSource(Scope::Scope1, Source::FixedFacilities, ExclusionReason::NoDataAvailable);
+        $exclusion = $footprint->exclusionFor(Scope::Scope1, Source::FixedFacilities);
+        $this->assertNotNull($exclusion);
+
+        $footprint->excludeSource(Scope::Scope1, Source::FixedFacilities, ExclusionReason::NotApplicable, 'comment');
+
+        $this->assertCount(1, $footprint->allExclusions());
+        $this->assertSame($exclusion, $footprint->exclusionFor(Scope::Scope1, Source::FixedFacilities));
+        $this->assertSame(ExclusionReason::NotApplicable, $exclusion->reason());
+        $this->assertSame('comment', $exclusion->comment());
     }
 
     public function testExclusionsForIndexesBySource(): void
@@ -422,5 +441,181 @@ final class CompanyCarbonFootprintTest extends TestCase
 
         $this->assertCount(0, $footprint->activityIds($firstProperty));
         $this->assertCount(0, $footprint->activityIds($unassigned));
+    }
+
+    public function testRecordNonConsolidatedPropertyPublishesTheEvent(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint->clearEvents();
+        $origin = PropertyCarbonFootprintId::generate();
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, $origin, new Emissions('5000', '4900', '1', '1'), null);
+
+        $recorded = array_values(array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintNonConsolidatedPropertyRecorded));
+        $this->assertCount(1, $recorded);
+        $this->assertSame('property-1', (string) $recorded[0]->propertyId());
+        $this->assertSame(Source::Franchises, $recorded[0]->source());
+
+        $lines = $footprint->nonConsolidatedPropertyLines();
+        $this->assertCount(1, $lines);
+        $this->assertSame('5000', $lines[0]->emissions->co2eq());
+        $this->assertSame((string) $origin, (string) $lines[0]->propertyCarbonFootprintId);
+    }
+
+    public function testRecordNonConsolidatedPropertyIsIdempotent(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $origin = PropertyCarbonFootprintId::generate();
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, $origin, new Emissions('5000'), '10');
+        $footprint->clearEvents();
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new PropertyCarbonFootprintId((string) $origin), new Emissions('5000'), '10');
+
+        $this->assertSame([], $footprint->recordedEvents());
+    }
+
+    public function testRecordNonConsolidatedPropertyReplacesTheRowOfTheSameProperty(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, null, new Emissions('300'), null);
+
+        $lines = $footprint->nonConsolidatedPropertyLines();
+        $this->assertCount(1, $lines);
+        $this->assertSame(Source::DownstreamLeasedAssets, $lines[0]->source);
+        $this->assertSame('300', $lines[0]->emissions->co2eq());
+    }
+
+    public function testRecordNonConsolidatedPropertyKeepsTheIdOfTheReplacedRow(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
+        $before = $this->nonConsolidatedPropertyIds($footprint);
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions('5000'), '4500');
+
+        $this->assertCount(1, $before);
+        $this->assertSame($before, $this->nonConsolidatedPropertyIds($footprint));
+        $this->assertSame('4500', $footprint->nonConsolidatedPropertyLines()[0]->emissions->co2eq());
+    }
+
+    public function testRecordNonConsolidatedPropertyRejectsOtherSources(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Investments, null, new Emissions(), null);
+    }
+
+    public function testRecordNonConsolidatedPropertyRejectsNegativeManualEmissions(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Manual emissions must be a non-negative number');
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions(), '-1');
+    }
+
+    public function testRecordNonConsolidatedPropertyRejectsNonNumericManualEmissions(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Manual emissions must be a non-negative number');
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions(), 'abc');
+    }
+
+    public function testRecordNonConsolidatedPropertyWithExcludedSourceRemovesTheRow(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
+        $footprint->excludeSource(Scope::Scope3, Source::Franchises, ExclusionReason::NotApplicable);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::Franchises, null, new Emissions('10'), null);
+
+        $this->assertSame([], $footprint->nonConsolidatedPropertyLines());
+    }
+
+    public function testRecordNonConsolidatedPropertyWithExcludedStageRemovesTheExistingRow(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, new Emissions('5000'));
+        $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, null, new Emissions('5000'), null);
+
+        $this->assertSame([], $footprint->nonConsolidatedPropertyLines());
+    }
+
+    public function testRetainNonConsolidatedPropertiesRemovesTheOthers(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, new Emissions('100'), null);
+        $footprint->clearEvents();
+
+        $footprint->retainNonConsolidatedProperties([new PropertyId('property-2')]);
+
+        $removed = array_values(array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintNonConsolidatedPropertyRemoved));
+        $this->assertCount(1, $removed);
+        $this->assertSame('property-1', (string) $removed[0]->propertyId());
+        $this->assertCount(1, $footprint->nonConsolidatedPropertyLines());
+        $this->assertSame('property-2', (string) $footprint->nonConsolidatedPropertyLines()[0]->propertyId);
+    }
+
+    public function testExcludeFranchisesRemovesOnlyItsRows(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, new Emissions('100'), null);
+
+        $footprint->excludeSource(Scope::Scope3, Source::Franchises, ExclusionReason::NotApplicable);
+
+        $lines = $footprint->nonConsolidatedPropertyLines();
+        $this->assertCount(1, $lines);
+        $this->assertSame(Source::DownstreamLeasedAssets, $lines[0]->source);
+    }
+
+    public function testExcludeScope3RemovesEveryRow(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, new Emissions('100'), null);
+
+        $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->assertSame([], $footprint->nonConsolidatedPropertyLines());
+    }
+
+    public function testCompletedFootprintCannotRecordNonConsolidatedProperties(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint->complete(new Emissions('1'));
+
+        $this->expectException(OrganizationalCarbonFootprintAlreadyCompletedException::class);
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions(), null);
+    }
+
+    public function testNonConsolidatedPropertyLinesApplyTheManualEmissions(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, new Emissions('0'), '4500');
+
+        $line = $footprint->nonConsolidatedPropertyLines()[0];
+
+        $this->assertSame('4500', $line->emissions->co2eq());
+        $this->assertSame('0', $line->emissions->co2());
+        $this->assertSame('0', $line->calculatedEmissions->co2eq());
+        $this->assertSame('4500', $line->manualCo2eq);
+    }
+
+    /** @return list<string> */
+    private function nonConsolidatedPropertyIds(CompanyCarbonFootprint $footprint): array
+    {
+        /** @var iterable<CompanyCarbonFootprintNonConsolidatedProperty> $rows */
+        $rows = new \ReflectionProperty(CompanyCarbonFootprint::class, 'nonConsolidatedProperties')->getValue($footprint);
+
+        $ids = [];
+        foreach ($rows as $row) {
+            $ids[] = (string) $row->id();
+        }
+
+        return $ids;
     }
 }

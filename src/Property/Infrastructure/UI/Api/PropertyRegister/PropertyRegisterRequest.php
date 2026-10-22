@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Property\Infrastructure\UI\Api\PropertyRegister;
 
 use OpenApi\Attributes as OA;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class PropertyRegisterRequest
 {
@@ -43,5 +44,8 @@ class PropertyRegisterRequest
         public ?string $source = null,
         #[OA\Property(type: 'string', example: null, nullable: true)]
         public ?string $externalId = null,
+        #[OA\Property(type: 'string', example: 'franchised', nullable: true, enum: ['owned', 'leased', 'managed', 'franchised', 'leased_out'])]
+        #[Assert\Choice(choices: ['owned', 'leased', 'managed', 'franchised', 'leased_out'])]
+        public ?string $operatingRegime = null,
     ) {}
 }

@@ -41,6 +41,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             yield $theme . ' property scope 3 es' => [$theme, 'property-scope-3', Locale::Spanish];
             yield $theme . ' company scope 3 es' => [$theme, 'company-scope-3', Locale::Spanish];
             yield $theme . ' property scope 3 excluded es' => [$theme, 'property-scope-3-excluded', Locale::Spanish];
+            yield $theme . ' company non consolidated properties es' => [$theme, 'company-non-consolidated', Locale::Spanish];
         }
     }
 
@@ -89,6 +90,43 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $this->assertEqualsCanonicalizing([Source::PurchasedGoodsAndServices, Source::BusinessTravel], $sources);
     }
 
+    /** @dataProvider themes */
+    public function testTheNonConsolidatedPropertiesHaveTheirOwnPageInACompanyReport(string $theme): void
+    {
+        $sources = $this->scope3PageSources($theme, OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties());
+
+        $this->assertContains(Source::DownstreamLeasedAssets, $sources);
+        $this->assertContains(Source::Franchises, $sources);
+
+        $generator = $this->generatorFor($theme);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} $table */
+        $table = (new \ReflectionMethod($generator, 'nonConsolidatedPropertyTable'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties(), Source::DownstreamLeasedAssets, Locale::Spanish);
+
+        $this->assertCount(2, $table[1]);
+        $this->assertSame('Hotel Arrendado', $table[1][0][0]);
+        $this->assertTrue($table[3]);
+    }
+
+    /** @dataProvider themes */
+    public function testAPropertyReportLeavesOutTheCompanyOnlySources(string $theme): void
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<list<string>> $rows */
+        $rows = (new \ReflectionMethod($generator, 'includedEmissionsRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::Spanish);
+        /** @var list<list<string>> $companyRows */
+        $companyRows = (new \ReflectionMethod($generator, 'includedEmissionsRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withScope3(CarbonFootprintReportSubjectType::Company), Locale::Spanish);
+
+        $franchises = $this->translator()->trans(Source::Franchises->value, [], 'source', Locale::Spanish->value);
+        $leasedAssets = $this->translator()->trans(Source::DownstreamLeasedAssets->value, [], 'source', Locale::Spanish->value);
+
+        $this->assertNotContains($franchises, array_column($rows, 1));
+        $this->assertNotContains($leasedAssets, array_column($rows, 1));
+        $this->assertContains($franchises, array_column($companyRows, 1));
+        $this->assertCount(count($rows) + 2, $companyRows);
+    }
+
     /** @return list<Source> */
     private function scope3PageSources(string $theme, OrganizationalCarbonFootprintReportData $data): array
     {
@@ -113,6 +151,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             'company-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(CarbonFootprintReportSubjectType::Company), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             'property-scope-3' => [OrganizationalCarbonFootprintReportDataMother::withScope3(), CarbonFootprintReportTextsMother::forOrganization()],
             'company-scope-3' => [OrganizationalCarbonFootprintReportDataMother::withScope3(CarbonFootprintReportSubjectType::Company), CarbonFootprintReportTextsMother::forOrganization()],
+            'company-non-consolidated' => [OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-scope-3-excluded' => [OrganizationalCarbonFootprintReportDataMother::withScope3Excluded(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-long-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(targetYear: 2035), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             default => [OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), CarbonFootprintReportTextsMother::forOrganization()],

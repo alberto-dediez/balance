@@ -10,11 +10,11 @@ use App\Bioscore\Domain\Model\BioscoreConsumption\BioscoreConsumptionsQuery;
 use App\Bioscore\Domain\Model\BioscoreConsumption\BioscorePropertyConsumptions;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\PropertySectionAnswers;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersService;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\Property\Domain\Model\Property\PropertyId;
-use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
@@ -28,7 +28,7 @@ class LoadCompanyCarbonFootprintConsumptionsService implements CommandHandler
 
     public function __construct(
         private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
-        private PropertyRepository $propertyRepository,
+        private CompanyProperties $companyProperties,
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private BioscoreConsumptionGateway $gateway,
         private BioscoreConsumptionAnswersBuilder $answersBuilder,
@@ -52,7 +52,7 @@ class LoadCompanyCarbonFootprintConsumptionsService implements CommandHandler
 
         /** @var array<string, PropertyId> $companyPropertyIds */
         $companyPropertyIds = [];
-        foreach ($this->propertyRepository->findByCompanyId($companyId) as $property) {
+        foreach ($this->companyProperties->consolidated($companyId) as $property) {
             $companyPropertyIds[(string) $property->id()] = $property->id();
         }
 

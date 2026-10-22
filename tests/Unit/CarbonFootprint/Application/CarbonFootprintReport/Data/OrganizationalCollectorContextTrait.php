@@ -36,6 +36,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityM
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 
 trait OrganizationalCollectorContextTrait
@@ -53,7 +54,7 @@ trait OrganizationalCollectorContextTrait
     {
         return new MitigationPlanReportBuilder(
             $this->mitigationActionRepository,
-            new MitigationEmissionSourcesBuilder($this->activityRepository, $this->itemNameResolver(), $this->derivedSourceEmissionsCalculator()),
+            new MitigationEmissionSourcesBuilder($this->activityRepository, $this->itemNameResolver(), $this->derivedSourceEmissionsCalculator(), PropertyRepositoryMother::inMemory()),
         );
     }
 

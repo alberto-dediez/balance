@@ -99,6 +99,15 @@ class MitigationMeasureTest extends TestCase
         $this->assertInstanceOf(MitigationMeasureEffectAdded::class, $this->spySubscriber->lastEvent());
     }
 
+    public function testSetEffectAcceptsFranchises(): void
+    {
+        $measure = MitigationMeasureMother::registeredMitigationMeasure();
+
+        $measure->setEffect(Source::Franchises, 0.1, 0.3);
+
+        $this->assertInstanceOf(MitigationMeasureEffectAdded::class, $this->spySubscriber->lastEvent());
+    }
+
     public function testSyncEffectsRemovesTheMissingOnes(): void
     {
         $measure = MitigationMeasureMother::withEffect(Source::FixedFacilities, 0.1, 0.3);

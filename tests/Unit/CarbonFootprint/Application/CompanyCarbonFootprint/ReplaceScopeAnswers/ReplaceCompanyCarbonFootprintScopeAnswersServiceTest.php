@@ -19,6 +19,7 @@ use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\PropertySectionAnswers;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersService;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
@@ -39,6 +40,7 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCompanyCarbonFootprintRepository;
 use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
@@ -127,7 +129,7 @@ class ReplaceCompanyCarbonFootprintScopeAnswersServiceTest extends TestCase
 
         $this->sut = new ReplaceCompanyCarbonFootprintScopeAnswersService(
             $this->repository,
-            $this->propertyRepository,
+            new CompanyProperties($this->propertyRepository),
             new CompanyCarbonFootprintAuthorizer(),
             new StageAnswersProcessor(),
             new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), $this->propertyRepository)),
@@ -178,6 +180,21 @@ class ReplaceCompanyCarbonFootprintScopeAnswersServiceTest extends TestCase
             $footprint->id(),
             Scope::Scope1,
             [new PropertySectionAnswers(new PropertyId('property-9'), [$this->combustibleSection()])],
+        ), $this->ownerUser());
+    }
+
+    public function testABlockOfANonConsolidatedPropertyIsRejected(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Hotel C', new CompanyId(self::COMPANY_ID), new PropertyId('property-3'), OperatingRegime::Franchised));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Property does not belong to company');
+
+        ($this->sut)(new ReplaceCompanyCarbonFootprintScopeAnswersRequest(
+            $footprint->id(),
+            Scope::Scope1,
+            [new PropertySectionAnswers(new PropertyId('property-3'), [$this->combustibleSection()])],
         ), $this->ownerUser());
     }
 

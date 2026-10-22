@@ -7,10 +7,10 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
-use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 
@@ -18,7 +18,7 @@ final class GetCompanyCarbonFootprintResultsService
 {
     public function __construct(
         private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
-        private PropertyRepository $propertyRepository,
+        private CompanyProperties $companyProperties,
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private EmissionsBreakdownBuilder $breakdownBuilder,
     ) {}
@@ -33,8 +33,7 @@ final class GetCompanyCarbonFootprintResultsService
 
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::View, $user);
 
-        $companyId = $companyCarbonFootprint->companyId();
-        $properties = null !== $companyId ? array_values($this->propertyRepository->findByCompanyId($companyId)) : [];
+        $properties = $this->companyProperties->all($companyCarbonFootprint->companyId());
 
         $breakdown = $this->breakdownBuilder->build($companyCarbonFootprint, Scope::cases());
 

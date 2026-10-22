@@ -51,6 +51,7 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryM
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationMeasureRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -62,6 +63,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFact
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 
@@ -75,6 +77,7 @@ trait MitigationPlanContextTrait
     private CombustibleId $naturalGasId;
     private ElectricityMarketerId $marketerId;
     private MitigationEmissionSourcesBuilder $emissionSourcesBuilder;
+    private InMemoryPropertyRepository $properties;
 
     private function initMitigationPlan(): void
     {
@@ -85,6 +88,7 @@ trait MitigationPlanContextTrait
         $this->mitigationMeasures = new InMemoryMitigationMeasureRepository();
         $this->naturalGasId = CombustibleId::generate();
         $this->marketerId = ElectricityMarketerId::generate();
+        $this->properties = PropertyRepositoryMother::inMemory();
         $this->emissionSourcesBuilder = new MitigationEmissionSourcesBuilder(
             $this->activities,
             new ActivityItemNameResolver(
@@ -96,6 +100,7 @@ trait MitigationPlanContextTrait
                 new FakeTranslator(),
             ),
             new DerivedSourceEmissionsCalculator($this->activities),
+            $this->properties,
         );
     }
 

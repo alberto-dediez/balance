@@ -148,12 +148,12 @@ trait CarbonFootprintReportFiguresTrait
      *
      * @return list<Source>
      */
-    private function stageSources(array $stages): array
+    private function stageSources(array $stages, ?CarbonFootprintReportSubjectType $subjectType = null): array
     {
         $sources = [];
 
         foreach ($stages as $stage) {
-            foreach ($this->sourcesOf($stage) as $source) {
+            foreach ($this->sourcesOf($stage, $subjectType) as $source) {
                 $sources[$source->value] = true;
             }
         }
@@ -162,10 +162,10 @@ trait CarbonFootprintReportFiguresTrait
     }
 
     /** @return list<Source> */
-    private function sourcesOf(CalculationStage $stage): array
+    private function sourcesOf(CalculationStage $stage, ?CarbonFootprintReportSubjectType $subjectType = null): array
     {
         if ($stage instanceof Scope) {
-            return $stage->allSources();
+            return null !== $subjectType ? $stage->sourcesFor($subjectType) : $stage->allSources();
         }
 
         return array_map(static fn(SectionDefinition $section): Source => $section->source, $stage->sections());
@@ -236,7 +236,7 @@ trait CarbonFootprintReportFiguresTrait
         $rows = [];
 
         foreach (Scope::cases() as $scope) {
-            foreach ($this->stageSources([$scope]) as $source) {
+            foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
                 $rows[] = [
                     $this->translator->trans($scope->value, [], 'scope', $locale->value),
                     $this->translator->trans($source->value, [], 'source', $locale->value),
@@ -278,7 +278,7 @@ trait CarbonFootprintReportFiguresTrait
                 continue;
             }
 
-            foreach ($this->stageSources([$scope]) as $source) {
+            foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
                 $exclusion = $this->exclusionFor($data, $scope, $source);
 
                 $rows[] = [
@@ -304,7 +304,7 @@ trait CarbonFootprintReportFiguresTrait
                 continue;
             }
 
-            foreach ($this->stageSources([$scope]) as $source) {
+            foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
                 if (Scope::Scope3 === $scope && !$this->hasReportedSource($data, $scope, $source)) {
                     continue;
                 }
@@ -337,6 +337,12 @@ trait CarbonFootprintReportFiguresTrait
         }
 
         foreach ($data->derivedLines as $line) {
+            if ($line->source === $source) {
+                return true;
+            }
+        }
+
+        foreach ($data->nonConsolidatedPropertyLines as $line) {
             if ($line->source === $source) {
                 return true;
             }
@@ -412,6 +418,10 @@ trait CarbonFootprintReportFiguresTrait
         $total = 0.0;
 
         foreach ($data->derivedLines as $line) {
+            if (Source::FuelAndEnergyRelated !== $line->source) {
+                continue;
+            }
+
             $rows[] = [
                 $this->translator->trans($line->origin->stage->key(), [], 'scope', $locale->value),
                 $this->translator->trans($line->origin->source->value, [], 'source', $locale->value),
@@ -425,6 +435,50 @@ trait CarbonFootprintReportFiguresTrait
 
         if ($hasTotal) {
             $rows[] = [$this->trans('Total', $locale), '', '', $this->number($total)];
+        }
+
+        return [$header, $rows, $widths, $hasTotal];
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
+    private function nonConsolidatedPropertyTable(OrganizationalCarbonFootprintReportData $data, Source $source, Locale $locale): array
+    {
+        $header = [$this->trans('Propiedad', $locale), $this->trans('Origen', $locale), $this->trans('Emisiones kgCO2eq', $locale)];
+        $widths = ['45%', '30%', '25%'];
+
+        $namesByProperty = [];
+        foreach ($data->emissionsByProperty as $property) {
+            if (null !== $property['propertyId']) {
+                $namesByProperty[$property['propertyId']] = $property['name'];
+            }
+        }
+
+        $rows = [];
+        $total = 0.0;
+
+        foreach ($data->nonConsolidatedPropertyLines as $line) {
+            if ($line->source !== $source) {
+                continue;
+            }
+
+            $origin = match (true) {
+                null !== $line->manualCo2eq => $this->trans('Valor manual', $locale),
+                null !== $line->propertyCarbonFootprintId => $this->trans('Huella de la propiedad', $locale),
+                default => $this->trans('Sin datos', $locale),
+            };
+
+            $rows[] = [
+                $namesByProperty[(string) $line->propertyId] ?? (string) $line->propertyId,
+                $origin,
+                $this->number($line->emissions->co2eq()),
+            ];
+            $total += (float) $line->emissions->co2eq();
+        }
+
+        $hasTotal = [] !== $rows;
+
+        if ($hasTotal) {
+            $rows[] = [$this->trans('Total', $locale), '', $this->number($total)];
         }
 
         return [$header, $rows, $widths, $hasTotal];

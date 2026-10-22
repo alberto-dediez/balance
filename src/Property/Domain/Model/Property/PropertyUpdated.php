@@ -23,6 +23,7 @@ final class PropertyUpdated extends DomainEvent
         private readonly ?CompanyId $companyId = null,
         private readonly ?int $numberOfEmployees = null,
         private readonly ?int $dailyClients = null,
+        private readonly OperatingRegime $operatingRegime = OperatingRegime::Owned,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -69,6 +70,11 @@ final class PropertyUpdated extends DomainEvent
         return $this->dailyClients;
     }
 
+    public function operatingRegime(): OperatingRegime
+    {
+        return $this->operatingRegime;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->propertyId;
@@ -85,6 +91,7 @@ final class PropertyUpdated extends DomainEvent
             'externalId' => $this->externalId,
             'numberOfEmployees' => $this->numberOfEmployees,
             'dailyClients' => $this->dailyClients,
+            'operatingRegime' => $this->operatingRegime->value,
         ];
     }
 
@@ -102,6 +109,7 @@ final class PropertyUpdated extends DomainEvent
             companyId: null !== ($payload['companyId'] ?? null) ? new CompanyId($payload['companyId']) : null,
             numberOfEmployees: $payload['numberOfEmployees'] ?? null,
             dailyClients: $payload['dailyClients'] ?? null,
+            operatingRegime: OperatingRegime::tryFrom($payload['operatingRegime'] ?? '') ?? OperatingRegime::Owned,
             id: $id,
             occurredOn: $occurredOn,
         );

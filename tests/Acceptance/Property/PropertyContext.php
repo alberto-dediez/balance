@@ -10,6 +10,7 @@ use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -169,7 +170,40 @@ final readonly class PropertyContext implements Context
             info: $property->info(),
             externalId: $property->externalId(),
             companyId: $company->id(),
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
+            operatingRegime: $property->operatingRegime(),
         );
+    }
+
+    #[Given('property :property has operating regime :regime')]
+    public function propertyHasOperatingRegime(string $property, string $regime): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($property));
+
+        assert(null !== $property);
+
+        $property->update(
+            name: $property->name(),
+            accountId: $property->accountId(),
+            info: $property->info(),
+            externalId: $property->externalId(),
+            companyId: $property->companyId(),
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
+            operatingRegime: OperatingRegime::from($regime),
+        );
+
+        $this->getPropertyRepository()->add($property);
+    }
+
+    #[Then('property :id should have operating regime :regime')]
+    public function propertyShouldHaveOperatingRegime(string $id, string $regime): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($id));
+
+        Assert::assertNotNull($property);
+        Assert::assertSame(OperatingRegime::from($regime), $property->operatingRegime());
     }
 
     #[Then('property :id has place location :label at :latitude, :longitude')]

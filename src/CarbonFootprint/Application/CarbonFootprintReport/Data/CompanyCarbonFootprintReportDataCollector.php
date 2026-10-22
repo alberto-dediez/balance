@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
@@ -16,7 +17,6 @@ use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepo
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Property\Domain\Model\Company\CompanyRepository;
-use App\Property\Domain\Model\Property\PropertyRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprintReportDataCollector
@@ -24,7 +24,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
     public function __construct(
         private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
         private CompanyRepository $companyRepository,
-        private PropertyRepository $propertyRepository,
+        private CompanyProperties $companyProperties,
         private EmissionFactorGroupRepository $emissionFactorGroupRepository,
         private EmissionsBreakdownBuilder $breakdownBuilder,
         private OrganizationalCarbonFootprintReportLinesBuilder $linesBuilder,
@@ -61,7 +61,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
         }
 
         $propertyNamesById = [];
-        foreach ($this->propertyRepository->findByCompanyId($company->id()) as $property) {
+        foreach ($this->companyProperties->all($company->id()) as $property) {
             $propertyNamesById[(string) $property->id()] = $property->name();
         }
 
@@ -102,6 +102,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
             scope3ExclusionReason: $companyCarbonFootprint->stageExclusionReason(Scope::Scope3),
             scope3ExclusionComment: $companyCarbonFootprint->stageExclusionComment(Scope::Scope3),
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($companyCarbonFootprint, Scope::Scope3),
+            nonConsolidatedPropertyLines: $this->derivedSourceEmissionsCalculator->nonConsolidatedPropertyLines($companyCarbonFootprint, Scope::Scope3),
         );
     }
 }

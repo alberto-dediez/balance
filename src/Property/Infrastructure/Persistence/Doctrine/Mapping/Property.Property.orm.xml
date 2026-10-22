@@ -19,6 +19,11 @@
         
         <field name="numberOfEmployees" type="integer" column="number_of_employees" nullable="true" />
         <field name="dailyClients" type="integer" column="daily_clients" nullable="true" />
+        <field name="operatingRegime" type="string" column="operating_regime" enum-type="App\Property\Domain\Model\Property\OperatingRegime" nullable="false">
+            <options>
+                <option name="default">owned</option>
+            </options>
+        </field>
 
         <field name="removed" type="boolean" nullable="true" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />

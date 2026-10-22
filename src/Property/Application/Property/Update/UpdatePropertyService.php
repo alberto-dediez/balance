@@ -63,6 +63,7 @@ class UpdatePropertyService implements CommandHandler
             companyId: $companyId,
             numberOfEmployees: $request->numberOfEmployees,
             dailyClients: $request->dailyClients,
+            operatingRegime: $request->operatingRegime,
         );
 
         $this->repository->add($property);
@@ -76,6 +77,7 @@ class UpdatePropertyService implements CommandHandler
             companyId: $property->companyId(),
             numberOfEmployees: $property->numberOfEmployees(),
             dailyClients: $property->dailyClients(),
+            operatingRegime: $property->operatingRegime(),
         );
     }
 

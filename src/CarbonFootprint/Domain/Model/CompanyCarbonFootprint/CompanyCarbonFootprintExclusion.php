@@ -61,4 +61,11 @@ class CompanyCarbonFootprintExclusion implements SourceExclusion
     {
         return $this->excludedAt;
     }
+
+    public function update(ExclusionReason $reason, ?string $comment, \DateTimeImmutable $excludedAt): void
+    {
+        $this->reason = $reason;
+        $this->comment = $comment;
+        $this->excludedAt = $excludedAt;
+    }
 }

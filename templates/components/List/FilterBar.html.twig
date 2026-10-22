@@ -56,6 +56,8 @@
                             {% set value = value.value | trans({}, 'unitType') %}
                         {% elseif field == 'mode' %}
                             {% set value = value.value | trans({}, 'transportModeType') %}
+                        {% elseif field == 'operatingRegime' %}
+                            {% set value = value.value | trans({}, 'operatingRegime') %}
                         {% endif %}
 
                         <twig:List:FilterShow

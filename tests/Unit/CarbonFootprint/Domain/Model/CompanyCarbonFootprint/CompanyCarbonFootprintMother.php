@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 
@@ -103,6 +106,22 @@ class CompanyCarbonFootprintMother
         $companyCarbonFootprint = self::withScope2Answered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
         $companyCarbonFootprint->excludeStage(Scope::Scope3, $reason, $comment);
         $companyCarbonFootprint->answerScope(Scope::Scope3);
+
+        return $companyCarbonFootprint;
+    }
+
+    public static function withNonConsolidatedProperty(
+        PropertyId $propertyId,
+        Source $source,
+        Emissions $calculated,
+        ?string $manual = null,
+        string $companyId = 'company-id',
+        string $id = 'company-carbon-footprint-id',
+        string $accountId = 'account-id',
+        int $year = 2025,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = self::withScope3Answered($companyId, $id, $accountId, $year);
+        $companyCarbonFootprint->recordNonConsolidatedProperty($propertyId, $source, null, $calculated, $manual);
 
         return $companyCarbonFootprint;
     }

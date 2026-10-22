@@ -69,3 +69,28 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/properties/edit/333"
         Then the response status should be 403
+
+    Scenario: As an owner, I can change the operating regime of my property
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "333" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/edit/333"
+        Then I see a form field "operatingRegime" with value "owned"
+        When I submit a form with "name:Hotel|[operatingRegime]:franchised" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Propiedad actualizada"
+        When I go to "/es/properties/edit/333"
+        Then I see a form field "operatingRegime" with value "franchised"
+
+    Scenario: As an admin, I can change the operating regime of a property
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given property "Hotel" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/properties/edit/333"
+        When I submit a form with "name:Hotel|[operatingRegime]:leased_out" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        When I go to "/es/admin/properties/edit/333"
+        Then I see a form field "operatingRegime" with value "leased_out"

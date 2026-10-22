@@ -26,6 +26,10 @@ class MitigationSourceType extends AbstractType
             foreach ($scope->sections() as $section) {
                 $choices[$section->source->value] = $section->source;
             }
+
+            foreach ($scope->companyOnlySources() as $source) {
+                $choices[$source->value] = $source;
+            }
         }
 
         $resolver->setDefaults([

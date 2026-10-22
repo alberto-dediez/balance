@@ -18,6 +18,7 @@ class PropertyFilter
         public ?DestinationId $destinationId = null,
         public ?CountryId $countryId = null,
         public ?AccountId $accountId = null,
+        public ?OperatingRegime $operatingRegime = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

@@ -24,6 +24,8 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateEconomicSectorActivity
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdatePurchaseServiceActivityService;
 use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
+use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
@@ -31,6 +33,10 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\AnswerCom
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\AnswerCompanyCarbonFootprintScopeService;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\PropertySectionAnswers;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyAnswer;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\EconomicSectorAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
@@ -55,6 +61,7 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryA
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryCompanyCarbonFootprintRepository;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
@@ -76,6 +83,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixMot
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
@@ -96,6 +104,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
     private \App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer $electricityMarketer;
     private PropertyId $firstPropertyId;
     private PropertyId $secondPropertyId;
+    private PropertyId $franchisedPropertyId;
     private PurchaseService $purchaseService;
     private EconomicSector $economicSector;
     private AnswerCompanyCarbonFootprintScopeService $sut;
@@ -110,6 +119,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
 
         $this->firstPropertyId = new PropertyId('property-1');
         $this->secondPropertyId = new PropertyId('property-2');
+        $this->franchisedPropertyId = new PropertyId('property-3');
 
         $this->propertyRepository->add(PropertyMother::from(
             propertyId: $this->firstPropertyId,
@@ -124,6 +134,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             accountId: new AccountId('account-id-test'),
             companyId: new CompanyId(self::COMPANY_ID),
         ));
+        $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Hotel C', new CompanyId(self::COMPANY_ID), $this->franchisedPropertyId, OperatingRegime::Franchised));
 
         $this->combustible = CombustibleMother::fromName('Gas natural');
         $this->combustible->setEmissionFactor($this->factor('0.18', Unit::KWh));
@@ -177,12 +188,19 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             ),
         ]);
 
+        $companyProperties = new CompanyProperties($this->propertyRepository);
+
         $this->sut = new AnswerCompanyCarbonFootprintScopeService(
             $this->repository,
-            $this->propertyRepository,
+            $companyProperties,
             new CompanyCarbonFootprintAuthorizer(),
             new StageAnswersProcessor(),
             new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), $this->propertyRepository)),
+            new NonConsolidatedPropertiesSynchronizer(new NonConsolidatedPropertyEmissionsResolver(
+                $companyProperties,
+                PropertyCarbonFootprintRepositoryMother::inMemory(),
+                new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
+            )),
         );
     }
 
@@ -303,6 +321,91 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             Scope::Scope3,
             [new PropertySectionAnswers($this->firstPropertyId, [$this->purchasesSection()])],
             stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
+        ), $this->ownerUser());
+    }
+
+    public function testAnsweringScope3RecordsTheNonConsolidatedPropertiesWithTheManualEmissions(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            nonConsolidatedProperties: [new NonConsolidatedPropertyAnswer($this->franchisedPropertyId, '4500')],
+        ), $this->ownerUser());
+
+        $lines = $footprint->nonConsolidatedPropertyLines();
+        $this->assertCount(1, $lines);
+        $this->assertSame((string) $this->franchisedPropertyId, (string) $lines[0]->propertyId);
+        $this->assertSame(Source::Franchises, $lines[0]->source);
+        $this->assertSame('4500', $lines[0]->manualCo2eq);
+        $this->assertSame('0', $lines[0]->calculatedEmissions->co2eq());
+        $this->assertNull($lines[0]->propertyCarbonFootprintId);
+    }
+
+    public function testABlockOfAFranchisedPropertyIsRejected(): void
+    {
+        $footprint = $this->registeredFootprint();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Property does not belong to company');
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, [
+            new PropertySectionAnswers($this->franchisedPropertyId, [$this->combustibleSection()]),
+        ]), $this->ownerUser());
+    }
+
+    public function testAnsweringAScopeRemovesTheActivitiesOfAPropertyThatBecameFranchised(): void
+    {
+        $footprint = $this->registeredFootprint();
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, [
+            new PropertySectionAnswers($this->secondPropertyId, [$this->combustibleSection()]),
+        ]), $this->ownerUser());
+
+        $placement = new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: $this->secondPropertyId);
+        $this->assertCount(1, $footprint->activityIds($placement));
+
+        $property = $this->propertyRepository->find($this->secondPropertyId);
+        assert(null !== $property);
+        $property->update(name: $property->name(), accountId: $property->accountId(), companyId: $property->companyId(), operatingRegime: OperatingRegime::Franchised);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, []), $this->ownerUser());
+
+        $this->assertCount(0, $footprint->activityIds($placement));
+    }
+
+    public function testExcludingTheWholeScope3DoesNotRecordNonConsolidatedProperties(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
+            nonConsolidatedProperties: [new NonConsolidatedPropertyAnswer($this->franchisedPropertyId, '4500')],
+        ), $this->ownerUser());
+
+        $this->assertSame([], $footprint->nonConsolidatedPropertyLines());
+    }
+
+    public function testManualEmissionsOfAnOwnedPropertyAreRejected(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Property is not a non-consolidated property of the company');
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            nonConsolidatedProperties: [new NonConsolidatedPropertyAnswer($this->firstPropertyId, '100')],
         ), $this->ownerUser());
     }
 

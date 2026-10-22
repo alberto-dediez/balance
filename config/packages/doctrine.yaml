@@ -83,6 +83,7 @@ doctrine:
             company_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintIdType
             company_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintActivityIdType
             company_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintExclusionIdType
+            company_carbon_footprint_non_consolidated_property_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintNonConsolidatedPropertyIdType
             mitigation_measure_category_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MitigationMeasureCategoryIdType
             mitigation_measure_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MitigationMeasureIdType
             mitigation_measure_effect_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MitigationMeasureEffectIdType

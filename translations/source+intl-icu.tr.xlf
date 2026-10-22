@@ -101,6 +101,14 @@
         <source>investments</source>
         <target>NEW_investments</target>
       </trans-unit>
+      <trans-unit id="o3qn.LF" resname="downstream_leased_assets">
+        <source>downstream_leased_assets</source>
+        <target>NEW_downstream_leased_assets</target>
+      </trans-unit>
+      <trans-unit id="kYfgk8s" resname="franchises">
+        <source>franchises</source>
+        <target>NEW_franchises</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
