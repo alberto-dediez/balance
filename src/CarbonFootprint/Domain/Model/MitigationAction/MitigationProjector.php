@@ -19,7 +19,7 @@ final class MitigationProjector
 
         $emittingKeys = [];
         foreach ($emissionSources as $emissionSource) {
-            if ($emissionSource->emissions > 0.0) {
+            if (!$emissionSource->isDerived() && $emissionSource->emissions > 0.0) {
                 $emittingKeys[$emissionSource->key()] = true;
             }
         }
@@ -68,7 +68,7 @@ final class MitigationProjector
             foreach ($years as $year) {
                 $rate = 0.0;
 
-                foreach ($ratesByKey[$emissionSource->key()] ?? [] as $entry) {
+                foreach ($ratesByKey[$emissionSource->reductionKey()] ?? [] as $entry) {
                     if ($entry['baseYear'] < $year && $year <= $entry['targetYear']) {
                         $rate += $entry['rate'];
                     }

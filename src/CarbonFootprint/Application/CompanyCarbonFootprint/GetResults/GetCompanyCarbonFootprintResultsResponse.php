@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\Property\Domain\Model\Property\Property;
@@ -27,5 +28,6 @@ final class GetCompanyCarbonFootprintResultsResponse
         public readonly array $emissionsByPropertyId = [],
         public readonly array $properties = [],
         public readonly array $exclusions = [],
+        public readonly ?StageExclusionAnswer $scope3Exclusion = null,
     ) {}
 }

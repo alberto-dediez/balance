@@ -11,11 +11,13 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 
 final class EmissionsBreakdownBuilder
 {
     public function __construct(
         private ActivityRepository $activityRepository,
+        private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
     ) {}
 
     /** @param list<CalculationStage> $stages */
@@ -81,6 +83,23 @@ final class EmissionsBreakdownBuilder
                 if (null !== $locationBasedEmissions) {
                     $locationBasedElectricity = $locationBasedElectricity->add($locationBasedEmissions);
                 }
+            }
+        }
+
+        foreach ($stages as $stage) {
+            if (!$stage instanceof Scope || [] === $stage->derivedSources()) {
+                continue;
+            }
+
+            foreach ($this->derivedSourceEmissionsCalculator->lines($carbonFootprint, $stage) as $line) {
+                $sourceValue = $line->source->value;
+                $propertyKey = (string) $line->origin->propertyId;
+
+                $total = $total->add($line->emissions);
+                $bySource[$sourceValue] = $bySource[$sourceValue]->add($line->emissions);
+                $byStage[$stage->key()] = $byStage[$stage->key()]->add($line->emissions);
+                $byStageAndSource[$stage->key()][$sourceValue] = $byStageAndSource[$stage->key()][$sourceValue]->add($line->emissions);
+                $byPropertyId[$propertyKey] = ($byPropertyId[$propertyKey] ?? new Emissions())->add($line->emissions);
             }
         }
 

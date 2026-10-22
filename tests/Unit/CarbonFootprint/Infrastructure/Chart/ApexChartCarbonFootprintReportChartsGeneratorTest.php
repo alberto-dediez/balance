@@ -96,8 +96,8 @@ class ApexChartCarbonFootprintReportChartsGeneratorTest extends TestCase
         $this->assertSame('donut', $calls[0]['chart']['type']);
         $this->assertSame([180.0, 2500.0, 1250.0], $calls[0]['series']);
         $this->assertSame('bar', $calls[1]['chart']['type']);
-        $this->assertSame([1430.0, 2500.0], $calls[1]['series'][0]['data']);
-        $this->assertSame(['scope_1', 'scope_2'], $calls[1]['xaxis']['categories']);
+        $this->assertSame([1430.0, 2500.0, 0.0], $calls[1]['series'][0]['data']);
+        $this->assertSame(['scope_1', 'scope_2', 'scope_3'], $calls[1]['xaxis']['categories']);
     }
 
     public function testGeneratesTheByPropertyChartOnlyForACompany(): void

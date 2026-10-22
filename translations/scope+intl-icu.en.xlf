@@ -13,6 +13,10 @@
         <source>scope_2</source>
         <target>Scope 2</target>
       </trans-unit>
+      <trans-unit id="aE.zhya" resname="scope_3">
+        <source>scope_3</source>
+        <target>Scope 3</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

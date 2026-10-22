@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
@@ -77,6 +78,35 @@ class PropertyCarbonFootprintMother
         return $propertyCarbonFootprint;
     }
 
+    public static function withScope3Answered(
+        string $propertyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): PropertyCarbonFootprint {
+        $propertyCarbonFootprint = self::withScope2Answered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $propertyCarbonFootprint->answerScope(Scope::Scope3);
+
+        return $propertyCarbonFootprint;
+    }
+
+    public static function withScope3Excluded(
+        string $propertyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        ExclusionReason $reason = ExclusionReason::NoDataAvailable,
+        ?string $comment = null,
+    ): PropertyCarbonFootprint {
+        $propertyCarbonFootprint = self::withScope2Answered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $propertyCarbonFootprint->excludeStage(Scope::Scope3, $reason, $comment);
+        $propertyCarbonFootprint->answerScope(Scope::Scope3);
+
+        return $propertyCarbonFootprint;
+    }
+
     public static function withMitigationPlanStarted(
         string $propertyId,
         string $id,
@@ -84,6 +114,6 @@ class PropertyCarbonFootprintMother
         int $year = 2025,
         ?EmissionFactorGroupId $emissionFactorGroupId = null,
     ): PropertyCarbonFootprint {
-        return self::withScope2Answered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
+        return self::withScope3Answered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
     }
 }

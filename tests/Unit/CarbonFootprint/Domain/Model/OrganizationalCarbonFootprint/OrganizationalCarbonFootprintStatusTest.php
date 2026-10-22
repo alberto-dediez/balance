@@ -13,17 +13,20 @@ final class OrganizationalCarbonFootprintStatusTest extends TestCase
     {
         $this->assertSame(Status::Scope1Answered, Status::Started->advancedTo(Status::Scope1Answered));
         $this->assertSame(Status::Scope2Answered, Status::Scope1Answered->advancedTo(Status::Scope2Answered));
+        $this->assertSame(Status::Scope3Answered, Status::Scope2Answered->advancedTo(Status::Scope3Answered));
     }
 
     public function testAdvancedToNeverGoesBack(): void
     {
         $this->assertSame(Status::Scope2Answered, Status::Scope2Answered->advancedTo(Status::Scope1Answered));
+        $this->assertSame(Status::Scope3Answered, Status::Scope3Answered->advancedTo(Status::Scope2Answered));
     }
 
     public function testCompletedIsPreserved(): void
     {
         $this->assertSame(Status::Completed, Status::Completed->advancedTo(Status::Scope1Answered));
         $this->assertSame(Status::Completed, Status::Completed->advancedTo(Status::Scope2Answered));
+        $this->assertSame(Status::Completed, Status::Completed->advancedTo(Status::Scope3Answered));
     }
 
     public function testIsScope1Answered(): void
@@ -31,6 +34,7 @@ final class OrganizationalCarbonFootprintStatusTest extends TestCase
         $this->assertFalse(Status::Started->isScope1Answered());
         $this->assertTrue(Status::Scope1Answered->isScope1Answered());
         $this->assertTrue(Status::Scope2Answered->isScope1Answered());
+        $this->assertTrue(Status::Scope3Answered->isScope1Answered());
         $this->assertTrue(Status::Completed->isScope1Answered());
     }
 
@@ -39,14 +43,25 @@ final class OrganizationalCarbonFootprintStatusTest extends TestCase
         $this->assertFalse(Status::Started->isScope2Answered());
         $this->assertFalse(Status::Scope1Answered->isScope2Answered());
         $this->assertTrue(Status::Scope2Answered->isScope2Answered());
+        $this->assertTrue(Status::Scope3Answered->isScope2Answered());
         $this->assertTrue(Status::Completed->isScope2Answered());
+    }
+
+    public function testIsScope3Answered(): void
+    {
+        $this->assertFalse(Status::Started->isScope3Answered());
+        $this->assertFalse(Status::Scope1Answered->isScope3Answered());
+        $this->assertFalse(Status::Scope2Answered->isScope3Answered());
+        $this->assertTrue(Status::Scope3Answered->isScope3Answered());
+        $this->assertTrue(Status::Completed->isScope3Answered());
     }
 
     public function testActiveStepKey(): void
     {
         $this->assertSame('scope-1', Status::Started->activeStepKey());
         $this->assertSame('scope-2', Status::Scope1Answered->activeStepKey());
-        $this->assertSame('mitigation-plan', Status::Scope2Answered->activeStepKey());
+        $this->assertSame('scope-3', Status::Scope2Answered->activeStepKey());
+        $this->assertSame('mitigation-plan', Status::Scope3Answered->activeStepKey());
         $this->assertSame('results', Status::Completed->activeStepKey());
     }
 
@@ -55,6 +70,7 @@ final class OrganizationalCarbonFootprintStatusTest extends TestCase
         $this->assertSame(1, Status::Started->stepNumber());
         $this->assertSame(2, Status::Scope1Answered->stepNumber());
         $this->assertSame(3, Status::Scope2Answered->stepNumber());
-        $this->assertSame(4, Status::Completed->stepNumber());
+        $this->assertSame(4, Status::Scope3Answered->stepNumber());
+        $this->assertSame(5, Status::Completed->stepNumber());
     }
 }

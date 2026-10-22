@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
@@ -28,6 +29,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
         private EmissionsBreakdownBuilder $breakdownBuilder,
         private OrganizationalCarbonFootprintReportLinesBuilder $linesBuilder,
         private MitigationPlanReportBuilder $mitigationPlanBuilder,
+        private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -78,6 +80,10 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             activityLines: $this->linesBuilder->activityLines($propertyCarbonFootprint, []),
             exclusionLines: $this->linesBuilder->exclusionLines($propertyCarbonFootprint),
             mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Property, $propertyCarbonFootprint, $report->baseLocale()),
+            scope3Excluded: $propertyCarbonFootprint->isStageExcluded(Scope::Scope3),
+            scope3ExclusionReason: $propertyCarbonFootprint->stageExclusionReason(Scope::Scope3),
+            scope3ExclusionComment: $propertyCarbonFootprint->stageExclusionComment(Scope::Scope3),
+            derivedLines: $this->derivedSourceEmissionsCalculator->lines($propertyCarbonFootprint, Scope::Scope3),
         );
     }
 }

@@ -28,6 +28,13 @@
                 <option name="default">0</option>
             </options>
         </field>
+        <field name="scope3Excluded" type="boolean" column="scope_3_excluded" nullable="false">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+        <field name="scope3ExclusionReason" type="string" column="scope_3_exclusion_reason" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason" nullable="true" />
+        <field name="scope3ExclusionComment" type="text" column="scope_3_exclusion_comment" nullable="true" />
 
         <field name="removed" type="boolean" nullable="false" />
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />

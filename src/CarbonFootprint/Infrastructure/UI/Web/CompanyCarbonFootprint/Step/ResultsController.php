@@ -34,9 +34,13 @@ class ResultsController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::View->value, $companyCarbonFootprint);
 
-        if (!$companyCarbonFootprint->status()->isScope2Answered()) {
+        if (!$companyCarbonFootprint->status()->isScope3Answered()) {
             return $this->redirectToRoute(
-                $companyCarbonFootprint->status()->isScope1Answered() ? 'company_carbon_footprints_scope_2' : 'company_carbon_footprints_scope_1',
+                match (true) {
+                    $companyCarbonFootprint->status()->isScope2Answered() => 'company_carbon_footprints_scope_3',
+                    $companyCarbonFootprint->status()->isScope1Answered() => 'company_carbon_footprints_scope_2',
+                    default => 'company_carbon_footprints_scope_1',
+                },
                 ['companyCarbonFootprintId' => $companyCarbonFootprintId],
             );
         }
@@ -52,6 +56,7 @@ class ResultsController extends AbstractController
                 $results->exclusions,
                 $results->emissionsByPropertyId,
                 $results->properties,
+                $results->scope3Exclusion,
             ) + [
                 'companyCarbonFootprint' => $companyCarbonFootprint,
                 'companyCarbonFootprintId' => $companyCarbonFootprintId,

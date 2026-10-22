@@ -1,6 +1,6 @@
 {% extends '@carbon_footprint/company_carbon_footprints/wizard-layout.html.twig' %}
 
-{% set wizard_selected = 3 %}
+{% set wizard_selected = 4 %}
 
 {% block top_actions %}
     {{ parent() }}
@@ -20,6 +20,6 @@
 {% block wizard_panels %}
     {% include '@carbon_footprint/organizational_carbon_footprints/_mitigation_plan.html.twig' with {
         carbonFootprint: companyCarbonFootprint,
-        previousPath: path('company_carbon_footprints_scope_2', {companyCarbonFootprintId: companyCarbonFootprintId}),
+        previousPath: path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId}),
     } %}
 {% endblock %}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Tcpdf;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportCompensationLine;
@@ -64,6 +65,9 @@ trait CarbonFootprintReportFiguresTrait
             new PdfKeyFigure($this->trans('Emisiones totales', $locale), $this->tonnes($data->totalEmissions->co2eq()), 't CO₂eq'),
             new PdfKeyFigure($this->translator->trans(Scope::Scope1->value, [], 'scope', $locale->value), $this->tonnes(($data->emissionsByScope[Scope::Scope1->value] ?? new Emissions())->co2eq()), 't CO₂eq'),
             new PdfKeyFigure($this->translator->trans(Scope::Scope2->value, [], 'scope', $locale->value), $this->tonnes(($data->emissionsByScope[Scope::Scope2->value] ?? new Emissions())->co2eq()), 't CO₂eq'),
+            $data->scope3Excluded
+                ? new PdfKeyFigure($this->translator->trans(Scope::Scope3->value, [], 'scope', $locale->value), $this->trans('Excluido', $locale))
+                : new PdfKeyFigure($this->translator->trans(Scope::Scope3->value, [], 'scope', $locale->value), $this->tonnes(($data->emissionsByScope[Scope::Scope3->value] ?? new Emissions())->co2eq()), 't CO₂eq'),
             new PdfKeyFigure($this->trans('Fuente con más emisiones', $locale), $this->translator->trans($this->maxKey($data->emissionsBySource, Source::FixedFacilities->value), [], 'source', $locale->value)),
             new PdfKeyFigure($this->trans('Electricidad por localización', $locale), $this->tonnes($data->locationBasedElectricityEmissions->co2eq()), 't CO₂eq'),
         ];
@@ -149,12 +153,22 @@ trait CarbonFootprintReportFiguresTrait
         $sources = [];
 
         foreach ($stages as $stage) {
-            foreach ($stage->sections() as $section) {
-                $sources[$section->source->value] = true;
+            foreach ($this->sourcesOf($stage) as $source) {
+                $sources[$source->value] = true;
             }
         }
 
         return array_values(array_filter(Source::cases(), static fn(Source $source): bool => isset($sources[$source->value])));
+    }
+
+    /** @return list<Source> */
+    private function sourcesOf(CalculationStage $stage): array
+    {
+        if ($stage instanceof Scope) {
+            return $stage->allSources();
+        }
+
+        return array_map(static fn(SectionDefinition $section): Source => $section->source, $stage->sections());
     }
 
     /**
@@ -222,11 +236,11 @@ trait CarbonFootprintReportFiguresTrait
         $rows = [];
 
         foreach (Scope::cases() as $scope) {
-            foreach ($scope->sections() as $section) {
+            foreach ($this->stageSources([$scope]) as $source) {
                 $rows[] = [
                     $this->translator->trans($scope->value, [], 'scope', $locale->value),
-                    $this->translator->trans($section->source->value, [], 'source', $locale->value),
-                    $this->number(($data->emissionsByScopeAndSource[$scope->value][$section->source->value] ?? new Emissions())->co2eq()),
+                    $this->translator->trans($source->value, [], 'source', $locale->value),
+                    $this->number(($data->emissionsByScopeAndSource[$scope->value][$source->value] ?? new Emissions())->co2eq()),
                 ];
             }
         }
@@ -252,12 +266,24 @@ trait CarbonFootprintReportFiguresTrait
         $rows = [];
 
         foreach (Scope::cases() as $scope) {
-            foreach ($scope->sections() as $section) {
-                $exclusion = $this->exclusionFor($data, $scope, $section->source);
+            if (Scope::Scope3 === $scope && $data->scope3Excluded) {
+                $rows[] = [
+                    $this->translator->trans($scope->value, [], 'scope', $locale->value),
+                    $this->trans('Alcance completo', $locale),
+                    $this->trans('No', $locale),
+                    null === $data->scope3ExclusionReason ? '-' : $this->translator->trans($data->scope3ExclusionReason->value, [], 'exclusionReason', $locale->value),
+                    $data->scope3ExclusionComment ?? '-',
+                ];
+
+                continue;
+            }
+
+            foreach ($this->stageSources([$scope]) as $source) {
+                $exclusion = $this->exclusionFor($data, $scope, $source);
 
                 $rows[] = [
                     $this->translator->trans($scope->value, [], 'scope', $locale->value),
-                    $this->translator->trans($section->source->value, [], 'source', $locale->value),
+                    $this->translator->trans($source->value, [], 'source', $locale->value),
                     null === $exclusion ? $this->trans('Sí', $locale) : $this->trans('No', $locale),
                     null === $exclusion ? '-' : $this->translator->trans($exclusion->reason->value, [], 'exclusionReason', $locale->value),
                     $exclusion->comment ?? '-',
@@ -269,21 +295,54 @@ trait CarbonFootprintReportFiguresTrait
     }
 
     /** @return list<array{0: Scope, 1: Source, 2: string}> */
-    private function scopeSourceDefinitions(Locale $locale): array
+    private function scopeSourceDefinitions(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
     {
         $definitions = [];
 
         foreach (Scope::cases() as $scope) {
-            foreach ($scope->sections() as $section) {
+            if (Scope::Scope3 === $scope && $data->scope3Excluded) {
+                continue;
+            }
+
+            foreach ($this->stageSources([$scope]) as $source) {
+                if (Scope::Scope3 === $scope && !$this->hasReportedSource($data, $scope, $source)) {
+                    continue;
+                }
+
                 $definitions[] = [
                     $scope,
-                    $section->source,
-                    $this->translator->trans($scope->value, [], 'scope', $locale->value) . ' · ' . $this->translator->trans($section->source->value, [], 'source', $locale->value),
+                    $source,
+                    $this->translator->trans($scope->value, [], 'scope', $locale->value) . ' · ' . $this->translator->trans($source->value, [], 'source', $locale->value),
                 ];
             }
         }
 
         return $definitions;
+    }
+
+    private function hasReportedSource(OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source): bool
+    {
+        if (null !== $this->exclusionFor($data, $scope, $source)) {
+            return true;
+        }
+
+        if ((float) ($data->emissionsByScopeAndSource[$scope->value][$source->value] ?? new Emissions())->co2eq() > 0.0) {
+            return true;
+        }
+
+        foreach ($data->activityLines as $line) {
+            if ($line->scope === $scope && $line->source === $source) {
+                return true;
+            }
+        }
+
+        foreach ($data->derivedLines as $line) {
+            if ($line->source === $source) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function exclusionFor(OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source): ?OrganizationalCarbonFootprintReportExclusionLine
@@ -338,6 +397,34 @@ trait CarbonFootprintReportFiguresTrait
             $totalRow[0] = $this->trans('Total', $locale);
             $totalRow[] = $this->number($total);
             $rows[] = $totalRow;
+        }
+
+        return [$header, $rows, $widths, $hasTotal];
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
+    private function derivedSourceTable(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $header = [$this->trans('Alcance', $locale), $this->trans('Fuente', $locale), $this->trans('Tipo', $locale), $this->trans('Emisiones kgCO2eq', $locale)];
+        $widths = ['20%', '35%', '25%', '20%'];
+
+        $rows = [];
+        $total = 0.0;
+
+        foreach ($data->derivedLines as $line) {
+            $rows[] = [
+                $this->translator->trans($line->origin->stage->key(), [], 'scope', $locale->value),
+                $this->translator->trans($line->origin->source->value, [], 'source', $locale->value),
+                $this->translator->trans($line->activityType->value, [], 'activityType', $locale->value),
+                $this->number($line->emissions->co2eq()),
+            ];
+            $total += (float) $line->emissions->co2eq();
+        }
+
+        $hasTotal = [] !== $rows;
+
+        if ($hasTotal) {
+            $rows[] = [$this->trans('Total', $locale), '', '', $this->number($total)];
         }
 
         return [$header, $rows, $widths, $hasTotal];
@@ -526,7 +613,7 @@ trait CarbonFootprintReportFiguresTrait
         foreach ($data->exclusionLines as $exclusionLine) {
             $rows[] = [
                 $this->translator->trans($exclusionLine->scope->value, [], 'scope', $locale->value),
-                $this->translator->trans($exclusionLine->source->value, [], 'source', $locale->value),
+                null === $exclusionLine->source ? $this->trans('Alcance completo', $locale) : $this->translator->trans($exclusionLine->source->value, [], 'source', $locale->value),
                 $this->translator->trans($exclusionLine->reason->value, [], 'exclusionReason', $locale->value),
                 $exclusionLine->comment ?? '-',
             ];

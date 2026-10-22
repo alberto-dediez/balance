@@ -7,32 +7,48 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CompanyCarbonFootprint\Answ
 use App\CarbonFootprint\Application\Activity\ActivityAuthorizer;
 use App\CarbonFootprint\Application\Activity\Answer\ActivityAnswerHandlerRegistry;
 use App\CarbonFootprint\Application\Activity\Answer\CombustibleAnswerHandler;
+use App\CarbonFootprint\Application\Activity\Answer\EconomicSectorAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
+use App\CarbonFootprint\Application\Activity\Answer\PurchaseServiceAnswerHandler;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
+use App\CarbonFootprint\Application\Activity\EconomicSectorEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityMixEmissionsResolver;
+use App\CarbonFootprint\Application\Activity\PurchaseServiceEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivityService;
+use App\CarbonFootprint\Application\Activity\Register\RegisterEconomicSectorActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
+use App\CarbonFootprint\Application\Activity\Register\RegisterPurchaseServiceActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
+use App\CarbonFootprint\Application\Activity\Update\UpdateEconomicSectorActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
+use App\CarbonFootprint\Application\Activity\Update\UpdatePurchaseServiceActivityService;
 use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\AnswerCompanyCarbonFootprintScopeRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\AnswerCompanyCarbonFootprintScopeService;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\PropertySectionAnswers;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\Answer\EconomicSectorAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\Answer\PurchaseServiceAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\EconomicSector\EconomicSector;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\PurchaseService\PurchaseService;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
@@ -52,12 +68,16 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
@@ -76,6 +96,8 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
     private \App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketer $electricityMarketer;
     private PropertyId $firstPropertyId;
     private PropertyId $secondPropertyId;
+    private PurchaseService $purchaseService;
+    private EconomicSector $economicSector;
     private AnswerCompanyCarbonFootprintScopeService $sut;
 
     protected function setUp(): void
@@ -118,11 +140,23 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
         $electricityMixRepository = ElectricityMixRepositoryMother::inMemory();
         $electricityMixRepository->add($electricityMix);
 
+        $this->purchaseService = PurchaseServiceMother::registeredPurchaseService();
+        $this->purchaseService->setEmissionFactor($this->factor('0.5', Unit::Euro));
+        $purchaseServiceRepository = PurchaseServiceRepositoryMother::inMemory();
+        $purchaseServiceRepository->add($this->purchaseService);
+
+        $this->economicSector = EconomicSectorMother::registeredEconomicSector();
+        $this->economicSector->setEmissionFactor($this->factor('0.2', Unit::Euro));
+        $economicSectorRepository = EconomicSectorRepositoryMother::inMemory();
+        $economicSectorRepository->add($this->economicSector);
+
         $authorizer = new ActivityAuthorizer();
         $calculator = EmissionsCalculatorMother::create();
         $combustibleSelector = new CombustibleEmissionFactorSelector($combustibleRepository);
         $electricitySelector = new ElectricityEmissionFactorSelector($electricityMarketerRepository, GdOFactorRepositoryMother::inMemory());
         $mixResolver = new ElectricityMixEmissionsResolver($electricityMixRepository, $calculator);
+        $purchaseServiceSelector = new PurchaseServiceEmissionFactorSelector($purchaseServiceRepository);
+        $economicSectorSelector = new EconomicSectorEmissionFactorSelector($economicSectorRepository);
 
         $handlers = new ActivityAnswerHandlerRegistry([
             new CombustibleAnswerHandler(
@@ -132,6 +166,14 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             new ElectricityAnswerHandler(
                 new RegisterElectricityActivityService($this->activityRepository, $authorizer, $electricitySelector, $calculator, $mixResolver),
                 new UpdateElectricityActivityService($this->activityRepository, $authorizer, $electricitySelector, $calculator, $mixResolver),
+            ),
+            new PurchaseServiceAnswerHandler(
+                new RegisterPurchaseServiceActivityService($this->activityRepository, $authorizer, $purchaseServiceSelector, $calculator),
+                new UpdatePurchaseServiceActivityService($this->activityRepository, $authorizer, $purchaseServiceSelector, $calculator),
+            ),
+            new EconomicSectorAnswerHandler(
+                new RegisterEconomicSectorActivityService($this->activityRepository, $authorizer, $economicSectorSelector, $calculator),
+                new UpdateEconomicSectorActivityService($this->activityRepository, $authorizer, $economicSectorSelector, $calculator),
             ),
         ]);
 
@@ -208,6 +250,79 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
         $this->assertInstanceOf(ElectricityActivity::class, $unassigned);
         $this->assertSame(180.0, (float) $withProperty->locationBasedEmissions()?->co2eq());
         $this->assertNull($unassigned->locationBasedEmissions());
+    }
+
+    public function testRegistersScope3ActivitiesByPropertyAndInTheUnassignedBlock(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3, [
+            new PropertySectionAnswers($this->firstPropertyId, [$this->purchasesSection()]),
+            new PropertySectionAnswers(null, [new SectionAnswer($this->scope3Section('investments'), [new EconomicSectorAnswer($this->economicSector->id(), new Quantity(5000.0, Unit::Euro))])]),
+        ]), $this->ownerUser());
+
+        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope3Answered, $footprint->status());
+        $this->assertTrue($footprint->isMitigationPlanStarted());
+        $this->assertCount(1, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices, propertyId: $this->firstPropertyId)));
+        $this->assertCount(1, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::Investments)));
+    }
+
+    public function testExcludingTheWholeScope3EmptiesEveryBlock(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3, [
+            new PropertySectionAnswers($this->firstPropertyId, [$this->purchasesSection()]),
+            new PropertySectionAnswers(null, [$this->purchasesSection()]),
+        ]), $this->ownerUser());
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
+        ), $this->ownerUser());
+
+        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope3Answered, $footprint->status());
+        $this->assertTrue($footprint->isStageExcluded(Scope::Scope3));
+        $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices, propertyId: $this->firstPropertyId)));
+        $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices)));
+    }
+
+    public function testExcludingTheWholeScope3WithAnswersInABlockThrows(): void
+    {
+        $footprint = $this->registeredFootprint();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            [new PropertySectionAnswers($this->firstPropertyId, [$this->purchasesSection()])],
+            stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
+        ), $this->ownerUser());
+    }
+
+    private function purchasesSection(): SectionAnswer
+    {
+        return new SectionAnswer(
+            $this->scope3Section('purchasedGoodsAndServices'),
+            [new PurchaseServiceAnswer($this->purchaseService->id(), new Quantity(1000.0, Unit::Euro))],
+        );
+    }
+
+    private function scope3Section(string $key): SectionDefinition
+    {
+        foreach (Scope::Scope3->sections() as $section) {
+            if ($key === $section->key) {
+                return $section;
+            }
+        }
+
+        throw new \InvalidArgumentException($key);
     }
 
     private function combustibleSection(): SectionAnswer

@@ -55,6 +55,7 @@ class LoadCompanyCarbonFootprintConsumptionsController extends AbstractControlle
         $stepRoute = match ($scopeEnum) {
             Scope::Scope1 => 'company_carbon_footprints_scope_1',
             Scope::Scope2 => 'company_carbon_footprints_scope_2',
+            Scope::Scope3 => throw $this->createNotFoundException('Bioscore no admite el alcance 3'),
         };
         $redirect = $this->redirectToRoute($stepRoute, ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
 

@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityReference;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -162,6 +163,21 @@ trait OrganizationalCarbonFootprintTrait
     public function isSourceExcluded(CalculationStage $stage, Source $source): bool
     {
         return null !== $this->exclusionFor($stage, $source);
+    }
+
+    public function isStageExcluded(CalculationStage $stage): bool
+    {
+        return $stage->key() === Scope::Scope3->key() && $this->scope3Excluded;
+    }
+
+    public function stageExclusionReason(CalculationStage $stage): ?ExclusionReason
+    {
+        return $stage->key() === Scope::Scope3->key() ? $this->scope3ExclusionReason : null;
+    }
+
+    public function stageExclusionComment(CalculationStage $stage): ?string
+    {
+        return $stage->key() === Scope::Scope3->key() ? $this->scope3ExclusionComment : null;
     }
 
     private function attachActivity(object $child): void

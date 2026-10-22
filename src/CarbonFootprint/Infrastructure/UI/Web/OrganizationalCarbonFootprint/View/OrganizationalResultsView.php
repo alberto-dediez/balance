@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -32,6 +33,7 @@ final class OrganizationalResultsView
         array $exclusions,
         array $emissionsByPropertyId = [],
         array $properties = [],
+        ?StageExclusionAnswer $scope3Exclusion = null,
     ): array {
         return [
             'sourceChart' => $this->sourceChart($emissionsBySource),
@@ -41,7 +43,7 @@ final class OrganizationalResultsView
                 Scope::cases(),
             ),
             'scopeSourceSeries' => $this->scopeSourceSeries($emissionsBySource, $emissionsByScopeAndSource),
-            'exclusions' => $this->exclusions($exclusions),
+            'exclusions' => $this->exclusions($exclusions, $scope3Exclusion),
             'propertyChart' => $this->propertyChart($emissionsByPropertyId, $properties),
         ];
     }
@@ -124,9 +126,18 @@ final class OrganizationalResultsView
      *
      * @return list<array{scope: string, source: string, reason: string, comment: ?string}>
      */
-    private function exclusions(array $exclusions): array
+    private function exclusions(array $exclusions, ?StageExclusionAnswer $scope3Exclusion): array
     {
         $rows = [];
+
+        if (null !== $scope3Exclusion) {
+            $rows[] = [
+                'scope' => $this->translator->trans(Scope::Scope3->value, [], 'scope'),
+                'source' => $this->translator->trans('Alcance completo'),
+                'reason' => $this->translator->trans($scope3Exclusion->reason->value, [], 'exclusionReason'),
+                'comment' => $scope3Exclusion->comment,
+            ];
+        }
 
         foreach ($exclusions as $exclusion) {
             $rows[] = [

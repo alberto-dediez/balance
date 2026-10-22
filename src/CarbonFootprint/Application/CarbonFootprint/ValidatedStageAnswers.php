@@ -16,5 +16,6 @@ final class ValidatedStageAnswers
     public function __construct(
         public readonly array $sectionAnswers,
         public readonly array $exclusionsBySource,
+        public readonly ?StageExclusionAnswer $stageExclusion = null,
     ) {}
 }

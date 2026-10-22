@@ -1,6 +1,6 @@
 {% extends '@carbon_footprint/company_carbon_footprints/wizard-layout.html.twig' %}
 
-{% set wizard_selected = 4 %}
+{% set wizard_selected = 5 %}
 
 {% block wizard_panels %}
     <div class="row">
@@ -53,7 +53,7 @@
                                 title="{{ 'Emisiones' | trans }}"
                                 :values="scopeChart.values"
                                 :categories="scopeChart.labels"
-                                :colors="['var(--bs-info)', 'var(--bs-warning)']"
+                                :colors="['var(--bs-info)', 'var(--bs-warning)', 'var(--bs-success)']"
                                 unit="kg"
                                 :decimals="0"
                             />

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -30,25 +31,27 @@ class OrganizationalResultsViewTest extends TestCase
     {
         $view = $this->sut->build($this->bySource(), $this->byScope(), $this->byScopeAndSource(), []);
 
-        $this->assertSame([Source::FixedFacilities->value, Source::BuildingElectricity->value], $view['sourceChart']['labels']);
-        $this->assertSame([180.0, 2500.0], $view['sourceChart']['values']);
+        $this->assertSame([Source::FixedFacilities->value, Source::BuildingElectricity->value, Source::BusinessTravel->value], $view['sourceChart']['labels']);
+        $this->assertSame([180.0, 2500.0, 900.0], $view['sourceChart']['values']);
     }
 
-    public function testScopeChartAlwaysHasBothScopes(): void
+    public function testScopeChartAlwaysHasTheThreeScopes(): void
     {
         $view = $this->sut->build($this->bySource(), $this->byScope(), $this->byScopeAndSource(), []);
 
-        $this->assertSame([Scope::Scope1->value, Scope::Scope2->value], $view['scopeChart']['labels']);
-        $this->assertSame([180.0, 2500.0], $view['scopeChart']['values']);
+        $this->assertSame([Scope::Scope1->value, Scope::Scope2->value, Scope::Scope3->value], $view['scopeChart']['labels']);
+        $this->assertSame([180.0, 2500.0, 900.0], $view['scopeChart']['values']);
     }
 
     public function testScopeSourceSeriesOnlyIncludesSourcesWithEmissions(): void
     {
         $view = $this->sut->build($this->bySource(), $this->byScope(), $this->byScopeAndSource(), []);
 
-        $this->assertCount(2, $view['scopeSourceSeries']);
+        $this->assertCount(3, $view['scopeSourceSeries']);
         $this->assertSame(Source::FixedFacilities->value, $view['scopeSourceSeries'][0]['name']);
-        $this->assertSame([180.0, 0.0], $view['scopeSourceSeries'][0]['data']);
+        $this->assertSame([180.0, 0.0, 0.0], $view['scopeSourceSeries'][0]['data']);
+        $this->assertSame(Source::BusinessTravel->value, $view['scopeSourceSeries'][2]['name']);
+        $this->assertSame([0.0, 0.0, 900.0], $view['scopeSourceSeries'][2]['data']);
     }
 
     public function testExclusionsAreTranslated(): void
@@ -68,6 +71,32 @@ class OrganizationalResultsViewTest extends TestCase
         $this->assertCount(1, $view['exclusions']);
         $this->assertSame(Scope::Scope1->value, $view['exclusions'][0]['scope']);
         $this->assertSame(Source::RefrigerantLeaks->value, $view['exclusions'][0]['source']);
+        $this->assertSame('Sin datos', $view['exclusions'][0]['comment']);
+    }
+
+    public function testTheScope3ExclusionIsTheFirstRow(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::registered();
+        $exclusion = new PropertyCarbonFootprintExclusion(
+            id: PropertyCarbonFootprintExclusionId::generate(),
+            propertyCarbonFootprint: $footprint,
+            scope: Scope::Scope1,
+            source: Source::RefrigerantLeaks,
+            reason: ExclusionReason::NoDataAvailable,
+        );
+
+        $view = $this->sut->build(
+            $this->bySource(),
+            $this->byScope(),
+            $this->byScopeAndSource(),
+            [$exclusion],
+            scope3Exclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable, 'Sin datos'),
+        );
+
+        $this->assertCount(2, $view['exclusions']);
+        $this->assertSame(Scope::Scope3->value, $view['exclusions'][0]['scope']);
+        $this->assertSame('Alcance completo', $view['exclusions'][0]['source']);
+        $this->assertSame(ExclusionReason::NoDataAvailable->value, $view['exclusions'][0]['reason']);
         $this->assertSame('Sin datos', $view['exclusions'][0]['comment']);
     }
 
@@ -104,6 +133,7 @@ class OrganizationalResultsViewTest extends TestCase
         }
         $bySource[Source::FixedFacilities->value] = new Emissions('180', '180', '0', '0');
         $bySource[Source::BuildingElectricity->value] = new Emissions('2500', '2500', '0', '0');
+        $bySource[Source::BusinessTravel->value] = new Emissions('900', '900', '0', '0');
 
         return $bySource;
     }
@@ -114,6 +144,7 @@ class OrganizationalResultsViewTest extends TestCase
         return [
             Scope::Scope1->value => new Emissions('180', '180', '0', '0'),
             Scope::Scope2->value => new Emissions('2500', '2500', '0', '0'),
+            Scope::Scope3->value => new Emissions('900', '900', '0', '0'),
         ];
     }
 
@@ -131,6 +162,9 @@ class OrganizationalResultsViewTest extends TestCase
         $scope2 = $empty;
         $scope2[Source::BuildingElectricity->value] = new Emissions('2500', '2500', '0', '0');
 
-        return [Scope::Scope1->value => $scope1, Scope::Scope2->value => $scope2];
+        $scope3 = $empty;
+        $scope3[Source::BusinessTravel->value] = new Emissions('900', '900', '0', '0');
+
+        return [Scope::Scope1->value => $scope1, Scope::Scope2->value => $scope2, Scope::Scope3->value => $scope3];
     }
 }

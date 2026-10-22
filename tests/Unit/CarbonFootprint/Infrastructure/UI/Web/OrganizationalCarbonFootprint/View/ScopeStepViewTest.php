@@ -95,4 +95,22 @@ class ScopeStepViewTest extends TestCase
         $this->assertSame([], $view['refrigerantGasRows']);
         $this->assertSame([], $view['electricityRows']);
     }
+
+    public function testSectionsAreIndexedByKeyWithTheirCatalogAndRows(): void
+    {
+        $activity = TransportActivityMother::registered(new AccountId('account-id'));
+        $transport = TransportMother::fromName('Camión');
+        $sections = Scope::Scope3->sections();
+
+        $view = $this->sut->build([
+            new StageSection($sections[2], [$activity], [$transport]),
+            new StageSection($sections[7], [], [$transport]),
+        ]);
+
+        $this->assertSame(['upstreamTransport', 'downstreamTransport'], array_keys($view['sections']));
+        $this->assertSame([$transport], $view['sections']['upstreamTransport']['catalog']);
+        $this->assertSame([], $view['sections']['upstreamTransport']['secondaryCatalog']);
+        $this->assertCount(1, $view['sections']['upstreamTransport']['rows']);
+        $this->assertCount(0, $view['sections']['downstreamTransport']['rows']);
+    }
 }

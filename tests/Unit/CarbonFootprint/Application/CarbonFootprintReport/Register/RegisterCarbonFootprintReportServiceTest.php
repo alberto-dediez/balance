@@ -143,12 +143,12 @@ class RegisterCarbonFootprintReportServiceTest extends TestCase
 
                 return (string) $footprint->id();
             case CarbonFootprintReportSubjectType::Property:
-                $footprint = PropertyCarbonFootprintMother::withScope2Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), $accountId);
+                $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), $accountId);
                 $this->propertyCarbonFootprints->add($footprint);
 
                 return (string) $footprint->id();
             default:
-                $footprint = CompanyCarbonFootprintMother::withScope2Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), $accountId);
+                $footprint = CompanyCarbonFootprintMother::withScope3Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), $accountId);
                 $this->companyCarbonFootprints->add($footprint);
 
                 return (string) $footprint->id();

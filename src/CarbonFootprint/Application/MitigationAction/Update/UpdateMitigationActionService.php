@@ -54,6 +54,10 @@ class UpdateMitigationActionService implements CommandHandler
         if ($mitigationAction->isManual()) {
             $emissionSources = [];
             foreach ($this->emissionSourcesBuilder->build($carbonFootprint) as $emissionSource) {
+                if ($emissionSource->isDerived()) {
+                    continue;
+                }
+
                 $emissionSources[$emissionSource->key()] = $emissionSource;
             }
 

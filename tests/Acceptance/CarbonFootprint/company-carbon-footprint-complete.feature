@@ -1,7 +1,7 @@
 Feature:
     I want a company carbon footprint to be completed when its mitigation plan step is submitted and to be reopened on demand
 
-    Scenario: Saving scope 2 moves to the mitigation plan without completing
+    Scenario: Saving scopes 2 and 3 moves to the mitigation plan without completing
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given company "Hotelera" with id "C1" of account "666" exists
@@ -12,6 +12,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "company_carbon_footprints_scope_3"
+        When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         Then company carbon footprint "999" should not be completed
 
@@ -26,6 +28,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "company_carbon_footprints_scope_3"
+        When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         When I submit the mitigation plan step form
         Then I am redirected to route "company_carbon_footprints_results"
@@ -46,6 +50,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "company_carbon_footprints_scope_3"
+        When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         When I submit the mitigation plan step form
         Then I am redirected to route "company_carbon_footprints_results"
@@ -65,6 +71,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "company_carbon_footprints_scope_3"
+        When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         When I submit the mitigation plan step form
         Then I am redirected to route "company_carbon_footprints_results"
@@ -85,6 +93,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "company_carbon_footprints_scope_3"
+        When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         When I submit the mitigation plan step form
         Then I am redirected to route "company_carbon_footprints_results"
@@ -97,7 +107,7 @@ Feature:
         Given company "Hotelera" with id "C1" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
         Given property "1111" has company "C1" assigned
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 3 answered exists
         Given company carbon footprint "999" is completed
         Given company carbon footprint "999" has a report "generated" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -106,3 +116,27 @@ Feature:
         Then I am redirected to route "company_carbon_footprints_scope_1"
         Then company carbon footprint "999" should not be completed
         Then there should be no report of company carbon footprint "999"
+
+    Scenario: The footprint cannot be completed until scope 3 is answered
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given company "Hotelera" with id "C1" of account "666" exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        When I am logged as "owner@dediez.software"
+        When I make a POST request to "/es/company-carbon-footprints/999/step/mitigation-plan"
+        Then I am redirected to route "company_carbon_footprints_scope_3"
+        Then company carbon footprint "999" should not be completed
+
+    Scenario: The total includes the scope 3 purchases and the derived fuel and energy emissions
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given company "Hotelera" with id "C1" of account "666" exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 3 answered exists
+        Given company carbon footprint "999" has a combustible "CB1" activity of "1000" kg with "210" kg well-to-tank
+        Given company carbon footprint "999" has a purchase service activity "PS1" in scope 3
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/company-carbon-footprints/999/step/mitigation-plan"
+        When I submit the mitigation plan step form
+        Then I am redirected to route "company_carbon_footprints_results"
+        Then company carbon footprint "999" should be completed
+        Then company carbon footprint "999" should have total emissions of "1710" kg

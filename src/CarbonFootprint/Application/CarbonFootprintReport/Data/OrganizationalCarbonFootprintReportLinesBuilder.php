@@ -80,6 +80,16 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
     {
         $lines = [];
 
+        $scope3ExclusionReason = $carbonFootprint->stageExclusionReason(Scope::Scope3);
+        if ($carbonFootprint->isStageExcluded(Scope::Scope3) && null !== $scope3ExclusionReason) {
+            $lines[] = new OrganizationalCarbonFootprintReportExclusionLine(
+                scope: Scope::Scope3,
+                source: null,
+                reason: $scope3ExclusionReason,
+                comment: $carbonFootprint->stageExclusionComment(Scope::Scope3),
+            );
+        }
+
         foreach ($carbonFootprint->allExclusions() as $exclusion) {
             $scope = $exclusion->stage();
 

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults;
 
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -45,6 +47,18 @@ final class GetCompanyCarbonFootprintResultsService
             emissionsByPropertyId: $breakdown->byPropertyId,
             properties: $properties,
             exclusions: $companyCarbonFootprint->allExclusions(),
+            scope3Exclusion: $this->scope3Exclusion($companyCarbonFootprint),
         );
+    }
+
+    private function scope3Exclusion(CompanyCarbonFootprint $companyCarbonFootprint): ?StageExclusionAnswer
+    {
+        $reason = $companyCarbonFootprint->stageExclusionReason(Scope::Scope3);
+
+        if (!$companyCarbonFootprint->isStageExcluded(Scope::Scope3) || null === $reason) {
+            return null;
+        }
+
+        return new StageExclusionAnswer($reason, $companyCarbonFootprint->stageExclusionComment(Scope::Scope3));
     }
 }

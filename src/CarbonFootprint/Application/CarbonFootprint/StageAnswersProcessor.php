@@ -8,6 +8,9 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 
 final class StageAnswersProcessor
 {
@@ -15,8 +18,24 @@ final class StageAnswersProcessor
      * @param list<SectionAnswer>   $sectionAnswers
      * @param list<ExclusionAnswer> $exclusions
      */
-    public function validate(CalculationStage $stage, array $sectionAnswers, array $exclusions): ValidatedStageAnswers
+    public function validate(CalculationStage $stage, array $sectionAnswers, array $exclusions, ?StageExclusionAnswer $stageExclusion = null): ValidatedStageAnswers
     {
+        if (null !== $stageExclusion) {
+            if (!$stage instanceof Scope || !$stage->isExcludable()) {
+                throw new \InvalidArgumentException(sprintf('Stage "%s" cannot be excluded.', $stage->key()));
+            }
+
+            foreach ($sectionAnswers as $sectionAnswer) {
+                if ([] !== $sectionAnswer->answers) {
+                    throw new \InvalidArgumentException(sprintf('Stage "%s" cannot have answers because it is excluded.', $stage->key()));
+                }
+            }
+
+            if ([] !== $exclusions) {
+                throw new \InvalidArgumentException(sprintf('Stage "%s" cannot have source exclusions because it is excluded.', $stage->key()));
+            }
+        }
+
         $sectionsByKey = [];
         foreach ($stage->sections() as $section) {
             $sectionsByKey[$section->key] = $section;
@@ -36,10 +55,7 @@ final class StageAnswersProcessor
             $validatedAnswers[] = new SectionAnswer($definition, $sectionAnswer->answers);
         }
 
-        $stageSources = [];
-        foreach ($stage->sections() as $section) {
-            $stageSources[$section->source->value] = $section->source;
-        }
+        $stageSources = $this->stageSources($stage);
 
         $exclusionsBySource = [];
         foreach ($exclusions as $exclusion) {
@@ -56,16 +72,13 @@ final class StageAnswersProcessor
             }
         }
 
-        return new ValidatedStageAnswers($validatedAnswers, $exclusionsBySource);
+        return new ValidatedStageAnswers($validatedAnswers, $exclusionsBySource, $stageExclusion);
     }
 
     /** @param array<string, ExclusionAnswer> $exclusionsBySource */
     public function applyExclusions(CarbonFootprint $carbonFootprint, CalculationStage $stage, array $exclusionsBySource): void
     {
-        $stageSources = [];
-        foreach ($stage->sections() as $section) {
-            $stageSources[$section->source->value] = $section->source;
-        }
+        $stageSources = $this->stageSources($stage);
 
         foreach ($stageSources as $sourceValue => $source) {
             if (isset($exclusionsBySource[$sourceValue])) {
@@ -77,5 +90,33 @@ final class StageAnswersProcessor
 
             $carbonFootprint->includeSource($stage, $source);
         }
+    }
+
+    public function applyStageExclusion(CarbonFootprint $carbonFootprint, CalculationStage $stage, ?StageExclusionAnswer $answer): void
+    {
+        if (null !== $answer) {
+            $carbonFootprint->excludeStage($stage, $answer->reason, $answer->comment);
+
+            return;
+        }
+
+        if ($stage instanceof Scope && $stage->isExcludable()) {
+            $carbonFootprint->includeStage($stage);
+        }
+    }
+
+    /** @return array<string, Source> */
+    private function stageSources(CalculationStage $stage): array
+    {
+        $sources = $stage instanceof Scope
+            ? $stage->allSources()
+            : array_map(static fn(SectionDefinition $section): Source => $section->source, $stage->sections());
+
+        $indexed = [];
+        foreach ($sources as $source) {
+            $indexed[$source->value] = $source;
+        }
+
+        return $indexed;
     }
 }

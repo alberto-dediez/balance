@@ -27,6 +27,7 @@ class EditController extends AbstractController
             match ($companyCarbonFootprint->status()->activeStepKey()) {
                 'scope-1' => 'company_carbon_footprints_scope_1',
                 'scope-2' => 'company_carbon_footprints_scope_2',
+                'scope-3' => 'company_carbon_footprints_scope_3',
                 'mitigation-plan' => 'company_carbon_footprints_mitigation_plan',
                 default => 'company_carbon_footprints_results',
             },

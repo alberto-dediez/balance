@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -77,6 +78,35 @@ class CompanyCarbonFootprintMother
         return $companyCarbonFootprint;
     }
 
+    public static function withScope3Answered(
+        string $companyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = self::withScope2Answered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $companyCarbonFootprint->answerScope(Scope::Scope3);
+
+        return $companyCarbonFootprint;
+    }
+
+    public static function withScope3Excluded(
+        string $companyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        ExclusionReason $reason = ExclusionReason::NoDataAvailable,
+        ?string $comment = null,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = self::withScope2Answered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $companyCarbonFootprint->excludeStage(Scope::Scope3, $reason, $comment);
+        $companyCarbonFootprint->answerScope(Scope::Scope3);
+
+        return $companyCarbonFootprint;
+    }
+
     public static function withMitigationPlanStarted(
         string $companyId,
         string $id,
@@ -84,6 +114,6 @@ class CompanyCarbonFootprintMother
         int $year = 2025,
         ?EmissionFactorGroupId $emissionFactorGroupId = null,
     ): CompanyCarbonFootprint {
-        return self::withScope2Answered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        return self::withScope3Answered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
     }
 }

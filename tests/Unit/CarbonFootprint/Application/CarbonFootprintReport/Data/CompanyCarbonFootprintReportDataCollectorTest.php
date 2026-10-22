@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\CompanyCarbonFootprintReportDataCollector;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
@@ -53,7 +54,7 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
         $emissionFactorGroups->add(EmissionFactorGroupMother::default());
 
-        $footprint = CompanyCarbonFootprintMother::withScope2Answered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
         $footprint->addActivity($this->combustibleActivity('180')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: $propertyOne->id()));
         $footprint->addActivity($this->electricityActivity('2500', '2000')->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity, propertyId: $propertyOne->id()));
         $footprint->addActivity($this->electricityActivity('0', null)->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity, propertyId: $propertyTwo->id()));
@@ -72,6 +73,7 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->linesBuilder(),
             new FakeTranslator(),
             $this->mitigationPlanBuilder(),
+            $this->derivedSourceEmissionsCalculator(),
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, (string) $footprint->id()));
@@ -104,7 +106,7 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
         $emissionFactorGroups->add(EmissionFactorGroupMother::default());
 
-        $footprint = CompanyCarbonFootprintMother::withScope2Answered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
         $activity = $this->combustibleActivity('1000');
         assert($activity instanceof CombustibleActivity);
         $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
@@ -118,7 +120,7 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->mitigationActionRepository->add($action);
         $this->mitigationActionRepository->add(MitigationActionMother::withEffect(Source::FixedFacilities, (string) $activity->combustibleId(), 0.5, 2025, 2030, (string) $footprint->id()));
 
-        $sut = new CompanyCarbonFootprintReportDataCollector($footprints, $companies, PropertyRepositoryMother::inMemory(), $emissionFactorGroups, $this->breakdownBuilder(), $this->linesBuilder(), new FakeTranslator(), $this->mitigationPlanBuilder());
+        $sut = new CompanyCarbonFootprintReportDataCollector($footprints, $companies, PropertyRepositoryMother::inMemory(), $emissionFactorGroups, $this->breakdownBuilder(), $this->linesBuilder(), new FakeTranslator(), $this->mitigationPlanBuilder(), $this->derivedSourceEmissionsCalculator());
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, (string) $footprint->id()));
 
@@ -127,6 +129,38 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertCount(1, $data->mitigationPlan->actions);
         $this->assertCount(1, $data->mitigationPlan->projection->sources);
         $this->assertEqualsWithDelta(800.0, $data->mitigationPlan->projection->totalByYear[2030], 0.001);
+    }
+
+    public function testIncludesTheScope3ExclusionAndTheDerivedLines(): void
+    {
+        $company = CompanyMother::fromName('Hotelera');
+        $companies = CompanyRepositoryMother::inMemory();
+        $companies->add($company);
+
+        $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroups->add(EmissionFactorGroupMother::default());
+
+        $included = CompanyCarbonFootprintMother::withScope2Answered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
+        $included->addActivity($this->combustibleActivityWithWellToTank('1000', '210')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
+        $included->answerScope(Scope::Scope3);
+        $excluded = CompanyCarbonFootprintMother::withScope3Excluded((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
+
+        $footprints = CompanyCarbonFootprintRepositoryMother::inMemory();
+        $footprints->add($included);
+        $footprints->add($excluded);
+
+        $sut = new CompanyCarbonFootprintReportDataCollector($footprints, $companies, PropertyRepositoryMother::inMemory(), $emissionFactorGroups, $this->breakdownBuilder(), $this->linesBuilder(), new FakeTranslator(), $this->mitigationPlanBuilder(), $this->derivedSourceEmissionsCalculator());
+
+        $includedData = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, (string) $included->id()));
+        $excludedData = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, (string) $excluded->id()));
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $includedData);
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $excludedData);
+        $this->assertFalse($includedData->scope3Excluded);
+        $this->assertCount(1, $includedData->derivedLines);
+        $this->assertTrue($excludedData->scope3Excluded);
+        $this->assertSame(ExclusionReason::NoDataAvailable, $excludedData->scope3ExclusionReason);
+        $this->assertNull($excludedData->exclusionLines[0]->source);
     }
 
     public function testOmitsTheUnassignedRowWhenItHasNoEmissions(): void
@@ -142,13 +176,13 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
         $emissionFactorGroups->add(EmissionFactorGroupMother::default());
 
-        $footprint = CompanyCarbonFootprintMother::withScope2Answered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
         $footprint->addActivity($this->combustibleActivity('180')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: $property->id()));
 
         $footprints = CompanyCarbonFootprintRepositoryMother::inMemory();
         $footprints->add($footprint);
 
-        $sut = new CompanyCarbonFootprintReportDataCollector($footprints, $companies, $properties, $emissionFactorGroups, $this->breakdownBuilder(), $this->linesBuilder(), new FakeTranslator(), $this->mitigationPlanBuilder());
+        $sut = new CompanyCarbonFootprintReportDataCollector($footprints, $companies, $properties, $emissionFactorGroups, $this->breakdownBuilder(), $this->linesBuilder(), new FakeTranslator(), $this->mitigationPlanBuilder(), $this->derivedSourceEmissionsCalculator());
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, (string) $footprint->id()));
 
@@ -167,6 +201,7 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->linesBuilder(),
             new FakeTranslator(),
             $this->mitigationPlanBuilder(),
+            $this->derivedSourceEmissionsCalculator(),
         );
 
         $this->assertTrue($sut->supports(CarbonFootprintReportSubjectType::Company));

@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegi
 use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\MitigationPlanReportBuilder;
@@ -52,13 +53,18 @@ trait OrganizationalCollectorContextTrait
     {
         return new MitigationPlanReportBuilder(
             $this->mitigationActionRepository,
-            new MitigationEmissionSourcesBuilder($this->activityRepository, $this->itemNameResolver()),
+            new MitigationEmissionSourcesBuilder($this->activityRepository, $this->itemNameResolver(), $this->derivedSourceEmissionsCalculator()),
         );
     }
 
     private function breakdownBuilder(): EmissionsBreakdownBuilder
     {
-        return new EmissionsBreakdownBuilder($this->activityRepository);
+        return new EmissionsBreakdownBuilder($this->activityRepository, $this->derivedSourceEmissionsCalculator());
+    }
+
+    private function derivedSourceEmissionsCalculator(): DerivedSourceEmissionsCalculator
+    {
+        return new DerivedSourceEmissionsCalculator($this->activityRepository);
     }
 
     private function linesBuilder(): OrganizationalCarbonFootprintReportLinesBuilder
@@ -90,6 +96,20 @@ trait OrganizationalCollectorContextTrait
             emissionFactor: new EmissionFactor('1.8', '1.8', '0', '0', 2025, EmissionFactorGroupMother::defaultId(), Unit::Liter, 'MITECO'),
             emissions: new Emissions($co2eq, $co2eq, '0', '0'),
             quantity: new Quantity(100.0, Unit::Liter),
+        ));
+    }
+
+    private function combustibleActivityWithWellToTank(string $co2eq, string $wellToTank): Activity
+    {
+        return $this->save(CombustibleActivity::register(
+            id: ActivityId::generate(),
+            accountId: new AccountId('account-id'),
+            combustibleId: CombustibleId::generate(),
+            emissionFactor: new EmissionFactor('1.8', '1.8', '0', '0', 2025, EmissionFactorGroupMother::defaultId(), Unit::Liter, 'MITECO'),
+            emissions: new Emissions($co2eq, $co2eq, '0', '0'),
+            quantity: new Quantity(100.0, Unit::Liter),
+            wellToTankEmissionFactor: new EmissionFactor('0.6', '0.6', '0', '0', 2025, EmissionFactorGroupMother::defaultId(), Unit::Liter, 'DEFRA'),
+            wellToTankEmissions: new Emissions($wellToTank, $wellToTank, '0', '0'),
         ));
     }
 

@@ -36,7 +36,28 @@ final class ScopeStepView
             'transportRows' => $this->rows($vehicles),
             'refrigerantGasRows' => $this->rows($refrigerantGases),
             'electricityRows' => $this->rows($electricity),
+            'sections' => $this->sections($sections),
         ];
+    }
+
+    /**
+     * @param list<StageSection> $sections
+     *
+     * @return array<string, array{catalog: list<object>, secondaryCatalog: list<object>, rows: list<ActivityRowView>}>
+     */
+    private function sections(array $sections): array
+    {
+        $views = [];
+
+        foreach ($sections as $section) {
+            $views[$section->definition->key] = [
+                'catalog' => $section->catalog,
+                'secondaryCatalog' => $section->secondaryCatalog,
+                'rows' => $this->rows($section),
+            ];
+        }
+
+        return $views;
     }
 
     /** @return list<ActivityRowView> */

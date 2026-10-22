@@ -219,7 +219,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
     {
         $isCompany = CarbonFootprintReportSubjectType::Company === $data->subjectType;
 
-        foreach ($this->scopeSourceDefinitions($locale) as [$scope, $source, $title]) {
+        foreach ($this->scopeSourceDefinitions($data, $locale) as [$scope, $source, $title]) {
             $pdf->AddPage();
             $this->renderSectionTitle($pdf, $title);
             $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
@@ -232,9 +232,11 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
                 continue;
             }
 
-            [$header, $rows, $widths] = Source::BuildingElectricity === $source
-                ? $this->electricityTable($data, $locale, $isCompany)
-                : $this->sourceTable($data, $scope, $source, $locale, $isCompany);
+            [$header, $rows, $widths] = match ($source) {
+                Source::BuildingElectricity => $this->electricityTable($data, $locale, $isCompany),
+                Source::FuelAndEnergyRelated => $this->derivedSourceTable($data, $locale),
+                default => $this->sourceTable($data, $scope, $source, $locale, $isCompany),
+            };
 
             if ([] === $rows) {
                 $pdf->writeHTML($this->markdownToStyledHtml($this->trans('No hay datos reportados', $locale)), true, false, true, false, '');

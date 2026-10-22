@@ -21,6 +21,10 @@
         <source>completed</source>
         <target>Completed</target>
       </trans-unit>
+      <trans-unit id="DifPWua" resname="scope_3_answered">
+        <source>scope_3_answered</source>
+        <target>Scope 3 answered</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

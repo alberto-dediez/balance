@@ -76,7 +76,7 @@ Feature:
         Given company "Hotelera" with id "C1" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
         Given property "1111" has company "C1" assigned
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 3 answered exists
         Given electricity marketer "Comercializadora" with id "EM1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/results"

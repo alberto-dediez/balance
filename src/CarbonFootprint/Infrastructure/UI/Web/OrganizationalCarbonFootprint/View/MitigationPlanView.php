@@ -23,29 +23,36 @@ final class MitigationPlanView
     public function build(array $actions, array $emissionSources, ?MitigationProjection $projection): array
     {
         $sourcesByKey = [];
+        $derivedSourcesByOriginKey = [];
         foreach ($emissionSources as $emissionSource) {
             $sourcesByKey[$emissionSource->key()] = $emissionSource;
+
+            if (null !== $emissionSource->originKey) {
+                $derivedSourcesByOriginKey[$emissionSource->originKey][] = $emissionSource;
+            }
         }
 
         return [
-            'actions' => array_map(fn(MitigationAction $action): array => $this->actionRow($action, $sourcesByKey), $actions),
+            'actions' => array_map(fn(MitigationAction $action): array => $this->actionRow($action, $sourcesByKey, $derivedSourcesByOriginKey), $actions),
             'projection' => null !== $projection ? $this->projection($projection) : null,
             'chart' => null !== $projection ? $this->chart($projection) : null,
         ];
     }
 
     /**
-     * @param array<string, MitigationEmissionSource> $sourcesByKey
+     * @param array<string, MitigationEmissionSource>       $sourcesByKey
+     * @param array<string, list<MitigationEmissionSource>> $derivedSourcesByOriginKey
      *
      * @return array{action: MitigationAction, effects: list<array{source: string, itemName: string, reduction: float, withoutEmissions: bool}>, expectedReduction: float}
      */
-    private function actionRow(MitigationAction $action, array $sourcesByKey): array
+    private function actionRow(MitigationAction $action, array $sourcesByKey, array $derivedSourcesByOriginKey): array
     {
         $effects = [];
         $expectedReduction = 0.0;
 
         foreach ($action->effects() as $effect) {
-            $emissionSource = $sourcesByKey[$effect->source()->value . '|' . $effect->itemId()] ?? null;
+            $effectKey = $effect->source()->value . '|' . $effect->itemId();
+            $emissionSource = $sourcesByKey[$effectKey] ?? null;
 
             $effects[] = [
                 'source' => $effect->source()->value,
@@ -56,6 +63,10 @@ final class MitigationPlanView
 
             if (null !== $emissionSource) {
                 $expectedReduction += $emissionSource->emissions * $effect->reduction();
+            }
+
+            foreach ($derivedSourcesByOriginKey[$effectKey] ?? [] as $derivedSource) {
+                $expectedReduction += $derivedSource->emissions * $effect->reduction();
             }
         }
 

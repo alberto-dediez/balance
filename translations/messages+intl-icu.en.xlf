@@ -9529,6 +9529,102 @@
         <source>Well-to-tank</source>
         <target>Well-to-tank</target>
       </trans-unit>
+      <trans-unit id="UtXzlwW" resname="Alcance completo">
+        <source>Alcance completo</source>
+        <target>Whole scope</target>
+      </trans-unit>
+      <trans-unit id="83EUIek" resname="(excluido)">
+        <source>(excluido)</source>
+        <target>(excluded)</target>
+      </trans-unit>
+      <trans-unit id="Gv8tTw7" resname="Los datos de alcance 1, alcance 2 y alcance 3 dependen del tipo de instalaciones, equipos y cadena de valor de la organización.">
+        <source>Los datos de alcance 1, alcance 2 y alcance 3 dependen del tipo de instalaciones, equipos y cadena de valor de la organización.</source>
+        <target>Scope 1, scope 2 and scope 3 data depend on the type of facilities, equipment and value chain of the organization.</target>
+      </trans-unit>
+      <trans-unit id="0JTDzfr" resname="No se incluyen las emisiones de alcance 3: {reason}">
+        <source>No se incluyen las emisiones de alcance 3: {reason}</source>
+        <target>Scope 3 emissions are not included: {reason}</target>
+      </trans-unit>
+      <trans-unit id="OSw3AnB" resname="Alcance 3: excluido">
+        <source>Alcance 3: excluido</source>
+        <target>Scope 3: excluded</target>
+      </trans-unit>
+      <trans-unit id="dCxsN8T" resname="Alcance 3: {total} kg de CO₂eq">
+        <source>Alcance 3: {total} kg de CO₂eq</source>
+        <target>Scope 3: {total} kg CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="dkSquDp" resname="Excluido">
+        <source>Excluido</source>
+        <target>Excluded</target>
+      </trans-unit>
+      <trans-unit id="uJAxj21" resname="Alcance excluido">
+        <source>Alcance excluido</source>
+        <target>Excluded scope</target>
+      </trans-unit>
+      <trans-unit id="VjN8x47" resname="No calcular el alcance 3">
+        <source>No calcular el alcance 3</source>
+        <target>Do not calculate scope 3</target>
+      </trans-unit>
+      <trans-unit id="DvywdHp" resname="Alcance 3">
+        <source>Alcance 3</source>
+        <target>Scope 3</target>
+      </trans-unit>
+      <trans-unit id="18ivyac" resname="Emisiones aguas arriba de combustibles y energía">
+        <source>Emisiones aguas arriba de combustibles y energía</source>
+        <target>Upstream emissions of fuels and energy</target>
+      </trans-unit>
+      <trans-unit id="jOXuTJx" resname="Aguas arriba">
+        <source>Aguas arriba</source>
+        <target>Upstream</target>
+      </trans-unit>
+      <trans-unit id="fhvUL0f" resname="Aguas abajo">
+        <source>Aguas abajo</source>
+        <target>Downstream</target>
+      </trans-unit>
+      <trans-unit id="jUFuV.6" resname="Compras de bienes y servicios">
+        <source>Compras de bienes y servicios</source>
+        <target>Purchases of goods and services</target>
+      </trans-unit>
+      <trans-unit id="VGDtp21" resname="Adquisiciones de bienes de capital">
+        <source>Adquisiciones de bienes de capital</source>
+        <target>Capital goods acquisitions</target>
+      </trans-unit>
+      <trans-unit id="..amkBQ" resname="Transportes de mercancías recibidas">
+        <source>Transportes de mercancías recibidas</source>
+        <target>Transport of received goods</target>
+      </trans-unit>
+      <trans-unit id="dB_UXWH" resname="Residuos generados">
+        <source>Residuos generados</source>
+        <target>Generated waste</target>
+      </trans-unit>
+      <trans-unit id="I_Hz8SC" resname="Desplazamientos de negocio">
+        <source>Desplazamientos de negocio</source>
+        <target>Business trips</target>
+      </trans-unit>
+      <trans-unit id=".Wt3zjm" resname="Alojamientos de negocio">
+        <source>Alojamientos de negocio</source>
+        <target>Business accommodation</target>
+      </trans-unit>
+      <trans-unit id="EI2VDoP" resname="Desplazamientos al trabajo">
+        <source>Desplazamientos al trabajo</source>
+        <target>Commuting to work</target>
+      </trans-unit>
+      <trans-unit id="786olnF" resname="Transportes de mercancías vendidas">
+        <source>Transportes de mercancías vendidas</source>
+        <target>Transport of sold goods</target>
+      </trans-unit>
+      <trans-unit id="nyiH6wQ" resname="Procesamiento de productos vendidos">
+        <source>Procesamiento de productos vendidos</source>
+        <target>Processing of sold products</target>
+      </trans-unit>
+      <trans-unit id="3DWGJpr" resname="Uso de productos vendidos">
+        <source>Uso de productos vendidos</source>
+        <target>Use of sold products</target>
+      </trans-unit>
+      <trans-unit id="XKDGalo" resname="Fin de vida de productos vendidos">
+        <source>Fin de vida de productos vendidos</source>
+        <target>End of life of sold products</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

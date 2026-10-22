@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
@@ -20,5 +21,6 @@ class AnswerCompanyCarbonFootprintScopeRequest implements Command
         public Scope $scope,
         public array $answersByProperty = [],
         public array $exclusions = [],
+        public ?StageExclusionAnswer $stageExclusion = null,
     ) {}
 }

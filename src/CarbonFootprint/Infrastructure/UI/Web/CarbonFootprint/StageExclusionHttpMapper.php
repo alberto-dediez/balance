@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\CarbonFootprint;
 
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use Symfony\Component\HttpFoundation\Request;
 
 final class StageExclusionHttpMapper
@@ -18,6 +20,12 @@ final class StageExclusionHttpMapper
         $stageSources = [];
         foreach ($stage->sections() as $section) {
             $stageSources[$section->source->value] = $section->source;
+        }
+
+        if ($stage instanceof Scope) {
+            foreach ($stage->derivedSources() as $source) {
+                $stageSources[$source->value] = $source;
+            }
         }
 
         $exclusions = [];
@@ -41,5 +49,21 @@ final class StageExclusionHttpMapper
         }
 
         return $exclusions;
+    }
+
+    public function mapStage(Request $request, CalculationStage $stage): ?StageExclusionAnswer
+    {
+        $row = $request->request->all('stageExclusion');
+
+        if (!isset($row['excluded'])) {
+            return null;
+        }
+
+        $reason = ExclusionReason::tryFrom(is_string($row['reason'] ?? null) ? $row['reason'] : '')
+            ?? throw new \InvalidArgumentException(sprintf('Invalid exclusion reason for stage "%s".', $stage->key()));
+
+        $comment = is_string($row['comment'] ?? null) ? trim($row['comment']) : '';
+
+        return new StageExclusionAnswer($reason, '' !== $comment ? $comment : null);
     }
 }

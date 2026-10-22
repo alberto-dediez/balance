@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="GcgVL0w" resname="material">
+        <source>material</source>
+        <target>Material</target>
+      </trans-unit>
+      <trans-unit id="STNXA1b" resname="catering_item">
+        <source>catering_item</source>
+        <target>Catering</target>
+      </trans-unit>
+      <trans-unit id="QuthK2r" resname="merchandising_item">
+        <source>merchandising_item</source>
+        <target>Merchandising</target>
+      </trans-unit>
+      <trans-unit id="sAtpbvr" resname="purchase_service">
+        <source>purchase_service</source>
+        <target>Purchased goods and services</target>
+      </trans-unit>
+      <trans-unit id="_A_eLiB" resname="capital_good">
+        <source>capital_good</source>
+        <target>Capital good</target>
+      </trans-unit>
+      <trans-unit id="hq7Za3R" resname="use_profile">
+        <source>use_profile</source>
+        <target>Use of sold products</target>
+      </trans-unit>
+      <trans-unit id="nG619ZC" resname="process">
+        <source>process</source>
+        <target>Processing of sold products</target>
+      </trans-unit>
+      <trans-unit id="IwWzB3r" resname="economic_sector">
+        <source>economic_sector</source>
+        <target>Economic sector</target>
+      </trans-unit>
+      <trans-unit id="dtnBSsv" resname="combustible">
+        <source>combustible</source>
+        <target>Fuel</target>
+      </trans-unit>
+      <trans-unit id="aQLcZ8C" resname="electricity">
+        <source>electricity</source>
+        <target>Electricity</target>
+      </trans-unit>
+      <trans-unit id="nUnzxCh" resname="machinery_fuel">
+        <source>machinery_fuel</source>
+        <target>Machinery fuel</target>
+      </trans-unit>
+      <trans-unit id="PNcBVeE" resname="mobility">
+        <source>mobility</source>
+        <target>Mobility</target>
+      </trans-unit>
+      <trans-unit id="Dahp53j" resname="overnight_stay">
+        <source>overnight_stay</source>
+        <target>Overnight stay</target>
+      </trans-unit>
+      <trans-unit id="Hlo_yJt" resname="transport">
+        <source>transport</source>
+        <target>Transport</target>
+      </trans-unit>
+      <trans-unit id="Ien2BhG" resname="waste">
+        <source>waste</source>
+        <target>Waste</target>
+      </trans-unit>
+      <trans-unit id="rBJzlJf" resname="refrigerant_gas">
+        <source>refrigerant_gas</source>
+        <target>Refrigerant gas</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

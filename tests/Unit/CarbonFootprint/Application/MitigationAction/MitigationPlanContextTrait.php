@@ -7,6 +7,8 @@ namespace App\Tests\Unit\CarbonFootprint\Application\MitigationAction;
 use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
 use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\MobilityCatalogProvider;
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprintReport\CarbonFootprintReportSubjects;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
@@ -58,6 +60,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCa
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
@@ -88,9 +91,11 @@ trait MitigationPlanContextTrait
                 new ActivityCatalogProviderRegistry([
                     new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
                     new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
+                    new MobilityCatalogProvider(MobilityRepositoryMother::inMemory()),
                 ]),
                 new FakeTranslator(),
             ),
+            new DerivedSourceEmissionsCalculator($this->activities),
         );
     }
 
@@ -156,7 +161,7 @@ trait MitigationPlanContextTrait
 
     private function propertyFootprint(int $year = 2025, ?PropertyId $propertyId = null, string $accountId = 'account-id', bool $withActivities = true): PropertyCarbonFootprint
     {
-        $footprint = PropertyCarbonFootprintMother::withScope2Answered((string) ($propertyId ?? PropertyId::generate()), (string) PropertyCarbonFootprintId::generate(), $accountId, $year);
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) ($propertyId ?? PropertyId::generate()), (string) PropertyCarbonFootprintId::generate(), $accountId, $year);
 
         if ($withActivities) {
             $footprint->addActivity($this->naturalGasActivity('600')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -171,7 +176,7 @@ trait MitigationPlanContextTrait
 
     private function companyFootprint(int $year = 2025, string $companyId = 'company-id'): CompanyCarbonFootprint
     {
-        $footprint = CompanyCarbonFootprintMother::withScope2Answered($companyId, (string) CompanyCarbonFootprintId::generate(), 'account-id', $year);
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered($companyId, (string) CompanyCarbonFootprintId::generate(), 'account-id', $year);
         $footprint->addActivity($this->naturalGasActivity('600')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
         $footprint->addActivity($this->naturalGasActivity('300')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
         $footprint->addActivity($this->naturalGasActivity('100')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -181,7 +186,7 @@ trait MitigationPlanContextTrait
         return $footprint;
     }
 
-    private function naturalGasActivity(string $co2eq): Activity
+    private function naturalGasActivity(string $co2eq, string $wellToTank = '0'): Activity
     {
         return $this->saveActivity(CombustibleActivity::register(
             id: ActivityId::generate(),
@@ -190,10 +195,11 @@ trait MitigationPlanContextTrait
             emissionFactor: new EmissionFactor('1.8', '1.8', '0', '0', 2025, EmissionFactorGroupMother::defaultId(), Unit::Liter, 'MITECO'),
             emissions: new Emissions($co2eq, $co2eq, '0', '0'),
             quantity: new Quantity(100.0, Unit::Liter),
+            wellToTankEmissions: new Emissions($wellToTank, $wellToTank, '0', '0'),
         ));
     }
 
-    private function marketerElectricityActivity(string $co2eq): Activity
+    private function marketerElectricityActivity(string $co2eq, string $wellToTank = '0'): Activity
     {
         return $this->saveActivity(ElectricityActivity::register(
             id: ActivityId::generate(),
@@ -203,6 +209,7 @@ trait MitigationPlanContextTrait
             emissionFactor: new EmissionFactor('0.25', '0.25', '0', '0', 2025, EmissionFactorGroupMother::defaultId(), Unit::KWh, 'Comercializadora'),
             emissions: new Emissions($co2eq, $co2eq, '0', '0'),
             quantity: new Quantity(10000.0, Unit::KWh),
+            wellToTankEmissions: new Emissions($wellToTank, $wellToTank, '0', '0'),
         ));
     }
 

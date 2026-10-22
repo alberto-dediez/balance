@@ -33,4 +33,16 @@ class MitigationEmissionSourceMother
     {
         return self::from(Source::BuildingElectricity, 'marketer', $emissions, 'Comercializadora');
     }
+
+    public static function derivedFrom(MitigationEmissionSource $origin, float $emissions): MitigationEmissionSource
+    {
+        return new MitigationEmissionSource(
+            scope: Scope::Scope3,
+            source: Source::FuelAndEnergyRelated,
+            itemId: $origin->itemId,
+            itemName: $origin->itemName,
+            emissions: $emissions,
+            originKey: $origin->key(),
+        );
+    }
 }

@@ -182,6 +182,7 @@ class MitigationProjectorTest extends TestCase
         $projection = (new MitigationProjector())->project(
             2025,
             [
+                MitigationEmissionSourceMother::from(Source::Investments, 'sector', 10.0, 'Sector'),
                 MitigationEmissionSourceMother::electricity(),
                 MitigationEmissionSourceMother::from(Source::RefrigerantLeaks, 'r410', 10.0, 'R410A'),
                 MitigationEmissionSourceMother::from(Source::FixedFacilities, 'propane', 10.0, 'Propano'),
@@ -193,8 +194,54 @@ class MitigationProjectorTest extends TestCase
 
         $this->assertNotNull($projection);
         $this->assertSame(
-            ['natural-gas', 'propane', 'diesel', 'r410', 'marketer'],
+            ['natural-gas', 'propane', 'diesel', 'r410', 'marketer', 'sector'],
             array_map(static fn($source) => $source->emissionSource->itemId, $projection->sources),
         );
+    }
+
+    public function testADerivedSourceFollowsTheReductionsOfItsOrigin(): void
+    {
+        $naturalGas = MitigationEmissionSourceMother::naturalGas(1000.0);
+        $electricity = MitigationEmissionSourceMother::electricity(500.0);
+
+        $projection = (new MitigationProjector())->project(
+            2025,
+            [
+                $naturalGas,
+                $electricity,
+                MitigationEmissionSourceMother::derivedFrom($naturalGas, 100.0),
+                MitigationEmissionSourceMother::derivedFrom($electricity, 50.0),
+            ],
+            [MitigationActionMother::withEffect(Source::FixedFacilities, 'natural-gas', 0.2)],
+        );
+
+        $this->assertNotNull($projection);
+
+        $derivedNaturalGas = $projection->sources[3];
+        $this->assertSame(Source::FuelAndEnergyRelated, $derivedNaturalGas->emissionSource->source);
+        $this->assertSame('natural-gas', $derivedNaturalGas->emissionSource->itemId);
+        $this->assertTrue($derivedNaturalGas->hasReductions);
+        $this->assertEqualsWithDelta($projection->sources[0]->rateByYear[2026], $derivedNaturalGas->rateByYear[2026], 0.000001);
+        $this->assertEqualsWithDelta(80.0, $derivedNaturalGas->expectedByYear[2030], 0.001);
+
+        $derivedElectricity = $projection->sources[2];
+        $this->assertFalse($derivedElectricity->hasReductions);
+        $this->assertEqualsWithDelta(50.0, $derivedElectricity->expectedByYear[2030], 0.001);
+
+        $this->assertEqualsWithDelta(1650.0, $projection->totalByYear[2025], 0.001);
+        $this->assertEqualsWithDelta(1430.0, $projection->totalByYear[2030], 0.001);
+    }
+
+    public function testAnEffectOnADerivedSourceDoesNotReduceIt(): void
+    {
+        $naturalGas = MitigationEmissionSourceMother::naturalGas(1000.0);
+
+        $projection = (new MitigationProjector())->project(
+            2025,
+            [$naturalGas, MitigationEmissionSourceMother::derivedFrom($naturalGas, 100.0)],
+            [MitigationActionMother::withEffect(Source::FuelAndEnergyRelated, 'natural-gas', 0.5)],
+        );
+
+        $this->assertNull($projection);
     }
 }

@@ -1,4 +1,4 @@
-{% props title, prefix, rows, items, units, eventId, readOnly = false %}
+{% props title, prefix, rows, items, units, eventId = null, calculateUrl = null, readOnly = false %}
 
 {% set proto %}{{ component('CarbonFootprint:PurchaseServiceActivityRow', { prefix: prefix, index: '__name__', items: items, units: units }) }}{% endset %}
 
@@ -7,7 +7,7 @@
         {% if not readOnly %}
         data-controller="collection activity-emissions"
         data-collection-prototype-value="{{ proto | e('html_attr') }}"
-        data-activity-emissions-url-value="{{ path('events_carbon_footprint_emissions_calculate', {eventId: eventId}) }}"
+        data-activity-emissions-url-value="{{ calculateUrl ?? path('events_carbon_footprint_emissions_calculate', {eventId: eventId}) }}"
         data-activity-emissions-type-value="purchase_service"
         {% endif %}
     >

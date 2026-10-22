@@ -58,21 +58,31 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
             $answersByPropertyKey[(string) $propertyId] = $block;
         }
 
-        $validatedExclusions = $this->answersProcessor->validate($request->scope, [], $request->exclusions);
+        $validatedExclusions = $this->answersProcessor->validate($request->scope, [], $request->exclusions, $request->stageExclusion);
 
-        $this->answersProcessor->applyExclusions($companyCarbonFootprint, $request->scope, $validatedExclusions->exclusionsBySource);
-
-        $blocks = ['' => null];
-        foreach ($companyPropertyIds as $key => $propertyId) {
-            $blocks[$key] = $propertyId;
+        if (null !== $validatedExclusions->stageExclusion) {
+            foreach ($answersByPropertyKey as $block) {
+                $this->answersProcessor->validate($request->scope, $block->sectionAnswers, [], $validatedExclusions->stageExclusion);
+            }
         }
 
-        foreach ($blocks as $key => $propertyId) {
-            $block = $answersByPropertyKey[$key] ?? null;
+        $this->answersProcessor->applyStageExclusion($companyCarbonFootprint, $request->scope, $validatedExclusions->stageExclusion);
 
-            $validated = $this->answersProcessor->validate($request->scope, null !== $block ? $block->sectionAnswers : [], $request->exclusions);
+        if (null === $validatedExclusions->stageExclusion) {
+            $this->answersProcessor->applyExclusions($companyCarbonFootprint, $request->scope, $validatedExclusions->exclusionsBySource);
 
-            $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, propertyId: $propertyId);
+            $blocks = ['' => null];
+            foreach ($companyPropertyIds as $key => $propertyId) {
+                $blocks[$key] = $propertyId;
+            }
+
+            foreach ($blocks as $key => $propertyId) {
+                $block = $answersByPropertyKey[$key] ?? null;
+
+                $validated = $this->answersProcessor->validate($request->scope, null !== $block ? $block->sectionAnswers : [], $request->exclusions);
+
+                $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, propertyId: $propertyId);
+            }
         }
 
         $companyCarbonFootprint->answerScope($request->scope);

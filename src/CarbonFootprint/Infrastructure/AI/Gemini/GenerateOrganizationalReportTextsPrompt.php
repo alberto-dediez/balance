@@ -74,7 +74,7 @@ final class GenerateOrganizationalReportTextsPrompt implements GeminiPrompt
             $lines[] = '';
             $lines[] = 'Excluded emission sources (scope | source | reason | comment):';
             foreach ($this->data->exclusionLines as $exclusionLine) {
-                $lines[] = sprintf('- %s | %s | %s | %s', $exclusionLine->scope->value, $exclusionLine->source->value, $exclusionLine->reason->value, $exclusionLine->comment ?? 'n/a');
+                $lines[] = sprintf('- %s | %s | %s | %s', $exclusionLine->scope->value, $exclusionLine->source->value ?? '(whole scope)', $exclusionLine->reason->value, $exclusionLine->comment ?? 'n/a');
             }
         }
 
@@ -105,7 +105,7 @@ final class GenerateOrganizationalReportTextsPrompt implements GeminiPrompt
         $lines[] = '';
         $lines[] = null !== $mitigationPlan ? 'Write five sections:' : 'Write four sections:';
         $lines[] = '1. purpose: the purpose of the report, presenting the carbon footprint as an environmental indicator of the activity and as the first step to reduce emissions, with a reference to the carbon footprint registry of the Spanish Ministry for the Ecological Transition (MITECO).';
-        $lines[] = '2. regulatoryContext: the regulatory context: the GHG Protocol and its five principles (completeness, consistency, transparency, relevance and accuracy), the scope 1 and scope 2 boundaries, ISO 14064-1 as a reference and the MITECO carbon footprint registry; describe the limits of the calculation including the excluded sources.';
+        $lines[] = sprintf('2. regulatoryContext: the regulatory context: the GHG Protocol and its five principles (completeness, consistency, transparency, relevance and accuracy), %s, ISO 14064-1 as a reference and the MITECO carbon footprint registry; describe the limits of the calculation including the excluded sources.', $this->boundaries());
         $lines[] = '3. sustainableDevelopmentGoals: the relation of the footprint with the Sustainable Development Goals 13 (climate action), 7 (affordable and clean energy) and 12 (responsible consumption and production), applied to the activity of the subject.';
         $lines[] = '4. conclusion: the main results with the figures supplied above, the most relevant sources and concrete reduction lines, without relying on excluded sources.';
 
@@ -184,5 +184,14 @@ final class GenerateOrganizationalReportTextsPrompt implements GeminiPrompt
     public function modelTier(): GeminiModelTier
     {
         return GeminiModelTier::MEDIUM;
+    }
+
+    private function boundaries(): string
+    {
+        if (!$this->data->scope3Excluded) {
+            return 'the scope 1, scope 2 and scope 3 boundaries';
+        }
+
+        return sprintf('the scope 1 and scope 2 boundaries (scope 3 excluded: %s)', $this->data->scope3ExclusionReason->value ?? 'n/a');
     }
 }

@@ -17,6 +17,7 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Organizationa
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintTrait;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -42,6 +43,9 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         private Emissions $totalEmissions = new Emissions(),
         private OrganizationalCarbonFootprintStatus $status = OrganizationalCarbonFootprintStatus::Started,
         private bool $mitigationPlanStarted = false,
+        private bool $scope3Excluded = false,
+        private ?ExclusionReason $scope3ExclusionReason = null,
+        private ?string $scope3ExclusionComment = null,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -89,7 +93,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
             ),
         );
 
-        if (Scope::Scope2 === $scope && !$this->mitigationPlanStarted) {
+        if (Scope::Scope3 === $scope && !$this->mitigationPlanStarted) {
             $this->recordApplyAndPublish(
                 new CompanyCarbonFootprintMitigationPlanStarted(
                     companyCarbonFootprintId: $this->id,
@@ -111,7 +115,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
             }
         }
 
-        if ($this->isSourceExcluded($scope, $placement->source)) {
+        if ($this->isStageExcluded($scope) || $this->isSourceExcluded($scope, $placement->source)) {
             return;
         }
 
@@ -144,6 +148,10 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
 
         $scope = $stage;
         assert($scope instanceof Scope);
+
+        if ($this->isStageExcluded($scope)) {
+            return;
+        }
 
         $existing = $this->exclusionFor($scope, $source);
         if (null !== $existing && $existing->reason() === $reason && $existing->comment() === $comment) {
@@ -192,12 +200,64 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
+    public function excludeStage(CalculationStage $stage, ExclusionReason $reason, ?string $comment = null): void
+    {
+        $this->ensureIsEditable();
+
+        $scope = $stage;
+        assert($scope instanceof Scope);
+
+        if (!$scope->isExcludable()) {
+            throw new StageNotExcludableException(sprintf('Stage "%s" cannot be excluded', $scope->key()));
+        }
+
+        if ($this->scope3Excluded && $this->scope3ExclusionReason === $reason && $this->scope3ExclusionComment === $comment) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintScopeExcluded(
+                companyCarbonFootprintId: $this->id,
+                scope: $scope,
+                reason: $reason,
+                comment: $comment,
+            ),
+        );
+
+        foreach ($scope->sections() as $section) {
+            $this->removeActivitiesOfSource($scope, $section->source);
+        }
+
+        foreach ($this->exclusionsFor($scope) as $exclusion) {
+            $this->includeSource($scope, $exclusion->source());
+        }
+    }
+
+    public function includeStage(CalculationStage $stage): void
+    {
+        $this->ensureIsEditable();
+
+        $scope = $stage;
+        assert($scope instanceof Scope);
+
+        if (!$this->isStageExcluded($scope)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintScopeIncluded(
+                companyCarbonFootprintId: $this->id,
+                scope: $scope,
+            ),
+        );
+    }
+
     public function complete(Emissions $totalEmissions): void
     {
         $this->ensureIsEditable();
 
-        if (OrganizationalCarbonFootprintStatus::Scope2Answered !== $this->status) {
-            throw new OrganizationalCarbonFootprintNotReadyToCompleteException('Organizational carbon footprint cannot be completed until scope 2 is answered');
+        if (OrganizationalCarbonFootprintStatus::Scope3Answered !== $this->status) {
+            throw new OrganizationalCarbonFootprintNotReadyToCompleteException('Organizational carbon footprint cannot be completed until scope 3 is answered');
         }
 
         $this->recordApplyAndPublish(
@@ -292,6 +352,22 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         $this->updatedAt = $event->occurredOn();
     }
 
+    public function applyCompanyCarbonFootprintScopeExcluded(CompanyCarbonFootprintScopeExcluded $event): void
+    {
+        $this->scope3Excluded = true;
+        $this->scope3ExclusionReason = $event->reason();
+        $this->scope3ExclusionComment = $event->comment();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintScopeIncluded(CompanyCarbonFootprintScopeIncluded $event): void
+    {
+        $this->scope3Excluded = false;
+        $this->scope3ExclusionReason = null;
+        $this->scope3ExclusionComment = null;
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function applyCompanyCarbonFootprintCompleted(CompanyCarbonFootprintCompleted $event): void
     {
         $this->status = OrganizationalCarbonFootprintStatus::Completed;
@@ -301,7 +377,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
 
     public function applyCompanyCarbonFootprintReopened(CompanyCarbonFootprintReopened $event): void
     {
-        $this->status = OrganizationalCarbonFootprintStatus::Scope2Answered;
+        $this->status = OrganizationalCarbonFootprintStatus::Scope3Answered;
         $this->totalEmissions = new Emissions();
         $this->updatedAt = $event->occurredOn();
     }

@@ -90,6 +90,15 @@ class MitigationMeasureTest extends TestCase
         $measure->setEffect(Source::Materials, 0.1, 0.3);
     }
 
+    public function testSetEffectAcceptsAScope3Source(): void
+    {
+        $measure = MitigationMeasureMother::registeredMitigationMeasure();
+
+        $measure->setEffect(Source::Investments, 0.1, 0.3);
+
+        $this->assertInstanceOf(MitigationMeasureEffectAdded::class, $this->spySubscriber->lastEvent());
+    }
+
     public function testSyncEffectsRemovesTheMissingOnes(): void
     {
         $measure = MitigationMeasureMother::withEffect(Source::FixedFacilities, 0.1, 0.3);

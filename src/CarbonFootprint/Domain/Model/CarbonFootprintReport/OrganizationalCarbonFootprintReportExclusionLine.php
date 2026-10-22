@@ -12,7 +12,7 @@ final class OrganizationalCarbonFootprintReportExclusionLine
 {
     public function __construct(
         public readonly Scope $scope,
-        public readonly Source $source,
+        public readonly ?Source $source,
         public readonly ExclusionReason $reason,
         public readonly ?string $comment = null,
     ) {}

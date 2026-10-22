@@ -58,6 +58,10 @@ class EditController extends AbstractController
 
         $emissionSources = [];
         foreach ($emissionSourcesBuilder->build($carbonFootprint) as $emissionSource) {
+            if ($emissionSource->isDerived()) {
+                continue;
+            }
+
             $emissionSources[$emissionSource->key()] = $emissionSource;
         }
 

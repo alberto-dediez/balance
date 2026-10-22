@@ -21,6 +21,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintSo
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintSourceIncluded;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -291,6 +292,19 @@ class EventCarbonFootprintTest extends TestCase
         $eventCarbonFootprint->reopen();
 
         $this->assertTrue($eventCarbonFootprint->exclusions()->isExcluded(Phase::Assembly, Source::WasteManagement));
+    }
+
+    public function testNoPhaseCanBeExcluded(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+
+        $this->assertFalse($eventCarbonFootprint->isStageExcluded(Phase::Materials));
+        $this->assertNull($eventCarbonFootprint->stageExclusionReason(Phase::Materials));
+        $this->assertNull($eventCarbonFootprint->stageExclusionComment(Phase::Materials));
+
+        $this->expectException(StageNotExcludableException::class);
+
+        $eventCarbonFootprint->excludeStage(Phase::Materials, ExclusionReason::NoDataAvailable);
     }
 
     private function completedEventCarbonFootprintWithOneActivity(): EventCarbonFootprint

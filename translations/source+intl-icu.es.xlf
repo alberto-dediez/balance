@@ -53,6 +53,54 @@
         <source>refrigerant_leaks</source>
         <target>Fugas de equipos de refrigeración</target>
       </trans-unit>
+      <trans-unit id="tqatE0q" resname="purchased_goods_and_services">
+        <source>purchased_goods_and_services</source>
+        <target>Bienes y servicios adquiridos</target>
+      </trans-unit>
+      <trans-unit id="1q0_Cjp" resname="capital_goods">
+        <source>capital_goods</source>
+        <target>Bienes de capital</target>
+      </trans-unit>
+      <trans-unit id="8mfq4.L" resname="fuel_and_energy_related">
+        <source>fuel_and_energy_related</source>
+        <target>Actividades relacionadas con combustibles y energía</target>
+      </trans-unit>
+      <trans-unit id="G2VfSNF" resname="upstream_transport">
+        <source>upstream_transport</source>
+        <target>Transporte y distribución aguas arriba</target>
+      </trans-unit>
+      <trans-unit id="lLFbEyu" resname="operations_waste">
+        <source>operations_waste</source>
+        <target>Residuos generados en las operaciones</target>
+      </trans-unit>
+      <trans-unit id="ZSnX1Nr" resname="business_travel">
+        <source>business_travel</source>
+        <target>Viajes de negocios</target>
+      </trans-unit>
+      <trans-unit id="q76ngop" resname="employee_commuting">
+        <source>employee_commuting</source>
+        <target>Desplazamientos de los empleados</target>
+      </trans-unit>
+      <trans-unit id="V4cpw.A" resname="downstream_transport">
+        <source>downstream_transport</source>
+        <target>Transporte y distribución aguas abajo</target>
+      </trans-unit>
+      <trans-unit id="BNsk0jL" resname="sold_products_processing">
+        <source>sold_products_processing</source>
+        <target>Procesamiento de los productos vendidos</target>
+      </trans-unit>
+      <trans-unit id="8FVkae_" resname="sold_products_use">
+        <source>sold_products_use</source>
+        <target>Uso de los productos vendidos</target>
+      </trans-unit>
+      <trans-unit id="oRsRGdM" resname="sold_products_end_of_life">
+        <source>sold_products_end_of_life</source>
+        <target>Tratamiento al final de la vida útil de los productos vendidos</target>
+      </trans-unit>
+      <trans-unit id="krPTarr" resname="investments">
+        <source>investments</source>
+        <target>Inversiones</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

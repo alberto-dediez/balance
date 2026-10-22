@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults;
 
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults\GetCompanyCarbonFootprintResultsRequest;
@@ -49,7 +50,7 @@ class GetCompanyCarbonFootprintResultsServiceTest extends TestCase
             $this->repository,
             PropertyRepositoryMother::inMemory(),
             new CompanyCarbonFootprintAuthorizer(),
-            new EmissionsBreakdownBuilder($this->activityRepository),
+            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
         );
     }
 
@@ -84,6 +85,28 @@ class GetCompanyCarbonFootprintResultsServiceTest extends TestCase
         $this->assertCount(1, $response->exclusions);
         $this->assertSame(Source::RefrigerantLeaks, $response->exclusions[0]->source());
         $this->assertSame('Sin datos', $response->exclusions[0]->comment());
+    }
+
+    public function testExposesTheScope3Exclusion(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable, 'Sin datos');
+
+        $response = ($this->sut)(new GetCompanyCarbonFootprintResultsRequest($footprint->id()), $this->ownerUser());
+
+        $this->assertNotNull($response->scope3Exclusion);
+        $this->assertSame(ExclusionReason::NoDataAvailable, $response->scope3Exclusion->reason);
+        $this->assertSame('Sin datos', $response->scope3Exclusion->comment);
+    }
+
+    public function testTheScope3ExclusionIsNullWhenTheScopeIsIncluded(): void
+    {
+        $footprint = $this->registeredFootprint();
+
+        $response = ($this->sut)(new GetCompanyCarbonFootprintResultsRequest($footprint->id()), $this->ownerUser());
+
+        $this->assertNull($response->scope3Exclusion);
+        $this->assertArrayHasKey(Scope::Scope3->value, $response->emissionsByScope);
     }
 
     public function testOtherAccountIsDenied(): void

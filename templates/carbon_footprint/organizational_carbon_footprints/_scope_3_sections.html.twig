@@ -1,0 +1,87 @@
+{% set readOnly = readOnly | default(false) %}
+{% set unassignedLabel = unassignedLabel | default(null) %}
+{% set scope3Tables = {
+    purchased_goods_and_services: [{key: 'purchasedGoodsAndServices', component: 'PurchaseServiceActivityTable', title: 'Compras de bienes y servicios' | trans}],
+    capital_goods: [{key: 'capitalGoods', component: 'CapitalGoodActivityTable', title: 'Adquisiciones de bienes de capital' | trans}],
+    upstream_transport: [{key: 'upstreamTransport', component: 'TransportActivityTable', title: 'Transportes de mercancías recibidas' | trans}],
+    operations_waste: [{key: 'operationsWaste', component: 'WasteActivityTable', title: 'Residuos generados' | trans}],
+    business_travel: [
+        {key: 'businessTravel', component: 'MobilityActivityTable', title: 'Desplazamientos de negocio' | trans},
+        {key: 'businessTravelStays', component: 'OvernightStayActivityTable', title: 'Alojamientos de negocio' | trans},
+    ],
+    employee_commuting: [{key: 'employeeCommuting', component: 'MobilityActivityTable', title: 'Desplazamientos al trabajo' | trans}],
+    downstream_transport: [{key: 'downstreamTransport', component: 'TransportActivityTable', title: 'Transportes de mercancías vendidas' | trans}],
+    sold_products_processing: [{key: 'soldProductsProcessing', component: 'ProcessActivityTable', title: 'Procesamiento de productos vendidos' | trans}],
+    sold_products_use: [{key: 'soldProductsUse', component: 'UseProfileActivityTable', title: 'Uso de productos vendidos' | trans}],
+    sold_products_end_of_life: [{key: 'soldProductsEndOfLife', component: 'WasteActivityTable', title: 'Fin de vida de productos vendidos' | trans}],
+    investments: [{key: 'investments', component: 'EconomicSectorActivityTable', title: 'Inversiones' | trans}],
+} %}
+
+<twig:CarbonFootprint:StageExclusion
+    stage="scope_3"
+    :exclusion="stageExclusion"
+    :reasons="exclusionReasons"
+    :readOnly="readOnly"
+>
+    {% for direction in [{title: 'Aguas arriba' | trans, sources: upstreamSources}, {title: 'Aguas abajo' | trans, sources: downstreamSources}] %}
+        <h4 class="fw-semibold mb-3">{{ direction.title }}</h4>
+
+        {% for source in direction.sources %}
+            <twig:CarbonFootprint:SourceSection
+                source="{{ source }}"
+                :exclusion="exclusions[source] ?? null"
+                :reasons="exclusionReasons"
+                :readOnly="readOnly"
+            >
+                {% if source == 'fuel_and_energy_related' %}
+                    <twig:Card title="{{ 'Emisiones aguas arriba de combustibles y energía' | trans }}">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>{{ 'Alcance' | trans }}</th>
+                                        <th>{{ 'Fuente' | trans }}</th>
+                                        <th>{{ 'Tipo' | trans }}</th>
+                                        <th class="text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for line in derivedLines %}
+                                        <tr>
+                                            <td>{{ line.origin.stage.value | trans({}, 'scope') }}</td>
+                                            <td>{{ line.origin.source.value | trans({}, 'source') }}</td>
+                                            <td>{{ line.activityType.value | trans({}, 'activityType') }}</td>
+                                            <td class="text-end">{{ line.emissions.co2eq | number_format(2, ',', '.') }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr><td colspan="4" class="text-muted">{{ 'No hay actividades registradas.' | trans }}</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="3">{{ 'Total' | trans }}</th>
+                                        <th class="text-end">{{ (derivedEmissions[source] ?? null) ? derivedEmissions[source].co2eq | number_format(2, ',', '.') : '---' }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </twig:Card>
+                {% else %}
+                    {% for table in scope3Tables[source] %}
+                        {% for block in blocks %}
+                            {{ component('CarbonFootprint:' ~ table.component, {
+                                title: block.property ? block.property.name ~ ' · ' ~ table.title : (unassignedLabel ? unassignedLabel ~ ' · ' ~ table.title : table.title),
+                                prefix: block.prefixBase is empty ? table.key : block.prefixBase ~ '[' ~ table.key ~ ']',
+                                rows: block.sections[table.key].rows,
+                                items: block.sections[table.key].catalog,
+                                units: table.key == 'investments' ? currencies : block.units,
+                                calculateUrl: calculateUrl,
+                                readOnly: readOnly,
+                            }) }}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </twig:CarbonFootprint:SourceSection>
+        {% endfor %}
+    {% endfor %}
+</twig:CarbonFootprint:StageExclusion>

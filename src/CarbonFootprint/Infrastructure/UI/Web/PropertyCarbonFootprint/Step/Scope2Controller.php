@@ -78,7 +78,7 @@ class Scope2Controller extends AbstractController
                 return $this->redirectToRoute('property_carbon_footprints_scope_2', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
             }
 
-            return $this->redirectToRoute('property_carbon_footprints_mitigation_plan', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
+            return $this->redirectToRoute('property_carbon_footprints_scope_3', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
         }
 
         $response = $getScope(new GetPropertyCarbonFootprintScopeRequest($propertyCarbonFootprint->id(), Scope::Scope2), $loggedUser());

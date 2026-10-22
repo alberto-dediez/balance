@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\Tcpdf;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -35,6 +38,9 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             yield $theme . ' property mitigation en' => [$theme, 'property-mitigation', Locale::English];
             yield $theme . ' company mitigation es' => [$theme, 'company-mitigation', Locale::Spanish];
             yield $theme . ' property long mitigation es' => [$theme, 'property-long-mitigation', Locale::Spanish];
+            yield $theme . ' property scope 3 es' => [$theme, 'property-scope-3', Locale::Spanish];
+            yield $theme . ' company scope 3 es' => [$theme, 'company-scope-3', Locale::Spanish];
+            yield $theme . ' property scope 3 excluded es' => [$theme, 'property-scope-3-excluded', Locale::Spanish];
         }
     }
 
@@ -60,6 +66,43 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         }
     }
 
+    /** @return iterable<string, array{0: string}> */
+    public static function themes(): iterable
+    {
+        yield 'default' => ['default'];
+        yield 'classic' => ['classic'];
+    }
+
+    /** @dataProvider themes */
+    public function testOnlyTheScope3SourcesWithDataHaveTheirOwnPage(string $theme): void
+    {
+        $sources = $this->scope3PageSources($theme, OrganizationalCarbonFootprintReportDataMother::withScope3OnlyInPurchasedGoodsAndServices());
+
+        $this->assertSame([Source::PurchasedGoodsAndServices], $sources);
+    }
+
+    /** @dataProvider themes */
+    public function testExcludedScope3SourcesKeepTheirOwnPage(string $theme): void
+    {
+        $sources = $this->scope3PageSources($theme, OrganizationalCarbonFootprintReportDataMother::withScope3OnlyInPurchasedGoodsAndServices(Source::BusinessTravel));
+
+        $this->assertEqualsCanonicalizing([Source::PurchasedGoodsAndServices, Source::BusinessTravel], $sources);
+    }
+
+    /** @return list<Source> */
+    private function scope3PageSources(string $theme, OrganizationalCarbonFootprintReportData $data): array
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<array{0: Scope, 1: Source, 2: string}> $definitions */
+        $definitions = (new \ReflectionMethod($generator, 'scopeSourceDefinitions'))->invoke($generator, $data, Locale::Spanish);
+
+        return array_values(array_map(
+            static fn(array $definition): Source => $definition[1],
+            array_filter($definitions, static fn(array $definition): bool => Scope::Scope3 === $definition[0]),
+        ));
+    }
+
     /** @return array{0: CarbonFootprintReportData, 1: CarbonFootprintReportTexts} */
     private function fixtureFor(string $type): array
     {
@@ -68,6 +111,9 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             'property' => [OrganizationalCarbonFootprintReportDataMother::forProperty(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             'company-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(CarbonFootprintReportSubjectType::Company), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
+            'property-scope-3' => [OrganizationalCarbonFootprintReportDataMother::withScope3(), CarbonFootprintReportTextsMother::forOrganization()],
+            'company-scope-3' => [OrganizationalCarbonFootprintReportDataMother::withScope3(CarbonFootprintReportSubjectType::Company), CarbonFootprintReportTextsMother::forOrganization()],
+            'property-scope-3-excluded' => [OrganizationalCarbonFootprintReportDataMother::withScope3Excluded(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-long-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(targetYear: 2035), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             default => [OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), CarbonFootprintReportTextsMother::forOrganization()],
         };
@@ -86,7 +132,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $translator->addLoader('xlf', new XliffFileLoader());
 
         foreach (Locale::cases() as $locale) {
-            foreach (['messages', 'scope', 'source', 'phase', 'exclusionReason', 'eventSectorType', 'eventTypologyType', 'eventSizeType'] as $domain) {
+            foreach (['messages', 'scope', 'source', 'activityType', 'phase', 'exclusionReason', 'eventSectorType', 'eventTypologyType', 'eventSizeType'] as $domain) {
                 $catalogue = sprintf('%s/translations/%s+intl-icu.%s.xlf', $this->rootDirectory(), $domain, $locale->value);
 
                 if (is_file($catalogue)) {

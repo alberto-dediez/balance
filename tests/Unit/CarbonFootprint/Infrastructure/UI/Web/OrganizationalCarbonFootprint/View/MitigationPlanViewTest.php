@@ -42,6 +42,25 @@ class MitigationPlanViewTest extends TestCase
         $this->assertSame(1456.0, $view['chart']['values'][1]);
     }
 
+    public function testTheExpectedReductionAlsoCountsTheWellToTankOfTheReducedSource(): void
+    {
+        $naturalGas = MitigationEmissionSourceMother::naturalGas(1000.0);
+        $electricity = MitigationEmissionSourceMother::electricity(500.0);
+        $sources = [
+            $naturalGas,
+            $electricity,
+            MitigationEmissionSourceMother::derivedFrom($naturalGas, 100.0),
+            MitigationEmissionSourceMother::derivedFrom($electricity, 50.0),
+        ];
+        $actions = [MitigationActionMother::withEffect(Source::FixedFacilities, 'natural-gas', 0.2)];
+
+        $view = (new MitigationPlanView())->build($actions, $sources, (new MitigationProjector())->project(2025, $sources, $actions));
+
+        $this->assertEqualsWithDelta(220.0, $view['actions'][0]['expectedReduction'], 0.001);
+        $this->assertCount(1, $view['actions'][0]['effects']);
+        $this->assertSame('Gas natural', $view['actions'][0]['effects'][0]['itemName']);
+    }
+
     public function testWithoutProjectionHasNoTablesNorChart(): void
     {
         $view = (new MitigationPlanView())->build([], [MitigationEmissionSourceMother::naturalGas()], null);

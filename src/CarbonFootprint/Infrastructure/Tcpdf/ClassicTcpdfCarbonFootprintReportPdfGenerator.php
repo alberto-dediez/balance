@@ -150,7 +150,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
             Source::BuildingElectricity->value => 'electricity.jpg',
         ];
 
-        foreach ($this->scopeSourceDefinitions($locale) as [$scope, $source, $title]) {
+        foreach ($this->scopeSourceDefinitions($data, $locale) as [$scope, $source, $title]) {
             $exclusion = $this->exclusionFor($data, $scope, $source);
 
             if (null !== $exclusion) {
@@ -162,12 +162,15 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
             }
 
             $isElectricity = Source::BuildingElectricity === $source;
+            $isDerived = Source::FuelAndEnergyRelated === $source;
 
-            [$header, $rows, $widths, $hasTotal] = $isElectricity
-                ? $this->electricityTable($data, $locale, $isCompany)
-                : $this->sourceTable($data, $scope, $source, $locale, $isCompany);
+            [$header, $rows, $widths, $hasTotal] = match (true) {
+                $isElectricity => $this->electricityTable($data, $locale, $isCompany),
+                $isDerived => $this->derivedSourceTable($data, $locale),
+                default => $this->sourceTable($data, $scope, $source, $locale, $isCompany),
+            };
 
-            $groupHeaderCells = [
+            $groupHeaderCells = $isDerived ? [] : [
                 ['', $isCompany ? 2 : 1],
                 [$this->trans('Factores', $locale), $isElectricity ? 2 : 4],
                 [$this->trans('Emisiones', $locale), $isElectricity ? 2 : 1],
@@ -347,10 +350,12 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
         $excluded = [];
         foreach ($data->exclusionLines as $line) {
-            $excluded[$line->scope->value . '|' . $line->source->value] = true;
+            if (null !== $line->source) {
+                $excluded[$line->scope->value . '|' . $line->source->value] = true;
+            }
         }
 
-        $icons = [Scope::Scope1->value => 'cars.jpg', Scope::Scope2->value => 'lighting.jpg'];
+        $icons = [Scope::Scope1->value => 'cars.jpg', Scope::Scope2->value => 'lighting.jpg', Scope::Scope3->value => 'scope3.jpg'];
         $blockTop = 70.0;
 
         foreach (Scope::cases() as $scope) {
@@ -362,13 +367,25 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
             $this->setFont($pdf, 11, self::FONT_STYLE_SEMIBOLD, self::COLOR_PRIMARY);
             $lineY = $blockTop;
-            foreach ($scope->sections() as $section) {
-                $label = $this->translator->trans($section->source->value, [], 'source', $locale->value);
-
-                if (isset($excluded[$scope->value . '|' . $section->source->value])) {
-                    $label .= ' ' . $this->trans('(excluida)', $locale);
+            $labels = [];
+            if (Scope::Scope3 === $scope && $data->scope3Excluded) {
+                $labels[] = $this->trans('Alcance completo', $locale) . ' ' . $this->trans('(excluido)', $locale);
+            } else {
+                foreach ($this->stageSources([$scope]) as $source) {
+                    $labels[] = $this->translator->trans($source->value, [], 'source', $locale->value)
+                        . (isset($excluded[$scope->value . '|' . $source->value]) ? ' ' . $this->trans('(excluida)', $locale) : '');
                 }
+            }
 
+            if (Scope::Scope3 === $scope && !$data->scope3Excluded) {
+                $this->setFont($pdf, 9, self::FONT_STYLE_SEMIBOLD, self::COLOR_PRIMARY);
+                $pdf->MultiCell(80, 4.5, implode(' · ', $labels), 0, 'L', false, 1, 40, $blockTop + 8);
+                $blockTop = $pdf->GetY() + 6;
+
+                continue;
+            }
+
+            foreach ($labels as $label) {
                 $pdf->setXY(60, $lineY);
                 $pdf->Cell(4, 6, '-', 0, 0, 'L');
                 $pdf->MultiCell(56, 6, $label, 0, 'L', false, 1, 64, $lineY);
@@ -380,11 +397,21 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
         $this->setFont($pdf, 8, self::FONT_STYLE_REGULAR, self::COLOR_PRIMARY);
         $pdf->setXY(self::MARGIN_LEFT, max(145, $blockTop + 4));
-        $pdf->MultiCell(100, 5, $this->trans('Los datos de alcance 1 y alcance 2 dependen del tipo de instalaciones y equipos de la organización.', $locale), 0, 'L');
-        $pdf->setX(self::MARGIN_LEFT);
-        $pdf->MultiCell(100, 5, $this->trans('No se incluyen las emisiones de alcance 3 porque la organización no dispone de los datos necesarios.', $locale), 0, 'L');
+        $pdf->MultiCell(100, 5, $this->scope3IncludedEmissionsText($data, $locale), 0, 'L');
 
         $this->paintImage($pdf, 'included-emissions.jpg', 125, 57, 160, 140, true);
+    }
+
+    private function scope3IncludedEmissionsText(OrganizationalCarbonFootprintReportData $data, Locale $locale): string
+    {
+        if (!$data->scope3Excluded) {
+            return $this->trans('Los datos de alcance 1, alcance 2 y alcance 3 dependen del tipo de instalaciones, equipos y cadena de valor de la organización.', $locale);
+        }
+
+        $reason = null === $data->scope3ExclusionReason ? '' : $this->translator->trans($data->scope3ExclusionReason->value, [], 'exclusionReason', $locale->value);
+        $text = $this->trans('No se incluyen las emisiones de alcance 3: {reason}', $locale, ['{reason}' => $reason]);
+
+        return null === $data->scope3ExclusionComment ? $text : $text . '. ' . $data->scope3ExclusionComment;
     }
 
     private function renderEventExclusionsPage(ReportTcpdf $pdf, EventCarbonFootprintReportData $data, Locale $locale): void
@@ -523,6 +550,9 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
             $scopeLines = [
                 mb_strtoupper($this->trans('Alcance 1: {total} kg de CO₂eq', $locale, ['{total}' => $this->number(($data->emissionsByScope[Scope::Scope1->value] ?? new Emissions())->co2eq())])),
                 mb_strtoupper($this->trans('Alcance 2: {total} kg de CO₂eq', $locale, ['{total}' => $this->number(($data->emissionsByScope[Scope::Scope2->value] ?? new Emissions())->co2eq())])),
+                mb_strtoupper($data->scope3Excluded
+                    ? $this->trans('Alcance 3: excluido', $locale)
+                    : $this->trans('Alcance 3: {total} kg de CO₂eq', $locale, ['{total}' => $this->number(($data->emissionsByScope[Scope::Scope3->value] ?? new Emissions())->co2eq())])),
             ];
             $fontSize = min(array_map(fn(string $line): float => $this->fitFont($pdf, $line, 82, 16, 10, self::FONT_STYLE_BOLD, self::COLOR_NEUTRAL_100), $scopeLines));
             $this->setFont($pdf, $fontSize, self::FONT_STYLE_BOLD, self::COLOR_NEUTRAL_100);

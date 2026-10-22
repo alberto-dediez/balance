@@ -15,10 +15,21 @@ final class MitigationEmissionSource
         public readonly string $itemId,
         public readonly string $itemName,
         public readonly float $emissions,
+        public readonly ?string $originKey = null,
     ) {}
 
     public function key(): string
     {
         return $this->source->value . '|' . $this->itemId;
+    }
+
+    public function isDerived(): bool
+    {
+        return null !== $this->originKey;
+    }
+
+    public function reductionKey(): string
+    {
+        return $this->originKey ?? $this->key();
     }
 }

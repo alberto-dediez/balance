@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprint;
 
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionAnswer;
@@ -99,6 +100,71 @@ class StageAnswersProcessorTest extends TestCase
         $this->createSUT()->applyExclusions($propertyCarbonFootprint, Scope::Scope1, []);
 
         $this->assertSame([], $propertyCarbonFootprint->exclusionsFor(Scope::Scope1));
+    }
+
+    public function testValidatesTheStageExclusionOfAnExcludableStage(): void
+    {
+        $stageExclusion = new StageExclusionAnswer(ExclusionReason::NoDataAvailable, 'sin datos');
+
+        $validated = $this->createSUT()->validate(Scope::Scope3, [], [], $stageExclusion);
+
+        $this->assertSame($stageExclusion, $validated->stageExclusion);
+    }
+
+    public function testThrowsWhenAnExcludedStageStillHasAnswers(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->createSUT()->validate(
+            Scope::Scope3,
+            [],
+            [new ExclusionAnswer(Source::Investments, ExclusionReason::NotApplicable)],
+            new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
+        );
+    }
+
+    public function testThrowsWhenTheStageIsNotExcludable(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->createSUT()->validate(Scope::Scope1, [], [], new StageExclusionAnswer(ExclusionReason::NoDataAvailable));
+    }
+
+    public function testAcceptsTheExclusionOfADerivedSource(): void
+    {
+        $validated = $this->createSUT()->validate(Scope::Scope3, [], [new ExclusionAnswer(Source::FuelAndEnergyRelated, ExclusionReason::NotSignificant)]);
+
+        $this->assertArrayHasKey(Source::FuelAndEnergyRelated->value, $validated->exclusionsBySource);
+    }
+
+    public function testApplyStageExclusionExcludesTheStage(): void
+    {
+        $propertyCarbonFootprint = $this->registeredFootprint();
+
+        $this->createSUT()->applyStageExclusion($propertyCarbonFootprint, Scope::Scope3, new StageExclusionAnswer(ExclusionReason::NoDataAvailable, 'sin datos'));
+
+        $this->assertTrue($propertyCarbonFootprint->isStageExcluded(Scope::Scope3));
+        $this->assertSame('sin datos', $propertyCarbonFootprint->stageExclusionComment(Scope::Scope3));
+    }
+
+    public function testApplyStageExclusionWithoutAnswerIncludesTheStage(): void
+    {
+        $propertyCarbonFootprint = $this->registeredFootprint();
+        $propertyCarbonFootprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->createSUT()->applyStageExclusion($propertyCarbonFootprint, Scope::Scope3, null);
+
+        $this->assertFalse($propertyCarbonFootprint->isStageExcluded(Scope::Scope3));
+    }
+
+    public function testApplyStageExclusionWithoutAnswerIgnoresNonExcludableStages(): void
+    {
+        $propertyCarbonFootprint = $this->registeredFootprint();
+        $propertyCarbonFootprint->clearEvents();
+
+        $this->createSUT()->applyStageExclusion($propertyCarbonFootprint, Scope::Scope1, null);
+
+        $this->assertSame([], $propertyCarbonFootprint->recordedEvents());
     }
 
     /** @param list<CombustibleAnswer|ElectricityAnswer> $answers */

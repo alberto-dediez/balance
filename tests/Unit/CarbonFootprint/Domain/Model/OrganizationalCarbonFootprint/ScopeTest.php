@@ -36,18 +36,21 @@ final class ScopeTest extends TestCase
     {
         $this->assertSame('scope_1', Scope::Scope1->key());
         $this->assertSame('scope_2', Scope::Scope2->key());
+        $this->assertSame('scope_3', Scope::Scope3->key());
     }
 
     public function testStepNumber(): void
     {
         $this->assertSame(1, Scope::Scope1->stepNumber());
         $this->assertSame(2, Scope::Scope2->stepNumber());
+        $this->assertSame(3, Scope::Scope3->stepNumber());
     }
 
     public function testAnsweredStatus(): void
     {
         $this->assertSame(OrganizationalCarbonFootprintStatus::Scope1Answered, Scope::Scope1->answeredStatus());
         $this->assertSame(OrganizationalCarbonFootprintStatus::Scope2Answered, Scope::Scope2->answeredStatus());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope3Answered, Scope::Scope3->answeredStatus());
     }
 
     public function testOfSource(): void
@@ -57,5 +60,99 @@ final class ScopeTest extends TestCase
         $this->assertSame(Scope::Scope1, Scope::ofSource(Source::RefrigerantLeaks));
         $this->assertSame(Scope::Scope2, Scope::ofSource(Source::BuildingElectricity));
         $this->assertNull(Scope::ofSource(Source::Materials));
+    }
+
+    public function testScope3HasTwelveSectionsInOrder(): void
+    {
+        $sections = Scope::Scope3->sections();
+
+        $this->assertCount(12, $sections);
+        $this->assertSame([
+            'purchasedGoodsAndServices',
+            'capitalGoods',
+            'upstreamTransport',
+            'operationsWaste',
+            'businessTravel',
+            'businessTravelStays',
+            'employeeCommuting',
+            'downstreamTransport',
+            'soldProductsProcessing',
+            'soldProductsUse',
+            'soldProductsEndOfLife',
+            'investments',
+        ], array_map(static fn($s) => $s->key, $sections));
+        $this->assertSame([
+            ActivityType::PurchaseService,
+            ActivityType::CapitalGood,
+            ActivityType::Transport,
+            ActivityType::Waste,
+            ActivityType::Mobility,
+            ActivityType::OvernightStay,
+            ActivityType::Mobility,
+            ActivityType::Transport,
+            ActivityType::Process,
+            ActivityType::UseProfile,
+            ActivityType::Waste,
+            ActivityType::EconomicSector,
+        ], array_map(static fn($s) => $s->activityType, $sections));
+        $this->assertCount(2, array_filter($sections, static fn($s) => Source::BusinessTravel === $s->source));
+    }
+
+    public function testOfSourceResolvesEveryScope3Source(): void
+    {
+        foreach ([
+            Source::PurchasedGoodsAndServices,
+            Source::CapitalGoods,
+            Source::FuelAndEnergyRelated,
+            Source::UpstreamTransport,
+            Source::OperationsWaste,
+            Source::BusinessTravel,
+            Source::EmployeeCommuting,
+            Source::DownstreamTransport,
+            Source::SoldProductsProcessing,
+            Source::SoldProductsUse,
+            Source::SoldProductsEndOfLife,
+            Source::Investments,
+        ] as $source) {
+            $this->assertSame(Scope::Scope3, Scope::ofSource($source), $source->value);
+        }
+    }
+
+    public function testOnlyScope3HasDerivedSources(): void
+    {
+        $this->assertSame([], Scope::Scope1->derivedSources());
+        $this->assertSame([], Scope::Scope2->derivedSources());
+        $this->assertSame([Source::FuelAndEnergyRelated], Scope::Scope3->derivedSources());
+        $this->assertCount(12, Scope::Scope3->allSources());
+        $this->assertContains(Source::FuelAndEnergyRelated, Scope::Scope3->allSources());
+    }
+
+    public function testOnlyScope3IsExcludable(): void
+    {
+        $this->assertFalse(Scope::Scope1->isExcludable());
+        $this->assertFalse(Scope::Scope2->isExcludable());
+        $this->assertTrue(Scope::Scope3->isExcludable());
+    }
+
+    public function testUpstreamAndDownstreamSources(): void
+    {
+        $this->assertSame([], Scope::Scope1->upstreamSources());
+        $this->assertSame([], Scope::Scope2->downstreamSources());
+        $this->assertSame([
+            Source::PurchasedGoodsAndServices,
+            Source::CapitalGoods,
+            Source::FuelAndEnergyRelated,
+            Source::UpstreamTransport,
+            Source::OperationsWaste,
+            Source::BusinessTravel,
+            Source::EmployeeCommuting,
+        ], Scope::Scope3->upstreamSources());
+        $this->assertSame([
+            Source::DownstreamTransport,
+            Source::SoldProductsProcessing,
+            Source::SoldProductsUse,
+            Source::SoldProductsEndOfLife,
+            Source::Investments,
+        ], Scope::Scope3->downstreamSources());
     }
 }

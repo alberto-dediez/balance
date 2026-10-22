@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope;
 
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
+use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -19,6 +23,7 @@ final class GetCompanyCarbonFootprintScopeService
         private PropertyRepository $propertyRepository,
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private StageSectionsBuilder $sectionsBuilder,
+        private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
     ) {}
 
     public function __invoke(GetCompanyCarbonFootprintScopeRequest $request, User $user): GetCompanyCarbonFootprintScopeResponse
@@ -48,6 +53,23 @@ final class GetCompanyCarbonFootprintScopeService
             );
         }
 
-        return new GetCompanyCarbonFootprintScopeResponse($blocks, $companyCarbonFootprint->exclusionsFor($request->scope));
+        return new GetCompanyCarbonFootprintScopeResponse(
+            blocks: $blocks,
+            exclusions: $companyCarbonFootprint->exclusionsFor($request->scope),
+            stageExclusion: $this->stageExclusion($companyCarbonFootprint, $request->scope),
+            derivedEmissions: $this->derivedSourceEmissionsCalculator->calculate($companyCarbonFootprint, $request->scope),
+            derivedLines: $this->derivedSourceEmissionsCalculator->lines($companyCarbonFootprint, $request->scope),
+        );
+    }
+
+    private function stageExclusion(CompanyCarbonFootprint $companyCarbonFootprint, Scope $scope): ?StageExclusionAnswer
+    {
+        $reason = $companyCarbonFootprint->stageExclusionReason($scope);
+
+        if (!$companyCarbonFootprint->isStageExcluded($scope) || null === $reason) {
+            return null;
+        }
+
+        return new StageExclusionAnswer($reason, $companyCarbonFootprint->stageExclusionComment($scope));
     }
 }

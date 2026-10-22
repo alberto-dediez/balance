@@ -1,0 +1,63 @@
+{% props stage, exclusion = null, reasons = [], readOnly = false %}
+
+<div data-controller="source-exclusion">
+    <twig:Card class="mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h5 class="mb-0">{{ stage | trans({}, 'scope') }}</h5>
+
+            {% if readOnly %}
+                {% if exclusion %}
+                    <span class="badge text-bg-secondary">{{ 'Alcance excluido' | trans }}</span>
+                {% endif %}
+            {% else %}
+                <div class="form-check form-switch mb-0">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        value="1"
+                        name="stageExclusion[excluded]"
+                        id="stage_exclusion_{{ stage }}"
+                        data-source-exclusion-target="checkbox"
+                        data-action="source-exclusion#toggle"
+                        {% if exclusion %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="stage_exclusion_{{ stage }}">
+                        {{ 'No calcular el alcance 3' | trans }}
+                    </label>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if readOnly %}
+            {% if exclusion %}
+                <div class="alert alert-warning d-flex align-items-center gap-2 mt-3 mb-0">
+                    <span>{{ exclusion.reason | trans({}, 'exclusionReason') }}</span>
+                    {% if exclusion.comment %}
+                        <span class="text-muted">{{ exclusion.comment }}</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="row g-2 mt-2 {% if not exclusion %}d-none{% endif %}" data-source-exclusion-target="details">
+                <div class="col-md-4">
+                    <label class="form-label" for="stage_exclusion_{{ stage }}_reason">{{ 'Motivo de la exclusión' | trans }}</label>
+                    <select class="form-select" name="stageExclusion[reason]" id="stage_exclusion_{{ stage }}_reason">
+                        {% for reason in reasons %}
+                            <option value="{{ reason.value }}" {% if exclusion and exclusion.reason == reason.value %}selected{% endif %}>
+                                {{ reason.value | trans({}, 'exclusionReason') }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label" for="stage_exclusion_{{ stage }}_comment">{{ 'Comentario (opcional)' | trans }}</label>
+                    <textarea class="form-control" name="stageExclusion[comment]" id="stage_exclusion_{{ stage }}_comment" rows="1">{{ exclusion ? exclusion.comment : '' }}</textarea>
+                </div>
+            </div>
+        {% endif %}
+    </twig:Card>
+
+    <fieldset data-source-exclusion-target="sections">
+        {% block content %}{% endblock %}
+    </fieldset>
+</div>

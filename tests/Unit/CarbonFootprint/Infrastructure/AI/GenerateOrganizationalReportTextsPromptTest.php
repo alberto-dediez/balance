@@ -49,6 +49,27 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringNotContainsString('Emissions by property', $text);
     }
 
+    public function testWithScope3TheTextIncludesItsEmissionsAndTheThreeBoundaries(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::English);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('- scope_3: 5490', $text);
+        $this->assertStringContainsString('- scope_3 | fuel_and_energy_related: 590', $text);
+        $this->assertStringContainsString('the scope 1, scope 2 and scope 3 boundaries', $text);
+    }
+
+    public function testWithScope3ExcludedTheTextDeclaresTheExclusionAndItsReason(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3Excluded(), Locale::English);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('the scope 1 and scope 2 boundaries (scope 3 excluded: no_data_available)', $text);
+        $this->assertStringContainsString('- scope_3 | (whole scope) | no_data_available | Sin datos de proveedores', $text);
+    }
+
     public function testTextIncludesTheBreakdownByPropertyForACompany(): void
     {
         $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), Locale::Spanish);

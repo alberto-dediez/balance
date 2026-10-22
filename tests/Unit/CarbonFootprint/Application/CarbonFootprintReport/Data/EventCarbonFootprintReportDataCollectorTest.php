@@ -6,6 +6,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
 use App\CarbonFootprint\Application\Activity\Catalog\MaterialCatalogProvider;
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\EventCarbonFootprintReportDataCollector;
@@ -136,7 +137,7 @@ class EventCarbonFootprintReportDataCollectorTest extends TestCase
             $eventRepository,
             $emissionFactorGroupRepository,
             $activityRepository,
-            new EmissionsBreakdownBuilder($activityRepository),
+            new EmissionsBreakdownBuilder($activityRepository, new DerivedSourceEmissionsCalculator($activityRepository)),
             new ActivityItemNameResolver(
                 new ActivityCatalogProviderRegistry([new MaterialCatalogProvider($materialRepository)]),
                 new FakeTranslator(),

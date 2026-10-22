@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\CarbonFootprintReport;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\Emissions;
 
 final class OrganizationalCarbonFootprintReportData implements CarbonFootprintReportData
@@ -15,6 +17,7 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
      * @param list<array{propertyId: ?string, name: string, emissions: Emissions}> $emissionsByProperty
      * @param list<OrganizationalCarbonFootprintReportActivityLine>                $activityLines
      * @param list<OrganizationalCarbonFootprintReportExclusionLine>               $exclusionLines
+     * @param list<DerivedSourceLine>                                              $derivedLines
      */
     public function __construct(
         public readonly CarbonFootprintReportSubjectType $subjectType,
@@ -32,6 +35,10 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         public readonly array $activityLines,
         public readonly array $exclusionLines = [],
         public readonly ?OrganizationalCarbonFootprintReportMitigationPlan $mitigationPlan = null,
+        public readonly bool $scope3Excluded = false,
+        public readonly ?ExclusionReason $scope3ExclusionReason = null,
+        public readonly ?string $scope3ExclusionComment = null,
+        public readonly array $derivedLines = [],
     ) {}
 
     public function subjectType(): CarbonFootprintReportSubjectType

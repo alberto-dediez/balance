@@ -7,12 +7,14 @@ namespace App\Tests\Unit\CarbonFootprint\Application\MitigationAction\Update;
 use App\CarbonFootprint\Application\MitigationAction\MitigationActionEffectData;
 use App\CarbonFootprint\Application\MitigationAction\MitigationPlanNotEditableException;
 use App\CarbonFootprint\Application\MitigationAction\Update\UpdateMitigationActionRequest;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationAction;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionId;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionReductionOutOfRangeException;
 use App\CarbonFootprint\Domain\Model\MitigationMeasure\MitigationMeasureId;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -118,6 +120,23 @@ class UpdateMitigationActionServiceTest extends TestCase
             '',
             2030,
             [new MitigationActionEffectData(Source::RefrigerantLeaks, 'unknown', 0.5)],
+        ), $this->owner());
+    }
+
+    public function testRejectsAnEffectOnTheDerivedScope3Source(): void
+    {
+        $footprint = $this->propertyFootprint(withActivities: false);
+        $footprint->addActivity($this->naturalGasActivity('600', '60')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $action = $this->manualAction($footprint);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->updateService())(new UpdateMitigationActionRequest(
+            $action->id(),
+            'Caldera',
+            '',
+            2030,
+            [new MitigationActionEffectData(Source::FuelAndEnergyRelated, (string) $this->naturalGasId, 0.5)],
         ), $this->owner());
     }
 

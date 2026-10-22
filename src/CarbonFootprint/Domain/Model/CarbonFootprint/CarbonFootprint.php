@@ -33,6 +33,16 @@ interface CarbonFootprint
 
     public function includeSource(CalculationStage $stage, Source $source): void;
 
+    public function excludeStage(CalculationStage $stage, ExclusionReason $reason, ?string $comment = null): void;
+
+    public function includeStage(CalculationStage $stage): void;
+
+    public function isStageExcluded(CalculationStage $stage): bool;
+
+    public function stageExclusionReason(CalculationStage $stage): ?ExclusionReason;
+
+    public function stageExclusionComment(CalculationStage $stage): ?string;
+
     /** @return array<string, SourceExclusion> */
     public function exclusionsFor(CalculationStage $stage): array;
 

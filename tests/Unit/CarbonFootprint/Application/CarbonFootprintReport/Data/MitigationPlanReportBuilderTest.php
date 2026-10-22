@@ -31,7 +31,7 @@ class MitigationPlanReportBuilderTest extends TestCase
         DomainEventPublisher::instance()->reset();
         $this->initActivities();
 
-        $this->footprint = PropertyCarbonFootprintMother::withScope2Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $this->footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
         $activity = $this->combustibleActivity('1000');
         assert($activity instanceof CombustibleActivity);
         $this->combustibleId = (string) $activity->combustibleId();
@@ -74,6 +74,29 @@ class MitigationPlanReportBuilderTest extends TestCase
 
         $this->assertNotNull($plan);
         $this->assertSame('Caldera', $plan->actions[0]->name);
+    }
+
+    public function testAnActionOnASourceAlsoReducesItsWellToTank(): void
+    {
+        $activity = $this->combustibleActivityWithWellToTank('500', '50');
+        assert($activity instanceof CombustibleActivity);
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $action = MitigationActionMother::manual(carbonFootprintId: (string) $footprint->id(), name: 'Caldera');
+        $action->setEffect(Source::FixedFacilities, (string) $activity->combustibleId(), 'Gas natural', 0.2);
+        $this->mitigationActionRepository->add($action);
+
+        $plan = $this->mitigationPlanBuilder()->build(CarbonFootprintReportSubjectType::Property, $footprint, null);
+
+        $this->assertNotNull($plan);
+        $this->assertCount(2, $plan->projection->sources);
+        $wellToTank = $plan->projection->sources[1];
+        $this->assertSame(Scope::Scope3, $wellToTank->emissionSource->scope);
+        $this->assertSame(Source::FuelAndEnergyRelated, $wellToTank->emissionSource->source);
+        $this->assertTrue($wellToTank->hasReductions);
+        $this->assertEqualsWithDelta(40.0, $wellToTank->expectedByYear[2030], 0.001);
+        $this->assertEqualsWithDelta(550.0, $plan->projection->totalByYear[2025], 0.001);
+        $this->assertEqualsWithDelta(440.0, $plan->projection->totalByYear[2030], 0.001);
     }
 
     public function testReturnsNullWithoutActions(): void

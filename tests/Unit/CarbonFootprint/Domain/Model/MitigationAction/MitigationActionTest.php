@@ -195,6 +195,15 @@ class MitigationActionTest extends TestCase
         $action->setEffect(Source::Materials, 'material', 'Material', 0.2);
     }
 
+    public function testSetEffectAcceptsAScope3Source(): void
+    {
+        $action = MitigationActionMother::manual();
+
+        $action->setEffect(Source::Investments, 'sector', 'Sector', 0.2);
+
+        $this->assertNotNull($action->effects()->forSourceAndItem(Source::Investments, 'sector'));
+    }
+
     public function testSyncEffectsAddsUpdatesAndRemoves(): void
     {
         $action = MitigationActionMother::manual();

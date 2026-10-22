@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
 use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
@@ -527,6 +528,28 @@ class EventCarbonFootprint implements CarbonFootprint, \Stringable
                 source: $source,
             ),
         );
+    }
+
+    public function excludeStage(CalculationStage $stage, ExclusionReason $reason, ?string $comment = null): void
+    {
+        throw new StageNotExcludableException(sprintf('Stage "%s" cannot be excluded', $stage->key()));
+    }
+
+    public function includeStage(CalculationStage $stage): void {}
+
+    public function isStageExcluded(CalculationStage $stage): bool
+    {
+        return false;
+    }
+
+    public function stageExclusionReason(CalculationStage $stage): ?ExclusionReason
+    {
+        return null;
+    }
+
+    public function stageExclusionComment(CalculationStage $stage): ?string
+    {
+        return null;
     }
 
     public function applyEventCarbonFootprintSourceExcluded(EventCarbonFootprintSourceExcluded $event): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\CompanyCarbonFootprint\Complete;
 
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\Complete\CompleteCompanyCarbonFootprintRequest;
@@ -24,6 +25,7 @@ use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -45,13 +47,13 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
         $this->sut = new CompleteCompanyCarbonFootprintService(
             $this->repository,
             new CompanyCarbonFootprintAuthorizer(),
-            new EmissionsBreakdownBuilder($this->activityRepository),
+            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
         );
     }
 
     public function testCompletesTheFootprintWithTheTotalOfItsActivities(): void
     {
-        $footprint = $this->scope2AnsweredFootprint();
+        $footprint = $this->scope3AnsweredFootprint();
         $activity = CombustibleActivityMother::registered(new AccountId('account-id-test'));
         $this->activityRepository->save($activity);
         $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -61,6 +63,46 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
 
         $this->assertTrue($footprint->isCompleted());
         $this->assertSame('15', $footprint->totalEmissions()->co2eq());
+    }
+
+    public function testTheTotalIncludesScope3AndTheDerivedFuelAndEnergyEmissions(): void
+    {
+        $footprint = $this->scope3AnsweredFootprint();
+        $combustible = CombustibleActivityMother::registeredWithWellToTank(new AccountId('account-id-test'));
+        $purchase = PurchaseServiceActivityMother::registered(new AccountId('account-id-test'));
+        $this->activityRepository->save($combustible);
+        $this->activityRepository->save($purchase);
+        $footprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $footprint->addActivity($purchase->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+        $this->repository->add($footprint);
+
+        ($this->sut)(new CompleteCompanyCarbonFootprintRequest($footprint->id()), $this->ownerUser());
+
+        $expected = (float) $combustible->emissions()->co2eq() + (float) $purchase->emissions()->co2eq() + (float) $combustible->wellToTankEmissions()->co2eq();
+        $this->assertSame($expected, (float) $footprint->totalEmissions()->co2eq());
+    }
+
+    public function testAnExcludedScope3IsLeftOutOfTheTotal(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Excluded((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
+        $combustible = CombustibleActivityMother::registeredWithWellToTank(new AccountId('account-id-test'));
+        $this->activityRepository->save($combustible);
+        $footprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $this->repository->add($footprint);
+
+        ($this->sut)(new CompleteCompanyCarbonFootprintRequest($footprint->id()), $this->ownerUser());
+
+        $this->assertSame('15', $footprint->totalEmissions()->co2eq());
+    }
+
+    public function testScope2AnsweredFootprintThrows(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope2Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
+        $this->repository->add($footprint);
+
+        $this->expectException(OrganizationalCarbonFootprintNotReadyToCompleteException::class);
+
+        ($this->sut)(new CompleteCompanyCarbonFootprintRequest($footprint->id()), $this->ownerUser());
     }
 
     public function testFootprintNotFoundThrows(): void
@@ -82,7 +124,7 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
 
     public function testUnauthorizedAccessThrows(): void
     {
-        $footprint = $this->scope2AnsweredFootprint();
+        $footprint = $this->scope3AnsweredFootprint();
         $this->repository->add($footprint);
 
         $this->expectException(UnauthorizedActionException::class);
@@ -90,9 +132,9 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
         ($this->sut)(new CompleteCompanyCarbonFootprintRequest($footprint->id()), UserMother::fromUsernameAndRole('user', Role::User));
     }
 
-    private function scope2AnsweredFootprint(): CompanyCarbonFootprint
+    private function scope3AnsweredFootprint(): CompanyCarbonFootprint
     {
-        return CompanyCarbonFootprintMother::withScope2Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
+        return CompanyCarbonFootprintMother::withScope3Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
     }
 
     private function ownerUser(): User
