@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="rmqcSiK" resname="Sent">
+        <source>Sent</source>
+        <target>Enviado</target>
+      </trans-unit>
+      <trans-unit id="S.vnhPJ" resname="Failed">
+        <source>Failed</source>
+        <target>Fallido</target>
+      </trans-unit>
+      <trans-unit id="5SES.pD" resname="Deferred">
+        <source>Deferred</source>
+        <target>Diferido</target>
+      </trans-unit>
+      <trans-unit id="tQPP6b8" resname="Delivered">
+        <source>Delivered</source>
+        <target>Entregado</target>
+      </trans-unit>
+      <trans-unit id="Ra8mg.b" resname="Bounced">
+        <source>Bounced</source>
+        <target>Rebotado</target>
+      </trans-unit>
+      <trans-unit id="lGci0JN" resname="Dropped">
+        <source>Dropped</source>
+        <target>Descartado</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

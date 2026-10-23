@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use App\Shared\Infrastructure\Health\InMemoryHealthIndicator;
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -20,9 +23,30 @@ class SystemContext implements Context
     private ?int $statusCode = null;
     private ?CommandTester $commandTester = null;
 
-    public function __construct(KernelInterface $kernel)
+    public function __construct(private readonly KernelInterface $kernel)
     {
         $this->application = new Application($kernel);
+    }
+
+    #[AfterScenario]
+    public function after(AfterScenarioScope $scope): void
+    {
+        $this->getInMemoryHealthIndicator()->markHealthy();
+    }
+
+    private function getInMemoryHealthIndicator(): InMemoryHealthIndicator
+    {
+        return $this->kernel->getContainer()->get(InMemoryHealthIndicator::class);
+    }
+
+    #[Given('the health indicator :name is failing')]
+    public function theHealthIndicatorIsFailing(string $name): void
+    {
+        $indicator = $this->getInMemoryHealthIndicator();
+
+        Assert::assertSame($name, $indicator->name());
+
+        $indicator->markUnhealthy();
     }
 
     #[Given('I am the system')]

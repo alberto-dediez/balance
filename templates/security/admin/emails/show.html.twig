@@ -1,0 +1,45 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Emails enviados' | trans) ~ ' > ' ~ emailLog.subject %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_emails') }}" />
+    <twig:TopAction path="{{ path('admin_emails_history', {'emailLogId': emailLog.id}) }}">
+        <twig:Icon name="solar:record-minimalistic-line-duotone" size="lg" class="me-2" />
+        {{ 'Ver auditoría' | trans }}
+    </twig:TopAction>
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <h6 class="fw-semibold mb-3">{{ 'Email' | trans }}</h6>
+                <twig:View:Field label="{{ 'Destinatario' | trans }}">{{ emailLog.recipientName }} &lt;{{ emailLog.recipientEmail }}&gt;</twig:View:Field>
+                <twig:View:Field label="{{ 'Asunto' | trans }}">{{ emailLog.subject }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Origen' | trans }}">{{ emailLog.template }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Proveedor' | trans }}">{{ emailLog.provider }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Id del proveedor' | trans }}">{{ emailLog.providerMessageId ?? '---' }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <h6 class="fw-semibold mb-3">{{ 'Seguimiento' | trans }}</h6>
+                {% if not emailLog.trackable %}
+                    <twig:Alert type="info">{% trans %}El proveedor configurado no envía información de entrega ni de apertura{% endtrans %}</twig:Alert>
+                {% endif %}
+                <twig:View:Field label="{{ 'Estado' | trans }}">{% include '@security/admin/emails/_status_badge.html.twig' with {'emailLog': emailLog} %}</twig:View:Field>
+                {% if emailLog.statusReason %}
+                    <twig:View:Field label="{{ 'Motivo' | trans }}">{{ emailLog.statusReason }}</twig:View:Field>
+                {% endif %}
+                <twig:View:Field label="{{ 'Enviado' | trans }}">{{ emailLog.sentAt | date('d/m/Y H:i') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Entregado' | trans }}">{{ emailLog.deliveredAt ? emailLog.deliveredAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Primera apertura' | trans }}">{{ emailLog.firstOpenedAt ? emailLog.firstOpenedAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Última apertura' | trans }}">{{ emailLog.lastOpenedAt ? emailLog.lastOpenedAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Aperturas' | trans }}">{{ emailLog.openCount }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Primer clic' | trans }}">{{ emailLog.firstClickedAt ? emailLog.firstClickedAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Clics' | trans }}">{{ emailLog.clickCount }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Marcado como spam' | trans }}">{{ emailLog.spamReportedAt ? emailLog.spamReportedAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Último evento' | trans }}">{{ emailLog.lastEventAt ? emailLog.lastEventAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+            </div>
+        </div>
+    </twig:Card>
+{% endblock %}

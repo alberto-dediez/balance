@@ -10,6 +10,9 @@ use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaStorage;
 use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryStorageSyncTaskRepository;
+use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
+use App\Library\Infrastructure\Storage\MediaStorageRegistry;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaMother;
@@ -24,10 +27,13 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final class LibraryContext implements Context
 {
     private AcceptanceClient $client;
+
+    private ?string $lastRemovedMediaPath = null;
 
     public function __construct(
         KernelBrowser $kernelBrowser,
@@ -39,6 +45,7 @@ final class LibraryContext implements Context
     public function after(AfterScenarioScope $scope): void
     {
         $this->client->reset();
+        $this->lastRemovedMediaPath = null;
     }
 
     private function getMediaRepository(): MediaRepository
@@ -208,6 +215,160 @@ final class LibraryContext implements Context
     public function theLibraryContainsFiles(int $total): void
     {
         Assert::assertCount($total, $this->getMediaRepository()->findByFilter(new MediaFilter(limit: 0)));
+    }
+
+    #[Then('media :id is stored in the :driver storage')]
+    public function mediaIsStoredInTheStorage(string $id, string $driver): void
+    {
+        Assert::assertTrue($this->getStorage($driver)->exists($this->getMedia($id)->path()));
+    }
+
+    #[Then('media :id is not stored in the :driver storage')]
+    public function mediaIsNotStoredInTheStorage(string $id, string $driver): void
+    {
+        Assert::assertFalse($this->getStorage($driver)->exists($this->getMedia($id)->path()));
+    }
+
+    #[Given('the file of media :id is missing in the :driver storage')]
+    public function theFileOfMediaIsMissingInTheStorage(string $id, string $driver): void
+    {
+        $this->getStorage($driver)->delete($this->getMedia($id)->path());
+    }
+
+    #[Given('the main media storage is unavailable')]
+    public function theMainMediaStorageIsUnavailable(): void
+    {
+        $this->getMainStorage()->markUnavailable();
+    }
+
+    #[Given('the main media storage is available again')]
+    public function theMainMediaStorageIsAvailableAgain(): void
+    {
+        $this->getMainStorage()->markAvailable();
+    }
+
+    #[Then('media :id is stored in the main storage')]
+    public function mediaIsStoredInTheMainStorage(string $id): void
+    {
+        Assert::assertTrue($this->getMainStorage()->exists($this->getMedia($id)->path()));
+    }
+
+    #[Then('media :id is not stored in the main storage')]
+    public function mediaIsNotStoredInTheMainStorage(string $id): void
+    {
+        Assert::assertFalse($this->getMainStorage()->exists($this->getMedia($id)->path()));
+    }
+
+    #[Then('media :id is stored in the fallback storage')]
+    public function mediaIsStoredInTheFallbackStorage(string $id): void
+    {
+        Assert::assertTrue($this->getFallbackStorage()->exists($this->getMedia($id)->path()));
+    }
+
+    #[Then('media :id is not stored in the fallback storage')]
+    public function mediaIsNotStoredInTheFallbackStorage(string $id): void
+    {
+        Assert::assertFalse($this->getFallbackStorage()->exists($this->getMedia($id)->path()));
+    }
+
+    #[Then('the last uploaded media is stored in the :storage storage')]
+    public function theLastUploadedMediaIsStoredInTheStorage(string $storage): void
+    {
+        Assert::assertTrue($this->getStorageByRole($storage)->exists($this->getLastUploadedMedia()->path()));
+    }
+
+    #[Then('the last uploaded media is not stored in the :storage storage')]
+    public function theLastUploadedMediaIsNotStoredInTheStorage(string $storage): void
+    {
+        Assert::assertFalse($this->getStorageByRole($storage)->exists($this->getLastUploadedMedia()->path()));
+    }
+
+    #[When('I go to the show page of the last uploaded media')]
+    public function iGoToTheShowPageOfTheLastUploadedMedia(): void
+    {
+        $this->client->request('GET', sprintf('/es/library/media/%s/show', (string) $this->getLastUploadedMedia()->id()));
+    }
+
+    #[When('I go to the remove page of the last uploaded media')]
+    public function iGoToTheRemovePageOfTheLastUploadedMedia(): void
+    {
+        $media = $this->getLastUploadedMedia();
+        $this->lastRemovedMediaPath = $media->path();
+
+        $token = $this->client->getContainer()->get(CsrfTokenManagerInterface::class)->getToken('remove')->getValue();
+
+        $this->client->request(
+            'GET',
+            sprintf('/es/library/media/remove/%s?_token=%s', (string) $media->id(), urlencode($token)),
+            ['HTTP_SEC_FETCH_SITE' => 'same-origin'],
+        );
+    }
+
+    #[Then('the last removed media is not stored in the fallback storage')]
+    public function theLastRemovedMediaIsNotStoredInTheFallbackStorage(): void
+    {
+        Assert::assertNotNull($this->lastRemovedMediaPath);
+        Assert::assertFalse($this->getFallbackStorage()->exists($this->lastRemovedMediaPath));
+    }
+
+    #[Then('there are :count pending storage sync tasks')]
+    public function thereArePendingStorageSyncTasks(int $count): void
+    {
+        $tasks = $this->client->getContainer()->get(InMemoryStorageSyncTaskRepository::class);
+
+        Assert::assertInstanceOf(InMemoryStorageSyncTaskRepository::class, $tasks);
+        Assert::assertSame($count, $tasks->countPending());
+    }
+
+    private function getStorage(string $driver): MediaStorage
+    {
+        return $this->client->getContainer()->get(MediaStorageRegistry::class)->get($driver);
+    }
+
+    private function getMainStorage(): InMemoryMediaStorage
+    {
+        return $this->getInMemoryStorage('library.media_storage.primary');
+    }
+
+    private function getFallbackStorage(): InMemoryMediaStorage
+    {
+        return $this->getInMemoryStorage('library.media_storage.fallback_in_memory');
+    }
+
+    private function getInMemoryStorage(string $serviceId): InMemoryMediaStorage
+    {
+        $storage = $this->client->getContainer()->get($serviceId);
+
+        Assert::assertInstanceOf(InMemoryMediaStorage::class, $storage);
+
+        return $storage;
+    }
+
+    private function getStorageByRole(string $storage): InMemoryMediaStorage
+    {
+        return match ($storage) {
+            'main' => $this->getMainStorage(),
+            'fallback' => $this->getFallbackStorage(),
+            default => throw new \InvalidArgumentException(sprintf('Unknown storage "%s"', $storage)),
+        };
+    }
+
+    private function getLastUploadedMedia(): Media
+    {
+        $media = $this->getMediaRepository()->findByFilter(new MediaFilter(limit: 1));
+
+        Assert::assertCount(1, $media);
+
+        return $media[0];
+    }
+
+    private function getMedia(string $id): Media
+    {
+        $media = $this->getMediaRepository()->find(new MediaId($id));
+
+        Assert::assertNotNull($media);
+
+        return $media;
     }
 
     private function uploadThroughThePicker(string $fileName, string $token, string $types = '', string $visibility = ''): void

@@ -1,0 +1,4 @@
+{% trans with {
+    '{date}': event.bouncedAt | date('d/m/Y H:i'),
+    '{reason}': event.reason
+} %}Email rebotado el {date}: {reason}{% endtrans %}

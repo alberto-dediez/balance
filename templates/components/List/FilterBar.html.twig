@@ -28,6 +28,8 @@
                             {% set value = value | category_name %}
                         {% elseif field == 'companyId' %}
                             {% set value = value | company_name %}
+                        {% elseif formField.vars.choice_translation_domain is defined and formField.vars.choice_translation_domain and value is not iterable %}
+                            {% set value = (value | show_field_value) | trans({}, formField.vars.choice_translation_domain) %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% endif %}

@@ -16,6 +16,17 @@ parameters:
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     app.google_maps_enabled: '%env(bool:GOOGLE_MAPS_ENABLED)%'
     app.google_maps_region: '%env(GOOGLE_MAPS_REGION)%'
+    ovh.s3.endpoint: '%env(OVH_S3_ENDPOINT)%'
+    ovh.s3.region: '%env(OVH_S3_REGION)%'
+    ovh.s3.bucket: '%env(OVH_S3_BUCKET)%'
+    ovh.s3.access_key: '%env(OVH_S3_ACCESS_KEY)%'
+    ovh.s3.secret_key: '%env(OVH_S3_SECRET_KEY)%'
+    ovh.s3.prefix: '%env(OVH_S3_PREFIX)%'
+    shared.health_check.queue_max_wait_minutes: '%env(int:HEALTH_CHECK_QUEUE_MAX_WAIT_MINUTES)%'
+    shared.health_check.queue_transports:
+        async_high: high
+        async: medium
+        async_low: low
 
 services:
     _defaults:
@@ -47,6 +58,7 @@ services:
         public: true
         arguments:
             $mailerFrom: '%mailer.from%'
+            $mailerDsn: '%env(MAILER_DSN)%'
 
     App\Shared\Infrastructure\Symfony\Event\EmailListener:
         public: true
@@ -105,9 +117,38 @@ services:
 
     App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\CachedPlaceFinder'
 
+    App\Shared\Infrastructure\Storage\Ovh\OvhS3ClientFactory:
+        arguments:
+            $endpoint: '%ovh.s3.endpoint%'
+            $region: '%ovh.s3.region%'
+            $accessKey: '%ovh.s3.access_key%'
+            $secretKey: '%ovh.s3.secret_key%'
+            $httpClient: null
+
+    AsyncAws\S3\S3Client:
+        factory: ['@App\Shared\Infrastructure\Storage\Ovh\OvhS3ClientFactory', 'create']
+        lazy: true
+
+    App\Shared\Infrastructure\Persistence\Doctrine\DatabaseHealthIndicator:
+        tags: [{ name: shared.health_indicator, priority: 20 }]
+
+    App\Shared\Infrastructure\Symfony\Messenger\QueueHealthIndicator:
+        arguments:
+            $transportNames: '%shared.health_check.queue_transports%'
+            $maxWaitMinutes: '%shared.health_check.queue_max_wait_minutes%'
+        tags: [{ name: shared.health_indicator, priority: 10 }]
+
 when@test:
     parameters:
         app.uploads_dir: '%kernel.project_dir%/var/uploads_test%env(default::TEST_TOKEN)%'
 
     services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Shared\Infrastructure\Health\InMemoryHealthIndicator:
+            public: true
+            tags: [{ name: shared.health_indicator, priority: 0 }]
+
         App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\NullPlaceFinder'

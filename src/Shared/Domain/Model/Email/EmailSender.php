@@ -16,5 +16,5 @@ interface EmailSender
         string $template,
         ?array $params = null,
         array $attachments = [],
-    ): void;
+    ): EmailTrackingId;
 }

@@ -1,0 +1,1 @@
+<span class="badge bg-{{ emailLog.status.badgeColor }}-subtle text-{{ emailLog.status.badgeColor }}"{% if emailLog.statusReason %} title="{{ emailLog.statusReason }}"{% endif %}>{{ emailLog.status.value | trans({}, 'emailLogStatus') }}</span>

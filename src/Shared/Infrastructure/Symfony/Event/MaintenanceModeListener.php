@@ -21,6 +21,7 @@ class MaintenanceModeListener
         '/api/health-check',
         '/_wdt',
         '/_profiler',
+        '/webhook',
     ];
 
     public function __construct(

@@ -23,6 +23,7 @@ doctrine:
             brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
             company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
+            email_log_id: App\Security\Infrastructure\Persistence\Doctrine\Type\EmailLogIdType
             two_factor_method: App\Security\Infrastructure\Persistence\Doctrine\Type\TwoFactorMethodType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType

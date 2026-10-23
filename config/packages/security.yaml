@@ -68,6 +68,7 @@ security:
         - { path: /recover-password, roles: PUBLIC_ACCESS }
         - { path: /login, roles: PUBLIC_ACCESS }
         - { path: /logout, role: PUBLIC_ACCESS }
+        - { path: ^/webhook/, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
         
 

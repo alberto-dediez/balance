@@ -12,6 +12,8 @@ parameters:
     app.sso_bioscore_enabled: '%env(bool:SSO_BIOSCORE_ENABLED)%'
     app.two_factor_required: '%env(bool:TWO_FACTOR_REQUIRED)%'
     app.two_factor_sso_enabled: '%env(bool:TWO_FACTOR_SSO_ENABLED)%'
+    app.email_log_retention_days: '%env(int:EMAIL_LOG_RETENTION_DAYS)%'
+    app.sendgrid_webhook_secret: '%env(SENDGRID_WEBHOOK_SECRET)%'
 
 services:
     _defaults:
@@ -21,6 +23,9 @@ services:
             $smsEnabled: '%app.signature_sms_enabled%'
             $whatsappEnabled: '%app.signature_whatsapp_enabled%'
             $accountImpersonationEnabled: '%app.account_impersonation_enabled%'
+            $retentionDays: '%app.email_log_retention_days%'
+            $webhookSecret: '%app.sendgrid_webhook_secret%'
+            $mailerDsn: '%env(MAILER_DSN)%'
 
     App\Security\:
         resource: '../../../'
