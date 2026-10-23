@@ -212,6 +212,21 @@ class EventCarbonFootprintTest extends TestCase
         $this->assertNull($exclusions[0]->comment());
     }
 
+    public function testChangingTheReasonOfAnExclusionKeepsTheSameRow(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable);
+        $exclusion = $eventCarbonFootprint->exclusions()->forPhaseAndSource(Phase::Assembly, Source::WasteManagement);
+        $this->assertNotNull($exclusion);
+
+        $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NotApplicable, 'comment');
+
+        $this->assertCount(1, $eventCarbonFootprint->exclusions()->toArray());
+        $this->assertSame($exclusion, $eventCarbonFootprint->exclusions()->forPhaseAndSource(Phase::Assembly, Source::WasteManagement));
+        $this->assertSame(ExclusionReason::NotApplicable, $exclusion->reason());
+        $this->assertSame('comment', $exclusion->comment());
+    }
+
     public function testIncludeSourceRemovesTheExclusion(): void
     {
         $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();

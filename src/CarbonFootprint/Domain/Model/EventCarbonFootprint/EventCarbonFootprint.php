@@ -20,6 +20,7 @@ use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\AggregateRoot;
+use Doctrine\Common\Collections\Collection;
 
 class EventCarbonFootprint implements CarbonFootprint, \Stringable
 {
@@ -554,22 +555,26 @@ class EventCarbonFootprint implements CarbonFootprint, \Stringable
 
     public function applyEventCarbonFootprintSourceExcluded(EventCarbonFootprintSourceExcluded $event): void
     {
-        $this->removeExclusionChild($event->phase(), $event->source());
+        $existing = $this->exclusions()->forPhaseAndSource($event->phase(), $event->source());
 
-        $exclusion = new EventCarbonFootprintExclusion(
-            id: EventCarbonFootprintExclusionId::generate(),
-            eventCarbonFootprint: $this,
-            phase: $event->phase(),
-            source: $event->source(),
-            reason: $event->reason(),
-            comment: $event->comment(),
-            excludedAt: $event->occurredOn(),
-        );
+        if ($existing instanceof EventCarbonFootprintExclusion) {
+            $existing->update($event->reason(), $event->comment(), $event->occurredOn());
+        } else {
+            $exclusion = new EventCarbonFootprintExclusion(
+                id: EventCarbonFootprintExclusionId::generate(),
+                eventCarbonFootprint: $this,
+                phase: $event->phase(),
+                source: $event->source(),
+                reason: $event->reason(),
+                comment: $event->comment(),
+                excludedAt: $event->occurredOn(),
+            );
 
-        if (is_array($this->exclusions)) {
-            $this->exclusions[] = $exclusion;
-        } elseif ($this->exclusions instanceof \Doctrine\Common\Collections\Collection) {
-            $this->exclusions->add($exclusion);
+            if (is_array($this->exclusions)) {
+                $this->exclusions[] = $exclusion;
+            } elseif ($this->exclusions instanceof Collection) {
+                $this->exclusions->add($exclusion);
+            }
         }
 
         $this->updatedAt = $event->occurredOn();
@@ -589,7 +594,7 @@ class EventCarbonFootprint implements CarbonFootprint, \Stringable
             }
             if (is_array($this->exclusions)) {
                 unset($this->exclusions[$key]);
-            } elseif ($this->exclusions instanceof \Doctrine\Common\Collections\Collection) {
+            } elseif ($this->exclusions instanceof Collection) {
                 $this->exclusions->removeElement($exclusion);
             }
 
@@ -612,7 +617,7 @@ class EventCarbonFootprint implements CarbonFootprint, \Stringable
 
         if (is_array($this->activities)) {
             $this->activities[] = $activity;
-        } elseif ($this->activities instanceof \Doctrine\Common\Collections\Collection) {
+        } elseif ($this->activities instanceof Collection) {
             $this->activities->add($activity);
         }
     }
@@ -625,7 +630,7 @@ class EventCarbonFootprint implements CarbonFootprint, \Stringable
             }
             if (is_array($this->activities)) {
                 unset($this->activities[$key]);
-            } elseif ($this->activities instanceof \Doctrine\Common\Collections\Collection) {
+            } elseif ($this->activities instanceof Collection) {
                 $this->activities->removeElement($activity);
             }
 

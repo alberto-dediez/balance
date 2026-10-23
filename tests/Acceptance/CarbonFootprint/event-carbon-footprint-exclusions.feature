@@ -20,6 +20,24 @@ Feature:
         Then the response status should be 200
         Then I see a text "Sin facturas"
 
+    Scenario: Changing the reason of an excluded source keeps a single exclusion
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given event "Evento A" with id "333" of account "666" exists
+        Given event carbon footprint with id "999" for event "333" of account "666" with materials answered exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/events/333/carbon-footprint/step/assembly"
+        When I submit the "assembly" step form excluding source "waste_management" with reason "no_data_available" and comment "Sin facturas"
+        Then I am redirected to route "events_carbon_footprint_celebration"
+        When I go to "/es/events/333/carbon-footprint/step/assembly"
+        When I submit the "assembly" step form excluding source "waste_management" with reason "not_significant" and comment "Poco relevante"
+        Then I am redirected to route "events_carbon_footprint_celebration"
+        Then event carbon footprint "999" should have source "waste_management" excluded in phase "assembly" with reason "not_significant"
+        When I go to "/es/events/333/carbon-footprint/step/assembly"
+        Then the response status should be 200
+        Then I see a text "Poco relevante"
+        Then I do not see a text "Sin facturas"
+
     Scenario: The results page shows the excluded emission sources section
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
