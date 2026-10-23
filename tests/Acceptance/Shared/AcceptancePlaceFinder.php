@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use App\Shared\Domain\Model\Geo\GeoBounds;
 use App\Shared\Domain\Model\Geo\GeoPlace;
 use App\Shared\Domain\Model\Geo\GeoPoint;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Geo\PlaceKind;
+use App\Shared\Domain\Model\Geo\PlaceSearchArea;
 use App\Shared\Domain\Model\Geo\PlaceSuggestion;
 use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -20,9 +22,26 @@ class AcceptancePlaceFinder implements PlaceFinder
 
     private bool $operative = true;
 
-    public function add(string $reference, string $label, float $latitude, float $longitude): void
-    {
-        $this->places[$reference] = new GeoPlace($reference, $label, new GeoPoint($latitude, $longitude));
+    /** @param list<string> $areaNames */
+    public function add(
+        string $reference,
+        string $label,
+        float $latitude,
+        float $longitude,
+        ?string $name = null,
+        ?GeoBounds $viewport = null,
+        array $areaNames = [],
+        ?string $countryCode = null,
+    ): void {
+        $this->places[$reference] = new GeoPlace(
+            $reference,
+            $label,
+            new GeoPoint($latitude, $longitude),
+            $name,
+            $viewport,
+            $areaNames,
+            $countryCode,
+        );
     }
 
     public function disable(): void
@@ -35,7 +54,7 @@ class AcceptancePlaceFinder implements PlaceFinder
         return $this->operative;
     }
 
-    public function suggest(string $query, PlaceKind $kind, Locale $locale): array
+    public function suggest(string $query, PlaceKind $kind, Locale $locale, ?PlaceSearchArea $area = null): array
     {
         if (!$this->operative) {
             return [];

@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkFilt
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -49,6 +50,22 @@ class DoctrineTripCalculationLinkRepository implements TripCalculationLinkReposi
             ->from(TripCalculationLink::class, 't')
             ->where($qb->expr()->eq('t.propertyId', ':propertyId'))
             ->setParameter('propertyId', (string) $propertyId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findForAccount(AccountId $accountId): ?TripCalculationLink
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return $qb
+            ->select('t')
+            ->from(TripCalculationLink::class, 't')
+            ->where($qb->expr()->eq('t.accountId', ':accountId'))
+            ->andWhere($qb->expr()->isNull('t.propertyId'))
+            ->setParameter('accountId', (string) $accountId)
+            ->orderBy('t.registeredAt', 'ASC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }

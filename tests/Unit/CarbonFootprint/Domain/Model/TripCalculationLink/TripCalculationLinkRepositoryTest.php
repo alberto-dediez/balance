@@ -6,11 +6,13 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink;
 
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkFilter;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationMode;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-abstract class TripCalculationLinkRepositoryTest extends TestCase
+abstract class TripCalculationLinkRepositoryTest extends KernelTestCase
 {
     public function testAddTripCalculationLinkToRepository(): void
     {
@@ -85,6 +87,84 @@ abstract class TripCalculationLinkRepositoryTest extends TestCase
         $repository = $this->createSUT();
 
         $this->assertNull($repository->findByToken('invalid-token'));
+    }
+
+    public function testFindForAccountReturnsTheAccountLinkAndNotThePropertyOnes(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = (string) AccountId::generate();
+        $repository->add(TripCalculationLinkMother::fromPropertyIdAndAccount((string) PropertyId::generate(), $accountId));
+        $accountLink = TripCalculationLinkMother::forAccount($accountId);
+        $repository->add($accountLink);
+        $repository->add(TripCalculationLinkMother::forAccount((string) AccountId::generate()));
+
+        $recovered = $repository->findForAccount(new AccountId($accountId));
+
+        $this->assertNotNull($recovered);
+        $this->assertEquals($accountLink->id(), $recovered->id());
+        $this->assertNull($recovered->propertyId());
+    }
+
+    public function testFindForAccountReturnsNullWhenTheAccountOnlyHasPropertyLinks(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = (string) AccountId::generate();
+        $repository->add(TripCalculationLinkMother::fromPropertyIdAndAccount((string) PropertyId::generate(), $accountId));
+
+        $this->assertNull($repository->findForAccount(new AccountId($accountId)));
+    }
+
+    public function testPersistsTheDestinationCountriesAndProperties(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = (string) AccountId::generate();
+        $countryId = CountryId::generate();
+        $link = TripCalculationLinkMother::forAccountWithDestination($accountId, TripDestinationMode::Countries, countryIds: [$countryId]);
+        $repository->add($link);
+
+        $recovered = $repository->findForAccount(new AccountId($accountId));
+
+        $this->assertNotNull($recovered);
+        $this->assertSame(TripDestinationMode::Countries, $recovered->destinationMode());
+        $this->assertEquals([$countryId], $recovered->destinationCountryIds());
+
+        $propertyId = PropertyId::generate();
+        $recovered->updateDestination(TripDestinationMode::SelectedProperties, $recovered->destinationPlaceKind(), [], [$propertyId], null, null, null);
+        $repository->add($recovered);
+
+        $recovered = $repository->findForAccount(new AccountId($accountId));
+
+        $this->assertNotNull($recovered);
+        $this->assertSame([], $recovered->destinationCountryIds());
+        $this->assertEquals([$propertyId], $recovered->destinationPropertyIds());
+    }
+
+    public function testSavesAgainTheSameDestinationCountriesAndProperties(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = (string) AccountId::generate();
+        $countryId = CountryId::generate();
+        $link = TripCalculationLinkMother::forAccountWithDestination($accountId, TripDestinationMode::Countries, countryIds: [$countryId]);
+        $repository->add($link);
+
+        $link->updateDestination(TripDestinationMode::Countries, $link->destinationPlaceKind(), [$countryId], [], null, null, null);
+        $repository->add($link);
+
+        $propertyId = PropertyId::generate();
+        $link->updateDestination(TripDestinationMode::SelectedProperties, $link->destinationPlaceKind(), [], [$propertyId], null, null, null);
+        $repository->add($link);
+        $link->updateDestination(TripDestinationMode::SelectedProperties, $link->destinationPlaceKind(), [], [$propertyId], null, null, null);
+        $repository->add($link);
+
+        $recovered = $repository->findForAccount(new AccountId($accountId));
+
+        $this->assertNotNull($recovered);
+        $this->assertSame([], $recovered->destinationCountryIds());
+        $this->assertEquals([$propertyId], $recovered->destinationPropertyIds());
     }
 
     abstract protected function createSUT(): TripCalculationLinkRepository;

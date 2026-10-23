@@ -22,6 +22,11 @@ use Symfony\Component\Routing\Attribute\Route;
     name: 'public_carbon_footprint_property_trip_contribution_project',
     methods: ['GET'],
 )]
+#[Route(
+    '/carbon-footprint/trip/{token}/result/{tripCalculationId}/compensate/{projectId}/details',
+    name: 'public_carbon_footprint_trip_contribution_project',
+    methods: ['GET'],
+)]
 class ProjectController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
@@ -74,7 +79,8 @@ class ProjectController extends AbstractController
         return $this->render('@carbon_footprint/project_contribution/project.html.twig', [
             'token' => $token,
             'property' => $link->property,
-            'routes' => $this->contributionRoutes($token, $tripCalculationId),
+            'ownerName' => $link->ownerName,
+            'routes' => $this->contributionRoutes($link->tripCalculationLink, $token, $tripCalculationId),
             'project' => $option->project,
             'option' => $option,
             'gallery' => $gallery,

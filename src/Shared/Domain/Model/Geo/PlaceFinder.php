@@ -11,7 +11,7 @@ interface PlaceFinder
     public function isOperative(): bool;
 
     /** @return list<PlaceSuggestion> */
-    public function suggest(string $query, PlaceKind $kind, Locale $locale): array;
+    public function suggest(string $query, PlaceKind $kind, Locale $locale, ?PlaceSearchArea $area = null): array;
 
     public function resolve(string $reference, Locale $locale): ?GeoPlace;
 }

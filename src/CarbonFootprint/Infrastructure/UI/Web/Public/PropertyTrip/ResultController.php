@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/carbon-footprint/property-trip/{token}/result/{tripCalculationId}', name: 'public_carbon_footprint_property_trip_result', methods: ['GET'])]
+#[Route('/carbon-footprint/trip/{token}/result/{tripCalculationId}', name: 'public_carbon_footprint_trip_result', methods: ['GET'])]
 class ResultController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
@@ -65,7 +66,7 @@ class ResultController extends AbstractController
             $mobilityNames[(string) $mobility->id()] = $mobility->name();
         }
 
-        $accountId = $response->tripCalculationLink->accountId() ?? $response->property->accountId();
+        $accountId = $response->tripCalculationLink->accountId() ?? $response->property?->accountId();
         $hasContributionOptions = false;
 
         if ($accountId instanceof AccountId) {
@@ -79,7 +80,9 @@ class ResultController extends AbstractController
 
         return $this->render('@carbon_footprint/public/property_trip/result.html.twig', [
             'token' => $token,
-            'property' => $response->property,
+            'ownerName' => $response->ownerName,
+            'asksForDestination' => $response->asksForDestination,
+            'routePrefix' => PublicTripRoutes::for($response->tripCalculationLink)->prefix,
             'tripCalculation' => $tripCalculation,
             'emissionsPerPerson' => $perPersonTripEmissionsCalculator->forTripCalculations([$tripCalculation]),
             'mobilityNames' => $mobilityNames,

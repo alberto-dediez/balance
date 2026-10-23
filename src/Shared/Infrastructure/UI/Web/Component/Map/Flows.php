@@ -17,6 +17,8 @@ final class Flows
 
     public int $height = 420;
 
+    public bool $arrows = false;
+
     public function __construct(
         private readonly string $tileKey,
     ) {}

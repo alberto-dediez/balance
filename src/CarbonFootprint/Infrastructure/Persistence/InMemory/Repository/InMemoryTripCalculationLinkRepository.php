@@ -41,6 +41,25 @@ class InMemoryTripCalculationLinkRepository implements TripCalculationLinkReposi
         return null;
     }
 
+    public function findForAccount(AccountId $accountId): ?TripCalculationLink
+    {
+        $found = null;
+
+        foreach ($this->tripCalculationLinks as $tripCalculationLink) {
+            $linkAccountId = $tripCalculationLink->accountId();
+
+            if ($tripCalculationLink->isForProperty() || !$linkAccountId instanceof AccountId || !$accountId->equals($linkAccountId)) {
+                continue;
+            }
+
+            if (null === $found || $tripCalculationLink->registeredAt() < $found->registeredAt()) {
+                $found = $tripCalculationLink;
+            }
+        }
+
+        return $found;
+    }
+
     /** @return list<TripCalculationLink> */
     public function findByFilter(TripCalculationLinkFilter $filter): array
     {

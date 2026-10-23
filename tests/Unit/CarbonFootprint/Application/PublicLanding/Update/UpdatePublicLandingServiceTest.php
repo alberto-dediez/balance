@@ -8,9 +8,11 @@ use App\CarbonFootprint\Application\PublicLanding\PublicLandingAuthorizer;
 use App\CarbonFootprint\Application\PublicLanding\Update\PublicLandingBlockData;
 use App\CarbonFootprint\Application\PublicLanding\Update\UpdatePublicLandingRequest;
 use App\CarbonFootprint\Application\PublicLanding\Update\UpdatePublicLandingService;
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLanding;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPublicLandingRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
 use App\Property\Application\Property\PropertyAuthorizer;
@@ -51,6 +53,8 @@ class UpdatePublicLandingServiceTest extends TestCase
                 new PropertyAuthorizer(),
                 new InMemoryEventRepository(),
                 new EventAuthorizer(),
+                new InMemoryTripCalculationLinkRepository(),
+                new TripCalculationLinkAuthorizer($this->propertyRepository, new PropertyAuthorizer()),
             ),
         );
     }

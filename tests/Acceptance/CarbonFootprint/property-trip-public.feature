@@ -21,6 +21,7 @@ Feature:
         Then I see a text "Tu huella de carbono"
         Then I see a text "kg CO₂eq"
         Then trip calculation link "TL1" should have 1 trip calculations
+        Then trip calculation of link "TL1" should have destination "Hotel A"
 
     Scenario: A local visitor does not answer the trip questions
         Given account "MyCompany" with id "666" exists

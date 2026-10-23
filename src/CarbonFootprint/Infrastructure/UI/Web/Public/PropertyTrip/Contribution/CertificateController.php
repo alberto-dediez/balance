@@ -10,6 +10,7 @@ use App\Balance\Application\ContributionCertificate\Download\DownloadContributio
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
+use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCertificateTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
@@ -24,6 +25,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(
     '/carbon-footprint/property-trip/{token}/contribution/{contributionId}/certificate',
     name: 'public_carbon_footprint_property_trip_contribution_certificate',
+    methods: ['GET'],
+)]
+#[Route(
+    '/carbon-footprint/trip/{token}/contribution/{contributionId}/certificate',
+    name: 'public_carbon_footprint_trip_contribution_certificate',
     methods: ['GET'],
 )]
 class CertificateController extends AbstractController
@@ -41,6 +47,7 @@ class CertificateController extends AbstractController
         string $contributionId,
         GetTripCalculationLinkByTokenService $getByToken,
         ProjectContributionRepository $projectContributionRepository,
+        TripCalculationRepository $tripCalculationRepository,
         ContributionCertificateRepository $contributionCertificateRepository,
         DownloadContributionCertificateService $downloadContributionCertificate,
         Request $request,
@@ -52,7 +59,11 @@ class CertificateController extends AbstractController
         $link = $this->resolveLink($token, $getByToken);
         $accountId = null !== $link ? $this->accountIdOf($link) : null;
 
-        if (!$accountId instanceof AccountId) {
+        if (
+            null === $link
+            || !$accountId instanceof AccountId
+            || null === $this->resolveContribution($contributionId, $link, $projectContributionRepository, $tripCalculationRepository)
+        ) {
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
 

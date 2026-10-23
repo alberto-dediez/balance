@@ -9673,6 +9673,194 @@
         <source>Propiedades arrendadas a terceros</source>
         <target>Propiedades arrendadas a terceros</target>
       </trans-unit>
+      <trans-unit id="o0zW6wu" resname="Destinos permitidos">
+        <source>Destinos permitidos</source>
+        <target>Destinos permitidos</target>
+      </trans-unit>
+      <trans-unit id="mYTxrpT" resname="Tipo de destino">
+        <source>Tipo de destino</source>
+        <target>Tipo de destino</target>
+      </trans-unit>
+      <trans-unit id="VYK6FSQ" resname="No aplica cuando el destino es una de tus propiedades.">
+        <source>No aplica cuando el destino es una de tus propiedades.</source>
+        <target>No aplica cuando el destino es una de tus propiedades.</target>
+      </trans-unit>
+      <trans-unit id="ZeLPCUB" resname="Hasta 15 países.">
+        <source>Hasta 15 países.</source>
+        <target>Hasta 15 países.</target>
+      </trans-unit>
+      <trans-unit id="_NcgoQp" resname="Región">
+        <source>Región</source>
+        <target>Región</target>
+      </trans-unit>
+      <trans-unit id="bhsYnAy" resname="Cálculos de viajes">
+        <source>Cálculos de viajes</source>
+        <target>Cálculos de viajes</target>
+      </trans-unit>
+      <trans-unit id="s1ejjLH" resname="Viaje">
+        <source>Viaje</source>
+        <target>Viaje</target>
+      </trans-unit>
+      <trans-unit id="6NWiAOT" resname="Calculadora de viajes">
+        <source>Calculadora de viajes</source>
+        <target>Calculadora de viajes</target>
+      </trans-unit>
+      <trans-unit id="Vd6o15o" resname="Configuración">
+        <source>Configuración</source>
+        <target>Configuración</target>
+      </trans-unit>
+      <trans-unit id="grV_csN" resname="Enlace de la calculadora de viajes">
+        <source>Enlace de la calculadora de viajes</source>
+        <target>Enlace de la calculadora de viajes</target>
+      </trans-unit>
+      <trans-unit id="NFzNC6u" resname="Top de destinos">
+        <source>Top de destinos</source>
+        <target>Top de destinos</target>
+      </trans-unit>
+      <trans-unit id=".1KkSZw" resname="Todavía no hay destinos registrados.">
+        <source>Todavía no hay destinos registrados.</source>
+        <target>Todavía no hay destinos registrados.</target>
+      </trans-unit>
+      <trans-unit id="UroK_aL" resname="Debes indicar el destino de tu viaje.">
+        <source>Debes indicar el destino de tu viaje.</source>
+        <target>Debes indicar el destino de tu viaje.</target>
+      </trans-unit>
+      <trans-unit id="DtFTPeG" resname="El destino elegido no está permitido en esta calculadora.">
+        <source>El destino elegido no está permitido en esta calculadora.</source>
+        <target>El destino elegido no está permitido en esta calculadora.</target>
+      </trans-unit>
+      <trans-unit id="VVXS0hA" resname="Solo la calculadora de viajes de la cuenta permite configurar el destino.">
+        <source>Solo la calculadora de viajes de la cuenta permite configurar el destino.</source>
+        <target>Solo la calculadora de viajes de la cuenta permite configurar el destino.</target>
+      </trans-unit>
+      <trans-unit id="I0YtRQH" resname="Debes elegir entre 1 y 15 países.">
+        <source>Debes elegir entre 1 y 15 países.</source>
+        <target>Debes elegir entre 1 y 15 países.</target>
+      </trans-unit>
+      <trans-unit id="rw5Wig1" resname="Debes elegir una región.">
+        <source>Debes elegir una región.</source>
+        <target>Debes elegir una región.</target>
+      </trans-unit>
+      <trans-unit id="y1Vc6o6" resname="Debes elegir al menos una propiedad.">
+        <source>Debes elegir al menos una propiedad.</source>
+        <target>Debes elegir al menos una propiedad.</target>
+      </trans-unit>
+      <trans-unit id="9RfqoJv" resname="El país elegido no tiene código ISO.">
+        <source>El país elegido no tiene código ISO.</source>
+        <target>El país elegido no tiene código ISO.</target>
+      </trans-unit>
+      <trans-unit id="LMxi8f6" resname="No se ha podido obtener la zona de la región elegida.">
+        <source>No se ha podido obtener la zona de la región elegida.</source>
+        <target>No se ha podido obtener la zona de la región elegida.</target>
+      </trans-unit>
+      <trans-unit id="rSDkmc4" resname="La propiedad elegida no está disponible para esta calculadora.">
+        <source>La propiedad elegida no está disponible para esta calculadora.</source>
+        <target>La propiedad elegida no está disponible para esta calculadora.</target>
+      </trans-unit>
+      <trans-unit id="Wrz1Lsp" resname="Destino: {destination}">
+        <source>Destino: {destination}</source>
+        <target>Destino: {destination}</target>
+      </trans-unit>
+      <trans-unit id="OJmOyO." resname="Cuéntanos tu viaje y te diremos su huella de carbono.">
+        <source>Cuéntanos tu viaje y te diremos su huella de carbono.</source>
+        <target>Cuéntanos tu viaje y te diremos su huella de carbono.</target>
+      </trans-unit>
+      <trans-unit id="xABPf.D" resname="Cuéntanos cómo es tu desplazamiento y te diremos su huella de carbono.">
+        <source>Cuéntanos cómo es tu desplazamiento y te diremos su huella de carbono.</source>
+        <target>Cuéntanos cómo es tu desplazamiento y te diremos su huella de carbono.</target>
+      </trans-unit>
+      <trans-unit id="RmGai_S" resname="Cuéntanos tu estancia y te diremos su huella de carbono.">
+        <source>Cuéntanos tu estancia y te diremos su huella de carbono.</source>
+        <target>Cuéntanos tu estancia y te diremos su huella de carbono.</target>
+      </trans-unit>
+      <trans-unit id="eaLBZDn" resname="¿Tu viaje incluye desplazamiento?">
+        <source>¿Tu viaje incluye desplazamiento?</source>
+        <target>¿Tu viaje incluye desplazamiento?</target>
+      </trans-unit>
+      <trans-unit id="_x6BNeH" resname="¿Incluye noches de alojamiento?">
+        <source>¿Incluye noches de alojamiento?</source>
+        <target>¿Incluye noches de alojamiento?</target>
+      </trans-unit>
+      <trans-unit id="GfhZsdS" resname="¿Cuál es el destino de tu viaje?">
+        <source>¿Cuál es el destino de tu viaje?</source>
+        <target>¿Cuál es el destino de tu viaje?</target>
+      </trans-unit>
+      <trans-unit id="ZajNtJ7" resname="¿Desde dónde sales?">
+        <source>¿Desde dónde sales?</source>
+        <target>¿Desde dónde sales?</target>
+      </trans-unit>
+      <trans-unit id="uL2Oxcl" resname="Indica el medio de transporte de tu viaje. Si cambias de medio por el camino, dinos dónde lo haces.">
+        <source>Indica el medio de transporte de tu viaje. Si cambias de medio por el camino, dinos dónde lo haces.</source>
+        <target>Indica el medio de transporte de tu viaje. Si cambias de medio por el camino, dinos dónde lo haces.</target>
+      </trans-unit>
+      <trans-unit id="R0sVAr0" resname="¿Es un viaje de ida y vuelta?">
+        <source>¿Es un viaje de ida y vuelta?</source>
+        <target>¿Es un viaje de ida y vuelta?</target>
+      </trans-unit>
+      <trans-unit id="1p1bCsP" resname="¿Cuántas veces haces este viaje?">
+        <source>¿Cuántas veces haces este viaje?</source>
+        <target>¿Cuántas veces haces este viaje?</target>
+      </trans-unit>
+      <trans-unit id="q0oaWOT" resname="Ver respuestas">
+        <source>Ver respuestas</source>
+        <target>Ver respuestas</target>
+      </trans-unit>
+      <trans-unit id="kkzi78j" resname="Comparte este QR o su enlace con tus clientes para que calculen la huella de sus viajes.">
+        <source>Comparte este QR o su enlace con tus clientes para que calculen la huella de sus viajes.</source>
+        <target>Comparte este QR o su enlace con tus clientes para que calculen la huella de sus viajes.</target>
+      </trans-unit>
+      <trans-unit id="m5U.6kM" resname="Comparte este QR o su enlace con tus clientes para que calculen la huella de sus desplazamientos.">
+        <source>Comparte este QR o su enlace con tus clientes para que calculen la huella de sus desplazamientos.</source>
+        <target>Comparte este QR o su enlace con tus clientes para que calculen la huella de sus desplazamientos.</target>
+      </trans-unit>
+      <trans-unit id="Tju.Smp" resname="Comparte este QR o su enlace con tus clientes para que calculen la huella de sus estancias.">
+        <source>Comparte este QR o su enlace con tus clientes para que calculen la huella de sus estancias.</source>
+        <target>Comparte este QR o su enlace con tus clientes para que calculen la huella de sus estancias.</target>
+      </trans-unit>
+      <trans-unit id="NCO4bUs" resname="Elige a qué destinos pueden viajar tus clientes. El destino se usa para calcular la distancia del viaje.">
+        <source>Elige a qué destinos pueden viajar tus clientes. El destino se usa para calcular la distancia del viaje.</source>
+        <target>Elige a qué destinos pueden viajar tus clientes. El destino se usa para calcular la distancia del viaje.</target>
+      </trans-unit>
+      <trans-unit id="4MKMVLQ" resname="Calculadora de huella de viajes">
+        <source>Calculadora de huella de viajes</source>
+        <target>Calculadora de huella de viajes</target>
+      </trans-unit>
+      <trans-unit id="GmF2Y30" resname="Destino del viaje">
+        <source>Destino del viaje</source>
+        <target>Destino del viaje</target>
+      </trans-unit>
+      <trans-unit id="9aMXS83" resname="Todavía no hay viajes geolocalizados.">
+        <source>Todavía no hay viajes geolocalizados.</source>
+        <target>Todavía no hay viajes geolocalizados.</target>
+      </trans-unit>
+      <trans-unit id="4Pq3_RU" resname="Cada flecha une un origen con su destino. El grosor indica el número de viajeros.">
+        <source>Cada flecha une un origen con su destino. El grosor indica el número de viajeros.</source>
+        <target>Cada flecha une un origen con su destino. El grosor indica el número de viajeros.</target>
+      </trans-unit>
+      <trans-unit id="5_DTEL_" resname="Hay {count} respuestas sin destino localizado.">
+        <source>Hay {count} respuestas sin destino localizado.</source>
+        <target>Hay {count} respuestas sin destino localizado.</target>
+      </trans-unit>
+      <trans-unit id=".PxJVUM" resname="Mapa de viajes">
+        <source>Mapa de viajes</source>
+        <target>Mapa de viajes</target>
+      </trans-unit>
+      <trans-unit id="FVqK0VF" resname="No has indicado ningún desplazamiento, así que tu viaje no genera emisiones de desplazamiento.">
+        <source>No has indicado ningún desplazamiento, así que tu viaje no genera emisiones de desplazamiento.</source>
+        <target>No has indicado ningún desplazamiento, así que tu viaje no genera emisiones de desplazamiento.</target>
+      </trans-unit>
+      <trans-unit id="DwD_PDi" resname="Puedes contribuir a uno de los proyectos ambientales y sociales disponibles.">
+        <source>Puedes contribuir a uno de los proyectos ambientales y sociales disponibles.</source>
+        <target>Puedes contribuir a uno de los proyectos ambientales y sociales disponibles.</target>
+      </trans-unit>
+      <trans-unit id="X7uQeRN" resname="¿Hasta dónde llegas en este medio?">
+        <source>¿Hasta dónde llegas en este medio?</source>
+        <target>¿Hasta dónde llegas en este medio?</target>
+      </trans-unit>
+      <trans-unit id="yMczpF5" resname="Tu viaje no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.">
+        <source>Tu viaje no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.</source>
+        <target>Tu viaje no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

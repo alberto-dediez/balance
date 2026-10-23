@@ -26,6 +26,7 @@ final class TripCalculationRegistered extends DomainEvent
         private TripCalculationId $tripCalculationId,
         private TripCalculationLinkId $tripCalculationLinkId,
         private ?TripWaypoint $origin,
+        private ?TripWaypoint $destination,
         private bool $roundTrip,
         private int $trips,
         private ?int $nights,
@@ -54,6 +55,11 @@ final class TripCalculationRegistered extends DomainEvent
     public function origin(): ?TripWaypoint
     {
         return $this->origin;
+    }
+
+    public function destination(): ?TripWaypoint
+    {
+        return $this->destination;
     }
 
     public function roundTrip(): bool
@@ -113,6 +119,7 @@ final class TripCalculationRegistered extends DomainEvent
             'tripCalculationId' => (string) $this->tripCalculationId,
             'tripCalculationLinkId' => (string) $this->tripCalculationLinkId,
             'origin' => self::waypointToPrimitives($this->origin),
+            'destination' => self::waypointToPrimitives($this->destination),
             'roundTrip' => $this->roundTrip,
             'trips' => $this->trips,
             'nights' => $this->nights,
@@ -140,6 +147,7 @@ final class TripCalculationRegistered extends DomainEvent
             tripCalculationId: new TripCalculationId($payload['tripCalculationId']),
             tripCalculationLinkId: new TripCalculationLinkId($payload['tripCalculationLinkId']),
             origin: self::waypointFromPrimitives($payload['origin'] ?? null),
+            destination: self::waypointFromPrimitives($payload['destination'] ?? null),
             roundTrip: $payload['roundTrip'] ?? false,
             trips: (int) ($payload['trips'] ?? 1),
             nights: null !== ($payload['nights'] ?? null) ? (int) $payload['nights'] : null,

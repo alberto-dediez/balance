@@ -10,13 +10,48 @@
             <generator strategy="NONE" />
         </id>
 
-        <field name="propertyId" type="property_id" column="property_id" nullable="false" unique="true" />
+        <field name="propertyId" type="property_id" column="property_id" nullable="true" unique="true" />
         <field name="accountId" type="account_id" column="account_id" nullable="false" />
         <field name="token" type="string" length="64" nullable="false" unique="true" />
         <field name="scope" type="string" length="20" column="scope" nullable="false"
                enum-type="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope" />
 
+        <field name="destinationMode" type="string" length="20" column="destination_mode" nullable="false"
+               enum-type="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationMode" />
+        <field name="destinationPlaceKind" type="string" length="10" column="destination_place_kind" nullable="false"
+               enum-type="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationPlaceKind" />
+        <field name="destinationRegionReference" type="string" length="255" column="destination_region_reference" nullable="true" />
+        <field name="destinationRegionLabel" type="string" length="255" column="destination_region_label" nullable="true" />
+        <field name="destinationRegionLowLatitude" type="float" column="destination_region_low_latitude" nullable="true" />
+        <field name="destinationRegionLowLongitude" type="float" column="destination_region_low_longitude" nullable="true" />
+        <field name="destinationRegionHighLatitude" type="float" column="destination_region_high_latitude" nullable="true" />
+        <field name="destinationRegionHighLongitude" type="float" column="destination_region_high_longitude" nullable="true" />
+
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+
+        <one-to-many field="destinationCountries"
+                     target-entity="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkDestinationCountry"
+                     mapped-by="tripCalculationLink"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="destinationProperties"
+                     target-entity="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkDestinationProperty"
+                     mapped-by="tripCalculationLink"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <indexes>
+            <index name="idx_trip_calculation_links_account_id" columns="account_id" />
+        </indexes>
     </entity>
 
 </doctrine-mapping>

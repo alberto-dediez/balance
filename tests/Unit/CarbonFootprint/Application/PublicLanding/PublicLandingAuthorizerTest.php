@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\PublicLanding;
 
 use App\CarbonFootprint\Application\PublicLanding\PublicLandingAuthorizer;
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLanding;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingId;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
@@ -19,6 +21,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -30,12 +33,15 @@ class PublicLandingAuthorizerTest extends TestCase
 
     private InMemoryEventRepository $eventRepository;
 
+    private InMemoryTripCalculationLinkRepository $tripCalculationLinkRepository;
+
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
 
         $this->propertyRepository = new InMemoryPropertyRepository();
         $this->eventRepository = new InMemoryEventRepository();
+        $this->tripCalculationLinkRepository = new InMemoryTripCalculationLinkRepository();
     }
 
     public function testOwnerCanDoEverythingOnTheLandingOfItsOwnProperty(): void
@@ -68,6 +74,20 @@ class PublicLandingAuthorizerTest extends TestCase
     public function testOwnerCannotEditTheLandingOfAnEventOfAnotherAccount(): void
     {
         $publicLanding = $this->landingOfEventOfAccount('account-id');
+
+        $this->assertFalse($this->createSUT()->canDoThat($publicLanding, Action::Edit, $this->ownerOf('another-account-id')));
+    }
+
+    public function testOwnerCanEditTheLandingOfTheTripCalculatorOfItsAccount(): void
+    {
+        $publicLanding = $this->landingOfTripCalculatorOfAccount('account-id');
+
+        $this->assertTrue($this->createSUT()->canDoThat($publicLanding, Action::Edit, $this->ownerOf('account-id')));
+    }
+
+    public function testOwnerCannotEditTheLandingOfTheTripCalculatorOfAnotherAccount(): void
+    {
+        $publicLanding = $this->landingOfTripCalculatorOfAccount('account-id');
 
         $this->assertFalse($this->createSUT()->canDoThat($publicLanding, Action::Edit, $this->ownerOf('another-account-id')));
     }
@@ -121,6 +141,14 @@ class PublicLandingAuthorizerTest extends TestCase
         return PublicLandingMother::forEvent((string) $event->id(), $accountId);
     }
 
+    private function landingOfTripCalculatorOfAccount(string $accountId): PublicLanding
+    {
+        $tripCalculationLink = TripCalculationLinkMother::forAccount($accountId);
+        $this->tripCalculationLinkRepository->add($tripCalculationLink);
+
+        return PublicLandingMother::forTripCalculationLink((string) $tripCalculationLink->id(), $accountId);
+    }
+
     private function ownerOf(string $accountId): User
     {
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId($accountId));
@@ -133,6 +161,8 @@ class PublicLandingAuthorizerTest extends TestCase
             new PropertyAuthorizer(),
             $this->eventRepository,
             new EventAuthorizer(),
+            $this->tripCalculationLinkRepository,
+            new TripCalculationLinkAuthorizer($this->propertyRepository, new PropertyAuthorizer()),
         );
     }
 }

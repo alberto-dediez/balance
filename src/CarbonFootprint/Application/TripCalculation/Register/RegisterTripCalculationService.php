@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\TripCalculation\Register;
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
+use App\CarbonFootprint\Application\Trip\TripDestinationResolver;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
@@ -21,6 +22,7 @@ use App\CarbonFootprint\Domain\Model\Trip\TripWaypoint;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
@@ -44,6 +46,7 @@ final class RegisterTripCalculationService
         private TripEmissionsCalculator $tripEmissionsCalculator,
         private EmissionFactorGroupRepository $emissionFactorGroupRepository,
         private string $consentPolicyVersion,
+        private TripDestinationResolver $tripDestinationResolver,
     ) {}
 
     public function __invoke(RegisterTripCalculationRequest $request): RegisterTripCalculationResponse
@@ -87,19 +90,13 @@ final class RegisterTripCalculationService
             throw new \InvalidArgumentException('Debes indicar cuántas personas se alojaron.');
         }
 
-        $propertyId = $tripCalculationLink->propertyId();
-        $property = null !== $propertyId ? $this->propertyRepository->find($propertyId) : null;
-
-        if (null === $property) {
-            throw new TripCalculationLinkTokenInvalidException();
-        }
+        $destination = $this->destination($tripCalculationLink, $request->destinationPlaceReference);
 
         $origin = [] !== $legInputs ? $this->waypoint($originPlaceReference) : null;
         $legs = [];
         $kmByMobilityId = [];
 
         if ([] !== $legInputs) {
-            $destination = new TripWaypoint(label: $property->name(), point: $this->propertyLocator->locate($property));
             $legs = $this->resolveLegs($origin ?? new TripWaypoint(), $destination, $legInputs);
 
             $this->tripLegsAccumulator->accumulate($kmByMobilityId, $legs, $trips, $roundTrip, $this->mobilityFactorBasisProvider->factorBasisByMobilityId());
@@ -125,6 +122,7 @@ final class RegisterTripCalculationService
         $tripCalculation->register(
             tripCalculationLinkId: $tripCalculationLink->id(),
             origin: $origin,
+            destination: $destination,
             roundTrip: $roundTrip,
             trips: $trips,
             nights: $nights,
@@ -196,6 +194,22 @@ final class RegisterTripCalculationService
         }
 
         return $legs;
+    }
+
+    private function destination(TripCalculationLink $tripCalculationLink, ?string $destinationPlaceReference): TripWaypoint
+    {
+        if (!$tripCalculationLink->isForProperty()) {
+            return $this->tripDestinationResolver->resolve($tripCalculationLink, (string) $destinationPlaceReference);
+        }
+
+        $propertyId = $tripCalculationLink->propertyId();
+        $property = null !== $propertyId ? $this->propertyRepository->find($propertyId) : null;
+
+        if (null === $property) {
+            throw new TripCalculationLinkTokenInvalidException();
+        }
+
+        return new TripWaypoint(label: $property->name(), point: $this->propertyLocator->locate($property));
     }
 
     private function waypoint(?string $placeReference): ?TripWaypoint

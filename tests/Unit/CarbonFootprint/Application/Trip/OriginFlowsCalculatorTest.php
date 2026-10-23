@@ -85,6 +85,59 @@ class OriginFlowsCalculatorTest extends TestCase
         $this->assertSame('200', $flows[0]->emissions->co2eq());
     }
 
+    public function testSplitsTheFlowsOfAnOriginByDestination(): void
+    {
+        $linkId = (string) TripCalculationLinkId::generate();
+
+        $flows = $this->sut->forTripCalculationsByDestination([
+            $this->tripCalculationTo($linkId, 40.41681, -3.70381, 'Madrid', 39.46991, -0.37629, 'Valencia', people: 2),
+            $this->tripCalculationTo($linkId, 40.41681, -3.70381, 'Madrid', 41.38791, 2.16992, 'Barcelona', people: 1),
+        ]);
+
+        $this->assertCount(2, $flows);
+
+        $this->assertSame(40.42, $flows[0]->originLatitude);
+        $this->assertSame(-3.7, $flows[0]->originLongitude);
+        $this->assertSame('Madrid', $flows[0]->originLabel);
+        $this->assertSame(39.47, $flows[0]->destinationLatitude);
+        $this->assertSame(-0.38, $flows[0]->destinationLongitude);
+        $this->assertSame('Valencia', $flows[0]->destinationLabel);
+        $this->assertSame(2, $flows[0]->travellers);
+
+        $this->assertSame('Barcelona', $flows[1]->destinationLabel);
+    }
+
+    public function testGroupsTheSameRoundedOriginAndDestination(): void
+    {
+        $linkId = (string) TripCalculationLinkId::generate();
+
+        $flows = $this->sut->forTripCalculationsByDestination([
+            $this->tripCalculationTo($linkId, 40.41681, -3.70381, 'Madrid', 39.46991, -0.37629, 'Valencia', people: 2, distanceKm: 400.0, co2eq: '80'),
+            $this->tripCalculationTo($linkId, 40.41712, -3.70399, 'Madrid, España', 39.46999, -0.37631, 'Valencia, España', people: 3, distanceKm: 200.0, co2eq: '40'),
+        ]);
+
+        $this->assertCount(1, $flows);
+        $this->assertSame('Madrid', $flows[0]->originLabel);
+        $this->assertSame('Valencia', $flows[0]->destinationLabel);
+        $this->assertSame(2, $flows[0]->responses);
+        $this->assertSame(5, $flows[0]->travellers);
+        $this->assertSame(300.0, $flows[0]->km);
+        $this->assertSame('120', $flows[0]->emissions->co2eq());
+    }
+
+    public function testIgnoresTripCalculationsWithoutDestinationCoordinates(): void
+    {
+        $linkId = (string) TripCalculationLinkId::generate();
+
+        $flows = $this->sut->forTripCalculationsByDestination([
+            $this->tripCalculation($linkId, 40.41681, -3.70381, 'Madrid'),
+            $this->tripCalculationTo($linkId, 40.41681, -3.70381, 'Madrid', 39.46991, -0.37629, 'Valencia'),
+        ]);
+
+        $this->assertCount(1, $flows);
+        $this->assertSame('Valencia', $flows[0]->destinationLabel);
+    }
+
     public function testGroupsAttendeeSurveyResponsesCountingOneTravellerEach(): void
     {
         $attendeeSurveyId = 'attendee-survey-id';
@@ -127,6 +180,28 @@ class OriginFlowsCalculatorTest extends TestCase
             legs: [TripCalculationMother::leg(1, (string) MobilityId::generate(), $distanceKm)],
             mobilityEmissions: new Emissions(co2eq: $co2eq),
             origin: new TripWaypoint(label: $label, point: new GeoPoint($latitude, $longitude)),
+        );
+    }
+
+    private function tripCalculationTo(
+        string $linkId,
+        float $latitude,
+        float $longitude,
+        string $label,
+        float $destinationLatitude,
+        float $destinationLongitude,
+        string $destinationLabel,
+        ?int $people = null,
+        float $distanceKm = 300.0,
+        string $co2eq = '0',
+    ): TripCalculation {
+        return TripCalculationMother::from(
+            tripCalculationLinkId: $linkId,
+            people: $people,
+            legs: [TripCalculationMother::leg(1, (string) MobilityId::generate(), $distanceKm)],
+            mobilityEmissions: new Emissions(co2eq: $co2eq),
+            origin: new TripWaypoint(label: $label, point: new GeoPoint($latitude, $longitude)),
+            destination: new TripWaypoint(label: $destinationLabel, point: new GeoPoint($destinationLatitude, $destinationLongitude)),
         );
     }
 

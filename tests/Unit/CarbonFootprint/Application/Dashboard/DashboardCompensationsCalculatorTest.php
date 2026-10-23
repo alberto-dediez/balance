@@ -117,6 +117,42 @@ class DashboardCompensationsCalculatorTest extends TestCase
         $this->assertSame(['Reforestación' => 48.4, 'Escuela rural' => 12.1], $compensations->fundsByProject);
     }
 
+    public function testItCountsThePaidContributionsOfTheAccountTripCalculatorAsVoluntary(): void
+    {
+        $accountId = new AccountId(self::ACCOUNT_ID);
+        $projectContributionRepository = ProjectContributionRepositoryMother::inMemory();
+        $tripCalculationLinkRepository = TripCalculationLinkRepositoryMother::inMemory();
+        $tripCalculationRepository = TripCalculationRepositoryMother::inMemory();
+
+        $tripCalculationLink = TripCalculationLinkMother::forAccount(self::ACCOUNT_ID);
+        $tripCalculationLinkRepository->add($tripCalculationLink);
+        $tripCalculationRepository->add(TripCalculationMother::fromLinkId((string) $tripCalculationLink->id()));
+
+        $projectContributionRepository->add(ProjectContributionMother::paid(
+            accountId: $accountId,
+            tonnes: 1.0,
+            origin: ProjectContributionOrigin::TripCalculation,
+        ));
+
+        $sut = new DashboardCompensationsCalculator(
+            projectContributionRepository: $projectContributionRepository,
+            contributionsAggregator: new ProjectContributionsAggregator(),
+            projectRepository: ProjectRepositoryMother::inMemory(),
+            attendeeSurveyRepository: AttendeeSurveyRepositoryMother::inMemory(),
+            attendeeSurveyResponseRepository: AttendeeSurveyResponseRepositoryMother::inMemory(),
+            tripCalculationLinkRepository: $tripCalculationLinkRepository,
+            tripCalculationRepository: $tripCalculationRepository,
+        );
+
+        $compensations = $sut($accountId, (int) (new \DateTimeImmutable('NOW'))->format('Y'));
+
+        $this->assertEqualsWithDelta(1000.0, $compensations->voluntaryCompensatedCo2eqKg, 0.01);
+        $this->assertEqualsWithDelta(0.0, $compensations->ownCompensatedCo2eqKg, 0.01);
+        $this->assertSame(1, $compensations->tripCalculationLinks);
+        $this->assertSame(1, $compensations->tripCalculations);
+        $this->assertSame(1, $compensations->voluntaryContributors);
+    }
+
     public function testItReturnsEmptyCompensationsWhenThereIsNoActivity(): void
     {
         $sut = new DashboardCompensationsCalculator(

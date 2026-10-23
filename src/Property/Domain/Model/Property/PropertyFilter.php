@@ -13,11 +13,13 @@ class PropertyFilter
 {
     use Filter;
 
+    /** @param list<AccountId>|null $accountIds */
     public function __construct(
         public ?string $name = null,
         public ?DestinationId $destinationId = null,
         public ?CountryId $countryId = null,
         public ?AccountId $accountId = null,
+        public ?array $accountIds = null,
         public ?OperatingRegime $operatingRegime = null,
         int $limit = 10,
     ) {

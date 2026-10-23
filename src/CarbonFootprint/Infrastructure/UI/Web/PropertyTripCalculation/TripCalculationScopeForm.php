@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\TripCalculationLink\Register\RegisterTripCal
 use App\CarbonFootprint\Application\TripCalculationLink\Register\RegisterTripCalculationLinkService;
 use App\CarbonFootprint\Application\TripCalculationLink\UpdateScope\UpdateTripCalculationLinkScopeRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\UpdateScope\UpdateTripCalculationLinkScopeService;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\UpdateTripCalculationLinkScopeType;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\User\User;
@@ -35,6 +36,12 @@ final readonly class TripCalculationScopeForm
             $user,
         )->tripCalculationLink;
 
+        return $this->handleForLink($tripCalculationLink, $user, $request);
+    }
+
+    /** @return FormInterface<mixed> */
+    public function handleForLink(TripCalculationLink $tripCalculationLink, User $user, Request $request): FormInterface
+    {
         $form = $this->formFactory->create(
             UpdateTripCalculationLinkScopeType::class,
             new UpdateTripCalculationLinkScopeRequest(

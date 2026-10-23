@@ -6,6 +6,10 @@ import 'leaflet/dist/leaflet.min.css';
 
 const ARC_POINTS = 48;
 const MAX_ARC_LIFT_DEGREES = 6;
+const ARROW_LENGTH_PIXELS = 12;
+const ARROW_ANGLE_RADIANS = 25 * Math.PI / 180;
+const ARROW_MARKER_OFFSET_PIXELS = 10;
+const ARROW_HEADING_ARC_POINTS = 4;
 
 export default class extends Controller {
     static values = {
@@ -13,12 +17,17 @@ export default class extends Controller {
         destination: Object,
         labels: Object,
         tileKey: String,
+        arrows: { type: Boolean, default: false },
     }
 
     connect() {
-        const destination = this.destinationValue;
+        const globalDestination = this.isPoint(this.destinationValue) ? this.destinationValue : null;
+        const flows = this.flowsValue
+            .filter((flow) => this.isPoint(flow))
+            .map((flow) => ({ flow, destination: this.flowDestination(flow, globalDestination) }))
+            .filter((item) => item.destination !== null);
 
-        if (!destination || typeof destination.lat !== 'number') {
+        if (!globalDestination && flows.length === 0) {
             return;
         }
 
@@ -34,39 +43,63 @@ export default class extends Controller {
             maxZoom: 19,
         }).addTo(this.map);
 
-        const flows = this.flowsValue.filter((flow) => typeof flow.lat === 'number' && typeof flow.lng === 'number');
-        const maxTravellers = flows.reduce((max, flow) => Math.max(max, flow.travellers), 1);
-        const points = [[destination.lat, destination.lng]];
+        const maxTravellers = flows.reduce((max, item) => Math.max(max, item.flow.travellers), 1);
+        const destinations = new Map();
+        const points = [];
+        const color = this.color('--bs-primary', '#3b76ef');
 
-        flows.forEach((flow) => {
+        if (globalDestination) {
+            destinations.set(this.pointKey(globalDestination), globalDestination);
+        }
+
+        this.arrowHeads = [];
+
+        flows.forEach(({ flow, destination }) => {
             const weight = Math.sqrt(flow.travellers / maxTravellers);
-
-            L.polyline(this.arc(flow, destination), {
-                color: this.color('--bs-primary', '#3b76ef'),
+            const arc = this.arc(flow, destination);
+            const style = {
+                color,
                 weight: 1 + 4 * weight,
                 opacity: 0.35 + 0.45 * weight,
-            }).addTo(this.map);
+            };
+
+            L.polyline(arc, style).addTo(this.map);
+
+            if (this.arrowsValue) {
+                this.arrowHeads.push({ arc, layer: L.polyline([], style).addTo(this.map) });
+            }
 
             L.circleMarker([flow.lat, flow.lng], {
                 radius: 4 + 10 * weight,
-                color: this.color('--bs-primary', '#3b76ef'),
-                fillColor: this.color('--bs-primary', '#3b76ef'),
+                color,
+                fillColor: color,
                 fillOpacity: 0.5,
                 weight: 1,
             }).bindTooltip(this.tooltip(flow), { direction: 'top' }).addTo(this.map);
 
+            destinations.set(this.pointKey(destination), destination);
             points.push([flow.lat, flow.lng]);
         });
 
-        L.circleMarker([destination.lat, destination.lng], {
-            radius: 8,
-            color: this.color('--bs-danger', '#d5343f'),
-            fillColor: this.color('--bs-danger', '#d5343f'),
-            fillOpacity: 1,
-            weight: 2,
-        }).bindTooltip(destination.label, { direction: 'top' }).addTo(this.map);
+        destinations.forEach((destination) => {
+            L.circleMarker([destination.lat, destination.lng], {
+                radius: 8,
+                color: this.color('--bs-danger', '#d5343f'),
+                fillColor: this.color('--bs-danger', '#d5343f'),
+                fillOpacity: 1,
+                weight: 2,
+            }).bindTooltip(this.escape(destination.label ?? ''), { direction: 'top' }).addTo(this.map);
+
+            points.unshift([destination.lat, destination.lng]);
+        });
 
         this.map.fitBounds(L.latLngBounds(points), { padding: [24, 24], maxZoom: 12 });
+
+        if (this.arrowsValue) {
+            this.refreshArrowHeads();
+            this.map.on('zoomend', () => this.refreshArrowHeads());
+        }
+
         this.map.once('focus', () => this.map.scrollWheelZoom.enable());
     }
 
@@ -77,10 +110,55 @@ export default class extends Controller {
         }
     }
 
+    isPoint(point) {
+        return !!point && typeof point.lat === 'number' && typeof point.lng === 'number';
+    }
+
+    flowDestination(flow, globalDestination) {
+        if (typeof flow.destLat === 'number' && typeof flow.destLng === 'number') {
+            return { lat: flow.destLat, lng: flow.destLng, label: flow.destLabel ?? '' };
+        }
+
+        return globalDestination;
+    }
+
+    pointKey(point) {
+        return `${point.lat.toFixed(4)},${point.lng.toFixed(4)}`;
+    }
+
+    refreshArrowHeads() {
+        this.arrowHeads.forEach(({ arc, layer }) => layer.setLatLngs(this.arrowHead(arc)));
+    }
+
+    arrowHead(arc) {
+        const zoom = this.map.getZoom();
+        const end = this.map.project(L.latLng(arc[arc.length - 1]), zoom);
+        const previous = this.map.project(L.latLng(arc[Math.max(0, arc.length - 1 - ARROW_HEADING_ARC_POINTS)]), zoom);
+
+        if (end.distanceTo(previous) < 1) {
+            return [];
+        }
+
+        const heading = Math.atan2(end.y - previous.y, end.x - previous.x);
+        const tip = L.point(
+            end.x - ARROW_MARKER_OFFSET_PIXELS * Math.cos(heading),
+            end.y - ARROW_MARKER_OFFSET_PIXELS * Math.sin(heading),
+        );
+        const side = (offset) => this.map.unproject(L.point(
+            tip.x - ARROW_LENGTH_PIXELS * Math.cos(heading + offset),
+            tip.y - ARROW_LENGTH_PIXELS * Math.sin(heading + offset),
+        ), zoom);
+
+        return [side(ARROW_ANGLE_RADIANS), this.map.unproject(tip, zoom), side(-ARROW_ANGLE_RADIANS)];
+    }
+
     tooltip(flow) {
         const labels = this.labelsValue;
+        const title = flow.destLabel
+            ? `${this.escape(flow.label)} → ${this.escape(flow.destLabel)}`
+            : this.escape(flow.label);
         const rows = [
-            `<strong>${this.escape(flow.label)}</strong>`,
+            `<strong>${title}</strong>`,
             `${labels.travellers}: ${flow.travellers}`,
             `${labels.responses}: ${flow.responses}`,
         ];

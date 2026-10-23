@@ -7,8 +7,12 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationMode;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationPlaceKind;
+use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Model\Geo\GeoBounds;
 
 class TripCalculationLinkMother
 {
@@ -56,6 +60,50 @@ class TripCalculationLinkMother
         if (null !== $scope) {
             $tripCalculationLink->updateScope($scope);
         }
+
+        return $tripCalculationLink;
+    }
+
+    public static function forAccount(string $accountId, ?TripCalculationScope $scope = null, ?string $id = null): TripCalculationLink
+    {
+        $tripCalculationLink = new TripCalculationLink(id: new TripCalculationLinkId($id ?? (string) TripCalculationLinkId::generate()));
+        $tripCalculationLink->registerForAccount(
+            accountId: new AccountId($accountId),
+            token: TripCalculationLink::generateToken(),
+        );
+
+        if (null !== $scope) {
+            $tripCalculationLink->updateScope($scope);
+        }
+
+        return $tripCalculationLink;
+    }
+
+    /**
+     * @param list<CountryId>  $countryIds
+     * @param list<PropertyId> $propertyIds
+     */
+    public static function forAccountWithDestination(
+        string $accountId,
+        TripDestinationMode $mode,
+        array $countryIds = [],
+        array $propertyIds = [],
+        ?string $regionReference = null,
+        ?string $regionLabel = null,
+        ?GeoBounds $regionBounds = null,
+        TripDestinationPlaceKind $placeKind = TripDestinationPlaceKind::City,
+        ?TripCalculationScope $scope = null,
+    ): TripCalculationLink {
+        $tripCalculationLink = self::forAccount($accountId, $scope);
+        $tripCalculationLink->updateDestination(
+            mode: $mode,
+            placeKind: $placeKind,
+            countryIds: $countryIds,
+            propertyIds: $propertyIds,
+            regionReference: $regionReference,
+            regionLabel: $regionLabel,
+            regionBounds: $regionBounds,
+        );
 
         return $tripCalculationLink;
     }

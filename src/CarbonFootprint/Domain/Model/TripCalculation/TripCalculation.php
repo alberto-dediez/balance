@@ -41,6 +41,10 @@ class TripCalculation implements \Stringable
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         private ?ConsentProof $consentProof = null,
+        private ?string $destinationPlaceReference = null,
+        private ?string $destinationLabel = null,
+        private ?float $destinationLatitude = null,
+        private ?float $destinationLongitude = null,
     ) {
         $this->events = $events;
     }
@@ -73,6 +77,26 @@ class TripCalculation implements \Stringable
     public function originLongitude(): ?float
     {
         return $this->originLongitude;
+    }
+
+    public function destinationPlaceReference(): ?string
+    {
+        return $this->destinationPlaceReference;
+    }
+
+    public function destinationLabel(): ?string
+    {
+        return $this->destinationLabel;
+    }
+
+    public function destinationLatitude(): ?float
+    {
+        return $this->destinationLatitude;
+    }
+
+    public function destinationLongitude(): ?float
+    {
+        return $this->destinationLongitude;
     }
 
     public function roundTrip(): bool
@@ -150,6 +174,7 @@ class TripCalculation implements \Stringable
     public function register(
         TripCalculationLinkId $tripCalculationLinkId,
         ?TripWaypoint $origin,
+        ?TripWaypoint $destination,
         bool $roundTrip,
         int $trips,
         ?int $nights,
@@ -165,6 +190,7 @@ class TripCalculation implements \Stringable
                 tripCalculationId: $this->id(),
                 tripCalculationLinkId: $tripCalculationLinkId,
                 origin: $origin,
+                destination: $destination,
                 roundTrip: $roundTrip,
                 trips: $trips,
                 nights: $nights,
@@ -187,6 +213,12 @@ class TripCalculation implements \Stringable
         $this->originLabel = $origin?->label;
         $this->originLatitude = $origin?->point?->latitude;
         $this->originLongitude = $origin?->point?->longitude;
+
+        $destination = $event->destination();
+        $this->destinationPlaceReference = $destination?->reference;
+        $this->destinationLabel = $destination?->label;
+        $this->destinationLatitude = $destination?->point?->latitude;
+        $this->destinationLongitude = $destination?->point?->longitude;
 
         $this->roundTrip = $event->roundTrip();
         $this->trips = $event->trips();

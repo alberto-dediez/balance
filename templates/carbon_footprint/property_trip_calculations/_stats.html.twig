@@ -194,8 +194,9 @@
     </div>
 {% endif %}
 
+{% set stats_column = property is null and showTransport ? 'col-lg-3' : 'col-lg-4' %}
 <div class="row">
-    <div class="col-lg-4 d-flex">
+    <div class="{{ stats_column }} d-flex">
         <div class="card flex-fill">
             <div class="card-header fw-semibold">{{ 'Perfil de los viajes' | trans }}</div>
             <div class="card-body">
@@ -214,7 +215,7 @@
         </div>
     </div>
 
-    <div class="col-lg-4 d-flex">
+    <div class="{{ stats_column }} d-flex">
         <div class="card flex-fill">
             <div class="card-header fw-semibold">{{ 'Aportaciones por estado' | trans }}</div>
             <div class="card-body">
@@ -235,7 +236,7 @@
     </div>
 
     {% if showTransport %}
-        <div class="col-lg-4 d-flex">
+        <div class="{{ stats_column }} d-flex">
             <div class="card flex-fill">
                 <div class="card-header fw-semibold">{{ 'Principales orígenes' | trans }}</div>
                 <div class="card-body">
@@ -250,6 +251,28 @@
                         />
                     {% else %}
                         <p class="text-muted mb-0">{{ 'Todavía no hay orígenes registrados.' | trans }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if property is null %}
+        <div class="{{ stats_column }} d-flex">
+            <div class="card flex-fill">
+                <div class="card-header fw-semibold">{{ 'Top de destinos' | trans }}</div>
+                <div class="card-body">
+                    {% if destinationsChart.values is not empty %}
+                        <twig:Chart:Bar
+                            title="{{ 'Respuestas' | trans }}"
+                            :values="destinationsChart.values"
+                            :categories="destinationsChart.categories"
+                            :colors="['var(--bs-info)']"
+                            :decimals="0"
+                            :labelDecimals="0"
+                        />
+                    {% else %}
+                        <p class="text-muted mb-0">{{ 'Todavía no hay destinos registrados.' | trans }}</p>
                     {% endif %}
                 </div>
             </div>

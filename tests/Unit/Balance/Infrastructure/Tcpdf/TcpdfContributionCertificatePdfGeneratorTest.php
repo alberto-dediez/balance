@@ -14,6 +14,7 @@ use App\Tests\Unit\Security\Domain\Model\Branding\BrandingTokensMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\Loader\XliffFileLoader;
 use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class TcpdfContributionCertificatePdfGeneratorTest extends TestCase
 {
@@ -47,6 +48,40 @@ final class TcpdfContributionCertificatePdfGeneratorTest extends TestCase
         );
 
         $this->assertPreviewIsAPdf(ContributionCertificateDataMother::compensation(), Locale::Spanish, 'marca-blanca', $branding);
+    }
+
+    public function testItLabelsTheOriginOfACertificateFromATripCalculatorAsATrip(): void
+    {
+        $translator = new class ($this->translator()) implements TranslatorInterface {
+            /** @var list<string> */
+            public array $ids = [];
+
+            public function __construct(private readonly Translator $translator) {}
+
+            /** @param array<string, mixed> $parameters */
+            public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
+            {
+                $this->ids[] = $id;
+
+                return $this->translator->trans($id, $parameters, $domain, $locale);
+            }
+
+            public function getLocale(): string
+            {
+                return $this->translator->getLocale();
+            }
+        };
+
+        $path = (new TcpdfContributionCertificatePdfGenerator($translator, new QrCodeGenerator()))
+            ->generate(ContributionCertificateDataMother::tripCalculation(), Locale::Spanish, PdfBranding::bioscore());
+
+        try {
+            $this->assertStringStartsWith('%PDF-', (string) file_get_contents($path));
+            $this->assertContains('Viaje', $translator->ids);
+            $this->assertNotContains('Propiedad', $translator->ids);
+        } finally {
+            @unlink($path);
+        }
     }
 
     private function assertPreviewIsAPdf(ContributionCertificateData $data, Locale $locale, string $name, ?PdfBranding $branding = null): void

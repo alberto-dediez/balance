@@ -36,7 +36,8 @@ Feature:
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
-        Given contribution "C1" of account "666" for project "1111" with "2" tonnes is pending until "+12 hours"
+        Given trip calculation "T1" of link "TL1" exists
+        Given contribution "C1" of account "666" for project "1111" with "2" tonnes from "property_trip_calculation" "T1" is pending until "+12 hours"
         When the gateway notifies that the payment of contribution "C1" succeeded
         When the queued messages are processed
         When I go to "/es/carbon-footprint/property-trip/token-abc/contribution/C1/return"
@@ -61,12 +62,37 @@ Feature:
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
-        Given contribution "C1" of account "666" for project "1111" with "2" tonnes is pending until "+12 hours"
+        Given trip calculation "T1" of link "TL1" exists
+        Given contribution "C1" of account "666" for project "1111" with "2" tonnes from "property_trip_calculation" "T1" is pending until "+12 hours"
         When the gateway notifies that the payment of contribution "C1" succeeded
         When I go to "/es/carbon-footprint/property-trip/token-abc/contribution/C1/return"
         Then the response status should be 200
         Then I see a text "Estamos preparando tu certificado"
         Then I do not see a text "Descargar certificado"
+
+    Scenario: The thank-you page and the certificate of a contribution from another origin of the same account are not found
+        Given project "Reforestación" with id "1111" and price per tonne "20" exists
+        Given project "1111" is adhered to account "666"
+        Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
+        Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
+        Given property "Hotel B" with id "778" of account "666" exists
+        Given trip calculation link with id "TL2" and token "token-other" for property "778" of account "666" exists
+        Given trip calculation "T2" of link "TL2" exists
+        Given contribution "C1" of account "666" for project "1111" with "2" tonnes from "property_trip_calculation" "T2" is pending until "+12 hours"
+        Given contribution "C2" of account "666" for project "1111" with "2" tonnes from "account" "666" is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C1" succeeded
+        When the gateway notifies that the payment of contribution "C2" succeeded
+        When the queued messages are processed
+        When I go to "/es/carbon-footprint/property-trip/token-abc/contribution/C1/return"
+        Then the response status should be 404
+        When I download the certificate of contribution "C1" with token "token-abc"
+        Then the response status should be 404
+        When I go to "/es/carbon-footprint/property-trip/token-abc/contribution/C2/return"
+        Then the response status should be 404
+        When I download the certificate of contribution "C2" with token "token-abc"
+        Then the response status should be 404
+        When I go to "/es/carbon-footprint/property-trip/token-other/contribution/C1/return"
+        Then the response status should be 200
 
     Scenario: Anybody can verify a compensation certificate against the document in their hands
         Given project "Reforestación" with id "1111" and price per tonne "20" exists

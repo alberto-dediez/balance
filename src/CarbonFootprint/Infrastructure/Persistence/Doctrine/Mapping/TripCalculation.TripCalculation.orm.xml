@@ -17,6 +17,11 @@
         <field name="originLatitude" type="float" column="origin_latitude" nullable="true" />
         <field name="originLongitude" type="float" column="origin_longitude" nullable="true" />
 
+        <field name="destinationPlaceReference" type="string" length="255" column="destination_place_reference" nullable="true" />
+        <field name="destinationLabel" type="string" length="255" column="destination_label" nullable="true" />
+        <field name="destinationLatitude" type="float" column="destination_latitude" nullable="true" />
+        <field name="destinationLongitude" type="float" column="destination_longitude" nullable="true" />
+
         <field name="roundTrip" type="boolean" column="round_trip" nullable="false" />
         <field name="trips" type="integer" column="trips" nullable="true" />
         <field name="nights" type="integer" column="nights" nullable="true" />

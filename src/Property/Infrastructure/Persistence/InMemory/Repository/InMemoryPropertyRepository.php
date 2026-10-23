@@ -165,6 +165,10 @@ class InMemoryPropertyRepository implements PropertyRepository
                 continue;
             }
 
+            if (null !== $filter->accountIds && !$this->belongsToAnyAccount($property, $filter->accountIds)) {
+                continue;
+            }
+
             if ($filter->destinationId instanceof DestinationId && (null == $property->info()->destinationId() || false === $filter->destinationId->equals($property->info()->destinationId()))) {
                 continue;
             }
@@ -204,5 +208,23 @@ class InMemoryPropertyRepository implements PropertyRepository
         $clonedFilter->page = 0;
 
         return count($this->findByFilter($clonedFilter));
+    }
+
+    /** @param list<AccountId> $accountIds */
+    private function belongsToAnyAccount(Property $property, array $accountIds): bool
+    {
+        $propertyAccountId = $property->accountId();
+
+        if (null === $propertyAccountId) {
+            return false;
+        }
+
+        foreach ($accountIds as $accountId) {
+            if ($accountId->equals($propertyAccountId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

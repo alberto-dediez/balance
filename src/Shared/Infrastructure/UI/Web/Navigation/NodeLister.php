@@ -606,6 +606,23 @@ class NodeLister
         );
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Calculadora de viajes'),
+            icon: 'solar:routing-2-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Configuración'),
+                    icon: 'solar:settings-line-duotone',
+                    target: $this->router->generate('carbon_footprint_trip_calculator'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Respuestas'),
+                    icon: 'solar:chart-2-line-duotone',
+                    target: $this->router->generate('carbon_footprint_trip_calculator_responses'),
+                ),
+            ],
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Proyectos'),
             icon: 'solar:hand-heart-line-duotone',
             items: [

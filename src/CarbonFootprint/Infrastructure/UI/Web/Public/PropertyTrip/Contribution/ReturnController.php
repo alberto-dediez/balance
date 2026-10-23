@@ -8,9 +8,9 @@ use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributi
 use App\Balance\Application\ProjectContribution\Confirm\ConfirmProjectContributionService;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\Project\ProjectRepository;
-use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
+use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Payments\Domain\Model\Payment\PaymentId;
@@ -23,6 +23,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(
     '/carbon-footprint/property-trip/{token}/contribution/{contributionId}/return',
     name: 'public_carbon_footprint_property_trip_contribution_return',
+    methods: ['GET'],
+)]
+#[Route(
+    '/carbon-footprint/trip/{token}/contribution/{contributionId}/return',
+    name: 'public_carbon_footprint_trip_contribution_return',
     methods: ['GET'],
 )]
 class ReturnController extends AbstractController
@@ -39,6 +44,7 @@ class ReturnController extends AbstractController
         string $contributionId,
         GetTripCalculationLinkByTokenService $getByToken,
         ProjectContributionRepository $projectContributionRepository,
+        TripCalculationRepository $tripCalculationRepository,
         ProjectRepository $projectRepository,
         PaymentRepository $paymentRepository,
         ContributionCertificateRepository $contributionCertificateRepository,
@@ -55,16 +61,9 @@ class ReturnController extends AbstractController
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
 
-        $projectContribution = $projectContributionRepository->find(new ProjectContributionId($contributionId));
-        $accountId = $this->accountIdOf($link);
-        $contributionAccountId = $projectContribution?->accountId();
+        $projectContribution = $this->resolveContribution($contributionId, $link, $projectContributionRepository, $tripCalculationRepository);
 
-        if (
-            null === $projectContribution
-            || null === $accountId
-            || null === $contributionAccountId
-            || !$accountId->equals($contributionAccountId)
-        ) {
+        if (null === $projectContribution) {
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
 
@@ -80,7 +79,8 @@ class ReturnController extends AbstractController
         return $this->render('@carbon_footprint/project_contribution/confirmation.html.twig', [
             'token' => $token,
             'property' => $link->property,
-            'routes' => $this->contributionRoutes($token, (string) $projectContribution->originId()),
+            'ownerName' => $link->ownerName,
+            'routes' => $this->contributionRoutes($link->tripCalculationLink, $token, (string) $projectContribution->originId()),
             'contribution' => $projectContribution,
             'project' => null !== $projectId ? $projectRepository->find($projectId) : null,
             'payment' => $payment,

@@ -45,6 +45,74 @@ final class OriginFlowsCalculator
     }
 
     /**
+     * @param list<TripCalculation> $tripCalculations
+     *
+     * @return list<OriginDestinationFlow>
+     */
+    public function forTripCalculationsByDestination(array $tripCalculations): array
+    {
+        /** @var array<string, array{originLatitude: float, originLongitude: float, originLabel: string, destinationLatitude: float, destinationLongitude: float, destinationLabel: string, responses: int, travellers: int, km: float, emissions: Emissions}> $groups */
+        $groups = [];
+
+        foreach ($tripCalculations as $tripCalculation) {
+            $originLatitude = $tripCalculation->originLatitude();
+            $originLongitude = $tripCalculation->originLongitude();
+            $destinationLatitude = $tripCalculation->destinationLatitude();
+            $destinationLongitude = $tripCalculation->destinationLongitude();
+
+            if (null === $originLatitude || null === $originLongitude || null === $destinationLatitude || null === $destinationLongitude) {
+                continue;
+            }
+
+            $originLatitude = round($originLatitude, self::COORDINATE_PRECISION);
+            $originLongitude = round($originLongitude, self::COORDINATE_PRECISION);
+            $destinationLatitude = round($destinationLatitude, self::COORDINATE_PRECISION);
+            $destinationLongitude = round($destinationLongitude, self::COORDINATE_PRECISION);
+            $key = $originLatitude . ':' . $originLongitude . '>' . $destinationLatitude . ':' . $destinationLongitude;
+
+            $group = $groups[$key] ?? [
+                'originLatitude' => $originLatitude,
+                'originLongitude' => $originLongitude,
+                'originLabel' => $tripCalculation->originLabel() ?? '',
+                'destinationLatitude' => $destinationLatitude,
+                'destinationLongitude' => $destinationLongitude,
+                'destinationLabel' => $tripCalculation->destinationLabel() ?? '',
+                'responses' => 0,
+                'travellers' => 0,
+                'km' => 0.0,
+                'emissions' => new Emissions(),
+            ];
+
+            ++$group['responses'];
+            $group['travellers'] += max(1, $tripCalculation->people() ?? 1);
+            $group['km'] += $this->legsDistanceKm($tripCalculation->legs());
+            $group['emissions'] = $group['emissions']->add($tripCalculation->mobilityEmissions());
+
+            $groups[$key] = $group;
+        }
+
+        $flows = array_map(
+            static fn(array $group): OriginDestinationFlow => new OriginDestinationFlow(
+                originLatitude: $group['originLatitude'],
+                originLongitude: $group['originLongitude'],
+                originLabel: $group['originLabel'],
+                destinationLatitude: $group['destinationLatitude'],
+                destinationLongitude: $group['destinationLongitude'],
+                destinationLabel: $group['destinationLabel'],
+                responses: $group['responses'],
+                travellers: $group['travellers'],
+                km: $group['km'] / $group['responses'],
+                emissions: $group['emissions'],
+            ),
+            array_values($groups),
+        );
+
+        usort($flows, static fn(OriginDestinationFlow $a, OriginDestinationFlow $b): int => $b->travellers <=> $a->travellers);
+
+        return $flows;
+    }
+
+    /**
      * @param list<AttendeeSurveyResponse> $responses
      *
      * @return list<OriginFlow>

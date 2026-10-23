@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalcul
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\ConsentRequestReader;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PublicTripRoutes;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip\LegInputsHttpMapper;
 use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
@@ -19,8 +20,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/carbon-footprint/property-trip/{token}/trip', name: 'public_carbon_footprint_property_trip_trip')]
+#[Route('/carbon-footprint/trip/{token}/trip', name: 'public_carbon_footprint_trip_trip')]
 class TripController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
@@ -34,6 +37,7 @@ class TripController extends AbstractController
         string $token,
         GetTripCalculationLinkByTokenService $getByToken,
         RegisterTripCalculationService $registerTripCalculation,
+        TranslatorInterface $translator,
         Request $request,
     ): Response {
         if ($limited = $this->propertyTripRateLimiter->check($request)) {
@@ -49,6 +53,8 @@ class TripController extends AbstractController
         $this->brandFor($response->tripCalculationLink->accountId());
 
         $scope = $response->tripCalculationLink->scope();
+        $routes = PublicTripRoutes::for($response->tripCalculationLink);
+        $asksForDestination = $response->asksForDestination;
 
         if ($request->isMethod('POST')) {
             if (!$this->isCsrfTokenValid('property_trip_' . $token, $request->request->getString('_token'))) {
@@ -75,16 +81,17 @@ class TripController extends AbstractController
                         consentIp: ConsentRequestReader::ip($request),
                         consentUserAgent: ConsentRequestReader::userAgent($request),
                         consentAcceptLanguage: ConsentRequestReader::acceptLanguage($request),
+                        destinationPlaceReference: $asksForDestination && !empty($trip['destinationPlaceReference']) ? (string) $trip['destinationPlaceReference'] : null,
                     ));
                 } catch (TripCalculationLinkTokenInvalidException) {
                     return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
                 } catch (\InvalidArgumentException $e) {
-                    $this->addFlash('danger', new TranslatableMessage('No se ha podido calcular tu huella: {error}', ['{error}' => $e->getMessage()]));
+                    $this->addFlash('danger', new TranslatableMessage('No se ha podido calcular tu huella: {error}', ['{error}' => $translator->trans($e->getMessage())]));
 
-                    return $this->redirectToRoute('public_carbon_footprint_property_trip_trip', ['token' => $token]);
+                    return $this->redirectToRoute($routes->name('_trip'), ['token' => $token]);
                 }
 
-                return $this->redirectToRoute('public_carbon_footprint_property_trip_result', [
+                return $this->redirectToRoute($routes->name('_result'), [
                     'token' => $token,
                     'tripCalculationId' => (string) $registered->tripCalculationId,
                 ]);
@@ -95,7 +102,9 @@ class TripController extends AbstractController
 
         return $this->render('@carbon_footprint/public/property_trip/step/trip.html.twig', [
             'token' => $token,
-            'property' => $response->property,
+            'ownerName' => $response->ownerName,
+            'asksForDestination' => $asksForDestination,
+            'routePrefix' => $routes->prefix,
             'mobilities' => $response->mobilities,
             'geoEnabled' => $response->geoEnabled,
             'maxLegs' => $response->maxLegs,

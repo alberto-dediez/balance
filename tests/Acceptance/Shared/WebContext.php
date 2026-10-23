@@ -6,6 +6,8 @@ namespace App\Tests\Acceptance\Shared;
 
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use App\Shared\Domain\Model\Geo\GeoBounds;
+use App\Shared\Domain\Model\Geo\GeoPoint;
 use App\Shared\Infrastructure\Timezone\CookieTimezoneProvider;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
@@ -74,6 +76,33 @@ final class WebContext implements Context
     public function placeNamedAtExists(string $reference, string $label, string $latitude, string $longitude): void
     {
         $this->getPlaceFinder()->add($reference, $label, (float) $latitude, (float) $longitude);
+    }
+
+    #[Given('place :reference named :label at :latitude, :longitude in country :iso and areas :areas exists')]
+    public function placeNamedAtInCountryAndAreasExists(string $reference, string $label, string $latitude, string $longitude, string $iso, string $areas): void
+    {
+        $this->getPlaceFinder()->add(
+            $reference,
+            $label,
+            (float) $latitude,
+            (float) $longitude,
+            areaNames: array_values(array_filter(array_map('trim', explode(',', $areas)))),
+            countryCode: $iso,
+        );
+    }
+
+    #[Given('region :reference named :name with bounds :south, :west, :north, :east exists')]
+    public function regionNamedWithBoundsExists(string $reference, string $name, string $south, string $west, string $north, string $east): void
+    {
+        $this->getPlaceFinder()->add(
+            $reference,
+            $name,
+            ((float) $south + (float) $north) / 2,
+            ((float) $west + (float) $east) / 2,
+            name: $name,
+            viewport: new GeoBounds(new GeoPoint((float) $south, (float) $west), new GeoPoint((float) $north, (float) $east)),
+            areaNames: [$name],
+        );
     }
 
     #[Given('the places provider is disabled')]
@@ -327,6 +356,12 @@ final class WebContext implements Context
     {
         $this->client->followRedirect();
 
+        Assert::assertEquals($name, $this->client->getRequest()->attributes->get('_route'));
+    }
+
+    #[Then('the current route should be :name')]
+    public function theCurrentRouteShouldBe(string $name): void
+    {
         Assert::assertEquals($name, $this->client->getRequest()->attributes->get('_route'));
     }
 

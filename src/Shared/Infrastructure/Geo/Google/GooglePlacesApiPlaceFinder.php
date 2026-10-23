@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Geo\Google;
 
+use App\Shared\Domain\Model\Geo\GeoBounds;
 use App\Shared\Domain\Model\Geo\GeoPlace;
 use App\Shared\Domain\Model\Geo\GeoPoint;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Geo\PlaceKind;
+use App\Shared\Domain\Model\Geo\PlaceSearchArea;
 use App\Shared\Domain\Model\Geo\PlaceSuggestion;
 use App\Shared\Domain\Model\Locale\Locale;
 use Psr\Log\LoggerInterface;
@@ -19,6 +21,21 @@ final class GooglePlacesApiPlaceFinder implements PlaceFinder
     private const string AUTOCOMPLETE_URL = 'https://places.googleapis.com/v1/places:autocomplete';
 
     private const string DETAILS_URL = 'https://places.googleapis.com/v1/places/';
+
+    private const array AREA_COMPONENT_TYPES = [
+        'country',
+        'administrative_area_level_1',
+        'administrative_area_level_2',
+        'administrative_area_level_3',
+        'administrative_area_level_4',
+        'administrative_area_level_5',
+        'locality',
+        'postal_town',
+        'sublocality',
+        'sublocality_level_1',
+        'postal_code',
+        'colloquial_area',
+    ];
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -33,7 +50,7 @@ final class GooglePlacesApiPlaceFinder implements PlaceFinder
         return $this->enabled && '' !== $this->apiKey;
     }
 
-    public function suggest(string $query, PlaceKind $kind, Locale $locale): array
+    public function suggest(string $query, PlaceKind $kind, Locale $locale, ?PlaceSearchArea $area = null): array
     {
         if (!$this->isOperative()) {
             return [];
@@ -49,6 +66,19 @@ final class GooglePlacesApiPlaceFinder implements PlaceFinder
 
         if ([] !== $includedPrimaryTypes) {
             $body['includedPrimaryTypes'] = $includedPrimaryTypes;
+        }
+
+        if (null !== $area && [] !== $area->regionCodes) {
+            $body['includedRegionCodes'] = $area->regionCodes;
+        }
+
+        if (null !== $area?->bounds) {
+            $body['locationRestriction'] = [
+                'rectangle' => [
+                    'low' => ['latitude' => $area->bounds->low->latitude, 'longitude' => $area->bounds->low->longitude],
+                    'high' => ['latitude' => $area->bounds->high->latitude, 'longitude' => $area->bounds->high->longitude],
+                ],
+            ];
         }
 
         try {
@@ -97,7 +127,7 @@ final class GooglePlacesApiPlaceFinder implements PlaceFinder
             $response = $this->httpClient->request('GET', self::DETAILS_URL . rawurlencode($reference), [
                 'headers' => [
                     'X-Goog-Api-Key' => $this->apiKey,
-                    'X-Goog-FieldMask' => 'id,displayName,formattedAddress,location',
+                    'X-Goog-FieldMask' => 'id,displayName,formattedAddress,location,viewport,addressComponents',
                 ],
                 'query' => ['languageCode' => $locale->value],
             ]);
@@ -117,11 +147,79 @@ final class GooglePlacesApiPlaceFinder implements PlaceFinder
             return null;
         }
 
+        /** @var list<array<mixed>> $components */
+        $components = is_array($data['addressComponents'] ?? null) ? array_values($data['addressComponents']) : [];
+
         return new GeoPlace(
             reference: (string) ($data['id'] ?? $reference),
             label: (string) ($data['formattedAddress'] ?? $data['displayName']['text'] ?? $reference),
             point: new GeoPoint((float) $latitude, (float) $longitude),
+            name: isset($data['displayName']['text']) ? (string) $data['displayName']['text'] : null,
+            viewport: $this->viewport($data['viewport'] ?? null),
+            areaNames: $this->areaNames($components),
+            countryCode: $this->countryCode($components),
         );
+    }
+
+    private function viewport(mixed $viewport): ?GeoBounds
+    {
+        if (!is_array($viewport)) {
+            return null;
+        }
+
+        $low = $this->point($viewport['low'] ?? null);
+        $high = $this->point($viewport['high'] ?? null);
+
+        if (null === $low || null === $high) {
+            return null;
+        }
+
+        return new GeoBounds($low, $high);
+    }
+
+    private function point(mixed $location): ?GeoPoint
+    {
+        if (!is_array($location) || !is_numeric($location['latitude'] ?? null) || !is_numeric($location['longitude'] ?? null)) {
+            return null;
+        }
+
+        return new GeoPoint((float) $location['latitude'], (float) $location['longitude']);
+    }
+
+    /**
+     * @param list<array<mixed>> $components
+     *
+     * @return list<string>
+     */
+    private function areaNames(array $components): array
+    {
+        $names = [];
+
+        foreach ($components as $component) {
+            $types = is_array($component['types'] ?? null) ? $component['types'] : [];
+
+            if ([] === array_intersect(self::AREA_COMPONENT_TYPES, $types) || !isset($component['longText'])) {
+                continue;
+            }
+
+            $names[] = (string) $component['longText'];
+        }
+
+        return array_values(array_unique($names));
+    }
+
+    /** @param list<array<mixed>> $components */
+    private function countryCode(array $components): ?string
+    {
+        foreach ($components as $component) {
+            $types = is_array($component['types'] ?? null) ? $component['types'] : [];
+
+            if (in_array('country', $types, true) && isset($component['shortText'])) {
+                return (string) $component['shortText'];
+            }
+        }
+
+        return null;
     }
 
     /** @return list<string> */
@@ -130,6 +228,7 @@ final class GooglePlacesApiPlaceFinder implements PlaceFinder
         return match ($kind) {
             PlaceKind::City => ['locality', 'postal_town'],
             PlaceKind::Lodging => ['lodging'],
+            PlaceKind::Region => ['(regions)'],
             PlaceKind::Any => [],
         };
     }

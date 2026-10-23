@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/carbon-footprint/property-trip/{token}', name: 'public_carbon_footprint_property_trip', methods: ['GET'])]
+#[Route('/carbon-footprint/trip/{token}', name: 'public_carbon_footprint_trip', methods: ['GET'])]
 class IndexController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
@@ -46,15 +47,17 @@ class IndexController extends AbstractController
 
         $this->brandFor($response->tripCalculationLink->accountId());
 
+        $routes = PublicTripRoutes::for($response->tripCalculationLink);
+
         $landing = $this->renderPublicLanding(
             getActivePublicLanding: $getActivePublicLanding,
-            ownerType: PublicLandingOwnerType::Property,
-            ownerId: (string) $response->property->id(),
-            ownerName: $response->property->name(),
-            ctaRoute: 'public_carbon_footprint_property_trip_trip',
+            ownerType: $response->asksForDestination ? PublicLandingOwnerType::TripCalculationLink : PublicLandingOwnerType::Property,
+            ownerId: $response->asksForDestination ? (string) $response->tripCalculationLink->id() : (string) $response->property?->id(),
+            ownerName: $response->ownerName,
+            ctaRoute: $routes->name('_trip'),
             ctaRouteParams: ['token' => $token],
         );
 
-        return $landing ?? $this->redirectToRoute('public_carbon_footprint_property_trip_trip', ['token' => $token]);
+        return $landing ?? $this->redirectToRoute($routes->name('_trip'), ['token' => $token]);
     }
 }

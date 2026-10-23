@@ -21,5 +21,6 @@ final class RegisterTripCalculationRequest
         public readonly string $consentIp = '',
         public readonly string $consentUserAgent = '',
         public readonly string $consentAcceptLanguage = '',
+        public readonly ?string $destinationPlaceReference = null,
     ) {}
 }

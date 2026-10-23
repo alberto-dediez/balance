@@ -348,6 +348,19 @@ final class BalanceContext implements Context
         Assert::assertSame(ProjectContributionStatus::from($status), $contributions[0]->status());
     }
 
+    #[Given('contribution :id of account :accountId for project :projectId with :tonnes tonnes from :origin :originId is pending until :expiresAt')]
+    public function pendingContributionFromOriginExists(
+        string $id,
+        string $accountId,
+        string $projectId,
+        string $tonnes,
+        string $origin,
+        string $originId,
+        string $expiresAt,
+    ): void {
+        $this->pendingContributionExists($id, $accountId, $projectId, $tonnes, $expiresAt, ProjectContributionOrigin::from($origin), $originId);
+    }
+
     #[Given('contribution :id of account :accountId for project :projectId with :tonnes tonnes is pending until :expiresAt')]
     public function pendingContributionExists(
         string $id,
@@ -355,6 +368,8 @@ final class BalanceContext implements Context
         string $projectId,
         string $tonnes,
         string $expiresAt,
+        ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
+        ?string $originId = null,
     ): void {
         $contribution = new ProjectContribution(id: new ProjectContributionId($id));
         $payment = PaymentMother::pending(subjectId: $id);
@@ -364,8 +379,8 @@ final class BalanceContext implements Context
         $contribution->register(
             accountId: new AccountId($accountId),
             projectId: new ProjectId($projectId),
-            origin: ProjectContributionOrigin::PropertyTripCalculation,
-            originId: null,
+            origin: $origin,
+            originId: $originId,
             originName: null,
             co2eqKg: (float) $tonnes * 1000,
             tonnes: (float) $tonnes,

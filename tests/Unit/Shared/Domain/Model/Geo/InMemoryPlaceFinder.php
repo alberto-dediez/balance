@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Domain\Model\Geo;
 
+use App\Shared\Domain\Model\Geo\GeoBounds;
 use App\Shared\Domain\Model\Geo\GeoPlace;
 use App\Shared\Domain\Model\Geo\GeoPoint;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Geo\PlaceKind;
+use App\Shared\Domain\Model\Geo\PlaceSearchArea;
 use App\Shared\Domain\Model\Geo\PlaceSuggestion;
 use App\Shared\Domain\Model\Locale\Locale;
 
@@ -18,9 +20,28 @@ class InMemoryPlaceFinder implements PlaceFinder
 
     private int $resolveCalls = 0;
 
-    public function add(string $reference, string $label, float $latitude, float $longitude): void
-    {
-        $this->places[$reference] = new GeoPlace($reference, $label, new GeoPoint($latitude, $longitude));
+    private ?PlaceSearchArea $lastArea = null;
+
+    /** @param list<string> $areaNames */
+    public function add(
+        string $reference,
+        string $label,
+        float $latitude,
+        float $longitude,
+        ?string $name = null,
+        ?GeoBounds $viewport = null,
+        array $areaNames = [],
+        ?string $countryCode = null,
+    ): void {
+        $this->places[$reference] = new GeoPlace(
+            $reference,
+            $label,
+            new GeoPoint($latitude, $longitude),
+            $name,
+            $viewport,
+            $areaNames,
+            $countryCode,
+        );
     }
 
     public function isOperative(): bool
@@ -28,8 +49,10 @@ class InMemoryPlaceFinder implements PlaceFinder
         return true;
     }
 
-    public function suggest(string $query, PlaceKind $kind, Locale $locale): array
+    public function suggest(string $query, PlaceKind $kind, Locale $locale, ?PlaceSearchArea $area = null): array
     {
+        $this->lastArea = $area;
+
         $suggestions = [];
 
         foreach ($this->places as $place) {
@@ -53,5 +76,10 @@ class InMemoryPlaceFinder implements PlaceFinder
     public function resolveCalls(): int
     {
         return $this->resolveCalls;
+    }
+
+    public function lastArea(): ?PlaceSearchArea
+    {
+        return $this->lastArea;
     }
 }

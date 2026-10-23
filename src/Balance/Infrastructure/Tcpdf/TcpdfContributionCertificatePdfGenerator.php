@@ -222,6 +222,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
             ProjectContributionOrigin::EventCarbonFootprint => $this->trans('Evento', $locale),
             ProjectContributionOrigin::PropertyTripCalculation, ProjectContributionOrigin::Property => $this->trans('Propiedad', $locale),
             ProjectContributionOrigin::Account => $this->trans('Cuenta', $locale),
+            ProjectContributionOrigin::TripCalculation => $this->trans('Viaje', $locale),
             null => null,
         };
     }

@@ -7,6 +7,7 @@ namespace App\Shared\Infrastructure\Geo;
 use App\Shared\Domain\Model\Geo\GeoPlace;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Geo\PlaceKind;
+use App\Shared\Domain\Model\Geo\PlaceSearchArea;
 use App\Shared\Domain\Model\Locale\Locale;
 use Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -25,16 +26,16 @@ final class CachedPlaceFinder implements PlaceFinder
         return $this->placeFinder->isOperative();
     }
 
-    public function suggest(string $query, PlaceKind $kind, Locale $locale): array
+    public function suggest(string $query, PlaceKind $kind, Locale $locale, ?PlaceSearchArea $area = null): array
     {
-        return $this->placeFinder->suggest($query, $kind, $locale);
+        return $this->placeFinder->suggest($query, $kind, $locale, $area);
     }
 
     public function resolve(string $reference, Locale $locale): ?GeoPlace
     {
         /** @var GeoPlace|null $place */
         $place = $this->cache->get(
-            sprintf('cf_geo_place_%s_%s', $locale->value, hash('xxh128', $reference)),
+            sprintf('cf_geo_place_v2_%s_%s', $locale->value, hash('xxh128', $reference)),
             function (CacheItemInterface $item) use ($reference, $locale): ?GeoPlace {
                 $item->expiresAfter(self::TTL_SECONDS);
 

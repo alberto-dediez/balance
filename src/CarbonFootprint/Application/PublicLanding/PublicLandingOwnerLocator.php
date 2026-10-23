@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\PublicLanding;
 
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingOwnerType;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -22,13 +25,17 @@ final class PublicLandingOwnerLocator
         private readonly PropertyAuthorizer $propertyAuthorizer,
         private readonly EventRepository $eventRepository,
         private readonly EventAuthorizer $eventAuthorizer,
+        private readonly TripCalculationLinkRepository $tripCalculationLinkRepository,
+        private readonly TripCalculationLinkAuthorizer $tripCalculationLinkAuthorizer,
     ) {}
 
     public function accountId(PublicLandingOwnerType $ownerType, string $ownerId): AccountId
     {
-        $accountId = $ownerType->isProperty()
-            ? $this->propertyRepository->find(new PropertyId($ownerId))?->accountId()
-            : $this->eventRepository->find(new EventId($ownerId))?->accountId();
+        $accountId = match ($ownerType) {
+            PublicLandingOwnerType::Property => $this->propertyRepository->find(new PropertyId($ownerId))?->accountId(),
+            PublicLandingOwnerType::Event => $this->eventRepository->find(new EventId($ownerId))?->accountId(),
+            PublicLandingOwnerType::TripCalculationLink => $this->tripCalculationLinkRepository->find(new TripCalculationLinkId($ownerId))?->accountId(),
+        };
 
         if (!$accountId instanceof AccountId) {
             throw new \InvalidArgumentException('Public landing owner not found or has no accountId');
@@ -47,6 +54,18 @@ final class PublicLandingOwnerLocator
             }
 
             $this->propertyAuthorizer->denyUnlessCanDoThat($property, $action, $user);
+
+            return;
+        }
+
+        if ($ownerType->isTripCalculationLink()) {
+            $tripCalculationLink = $this->tripCalculationLinkRepository->find(new TripCalculationLinkId($ownerId));
+
+            if (null === $tripCalculationLink) {
+                throw new \InvalidArgumentException('Trip calculation link not found');
+            }
+
+            $this->tripCalculationLinkAuthorizer->denyUnlessCanDoThat($tripCalculationLink, $action, $user);
 
             return;
         }

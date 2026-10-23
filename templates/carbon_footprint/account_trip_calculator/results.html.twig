@@ -1,0 +1,21 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('carbon_footprint_trip_calculator') }}" />
+
+    {% if is_granted('ROLE_OWNER') %}
+        <twig:TopAction path="{{ path('owner_contribution_choose', {origin: 'account', originId: accountId}) }}" target="_blank">
+            <twig:Icon name="solar:hand-heart-bold" size="lg" class="me-2" />
+
+            {{ 'Compensar emisiones' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
+    <twig:TopAction:Export path="{{ path('export', {'code': 'account_trip_calculations', 'from': from|default(''), 'to': to|default('')}) }}" />
+{% endblock %}
+
+{% set page_title = ('Calculadora de viajes' | trans) ~ ' > ' ~ ('Respuestas' | trans) %}
+
+{% block content %}
+    {% include '@carbon_footprint/property_trip_calculations/_stats.html.twig' %}
+{% endblock %}

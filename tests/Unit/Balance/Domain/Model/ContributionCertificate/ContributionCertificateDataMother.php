@@ -39,6 +39,34 @@ class ContributionCertificateDataMother
         );
     }
 
+    public static function tripCalculation(): ContributionCertificateData
+    {
+        return new ContributionCertificateData(
+            code: 'T55R-I66P-V77J',
+            type: ContributionCertificateType::Compensation,
+            beneficiaryName: 'Lucía Martín',
+            beneficiaryIsCompany: false,
+            beneficiaryVatNumber: null,
+            contactName: 'Lucía Martín',
+            contactEmail: 'lucia@example.com',
+            contributorCountry: 'ES',
+            co2eqKg: 182.4,
+            contributionAmount: 3.65,
+            currency: 'EUR',
+            projectName: 'Reforestación Sierra de Aracena',
+            projectLocation: 'Sevilla',
+            projectRegistryId: 'VCS-1234',
+            masterSerials: ['2024-b012'],
+            creditLots: [
+                ['serial' => '2024-b012', 'startTonnes' => 4.1, 'endTonnes' => 4.2824],
+            ],
+            issuedAt: new \DateTimeImmutable('2026-10-23'),
+            verificationUrl: 'https://example.com/certificado/verificar/5c4e2a',
+            origin: ProjectContributionOrigin::TripCalculation,
+            originName: 'Valencia, España',
+        );
+    }
+
     public static function socialContribution(): ContributionCertificateData
     {
         return new ContributionCertificateData(

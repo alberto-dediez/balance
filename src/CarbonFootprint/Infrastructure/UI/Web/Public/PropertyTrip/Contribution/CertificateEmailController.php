@@ -8,8 +8,10 @@ use App\Balance\Application\ContributionCertificate\Send\SendContributionCertifi
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
+use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCertificateTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PublicTripRoutes;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +23,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(
     '/carbon-footprint/property-trip/{token}/contribution/{contributionId}/certificate/email',
     name: 'public_carbon_footprint_property_trip_contribution_certificate_email',
+    methods: ['POST'],
+)]
+#[Route(
+    '/carbon-footprint/trip/{token}/contribution/{contributionId}/certificate/email',
+    name: 'public_carbon_footprint_trip_contribution_certificate_email',
     methods: ['POST'],
 )]
 class CertificateEmailController extends AbstractController
@@ -39,6 +46,7 @@ class CertificateEmailController extends AbstractController
         string $contributionId,
         GetTripCalculationLinkByTokenService $getByToken,
         ProjectContributionRepository $projectContributionRepository,
+        TripCalculationRepository $tripCalculationRepository,
         ContributionCertificateRepository $contributionCertificateRepository,
         SendContributionCertificateService $sendContributionCertificate,
         Request $request,
@@ -54,7 +62,11 @@ class CertificateEmailController extends AbstractController
         $link = $this->resolveLink($token, $getByToken);
         $accountId = null !== $link ? $this->accountIdOf($link) : null;
 
-        if (!$accountId instanceof AccountId) {
+        if (
+            null === $link
+            || !$accountId instanceof AccountId
+            || null === $this->resolveContribution($contributionId, $link, $projectContributionRepository, $tripCalculationRepository)
+        ) {
             return $this->propertyTripInvalidResponse($this->propertyTripRateLimiter, $request);
         }
 
@@ -77,7 +89,7 @@ class CertificateEmailController extends AbstractController
         );
 
         return $this->redirectToRoute(
-            'public_carbon_footprint_property_trip_contribution_return',
+            PublicTripRoutes::for($link->tripCalculationLink)->name('_contribution_return'),
             ['token' => $token, 'contributionId' => $contributionId],
         );
     }

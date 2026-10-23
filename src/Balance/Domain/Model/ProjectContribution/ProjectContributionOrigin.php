@@ -11,4 +11,5 @@ enum ProjectContributionOrigin: string
     case EventCarbonFootprint = 'event_carbon_footprint';
     case Property = 'property';
     case Account = 'account';
+    case TripCalculation = 'trip_calculation';
 }

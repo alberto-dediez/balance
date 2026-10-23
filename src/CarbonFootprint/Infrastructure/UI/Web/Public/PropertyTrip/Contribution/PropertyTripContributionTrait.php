@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\Contribution;
 
+use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
+use App\CarbonFootprint\Application\Trip\TripCalculationContributionOrigin;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenResponse;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionGalleryTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionRoutes;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PublicTripRoutes;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 
@@ -22,17 +28,19 @@ trait PropertyTripContributionTrait
     use BrandedPublicControllerTrait;
     use ContributionGalleryTrait;
 
-    private function contributionRoutes(string $token, string $tripCalculationId): ContributionRoutes
+    private function contributionRoutes(TripCalculationLink $tripCalculationLink, string $token, string $tripCalculationId): ContributionRoutes
     {
+        $routes = PublicTripRoutes::for($tripCalculationLink);
+
         return new ContributionRoutes(
-            result: 'public_carbon_footprint_property_trip_result',
-            choose: 'public_carbon_footprint_property_trip_contribution_choose',
-            project: 'public_carbon_footprint_property_trip_contribution_project',
-            checkout: 'public_carbon_footprint_property_trip_contribution_checkout',
-            return: 'public_carbon_footprint_property_trip_contribution_return',
-            cancel: 'public_carbon_footprint_property_trip_contribution_cancel',
-            certificate: 'public_carbon_footprint_property_trip_contribution_certificate',
-            certificateEmail: 'public_carbon_footprint_property_trip_contribution_certificate_email',
+            result: $routes->name('_result'),
+            choose: $routes->name('_contribution_choose'),
+            project: $routes->name('_contribution_project'),
+            checkout: $routes->name('_contribution_checkout'),
+            return: $routes->name('_contribution_return'),
+            cancel: $routes->name('_contribution_cancel'),
+            certificate: $routes->name('_contribution_certificate'),
+            certificateEmail: $routes->name('_contribution_certificate_email'),
             routeParams: ['token' => $token, 'tripCalculationId' => $tripCalculationId],
             contributionRouteParams: ['token' => $token],
             resultRouteParams: ['token' => $token, 'tripCalculationId' => $tripCalculationId],
@@ -71,8 +79,34 @@ trait PropertyTripContributionTrait
         return $tripCalculation;
     }
 
+    private function resolveContribution(
+        string $contributionId,
+        GetTripCalculationLinkByTokenResponse $link,
+        ProjectContributionRepository $projectContributionRepository,
+        TripCalculationRepository $tripCalculationRepository,
+    ): ?ProjectContribution {
+        $projectContribution = $projectContributionRepository->find(new ProjectContributionId($contributionId));
+        $accountId = $this->accountIdOf($link);
+        $contributionAccountId = $projectContribution?->accountId();
+        $originId = $projectContribution?->originId();
+
+        if (
+            null === $projectContribution
+            || null === $accountId
+            || null === $contributionAccountId
+            || !$accountId->equals($contributionAccountId)
+            || TripCalculationContributionOrigin::for($link->tripCalculationLink) !== $projectContribution->origin()
+            || null === $originId
+            || null === $this->resolveTripCalculation($originId, $link, $tripCalculationRepository)
+        ) {
+            return null;
+        }
+
+        return $projectContribution;
+    }
+
     private function accountIdOf(GetTripCalculationLinkByTokenResponse $link): ?AccountId
     {
-        return $link->tripCalculationLink->accountId() ?? $link->property->accountId();
+        return $link->tripCalculationLink->accountId() ?? $link->property?->accountId();
     }
 }

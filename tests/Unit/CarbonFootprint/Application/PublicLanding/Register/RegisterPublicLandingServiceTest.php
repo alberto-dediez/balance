@@ -7,9 +7,11 @@ namespace App\Tests\Unit\CarbonFootprint\Application\PublicLanding\Register;
 use App\CarbonFootprint\Application\PublicLanding\PublicLandingOwnerLocator;
 use App\CarbonFootprint\Application\PublicLanding\Register\RegisterPublicLandingRequest;
 use App\CarbonFootprint\Application\PublicLanding\Register\RegisterPublicLandingService;
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingOwnerType;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingRegistered;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPublicLandingRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
@@ -21,6 +23,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -34,6 +37,8 @@ class RegisterPublicLandingServiceTest extends TestCase
 
     private InMemoryEventRepository $eventRepository;
 
+    private InMemoryTripCalculationLinkRepository $tripCalculationLinkRepository;
+
     private RegisterPublicLandingService $sut;
 
     protected function setUp(): void
@@ -43,6 +48,7 @@ class RegisterPublicLandingServiceTest extends TestCase
         $this->publicLandingRepository = new InMemoryPublicLandingRepository();
         $this->propertyRepository = new InMemoryPropertyRepository();
         $this->eventRepository = new InMemoryEventRepository();
+        $this->tripCalculationLinkRepository = new InMemoryTripCalculationLinkRepository();
 
         $this->sut = new RegisterPublicLandingService(
             $this->publicLandingRepository,
@@ -51,6 +57,8 @@ class RegisterPublicLandingServiceTest extends TestCase
                 new PropertyAuthorizer(),
                 $this->eventRepository,
                 new EventAuthorizer(),
+                $this->tripCalculationLinkRepository,
+                new TripCalculationLinkAuthorizer($this->propertyRepository, new PropertyAuthorizer()),
             ),
         );
     }
@@ -92,6 +100,36 @@ class RegisterPublicLandingServiceTest extends TestCase
 
         $this->assertSame(PublicLandingOwnerType::Event, $response->publicLanding->ownerType());
         $this->assertSame((string) $event->id(), $response->publicLanding->ownerId());
+    }
+
+    public function testRegistersAnEmptyLandingForATripCalculator(): void
+    {
+        $tripCalculationLink = TripCalculationLinkMother::forAccount('account-id');
+        $this->tripCalculationLinkRepository->add($tripCalculationLink);
+
+        $response = ($this->sut)(
+            new RegisterPublicLandingRequest(PublicLandingOwnerType::TripCalculationLink, (string) $tripCalculationLink->id()),
+            $this->ownerUser(),
+        );
+
+        $this->assertSame(PublicLandingOwnerType::TripCalculationLink, $response->publicLanding->ownerType());
+        $this->assertSame((string) $tripCalculationLink->id(), $response->publicLanding->ownerId());
+        $accountId = $response->publicLanding->accountId();
+        $this->assertNotNull($accountId);
+        $this->assertTrue((new AccountId('account-id'))->equals($accountId));
+    }
+
+    public function testDeniesAnOwnerFromAnotherAccountOnATripCalculator(): void
+    {
+        $tripCalculationLink = TripCalculationLinkMother::forAccount('account-id');
+        $this->tripCalculationLinkRepository->add($tripCalculationLink);
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        ($this->sut)(
+            new RegisterPublicLandingRequest(PublicLandingOwnerType::TripCalculationLink, (string) $tripCalculationLink->id()),
+            UserMother::fromUsernameAndRoleAndAccount('intruder', Role::Owner, new AccountId('another-account-id')),
+        );
     }
 
     public function testIsIdempotentAndReturnsTheExistingLanding(): void

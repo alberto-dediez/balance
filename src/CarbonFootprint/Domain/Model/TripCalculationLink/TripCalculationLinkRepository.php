@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Domain\Model\TripCalculationLink;
 
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\AccountId;
 
 interface TripCalculationLinkRepository
 {
@@ -13,6 +14,8 @@ interface TripCalculationLinkRepository
     public function find(TripCalculationLinkId $tripCalculationLinkId): ?TripCalculationLink;
 
     public function findByPropertyId(PropertyId $propertyId): ?TripCalculationLink;
+
+    public function findForAccount(AccountId $accountId): ?TripCalculationLink;
 
     /** @return list<TripCalculationLink> */
     public function findByFilter(TripCalculationLinkFilter $filter): array;

@@ -7,6 +7,7 @@ namespace App\Shared\Infrastructure\Geo;
 use App\Shared\Domain\Model\Geo\GeoPlace;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Geo\PlaceKind;
+use App\Shared\Domain\Model\Geo\PlaceSearchArea;
 use App\Shared\Domain\Model\Locale\Locale;
 
 final class NullPlaceFinder implements PlaceFinder
@@ -16,7 +17,7 @@ final class NullPlaceFinder implements PlaceFinder
         return false;
     }
 
-    public function suggest(string $query, PlaceKind $kind, Locale $locale): array
+    public function suggest(string $query, PlaceKind $kind, Locale $locale, ?PlaceSearchArea $area = null): array
     {
         return [];
     }

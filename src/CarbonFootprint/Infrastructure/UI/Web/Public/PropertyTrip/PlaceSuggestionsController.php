@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/carbon-footprint/property-trip/{token}/places', name: 'public_carbon_footprint_property_trip_places', methods: ['GET'])]
+#[Route('/carbon-footprint/trip/{token}/places', name: 'public_carbon_footprint_trip_places', methods: ['GET'])]
 class PlaceSuggestionsController extends AbstractController
 {
     public function __construct(

@@ -2,8 +2,8 @@
 
 {#
     Variables expected from the child template:
-      property, token — provided by the controller
+      ownerName, token — provided by the controller
 #}
 
-{% set card_title = property.name %}
+{% set card_title = ownerName %}
 {% set card_subtitle = 'Calculadora de huella de tu viaje' | trans %}

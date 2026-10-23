@@ -64,11 +64,13 @@ class TripCalculationMother
         ?string $emissionFactorGroupId = null,
         int $calculationYear = 2026,
         ?TripWaypoint $origin = null,
+        ?TripWaypoint $destination = null,
     ): TripCalculation {
         $tripCalculation = new TripCalculation(id: new TripCalculationId($id ?? (string) TripCalculationId::generate()));
         $tripCalculation->register(
             tripCalculationLinkId: new TripCalculationLinkId($tripCalculationLinkId),
             origin: $origin ?? new TripWaypoint(),
+            destination: $destination,
             roundTrip: $roundTrip,
             trips: $trips,
             nights: $nights,
@@ -81,6 +83,25 @@ class TripCalculationMother
         );
 
         return $tripCalculation;
+    }
+
+    public static function withDestination(
+        string $tripCalculationLinkId,
+        TripWaypoint $destination,
+        ?TripWaypoint $origin = null,
+        int $people = 1,
+        float $distanceKm = 300.0,
+        ?Emissions $mobilityEmissions = null,
+    ): TripCalculation {
+        return self::from(
+            tripCalculationLinkId: $tripCalculationLinkId,
+            nights: 1,
+            people: $people,
+            legs: [self::leg(1, (string) MobilityId::generate(), $distanceKm)],
+            mobilityEmissions: $mobilityEmissions,
+            origin: $origin,
+            destination: $destination,
+        );
     }
 
     public static function withConsent(string $tripCalculationLinkId, ?ConsentProof $consentProof = null): TripCalculation

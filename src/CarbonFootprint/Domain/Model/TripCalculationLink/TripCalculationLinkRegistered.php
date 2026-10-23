@@ -16,7 +16,7 @@ final class TripCalculationLinkRegistered extends DomainEvent
 
     public function __construct(
         private TripCalculationLinkId $tripCalculationLinkId,
-        private PropertyId $propertyId,
+        private ?PropertyId $propertyId,
         private AccountId $accountId,
         #[\SensitiveParameter]
         private string $token,
@@ -31,7 +31,7 @@ final class TripCalculationLinkRegistered extends DomainEvent
         return $this->tripCalculationLinkId;
     }
 
-    public function propertyId(): PropertyId
+    public function propertyId(): ?PropertyId
     {
         return $this->propertyId;
     }
@@ -55,7 +55,7 @@ final class TripCalculationLinkRegistered extends DomainEvent
     {
         return [
             'tripCalculationLinkId' => (string) $this->tripCalculationLinkId,
-            'propertyId' => (string) $this->propertyId,
+            'propertyId' => null !== $this->propertyId ? (string) $this->propertyId : null,
             'accountId' => (string) $this->accountId,
             'token' => $this->token,
         ];
@@ -65,7 +65,7 @@ final class TripCalculationLinkRegistered extends DomainEvent
     {
         return new self(
             tripCalculationLinkId: new TripCalculationLinkId($payload['tripCalculationLinkId']),
-            propertyId: new PropertyId($payload['propertyId']),
+            propertyId: null !== ($payload['propertyId'] ?? null) ? new PropertyId($payload['propertyId']) : null,
             accountId: new AccountId($payload['accountId']),
             token: $payload['token'],
             id: $id,

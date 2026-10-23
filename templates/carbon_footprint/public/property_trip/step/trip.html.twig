@@ -4,7 +4,15 @@
 
 {% block card_body %}
     <p class="text-muted">
-        {% if scope.asksForBoth %}
+        {% if asksForDestination %}
+            {% if scope.asksForBoth %}
+                {{ 'Cuéntanos tu viaje y te diremos su huella de carbono.' | trans }}
+            {% elseif scope.includesTransport %}
+                {{ 'Cuéntanos cómo es tu desplazamiento y te diremos su huella de carbono.' | trans }}
+            {% else %}
+                {{ 'Cuéntanos tu estancia y te diremos su huella de carbono.' | trans }}
+            {% endif %}
+        {% elseif scope.asksForBoth %}
             {{ 'Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu viaje.' | trans }}
         {% elseif scope.includesTransport %}
             {{ 'Cuéntanos cómo llegaste hasta aquí y te diremos la huella de carbono de tu desplazamiento.' | trans }}
@@ -13,13 +21,29 @@
         {% endif %}
     </p>
 
+    {% set came_from_another_city_label = asksForDestination ? '¿Tu viaje incluye desplazamiento?' | trans : '¿Te has desplazado desde otra ciudad?' | trans %}
+    {% set overnight_label = asksForDestination ? '¿Incluye noches de alojamiento?' | trans : '¿Dormiste alguna noche fuera de tu casa?' | trans %}
+
     <form method="post" name="trip">
         <input type="hidden" name="_token" value="{{ csrf_token('property_trip_' ~ token) }}">
 
+        {% if asksForDestination %}
+            <div class="mb-3">
+                <label class="form-label" for="trip-destination">{{ '¿Cuál es el destino de tu viaje?' | trans }}</label>
+                <input id="trip-destination"
+                       type="text"
+                       class="form-control"
+                       name="trip[destinationPlaceReference]"
+                       required
+                       data-controller="autocomplete"
+                       data-autocomplete-path-value="{{ path(routePrefix ~ '_destinations', {token: token}) }}">
+            </div>
+        {% endif %}
+
         {% if scope.asksForBoth %}
             <div class="mb-3">
-                <label class="form-label d-block">{{ '¿Te has desplazado desde otra ciudad?' | trans }}</label>
-                <div class="btn-group w-100" role="group" aria-label="{{ '¿Te has desplazado desde otra ciudad?' | trans }}">
+                <label class="form-label d-block">{{ came_from_another_city_label }}</label>
+                <div class="btn-group w-100" role="group" aria-label="{{ came_from_another_city_label }}">
                     <input class="btn-check" type="radio" name="trip[cameFromAnotherCity]" id="trip_camefromanothercity_yes" value="yes" required>
                     <label class="btn btn-outline-primary" for="trip_camefromanothercity_yes">{{ 'Sí' | trans }}</label>
                     <input class="btn-check" type="radio" name="trip[cameFromAnotherCity]" id="trip_camefromanothercity_no" value="no" required>
@@ -31,27 +55,30 @@
         {% if scope.includesTransport %}
             <div id="trip-block">
                 <div class="mb-3">
-                    <label class="form-label" for="trip-origin">{{ '¿Desde dónde viajaste?' | trans }}</label>
+                    <label class="form-label" for="trip-origin">{{ asksForDestination ? '¿Desde dónde sales?' | trans : '¿Desde dónde viajaste?' | trans }}</label>
                     <input id="trip-origin"
                            type="text"
                            class="form-control"
                            name="trip[originPlaceReference]"
                            {% if not scope.asksForBoth %}required{% endif %}
                            data-controller="autocomplete"
-                           data-autocomplete-path-value="{{ path('public_carbon_footprint_property_trip_places', {token: token, kind: 'city'}) }}">
+                           data-autocomplete-path-value="{{ path(routePrefix ~ '_places', {token: token, kind: 'city'}) }}">
                 </div>
 
                 {% include '@carbon_footprint/public/trip/_legs.html.twig' with {
                     prefix: 'trip',
-                    chainHelp: 'Indica el medio de transporte de tu viaje. Si cambiaste de medio por el camino, dinos dónde lo hiciste.' | trans,
+                    chainHelp: asksForDestination
+                        ? 'Indica el medio de transporte de tu viaje. Si cambias de medio por el camino, dinos dónde lo haces.' | trans
+                        : 'Indica el medio de transporte de tu viaje. Si cambiaste de medio por el camino, dinos dónde lo hiciste.' | trans,
                     mobilities: mobilities,
-                    placesPath: path('public_carbon_footprint_property_trip_places', {token: token, kind: 'city'}),
+                    placesPath: path(routePrefix ~ '_places', {token: token, kind: 'city'}),
                     maxLegs: maxLegs,
                     geoEnabled: geoEnabled,
+                    asksForDestination: asksForDestination,
                 } only %}
 
                 <div class="mb-3">
-                    <label class="form-label d-block">{{ '¿Fue un viaje de ida y vuelta?' | trans }}</label>
+                    <label class="form-label d-block">{{ asksForDestination ? '¿Es un viaje de ida y vuelta?' | trans : '¿Fue un viaje de ida y vuelta?' | trans }}</label>
                     <div class="btn-group w-100" role="group">
                         <input class="btn-check" type="radio" name="trip[roundTrip]" id="trip_roundtrip_yes" value="yes" checked>
                         <label class="btn btn-outline-primary" for="trip_roundtrip_yes">{{ 'Ida y vuelta' | trans }}</label>
@@ -61,7 +88,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">{{ '¿Cuántas veces hiciste este viaje?' | trans }}</label>
+                    <label class="form-label">{{ asksForDestination ? '¿Cuántas veces haces este viaje?' | trans : '¿Cuántas veces hiciste este viaje?' | trans }}</label>
                     <input type="number" min="1" step="1" inputmode="numeric" class="form-control" name="trip[trips]" value="1">
                 </div>
 
@@ -70,8 +97,8 @@
 
         {% if scope.asksForBoth %}
             <div class="mb-3">
-                <label class="form-label d-block">{{ '¿Dormiste alguna noche fuera de tu casa?' | trans }}</label>
-                <div class="btn-group w-100" role="group" aria-label="{{ '¿Dormiste alguna noche fuera de tu casa?' | trans }}">
+                <label class="form-label d-block">{{ overnight_label }}</label>
+                <div class="btn-group w-100" role="group" aria-label="{{ overnight_label }}">
                     <input class="btn-check" type="radio" name="trip[overnight]" id="trip_overnight_yes" value="yes">
                     <label class="btn btn-outline-primary" for="trip_overnight_yes">{{ 'Sí' | trans }}</label>
                     <input class="btn-check" type="radio" name="trip[overnight]" id="trip_overnight_no" value="no" checked>

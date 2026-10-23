@@ -25,6 +25,7 @@ final class ResultsView
         $showOvernightStay = $this->showOvernightStay($results);
 
         return [
+            'ownerName' => $results->ownerName,
             'property' => $results->property,
             'aggregation' => $results->aggregation,
             'mobilityBreakdown' => $results->mobilityBreakdown,
@@ -38,12 +39,30 @@ final class ResultsView
             'mobilityEmissionsChart' => $this->chartBuilder->mobilityEmissions($results->mobilityBreakdown),
             'contributionsChart' => $this->chartBuilder->contributions($results->contributions->aggregation),
             'originsChart' => $this->chartBuilder->counts($results->topOrigins),
+            'destinationsChart' => $this->chartBuilder->counts($results->topDestinations),
             'profileChart' => $this->chartBuilder->counts($this->profile($results, $showTransport, $showOvernightStay)),
-            'mapFlows' => $this->mapBuilder->flows($results->originFlows),
-            'mapDestination' => $this->mapBuilder->destination($results->destination, $results->property->name()),
             'unlocatedResponses' => $results->unlocatedCalculations,
             'showTransport' => $showTransport,
             'showOvernightStay' => $showOvernightStay,
+        ] + $this->map($results);
+    }
+
+    /** @return array<string, mixed> */
+    private function map(GetTripCalculationResultsResponse $results): array
+    {
+        if (null === $results->property) {
+            return [
+                'mapFlows' => $this->mapBuilder->originDestinationFlows($results->originDestinationFlows),
+                'mapDestination' => null,
+                'mapArrows' => true,
+                'undestinedResponses' => $results->undestinedCalculations,
+            ];
+        }
+
+        return [
+            'mapFlows' => $this->mapBuilder->flows($results->originFlows),
+            'mapDestination' => $this->mapBuilder->destination($results->destination, $results->property->name()),
+            'mapArrows' => false,
         ];
     }
 

@@ -18,6 +18,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class TripCalculationLinkAuthorizerTest extends TestCase
@@ -79,11 +80,71 @@ class TripCalculationLinkAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($link, Action::Edit, $this->ownerOf('account-id')));
     }
 
-    public function testNobodyCanActOnALinkWithoutProperty(): void
+    public function testOwnerCannotActOnALinkWithoutPropertyNorAccount(): void
     {
         $link = new TripCalculationLink(TripCalculationLinkId::generate());
 
-        $this->assertFalse($this->createSUT()->canDoThat($link, Action::View, UserMother::adminUser()));
+        $this->assertFalse($this->createSUT()->canDoThat($link, Action::View, $this->ownerOf('account-id')));
+    }
+
+    public function testOwnerCanDoEverythingOnTheAccountLinkOfItsAccount(): void
+    {
+        $link = TripCalculationLinkMother::forAccount('account-id');
+        $user = $this->ownerOf('account-id');
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Remove, Action::Export] as $action) {
+            $this->assertTrue($this->createSUT()->canDoThat($link, $action, $user));
+        }
+    }
+
+    public function testOwnerCannotDoAnythingOnTheAccountLinkOfAnotherAccount(): void
+    {
+        $link = TripCalculationLinkMother::forAccount('account-id');
+        $user = $this->ownerOf('another-account-id');
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Remove, Action::Export] as $action) {
+            $this->assertFalse($this->createSUT()->canDoThat($link, $action, $user));
+        }
+    }
+
+    public function testOwnerActsOnTheAccountLinkOfTheCurrentAccount(): void
+    {
+        $link = TripCalculationLinkMother::forAccount('impersonated-account-id');
+        $user = $this->ownerOf('account-id');
+        $sut = new TripCalculationLinkAuthorizer(
+            $this->propertyRepository,
+            new PropertyAuthorizer(),
+            new StubCurrentAccountIdProvider(new AccountId('impersonated-account-id')),
+        );
+
+        $this->assertTrue($sut->canDoThat($link, Action::Edit, $user));
+    }
+
+    public function testAdminCanDoEverythingOnAnAccountLink(): void
+    {
+        $link = TripCalculationLinkMother::forAccount('account-id');
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Remove, Action::Export] as $action) {
+            $this->assertTrue($this->createSUT()->canDoThat($link, $action, UserMother::adminUser()));
+        }
+    }
+
+    public function testUserCannotDoAnythingOnAnAccountLink(): void
+    {
+        $link = TripCalculationLinkMother::forAccount('account-id');
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::User, new AccountId('account-id'));
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Remove, Action::Export] as $action) {
+            $this->assertFalse($this->createSUT()->canDoThat($link, $action, $user));
+        }
+    }
+
+    public function testExportFollowsViewOnPropertyLinks(): void
+    {
+        $link = $this->linkToPropertyOfAccount('account-id');
+
+        $this->assertTrue($this->createSUT()->canDoThat($link, Action::Export, $this->ownerOf('account-id')));
+        $this->assertFalse($this->createSUT()->canDoThat($link, Action::Export, $this->ownerOf('another-account-id')));
     }
 
     public function testOnlySupportsTripCalculationLinks(): void

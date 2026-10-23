@@ -9,6 +9,7 @@ use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\AbstractAuthorizer;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
 use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
@@ -49,6 +50,11 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
         return $this->canRegister($subject, $user);
     }
 
+    protected function canExport(mixed $subject, User $user): bool
+    {
+        return $this->canView($subject, $user);
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof TripCalculationLink;
@@ -56,6 +62,10 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
 
     private function canDoThatOnProperty(TripCalculationLink $tripCalculationLink, Action $action, User $user): bool
     {
+        if (!$tripCalculationLink->isForProperty()) {
+            return $this->canManageAccountLink($tripCalculationLink, $user);
+        }
+
         $propertyId = $tripCalculationLink->propertyId();
         $property = null !== $propertyId ? $this->propertyRepository->find($propertyId) : null;
 
@@ -64,5 +74,20 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
         }
 
         return $this->propertyAuthorizer->canDoThat($property, $action, $user);
+    }
+
+    private function canManageAccountLink(TripCalculationLink $tripCalculationLink, User $user): bool
+    {
+        $currentAccountId = $this->currentAccountId($user);
+        $accountId = $tripCalculationLink->accountId();
+
+        if ($this->userHasRole($user, Role::Owner)
+        && null !== $currentAccountId
+        && null !== $accountId
+        && $currentAccountId->equals($accountId)) {
+            return true;
+        }
+
+        return $this->userHasRole($user, Role::Admin);
     }
 }

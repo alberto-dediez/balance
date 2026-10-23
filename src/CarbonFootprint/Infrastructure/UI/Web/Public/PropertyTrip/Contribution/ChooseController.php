@@ -22,6 +22,11 @@ use Symfony\Component\Routing\Attribute\Route;
     name: 'public_carbon_footprint_property_trip_contribution_choose',
     methods: ['GET'],
 )]
+#[Route(
+    '/carbon-footprint/trip/{token}/result/{tripCalculationId}/compensate',
+    name: 'public_carbon_footprint_trip_contribution_choose',
+    methods: ['GET'],
+)]
 class ChooseController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
@@ -72,8 +77,9 @@ class ChooseController extends AbstractController
         return $this->render('@carbon_footprint/project_contribution/choose.html.twig', [
             'token' => $token,
             'property' => $link->property,
+            'ownerName' => $link->ownerName,
             'co2eqKg' => (float) $tripCalculation->emissions()->co2eq(),
-            'routes' => $this->contributionRoutes($token, $tripCalculationId),
+            'routes' => $this->contributionRoutes($link->tripCalculationLink, $token, $tripCalculationId),
             'options' => $options->options,
             'covers' => $covers,
         ]);

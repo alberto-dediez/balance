@@ -31,6 +31,7 @@ final class DashboardCompensationsCalculator
     private const array VOLUNTARY_ORIGINS = [
         ProjectContributionOrigin::AttendeeSurveyResponse,
         ProjectContributionOrigin::PropertyTripCalculation,
+        ProjectContributionOrigin::TripCalculation,
     ];
 
     /** @var array<string, ProjectType|null> */

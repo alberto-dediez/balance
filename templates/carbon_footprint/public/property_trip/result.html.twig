@@ -51,7 +51,17 @@
         </table>
     {% elseif scope.asksForBoth %}
         <p class="text-muted small">
-            {{ 'No te has desplazado desde otra ciudad, así que tu visita no genera emisiones de desplazamiento.' | trans }}
+            {% if asksForDestination %}
+                {{ 'No has indicado ningún desplazamiento, así que tu viaje no genera emisiones de desplazamiento.' | trans }}
+            {% else %}
+                {{ 'No te has desplazado desde otra ciudad, así que tu visita no genera emisiones de desplazamiento.' | trans }}
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if asksForDestination and tripCalculation.destinationLabel %}
+        <p class="text-muted small">
+            {{ 'Destino: {destination}' | trans({'{destination}': tripCalculation.destinationLabel}) }}
         </p>
     {% endif %}
 
@@ -62,10 +72,12 @@
     {% endif %}
 
     {{ include(theme_template('@carbon_footprint/public/_compensate_cta.html.twig'), {
-        contribution_path: path('public_carbon_footprint_property_trip_contribution_choose', {
+        contribution_path: path(routePrefix ~ '_contribution_choose', {
             token: token,
             tripCalculationId: tripCalculation.id,
         }),
-        contribution_text: 'Puedes contribuir a uno de los proyectos ambientales y sociales de este alojamiento.' | trans,
+        contribution_text: asksForDestination
+            ? 'Puedes contribuir a uno de los proyectos ambientales y sociales disponibles.' | trans
+            : 'Puedes contribuir a uno de los proyectos ambientales y sociales de este alojamiento.' | trans,
     }) }}
 {% endblock %}

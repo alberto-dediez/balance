@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="BE97M87" resname="city">
+        <source>city</source>
+        <target>City</target>
+      </trans-unit>
+      <trans-unit id="6VaJve5" resname="lodging">
+        <source>lodging</source>
+        <target>Accommodation</target>
+      </trans-unit>
+      <trans-unit id="cXK0n9S" resname="any">
+        <source>any</source>
+        <target>Any place</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

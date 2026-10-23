@@ -1,0 +1,73 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('dashboard') }}" />
+
+    <twig:TopAction path="{{ path('carbon_footprint_trip_calculator_responses') }}">
+        <twig:Icon name="solar:chart-2-line-duotone" size="lg" class="me-2" />
+
+        {{ 'Ver respuestas' | trans }}
+    </twig:TopAction>
+{% endblock %}
+
+{% set page_title = 'Calculadora de viajes' | trans %}
+
+{% block content %}
+    {% set scope = scopeForm.vars.value.scope %}
+
+    <twig:Card title="{{ 'Calculadora de huella de viajes' | trans }}">
+        <p class="text-muted">
+            {% if scope.asksForBoth %}
+                {{ 'Comparte este QR o su enlace con tus clientes para que calculen la huella de sus viajes.' | trans }}
+            {% elseif scope.includesTransport %}
+                {{ 'Comparte este QR o su enlace con tus clientes para que calculen la huella de sus desplazamientos.' | trans }}
+            {% else %}
+                {{ 'Comparte este QR o su enlace con tus clientes para que calculen la huella de sus estancias.' | trans }}
+            {% endif %}
+        </p>
+
+        <twig:CarbonFootprint:TripCalculationLinkQr token="{{ link.token }}" />
+    </twig:Card>
+
+    {{ form_start(scopeForm) }}
+        <twig:Card title="{{ 'Qué recoge la calculadora' | trans }}">
+            {{ form_row(scopeForm.scope) }}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="scopeForm.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(scopeForm) }}
+
+    {{ form_start(destinationForm) }}
+        <twig:Card title="{{ 'Destino del viaje' | trans }}">
+            <p class="text-muted">
+                {{ 'Elige a qué destinos pueden viajar tus clientes. El destino se usa para calcular la distancia del viaje.' | trans }}
+            </p>
+
+            <div class="row" data-controller="trip-destination-mode" data-action="change->trip-destination-mode#refresh">
+                <div class="col-12">
+                    {{ form_row(destinationForm.mode) }}
+                </div>
+                <div class="col-12" data-trip-destination-mode-target="field" data-modes="free countries region">
+                    {{ form_row(destinationForm.placeKind) }}
+                </div>
+                <div class="col-12" data-trip-destination-mode-target="field" data-modes="countries">
+                    {{ form_row(destinationForm.countryIds) }}
+                </div>
+                <div class="col-12" data-trip-destination-mode-target="field" data-modes="region">
+                    {{ form_row(destinationForm.regionReference) }}
+                </div>
+                <div class="col-12" data-trip-destination-mode-target="field" data-modes="selected_properties">
+                    {{ form_row(destinationForm.propertyIds) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="destinationForm.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(destinationForm) }}
+
+    {% include '@carbon_footprint/public_landing/_tab.html.twig' with {form: landingForm} %}
+{% endblock %}

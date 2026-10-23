@@ -9,4 +9,5 @@ enum PlaceKind: string
     case City = 'city';
     case Lodging = 'lodging';
     case Any = 'any';
+    case Region = 'region';
 }

@@ -106,6 +106,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationMode;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Domain\Model\UseProfile\UseProfileRepository;
 use App\CarbonFootprint\Domain\Model\Waste\WasteId;
@@ -116,6 +117,7 @@ use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
 use App\Property\Domain\Model\Country\CountryId;
+use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -123,6 +125,8 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Domain\Model\Geo\GeoBounds;
+use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
@@ -150,6 +154,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\Property
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\UseProfile\UseProfileMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -1673,11 +1678,119 @@ final readonly class CarbonFootprintContext implements Context
         $this->getTripCalculationLinkRepository()->add($tripCalculationLink);
     }
 
+    #[Given('trip calculation :id of link :linkId exists')]
+    public function tripCalculationOfLinkExists(string $id, string $linkId): void
+    {
+        $this->getTripCalculationRepository()->add(TripCalculationMother::from(tripCalculationLinkId: $linkId, id: $id));
+    }
+
     #[Given('trip calculation link with id :id and token :token for property :propertyId of account :account with scope :scope exists')]
     public function tripCalculationLinkWithIdAndTokenForPropertyOfAccountWithScopeExists(string $id, string $token, string $propertyId, string $account, string $scope): void
     {
         $this->tripCalculationLinkWithIdAndTokenForPropertyOfAccountExists($id, $token, $propertyId, $account);
         $this->tripCalculationLinkHasScope($id, $scope);
+    }
+
+    #[Given('account trip calculator with id :id and token :token of account :account exists')]
+    public function accountTripCalculatorWithIdAndTokenOfAccountExists(string $id, string $token, string $account): void
+    {
+        $tripCalculationLink = new TripCalculationLink(new TripCalculationLinkId($id));
+        $tripCalculationLink->registerForAccount(
+            accountId: new AccountId($account),
+            token: $token,
+        );
+
+        $this->getTripCalculationLinkRepository()->add($tripCalculationLink);
+    }
+
+    #[Given('account trip calculator :id allows destinations in countries :isos')]
+    public function accountTripCalculatorAllowsDestinationsInCountries(string $id, string $isos): void
+    {
+        $countryRepository = $this->client->getContainer()->get(CountryRepository::class);
+        $countryIds = [];
+
+        foreach (array_filter(array_map('trim', explode(',', $isos))) as $iso) {
+            $country = $countryRepository->findByIso($iso);
+
+            Assert::assertNotNull($country);
+
+            $countryIds[] = $country->id();
+        }
+
+        $this->updateAccountTripCalculatorDestination($id, TripDestinationMode::Countries, countryIds: $countryIds);
+    }
+
+    #[Given('account trip calculator :id allows destinations in region :reference')]
+    public function accountTripCalculatorAllowsDestinationsInRegion(string $id, string $reference): void
+    {
+        $region = $this->client->getContainer()->get(PlaceFinder::class)->resolve($reference, Locale::Spanish);
+
+        Assert::assertNotNull($region);
+        Assert::assertNotNull($region->viewport);
+
+        $this->updateAccountTripCalculatorDestination(
+            $id,
+            TripDestinationMode::Region,
+            regionReference: $reference,
+            regionLabel: $region->name ?? $region->label,
+            regionBounds: $region->viewport,
+        );
+    }
+
+    #[Given('account trip calculator :id allows destinations in all properties')]
+    public function accountTripCalculatorAllowsDestinationsInAllProperties(string $id): void
+    {
+        $this->updateAccountTripCalculatorDestination($id, TripDestinationMode::AllProperties);
+    }
+
+    #[Given('account trip calculator :id allows destinations in properties :ids')]
+    public function accountTripCalculatorAllowsDestinationsInProperties(string $id, string $ids): void
+    {
+        $propertyIds = array_map(
+            static fn(string $propertyId): PropertyId => new PropertyId($propertyId),
+            array_values(array_filter(array_map('trim', explode(',', $ids)))),
+        );
+
+        $this->updateAccountTripCalculatorDestination($id, TripDestinationMode::SelectedProperties, propertyIds: $propertyIds);
+    }
+
+    #[Then('trip calculation of link :id should have destination :label')]
+    public function tripCalculationOfLinkShouldHaveDestination(string $id, string $label): void
+    {
+        $tripCalculations = $this->getTripCalculationRepository()->findByLinkId(new TripCalculationLinkId($id));
+
+        Assert::assertCount(1, $tripCalculations);
+        Assert::assertSame($label, $tripCalculations[0]->destinationLabel());
+    }
+
+    /**
+     * @param list<CountryId>  $countryIds
+     * @param list<PropertyId> $propertyIds
+     */
+    private function updateAccountTripCalculatorDestination(
+        string $id,
+        TripDestinationMode $mode,
+        array $countryIds = [],
+        array $propertyIds = [],
+        ?string $regionReference = null,
+        ?string $regionLabel = null,
+        ?GeoBounds $regionBounds = null,
+    ): void {
+        $tripCalculationLink = $this->getTripCalculationLinkRepository()->find(new TripCalculationLinkId($id));
+
+        Assert::assertNotNull($tripCalculationLink);
+
+        $tripCalculationLink->updateDestination(
+            mode: $mode,
+            placeKind: $tripCalculationLink->destinationPlaceKind(),
+            countryIds: $countryIds,
+            propertyIds: $propertyIds,
+            regionReference: $regionReference,
+            regionLabel: $regionLabel,
+            regionBounds: $regionBounds,
+        );
+
+        $this->getTripCalculationLinkRepository()->add($tripCalculationLink);
     }
 
     #[Given('trip calculation link :id has scope :scope')]

@@ -11,7 +11,11 @@
             </p>
         {% else %}
             <p class="text-muted small mb-0">
-                {{ 'Tu visita no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.' | trans }}
+                {% if asksForDestination | default(false) %}
+                    {{ 'Tu viaje no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.' | trans }}
+                {% else %}
+                    {{ 'Tu visita no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.' | trans }}
+                {% endif %}
             </p>
         {% endif %}
     </div>

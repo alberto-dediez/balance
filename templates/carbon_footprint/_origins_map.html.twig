@@ -1,16 +1,36 @@
-<twig:Card title="{{ 'Mapa de orígenes' | trans }}">
-    {% if mapDestination is null %}
-        <p class="text-muted mb-0">{{ missingDestinationMessage }}</p>
-    {% elseif mapFlows is empty %}
-        <p class="text-muted mb-0">{{ 'Todavía no hay orígenes geolocalizados.' | trans }}</p>
-    {% else %}
-        <twig:Map:Flows :flows="mapFlows" :destination="mapDestination" />
+{% set mapArrows = mapArrows | default(false) %}
+{% set undestinedResponses = undestinedResponses | default(0) %}
 
-        <small class="text-muted d-block mt-2">
-            {{ 'Cada línea une un origen con el destino. El grosor indica el número de viajeros.' | trans }}
-            {% if unlocatedResponses > 0 %}
-                {{ 'Hay {count} respuestas sin ubicación.' | trans({'count': unlocatedResponses}) }}
-            {% endif %}
-        </small>
-    {% endif %}
-</twig:Card>
+{% if mapArrows %}
+    <twig:Card title="{{ 'Mapa de viajes' | trans }}">
+        {% if mapFlows is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no hay viajes geolocalizados.' | trans }}</p>
+        {% else %}
+            <twig:Map:Flows :flows="mapFlows" :destination="null" :arrows="true" />
+
+            <small class="text-muted d-block mt-2">
+                {{ 'Cada flecha une un origen con su destino. El grosor indica el número de viajeros.' | trans }}
+                {% if undestinedResponses > 0 %}
+                    {{ 'Hay {count} respuestas sin destino localizado.' | trans({'count': undestinedResponses}) }}
+                {% endif %}
+            </small>
+        {% endif %}
+    </twig:Card>
+{% else %}
+    <twig:Card title="{{ 'Mapa de orígenes' | trans }}">
+        {% if mapDestination is null %}
+            <p class="text-muted mb-0">{{ missingDestinationMessage }}</p>
+        {% elseif mapFlows is empty %}
+            <p class="text-muted mb-0">{{ 'Todavía no hay orígenes geolocalizados.' | trans }}</p>
+        {% else %}
+            <twig:Map:Flows :flows="mapFlows" :destination="mapDestination" />
+
+            <small class="text-muted d-block mt-2">
+                {{ 'Cada línea une un origen con el destino. El grosor indica el número de viajeros.' | trans }}
+                {% if unlocatedResponses > 0 %}
+                    {{ 'Hay {count} respuestas sin ubicación.' | trans({'count': unlocatedResponses}) }}
+                {% endif %}
+            </small>
+        {% endif %}
+    </twig:Card>
+{% endif %}

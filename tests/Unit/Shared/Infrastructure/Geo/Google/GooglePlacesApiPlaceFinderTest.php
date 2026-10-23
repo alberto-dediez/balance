@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\Geo\Google;
 
+use App\Shared\Domain\Model\Geo\GeoBounds;
+use App\Shared\Domain\Model\Geo\GeoPoint;
 use App\Shared\Domain\Model\Geo\PlaceKind;
+use App\Shared\Domain\Model\Geo\PlaceSearchArea;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Geo\Google\GooglePlacesApiPlaceFinder;
 use PHPUnit\Framework\TestCase;
@@ -125,8 +128,45 @@ class GooglePlacesApiPlaceFinderTest extends TestCase
         $sut->suggest('Madrid', PlaceKind::Lodging, Locale::Spanish);
         $this->assertSame(['lodging'], $this->lastRequest()['body']['includedPrimaryTypes']);
 
+        $sut->suggest('Valencia', PlaceKind::Region, Locale::Spanish);
+        $this->assertSame(['(regions)'], $this->lastRequest()['body']['includedPrimaryTypes']);
+
         $sut->suggest('Madrid', PlaceKind::Any, Locale::Spanish);
         $this->assertArrayNotHasKey('includedPrimaryTypes', $this->lastRequest()['body']);
+    }
+
+    public function testSuggestRestrictsTheRegionCodesOfTheSearchArea(): void
+    {
+        $sut = $this->finder($this->client($this->jsonResponse([])));
+
+        $sut->suggest('Madrid', PlaceKind::City, Locale::Spanish, new PlaceSearchArea(['es', 'pt']));
+
+        $body = $this->lastRequest()['body'];
+
+        $this->assertSame(['es', 'pt'], $body['includedRegionCodes']);
+        $this->assertArrayNotHasKey('locationRestriction', $body);
+    }
+
+    public function testSuggestRestrictsTheRectangleOfTheSearchArea(): void
+    {
+        $sut = $this->finder($this->client($this->jsonResponse([])));
+
+        $sut->suggest(
+            'Valencia',
+            PlaceKind::City,
+            Locale::Spanish,
+            new PlaceSearchArea(bounds: new GeoBounds(new GeoPoint(37.8, -1.5), new GeoPoint(40.8, 0.7))),
+        );
+
+        $body = $this->lastRequest()['body'];
+
+        $this->assertSame([
+            'rectangle' => [
+                'low' => ['latitude' => 37.8, 'longitude' => -1.5],
+                'high' => ['latitude' => 40.8, 'longitude' => 0.7],
+            ],
+        ], $body['locationRestriction']);
+        $this->assertArrayNotHasKey('includedRegionCodes', $body);
     }
 
     public function testSuggestReturnsNoSuggestionsWhenTheApiFails(): void
@@ -152,6 +192,73 @@ class GooglePlacesApiPlaceFinderTest extends TestCase
         $this->assertSame('Madrid, España', $place->label);
         $this->assertSame(40.4168, $place->point->latitude);
         $this->assertSame(-3.7038, $place->point->longitude);
+    }
+
+    public function testResolveAsksForTheViewportAndTheAddressComponents(): void
+    {
+        $sut = $this->finder($this->client($this->jsonResponse([])));
+
+        $sut->resolve('place-id', Locale::Spanish);
+
+        $this->assertContains(
+            'X-Goog-FieldMask: id,displayName,formattedAddress,location,viewport,addressComponents',
+            $this->lastRequest()['headers'],
+        );
+    }
+
+    public function testResolveMapsTheNameViewportAreasAndCountry(): void
+    {
+        $sut = $this->finder($this->client($this->jsonResponse([
+            'id' => 'place-id',
+            'displayName' => ['text' => 'Valencia'],
+            'formattedAddress' => 'Valencia, España',
+            'location' => ['latitude' => 39.47, 'longitude' => -0.37],
+            'viewport' => [
+                'low' => ['latitude' => 39.4, 'longitude' => -0.43],
+                'high' => ['latitude' => 39.5, 'longitude' => -0.3],
+            ],
+            'addressComponents' => [
+                ['longText' => 'Valencia', 'shortText' => 'Valencia', 'types' => ['locality', 'political']],
+                ['longText' => 'Valencia', 'shortText' => 'V', 'types' => ['administrative_area_level_2', 'political']],
+                ['longText' => 'Comunitat Valenciana', 'shortText' => 'CV', 'types' => ['administrative_area_level_1', 'political']],
+                ['longText' => 'España', 'shortText' => 'ES', 'types' => ['country', 'political']],
+                ['longText' => '46001', 'shortText' => '46001', 'types' => ['postal_code']],
+            ],
+        ])));
+
+        $place = $sut->resolve('place-id', Locale::Spanish);
+
+        $this->assertNotNull($place);
+        $this->assertSame('Valencia', $place->name);
+        $this->assertNotNull($place->viewport);
+        $this->assertSame(39.4, $place->viewport->low->latitude);
+        $this->assertSame(-0.43, $place->viewport->low->longitude);
+        $this->assertSame(39.5, $place->viewport->high->latitude);
+        $this->assertSame(-0.3, $place->viewport->high->longitude);
+        $this->assertSame(['Valencia', 'Comunitat Valenciana', 'España', '46001'], $place->areaNames);
+        $this->assertSame('ES', $place->countryCode);
+    }
+
+    public function testResolveCollectsTheNamesOfTheMinorAreasOfThePlace(): void
+    {
+        $sut = $this->finder($this->client($this->jsonResponse([
+            'id' => 'place-id',
+            'formattedAddress' => 'Ruzafa, Valencia, España',
+            'location' => ['latitude' => 39.46, 'longitude' => -0.37],
+            'addressComponents' => [
+                ['longText' => 'Calle Sueca', 'shortText' => 'C. Sueca', 'types' => ['route']],
+                ['longText' => 'Ruzafa', 'shortText' => 'Ruzafa', 'types' => ['sublocality_level_1', 'sublocality', 'political']],
+                ['longText' => 'L\'Eixample', 'shortText' => 'L\'Eixample', 'types' => ['administrative_area_level_4', 'political']],
+                ['longText' => 'Distrito 2', 'shortText' => 'D2', 'types' => ['administrative_area_level_5', 'political']],
+                ['longText' => 'Huerta de Valencia', 'shortText' => 'Huerta', 'types' => ['colloquial_area', 'political']],
+                ['longText' => '46006', 'shortText' => '46006', 'types' => ['postal_code']],
+            ],
+        ])));
+
+        $place = $sut->resolve('place-id', Locale::Spanish);
+
+        $this->assertNotNull($place);
+        $this->assertSame(['Ruzafa', 'L\'Eixample', 'Distrito 2', 'Huerta de Valencia', '46006'], $place->areaNames);
     }
 
     public function testResolveFallsBackToTheDisplayNameWhenThereIsNoAddress(): void

@@ -96,6 +96,8 @@ doctrine:
             trip_calculation_link_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLinkIdType
             trip_calculation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationIdType
             trip_calculation_leg_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLegIdType
+            trip_calculation_link_destination_country_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLinkDestinationCountryIdType
+            trip_calculation_link_destination_property_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLinkDestinationPropertyIdType
             employee_participation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeParticipationIdType
             employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeContributionIdType
             carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CarbonFootprintReportIdType

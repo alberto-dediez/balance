@@ -1,0 +1,20 @@
+{% set tripCalculationUrl = this.url %}
+
+<div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+    <twig:Container:Qr :qrCode="this.qrCode" />
+
+    <div class="flex-grow-1 w-100">
+        <label class="form-label">{{ 'Enlace de la calculadora de viajes' | trans }}</label>
+        <div class="input-group">
+            <input type="text" class="form-control" value="{{ tripCalculationUrl }}" readonly data-trip-calculation-url>
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-trip-calculation-copy
+                onclick="navigator.clipboard.writeText(this.parentElement.querySelector('[data-trip-calculation-url]').value)"
+            >
+                {{ 'Copiar' | trans }}
+            </button>
+        </div>
+    </div>
+</div>

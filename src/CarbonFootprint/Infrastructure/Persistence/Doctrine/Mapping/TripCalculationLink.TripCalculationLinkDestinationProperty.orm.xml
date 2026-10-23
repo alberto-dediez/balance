@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkDestinationProperty" table="trip_calculation_link_destination_properties">
+        <id name="id" type="trip_calculation_link_destination_property_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="propertyId" type="property_id" column="property_id" nullable="false" />
+
+        <many-to-one field="tripCalculationLink" target-entity="App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink" inversed-by="destinationProperties">
+            <join-column name="trip_calculation_link_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <unique-constraints>
+            <unique-constraint name="uniq_trip_link_destination_property" columns="trip_calculation_link_id,property_id" />
+        </unique-constraints>
+    </entity>
+
+</doctrine-mapping>

@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="mb-2 leg-destination d-none">
-                    <label class="form-label">{{ '¿Hasta dónde llegaste en este medio?' | trans }}</label>
+                    <label class="form-label">{{ (asksForDestination | default(false)) ? '¿Hasta dónde llegas en este medio?' | trans : '¿Hasta dónde llegaste en este medio?' | trans }}</label>
                     <input type="text"
                            class="form-control"
                            name="{{ prefix }}[legs][{{ index }}][destinationPlaceReference]"

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\PublicLanding;
 
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLanding;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingOwnerType;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
@@ -25,6 +28,8 @@ final class PublicLandingAuthorizer extends AbstractAuthorizer
         private readonly PropertyAuthorizer $propertyAuthorizer,
         private readonly EventRepository $eventRepository,
         private readonly EventAuthorizer $eventAuthorizer,
+        private readonly TripCalculationLinkRepository $tripCalculationLinkRepository,
+        private readonly TripCalculationLinkAuthorizer $tripCalculationLinkAuthorizer,
         ?CurrentAccountIdProvider $currentAccountIdProvider = null,
         ?CurrentRolesProvider $currentRolesProvider = null,
     ) {
@@ -75,6 +80,12 @@ final class PublicLandingAuthorizer extends AbstractAuthorizer
             $event = $this->eventRepository->find(new EventId($publicLanding->ownerId()));
 
             return null !== $event && $this->eventAuthorizer->canDoThat($event, $action, $user);
+        }
+
+        if (PublicLandingOwnerType::TripCalculationLink === $ownerType) {
+            $tripCalculationLink = $this->tripCalculationLinkRepository->find(new TripCalculationLinkId($publicLanding->ownerId()));
+
+            return null !== $tripCalculationLink && $this->tripCalculationLinkAuthorizer->canDoThat($tripCalculationLink, $action, $user);
         }
 
         return false;

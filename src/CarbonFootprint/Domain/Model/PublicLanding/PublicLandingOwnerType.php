@@ -10,6 +10,8 @@ enum PublicLandingOwnerType: string
 
     case Property = 'property';
 
+    case TripCalculationLink = 'trip_link';
+
     public function isEvent(): bool
     {
         return self::Event === $this;
@@ -18,5 +20,10 @@ enum PublicLandingOwnerType: string
     public function isProperty(): bool
     {
         return self::Property === $this;
+    }
+
+    public function isTripCalculationLink(): bool
+    {
+        return self::TripCalculationLink === $this;
     }
 }

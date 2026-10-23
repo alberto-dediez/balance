@@ -8,7 +8,8 @@
 <div
     data-controller="flows-map"
     data-flows-map-flows-value="{{ flows | json_encode }}"
-    data-flows-map-destination-value="{{ destination | json_encode }}"
+    {% if destination is not null %}data-flows-map-destination-value="{{ destination | json_encode }}"{% endif %}
+    data-flows-map-arrows-value="{{ arrows ? 'true' : 'false' }}"
     data-flows-map-labels-value="{{ labels | json_encode }}"
     data-flows-map-tile-key-value="{{ this.tileKey }}"
     style="height: {{ height }}px;"

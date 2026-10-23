@@ -28,6 +28,11 @@ class PublicLandingMother
         return self::from(PublicLandingOwnerType::Event, $eventId, $accountId);
     }
 
+    public static function forTripCalculationLink(string $tripCalculationLinkId, string $accountId = 'account-id'): PublicLanding
+    {
+        return self::from(PublicLandingOwnerType::TripCalculationLink, $tripCalculationLinkId, $accountId);
+    }
+
     public static function from(
         PublicLandingOwnerType $ownerType,
         string $ownerId,

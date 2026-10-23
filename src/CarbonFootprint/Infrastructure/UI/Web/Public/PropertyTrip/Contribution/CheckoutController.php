@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\Contribution;
 
-use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
+use App\CarbonFootprint\Application\Trip\TripCalculationContributionOrigin;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCheckoutHandler;
@@ -20,6 +20,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(
     '/carbon-footprint/property-trip/{token}/result/{tripCalculationId}/compensate/{projectId}',
     name: 'public_carbon_footprint_property_trip_contribution_checkout',
+    methods: ['GET', 'POST'],
+)]
+#[Route(
+    '/carbon-footprint/trip/{token}/result/{tripCalculationId}/compensate/{projectId}',
+    name: 'public_carbon_footprint_trip_contribution_checkout',
     methods: ['GET', 'POST'],
 )]
 class CheckoutController extends AbstractController
@@ -65,12 +70,12 @@ class CheckoutController extends AbstractController
             new ContributionContext(
                 accountId: $accountId,
                 co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
-                origin: ProjectContributionOrigin::PropertyTripCalculation,
+                origin: TripCalculationContributionOrigin::for($link->tripCalculationLink),
                 originId: $tripCalculationId,
-                originName: $link->property->name(),
+                originName: $link->property?->name() ?? ($tripCalculation->destinationLabel() ?? $link->ownerName),
                 token: $token,
             ),
-            $this->contributionRoutes($token, $tripCalculationId),
+            $this->contributionRoutes($link->tripCalculationLink, $token, $tripCalculationId),
             $projectId,
             $request,
         );
@@ -83,7 +88,7 @@ class CheckoutController extends AbstractController
             return $this->redirect($result->redirectUrl);
         }
 
-        $parameters = $result->parameters + ['property' => $link->property];
+        $parameters = $result->parameters + ['property' => $link->property, 'ownerName' => $link->ownerName, 'asksForDestination' => $link->asksForDestination];
 
         if ($request->isXmlHttpRequest()) {
             return $this->render('@carbon_footprint/project_contribution/_summary.html.twig', $parameters);

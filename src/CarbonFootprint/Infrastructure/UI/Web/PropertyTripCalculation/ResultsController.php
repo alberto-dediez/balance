@@ -18,6 +18,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/carbon-footprint/property-trip-calculations/{propertyId}/responses', name: 'carbon_footprint_property_trip_calculations_responses', methods: ['GET'])]
 class ResultsController extends AbstractController
 {
+    use ResultsDateRangeTrait;
+
     public function __invoke(
         string $propertyId,
         GetTripCalculationResultsService $getResults,
@@ -43,27 +45,5 @@ class ResultsController extends AbstractController
             '@carbon_footprint/property_trip_calculations/results.html.twig',
             $resultsView->build($response, $this->queryString($request, 'from'), $this->queryString($request, 'to')),
         );
-    }
-
-    private function queryString(Request $request, string $key): ?string
-    {
-        $value = $request->query->get($key);
-
-        return is_string($value) ? $value : null;
-    }
-
-    private function date(mixed $value, bool $endOfDay = false): ?\DateTimeImmutable
-    {
-        if (!is_string($value) || '' === trim($value)) {
-            return null;
-        }
-
-        $date = \DateTimeImmutable::createFromFormat('!Y-m-d', trim($value));
-
-        if (false === $date) {
-            return null;
-        }
-
-        return $endOfDay ? $date->setTime(23, 59, 59) : $date;
     }
 }

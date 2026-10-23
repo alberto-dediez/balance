@@ -4,29 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\TripCalculation\GetResults;
 
-use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
-use App\CarbonFootprint\Application\Activity\ActivityEmissionsResolver;
-use App\CarbonFootprint\Application\Activity\EmissionFactorSelectorRegistry;
-use App\CarbonFootprint\Application\Activity\MobilityEmissionFactorSelector;
-use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
-use App\CarbonFootprint\Application\Trip\MobilityBreakdownCalculator;
-use App\CarbonFootprint\Application\Trip\OriginFlowsCalculator;
-use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
-use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsRequest;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsService;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
-use App\CarbonFootprint\Domain\Model\Trip\TripLegsAccumulator;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
-use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationsAggregator;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
-use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
-use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOvernightStayRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationRepository;
 use App\Property\Application\Property\PropertyAuthorizer;
@@ -39,7 +26,6 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
-use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
@@ -74,31 +60,7 @@ class GetTripCalculationResultsServiceTest extends TestCase
             $this->propertyRepository,
             new PropertyAuthorizer(),
             $this->tripCalculationLinkRepository,
-            $this->tripCalculationRepository,
-            new TripCalculationsAggregator(new TripLegsAccumulator()),
-            new MobilityBreakdownCalculator(
-                $this->mobilityRepository,
-                new ActivityEmissionsResolver(
-                    new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($this->mobilityRepository)]),
-                    EmissionsCalculatorMother::create(),
-                ),
-                new InMemoryEmissionFactorGroupRepository(),
-            ),
-            $this->projectContributionRepository,
-            new ProjectContributionsAggregator(),
-            new MobilityFactorBasisProvider($this->mobilityRepository),
-            new PerPersonTripEmissionsCalculator(
-                new TripLegsAccumulator(),
-                new MobilityFactorBasisProvider($this->mobilityRepository),
-                new TripEmissionsCalculator(
-                    new ActivityEmissionsResolver(
-                        new EmissionFactorSelectorRegistry([new MobilityEmissionFactorSelector($this->mobilityRepository)]),
-                        EmissionsCalculatorMother::create(),
-                    ),
-                    new InMemoryOvernightStayRepository(),
-                ),
-            ),
-            new OriginFlowsCalculator(),
+            TripCalculationResultsBuilderMother::create($this->tripCalculationRepository, $this->projectContributionRepository, $this->mobilityRepository),
             new PropertyLocator(),
         );
     }
@@ -112,6 +74,7 @@ class GetTripCalculationResultsServiceTest extends TestCase
         $this->assertNull($response->tripCalculationLink);
         $this->assertSame(0, $response->aggregation->calculations);
         $this->assertSame([], $response->mobilityBreakdown);
+        $this->assertSame('Hotel', $response->ownerName);
     }
 
     public function testAggregatesTheCalculationsOfTheProperty(): void
@@ -143,6 +106,9 @@ class GetTripCalculationResultsServiceTest extends TestCase
         $this->assertSame(3.0, $response->aggregation->overnightStays);
         $this->assertEqualsWithDelta(150.0, $response->aggregation->kmByMobilityId[$mobilityId], 0.001);
         $this->assertEqualsWithDelta(15.0, (float) $response->aggregation->totalEmissions->co2eq(), 0.001);
+        $this->assertSame('Hotel', $response->ownerName);
+        $this->assertSame([], $response->originDestinationFlows);
+        $this->assertSame(0, $response->undestinedCalculations);
     }
 
     public function testRestrictsTheAggregationToThePeriod(): void

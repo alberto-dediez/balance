@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="secjUgT" resname="free">
+        <source>free</source>
+        <target>Any destination</target>
+      </trans-unit>
+      <trans-unit id="hxzrUKQ" resname="countries">
+        <source>countries</source>
+        <target>Only in these countries</target>
+      </trans-unit>
+      <trans-unit id="ZrjYuLN" resname="region">
+        <source>region</source>
+        <target>Only in a region</target>
+      </trans-unit>
+      <trans-unit id="C2lkKY9" resname="all_properties">
+        <source>all_properties</source>
+        <target>All my properties</target>
+      </trans-unit>
+      <trans-unit id="AJWoMD0" resname="selected_properties">
+        <source>selected_properties</source>
+        <target>Only these properties</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

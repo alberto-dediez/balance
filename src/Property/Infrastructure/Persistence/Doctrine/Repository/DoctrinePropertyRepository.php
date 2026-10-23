@@ -221,6 +221,19 @@ class DoctrinePropertyRepository implements PropertyRepository
             ;
         }
 
+        if (null !== $filter->accountIds) {
+            if ([] === $filter->accountIds) {
+                $qb->andWhere('1 = 0');
+            } else {
+                $qb
+                    ->andWhere(
+                        $qb->expr()->in('p.accountId', ':accountIds'),
+                    )
+                    ->setParameter('accountIds', array_map(static fn(AccountId $accountId): string => (string) $accountId, $filter->accountIds))
+                ;
+            }
+        }
+
         if ($filter->operatingRegime instanceof OperatingRegime) {
             $qb
                 ->andWhere(

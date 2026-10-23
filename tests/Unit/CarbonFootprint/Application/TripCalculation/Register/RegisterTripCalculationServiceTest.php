@@ -11,6 +11,8 @@ use App\CarbonFootprint\Application\Activity\OvernightStayEmissionFactorSelector
 use App\CarbonFootprint\Application\Mobility\MobilityFactorBasisProvider;
 use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
+use App\CarbonFootprint\Application\Trip\TripDestinationCandidates;
+use App\CarbonFootprint\Application\Trip\TripDestinationResolver;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
 use App\CarbonFootprint\Application\TripCalculation\Register\RegisterTripCalculationRequest;
 use App\CarbonFootprint\Application\TripCalculation\Register\RegisterTripCalculationService;
@@ -27,6 +29,8 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationMode;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationNotAllowedException;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
@@ -35,15 +39,19 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryT
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Shared\Infrastructure\Geo\IntlCountryRegionCode;
 use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Security\Application\Account\ConsultantSupervisionPolicyMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 use App\Tests\Unit\Shared\Domain\Model\Geo\InMemoryPlaceFinder;
@@ -111,6 +119,13 @@ class RegisterTripCalculationServiceTest extends TestCase
             new TripEmissionsCalculator($activityEmissionsResolver, $this->overnightStayRepository),
             $emissionFactorGroupRepository,
             ConsentProofMother::POLICY_VERSION,
+            new TripDestinationResolver(
+                $this->placeFinder,
+                new TripDestinationCandidates($this->propertyRepository, ConsultantSupervisionPolicyMother::create(), new PropertyLocator()),
+                new InMemoryCountryRepository(),
+                new PropertyLocator(),
+                new IntlCountryRegionCode(),
+            ),
         );
     }
 
@@ -353,6 +368,103 @@ class RegisterTripCalculationServiceTest extends TestCase
         ));
     }
 
+    public function testAnAccountCalculatorRequiresADestination(): void
+    {
+        $link = $this->accountLink();
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Debes indicar el destino de tu viaje.');
+
+        ($this->sut)($this->request(
+            token: $link->token(),
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+        ));
+    }
+
+    public function testAnAccountCalculatorEndsTheLastLegAtTheDestinationAndStoresIt(): void
+    {
+        $link = $this->accountLink();
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+        $this->placeFinder->add('sevilla', 'Sevilla, España', 37.3891, -5.9845);
+        $this->placeFinder->add('valencia', 'Valencia, España', 39.4699, -0.3763);
+
+        $response = ($this->sut)($this->request(
+            token: $link->token(),
+            originPlaceReference: 'sevilla',
+            legs: [new LegInput(mobilityId: (string) $mobility->id())],
+            destinationPlaceReference: 'valencia',
+        ));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertSame('valencia', $stored->destinationPlaceReference());
+        $this->assertSame('Valencia, España', $stored->destinationLabel());
+        $this->assertSame(39.4699, $stored->destinationLatitude());
+        $this->assertSame(-0.3763, $stored->destinationLongitude());
+
+        $lastLeg = $stored->legs()[count($stored->legs()) - 1];
+        $this->assertSame('Valencia, España', $lastLeg->destinationLabel());
+        $this->assertSame(39.4699, $lastLeg->destinationLatitude());
+        $this->assertGreaterThan(500.0, (float) $lastLeg->distanceKm());
+    }
+
+    public function testAnOvernightStayOnlyAccountCalculatorAlsoStoresTheDestination(): void
+    {
+        $link = $this->accountLink(TripCalculationScope::OvernightStay);
+        $this->overnightStayWithFactor('4.0');
+        $this->placeFinder->add('valencia', 'Valencia, España', 39.4699, -0.3763);
+
+        $response = ($this->sut)($this->request(
+            token: $link->token(),
+            nights: 2,
+            destinationPlaceReference: 'valencia',
+        ));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertSame('Valencia, España', $stored->destinationLabel());
+        $this->assertSame([], $stored->legs());
+    }
+
+    public function testAnAccountCalculatorRejectsADestinationThatIsNotAllowed(): void
+    {
+        $link = TripCalculationLinkMother::forAccountWithDestination((string) AccountId::generate(), TripDestinationMode::AllProperties);
+        $this->tripCalculationLinkRepository->add($link);
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+        $this->placeFinder->add('valencia', 'Valencia, España', 39.4699, -0.3763);
+
+        $this->expectException(TripDestinationNotAllowedException::class);
+
+        ($this->sut)($this->request(
+            token: $link->token(),
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+            destinationPlaceReference: 'valencia',
+        ));
+    }
+
+    public function testAPropertyCalculatorStoresThePropertyAsDestination(): void
+    {
+        $link = $this->linkToLocatedProperty();
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+
+        $response = ($this->sut)($this->request(
+            token: $link->token(),
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+            destinationPlaceReference: 'ignored',
+        ));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertNull($stored->destinationPlaceReference());
+        $this->assertSame('Hotel', $stored->destinationLabel());
+        $this->assertSame(40.468, $stored->destinationLatitude());
+        $this->assertSame(-3.616, $stored->destinationLongitude());
+    }
+
     /** @param list<LegInput> $legs */
     private function request(
         string $token,
@@ -362,6 +474,7 @@ class RegisterTripCalculationServiceTest extends TestCase
         ?int $nights = 0,
         array $legs = [],
         ?int $people = 1,
+        ?string $destinationPlaceReference = null,
     ): RegisterTripCalculationRequest {
         return new RegisterTripCalculationRequest(
             token: $token,
@@ -371,7 +484,16 @@ class RegisterTripCalculationServiceTest extends TestCase
             nights: $nights,
             people: $people,
             legs: $legs,
+            destinationPlaceReference: $destinationPlaceReference,
         );
+    }
+
+    private function accountLink(?TripCalculationScope $scope = null): TripCalculationLink
+    {
+        $link = TripCalculationLinkMother::forAccount((string) AccountId::generate(), $scope);
+        $this->tripCalculationLinkRepository->add($link);
+
+        return $link;
     }
 
     private function linkToLocatedProperty(?TripCalculationScope $scope = null): TripCalculationLink
