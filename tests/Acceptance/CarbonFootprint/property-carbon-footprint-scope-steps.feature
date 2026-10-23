@@ -104,3 +104,47 @@ Feature:
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
         Then the electricity activity of property carbon footprint "999" has well-to-tank emissions of 610 kg co2eq
         Then the electricity activity of property carbon footprint "999" has location-based well-to-tank emissions of 610 kg co2eq
+
+    Scenario: The results step shows the scope 2 dual reporting
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given country "España" with iso "ES" and id "C-ES" exists
+        Given property "Hotel" with id "1111" of account "666" exists
+        Given property "1111" is in country "C-ES"
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 1 answered exists
+        Given electricity marketer "Comercializadora" with id "EM1" and emission factor for year "2025" exists
+        Given electricity mix for country "C-ES" with id "MIX1" and emission factor for year "2025" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/scope-2"
+        When I submit the scope "scope_2" step form with an electricity marketer "EM1" of 1000 "kWh"
+        Then I am redirected to route "property_carbon_footprints_scope_3"
+        When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        When I submit the mitigation plan step form
+        Then I am redirected to route "property_carbon_footprints_results"
+        When I go to "/es/property-carbon-footprints/999/step/results"
+        Then the response status should be 200
+        Then I see a text "Alcance 2 · método de localización (kg CO₂eq)"
+        Then I see a text "1.500,00"
+        Then I see a text "Total · método de localización (kg CO₂eq)"
+        Then I do not see a text "sin factor de mix eléctrico"
+
+    Scenario: The results step warns about the electricity without an electricity mix
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given country "España" with iso "ES" and id "C-ES" exists
+        Given property "Hotel" with id "1111" of account "666" exists
+        Given property "1111" is in country "C-ES"
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 1 answered exists
+        Given electricity marketer "Comercializadora" with id "EM1" and emission factor for year "2025" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/scope-2"
+        When I submit the scope "scope_2" step form with an electricity marketer "EM1" of 1000 "kWh"
+        Then I am redirected to route "property_carbon_footprints_scope_3"
+        When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        When I submit the mitigation plan step form
+        Then I am redirected to route "property_carbon_footprints_results"
+        When I go to "/es/property-carbon-footprints/999/step/results"
+        Then the response status should be 200
+        Then I see a text "Actividades de electricidad sin factor de mix eléctrico para su país y año: 1."

@@ -54,6 +54,10 @@ final class EmissionsBreakdownBuilder
         /** @var array<string, Emissions> $byPropertyId */
         $byPropertyId = [];
         $locationBasedElectricity = new Emissions();
+        $marketBasedElectricity = new Emissions();
+        $locationBasedTotal = new Emissions();
+        $electricityActivities = 0;
+        $electricityActivitiesWithoutLocationBased = 0;
 
         foreach ($this->activityRepository->findByIds($activityIds) as $activity) {
             $key = (string) $activity->id();
@@ -68,6 +72,8 @@ final class EmissionsBreakdownBuilder
             $propertyKey = (string) $placement->propertyId;
 
             $total = $total->add($activity->emissions());
+            $locationBasedEmissions = $activity instanceof ElectricityActivity ? $activity->locationBasedEmissions() : null;
+            $locationBasedTotal = $locationBasedTotal->add($locationBasedEmissions ?? $activity->emissions());
             $bySource[$sourceValue] = $bySource[$sourceValue]->add($activity->emissions());
 
             if (isset($byStage[$stageKey])) {
@@ -78,10 +84,13 @@ final class EmissionsBreakdownBuilder
             $byPropertyId[$propertyKey] = ($byPropertyId[$propertyKey] ?? new Emissions())->add($activity->emissions());
 
             if ($activity instanceof ElectricityActivity) {
-                $locationBasedEmissions = $activity->locationBasedEmissions();
+                ++$electricityActivities;
+                $marketBasedElectricity = $marketBasedElectricity->add($activity->emissions());
 
                 if (null !== $locationBasedEmissions) {
                     $locationBasedElectricity = $locationBasedElectricity->add($locationBasedEmissions);
+                } else {
+                    ++$electricityActivitiesWithoutLocationBased;
                 }
             }
         }
@@ -96,6 +105,7 @@ final class EmissionsBreakdownBuilder
                 $propertyKey = (string) $line->origin->propertyId;
 
                 $total = $total->add($line->emissions);
+                $locationBasedTotal = $locationBasedTotal->add($line->emissions);
                 $bySource[$sourceValue] = $bySource[$sourceValue]->add($line->emissions);
                 $byStage[$stage->key()] = $byStage[$stage->key()]->add($line->emissions);
                 $byStageAndSource[$stage->key()][$sourceValue] = $byStageAndSource[$stage->key()][$sourceValue]->add($line->emissions);
@@ -107,6 +117,7 @@ final class EmissionsBreakdownBuilder
                 $propertyKey = (string) $line->propertyId;
 
                 $total = $total->add($line->emissions);
+                $locationBasedTotal = $locationBasedTotal->add($line->emissions);
                 $bySource[$sourceValue] = $bySource[$sourceValue]->add($line->emissions);
                 $byStage[$stage->key()] = $byStage[$stage->key()]->add($line->emissions);
                 $byStageAndSource[$stage->key()][$sourceValue] = $byStageAndSource[$stage->key()][$sourceValue]->add($line->emissions);
@@ -121,6 +132,10 @@ final class EmissionsBreakdownBuilder
             byStageAndSource: $byStageAndSource,
             byPropertyId: $byPropertyId,
             locationBasedElectricity: $locationBasedElectricity,
+            marketBasedElectricity: $marketBasedElectricity,
+            locationBasedTotal: $locationBasedTotal,
+            electricityActivities: $electricityActivities,
+            electricityActivitiesWithoutLocationBased: $electricityActivitiesWithoutLocationBased,
         );
     }
 }

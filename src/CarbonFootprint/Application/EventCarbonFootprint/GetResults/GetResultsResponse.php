@@ -18,6 +18,11 @@ final class GetResultsResponse
     public function __construct(
         public readonly Emissions $totalEmissions,
         public readonly Emissions $emissionsPerAttendee,
+        public readonly Emissions $marketBasedElectricityEmissions,
+        public readonly Emissions $locationBasedElectricityEmissions,
+        public readonly Emissions $locationBasedTotalEmissions,
+        public readonly int $electricityActivities,
+        public readonly int $electricityActivitiesWithoutLocationBased,
         public readonly array $emissionsBySource,
         public readonly array $emissionsByPhase,
         public readonly array $emissionsByPhaseAndSource,

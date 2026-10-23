@@ -36,6 +36,8 @@ final class GetPropertyCarbonFootprintResultsService
         return new GetPropertyCarbonFootprintResultsResponse(
             totalEmissions: $breakdown->total,
             locationBasedElectricityEmissions: $breakdown->locationBasedElectricity,
+            locationBasedTotalEmissions: $breakdown->locationBasedTotal,
+            electricityActivitiesWithoutLocationBased: $breakdown->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $breakdown->bySource,
             emissionsByScope: $breakdown->byStage,
             emissionsByScopeAndSource: $breakdown->byStageAndSource,

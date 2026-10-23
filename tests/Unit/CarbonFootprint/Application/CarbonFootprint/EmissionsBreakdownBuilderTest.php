@@ -76,6 +76,114 @@ class EmissionsBreakdownBuilderTest extends TestCase
         $this->assertSame('180', $breakdown->locationBasedElectricity->co2eq());
     }
 
+    public function testAddsUpTheMarketBasedElectricityOfEveryElectricityActivity(): void
+    {
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+
+        $withLocationBased = ElectricityActivityMother::registeredWithLocationBasedResult();
+        $withoutLocationBased = ElectricityActivityMother::registered();
+        $this->activityRepository->save($withLocationBased);
+        $this->activityRepository->save($withoutLocationBased);
+
+        $propertyCarbonFootprint->addActivity($withLocationBased->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+        $propertyCarbonFootprint->addActivity($withoutLocationBased->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $this->assertSame('30', $breakdown->marketBasedElectricity->co2eq());
+        $this->assertSame(2, $breakdown->electricityActivities);
+        $this->assertSame(1, $breakdown->electricityActivitiesWithoutLocationBased);
+    }
+
+    public function testTheLocationBasedTotalReplacesOnlyTheElectricityThatHasALocationBasedResult(): void
+    {
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+
+        $combustible = CombustibleActivityMother::registered();
+        $withLocationBased = ElectricityActivityMother::registeredWithLocationBasedResult();
+        $withoutLocationBased = ElectricityActivityMother::registered();
+        $this->activityRepository->save($combustible);
+        $this->activityRepository->save($withLocationBased);
+        $this->activityRepository->save($withoutLocationBased);
+
+        $propertyCarbonFootprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $propertyCarbonFootprint->addActivity($withLocationBased->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+        $propertyCarbonFootprint->addActivity($withoutLocationBased->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $this->assertSame('45', $breakdown->total->co2eq());
+        $this->assertSame((float) $breakdown->total->co2eq() - 15.0 + 180.0, (float) $breakdown->locationBasedTotal->co2eq());
+    }
+
+    public function testTheLocationBasedTotalEqualsTheTotalWithoutElectricityActivities(): void
+    {
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+
+        $combustible = CombustibleActivityMother::registered();
+        $this->activityRepository->save($combustible);
+        $propertyCarbonFootprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $this->assertTrue($breakdown->locationBasedTotal->equals($breakdown->total));
+        $this->assertSame('0', $breakdown->marketBasedElectricity->co2eq());
+        $this->assertSame(0, $breakdown->electricityActivities);
+        $this->assertSame(0, $breakdown->electricityActivitiesWithoutLocationBased);
+    }
+
+    public function testTheLocationBasedTotalIncludesTheDerivedScope3Lines(): void
+    {
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+
+        $combustible = CombustibleActivityMother::registeredWithWellToTank();
+        $purchase = PurchaseServiceActivityMother::registered();
+        $this->activityRepository->save($combustible);
+        $this->activityRepository->save($purchase);
+
+        $propertyCarbonFootprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $propertyCarbonFootprint->addActivity($purchase->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $expectedTotal = (float) $combustible->emissions()->co2eq() + (float) $purchase->emissions()->co2eq() + 122.0;
+        $this->assertSame($expectedTotal, (float) $breakdown->locationBasedTotal->co2eq());
+    }
+
+    public function testCountsTheMachineryElectricityOfAnEventAsElectricity(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+
+        $electricity = ElectricityActivityMother::registeredWithLocationBasedResult();
+        $this->activityRepository->save($electricity);
+        $eventCarbonFootprint->addActivity($electricity->id(), new ActivityPlacement(Phase::Assembly, Source::MachineryOperation));
+
+        $breakdown = $this->createSUT()->build($eventCarbonFootprint, Phase::cases());
+
+        $this->assertSame(1, $breakdown->electricityActivities);
+        $this->assertSame('180', $breakdown->locationBasedElectricity->co2eq());
+    }
+
+    public function testTheMarketBasedElectricityMatchesScope2InAPropertyFootprint(): void
+    {
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+
+        $combustible = CombustibleActivityMother::registered();
+        $withLocationBased = ElectricityActivityMother::registeredWithLocationBasedResult();
+        $withoutLocationBased = ElectricityActivityMother::registered();
+        $this->activityRepository->save($combustible);
+        $this->activityRepository->save($withLocationBased);
+        $this->activityRepository->save($withoutLocationBased);
+
+        $propertyCarbonFootprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $propertyCarbonFootprint->addActivity($withLocationBased->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+        $propertyCarbonFootprint->addActivity($withoutLocationBased->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $this->assertTrue($breakdown->marketBasedElectricity->equals($breakdown->byStage[Scope::Scope2->key()]));
+    }
+
     public function testIncludesTheDerivedFuelAndEnergyRelatedEmissionsInScope3(): void
     {
         $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());

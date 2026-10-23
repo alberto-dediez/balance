@@ -23,5 +23,6 @@ final class EventCarbonFootprintReportActivityLine
         public readonly int $factorYear,
         public readonly ?string $factorSource,
         public readonly string $emissionsCo2eq,
+        public readonly ?string $locationBasedEmissionsCo2eq = null,
     ) {}
 }

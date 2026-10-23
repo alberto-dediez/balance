@@ -34,6 +34,11 @@ final class GetResultsService
         return new GetResultsResponse(
             totalEmissions: $eventCarbonFootprint->totalEmissions(),
             emissionsPerAttendee: $eventCarbonFootprint->emissionsPerAttendee(),
+            marketBasedElectricityEmissions: $breakdown->marketBasedElectricity,
+            locationBasedElectricityEmissions: $breakdown->locationBasedElectricity,
+            locationBasedTotalEmissions: $breakdown->locationBasedTotal,
+            electricityActivities: $breakdown->electricityActivities,
+            electricityActivitiesWithoutLocationBased: $breakdown->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $breakdown->bySource,
             emissionsByPhase: $breakdown->byStage,
             emissionsByPhaseAndSource: $breakdown->byStageAndSource,

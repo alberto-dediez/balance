@@ -22,6 +22,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MaterialActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
@@ -87,6 +88,32 @@ class GetResultsServiceTest extends TestCase
         $this->assertSame(Phase::Assembly, $response->exclusions[0]->stage());
         $this->assertSame(Source::WasteManagement, $response->exclusions[0]->source());
         $this->assertSame(ExclusionReason::NoDataAvailable, $response->exclusions[0]->reason());
+    }
+
+    public function testExposesTheDualElectricityReporting(): void
+    {
+        $eventCarbonFootprint = EventCarbonFootprintMother::registeredEventCarbonFootprint();
+
+        $material = MaterialActivityMother::registered(new AccountId('account-id'));
+        $withLocationBased = ElectricityActivityMother::registeredWithLocationBasedResult(new AccountId('account-id'));
+        $withoutLocationBased = ElectricityActivityMother::registered(new AccountId('account-id'));
+        $this->activityRepository->save($material);
+        $this->activityRepository->save($withLocationBased);
+        $this->activityRepository->save($withoutLocationBased);
+        $eventCarbonFootprint->addActivity($material->id(), new ActivityPlacement(Phase::Materials, Source::Materials));
+        $eventCarbonFootprint->addActivity($withLocationBased->id(), new ActivityPlacement(Phase::Assembly, Source::BuildingElectricity));
+        $eventCarbonFootprint->addActivity($withoutLocationBased->id(), new ActivityPlacement(Phase::Celebration, Source::BuildingElectricity));
+
+        $this->eventCarbonFootprintRepository->add($eventCarbonFootprint);
+
+        $response = ($this->sut)(new GetResultsRequest($eventCarbonFootprint->id()), $this->ownerUser());
+
+        $activitiesTotal = (float) $material->emissions()->co2eq() + (float) $withLocationBased->emissions()->co2eq() + (float) $withoutLocationBased->emissions()->co2eq();
+        $this->assertSame('30', $response->marketBasedElectricityEmissions->co2eq());
+        $this->assertSame('180', $response->locationBasedElectricityEmissions->co2eq());
+        $this->assertSame(2, $response->electricityActivities);
+        $this->assertSame(1, $response->electricityActivitiesWithoutLocationBased);
+        $this->assertSame($activitiesTotal - 15.0 + 180.0, (float) $response->locationBasedTotalEmissions->co2eq());
     }
 
     public function testEventCarbonFootprintNotFoundThrows(): void

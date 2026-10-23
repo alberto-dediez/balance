@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
@@ -70,6 +71,8 @@ final class EventCarbonFootprintReportDataCollector implements CarbonFootprintRe
                 continue;
             }
 
+            $locationBasedEmissions = $activity instanceof ElectricityActivity ? $activity->locationBasedEmissions() : null;
+
             $activityLines[] = new EventCarbonFootprintReportActivityLine(
                 itemName: $this->itemNameResolver->resolve($activity, $year, $emissionFactorGroupId),
                 activityType: ActivityType::fromActivity($activity),
@@ -82,6 +85,7 @@ final class EventCarbonFootprintReportDataCollector implements CarbonFootprintRe
                 factorYear: $activity->emissionFactor()->year(),
                 factorSource: $activity->emissionFactor()->source(),
                 emissionsCo2eq: $activity->emissions()->co2eq(),
+                locationBasedEmissionsCo2eq: $locationBasedEmissions?->co2eq(),
             );
         }
 
@@ -108,6 +112,11 @@ final class EventCarbonFootprintReportDataCollector implements CarbonFootprintRe
             calculationYear: $year,
             totalEmissions: $eventCarbonFootprint->totalEmissions(),
             emissionsPerAttendee: $eventCarbonFootprint->emissionsPerAttendee(),
+            marketBasedElectricityEmissions: $breakdown->marketBasedElectricity,
+            locationBasedElectricityEmissions: $breakdown->locationBasedElectricity,
+            locationBasedTotalEmissions: $breakdown->locationBasedTotal,
+            electricityActivities: $breakdown->electricityActivities,
+            electricityActivitiesWithoutLocationBased: $breakdown->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $breakdown->bySource,
             emissionsByPhase: $breakdown->byStage,
             emissionsByPhaseAndSource: $breakdown->byStageAndSource,

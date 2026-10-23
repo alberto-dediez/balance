@@ -9777,6 +9777,50 @@
         <source>Tu viaje no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.</source>
         <target>Seyahatiniz telafi edilecek emisyon oluşturmuyor, ancak projeye katkıda bulunabilirsiniz.</target>
       </trans-unit>
+      <trans-unit id="Lm1dhdx" resname="Electricidad: método de mercado y de localización">
+        <source>Electricidad: método de mercado y de localización</source>
+        <target>Elektrik: piyasaya dayalı ve konuma dayalı yöntemler</target>
+      </trans-unit>
+      <trans-unit id="jrsUt76" resname="Electricidad · localización">
+        <source>Electricidad · localización</source>
+        <target>Elektrik · konuma dayalı</target>
+      </trans-unit>
+      <trans-unit id="FwGpMEf" resname="Alcance 2 · localización">
+        <source>Alcance 2 · localización</source>
+        <target>Kapsam 2 · konuma dayalı</target>
+      </trans-unit>
+      <trans-unit id="LD8hLIb" resname="Alcance 2 · método de mercado (kg CO₂eq)">
+        <source>Alcance 2 · método de mercado (kg CO₂eq)</source>
+        <target>Kapsam 2 · piyasaya dayalı yöntem (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="b6N.4yw" resname="Alcance 2 · método de localización (kg CO₂eq)">
+        <source>Alcance 2 · método de localización (kg CO₂eq)</source>
+        <target>Kapsam 2 · konuma dayalı yöntem (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="032KgjP" resname="Total · método de localización (kg CO₂eq)">
+        <source>Total · método de localización (kg CO₂eq)</source>
+        <target>Toplam · konuma dayalı yöntem (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="D.MD9rD" resname="Actividades de electricidad sin factor de mix eléctrico">
+        <source>Actividades de electricidad sin factor de mix eléctrico</source>
+        <target>Elektrik karışımı faktörü olmayan elektrik faaliyetleri</target>
+      </trans-unit>
+      <trans-unit id="_PirwLk" resname="Electricidad · método de mercado (kg CO₂eq)">
+        <source>Electricidad · método de mercado (kg CO₂eq)</source>
+        <target>Elektrik · piyasaya dayalı yöntem (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="IpwKuRS" resname="Electricidad · método de localización (kg CO₂eq)">
+        <source>Electricidad · método de localización (kg CO₂eq)</source>
+        <target>Elektrik · konuma dayalı yöntem (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="7yqwT0_" resname="Hay {count} actividades de electricidad sin factor de mix eléctrico para su país y año: no se incluyen en el método de localización y conservan su valor de mercado en el total por localización.">
+        <source>Hay {count} actividades de electricidad sin factor de mix eléctrico para su país y año: no se incluyen en el método de localización y conservan su valor de mercado en el total por localización.</source>
+        <target>Ülkesi ve yılı için elektrik karışımı faktörü olmayan {count} elektrik faaliyeti var: konuma dayalı yönteme dahil edilmezler ve konuma dayalı toplamda piyasaya dayalı değerlerini korurlar.</target>
+      </trans-unit>
+      <trans-unit id="XXqqXlj" resname="Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.">
+        <source>Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.</source>
+        <target>Ülkesi ve yılı için elektrik karışımı faktörü olmayan elektrik faaliyetleri: {count}. Konuma dayalı yönteme dahil edilmezler ve konuma dayalı toplamda piyasaya dayalı değerlerini korurlar.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

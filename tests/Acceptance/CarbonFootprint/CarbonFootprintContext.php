@@ -11,6 +11,8 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
+use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityRequest;
+use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
@@ -49,6 +51,7 @@ use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootpri
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorRepository;
+use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMix\ElectricityMixRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
@@ -709,6 +712,26 @@ final readonly class CarbonFootprintContext implements Context
             co2: '1.0',
             ch4: '0.2',
             n2o: '0.3',
+            year: (int) $year,
+            emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
+            source: 'IPCC',
+        ));
+
+        $this->getElectricityMixRepository()->add($electricityMix);
+    }
+
+    #[Given('electricity mix for country :country with id :id and emission factor :co2eq for year :year exists')]
+    public function electricityMixWithGivenEmissionFactorExists(string $country, string $id, string $co2eq, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $electricityMix = ElectricityMixMother::fromCountryAndId($country, $id);
+
+        $electricityMix->setEmissionFactor(new EmissionFactor(
+            co2eq: $co2eq,
+            co2: $co2eq,
+            ch4: '0',
+            n2o: '0',
             year: (int) $year,
             emissionFactorGroupId: EmissionFactorGroupMother::default()->id(),
             source: 'IPCC',
@@ -1472,6 +1495,51 @@ final readonly class CarbonFootprintContext implements Context
         );
 
         $eventCarbonFootprint->addActivity($response->activityId, new ActivityPlacement(Phase::Assembly, Source::WasteManagement));
+
+        $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
+    }
+
+    #[Given('event carbon footprint :id has an electricity activity using marketer :marketerId of :quantity kWh in assembly for country :countryId')]
+    public function eventCarbonFootprintHasAnElectricityActivityInAssemblyForCountry(string $id, string $marketerId, string $quantity, string $countryId): void
+    {
+        $this->addElectricityActivityInAssembly($id, $marketerId, $quantity, new CountryId($countryId));
+    }
+
+    #[Given('event carbon footprint :id has an electricity activity using marketer :marketerId of :quantity kWh in assembly')]
+    public function eventCarbonFootprintHasAnElectricityActivityInAssembly(string $id, string $marketerId, string $quantity): void
+    {
+        $this->addElectricityActivityInAssembly($id, $marketerId, $quantity, null);
+    }
+
+    private function addElectricityActivityInAssembly(string $id, string $marketerId, string $quantity, ?CountryId $countryId): void
+    {
+        $eventCarbonFootprint = $this->getEventCarbonFootprintRepository()->find(new EventCarbonFootprintId($id));
+
+        Assert::assertNotNull($eventCarbonFootprint);
+
+        $accountId = $eventCarbonFootprint->accountId();
+        $emissionFactorGroupId = $eventCarbonFootprint->emissionFactorGroupId();
+
+        Assert::assertNotNull($accountId);
+        Assert::assertNotNull($emissionFactorGroupId);
+
+        $registerElectricityActivity = $this->client->getContainer()->get(RegisterElectricityActivityService::class);
+
+        $response = $registerElectricityActivity(
+            new RegisterElectricityActivityRequest(
+                accountId: $accountId,
+                electricityMarketerId: new ElectricityMarketerId($marketerId),
+                gdOFactorId: null,
+                quantity: new Quantity((float) $quantity, Unit::KWh),
+                year: $eventCarbonFootprint->calculationYear(),
+                emissionFactorGroupId: $emissionFactorGroupId,
+                source: null,
+                countryId: $countryId,
+            ),
+            UserMother::adminUser(),
+        );
+
+        $eventCarbonFootprint->addActivity($response->activityId, new ActivityPlacement(Phase::Assembly, Source::BuildingElectricity));
 
         $this->getEventCarbonFootprintRepository()->add($eventCarbonFootprint);
     }

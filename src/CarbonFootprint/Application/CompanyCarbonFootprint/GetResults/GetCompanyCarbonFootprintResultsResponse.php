@@ -22,6 +22,8 @@ final class GetCompanyCarbonFootprintResultsResponse
     public function __construct(
         public readonly Emissions $totalEmissions,
         public readonly Emissions $locationBasedElectricityEmissions,
+        public readonly Emissions $locationBasedTotalEmissions,
+        public readonly int $electricityActivitiesWithoutLocationBased,
         public readonly array $emissionsBySource,
         public readonly array $emissionsByScope,
         public readonly array $emissionsByScopeAndSource,

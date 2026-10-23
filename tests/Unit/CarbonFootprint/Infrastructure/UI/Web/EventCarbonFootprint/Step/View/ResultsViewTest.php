@@ -97,6 +97,11 @@ class ResultsViewTest extends TestCase
         return new GetResultsResponse(
             new Emissions($co2eq),
             new Emissions(),
+            new Emissions(),
+            new Emissions(),
+            new Emissions($co2eq),
+            0,
+            0,
             $bySource,
             $byPhase,
             $byPhaseAndSource,

@@ -19,9 +19,19 @@
                     <dt class="col-sm-4">{{ 'N₂O (kg)' | trans }}</dt>
                     <dd class="col-sm-8">{{ results.totalEmissions.n2o | number_format(2, ',', '.') }}</dd>
 
-                    <dt class="col-sm-4">{{ 'Electricidad por localización (kg CO₂eq)' | trans }}</dt>
+                    <dt class="col-sm-4">{{ 'Alcance 2 · método de mercado (kg CO₂eq)' | trans }}</dt>
+                    <dd class="col-sm-8">{{ results.emissionsByScope['scope_2'].co2eq | number_format(2, ',', '.') }}</dd>
+
+                    <dt class="col-sm-4">{{ 'Alcance 2 · método de localización (kg CO₂eq)' | trans }}</dt>
                     <dd class="col-sm-8">{{ results.locationBasedElectricityEmissions.co2eq | number_format(2, ',', '.') }}</dd>
+
+                    <dt class="col-sm-4">{{ 'Total · método de localización (kg CO₂eq)' | trans }}</dt>
+                    <dd class="col-sm-8">{{ results.locationBasedTotalEmissions.co2eq | number_format(2, ',', '.') }}</dd>
                 </dl>
+
+                {% if results.electricityActivitiesWithoutLocationBased > 0 %}
+                    <twig:Alert:Alert type="warning">{{ 'Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.' | trans({'{count}': results.electricityActivitiesWithoutLocationBased}) }}</twig:Alert:Alert>
+                {% endif %}
             </twig:Card>
 
             <div class="row">

@@ -69,6 +69,25 @@ class GetPropertyCarbonFootprintResultsServiceTest extends TestCase
         $this->assertSame(1250.0, (float) $response->emissionsBySource[Source::OwnVehicles->value]->co2eq());
         $this->assertSame(2500.0, (float) $response->emissionsByScopeAndSource[Scope::Scope2->value][Source::BuildingElectricity->value]->co2eq());
         $this->assertSame(2000.0, (float) $response->locationBasedElectricityEmissions->co2eq());
+        $this->assertSame(3430.0, (float) $response->locationBasedTotalEmissions->co2eq());
+        $this->assertSame(0, $response->electricityActivitiesWithoutLocationBased);
+    }
+
+    public function testCountsTheElectricityActivitiesWithoutLocationBasedResult(): void
+    {
+        $footprint = $this->registeredFootprint();
+
+        $this->givenACombustibleActivity($footprint, Scope::Scope1, Source::FixedFacilities, '180');
+        $this->givenACombustibleActivity($footprint, Scope::Scope1, Source::OwnVehicles, '1250');
+        $this->givenAnElectricityActivity($footprint, '2500', '2000');
+        $this->givenAnElectricityActivity($footprint, '400', null);
+
+        $response = ($this->sut)(new GetPropertyCarbonFootprintResultsRequest($footprint->id()), $this->ownerUser());
+
+        $this->assertSame(4330.0, (float) $response->totalEmissions->co2eq());
+        $this->assertSame(2000.0, (float) $response->locationBasedElectricityEmissions->co2eq());
+        $this->assertSame(3830.0, (float) $response->locationBasedTotalEmissions->co2eq());
+        $this->assertSame(1, $response->electricityActivitiesWithoutLocationBased);
     }
 
     public function testExposesTheExclusions(): void
@@ -123,9 +142,10 @@ class GetPropertyCarbonFootprintResultsServiceTest extends TestCase
         $footprint->addActivity($activity->id(), new ActivityPlacement($scope, $source));
     }
 
-    private function givenAnElectricityActivity(PropertyCarbonFootprint $footprint, string $co2eq, string $locationBased): void
+    private function givenAnElectricityActivity(PropertyCarbonFootprint $footprint, string $co2eq, ?string $locationBased): void
     {
         $activity = ElectricityActivityMother::registeredWithLocationBasedResult(new AccountId('account-id-test'));
+        $hasLocationBased = null !== $locationBased;
         $activity->update(
             $activity->electricityMarketerId(),
             $activity->gdOFactorId(),
@@ -133,11 +153,11 @@ class GetPropertyCarbonFootprintResultsServiceTest extends TestCase
             new Emissions($co2eq, $co2eq, '0', '0'),
             $activity->quantity(),
             null,
-            $activity->electricityMixId(),
-            ElectricityActivityMother::locationBasedEmissionFactor(),
-            new Emissions($locationBased, $locationBased, '0', '0'),
-            locationBasedWellToTankEmissionFactor: ElectricityActivityMother::locationBasedWellToTankEmissionFactor(),
-            locationBasedWellToTankEmissions: ElectricityActivityMother::locationBasedWellToTankEmissions(),
+            $hasLocationBased ? $activity->electricityMixId() : null,
+            $hasLocationBased ? ElectricityActivityMother::locationBasedEmissionFactor() : null,
+            $hasLocationBased ? new Emissions($locationBased, $locationBased, '0', '0') : null,
+            locationBasedWellToTankEmissionFactor: $hasLocationBased ? ElectricityActivityMother::locationBasedWellToTankEmissionFactor() : null,
+            locationBasedWellToTankEmissions: $hasLocationBased ? ElectricityActivityMother::locationBasedWellToTankEmissions() : null,
         );
         $this->activityRepository->save($activity);
 

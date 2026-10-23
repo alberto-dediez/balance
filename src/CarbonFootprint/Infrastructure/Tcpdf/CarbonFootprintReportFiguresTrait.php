@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Tcpdf;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -49,6 +50,10 @@ trait CarbonFootprintReportFiguresTrait
             new PdfKeyFigure($this->trans('Fuente con más emisiones', $locale), $this->translator->trans($this->maxKey($data->emissionsBySource, Source::Materials->value), [], 'source', $locale->value)),
         ];
 
+        if ($data->electricityActivities > 0) {
+            $figures[] = new PdfKeyFigure($this->trans('Electricidad · localización', $locale), $this->tonnes($data->locationBasedElectricityEmissions->co2eq()), 't CO₂eq');
+        }
+
         $compensation = $data->compensation;
 
         if (null !== $compensation && $compensation->hasCompensations()) {
@@ -69,7 +74,7 @@ trait CarbonFootprintReportFiguresTrait
                 ? new PdfKeyFigure($this->translator->trans(Scope::Scope3->value, [], 'scope', $locale->value), $this->trans('Excluido', $locale))
                 : new PdfKeyFigure($this->translator->trans(Scope::Scope3->value, [], 'scope', $locale->value), $this->tonnes(($data->emissionsByScope[Scope::Scope3->value] ?? new Emissions())->co2eq()), 't CO₂eq'),
             new PdfKeyFigure($this->trans('Fuente con más emisiones', $locale), $this->translator->trans($this->maxKey($data->emissionsBySource, Source::FixedFacilities->value), [], 'source', $locale->value)),
-            new PdfKeyFigure($this->trans('Electricidad por localización', $locale), $this->tonnes($data->locationBasedElectricityEmissions->co2eq()), 't CO₂eq'),
+            new PdfKeyFigure($this->trans('Alcance 2 · localización', $locale), $this->tonnes($data->locationBasedElectricityEmissions->co2eq()), 't CO₂eq'),
         ];
 
         if (CarbonFootprintReportSubjectType::Company === $data->subjectType) {
@@ -516,6 +521,82 @@ trait CarbonFootprintReportFiguresTrait
             array_push($row, $this->number($line->quantity), $line->factorCo2eq, $this->number($line->emissionsCo2eq), null !== $line->locationBasedEmissionsCo2eq ? $this->number($line->locationBasedEmissionsCo2eq) : '---');
 
             $rows[] = $row;
+            $marketTotal += (float) $line->emissionsCo2eq;
+            $locationTotal += (float) ($line->locationBasedEmissionsCo2eq ?? '0');
+        }
+
+        $hasTotal = [] !== $rows;
+
+        if ($hasTotal) {
+            $totalRow = array_fill(0, count($header) - 2, '');
+            $totalRow[0] = $this->trans('Total', $locale);
+            $totalRow[] = $this->number($marketTotal);
+            $totalRow[] = $this->number($locationTotal);
+            $rows[] = $totalRow;
+        }
+
+        return [$header, $rows, $widths, $hasTotal];
+    }
+
+    /** @return list<list<string>> */
+    private function organizationalDualReportingRows(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $rows = [
+            [$this->trans('Alcance 2 · método de mercado (kg CO₂eq)', $locale), $this->number(($data->emissionsByScope[Scope::Scope2->value] ?? new Emissions())->co2eq())],
+            [$this->trans('Alcance 2 · método de localización (kg CO₂eq)', $locale), $this->number($data->locationBasedElectricityEmissions->co2eq())],
+            [$this->trans('Total · método de localización (kg CO₂eq)', $locale), $this->number($data->locationBasedTotalEmissions->co2eq())],
+        ];
+
+        if ($data->electricityActivitiesWithoutLocationBased > 0) {
+            $rows[] = [$this->trans('Actividades de electricidad sin factor de mix eléctrico', $locale), (string) $data->electricityActivitiesWithoutLocationBased];
+        }
+
+        return $rows;
+    }
+
+    /** @return list<list<string>> */
+    private function eventDualReportingRows(EventCarbonFootprintReportData $data, Locale $locale): array
+    {
+        if (0 === $data->electricityActivities) {
+            return [];
+        }
+
+        $rows = [
+            [$this->trans('Electricidad · método de mercado (kg CO₂eq)', $locale), $this->number($data->marketBasedElectricityEmissions->co2eq())],
+            [$this->trans('Electricidad · método de localización (kg CO₂eq)', $locale), $this->number($data->locationBasedElectricityEmissions->co2eq())],
+            [$this->trans('Total · método de localización (kg CO₂eq)', $locale), $this->number($data->locationBasedTotalEmissions->co2eq())],
+        ];
+
+        if ($data->electricityActivitiesWithoutLocationBased > 0) {
+            $rows[] = [$this->trans('Actividades de electricidad sin factor de mix eléctrico', $locale), (string) $data->electricityActivitiesWithoutLocationBased];
+        }
+
+        return $rows;
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
+    private function eventElectricityTable(EventCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $header = [$this->trans('Actividad', $locale), $this->trans('Fase', $locale), 'kWh', $this->trans('Factor', $locale), $this->trans('Emisiones mercado kgCO2eq', $locale), $this->trans('Emisiones localización kgCO2eq', $locale)];
+        $widths = ['26%', '14%', '12%', '12%', '18%', '18%'];
+
+        $rows = [];
+        $marketTotal = 0.0;
+        $locationTotal = 0.0;
+
+        foreach ($data->activityLines as $line) {
+            if (ActivityType::Electricity !== $line->activityType) {
+                continue;
+            }
+
+            $rows[] = [
+                $line->itemName,
+                $this->translator->trans($line->phase->value, [], 'phase', $locale->value),
+                $this->number($line->quantity),
+                $line->factorCo2eq,
+                $this->number($line->emissionsCo2eq),
+                null !== $line->locationBasedEmissionsCo2eq ? $this->number($line->locationBasedEmissionsCo2eq) : '---',
+            ];
             $marketTotal += (float) $line->emissionsCo2eq;
             $locationTotal += (float) ($line->locationBasedEmissionsCo2eq ?? '0');
         }

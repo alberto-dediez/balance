@@ -58,6 +58,11 @@ class EventCarbonFootprintReportDataMother
             calculationYear: 2026,
             totalEmissions: new Emissions('10', '10', '0', '0'),
             emissionsPerAttendee: new Emissions('0.1', '0.1', '0', '0'),
+            marketBasedElectricityEmissions: new Emissions(),
+            locationBasedElectricityEmissions: new Emissions(),
+            locationBasedTotalEmissions: new Emissions('10', '10', '0', '0'),
+            electricityActivities: 0,
+            electricityActivitiesWithoutLocationBased: 0,
             emissionsBySource: $emissionsBySource,
             emissionsByPhase: $emissionsByPhase,
             emissionsByPhaseAndSource: $emissionsByPhaseAndSource,
@@ -82,6 +87,20 @@ class EventCarbonFootprintReportDataMother
 
     public static function withCompensation(): EventCarbonFootprintReportData
     {
+        return self::compensated('400', '640', '8340', 0);
+    }
+
+    public static function withElectricityWithoutLocationBasedResult(): EventCarbonFootprintReportData
+    {
+        return self::compensated(null, '240', '8240', 1);
+    }
+
+    private static function compensated(
+        ?string $secondElectricityLocationBasedCo2eq,
+        string $locationBasedElectricityCo2eq,
+        string $locationBasedTotalCo2eq,
+        int $electricityActivitiesWithoutLocationBased,
+    ): EventCarbonFootprintReportData {
         $emissionsBySource = [];
         foreach (Source::cases() as $source) {
             $emissionsBySource[$source->value] = new Emissions();
@@ -120,13 +139,18 @@ class EventCarbonFootprintReportDataMother
             calculationYear: 2026,
             totalEmissions: new Emissions('8500', '8400', '50', '50'),
             emissionsPerAttendee: new Emissions('10', '9.88', '0.06', '0.06'),
+            marketBasedElectricityEmissions: new Emissions('800', '800', '0', '0'),
+            locationBasedElectricityEmissions: new Emissions($locationBasedElectricityCo2eq, $locationBasedElectricityCo2eq, '0', '0'),
+            locationBasedTotalEmissions: new Emissions($locationBasedTotalCo2eq, $locationBasedTotalCo2eq, '50', '50'),
+            electricityActivities: 2,
+            electricityActivitiesWithoutLocationBased: $electricityActivitiesWithoutLocationBased,
             emissionsBySource: $emissionsBySource,
             emissionsByPhase: $emissionsByPhase,
             emissionsByPhaseAndSource: $emissionsByPhaseAndSource,
             activityLines: [
                 new EventCarbonFootprintReportActivityLine('Estructura de stands de madera', ActivityType::Material, Phase::Materials, Source::Materials, 1500.0, Unit::Kilogram, '0.8', Unit::Kilogram, 2026, 'MITECO', '1200'),
-                new EventCarbonFootprintReportActivityLine('Comercializadora Verde', ActivityType::Electricity, Phase::Assembly, Source::BuildingElectricity, 1200.0, Unit::KWh, '0.25', Unit::KWh, 2026, 'Comercializadora', '300'),
-                new EventCarbonFootprintReportActivityLine('Comercializadora Verde', ActivityType::Electricity, Phase::Celebration, Source::BuildingElectricity, 2000.0, Unit::KWh, '0.25', Unit::KWh, 2026, 'Comercializadora', '500'),
+                new EventCarbonFootprintReportActivityLine('Comercializadora Verde', ActivityType::Electricity, Phase::Assembly, Source::BuildingElectricity, 1200.0, Unit::KWh, '0.25', Unit::KWh, 2026, 'Comercializadora', '300', '240'),
+                new EventCarbonFootprintReportActivityLine('Comercializadora Verde', ActivityType::Electricity, Phase::Celebration, Source::BuildingElectricity, 2000.0, Unit::KWh, '0.25', Unit::KWh, 2026, 'Comercializadora', '500', $secondElectricityLocationBasedCo2eq),
                 new EventCarbonFootprintReportActivityLine('Coche particular', ActivityType::Mobility, Phase::Celebration, Source::AttendeesMobility, 26000.0, Unit::Kilometer, '0.25', Unit::Kilometer, 2026, 'MITECO', '6500'),
             ],
             exclusionLines: [

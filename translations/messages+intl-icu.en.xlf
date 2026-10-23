@@ -9861,6 +9861,50 @@
         <source>Tu viaje no genera emisiones que compensar, pero puedes hacer una aportación al proyecto.</source>
         <target>Your trip generates no emissions to offset, but you can make a contribution to the project.</target>
       </trans-unit>
+      <trans-unit id="Lm1dhdx" resname="Electricidad: método de mercado y de localización">
+        <source>Electricidad: método de mercado y de localización</source>
+        <target>Electricity: market-based and location-based methods</target>
+      </trans-unit>
+      <trans-unit id="jrsUt76" resname="Electricidad · localización">
+        <source>Electricidad · localización</source>
+        <target>Electricity · location-based</target>
+      </trans-unit>
+      <trans-unit id="FwGpMEf" resname="Alcance 2 · localización">
+        <source>Alcance 2 · localización</source>
+        <target>Scope 2 · location-based</target>
+      </trans-unit>
+      <trans-unit id="LD8hLIb" resname="Alcance 2 · método de mercado (kg CO₂eq)">
+        <source>Alcance 2 · método de mercado (kg CO₂eq)</source>
+        <target>Scope 2 · market-based method (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="b6N.4yw" resname="Alcance 2 · método de localización (kg CO₂eq)">
+        <source>Alcance 2 · método de localización (kg CO₂eq)</source>
+        <target>Scope 2 · location-based method (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="032KgjP" resname="Total · método de localización (kg CO₂eq)">
+        <source>Total · método de localización (kg CO₂eq)</source>
+        <target>Total · location-based method (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="D.MD9rD" resname="Actividades de electricidad sin factor de mix eléctrico">
+        <source>Actividades de electricidad sin factor de mix eléctrico</source>
+        <target>Electricity activities without an electricity mix factor</target>
+      </trans-unit>
+      <trans-unit id="_PirwLk" resname="Electricidad · método de mercado (kg CO₂eq)">
+        <source>Electricidad · método de mercado (kg CO₂eq)</source>
+        <target>Electricity · market-based method (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="IpwKuRS" resname="Electricidad · método de localización (kg CO₂eq)">
+        <source>Electricidad · método de localización (kg CO₂eq)</source>
+        <target>Electricity · location-based method (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="7yqwT0_" resname="Hay {count} actividades de electricidad sin factor de mix eléctrico para su país y año: no se incluyen en el método de localización y conservan su valor de mercado en el total por localización.">
+        <source>Hay {count} actividades de electricidad sin factor de mix eléctrico para su país y año: no se incluyen en el método de localización y conservan su valor de mercado en el total por localización.</source>
+        <target>There are {count} electricity activities without an electricity mix factor for their country and year: they are not included in the location-based method and keep their market-based value in the location-based total.</target>
+      </trans-unit>
+      <trans-unit id="XXqqXlj" resname="Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.">
+        <source>Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.</source>
+        <target>Electricity activities without an electricity mix factor for their country and year: {count}. They are not included in the location-based method and keep their market-based value in the location-based total.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

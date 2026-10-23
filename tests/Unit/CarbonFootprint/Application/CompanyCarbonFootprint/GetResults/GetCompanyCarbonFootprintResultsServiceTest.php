@@ -72,6 +72,8 @@ class GetCompanyCarbonFootprintResultsServiceTest extends TestCase
         $this->assertSame(1250.0, (float) $response->emissionsBySource[Source::OwnVehicles->value]->co2eq());
         $this->assertSame(2500.0, (float) $response->emissionsByScopeAndSource[Scope::Scope2->value][Source::BuildingElectricity->value]->co2eq());
         $this->assertSame(2000.0, (float) $response->locationBasedElectricityEmissions->co2eq());
+        $this->assertSame(3430.0, (float) $response->locationBasedTotalEmissions->co2eq());
+        $this->assertSame(0, $response->electricityActivitiesWithoutLocationBased);
         $this->assertArrayHasKey('', $response->emissionsByPropertyId);
         $this->assertSame(3930.0, (float) $response->emissionsByPropertyId['']->co2eq());
     }

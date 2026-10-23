@@ -40,6 +40,8 @@ final class GetCompanyCarbonFootprintResultsService
         return new GetCompanyCarbonFootprintResultsResponse(
             totalEmissions: $breakdown->total,
             locationBasedElectricityEmissions: $breakdown->locationBasedElectricity,
+            locationBasedTotalEmissions: $breakdown->locationBasedTotal,
+            electricityActivitiesWithoutLocationBased: $breakdown->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $breakdown->bySource,
             emissionsByScope: $breakdown->byStage,
             emissionsByScopeAndSource: $breakdown->byStageAndSource,

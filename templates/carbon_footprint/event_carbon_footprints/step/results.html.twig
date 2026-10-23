@@ -21,6 +21,23 @@
                         <dd class="col-sm-8">{{ results.totalEmissions.n2o | number_format(2, ',', '.') }}</dd>
                     </dl>
 
+                    {% if results.electricityActivities > 0 %}
+                        <dl class="row">
+                            <dt class="col-sm-4">{{ 'Electricidad · método de mercado (kg CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-8">{{ results.marketBasedElectricityEmissions.co2eq | number_format(2, ',', '.') }}</dd>
+
+                            <dt class="col-sm-4">{{ 'Electricidad · método de localización (kg CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-8">{{ results.locationBasedElectricityEmissions.co2eq | number_format(2, ',', '.') }}</dd>
+
+                            <dt class="col-sm-4">{{ 'Total · método de localización (kg CO₂eq)' | trans }}</dt>
+                            <dd class="col-sm-8">{{ results.locationBasedTotalEmissions.co2eq | number_format(2, ',', '.') }}</dd>
+                        </dl>
+
+                        {% if results.electricityActivitiesWithoutLocationBased > 0 %}
+                            <twig:Alert:Alert type="warning">{{ 'Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.' | trans({'{count}': results.electricityActivitiesWithoutLocationBased}) }}</twig:Alert:Alert>
+                        {% endif %}
+                    {% endif %}
+
                     {% if attendeesUsed is not empty and attendeesUsed > 0 %}
                         <dl class="row">
                             <dt class="col-sm-4">{{ 'CO₂ equivalente por asistente (kg)' | trans }}</dt>
@@ -30,9 +47,7 @@
                             <dd class="col-sm-8">{{ attendeesUsed }}</dd>
                         </dl>
                     {% else %}
-                        <div class="alert alert-warning mt-3" role="alert">
-                            {{ 'No hay asistentes reales ni estimados disponibles, por lo que no se ha podido calcular la huella por asistente.' | trans }}
-                        </div>
+                        <twig:Alert:Alert type="warning">{{ 'No hay asistentes reales ni estimados disponibles, por lo que no se ha podido calcular la huella por asistente.' | trans }}</twig:Alert:Alert>
                     {% endif %}
                 </twig:Card>
 
@@ -97,9 +112,7 @@
 
                 {% if report is not null and report.status.isGenerated and reportOutdated %}
                     <twig:Card title="{{ 'Informe de huella de carbono' | trans }}">
-                        <div class="alert alert-warning" role="alert">
-                            {{ 'Se han registrado compensaciones posteriores a la última emisión del informe. Reemítelo para incluirlas.' | trans }}
-                        </div>
+                        <twig:Alert:Alert type="warning">{{ 'Se han registrado compensaciones posteriores a la última emisión del informe. Reemítelo para incluirlas.' | trans }}</twig:Alert:Alert>
 
                         {% if eventCarbonFootprint | is_authorized('edit') %}
                             <a href="{{ path('carbon_footprint_reports_reissue', {reportId: report.id, _token: csrf_token('carbon_footprint_report')}) }}"

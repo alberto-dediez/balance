@@ -44,6 +44,7 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringContainsString('Calculation year: 2025', $text);
         $this->assertStringContainsString('- scope_1: 1430', $text);
         $this->assertStringContainsString('- scope_2: 2500', $text);
+        $this->assertStringContainsString('Location-based total emissions:', $text);
         $this->assertStringContainsString('scope_1 | refrigerant_leaks | not_applicable | Sin equipos de refrigeración', $text);
         $this->assertStringContainsString('Write all output in English', $text);
         $this->assertStringNotContainsString('Emissions by property', $text);

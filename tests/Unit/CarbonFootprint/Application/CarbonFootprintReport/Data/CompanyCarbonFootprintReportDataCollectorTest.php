@@ -86,6 +86,8 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertNull($data->companyName);
         $this->assertSame('3930', $data->totalEmissions()->co2eq());
         $this->assertSame('2000', $data->locationBasedElectricityEmissions->co2eq());
+        $this->assertSame('3430', $data->locationBasedTotalEmissions->co2eq());
+        $this->assertSame(1, $data->electricityActivitiesWithoutLocationBased);
 
         $this->assertSame(['P1', 'P2', 'Sin asignar a propiedad'], array_column($data->emissionsByProperty, 'name'));
         $this->assertSame([(string) $propertyOne->id(), (string) $propertyTwo->id(), null], array_column($data->emissionsByProperty, 'propertyId'));

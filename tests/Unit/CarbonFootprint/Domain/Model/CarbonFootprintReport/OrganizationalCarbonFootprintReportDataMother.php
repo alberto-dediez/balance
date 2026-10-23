@@ -33,6 +33,11 @@ class OrganizationalCarbonFootprintReportDataMother
         return self::build(CarbonFootprintReportSubjectType::Property, 'Hotel Sol', 'Hotelera del Sur', 'España', null);
     }
 
+    public static function withElectricityWithoutLocationBasedResult(): OrganizationalCarbonFootprintReportData
+    {
+        return self::build(CarbonFootprintReportSubjectType::Property, 'Hotel Sol', 'Hotelera del Sur', 'España', null, electricityActivitiesWithoutLocationBased: 1);
+    }
+
     public static function forCompanyWithTwoProperties(): OrganizationalCarbonFootprintReportData
     {
         return self::build(CarbonFootprintReportSubjectType::Company, 'Hotelera del Sur', null, null, [
@@ -79,6 +84,8 @@ class OrganizationalCarbonFootprintReportDataMother
             calculationYear: $data->calculationYear,
             totalEmissions: $data->totalEmissions->add($franchise)->add($leasedOut),
             locationBasedElectricityEmissions: $data->locationBasedElectricityEmissions,
+            locationBasedTotalEmissions: $data->locationBasedTotalEmissions->add($franchise)->add($leasedOut),
+            electricityActivitiesWithoutLocationBased: $data->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $emissionsBySource,
             emissionsByScope: $emissionsByScope,
             emissionsByScopeAndSource: $emissionsByScopeAndSource,
@@ -122,6 +129,8 @@ class OrganizationalCarbonFootprintReportDataMother
             calculationYear: $data->calculationYear,
             totalEmissions: $data->totalEmissions,
             locationBasedElectricityEmissions: $data->locationBasedElectricityEmissions,
+            locationBasedTotalEmissions: $data->locationBasedTotalEmissions,
+            electricityActivitiesWithoutLocationBased: $data->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $data->emissionsBySource,
             emissionsByScope: $data->emissionsByScope,
             emissionsByScopeAndSource: $emissionsByScopeAndSource,
@@ -192,6 +201,7 @@ class OrganizationalCarbonFootprintReportDataMother
         ?OrganizationalCarbonFootprintReportMitigationPlan $mitigationPlan = null,
         bool $scope3 = false,
         bool $scope3Excluded = false,
+        int $electricityActivitiesWithoutLocationBased = 0,
     ): OrganizationalCarbonFootprintReportData {
         $emissionsBySource = [];
         foreach (Source::cases() as $source) {
@@ -230,6 +240,7 @@ class OrganizationalCarbonFootprintReportDataMother
         ];
         $derivedLines = [];
         $totalEmissions = new Emissions('3930', '3930', '0', '0');
+        $locationBasedTotalEmissions = new Emissions('3430', '3430', '0', '0');
 
         if ($scope3) {
             $emissionsBySource[Source::PurchasedGoodsAndServices->value] = new Emissions('4000', '4000', '0', '0');
@@ -246,6 +257,7 @@ class OrganizationalCarbonFootprintReportDataMother
                 new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity), ActivityType::Electricity, new Emissions('380', '380', '0', '0'), ActivityId::generate()),
             ];
             $totalEmissions = new Emissions('9420', '9420', '0', '0');
+            $locationBasedTotalEmissions = new Emissions('8920', '8920', '0', '0');
         }
 
         if ($scope3Excluded) {
@@ -261,6 +273,8 @@ class OrganizationalCarbonFootprintReportDataMother
             calculationYear: 2025,
             totalEmissions: $totalEmissions,
             locationBasedElectricityEmissions: new Emissions('2000', '2000', '0', '0'),
+            locationBasedTotalEmissions: $locationBasedTotalEmissions,
+            electricityActivitiesWithoutLocationBased: $electricityActivitiesWithoutLocationBased,
             emissionsBySource: $emissionsBySource,
             emissionsByScope: $emissionsByScope,
             emissionsByScopeAndSource: $emissionsByScopeAndSource,

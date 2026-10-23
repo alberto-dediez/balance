@@ -91,6 +91,8 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
             calculationYear: $companyCarbonFootprint->calculationYear(),
             totalEmissions: $companyCarbonFootprint->totalEmissions(),
             locationBasedElectricityEmissions: $breakdown->locationBasedElectricity,
+            locationBasedTotalEmissions: $breakdown->locationBasedTotal,
+            electricityActivitiesWithoutLocationBased: $breakdown->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $breakdown->bySource,
             emissionsByScope: $breakdown->byStage,
             emissionsByScopeAndSource: $breakdown->byStageAndSource,

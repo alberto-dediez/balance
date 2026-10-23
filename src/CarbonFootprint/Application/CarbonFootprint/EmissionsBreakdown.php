@@ -21,5 +21,9 @@ final class EmissionsBreakdown
         public readonly array $byStageAndSource,
         public readonly array $byPropertyId,
         public readonly Emissions $locationBasedElectricity,
+        public readonly Emissions $marketBasedElectricity,
+        public readonly Emissions $locationBasedTotal,
+        public readonly int $electricityActivities,
+        public readonly int $electricityActivitiesWithoutLocationBased,
     ) {}
 }

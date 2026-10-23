@@ -572,7 +572,16 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
     {
         $totalsRows = $this->emissionsRows($data->totalEmissions);
         $totalsRows[] = [$this->trans('CO₂eq por asistente (kg)', $locale), $this->number($data->emissionsPerAttendee->co2eq())];
+        array_push($totalsRows, ...$this->eventDualReportingRows($data, $locale));
         $this->renderDataPage($pdf, $this->trans('Resultados', $locale), 'cars.jpg', $this->buildClassicTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), $this->trans('Resultados', $locale), count($totalsRows), $locale);
+
+        [$header, $rows, $widths, $hasTotal] = $this->eventElectricityTable($data, $locale);
+
+        if ([] !== $rows) {
+            $title = $this->trans('Electricidad: método de mercado y de localización', $locale);
+            $groupHeaderCells = [['', 2], [$this->trans('Factores', $locale), 2], [$this->trans('Emisiones', $locale), 2]];
+            $this->renderDataPage($pdf, $title, 'electricity.jpg', $this->buildClassicTableHtml($header, $rows, $widths, $groupHeaderCells, $hasTotal), $title, count($rows), $locale, isSourceData: true);
+        }
 
         $sourceRows = $this->sourceRows($data->emissionsBySource, Phase::cases(), $locale);
         $this->renderDataPage($pdf, $this->trans('Emisiones por fuente', $locale), 'cars.jpg', $this->buildClassicTableHtml([$this->trans('Fuente', $locale), 'CO₂eq (kg)'], $sourceRows), $this->trans('Emisiones por fuente', $locale), count($sourceRows), $locale);
@@ -587,7 +596,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
     private function renderOrganizationalResultsPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
     {
         $totalsRows = $this->emissionsRows($data->totalEmissions);
-        $totalsRows[] = [$this->trans('Electricidad por localización (kg CO₂eq)', $locale), $this->number($data->locationBasedElectricityEmissions->co2eq())];
+        array_push($totalsRows, ...$this->organizationalDualReportingRows($data, $locale));
         $this->renderDataPage($pdf, $this->trans('Resultados', $locale), null, $this->buildClassicTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), $this->trans('Resultados', $locale), count($totalsRows), $locale);
 
         $scopeRows = $this->scopeRows($data, $locale);

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
+use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\MaterialCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\EventCarbonFootprintReportDataCollector;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\EventCompensationCollector;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -30,14 +32,17 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MaterialActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Material\MaterialRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
@@ -85,6 +90,25 @@ class EventCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertSame('no invoices', $data->exclusionLines[0]->comment);
     }
 
+    public function testCollectsTheDualElectricityFiguresAndTheLocationBasedLine(): void
+    {
+        [$sut, $eventCarbonFootprint] = $this->createSUT(withElectricity: true);
+
+        $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Event, (string) $eventCarbonFootprint->id()));
+
+        $this->assertInstanceOf(EventCarbonFootprintReportData::class, $data);
+        $this->assertSame('15', $data->marketBasedElectricityEmissions->co2eq());
+        $this->assertSame('180', $data->locationBasedElectricityEmissions->co2eq());
+        $this->assertSame(1, $data->electricityActivities);
+        $this->assertSame(0, $data->electricityActivitiesWithoutLocationBased);
+        $this->assertSame('195', $data->locationBasedTotalEmissions->co2eq());
+
+        $this->assertCount(2, $data->activityLines);
+        foreach ($data->activityLines as $line) {
+            $this->assertSame(ActivityType::Electricity === $line->activityType ? '180.0' : null, $line->locationBasedEmissionsCo2eq);
+        }
+    }
+
     public function testThrowsWhenTheFootprintDoesNotExist(): void
     {
         [$sut] = $this->createSUT();
@@ -95,7 +119,7 @@ class EventCarbonFootprintReportDataCollectorTest extends TestCase
     }
 
     /** @return array{0: EventCarbonFootprintReportDataCollector, 1: EventCarbonFootprint} */
-    private function createSUT(bool $withExclusion = false): array
+    private function createSUT(bool $withExclusion = false, bool $withElectricity = false): array
     {
         $eventCarbonFootprintRepository = EventCarbonFootprintRepositoryMother::inMemory();
         $eventRepository = EventRepositoryMother::inMemory();
@@ -125,6 +149,12 @@ class EventCarbonFootprintReportDataCollectorTest extends TestCase
         );
         $eventCarbonFootprint->addActivity($activity->id(), new ActivityPlacement(Phase::Materials, Source::Materials));
 
+        if ($withElectricity) {
+            $electricity = ElectricityActivityMother::registeredWithLocationBasedResult(new AccountId('account-id'));
+            $activityRepository->save($electricity);
+            $eventCarbonFootprint->addActivity($electricity->id(), new ActivityPlacement(Phase::Assembly, Source::BuildingElectricity));
+        }
+
         if ($withExclusion) {
             $eventCarbonFootprint->excludeSource(Phase::Assembly, Source::WasteManagement, ExclusionReason::NoDataAvailable, 'no invoices');
         }
@@ -139,7 +169,10 @@ class EventCarbonFootprintReportDataCollectorTest extends TestCase
             $activityRepository,
             new EmissionsBreakdownBuilder($activityRepository, new DerivedSourceEmissionsCalculator($activityRepository)),
             new ActivityItemNameResolver(
-                new ActivityCatalogProviderRegistry([new MaterialCatalogProvider($materialRepository)]),
+                new ActivityCatalogProviderRegistry([
+                    new MaterialCatalogProvider($materialRepository),
+                    new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
+                ]),
                 new FakeTranslator(),
             ),
             new EventCompensationCollector(

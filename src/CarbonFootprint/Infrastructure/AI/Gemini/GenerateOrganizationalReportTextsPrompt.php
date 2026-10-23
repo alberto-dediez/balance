@@ -34,6 +34,8 @@ final class GenerateOrganizationalReportTextsPrompt implements GeminiPrompt
             '',
             sprintf('Total emissions: %s kg CO2eq, %s kg CO2, %s kg CH4, %s kg N2O', $this->data->totalEmissions->co2eq(), $this->data->totalEmissions->co2(), $this->data->totalEmissions->ch4(), $this->data->totalEmissions->n2o()),
             sprintf('Location-based electricity emissions: %s kg CO2eq', $this->data->locationBasedElectricityEmissions->co2eq()),
+            sprintf('Location-based total emissions: %s kg CO2eq', $this->data->locationBasedTotalEmissions->co2eq()),
+            sprintf('Electricity activities without location-based factor: %d', $this->data->electricityActivitiesWithoutLocationBased),
             '',
             'Emissions by scope (kg CO2eq):',
         ];

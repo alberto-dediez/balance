@@ -54,6 +54,13 @@ class GenerateReportTextsPromptTest extends TestCase
         $this->assertStringContainsString($data->eventName, $prompt->text());
     }
 
+    public function testTextIncludesTheLocationBasedFigures(): void
+    {
+        $prompt = new GenerateEventReportTextsPrompt(EventCarbonFootprintReportDataMother::withCompensation(), Locale::Spanish);
+
+        $this->assertStringContainsString('Location-based total emissions: 8340 kg CO2eq', $prompt->text());
+    }
+
     public function testTextIncludesTheExclusionsBlockWhenThereAreExclusionLines(): void
     {
         $data = EventCarbonFootprintReportDataMother::random([

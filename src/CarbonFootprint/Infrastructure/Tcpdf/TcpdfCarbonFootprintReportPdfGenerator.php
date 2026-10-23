@@ -155,6 +155,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
 
         $totalsRows = $this->emissionsRows($data->totalEmissions);
         $totalsRows[] = [$this->trans('CO₂eq por asistente (kg)', $locale), $this->number($data->emissionsPerAttendee->co2eq())];
+        array_push($totalsRows, ...$this->eventDualReportingRows($data, $locale));
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), true, false, true, false, '');
 
         $pdf->Ln(4);
@@ -168,6 +169,15 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $pdf->AddPage();
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Fase', $locale), $this->trans('Fuente', $locale), 'CO₂eq (kg)'], $this->phaseSourceRows($data, $locale)), true, false, true, false, '');
         $this->embedChart($pdf, $charts->get('byPhaseAndSource'));
+
+        [$header, $rows, $widths] = $this->eventElectricityTable($data, $locale);
+
+        if ([] !== $rows) {
+            $pdf->AddPage();
+            $this->renderSectionTitle($pdf, $this->trans('Electricidad: método de mercado y de localización', $locale));
+            $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->buildTableHtml($header, $rows, $widths), true, false, true, false, '');
+        }
     }
 
     private function renderOrganizationalResultsSection(\TCPDF $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportCharts $charts, Locale $locale): void
@@ -177,7 +187,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
         $totalsRows = $this->emissionsRows($data->totalEmissions);
-        $totalsRows[] = [$this->trans('Electricidad por localización (kg CO₂eq)', $locale), $this->number($data->locationBasedElectricityEmissions->co2eq())];
+        array_push($totalsRows, ...$this->organizationalDualReportingRows($data, $locale));
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), true, false, true, false, '');
 
         $pdf->Ln(4);

@@ -95,6 +95,8 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertSame(2025, $data->calculationYear());
         $this->assertSame('3930', $data->totalEmissions()->co2eq());
         $this->assertSame('2000', $data->locationBasedElectricityEmissions->co2eq());
+        $this->assertSame('3430', $data->locationBasedTotalEmissions->co2eq());
+        $this->assertSame(0, $data->electricityActivitiesWithoutLocationBased);
         $this->assertSame('1430', $data->emissionsByScope[Scope::Scope1->value]->co2eq());
         $this->assertSame('2500', $data->emissionsByScope[Scope::Scope2->value]->co2eq());
         $this->assertSame('180', $data->emissionsBySource[Source::FixedFacilities->value]->co2eq());

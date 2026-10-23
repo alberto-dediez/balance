@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator;
@@ -32,6 +33,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         foreach (['default', 'classic'] as $theme) {
             yield $theme . ' event es' => [$theme, 'event', Locale::Spanish];
             yield $theme . ' event en' => [$theme, 'event', Locale::English];
+            yield $theme . ' event electricity without mix es' => [$theme, 'event-electricity-without-mix', Locale::Spanish];
             yield $theme . ' property es' => [$theme, 'property', Locale::Spanish];
             yield $theme . ' company es' => [$theme, 'company', Locale::Spanish];
             yield $theme . ' property mitigation es' => [$theme, 'property-mitigation', Locale::Spanish];
@@ -127,6 +129,81 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $this->assertCount(count($rows) + 2, $companyRows);
     }
 
+    /** @dataProvider themes */
+    public function testTheEventElectricityTableListsOneRowPerElectricityActivityPlusTheTotal(string $theme): void
+    {
+        $withCompensation = $this->eventElectricityTableRows($theme, EventCarbonFootprintReportDataMother::withCompensation());
+
+        $this->assertCount(3, $withCompensation);
+        $this->assertSame('400,00', $withCompensation[1][5]);
+        $this->assertCount(0, $this->eventElectricityTableRows($theme, EventCarbonFootprintReportDataMother::random()));
+
+        $withoutMix = $this->eventElectricityTableRows($theme, EventCarbonFootprintReportDataMother::withElectricityWithoutLocationBasedResult());
+
+        $this->assertSame('---', $withoutMix[1][5]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheEventTotalsIncludeTheDualReportingRowsOnlyWithElectricity(string $theme): void
+    {
+        $this->assertSame([], $this->eventDualReportingRows($theme, EventCarbonFootprintReportDataMother::random()));
+        $this->assertCount(3, $this->eventDualReportingRows($theme, EventCarbonFootprintReportDataMother::withCompensation()));
+
+        $withoutMix = $this->eventDualReportingRows($theme, EventCarbonFootprintReportDataMother::withElectricityWithoutLocationBasedResult());
+
+        $this->assertCount(4, $withoutMix);
+        $this->assertSame(['Actividades de electricidad sin factor de mix eléctrico', '1'], $withoutMix[3]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheOrganizationalTotalsIncludeTheDualReportingRows(string $theme): void
+    {
+        $rows = $this->organizationalDualReportingRows($theme, OrganizationalCarbonFootprintReportDataMother::forProperty());
+
+        $this->assertCount(3, $rows);
+        $this->assertSame('2.500,00', $rows[0][1]);
+        $this->assertSame('2.000,00', $rows[1][1]);
+        $this->assertSame('3.430,00', $rows[2][1]);
+
+        $withoutMix = $this->organizationalDualReportingRows($theme, OrganizationalCarbonFootprintReportDataMother::withElectricityWithoutLocationBasedResult());
+
+        $this->assertCount(4, $withoutMix);
+        $this->assertSame(['Actividades de electricidad sin factor de mix eléctrico', '1'], $withoutMix[3]);
+    }
+
+    /** @return list<list<string>> */
+    private function organizationalDualReportingRows(string $theme, OrganizationalCarbonFootprintReportData $data): array
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<list<string>> $rows */
+        $rows = (new \ReflectionMethod($generator, 'organizationalDualReportingRows'))->invoke($generator, $data, Locale::Spanish);
+
+        return $rows;
+    }
+
+    /** @return list<list<string>> */
+    private function eventElectricityTableRows(string $theme, EventCarbonFootprintReportData $data): array
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} $table */
+        $table = (new \ReflectionMethod($generator, 'eventElectricityTable'))->invoke($generator, $data, Locale::Spanish);
+
+        return $table[1];
+    }
+
+    /** @return list<list<string>> */
+    private function eventDualReportingRows(string $theme, EventCarbonFootprintReportData $data): array
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<list<string>> $rows */
+        $rows = (new \ReflectionMethod($generator, 'eventDualReportingRows'))->invoke($generator, $data, Locale::Spanish);
+
+        return $rows;
+    }
+
     /** @return list<Source> */
     private function scope3PageSources(string $theme, OrganizationalCarbonFootprintReportData $data): array
     {
@@ -146,6 +223,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
     {
         return match ($type) {
             'event' => [EventCarbonFootprintReportDataMother::withCompensation(), CarbonFootprintReportTextsMother::forEvent()],
+            'event-electricity-without-mix' => [EventCarbonFootprintReportDataMother::withElectricityWithoutLocationBasedResult(), CarbonFootprintReportTextsMother::forEvent()],
             'property' => [OrganizationalCarbonFootprintReportDataMother::forProperty(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             'company-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(CarbonFootprintReportSubjectType::Company), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],

@@ -30,6 +30,8 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         public readonly int $calculationYear,
         public readonly Emissions $totalEmissions,
         public readonly Emissions $locationBasedElectricityEmissions,
+        public readonly Emissions $locationBasedTotalEmissions,
+        public readonly int $electricityActivitiesWithoutLocationBased,
         public readonly array $emissionsBySource,
         public readonly array $emissionsByScope,
         public readonly array $emissionsByScopeAndSource,
