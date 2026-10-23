@@ -9,6 +9,7 @@ use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
 use App\Shared\Application\CommandBus\CommandSchedule;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\ScheduledCommand;
+use App\Shared\Application\CommandBus\TimedCommand;
 use PHPUnit\Framework\TestCase;
 
 class CommandScheduleTest extends TestCase
@@ -43,5 +44,15 @@ class CommandScheduleTest extends TestCase
 
         $this->assertInstanceOf(DeferredCommand::class, $command);
         $this->assertInstanceOf(SyncMediaStorageRequest::class, $command->command());
+    }
+
+    public function testEveryScheduledCommandReceivesTheExecutionTime(): void
+    {
+        foreach ((new CommandSchedule())->commands() as $scheduled) {
+            $command = $scheduled->command();
+
+            $this->assertInstanceOf(DeferredCommand::class, $command);
+            $this->assertInstanceOf(TimedCommand::class, $command->command(), $scheduled->id());
+        }
     }
 }

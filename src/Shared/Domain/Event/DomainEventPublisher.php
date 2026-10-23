@@ -78,10 +78,8 @@ final class DomainEventPublisher
     {
         $this->isLock = false;
 
-        foreach ($this->queue as $i => $event) {
+        while (null !== ($event = array_shift($this->queue))) {
             $this->publish($event);
-
-            unset($this->queue[$i]);
         }
     }
 }

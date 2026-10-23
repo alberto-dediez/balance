@@ -13,11 +13,8 @@ use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignature
 /**
  * Hardcoded registry of commands that must be dispatched periodically.
  *
- * Add one {@see ScheduledCommand} per recurring task. The interval is
- * expressed in minutes and must be a multiple of
- * {@see ScheduledCommand::TICK_IN_MINUTES}. Wrap the inner command in a
- * {@see DeferredCommand} when it should run asynchronously through the
- * message bus instead of inline.
+ * Add one {@see ScheduledCommand} per recurring task through its named
+ * constructors, which defer the inner command to the message bus.
  */
 class CommandSchedule
 {

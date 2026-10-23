@@ -151,6 +151,17 @@ class SyncMediaStorageServiceTest extends TestCase
         $this->assertTrue($this->createSUT()->isHandled(new SyncMediaStorageRequest(new \DateTimeImmutable('NOW'))));
     }
 
+    public function testRequestTakesTheExecutionTimeKeepingTheBatchSize(): void
+    {
+        $request = new SyncMediaStorageRequest(new \DateTimeImmutable('2026-10-09 07:00'), batchSize: 5);
+
+        $executed = $request->withNow(new \DateTimeImmutable('2026-10-10 07:00'));
+
+        $this->assertEquals(new \DateTimeImmutable('2026-10-10 07:00'), $executed->now);
+        $this->assertSame(5, $executed->batchSize);
+        $this->assertEquals(new \DateTimeImmutable('2026-10-09 07:00'), $request->now);
+    }
+
     private function createSUT(): SyncMediaStorageService
     {
         return new SyncMediaStorageService($this->tasks, $this->primary, $this->fallback, new MediaStorageFileCopier());
