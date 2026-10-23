@@ -14,12 +14,14 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryT
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationRepository;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
@@ -37,6 +39,8 @@ class PropertyTripCalculationsExportationTypeTest extends TestCase
 
     private InMemoryProjectRepository $projectRepository;
 
+    private InMemoryPropertyRepository $propertyRepository;
+
     private RequestStack $requestStack;
 
     private PropertyTripCalculationsExportationType $sut;
@@ -47,17 +51,10 @@ class PropertyTripCalculationsExportationTypeTest extends TestCase
         $this->tripCalculationLinkRepository = new InMemoryTripCalculationLinkRepository();
         $this->projectContributionRepository = new InMemoryProjectContributionRepository();
         $this->projectRepository = new InMemoryProjectRepository();
+        $this->propertyRepository = new InMemoryPropertyRepository();
         $this->requestStack = new RequestStack();
 
-        $this->sut = new PropertyTripCalculationsExportationType(
-            $this->tripCalculationRepository,
-            $this->tripCalculationLinkRepository,
-            new OriginCompensationsCalculator($this->projectContributionRepository, $this->projectRepository),
-            new PropertyAuthorizer(new StubCurrentAccountIdProvider(new AccountId('account-id'))),
-            new FakeTranslator(),
-            new StubCurrentAccountIdProvider(new AccountId('account-id')),
-            $this->requestStack,
-        );
+        $this->sut = $this->sutWithCurrentAccount(new AccountId('account-id'));
     }
 
     public function testCreatesAnEmptyFilterWithoutRequest(): void
@@ -261,5 +258,95 @@ class PropertyTripCalculationsExportationTypeTest extends TestCase
         ));
 
         self::assertFalse($this->sut->isAuthorized(UserMother::registeredUser()));
+    }
+
+    public function testAuthorizesTheOwnerToExportAPropertyOfTheCurrentAccount(): void
+    {
+        $propertyId = PropertyId::generate();
+        $this->propertyRepository->add(PropertyMother::from($propertyId, accountId: new AccountId('account-id')));
+
+        self::assertTrue($this->sut->isAuthorizedForFilter(
+            new PropertyTripCalculationsExportFilter(propertyId: $propertyId),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')),
+        ));
+    }
+
+    public function testDoesNotAuthorizeTheOwnerToExportAPropertyOfAnotherAccount(): void
+    {
+        $propertyId = PropertyId::generate();
+        $this->propertyRepository->add(PropertyMother::from($propertyId, accountId: new AccountId('other-account')));
+
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new PropertyTripCalculationsExportFilter(propertyId: $propertyId),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')),
+        ));
+    }
+
+    public function testAuthorizesAnImpersonatedAccountProperty(): void
+    {
+        $sut = $this->sutWithCurrentAccount(new AccountId('impersonated'));
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+
+        $impersonatedPropertyId = PropertyId::generate();
+        $this->propertyRepository->add(PropertyMother::from($impersonatedPropertyId, accountId: new AccountId('impersonated')));
+
+        $ownPropertyId = PropertyId::generate();
+        $this->propertyRepository->add(PropertyMother::from($ownPropertyId, accountId: new AccountId('account-id')));
+
+        self::assertTrue($sut->isAuthorizedForFilter(
+            new PropertyTripCalculationsExportFilter(propertyId: $impersonatedPropertyId),
+            $owner,
+        ));
+
+        self::assertFalse($sut->isAuthorizedForFilter(
+            new PropertyTripCalculationsExportFilter(propertyId: $ownPropertyId),
+            $owner,
+        ));
+    }
+
+    public function testAuthorizesAdminsToExportAnyProperty(): void
+    {
+        $propertyId = PropertyId::generate();
+        $this->propertyRepository->add(PropertyMother::from($propertyId, accountId: new AccountId('other-account')));
+
+        self::assertTrue($this->sut->isAuthorizedForFilter(
+            new PropertyTripCalculationsExportFilter(propertyId: $propertyId),
+            UserMother::adminUser(),
+        ));
+    }
+
+    public function testDoesNotAuthorizeAFilterWithoutProperty(): void
+    {
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new PropertyTripCalculationsExportFilter(),
+            UserMother::adminUser(),
+        ));
+    }
+
+    public function testDoesNotAuthorizeAnUnknownProperty(): void
+    {
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new PropertyTripCalculationsExportFilter(propertyId: PropertyId::generate()),
+            UserMother::adminUser(),
+        ));
+    }
+
+    public function testDoesNotAuthorizeAnotherFilterClass(): void
+    {
+        self::assertFalse($this->sut->isAuthorizedForFilter(new \stdClass(), UserMother::adminUser()));
+    }
+
+    private function sutWithCurrentAccount(AccountId $currentAccountId): PropertyTripCalculationsExportationType
+    {
+        return new PropertyTripCalculationsExportationType(
+            $this->tripCalculationRepository,
+            $this->tripCalculationLinkRepository,
+            new OriginCompensationsCalculator($this->projectContributionRepository, $this->projectRepository),
+            new PropertyAuthorizer(new StubCurrentAccountIdProvider($currentAccountId)),
+            $this->propertyRepository,
+            new FakeTranslator(),
+            new StubCurrentAccountIdProvider($currentAccountId),
+            $this->requestStack,
+        );
     }
 }

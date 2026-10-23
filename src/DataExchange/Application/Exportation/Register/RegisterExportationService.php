@@ -10,6 +10,7 @@ use App\DataExchange\Domain\Model\Exportation\ExportationId;
 use App\DataExchange\Domain\Model\Exportation\ExportationRepository;
 use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportationTypeFactory;
+use App\DataExchange\Domain\Model\Exportation\FilterAuthorizedExportationType;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
@@ -40,6 +41,11 @@ class RegisterExportationService implements CommandHandler
 
         if (false === $exportationType->isAuthorized($user)) {
             throw new \RuntimeException('Export type not allowed');
+        }
+
+        if ($exportationType instanceof FilterAuthorizedExportationType
+            && false === $exportationType->isAuthorizedForFilter($request->filter, $user)) {
+            throw new \RuntimeException('Export filter not allowed');
         }
 
         $exportation = new Exportation(id: ExportationId::generate());

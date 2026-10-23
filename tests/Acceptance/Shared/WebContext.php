@@ -352,6 +352,16 @@ final class WebContext implements Context
         Assert::assertGreaterThan(0, $field->count(), sprintf('Form field "%s" not found in the page', $name));
     }
 
+    #[Then('I do not see a form field :name')]
+    public function iDoNotSeeAFormField(string $name): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $field = $crawler->filter(sprintf('[name*="%s"]', $name));
+
+        Assert::assertSame(0, $field->count(), sprintf('Form field "%s" found in the page', $name));
+    }
+
     #[Then('I see a form field :name with value :value')]
     public function iSeeAFormFieldWithValue(string $name, string $value): void
     {
@@ -366,6 +376,18 @@ final class WebContext implements Context
             : $field->attr('value') === $value;
 
         Assert::assertTrue($hasValue, sprintf('Form field "%s" does not have value "%s"', $name, $value));
+    }
+
+    #[Then('I see an option :value in form field :name')]
+    public function iSeeAnOptionInFormField(string $value, string $name): void
+    {
+        Assert::assertGreaterThan(0, $this->countOptionsWithValueOrText($name, $value), sprintf('Option "%s" not found in form field "%s"', $value, $name));
+    }
+
+    #[Then('I do not see an option :value in form field :name')]
+    public function iDoNotSeeAnOptionInFormField(string $value, string $name): void
+    {
+        Assert::assertSame(0, $this->countOptionsWithValueOrText($name, $value), sprintf('Option "%s" found in form field "%s"', $value, $name));
     }
 
     #[Then('I see an option :value in form field :name with attribute :attribute :attributeValue')]
@@ -529,5 +551,13 @@ final class WebContext implements Context
         Assert::assertNotFalse($response);
 
         Assert::assertSame($count, substr_count($response, $text));
+    }
+
+    private function countOptionsWithValueOrText(string $name, string $value): int
+    {
+        return $this->client->getCrawler()
+            ->filter(sprintf('[name*="%s"] option', $name))
+            ->reduce(fn(Crawler $option): bool => $option->attr('value') === $value || trim($option->text()) === $value)
+            ->count();
     }
 }

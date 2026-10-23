@@ -18,6 +18,7 @@ use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\DataExchange\Application\Exportation\FakeExportationType;
+use App\Tests\Unit\DataExchange\Application\Exportation\FakeFilterAuthorizedExportationType;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -95,6 +96,67 @@ class RegisterExportationServiceTest extends TestCase
         );
     }
 
+    public function testRejectsAFilterTheUserCannotExport(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Export filter not allowed');
+
+        $sut = new RegisterExportationService(
+            new InMemoryExportationRepository(),
+            new ExportationTypeFactory([new FakeFilterAuthorizedExportationType(authorizedForFilter: false)]),
+            7,
+        );
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, AccountId::generate());
+
+        $sut($this->request($user->accountId()), $user);
+    }
+
+    public function testDoesNotPersistNorDispatchWhenTheFilterIsRejected(): void
+    {
+        $repository = new InMemoryExportationRepository();
+
+        $sut = new RegisterExportationService(
+            $repository,
+            new ExportationTypeFactory([new FakeFilterAuthorizedExportationType(authorizedForFilter: false)]),
+            7,
+        );
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, AccountId::generate());
+
+        try {
+            $sut($this->request($user->accountId()), $user);
+            self::fail('Expected the filter to be rejected');
+        } catch (\RuntimeException $exception) {
+            self::assertSame('Export filter not allowed', $exception->getMessage());
+        }
+
+        self::assertSame([], $repository->findExpired(new \DateTimeImmutable('+100 years')));
+        self::assertSame([], $this->spySubscriber->events());
+        self::assertSame([], $this->spyCommandBus->commands());
+    }
+
+    public function testRegistersWhenTheFilterIsAuthorized(): void
+    {
+        $repository = new InMemoryExportationRepository();
+
+        $sut = new RegisterExportationService(
+            $repository,
+            new ExportationTypeFactory([new FakeFilterAuthorizedExportationType(authorizedForFilter: true)]),
+            7,
+        );
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, AccountId::generate());
+
+        $response = $sut($this->request($user->accountId()), $user);
+
+        self::assertNotNull($repository->find($response->exportationId));
+
+        $commands = $this->spyCommandBus->commands();
+        self::assertCount(1, $commands);
+        self::assertInstanceOf(DeferredCommand::class, $commands[0]['command']);
+    }
+
     public function testIsHandled(): void
     {
         $sut = new RegisterExportationService(
@@ -109,5 +171,16 @@ class RegisterExportationServiceTest extends TestCase
             columns: ['username'],
             filter: new \stdClass(),
         )));
+    }
+
+    private function request(?AccountId $accountId): RegisterExportationRequest
+    {
+        return new RegisterExportationRequest(
+            type: 'users',
+            format: ExportationFormat::Xlsx,
+            columns: ['username'],
+            filter: new \stdClass(),
+            accountId: $accountId,
+        );
     }
 }

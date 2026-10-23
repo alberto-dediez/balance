@@ -10,6 +10,7 @@ use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportationTypeFactory;
 use App\DataExchange\Domain\Model\Exportation\ExportStorage;
 use App\DataExchange\Domain\Model\Exportation\ExportWriter;
+use App\DataExchange\Domain\Model\Exportation\FilterAuthorizedExportationType;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -51,7 +52,7 @@ class ExecuteExportationService implements CommandHandler
         $temporaryPath = (string) tempnam(sys_get_temp_dir(), 'export_');
 
         try {
-            $this->generate($exportation, $exportationType, $temporaryPath);
+            $this->generate($exportation, $exportationType, $temporaryPath, $user);
 
             $storedFile = $this->exportStorage->store(
                 $exportation->id(),
@@ -81,11 +82,16 @@ class ExecuteExportationService implements CommandHandler
         );
     }
 
-    private function generate(Exportation $exportation, ExportationType $exportationType, string $temporaryPath): void
+    private function generate(Exportation $exportation, ExportationType $exportationType, string $temporaryPath, User $user): void
     {
         $columns = $this->orderedColumns($exportation, $exportationType);
 
         $filter = $exportationType->hydrateFilter($exportation->filterCriteria());
+
+        if ($exportationType instanceof FilterAuthorizedExportationType
+            && false === $exportationType->isAuthorizedForFilter($filter, $user)) {
+            throw new \RuntimeException('Export filter not allowed');
+        }
 
         $name = $exportationType->name();
 

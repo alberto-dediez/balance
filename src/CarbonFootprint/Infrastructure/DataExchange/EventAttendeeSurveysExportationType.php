@@ -12,11 +12,12 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepository;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\AdminEventAttendeeSurveysExportType;
-use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportColumnDefinition;
+use App\DataExchange\Domain\Model\Exportation\FilterAuthorizedExportationType;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
+use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
@@ -24,13 +25,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class EventAttendeeSurveysExportationType implements ExportationType
+class EventAttendeeSurveysExportationType implements FilterAuthorizedExportationType
 {
     public function __construct(
         private readonly AttendeeSurveyResponseRepository $attendeeSurveyResponseRepository,
         private readonly AttendeeSurveyRepository $attendeeSurveyRepository,
         private readonly OriginCompensationsCalculator $originCompensationsCalculator,
         private readonly EventAuthorizer $authorizer,
+        private readonly EventRepository $eventRepository,
         private readonly TranslatorInterface $translator,
         private readonly CurrentAccountIdProvider $currentAccountIdProvider,
         private readonly RequestStack $requestStack,
@@ -195,6 +197,21 @@ class EventAttendeeSurveysExportationType implements ExportationType
         );
 
         return $this->authorizer->canDoThat($subject, Action::Export, $user);
+    }
+
+    public function isAuthorizedForFilter(object $filter, User $user): bool
+    {
+        if (!$filter instanceof EventAttendeeSurveysExportFilter || !$filter->eventId instanceof EventId) {
+            return false;
+        }
+
+        $event = $this->eventRepository->find($filter->eventId);
+
+        if (!$event instanceof Event) {
+            return false;
+        }
+
+        return $this->authorizer->canDoThat($event, Action::Export, $user);
     }
 
     private function yesNo(bool $value): string

@@ -5,22 +5,29 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 
 use App\CarbonFootprint\Application\TripCalculation\Export\PropertyTripCalculationsExportFilter;
+use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
+use App\Security\Application\Action;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /** @extends AbstractType<PropertyTripCalculationsExportFilter> */
 class AdminPropertyTripCalculationsExportType extends AbstractType
 {
+    public function __construct(private readonly AuthorizationCheckerInterface $authorizationChecker) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('propertyId', PropertyIdType::class, [
                 'label' => new TranslatableMessage('Instalación'),
                 'required' => true,
+                'all_accounts' => $this->authorizationChecker->isGranted(Action::Export->value, new Property(id: PropertyId::generate())),
             ])
             ->add('from', DateType::class, [
                 'label' => new TranslatableMessage('Desde'),

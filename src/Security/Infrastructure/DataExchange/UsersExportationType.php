@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\DataExchange;
 
-use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportColumnDefinition;
+use App\DataExchange\Domain\Model\Exportation\FilterAuthorizedExportationType;
 use App\Security\Application\Action;
 use App\Security\Application\User\Export\UsersExportFilter;
 use App\Security\Application\User\UserAuthorizer;
@@ -18,16 +18,18 @@ use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Form\AdminUsersExportType;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class UsersExportationType implements ExportationType
+class UsersExportationType implements FilterAuthorizedExportationType
 {
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly AccountRepository $accountRepository,
         private readonly UserAuthorizer $authorizer,
         private readonly TranslatorInterface $translator,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
     ) {}
 
@@ -64,7 +66,24 @@ class UsersExportationType implements ExportationType
 
     public function createFilter(): object
     {
-        return new UsersExportFilter();
+        $filter = new UsersExportFilter();
+
+        if ($this->canExportEveryAccount()) {
+            return $filter;
+        }
+
+        $currentAccountId = $this->currentAccountIdProvider?->currentAccountId();
+
+        if ($currentAccountId instanceof AccountId) {
+            $filter->account = $this->accountRepository->find($currentAccountId);
+        }
+
+        return $filter;
+    }
+
+    public function canExportEveryAccount(): bool
+    {
+        return $this->authorizationChecker->isGranted(Action::Export->value, new User(id: UserId::generate()));
     }
 
     public function dehydrateFilter(object $filter): array
@@ -131,6 +150,20 @@ class UsersExportationType implements ExportationType
         $subject = new User(
             id: UserId::generate(),
             accountId: $this->currentAccountIdProvider?->currentAccountId() ?? $user->accountId(),
+        );
+
+        return $this->authorizer->canDoThat($subject, Action::Export, $user);
+    }
+
+    public function isAuthorizedForFilter(object $filter, User $user): bool
+    {
+        if (!$filter instanceof UsersExportFilter) {
+            return false;
+        }
+
+        $subject = new User(
+            id: UserId::generate(),
+            accountId: $filter->account?->id(),
         );
 
         return $this->authorizer->canDoThat($subject, Action::Export, $user);

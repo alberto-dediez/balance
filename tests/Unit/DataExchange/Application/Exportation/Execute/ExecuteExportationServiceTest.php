@@ -16,6 +16,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\DataExchange\Application\Exportation\FakeExportationType;
+use App\Tests\Unit\DataExchange\Application\Exportation\FakeFilterAuthorizedExportationType;
 use App\Tests\Unit\DataExchange\Application\Exportation\SpyExportStorage;
 use App\Tests\Unit\DataExchange\Application\Exportation\SpyExportWriter;
 use App\Tests\Unit\DataExchange\Domain\Model\Exportation\ExportationMother;
@@ -115,6 +116,39 @@ class ExecuteExportationServiceTest extends TestCase
         $persisted = $repository->find($exportation->id());
         $this->assertNotNull($persisted);
         $this->assertTrue($persisted->isFailed());
+
+        $events = $this->spySubscriber->events();
+        $this->assertNotEmpty(array_filter($events, static fn($event): bool => $event instanceof ExportationFailed));
+    }
+
+    public function testFailsWhenTheFilterIsNoLongerAuthorized(): void
+    {
+        $exportation = ExportationMother::registered(columns: ['username']);
+
+        $repository = new InMemoryExportationRepository();
+        $repository->add($exportation);
+
+        $storage = new SpyExportStorage();
+        $writer = new SpyExportWriter();
+
+        $sut = new ExecuteExportationService(
+            $repository,
+            new ExportationTypeFactory([new FakeFilterAuthorizedExportationType(authorizedForFilter: false)]),
+            $storage,
+            $writer,
+            $this->translator(),
+        );
+
+        $response = $sut(new ExecuteExportationRequest($exportation->id()), UserMother::adminUser());
+
+        $this->assertFalse($response->success);
+
+        $persisted = $repository->find($exportation->id());
+        $this->assertNotNull($persisted);
+        $this->assertTrue($persisted->isFailed());
+        $this->assertSame('Export filter not allowed', $persisted->errorMessage());
+        $this->assertSame(0, $storage->storeCalls);
+        $this->assertSame([], $writer->rows);
 
         $events = $this->spySubscriber->events();
         $this->assertNotEmpty(array_filter($events, static fn($event): bool => $event instanceof ExportationFailed));

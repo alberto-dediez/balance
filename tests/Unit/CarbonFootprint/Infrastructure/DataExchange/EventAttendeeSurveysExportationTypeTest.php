@@ -14,12 +14,14 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryA
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryAttendeeSurveyResponseRepository;
 use App\EventOperations\Application\Event\EventAuthorizer;
 use App\EventOperations\Domain\Model\Event\EventId;
+use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
@@ -37,6 +39,8 @@ class EventAttendeeSurveysExportationTypeTest extends TestCase
 
     private InMemoryProjectRepository $projectRepository;
 
+    private InMemoryEventRepository $eventRepository;
+
     private RequestStack $requestStack;
 
     private EventAttendeeSurveysExportationType $sut;
@@ -47,6 +51,7 @@ class EventAttendeeSurveysExportationTypeTest extends TestCase
         $this->attendeeSurveyRepository = new InMemoryAttendeeSurveyRepository();
         $this->projectContributionRepository = new InMemoryProjectContributionRepository();
         $this->projectRepository = new InMemoryProjectRepository();
+        $this->eventRepository = new InMemoryEventRepository();
         $this->requestStack = new RequestStack();
 
         $this->sut = new EventAttendeeSurveysExportationType(
@@ -54,6 +59,7 @@ class EventAttendeeSurveysExportationTypeTest extends TestCase
             $this->attendeeSurveyRepository,
             new OriginCompensationsCalculator($this->projectContributionRepository, $this->projectRepository),
             new EventAuthorizer(new StubCurrentAccountIdProvider(new AccountId('account-id'))),
+            $this->eventRepository,
             new FakeTranslator(),
             new StubCurrentAccountIdProvider(new AccountId('account-id')),
             $this->requestStack,
@@ -261,5 +267,98 @@ class EventAttendeeSurveysExportationTypeTest extends TestCase
         ));
 
         self::assertFalse($this->sut->isAuthorized(UserMother::adminUser()));
+    }
+
+    public function testAuthorizesTheOwnerToExportAnEventOfTheCurrentAccount(): void
+    {
+        $eventId = EventId::generate();
+        $this->eventRepository->add(EventMother::fromNameAndAccountAndId('Congreso', 'account-id', (string) $eventId));
+
+        self::assertTrue($this->sut->isAuthorizedForFilter(
+            new EventAttendeeSurveysExportFilter(eventId: $eventId),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')),
+        ));
+    }
+
+    public function testDoesNotAuthorizeTheOwnerToExportAnEventOfAnotherAccount(): void
+    {
+        $eventId = EventId::generate();
+        $this->eventRepository->add(EventMother::fromNameAndAccountAndId('Congreso', 'other-account', (string) $eventId));
+
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new EventAttendeeSurveysExportFilter(eventId: $eventId),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')),
+        ));
+    }
+
+    public function testAuthorizesTheOwnerToExportAnEventOfTheImpersonatedAccount(): void
+    {
+        $sut = $this->sutWithCurrentAccount(new AccountId('impersonated'));
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+
+        $impersonatedEventId = EventId::generate();
+        $this->eventRepository->add(EventMother::fromNameAndAccountAndId('Congreso', 'impersonated', (string) $impersonatedEventId));
+
+        $ownEventId = EventId::generate();
+        $this->eventRepository->add(EventMother::fromNameAndAccountAndId('Jornada', 'account-id', (string) $ownEventId));
+
+        self::assertTrue($sut->isAuthorizedForFilter(
+            new EventAttendeeSurveysExportFilter(eventId: $impersonatedEventId),
+            $owner,
+        ));
+
+        self::assertFalse($sut->isAuthorizedForFilter(
+            new EventAttendeeSurveysExportFilter(eventId: $ownEventId),
+            $owner,
+        ));
+    }
+
+    public function testDoesNotAuthorizeAFilterWithoutEvent(): void
+    {
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new EventAttendeeSurveysExportFilter(),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')),
+        ));
+    }
+
+    public function testDoesNotAuthorizeAnUnknownEvent(): void
+    {
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new EventAttendeeSurveysExportFilter(eventId: EventId::generate()),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')),
+        ));
+    }
+
+    public function testDoesNotAuthorizeAdminsToExportEventSurveys(): void
+    {
+        $eventId = EventId::generate();
+        $this->eventRepository->add(EventMother::fromNameAndAccountAndId('Congreso', 'account-id', (string) $eventId));
+
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new EventAttendeeSurveysExportFilter(eventId: $eventId),
+            UserMother::adminUser(),
+        ));
+    }
+
+    public function testDoesNotAuthorizeAnotherFilterClass(): void
+    {
+        self::assertFalse($this->sut->isAuthorizedForFilter(
+            new \stdClass(),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id')),
+        ));
+    }
+
+    private function sutWithCurrentAccount(AccountId $currentAccountId): EventAttendeeSurveysExportationType
+    {
+        return new EventAttendeeSurveysExportationType(
+            $this->attendeeSurveyResponseRepository,
+            $this->attendeeSurveyRepository,
+            new OriginCompensationsCalculator($this->projectContributionRepository, $this->projectRepository),
+            new EventAuthorizer(new StubCurrentAccountIdProvider($currentAccountId)),
+            $this->eventRepository,
+            new FakeTranslator(),
+            new StubCurrentAccountIdProvider($currentAccountId),
+            $this->requestStack,
+        );
     }
 }

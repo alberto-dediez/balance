@@ -13,11 +13,12 @@ use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationFilter;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\AdminPropertyTripCalculationsExportType;
-use App\DataExchange\Domain\Model\Exportation\ExportationType;
 use App\DataExchange\Domain\Model\Exportation\ExportColumnDefinition;
+use App\DataExchange\Domain\Model\Exportation\FilterAuthorizedExportationType;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
@@ -25,13 +26,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PropertyTripCalculationsExportationType implements ExportationType
+class PropertyTripCalculationsExportationType implements FilterAuthorizedExportationType
 {
     public function __construct(
         private readonly TripCalculationRepository $tripCalculationRepository,
         private readonly TripCalculationLinkRepository $tripCalculationLinkRepository,
         private readonly OriginCompensationsCalculator $originCompensationsCalculator,
         private readonly PropertyAuthorizer $authorizer,
+        private readonly PropertyRepository $propertyRepository,
         private readonly TranslatorInterface $translator,
         private readonly CurrentAccountIdProvider $currentAccountIdProvider,
         private readonly RequestStack $requestStack,
@@ -180,6 +182,21 @@ class PropertyTripCalculationsExportationType implements ExportationType
         );
 
         return $this->authorizer->canDoThat($subject, Action::Export, $user);
+    }
+
+    public function isAuthorizedForFilter(object $filter, User $user): bool
+    {
+        if (!$filter instanceof PropertyTripCalculationsExportFilter || !$filter->propertyId instanceof PropertyId) {
+            return false;
+        }
+
+        $property = $this->propertyRepository->find($filter->propertyId);
+
+        if (!$property instanceof Property) {
+            return false;
+        }
+
+        return $this->authorizer->canDoThat($property, Action::Export, $user);
     }
 
     private function yesNo(bool $value): string
