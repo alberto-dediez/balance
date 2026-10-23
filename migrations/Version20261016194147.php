@@ -61,9 +61,16 @@ final class Version20261016194147 extends AbstractMigration
               distance_km DOUBLE PRECISION DEFAULT NULL
         SQL);
 
-        $this->addSql('ALTER TABLE transport_emission_factor RENAME INDEX uq_road_transport_emission_factor_year TO uq_transport_emission_factor_year');
-        $this->addSql('ALTER TABLE transport_emission_factor RENAME INDEX IDX_3478DE3E6C5E3E99 TO IDX_1670911E9909C13F');
-        $this->addSql('ALTER TABLE transport_translation RENAME INDEX IDX_30DF047B6C5E3E99 TO IDX_2207A6689909C13F');
+        $this->addSql('DROP INDEX uq_road_transport_emission_factor_year ON transport_emission_factor');
+        $this->addSql('DROP INDEX IDX_3478DE3E6C5E3E99 ON transport_emission_factor');
+        $this->addSql('DROP INDEX IDX_30DF047B6C5E3E99 ON transport_translation');
+        $this->addSql(<<<'SQL'
+            CREATE UNIQUE INDEX uq_transport_emission_factor_year ON transport_emission_factor (
+              transport_id, year, emission_factor_group_id
+            )
+        SQL);
+        $this->addSql('CREATE INDEX IDX_1670911E9909C13F ON transport_emission_factor (transport_id)');
+        $this->addSql('CREATE INDEX IDX_2207A6689909C13F ON transport_translation (transport_id)');
 
         $this->addSql(<<<'SQL'
             ALTER TABLE
@@ -123,9 +130,16 @@ final class Version20261016194147 extends AbstractMigration
         $this->addSql('ALTER TABLE transport_translation DROP FOREIGN KEY FK_2207A6689909C13F');
         $this->addSql('ALTER TABLE transport_activities DROP FOREIGN KEY FK_D2BA26AFBF396750');
 
-        $this->addSql('ALTER TABLE transport_emission_factor RENAME INDEX uq_transport_emission_factor_year TO uq_road_transport_emission_factor_year');
-        $this->addSql('ALTER TABLE transport_emission_factor RENAME INDEX IDX_1670911E9909C13F TO IDX_3478DE3E6C5E3E99');
-        $this->addSql('ALTER TABLE transport_translation RENAME INDEX IDX_2207A6689909C13F TO IDX_30DF047B6C5E3E99');
+        $this->addSql('DROP INDEX uq_transport_emission_factor_year ON transport_emission_factor');
+        $this->addSql('DROP INDEX IDX_1670911E9909C13F ON transport_emission_factor');
+        $this->addSql('DROP INDEX IDX_2207A6689909C13F ON transport_translation');
+        $this->addSql(<<<'SQL'
+            CREATE UNIQUE INDEX uq_road_transport_emission_factor_year ON transport_emission_factor (
+              transport_id, year, emission_factor_group_id
+            )
+        SQL);
+        $this->addSql('CREATE INDEX IDX_3478DE3E6C5E3E99 ON transport_emission_factor (transport_id)');
+        $this->addSql('CREATE INDEX IDX_30DF047B6C5E3E99 ON transport_translation (transport_id)');
 
         $this->addSql(<<<'SQL'
             ALTER TABLE
