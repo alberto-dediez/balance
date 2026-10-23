@@ -9,7 +9,9 @@ use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Application\CommandBus\TimedCommand;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -36,7 +38,7 @@ class DeferredMessageHandler
 
         try {
             CommandBusDispatcher::instance()->dispatch(
-                $message->command(),
+                $this->commandAtExecutionTime($message->command()),
                 $user,
             );
         } finally {
@@ -44,5 +46,14 @@ class DeferredMessageHandler
             $this->impersonatedAccount->force(null, null);
             $this->loggedAccount->reset();
         }
+    }
+
+    private function commandAtExecutionTime(Command $command): Command
+    {
+        if ($command instanceof TimedCommand) {
+            return $command->withNow(new \DateTimeImmutable('NOW'));
+        }
+
+        return $command;
     }
 }

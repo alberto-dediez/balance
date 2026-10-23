@@ -7,6 +7,8 @@ namespace App\Tests\Unit\Shared\Domain\Event;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Event\DomainEventSubscriber;
+use App\Shared\Domain\Event\RegisterTrait;
 use App\Shared\Domain\Model\AggregateRootId;
 use PHPUnit\Framework\TestCase;
 
@@ -49,6 +51,61 @@ class DomainEventPublisherTest extends TestCase
 
         $this->assertCount(1, $this->spySubscriber->events());
         $this->assertCount(0, $anotherSpy->events());
+    }
+
+    public function testUnlockDoesNotPublishTwiceAnEventWhoseSubscriberFailed(): void
+    {
+        $publisher = DomainEventPublisher::instance();
+        $publisher->reset();
+
+        $failing = new FailingOnceDomainEventSubscriber();
+        $failing->register();
+
+        $publisher->lock();
+        $publisher->publish($first = new FakeEvent());
+        $publisher->publish($second = new FakeEvent());
+
+        try {
+            $publisher->unlock();
+            $this->fail('The failing subscriber should have thrown');
+        } catch (\RuntimeException) {
+        }
+
+        $publisher->unlock();
+
+        $this->assertSame([$first, $second], $failing->events());
+    }
+}
+
+final class FailingOnceDomainEventSubscriber implements DomainEventSubscriber
+{
+    use RegisterTrait;
+
+    private bool $failed = false;
+
+    /** @var DomainEvent[] */
+    private array $events = [];
+
+    public function handle(DomainEvent $event): void
+    {
+        $this->events[] = $event;
+
+        if (!$this->failed) {
+            $this->failed = true;
+
+            throw new \RuntimeException('Subscriber failed');
+        }
+    }
+
+    public function isSubscribedTo(DomainEvent $event): bool
+    {
+        return true;
+    }
+
+    /** @return DomainEvent[] */
+    public function events(): array
+    {
+        return $this->events;
     }
 }
 

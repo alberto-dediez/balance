@@ -16,6 +16,7 @@ use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandResponse;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\CommandBus\TimedCommand;
 use App\Shared\Infrastructure\Messenger\DeferredMessage;
 use App\Shared\Infrastructure\Messenger\DeferredMessageHandler;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -145,6 +146,26 @@ class DeferredMessageHandlerTest extends TestCase
         $this->assertNull($forcedCalls[count($forcedCalls) - 1][0]);
     }
 
+    public function testDispatchesTimedCommandsWithTheExecutionTimeInsteadOfTheDispatchTime(): void
+    {
+        $user = UserMother::adminUser();
+        $this->userRepository->add($user);
+
+        $dispatchedAt = new \DateTimeImmutable('2020-01-01 07:00');
+        $message = new DeferredMessage(new FakeTimedCommandForMessageHandler($dispatchedAt), $user->id());
+
+        $before = new \DateTimeImmutable('NOW');
+        $this->createSUT()($message);
+        $after = new \DateTimeImmutable('NOW');
+
+        $commands = $this->captureHandler->commands();
+        $this->assertCount(1, $commands);
+        $command = $commands[0]['command'];
+        $this->assertInstanceOf(FakeTimedCommandForMessageHandler::class, $command);
+        $this->assertGreaterThanOrEqual($before, $command->now);
+        $this->assertLessThanOrEqual($after, $command->now);
+    }
+
     public function testThrowsInvalidArgumentExceptionWhenUserNotFound(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -167,6 +188,18 @@ class DeferredMessageHandlerTest extends TestCase
 }
 
 class FakeCommandForMessageHandler implements Command {}
+
+class FakeTimedCommandForMessageHandler implements TimedCommand
+{
+    public function __construct(
+        public \DateTimeImmutable $now,
+    ) {}
+
+    public function withNow(\DateTimeImmutable $now): self
+    {
+        return new self($now);
+    }
+}
 
 class ThrowingCommandHandlerForMessageHandler implements CommandHandler
 {
