@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\AI\Gemini;
+namespace App\Shared\Infrastructure\AI;
 
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[When(env: 'test')]
-class InMemoryGeminiClient implements GeminiClient
+class InMemoryAiClient implements AiClient
 {
-    private ?GeminiPrompt $lastPrompt = null;
+    private ?AiPrompt $lastPrompt = null;
 
     /** @param array<mixed> $response */
     public function __construct(private array $response = []) {}
@@ -21,14 +21,14 @@ class InMemoryGeminiClient implements GeminiClient
     }
 
     /** @return array<mixed> */
-    public function send(GeminiPrompt $prompt): array
+    public function send(AiPrompt $prompt): array
     {
         $this->lastPrompt = $prompt;
 
         return $this->response;
     }
 
-    public function lastPrompt(): ?GeminiPrompt
+    public function lastPrompt(): ?AiPrompt
     {
         return $this->lastPrompt;
     }

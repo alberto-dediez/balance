@@ -8,11 +8,16 @@ parameters:
     error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
     error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
     error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
+    app.ai_provider: '%env(AI_PROVIDER)%'
+    app.ai_log_enabled: '%env(bool:AI_LOG_ENABLED)%'
     app.gemini_api_key: '%env(GEMINI_API_KEY)%'
     app.gemini_model_low: '%env(GEMINI_MODEL_LOW)%'
     app.gemini_model_medium: '%env(GEMINI_MODEL_MEDIUM)%'
     app.gemini_model_high: '%env(GEMINI_MODEL_HIGH)%'
-    app.gemini_log_enabled: '%env(bool:GEMINI_LOG_ENABLED)%'
+    app.anthropic_api_key: '%env(ANTHROPIC_API_KEY)%'
+    app.anthropic_model_low: '%env(ANTHROPIC_MODEL_LOW)%'
+    app.anthropic_model_medium: '%env(ANTHROPIC_MODEL_MEDIUM)%'
+    app.anthropic_model_high: '%env(ANTHROPIC_MODEL_HIGH)%'
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     app.google_maps_enabled: '%env(bool:GOOGLE_MAPS_ENABLED)%'
     app.google_maps_region: '%env(GOOGLE_MAPS_REGION)%'
@@ -92,18 +97,6 @@ services:
 
     App\Shared\Domain\Model\WhatsApp\WhatsAppSender: '@App\Shared\Infrastructure\WhatsApp\TwilioWhatsAppSender'
 
-    App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
-        arguments:
-            $apiKey: '%app.gemini_api_key%'
-            $modelLow: '%app.gemini_model_low%'
-            $modelMedium: '%app.gemini_model_medium%'
-            $modelHigh: '%app.gemini_model_high%'
-            $logEnabled: '%app.gemini_log_enabled%'
-            $logDir: '%kernel.project_dir%/var/gemini-logs'
-
-    App\Shared\Infrastructure\AI\Gemini\GeminiClient:
-        alias: App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient
-
     App\Shared\Infrastructure\Geo\Google\GooglePlacesApiPlaceFinder:
         arguments:
             $apiKey: '%app.google_maps_api_key%'
@@ -137,6 +130,68 @@ services:
             $transportNames: '%shared.health_check.queue_transports%'
             $maxWaitMinutes: '%shared.health_check.queue_max_wait_minutes%'
         tags: [{ name: shared.health_indicator, priority: 10 }]
+
+when@dev:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Shared\Infrastructure\AI\AiRequestLog:
+            arguments:
+                $enabled: '%app.ai_log_enabled%'
+                $dir: '%kernel.project_dir%/var/ai-logs'
+
+        App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
+            arguments:
+                $apiKey: '%app.gemini_api_key%'
+                $modelLow: '%app.gemini_model_low%'
+                $modelMedium: '%app.gemini_model_medium%'
+                $modelHigh: '%app.gemini_model_high%'
+
+        App\Shared\Infrastructure\AI\Anthropic\AnthropicHttpClient:
+            arguments:
+                $apiKey: '%app.anthropic_api_key%'
+                $modelLow: '%app.anthropic_model_low%'
+                $modelMedium: '%app.anthropic_model_medium%'
+                $modelHigh: '%app.anthropic_model_high%'
+
+        App\Shared\Infrastructure\AI\ProviderAiClient:
+            arguments:
+                $provider: '%app.ai_provider%'
+
+        App\Shared\Infrastructure\AI\AiClient: '@App\Shared\Infrastructure\AI\ProviderAiClient'
+
+when@prod:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Shared\Infrastructure\AI\AiRequestLog:
+            arguments:
+                $enabled: '%app.ai_log_enabled%'
+                $dir: '%kernel.project_dir%/var/ai-logs'
+
+        App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
+            arguments:
+                $apiKey: '%app.gemini_api_key%'
+                $modelLow: '%app.gemini_model_low%'
+                $modelMedium: '%app.gemini_model_medium%'
+                $modelHigh: '%app.gemini_model_high%'
+
+        App\Shared\Infrastructure\AI\Anthropic\AnthropicHttpClient:
+            arguments:
+                $apiKey: '%app.anthropic_api_key%'
+                $modelLow: '%app.anthropic_model_low%'
+                $modelMedium: '%app.anthropic_model_medium%'
+                $modelHigh: '%app.anthropic_model_high%'
+
+        App\Shared\Infrastructure\AI\ProviderAiClient:
+            arguments:
+                $provider: '%app.ai_provider%'
+
+        App\Shared\Infrastructure\AI\AiClient: '@App\Shared\Infrastructure\AI\ProviderAiClient'
 
 when@test:
     parameters:

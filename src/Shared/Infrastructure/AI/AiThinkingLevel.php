@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\AI\Gemini;
+namespace App\Shared\Infrastructure\AI;
 
-enum GeminiModelTier
+enum AiThinkingLevel
 {
+    case MINIMAL;
     case LOW;
     case MEDIUM;
     case HIGH;
