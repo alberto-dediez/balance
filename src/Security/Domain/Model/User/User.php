@@ -174,7 +174,7 @@ class User implements \Stringable
         $this->recordApplyAndPublish(
             new UserRegistered(
                 userId: $this->id(),
-                username: $username,
+                username: (string) new Username($username),
                 password: $password,
                 accountId: $accountId,
             ),

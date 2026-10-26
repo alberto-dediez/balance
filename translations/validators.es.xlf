@@ -697,6 +697,10 @@
         <source>notification_channel.signer_phone_required</source>
         <target>El teléfono del firmante es obligatorio cuando el canal de notificación es SMS.</target>
       </trans-unit>
+      <trans-unit id="dXBo.Go" resname="El nombre de usuario no puede contener los caracteres &lt; ni &gt;">
+        <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
+        <target><![CDATA[El nombre de usuario no puede contener los caracteres < ni >]]></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

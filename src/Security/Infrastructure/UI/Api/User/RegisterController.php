@@ -26,6 +26,10 @@ use Symfony\Component\Routing\Attribute\Route;
     description: 'Returns info about new registered user',
     content: new Model(type: UserResponse::class),
 )]
+#[OA\Response(
+    response: 422,
+    description: 'The username contains invalid characters',
+)]
 class RegisterController extends AbstractController
 {
     public function __invoke(

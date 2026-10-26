@@ -12,6 +12,7 @@ use App\Security\Application\User\UpdateProfile\UpdateProfileRequest;
 use App\Security\Application\User\UpdateProfile\UpdateProfileService;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
+use App\Security\Domain\Model\User\InvalidUsernameException;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
@@ -56,6 +57,10 @@ trait RegisterUserTrait
             return true;
         } catch (DuplicatedUsernameException) {
             $form->get('username')->addError(new FormError('El nombre de usuario ya existe'));
+
+            $this->addFlash('danger', new TranslatableMessage('El formulario contiene errores, por favor, reviselos antes de continuar.'));
+        } catch (InvalidUsernameException) {
+            $form->get('username')->addError(new FormError('El nombre de usuario no puede contener los caracteres < ni >'));
 
             $this->addFlash('danger', new TranslatableMessage('El formulario contiene errores, por favor, reviselos antes de continuar.'));
         }

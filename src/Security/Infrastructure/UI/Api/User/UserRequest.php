@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\UI\Api\User;
 
+use App\Security\Domain\Model\User\Username;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UserRequest
 {
@@ -13,6 +15,7 @@ class UserRequest
             type: 'string',
             example: 'user@dediez.software',
         )]
+        #[Assert\Regex(pattern: Username::PATTERN, message: 'El nombre de usuario no puede contener los caracteres < ni >')]
         public string $username,
         #[OA\Property(
             type: 'string',

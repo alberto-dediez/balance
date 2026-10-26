@@ -7,6 +7,7 @@ namespace App\Security\Infrastructure\UI\Console\User;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\InvalidUsernameException;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -37,6 +38,8 @@ class RegisterCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
         $request = new RegisterUserRequest(
             username: $input->getArgument('username'),
             password: $input->getArgument('password'),
@@ -47,9 +50,14 @@ class RegisterCommand extends Command
 
         $performBy = UserMother::systemUser();
 
-        $response = $this->registerUser->__invoke($request, $performBy);
+        try {
+            $response = $this->registerUser->__invoke($request, $performBy);
+        } catch (InvalidUsernameException $e) {
+            $io->error($e->getMessage());
 
-        $io = new SymfonyStyle($input, $output);
+            return Command::FAILURE;
+        }
+
         $io->title('Registro de usuarios');
 
         $io->table(
