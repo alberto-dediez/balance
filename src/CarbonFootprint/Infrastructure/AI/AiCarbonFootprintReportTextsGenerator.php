@@ -10,15 +10,15 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsGenerator;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
-use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateEventReportTextsPrompt;
-use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateOrganizationalReportTextsPrompt;
-use App\CarbonFootprint\Infrastructure\AI\Gemini\TranslateReportTextsPrompt;
+use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateEventReportTextsPrompt;
+use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateOrganizationalReportTextsPrompt;
+use App\CarbonFootprint\Infrastructure\AI\Prompt\TranslateReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\AiClient;
 use App\Shared\Infrastructure\AI\AiPrompt;
 use App\Shared\Infrastructure\AI\AiResponseException;
 
-final class GeminiCarbonFootprintReportTextsGenerator implements CarbonFootprintReportTextsGenerator
+final class AiCarbonFootprintReportTextsGenerator implements CarbonFootprintReportTextsGenerator
 {
     private const int MAX_ATTEMPTS = 3;
 
@@ -66,13 +66,13 @@ final class GeminiCarbonFootprintReportTextsGenerator implements CarbonFootprint
             $texts = $this->textsFrom($result, $requiredKeys, $optionalKeys);
 
             if ($this->hasCorruptedCharacters($texts)) {
-                $lastFailure = 'Gemini returned corrupted characters in the report texts';
+                $lastFailure = 'The AI returned corrupted characters in the report texts';
 
                 continue;
             }
 
             if (!$this->hasAllRequired($texts, $requiredKeys)) {
-                $lastFailure = 'Gemini returned incomplete report texts';
+                $lastFailure = 'The AI returned incomplete report texts';
 
                 continue;
             }

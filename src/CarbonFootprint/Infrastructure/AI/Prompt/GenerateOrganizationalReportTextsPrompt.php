@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Infrastructure\AI\Gemini;
+namespace App\CarbonFootprint\Infrastructure\AI\Prompt;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\Shared\Domain\Model\Locale\Locale;

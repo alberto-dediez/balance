@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
-use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateOrganizationalReportTextsPrompt;
+use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateOrganizationalReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\AiModelTier;
 use App\Shared\Infrastructure\AI\AiThinkingLevel;

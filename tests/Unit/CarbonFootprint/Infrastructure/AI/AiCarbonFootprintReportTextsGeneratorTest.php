@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
-use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateEventReportTextsPrompt;
-use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateOrganizationalReportTextsPrompt;
-use App\CarbonFootprint\Infrastructure\AI\Gemini\TranslateReportTextsPrompt;
-use App\CarbonFootprint\Infrastructure\AI\GeminiCarbonFootprintReportTextsGenerator;
+use App\CarbonFootprint\Infrastructure\AI\AiCarbonFootprintReportTextsGenerator;
+use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateEventReportTextsPrompt;
+use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateOrganizationalReportTextsPrompt;
+use App\CarbonFootprint\Infrastructure\AI\Prompt\TranslateReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\InMemoryAiClient;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
 use PHPUnit\Framework\TestCase;
 
-class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
+class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
 {
     public function testMapsAnEventResponseIntoTexts(): void
     {
@@ -27,7 +27,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             'analysisAndRecommendations' => 'Analysis text',
         ]);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $texts = $sut->generate(EventCarbonFootprintReportDataMother::random(), Locale::Spanish);
 
@@ -50,7 +50,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             'conclusion' => 'Conclusion text',
         ]);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $texts = $sut->generate(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish);
 
@@ -70,7 +70,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             'mitigationPlan' => 'Plan text',
         ]);
 
-        $texts = (new GeminiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
+        $texts = (new AiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
 
         $this->assertSame('Plan text', $texts->sections['mitigationPlan']);
     }
@@ -86,7 +86,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             'mitigationPlan' => '',
         ]);
 
-        $texts = (new GeminiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
+        $texts = (new AiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
 
         $this->assertArrayNotHasKey('mitigationPlan', $texts->sections);
     }
@@ -101,7 +101,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             'analysisAndRecommendations' => 'Translated analysis',
         ]);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $texts = $sut->translate(
             new CarbonFootprintReportTexts(['executiveSummary' => 'summary-es', 'methodology' => 'methodology-es', 'emissionFactorSources' => 'sources-es', 'analysisAndRecommendations' => 'analysis-es']),
@@ -124,7 +124,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             'analysisAndRecommendations' => 'Analysis text',
         ]);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('corrupted characters');
@@ -143,7 +143,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             'compensation' => '',
         ]);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $texts = $sut->generate(EventCarbonFootprintReportDataMother::random(), Locale::Spanish);
 
@@ -152,7 +152,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testRetriesWhenARequiredSectionIsMissingAndReturnsTheCompleteAttempt(): void
     {
-        $client = new QueueGeminiClient([
+        $client = new QueueAiClient([
             ['executiveSummary' => 'Only summary'],
             [
                 'executiveSummary' => 'Summary',
@@ -162,7 +162,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
             ],
         ]);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $texts = $sut->generate(EventCarbonFootprintReportDataMother::random(), Locale::Spanish);
 
@@ -175,7 +175,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $client = new InMemoryAiClient();
         $client->setResponse(['executiveSummary' => 'Only summary']);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('incomplete report texts');
@@ -188,7 +188,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $client = new InMemoryAiClient();
         $client->setResponse(['purpose' => 'Translated purpose', 'conclusion' => '']);
 
-        $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('incomplete report texts');

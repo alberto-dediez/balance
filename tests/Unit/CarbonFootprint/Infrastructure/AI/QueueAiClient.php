@@ -7,7 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 use App\Shared\Infrastructure\AI\AiClient;
 use App\Shared\Infrastructure\AI\AiPrompt;
 
-final class QueueGeminiClient implements AiClient
+final class QueueAiClient implements AiClient
 {
     private int $calls = 0;
 
