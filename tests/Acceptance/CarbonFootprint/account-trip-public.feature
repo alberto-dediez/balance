@@ -113,6 +113,67 @@ Feature:
         [{"value": "property:P1", "label": "Hotel Mar"}]
         """
 
+    Scenario: A calculator for all properties lists every allowed property before the visitor types
+        Given property "Hotel Mar" with id "P1" of account "666" exists
+        Given property "P1" is located at "39.4699", "-0.3763"
+        Given property "Apartamentos Sol" with id "P2" of account "666" exists
+        Given property "P2" is located at "39.4800", "-0.3800"
+        Given account "Otra cadena" with id "555" exists
+        Given property "Hotel Ajeno" with id "P3" of account "555" exists
+        Given property "P3" is located at "39.4900", "-0.3900"
+        Given account trip calculator "TL1" allows destinations in all properties
+        When I go to "/es/carbon-footprint/trip/token-abc/destinations?query="
+        Then the response status should be 200
+        Then I see a JSON that should be equal to:
+        """
+        [{"value": "property:P2", "label": "Apartamentos Sol"}, {"value": "property:P1", "label": "Hotel Mar"}]
+        """
+
+    Scenario: A calculator limited to some properties lists only the selected ones before the visitor types
+        Given property "Hotel Mar" with id "P1" of account "666" exists
+        Given property "P1" is located at "39.4699", "-0.3763"
+        Given property "Apartamentos Sol" with id "P2" of account "666" exists
+        Given property "P2" is located at "39.4800", "-0.3800"
+        Given account trip calculator "TL1" allows destinations in properties "P1"
+        When I go to "/es/carbon-footprint/trip/token-abc/destinations?query="
+        Then the response status should be 200
+        Then I see a JSON that should be equal to:
+        """
+        [{"value": "property:P1", "label": "Hotel Mar"}]
+        """
+
+    Scenario: A calculator for properties filters by name from the first letter
+        Given property "Hotel Mar" with id "P1" of account "666" exists
+        Given property "P1" is located at "39.4699", "-0.3763"
+        Given property "Apartamentos Sol" with id "P2" of account "666" exists
+        Given property "P2" is located at "39.4800", "-0.3800"
+        Given account trip calculator "TL1" allows destinations in all properties
+        When I go to "/es/carbon-footprint/trip/token-abc/destinations?query=s"
+        Then the response status should be 200
+        Then I see a JSON that should be equal to:
+        """
+        [{"value": "property:P2", "label": "Apartamentos Sol"}]
+        """
+
+    Scenario: A free-destination calculator does not suggest anything for an empty query
+        When I go to "/es/carbon-footprint/trip/token-abc/destinations?query="
+        Then the response status should be 200
+        Then I see a JSON that should be equal to:
+        """
+        []
+        """
+
+    Scenario: The destination field preloads its options when the destinations are properties
+        Given account trip calculator "TL1" allows destinations in all properties
+        When I go to "/es/carbon-footprint/trip/token-abc/trip"
+        Then the response status should be 200
+        Then I see a text 'data-autocomplete-preload-value="true"'
+
+    Scenario: The destination field does not preload options when the destination is free
+        When I go to "/es/carbon-footprint/trip/token-abc/trip"
+        Then the response status should be 200
+        Then I see a text 'data-autocomplete-preload-value="false"'
+
     Scenario: The account calculator uses its own public routes and still answers through the property ones
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
         Given project "1111" is adhered to account "666"

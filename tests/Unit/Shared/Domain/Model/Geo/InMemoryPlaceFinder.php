@@ -20,6 +20,8 @@ class InMemoryPlaceFinder implements PlaceFinder
 
     private int $resolveCalls = 0;
 
+    private int $suggestCalls = 0;
+
     private ?PlaceSearchArea $lastArea = null;
 
     /** @param list<string> $areaNames */
@@ -51,6 +53,7 @@ class InMemoryPlaceFinder implements PlaceFinder
 
     public function suggest(string $query, PlaceKind $kind, Locale $locale, ?PlaceSearchArea $area = null): array
     {
+        ++$this->suggestCalls;
         $this->lastArea = $area;
 
         $suggestions = [];
@@ -76,6 +79,11 @@ class InMemoryPlaceFinder implements PlaceFinder
     public function resolveCalls(): int
     {
         return $this->resolveCalls;
+    }
+
+    public function suggestCalls(): int
+    {
+        return $this->suggestCalls;
     }
 
     public function lastArea(): ?PlaceSearchArea

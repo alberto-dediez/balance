@@ -104,6 +104,7 @@ class TripController extends AbstractController
             'token' => $token,
             'ownerName' => $response->ownerName,
             'asksForDestination' => $asksForDestination,
+            'destinationPreload' => $asksForDestination && $response->tripCalculationLink->destinationMode()->usesProperties(),
             'routePrefix' => $routes->prefix,
             'mobilities' => $response->mobilities,
             'geoEnabled' => $response->geoEnabled,

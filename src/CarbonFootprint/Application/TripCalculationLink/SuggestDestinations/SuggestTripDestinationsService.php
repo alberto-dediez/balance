@@ -19,7 +19,7 @@ final class SuggestTripDestinationsService
 {
     private const int MINIMUM_QUERY_LENGTH = 3;
 
-    private const int MAX_PROPERTY_SUGGESTIONS = 10;
+    private const int MAX_PROPERTY_SUGGESTIONS = 50;
 
     public function __construct(
         private readonly TripCalculationLinkRepository $tripCalculationLinkRepository,
@@ -38,12 +38,12 @@ final class SuggestTripDestinationsService
 
         $query = trim($request->query);
 
-        if (mb_strlen($query) < self::MINIMUM_QUERY_LENGTH) {
-            return new SuggestTripDestinationsResponse([]);
-        }
-
         if ($tripCalculationLink->destinationMode()->usesProperties()) {
             return new SuggestTripDestinationsResponse($this->propertySuggestions($tripCalculationLink, $query));
+        }
+
+        if (mb_strlen($query) < self::MINIMUM_QUERY_LENGTH) {
+            return new SuggestTripDestinationsResponse([]);
         }
 
         return new SuggestTripDestinationsResponse($this->placeFinder->suggest(
@@ -57,10 +57,14 @@ final class SuggestTripDestinationsService
     /** @return list<PlaceSuggestion> */
     private function propertySuggestions(TripCalculationLink $tripCalculationLink, string $query): array
     {
-        $properties = array_filter(
-            $this->tripDestinationCandidates->allowedFor($tripCalculationLink),
-            static fn(Property $property): bool => false !== mb_stripos($property->name(), $query),
-        );
+        $properties = $this->tripDestinationCandidates->allowedFor($tripCalculationLink);
+
+        if ('' !== $query) {
+            $properties = array_filter(
+                $properties,
+                static fn(Property $property): bool => false !== mb_stripos($property->name(), $query),
+            );
+        }
 
         return array_map(
             static fn(Property $property): PlaceSuggestion => new PlaceSuggestion(

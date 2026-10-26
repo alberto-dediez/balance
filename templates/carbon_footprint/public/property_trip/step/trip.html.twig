@@ -36,7 +36,8 @@
                        name="trip[destinationPlaceReference]"
                        required
                        data-controller="autocomplete"
-                       data-autocomplete-path-value="{{ path(routePrefix ~ '_destinations', {token: token}) }}">
+                       data-autocomplete-path-value="{{ path(routePrefix ~ '_destinations', {token: token}) }}"
+                       data-autocomplete-preload-value="{{ destinationPreload ? 'true' : 'false' }}">
             </div>
         {% endif %}
 

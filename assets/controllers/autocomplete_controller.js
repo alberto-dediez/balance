@@ -8,7 +8,8 @@ export default class extends Controller {
     static values = {
         path: String,
         selectedLabel: String,
-        submitOnChange: Boolean
+        submitOnChange: Boolean,
+        preload: Boolean
     }
 
     connect() {
@@ -36,6 +37,10 @@ export default class extends Controller {
                     });
 
             };
+
+            if (this.preloadValue) {
+                options.preload = 'focus';
+            }
 
             if (this.element.value && this.element.value.length > 0) {
                 options.options = [{
