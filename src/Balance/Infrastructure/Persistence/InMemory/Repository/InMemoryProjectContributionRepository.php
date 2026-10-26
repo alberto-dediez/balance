@@ -147,7 +147,7 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         foreach ($this->findByFilter(new ProjectContributionFilter(accountId: $accountId, limit: 0)) as $projectContribution) {
             $projectId = $projectContribution->projectId();
 
-            if (!$projectId instanceof ProjectId || !$projectContribution->reservesCredit($now)) {
+            if (!$projectId instanceof ProjectId || $projectContribution->funding()->isImported() || !$projectContribution->reservesCredit($now)) {
                 continue;
             }
 
@@ -217,7 +217,8 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
                 status: ProjectContributionStatus::Paid,
                 limit: 0,
             )),
-            static fn(ProjectContribution $contribution): bool => $contribution->unallocatedTonnes() > ProjectContribution::TONNE_TOLERANCE,
+            static fn(ProjectContribution $contribution): bool => !$contribution->funding()->isImported()
+                && $contribution->unallocatedTonnes() > ProjectContribution::TONNE_TOLERANCE,
         ));
 
         usort(
@@ -278,7 +279,7 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         $committed = 0.0;
 
         foreach ($this->findByFilter(new ProjectContributionFilter(projectId: $projectId, limit: 0)) as $projectContribution) {
-            if ($projectContribution->reservesCredit($now)) {
+            if (!$projectContribution->funding()->isImported() && $projectContribution->reservesCredit($now)) {
                 $committed += $projectContribution->tonnes();
             }
         }

@@ -141,7 +141,7 @@ final class CheckLedgerService implements CommandHandler
         }
 
         if (0 === $entriesCount) {
-            if ($projectContribution->isOwnCreditFunded()) {
+            if ($projectContribution->isOwnCreditFunded() || $projectContribution->funding()->isImported()) {
                 return null;
             }
 

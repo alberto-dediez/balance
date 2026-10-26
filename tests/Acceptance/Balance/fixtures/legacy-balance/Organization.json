@@ -1,0 +1,5 @@
+[
+  {"_id": {"$oid": "66d5a88dd8f0e44fb3460001"}, "active": true, "created_at": {"$date": "2024-08-29T14:10:45.872Z"}, "display_name": "Viajes Test", "organizationType": "ota", "sluglified_name": "viajes-test", "theme": null},
+  {"_id": {"$oid": "66d5a88dd8f0e44fb3460002"}, "active": true, "created_at": {"$date": "2024-08-30T10:00:00.000Z"}, "display_name": "Hotel Test", "organizationType": "hotel", "sluglified_name": "hotel-test", "theme": null},
+  {"_id": {"$oid": "66d5a88dd8f0e44fb3460003"}, "active": true, "created_at": {"$date": "2024-08-31T10:00:00.000Z"}, "display_name": "Organización de prueba", "organizationType": "hotel", "sluglified_name": "test-org", "theme": null}
+]

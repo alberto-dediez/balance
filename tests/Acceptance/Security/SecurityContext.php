@@ -324,6 +324,12 @@ final class SecurityContext implements Context
         Assert::assertEquals($target, parse_url((string) $response->headers->get('Location'), PHP_URL_PATH));
     }
 
+    #[Then('user :username does not exist')]
+    public function userDoesNotExist(string $username): void
+    {
+        Assert::assertNull($this->getUserRepository()->findByUsername($username));
+    }
+
     #[Then('user :username has two factor method :method')]
     public function userHasTwoFactorMethod(string $username, string $method): void
     {

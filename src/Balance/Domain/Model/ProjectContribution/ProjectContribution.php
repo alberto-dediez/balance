@@ -361,6 +361,7 @@ class ProjectContribution
         ?\DateTimeImmutable $expiresAt,
         ProjectContributionFunding $funding = ProjectContributionFunding::Payment,
         ?PaymentId $paymentId = null,
+        ?\DateTimeImmutable $registeredAt = null,
     ): void {
         if ($tonnes <= 0.0) {
             throw new \InvalidArgumentException('Contribution tonnes must be greater than zero.');
@@ -401,6 +402,7 @@ class ProjectContribution
                 expiresAt: $expiresAt,
                 funding: $funding,
                 paymentId: $paymentId,
+                occurredOn: $registeredAt,
             ),
         );
     }
@@ -441,6 +443,23 @@ class ProjectContribution
                 accountId: $this->accountId,
                 projectId: $this->projectId,
                 tonnes: $this->tonnes,
+            ),
+        );
+    }
+
+    public function importAsPaid(\DateTimeImmutable $paidAt): void
+    {
+        if ($this->status->isResolved()) {
+            throw new \LogicException('Contribution already resolved');
+        }
+
+        $this->recordApplyAndPublish(
+            new ProjectContributionImportedAsPaid(
+                projectContributionId: $this->id(),
+                accountId: $this->accountId,
+                projectId: $this->projectId,
+                tonnes: $this->tonnes,
+                occurredOn: $paidAt,
             ),
         );
     }
@@ -577,6 +596,13 @@ class ProjectContribution
     }
 
     public function applyProjectContributionPaid(ProjectContributionPaid $event): void
+    {
+        $this->status = ProjectContributionStatus::Paid;
+        $this->paidAt = $event->occurredOn();
+        $this->resolvedAt = $event->occurredOn();
+    }
+
+    public function applyProjectContributionImportedAsPaid(ProjectContributionImportedAsPaid $event): void
     {
         $this->status = ProjectContributionStatus::Paid;
         $this->paidAt = $event->occurredOn();

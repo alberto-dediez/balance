@@ -89,6 +89,16 @@ class CheckLedgerServiceTest extends TestCase
         $this->assertFalse($response->findings[0]->repaired);
     }
 
+    public function testAnImportedContributionWithoutEntriesIsNotReported(): void
+    {
+        $this->contributions->add(ProjectContributionMother::imported($this->accountId, $this->projectId, 1.0));
+
+        $response = $this->check(repair: true);
+
+        $this->assertFalse($response->hasFindings());
+        $this->assertSame(1, $response->checkedContributions);
+    }
+
     public function testRepairRecordsTheMissingEntries(): void
     {
         $contribution = $this->givenPaidContribution();

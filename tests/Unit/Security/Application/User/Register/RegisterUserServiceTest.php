@@ -58,6 +58,18 @@ class RegisterUserServiceTest extends TestCase
         $this->assertTrue($userPersisted->id()->equals($lastEvent->userId()));
     }
 
+    public function testWelcomeIsPassedToTheEvent(): void
+    {
+        $sut = $this->createSUT(new InMemoryUserRepository());
+
+        $sut(new RegisterUserRequest(username: 'an@email.com', password: '666', welcome: false), UserMother::adminUser());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(UserRegistered::class, $lastEvent);
+        $this->assertFalse($lastEvent->welcome());
+    }
+
     public function testPasswordIsEncoded(): void
     {
         $repository = new InMemoryUserRepository();

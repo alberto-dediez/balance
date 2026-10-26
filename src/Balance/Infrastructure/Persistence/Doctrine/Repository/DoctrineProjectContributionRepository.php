@@ -9,6 +9,7 @@ use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAllocation;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFunding;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
@@ -199,6 +200,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ->select('pc.projectId as projectId, SUM(pc.tonnes) as tonnes')
             ->from(ProjectContribution::class, 'pc')
             ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->neq('pc.funding', ':imported'))
             ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->eq('pc.status', ':paid'),
@@ -210,6 +212,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             )
             ->groupBy('pc.projectId')
             ->setParameter('accountId', (string) $accountId)
+            ->setParameter('imported', ProjectContributionFunding::Imported->value)
             ->setParameter('paid', ProjectContributionStatus::Paid->value)
             ->setParameter('pending', ProjectContributionStatus::Pending->value)
             ->setParameter('now', $now)
@@ -305,11 +308,13 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ->from(ProjectContribution::class, 'pc')
             ->leftJoin('pc.creditAllocations', 'a')
             ->andWhere($qb->expr()->eq('pc.status', ':status'))
+            ->andWhere($qb->expr()->neq('pc.funding', ':imported'))
             ->groupBy('pc.id')
             ->having($qb->expr()->lt('COALESCE(SUM(a.tonnes), 0)', 'pc.tonnes - :tolerance'))
             ->orderBy('pc.paidAt', 'ASC')
             ->addOrderBy('pc.id', 'ASC')
             ->setParameter('status', ProjectContributionStatus::Paid->value)
+            ->setParameter('imported', ProjectContributionFunding::Imported->value)
             ->setParameter('tolerance', ProjectContribution::TONNE_TOLERANCE)
         ;
 
@@ -387,6 +392,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ->select('COALESCE(SUM(pc.tonnes), 0)')
             ->from(ProjectContribution::class, 'pc')
             ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
+            ->andWhere($qb->expr()->neq('pc.funding', ':imported'))
             ->andWhere(
                 $qb->expr()->orX(
                     $qb->expr()->eq('pc.status', ':paid'),
@@ -397,6 +403,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
                 ),
             )
             ->setParameter('projectId', (string) $projectId)
+            ->setParameter('imported', ProjectContributionFunding::Imported->value)
             ->setParameter('paid', ProjectContributionStatus::Paid->value)
             ->setParameter('pending', ProjectContributionStatus::Pending->value)
             ->setParameter('now', $now)

@@ -83,6 +83,41 @@ class RegisterAccountTripCalculationLinkServiceTest extends TestCase
         $this->assertNull($this->tripCalculationLinkRepository->findForAccount(new AccountId('account-id')));
     }
 
+    public function testRegistersTheLinkOfTheGivenAccountWithoutCurrentAccount(): void
+    {
+        $response = ($this->createSUT(null))(
+            new RegisterAccountTripCalculationLinkRequest(new AccountId('given-account-id')),
+            UserMother::systemUser(),
+        );
+
+        $accountId = $response->tripCalculationLink->accountId();
+
+        $this->assertNotNull($accountId);
+        $this->assertTrue((new AccountId('given-account-id'))->equals($accountId));
+        $this->assertNotNull($this->tripCalculationLinkRepository->findForAccount(new AccountId('given-account-id')));
+    }
+
+    public function testIsIdempotentForTheGivenAccount(): void
+    {
+        $sut = $this->createSUT(null);
+        $request = new RegisterAccountTripCalculationLinkRequest(new AccountId('given-account-id'));
+
+        $first = $sut($request, UserMother::adminUser());
+        $second = $sut($request, UserMother::adminUser());
+
+        $this->assertTrue($first->tripCalculationLink->id()->equals($second->tripCalculationLink->id()));
+    }
+
+    public function testDeniesAUserOfAnotherAccountForTheGivenAccount(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        ($this->createSUT('account-id'))(
+            new RegisterAccountTripCalculationLinkRequest(new AccountId('given-account-id')),
+            UserMother::fromUsernameAndRoleAndAccount('user', Role::User, new AccountId('account-id')),
+        );
+    }
+
     public function testThrowsWithoutCurrentAccount(): void
     {
         $this->expectException(\InvalidArgumentException::class);

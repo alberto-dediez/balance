@@ -8,9 +8,15 @@ enum ProjectContributionFunding: string
 {
     case Payment = 'payment';
     case OwnCredit = 'own_credit';
+    case Imported = 'imported';
 
     public function isOwnCredit(): bool
     {
         return self::OwnCredit === $this;
+    }
+
+    public function isImported(): bool
+    {
+        return self::Imported === $this;
     }
 }

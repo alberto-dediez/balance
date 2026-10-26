@@ -169,7 +169,7 @@ class User implements \Stringable
         return $this->twoFactorChallenge ?? TwoFactorChallenge::none();
     }
 
-    public function register(string $username, string $password, ?AccountId $accountId = null): void
+    public function register(string $username, string $password, ?AccountId $accountId = null, bool $welcome = true): void
     {
         $this->recordApplyAndPublish(
             new UserRegistered(
@@ -177,6 +177,7 @@ class User implements \Stringable
                 username: $username,
                 password: $password,
                 accountId: $accountId,
+                welcome: $welcome,
             ),
         );
     }

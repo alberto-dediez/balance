@@ -136,7 +136,8 @@ final class ReallocateUnderallocatedContributionsService
 
         $underallocated = array_values(array_filter(
             $contributions,
-            static fn(ProjectContribution $contribution): bool => $contribution->unallocatedTonnes() > self::MIN_ALLOCATABLE_TONNES,
+            static fn(ProjectContribution $contribution): bool => !$contribution->funding()->isImported()
+                && $contribution->unallocatedTonnes() > self::MIN_ALLOCATABLE_TONNES,
         ));
 
         usort(

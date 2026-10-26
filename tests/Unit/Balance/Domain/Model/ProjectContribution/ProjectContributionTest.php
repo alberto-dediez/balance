@@ -6,10 +6,14 @@ namespace App\Tests\Unit\Balance\Domain\Model\ProjectContribution;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionExpired;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFailed;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionImportedAsPaid;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionPaid;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionPaymentUnreconciled;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRegistered;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
+use App\Shared\Domain\Event\DomainEvent;
+use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
 
 class ProjectContributionTest extends TestCase
@@ -23,6 +27,24 @@ class ProjectContributionTest extends TestCase
         $this->assertSame(40.0, $contribution->taxableAmount());
         $this->assertSame(48.4, $contribution->totalAmount());
         $this->assertInstanceOf(ProjectContributionRegistered::class, array_values($contribution->recordedEvents())[0]);
+    }
+
+    public function testRegisteringWithoutDateUsesTheCurrentMoment(): void
+    {
+        $before = new \DateTimeImmutable('NOW');
+
+        $contribution = ProjectContributionMother::pending();
+
+        $this->assertGreaterThanOrEqual($before, $contribution->registeredAt());
+    }
+
+    public function testRegisteringWithDateKeepsTheGivenMoment(): void
+    {
+        $registeredAt = new \DateTimeImmutable('2025-03-14 09:30:00');
+
+        $contribution = ProjectContributionMother::imported(paidAt: $registeredAt);
+
+        $this->assertEquals($registeredAt, $contribution->registeredAt());
     }
 
     public function testCannotRegisterWithoutTonnes(): void
@@ -40,6 +62,34 @@ class ProjectContributionTest extends TestCase
         $this->assertSame(ProjectContributionStatus::Paid, $contribution->status());
         $this->assertNotNull($contribution->paidAt());
         $this->assertInstanceOf(ProjectContributionPaid::class, array_values($contribution->recordedEvents())[1]);
+    }
+
+    public function testImportingAsPaidMarksItAsPaidOnTheGivenDate(): void
+    {
+        DomainEventPublisher::instance()->reset();
+        $spySubscriber = new SpyDomainEventSubscriber();
+
+        $paidAt = new \DateTimeImmutable('2025-03-14 09:30:00');
+        $contribution = ProjectContributionMother::pending();
+        $contribution->importAsPaid($paidAt);
+
+        $this->assertTrue($contribution->isPaid());
+        $this->assertEquals($paidAt, $contribution->paidAt());
+        $this->assertEquals($paidAt, $contribution->resolvedAt());
+        $this->assertInstanceOf(ProjectContributionImportedAsPaid::class, $spySubscriber->lastEvent());
+        $this->assertSame([], array_filter(
+            $spySubscriber->events(),
+            static fn(DomainEvent $event): bool => $event instanceof ProjectContributionPaid,
+        ));
+    }
+
+    public function testCannotImportAsPaidAResolvedContribution(): void
+    {
+        $contribution = ProjectContributionMother::paid();
+
+        $this->expectException(\LogicException::class);
+
+        $contribution->importAsPaid(new \DateTimeImmutable('2025-03-14'));
     }
 
     public function testPayingTwiceRecordsASingleEvent(): void

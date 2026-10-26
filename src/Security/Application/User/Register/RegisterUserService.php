@@ -40,7 +40,7 @@ class RegisterUserService implements CommandHandler
         $hashedPassword = $this->passwordHasher->hashPassword($request->password);
 
         $user = new User($id);
-        $user->register($request->username, $hashedPassword, $request->accountId);
+        $user->register($request->username, $hashedPassword, $request->accountId, welcome: $request->welcome);
 
         $this->userRepository->add($user);
 

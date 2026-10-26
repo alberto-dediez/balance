@@ -123,6 +123,50 @@ class ProjectContributionMother
         return $projectContribution;
     }
 
+    public static function imported(
+        ?AccountId $accountId = null,
+        ?ProjectId $projectId = null,
+        float $tonnes = 1.0,
+        ?\DateTimeImmutable $paidAt = null,
+    ): ProjectContribution {
+        $paidAt ??= new \DateTimeImmutable('-2 days');
+
+        $projectContribution = new ProjectContribution(id: ProjectContributionId::generate());
+        $projectContribution->register(
+            accountId: $accountId ?? AccountId::generate(),
+            projectId: $projectId ?? ProjectId::generate(),
+            origin: ProjectContributionOrigin::TripCalculation,
+            originId: null,
+            originName: null,
+            co2eqKg: $tonnes * 1000,
+            tonnes: $tonnes,
+            pricePerTonne: 20.0,
+            costPerTonne: 15.0,
+            freeAmount: true,
+            contributionAmount: round($tonnes * 20.0, 2),
+            managementFeeAmount: 0.0,
+            taxableAmount: 0.0,
+            vatRate: 0.0,
+            vatAmount: 0.0,
+            totalAmount: round($tonnes * 20.0, 2),
+            vatReason: null,
+            currency: 'EUR',
+            contributorName: 'Ana Donante',
+            contributorEmail: 'ana@example.com',
+            contributorCountry: 'ES',
+            contributorIsCompany: false,
+            contributorCompanyName: null,
+            contributorVatNumber: null,
+            locale: Locale::Spanish,
+            expiresAt: null,
+            funding: ProjectContributionFunding::Imported,
+            registeredAt: $paidAt,
+        );
+        $projectContribution->importAsPaid($paidAt);
+
+        return $projectContribution;
+    }
+
     public static function pendingFromAttendeeSurveyResponse(
         AccountId $accountId,
         ProjectId $projectId,

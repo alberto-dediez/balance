@@ -1,0 +1,4 @@
+[
+  {"_id": {"$oid": "67321d9ece709cddf95d0001"}, "amount": 50, "created_at": {"$date": "2024-11-11T15:07:10.877Z"}, "currency": "eur", "donerEmail": "donante@example.test", "donerName": "Ana Donante", "ecoProjectId": "66e15d7743e6391cc4900001", "organizationId": "66d5a88dd8f0e44fb3460001", "transaction_uuid": "c0063a20-fe4e-48c6-b91a-fed92e6e4ebc"},
+  {"_id": {"$oid": "67321d9ece709cddf95d0002"}, "amount": 100, "created_at": {"$date": "2025-02-03T09:00:00.000Z"}, "currency": "eur", "donerEmail": "otro@example.test", "donerName": "Luis Donante", "ecoProjectId": "66e15d7743e6391cc4900002", "organizationId": "66d5a88dd8f0e44fb3460001", "transaction_uuid": "13c8d8db-b88b-41db-880f-23aa6df79d53"}
+]

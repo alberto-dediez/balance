@@ -29,7 +29,7 @@ class RegisterAccountTripCalculationLinkService implements CommandHandler
 
     public function __invoke(RegisterAccountTripCalculationLinkRequest $request, User $user): RegisterAccountTripCalculationLinkResponse
     {
-        $accountId = $this->currentAccountIdProvider->currentAccountId();
+        $accountId = $request->accountId ?? $this->currentAccountIdProvider->currentAccountId();
 
         if (null === $accountId) {
             throw new \InvalidArgumentException('No current account');

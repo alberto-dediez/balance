@@ -1,0 +1,4 @@
+[
+  {"_id": {"$oid": "66e15d7743e6391cc4900001"}, "created_at": {"$date": "2024-09-11T09:05:59.480Z"}, "display_name": "Programa CAMINA ", "sluglified_name": "programa-camina"},
+  {"_id": {"$oid": "66e15d7743e6391cc4900002"}, "created_at": {"$date": "2024-09-11T09:06:59.480Z"}, "display_name": "Bosque Antiguo", "sluglified_name": "bosque-antiguo"}
+]

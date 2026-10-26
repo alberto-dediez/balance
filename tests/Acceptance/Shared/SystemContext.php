@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Acceptance\Shared;
 
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -19,6 +20,9 @@ class SystemContext implements Context
     private ?string $output = null;
     private ?int $statusCode = null;
     private ?CommandTester $commandTester = null;
+
+    /** @var list<string> */
+    private array $answers = [];
 
     public function __construct(KernelInterface $kernel)
     {
@@ -75,6 +79,43 @@ class SystemContext implements Context
 
         $this->commandTester = new CommandTester($command);
         $this->statusCode = $this->commandTester->execute($parameters);
+
+        $this->output = $this->commandTester->getDisplay();
+    }
+
+    #[Given('the command answers are:')]
+    public function theCommandAnswersAre(TableNode $table): void
+    {
+        $this->answers = array_map(
+            static fn(array $row): string => (string) $row['answer'],
+            $table->getColumnsHash(),
+        );
+    }
+
+    #[When('command :name is executed with parameters:')]
+    public function commandIsExecutedWithParameters(string $name, TableNode $table): void
+    {
+        $parameters = [];
+
+        foreach ($table->getColumnsHash() as $row) {
+            $parameter = (string) $row['parameter'];
+            $value = '' === (string) $row['value'] && str_starts_with($parameter, '--') ? true : (string) $row['value'];
+
+            if (!array_key_exists($parameter, $parameters)) {
+                $parameters[$parameter] = $value;
+
+                continue;
+            }
+
+            $parameters[$parameter] = array_merge((array) $parameters[$parameter], [$value]);
+        }
+
+        $command = $this->application->find($name);
+
+        $this->commandTester = new CommandTester($command);
+        $this->commandTester->setInputs($this->answers);
+        $this->statusCode = $this->commandTester->execute($parameters, ['interactive' => [] !== $this->answers]);
+        $this->answers = [];
 
         $this->output = $this->commandTester->getDisplay();
     }

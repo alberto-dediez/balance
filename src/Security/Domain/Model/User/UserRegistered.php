@@ -19,6 +19,7 @@ final class UserRegistered extends DomainEvent
         #[\SensitiveParameter]
         private readonly string $password,
         private readonly ?AccountId $accountId = null,
+        private readonly bool $welcome = true,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -45,13 +46,18 @@ final class UserRegistered extends DomainEvent
         return $this->accountId;
     }
 
+    public function welcome(): bool
+    {
+        return $this->welcome;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->userId;
     }
 
     /**
-     * @return array{userId:string, username: string, password: string, accountId: string}
+     * @return array{userId:string, username: string, password: string, accountId: string, welcome: bool}
      */
     public function payload(): array
     {
@@ -60,6 +66,7 @@ final class UserRegistered extends DomainEvent
             'username' => $this->username,
             'password' => $this->password,
             'accountId' => (string) $this->accountId,
+            'welcome' => $this->welcome,
         ];
     }
 
@@ -78,6 +85,7 @@ final class UserRegistered extends DomainEvent
             accountId: (empty($payload['accountId']))
                 ? null
                 : new AccountId($payload['accountId']),
+            welcome: (bool) ($payload['welcome'] ?? true),
             id: $id,
             occurredOn: $occurredOn,
         );

@@ -117,12 +117,13 @@ class TripCalculationMother
         return self::fromLinkId((string) TripCalculationLinkId::generate());
     }
 
-    public static function registeredAt(string $tripCalculationLinkId, string $registeredAt): TripCalculation
+    public static function registeredAt(string $tripCalculationLinkId, string $registeredAt, ?Emissions $emissions = null): TripCalculation
     {
         return new TripCalculation(
             id: TripCalculationId::generate(),
             tripCalculationLinkId: new TripCalculationLinkId($tripCalculationLinkId),
             trips: 1,
+            emissions: $emissions,
             registeredAt: new \DateTimeImmutable($registeredAt),
         );
     }

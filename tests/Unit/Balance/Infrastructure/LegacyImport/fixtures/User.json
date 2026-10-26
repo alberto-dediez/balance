@@ -1,0 +1,4 @@
+[
+  {"_id": {"$oid": "user-admin"}, "created_at": {"$date": "2024-08-29T14:10:33.816Z"}, "email": "Admin@Example.com", "global_permissions": ["GENERAL_GLOBAL_ADMIN"], "hashed_password": "$2a$10$x", "provider": "local"},
+  {"_id": {"$oid": "user-owner"}, "created_at": {"$date": "2024-08-30T10:00:00.000Z"}, "email": "owner@example.com", "global_permissions": [], "hashed_password": "$2a$10$y", "provider": "local"}
+]

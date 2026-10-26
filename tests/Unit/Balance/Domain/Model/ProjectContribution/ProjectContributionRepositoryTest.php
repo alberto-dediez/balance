@@ -154,6 +154,22 @@ abstract class ProjectContributionRepositoryTest extends KernelTestCase
         $this->assertSame(1.0, $committed[(string) $secondProjectId]);
     }
 
+    public function testImportedContributionsAreNotCommitted(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+        $now = new \DateTimeImmutable('NOW');
+
+        $repository->add(ProjectContributionMother::paid($accountId, $projectId, tonnes: 3.0));
+        $repository->add(ProjectContributionMother::imported($accountId, $projectId, tonnes: 4.0));
+
+        $this->assertSame(3.0, $repository->committedTonnes($accountId, $projectId, $now));
+        $this->assertSame([(string) $projectId => 3.0], $repository->committedTonnesByAccount($accountId, $now));
+        $this->assertSame(3.0, $repository->committedTonnesForProject($projectId, $now));
+    }
+
     public function testCommittedTonnesOfAnUnknownProjectIsZero(): void
     {
         $repository = $this->createSUT();
@@ -236,6 +252,23 @@ abstract class ProjectContributionRepositoryTest extends KernelTestCase
         $this->assertCount(2, $repository->underallocatedContributions(null, null));
         $this->assertCount(1, $repository->underallocatedContributions($accountId, null));
         $this->assertCount(1, $repository->underallocatedContributions(null, $projectId));
+    }
+
+    public function testUnderallocatedContributionsExcludeImportedOnes(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $underallocated = ProjectContributionMother::paid($accountId, $projectId, 5.0);
+        $repository->add($underallocated);
+        $repository->add(ProjectContributionMother::imported($accountId, $projectId, 2.0));
+
+        $contributions = $repository->underallocatedContributions($accountId, $projectId);
+
+        $this->assertCount(1, $contributions);
+        $this->assertTrue($underallocated->id()->equals($contributions[0]->id()));
     }
 
     public function testUnderallocatedContributionsAreOrderedByPaymentDate(): void

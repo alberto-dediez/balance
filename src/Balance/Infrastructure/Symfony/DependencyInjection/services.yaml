@@ -7,10 +7,20 @@ services:
         resource: '../../../'
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
+            - '../../../Infrastructure/LegacyImport/'
 
     App\Balance\Infrastructure\UI\Console\:
         resource: '../../../Infrastructure/UI/Console/'
         tags: ['console.command']
+
+    App\Balance\Infrastructure\LegacyImport\:
+        resource: '../../../Infrastructure/LegacyImport/'
+        exclude:
+            - '../../../Infrastructure/LegacyImport/{ImportDecisions,ImportOptions,LegacyBalanceDataset,LegacyCalculation,LegacyDonation,LegacyEcoProject,LegacyMembership,LegacyOrganization,LegacyPlace,LegacyUser,OrganizationDecision,OrganizationTarget,RedirectRule}.php'
+
+    App\Balance\Infrastructure\UI\Console\LegacyImport\ImportLegacyBalanceCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
 
     App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionService:
         arguments:

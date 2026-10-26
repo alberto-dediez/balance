@@ -110,6 +110,21 @@ class ReallocateUnderallocatedContributionsServiceTest extends TestCase
         $this->assertSame(0.0, $response->reallocatedTonnes);
     }
 
+    public function testAnImportedContributionReceivesNoCredits(): void
+    {
+        $this->givenCompensationProject();
+
+        $this->givenValidatedPurchase(10.0, '-1 day');
+        $contribution = ProjectContributionMother::imported($this->accountId, $this->projectId, 3.0);
+        $this->contributions->add($contribution);
+
+        $response = $this->reallocate();
+
+        $this->assertSame(0, $response->contributionsCovered);
+        $this->assertSame(0.0, $response->reallocatedTonnes);
+        $this->assertSame(0.0, $contribution->allocatedTonnes());
+    }
+
     public function testMultipleUnderallocatedContributionsAreReallocatedTogether(): void
     {
         $this->givenCompensationProject();

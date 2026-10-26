@@ -49,6 +49,7 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
+use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -61,6 +62,8 @@ use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 final class BalanceContext implements Context
 {
     private const int MAX_QUEUE_ROUNDS = 10;
+
+    private const string LEGACY_REDIRECTS_FILE = 'tests/Acceptance/Balance/fixtures/legacy-balance/redirects.txt';
 
     /** @var list<string> */
     private const array TRANSPORTS = [
@@ -77,6 +80,39 @@ final class BalanceContext implements Context
     public function __construct(KernelBrowser $client)
     {
         $this->client = AcceptanceClient::instance($client);
+    }
+
+    #[AfterScenario('@legacy-import')]
+    public function removeLegacyRedirectsFile(): void
+    {
+        $path = $this->projectPath(self::LEGACY_REDIRECTS_FILE);
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
+    }
+
+    #[Then('file :path contains :text')]
+    public function fileContains(string $path, string $text): void
+    {
+        $path = $this->projectPath($path);
+
+        Assert::assertFileExists($path);
+        Assert::assertStringContainsString($text, (string) file_get_contents($path));
+    }
+
+    #[Then('file :path does not contain :text')]
+    public function fileDoesNotContain(string $path, string $text): void
+    {
+        $path = $this->projectPath($path);
+
+        Assert::assertFileExists($path);
+        Assert::assertStringNotContainsString($text, (string) file_get_contents($path));
+    }
+
+    private function projectPath(string $path): string
+    {
+        return $this->client->getKernelBrowser()->getKernel()->getProjectDir() . '/' . $path;
     }
 
     public function getProjectRepository(): ProjectRepository

@@ -35,6 +35,10 @@ class WelcomeUserNotifier implements DomainEventSubscriber
 
     private function handleUserRegistered(UserRegistered $event): void
     {
+        if (!$event->welcome()) {
+            return;
+        }
+
         $subject = 'Bienvenido {user}';
         $subjectParams = ['{user}' => $event->username()];
         $params = [

@@ -9,5 +9,5 @@ use App\Shared\Application\CommandBus\Command;
 
 class RegisterUserRequest implements Command
 {
-    public function __construct(public string $username = '', #[\SensitiveParameter] public string $password = '', public ?AccountId $accountId = null) {}
+    public function __construct(public string $username = '', #[\SensitiveParameter] public string $password = '', public ?AccountId $accountId = null, public bool $welcome = true) {}
 }

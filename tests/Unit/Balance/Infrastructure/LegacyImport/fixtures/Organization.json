@@ -1,0 +1,4 @@
+[
+  {"_id": {"$oid": "org-ota"}, "active": true, "created_at": {"$date": "2024-08-29T14:10:45.872Z"}, "display_name": "Viajes Test", "organizationType": "ota", "sluglified_name": "viajes-test", "theme": null},
+  {"_id": {"$oid": "org-hotel"}, "active": false, "created_at": {"$date": "2024-09-01T08:00:00.000Z"}, "display_name": "Hotel Test", "organizationType": "hotel", "sluglified_name": "hotel-test", "theme": null}
+]

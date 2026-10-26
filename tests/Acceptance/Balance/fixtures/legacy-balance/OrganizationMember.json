@@ -1,0 +1,5 @@
+[
+  {"_id": {"$oid": "66d08165b5c27984100000b1"}, "active": true, "created_at": {"$date": "2024-08-30T10:00:00.000Z"}, "member_id": "66d0815900000000000000a2", "organization_id": "66d5a88dd8f0e44fb3460001", "role_names": ["organization-admin"]},
+  {"_id": {"$oid": "66d08165b5c27984100000b2"}, "active": true, "created_at": {"$date": "2024-08-30T11:00:00.000Z"}, "member_id": "66d0815900000000000000a3", "organization_id": "66d5a88dd8f0e44fb3460002", "role_names": ["external"]},
+  {"_id": {"$oid": "66d08165b5c27984100000b3"}, "active": true, "created_at": {"$date": "2024-08-31T11:00:00.000Z"}, "member_id": "66d0815900000000000000a4", "organization_id": "66d5a88dd8f0e44fb3460003", "role_names": ["organization-admin"]}
+]

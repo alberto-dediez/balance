@@ -184,6 +184,7 @@ class TripCalculation implements \Stringable
         Emissions $overnightEmissions,
         ?EmissionFactorGroupId $emissionFactorGroupId,
         int $calculationYear,
+        ?\DateTimeImmutable $registeredAt = null,
     ): void {
         $this->recordApplyAndPublish(
             new TripCalculationRegistered(
@@ -200,6 +201,7 @@ class TripCalculation implements \Stringable
                 overnightEmissions: $overnightEmissions,
                 emissionFactorGroupId: $emissionFactorGroupId,
                 calculationYear: $calculationYear,
+                occurredOn: $registeredAt,
             ),
         );
     }
