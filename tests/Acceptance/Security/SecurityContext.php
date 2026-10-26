@@ -29,6 +29,7 @@ use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider;
 use App\Security\Infrastructure\Sso\SsoProviderRegistry;
+use App\Security\Infrastructure\Symfony\Event\UserLogged;
 use App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTotpAuthenticator;
 use App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTwoFactorPolicy;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -36,6 +37,7 @@ use App\Shared\Infrastructure\Symfony\Event\EmailListener;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\EmailLog\EmailLogMother;
+use App\Tests\Unit\Security\Domain\Model\RecordedEvent\RecordedEventMother;
 use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
@@ -366,6 +368,15 @@ final class SecurityContext implements Context
         $user = UserMother::fromUsernameAndRoleAndId($username, Role::User, new UserId($id));
 
         $this->getUserRepository()->add($user);
+    }
+
+    #[Given('user with id :id has logged in')]
+    public function userWithIdHasLoggedIn(string $id): void
+    {
+        $this->getRecordedEventRepository()->add(RecordedEventMother::from(
+            userId: new UserId($id),
+            event: new UserLogged(new UserId($id), 'main'),
+        ));
     }
 
     #[Given('user :username with role :role with id :id exists')]

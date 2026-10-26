@@ -55,7 +55,9 @@ class UserExtension extends AbstractExtension
         if (!isset($this->users[(string) $userId])) {
             $user = $this->userRepository->find($userId);
 
-            $username = null == $user ? new TranslatableMessage('<s>{userId}</s>', ['{userId}' => (string) $userId]) : (string) $user;
+            $username = null == $user
+                ? new TranslatableMessage('<s>{userId}</s>', ['{userId}' => htmlspecialchars((string) $userId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')])
+                : htmlspecialchars((string) $user, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
             $this->users[(string) $userId] = $username;
         }

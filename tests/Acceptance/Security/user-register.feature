@@ -85,3 +85,42 @@ Feature:
         When I submit a form with "username:user@dediez.software|password:333|roles:[1,2]" and button "Registrar"
         Then the response status should be 200
         Then I see a text "El nombre de usuario ya existe"
+
+    Scenario: As an admin, I can't register a user whose username contains HTML
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "Minotour" with id "6666" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/users/register"
+        When I submit a form with "username:<b>pepe</b>|password:333|roles:[1,2]" and button "Registrar"
+        Then the response status should be 200
+        Then I see a text "El nombre de usuario no puede contener los caracteres"
+        Then I do not see a text "Usuario creado correctamente"
+
+    Scenario: As owner I can't register a user of my account whose username contains HTML
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/users/register"
+        When I submit a form with "username:<b>pepe</b>|password:333" and button "Registrar"
+        Then the response status should be 200
+        Then I see a text "El nombre de usuario no puede contener los caracteres"
+        Then I do not see a text "Usuario creado correctamente"
+
+    Scenario: As an admin, I can't register by API a user whose username contains HTML
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "123" exists
+        When I am authenticated in API as "admin@dediez.software"
+        When I send a POST request to "/api/users" with body:
+        """
+        {
+          "username": "<b>pepe</b>",
+          "account_id": "123"
+        }
+        """
+        Then the status code should be 422
+
+    Scenario: Command security:user:register rejects a username with HTML
+        Given I am the system
+        When command "security:user:register" is executed with argument "username:<b>pepe</b> password:123"
+        Then I expect status code 1
+        Then I want to see "no puede contener" in command output
