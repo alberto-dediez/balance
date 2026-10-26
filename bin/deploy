@@ -19,7 +19,7 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PHP="${PHP:-/opt/plesk/php/8.4/bin/php}"
 COMPOSER_BIN="${COMPOSER_BIN:-/usr/lib64/plesk-9.0/composer.phar}"
 SUPERVISORCTL="${SUPERVISORCTL:-/usr/bin/supervisorctl}"
-SUPERVISOR_GROUP="${SUPERVISOR_GROUP:-hydra}"
+SUPERVISOR_GROUP="${SUPERVISOR_GROUP:-balance}"
 DEPLOY_LOG="${DEPLOY_LOG:-$PROJECT_DIR/var/log/deploy.log}"
 DEPLOY_WEBHOOK_URL="${DEPLOY_WEBHOOK_URL:-}"
 

@@ -11,6 +11,15 @@ Este README y `bin/deploy` son comunes a todas las plataformas basadas en Hydra.
 | `<PROJECT_USER>` | System user de la suscripción de Plesk | `example.com_ab12cd34` |
 | `<DOMINIO>` | Dominio del sitio en Plesk | `app.example.com` |
 
+Valores de balance:
+
+| Marcador | Valor |
+|----------|-------|
+| `<GRUPO>` | `balance` ([`balance-workers.ini`](balance-workers.ini)) |
+| `<PROJECT_DIR>` | `/var/www/vhosts/bioscore.info/balance.bioscore.info` |
+| `<PROJECT_USER>` | `bioscore.info_vtdmx4srwt` |
+| `<DOMINIO>` | `balance.bioscore.info` |
+
 Rutas por defecto de `bin/deploy` (se pueden sobrescribir con variables de entorno):
 
 | Dato | Valor | Variable |
