@@ -741,6 +741,10 @@
         <source>El valor de reducción de esta medida debe estar dentro del rango establecido</source>
         <target>El valor de reducción de esta medida debe estar dentro del rango establecido</target>
       </trans-unit>
+      <trans-unit id="dXBo.Go" resname="El nombre de usuario no puede contener los caracteres &lt; ni &gt;">
+        <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
+        <target><![CDATA[El nombre de usuario no puede contener los caracteres < ni >]]></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

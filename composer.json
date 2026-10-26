@@ -8,6 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
+        "async-aws/s3": "^3.5",
         "bacon/bacon-qr-code": "^3.1",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.13",

@@ -8,6 +8,8 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
 use App\Security\Domain\Model\User\DuplicatedUsernameException;
+use App\Security\Domain\Model\User\InvalidUsernameException;
+use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserRegistered;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Security\Infrastructure\Symfony\Security\Md5PasswordHasher;
@@ -117,6 +119,29 @@ class RegisterUserServiceTest extends TestCase
         );
 
         $sut($request2, $performBy);
+    }
+
+    public function testUsernameWithHtmlIsRejected(): void
+    {
+        $repository = new InMemoryUserRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $request = new RegisterUserRequest(
+            username: '<img src=x onerror=alert(1)>',
+            password: '666',
+        );
+
+        $performBy = UserMother::adminUser();
+
+        try {
+            $sut($request, $performBy);
+            $this->fail('InvalidUsernameException was expected');
+        } catch (InvalidUsernameException) {
+        }
+
+        $this->assertSame(0, $repository->totalResultsByFilter(new UserFilter()));
+        $this->assertNull($this->spySubscriber->lastEvent());
     }
 
     public function testUnauthorizedAccess(): void

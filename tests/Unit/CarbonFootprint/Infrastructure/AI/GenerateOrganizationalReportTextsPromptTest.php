@@ -6,8 +6,8 @@ namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
 use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateOrganizationalReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
-use App\Shared\Infrastructure\AI\Gemini\GeminiThinkingLevel;
+use App\Shared\Infrastructure\AI\AiModelTier;
+use App\Shared\Infrastructure\AI\AiThinkingLevel;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
 use PHPUnit\Framework\TestCase;
 
@@ -30,8 +30,8 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
     {
         $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish);
 
-        $this->assertSame(GeminiModelTier::MEDIUM, $prompt->modelTier());
-        $this->assertSame(GeminiThinkingLevel::MEDIUM, $prompt->thinkingLevel());
+        $this->assertSame(AiModelTier::MEDIUM, $prompt->modelTier());
+        $this->assertSame(AiThinkingLevel::MEDIUM, $prompt->thinkingLevel());
     }
 
     public function testTextIncludesTheSubjectDataTotalsAndExclusions(): void

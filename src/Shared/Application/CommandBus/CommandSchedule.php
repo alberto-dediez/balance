@@ -12,6 +12,8 @@ use App\Bioscore\Application\BioscoreCatalogItem\Sync\SyncBioscoreCatalogsReques
 use App\CarbonFootprint\Application\ExchangeRate\Sync\SyncExchangeRatesRequest;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
+use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
+use App\Security\Application\EmailLog\Purge\PurgeEmailLogsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
 
 class CommandSchedule
@@ -68,9 +70,19 @@ class CommandSchedule
                 command: new SyncExchangeRatesRequest(now: new \DateTimeImmutable('NOW')),
                 time: '17:00',
             ),
+            ScheduledCommand::dailyAt(
+                id: 'security:purge-email-logs',
+                command: new PurgeEmailLogsRequest(new \DateTimeImmutable('NOW')),
+                time: '03:00',
+            ),
             ScheduledCommand::everyMinutes(
                 id: 'changelog:publish-scheduled-announcements',
                 command: new PublishScheduledAnnouncementsRequest(new \DateTimeImmutable('NOW')),
+                minutes: 5,
+            ),
+            ScheduledCommand::everyMinutes(
+                id: 'library:sync-media-storage',
+                command: new SyncMediaStorageRequest(new \DateTimeImmutable('NOW')),
                 minutes: 5,
             ),
         ];

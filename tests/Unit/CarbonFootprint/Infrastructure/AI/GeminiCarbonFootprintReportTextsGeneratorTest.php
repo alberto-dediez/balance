@@ -10,7 +10,7 @@ use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateOrganizationalReportTex
 use App\CarbonFootprint\Infrastructure\AI\Gemini\TranslateReportTextsPrompt;
 use App\CarbonFootprint\Infrastructure\AI\GeminiCarbonFootprintReportTextsGenerator;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\Gemini\InMemoryGeminiClient;
+use App\Shared\Infrastructure\AI\InMemoryAiClient;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 {
     public function testMapsAnEventResponseIntoTexts(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse([
             'executiveSummary' => 'Summary line 1\nSummary line 2',
             'methodology' => 'Methodology text',
@@ -42,7 +42,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testMapsAnOrganizationalResponseIntoTexts(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
@@ -61,7 +61,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testKeepsTheMitigationPlanSectionWhenItArrives(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
@@ -77,7 +77,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testOmitsAnEmptyMitigationPlanSection(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
@@ -93,7 +93,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testTranslateSendsTranslatePromptAndMapsResponse(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse([
             'executiveSummary' => 'Translated summary',
             'methodology' => 'Translated methodology',
@@ -116,7 +116,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testThrowsWhenResponseKeepsReturningCorruptedCharacters(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse([
             'executiveSummary' => "El car\x01cter del a\x06o",
             'methodology' => 'Methodology text',
@@ -134,7 +134,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testEmptyOptionalSectionIsOmitted(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse([
             'executiveSummary' => 'Summary',
             'methodology' => 'Methodology text',
@@ -172,7 +172,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testThrowsWhenTheResponseKeepsMissingRequiredSections(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse(['executiveSummary' => 'Only summary']);
 
         $sut = new GeminiCarbonFootprintReportTextsGenerator($client);
@@ -185,7 +185,7 @@ class GeminiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
     public function testTranslateThrowsWhenATranslatedSectionComesBackEmpty(): void
     {
-        $client = new InMemoryGeminiClient();
+        $client = new InMemoryAiClient();
         $client->setResponse(['purpose' => 'Translated purpose', 'conclusion' => '']);
 
         $sut = new GeminiCarbonFootprintReportTextsGenerator($client);

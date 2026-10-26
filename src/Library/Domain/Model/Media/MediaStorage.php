@@ -10,6 +10,8 @@ interface MediaStorage
 {
     public function store(MediaId $mediaId, ?AccountId $accountId, string $extension, string $localPath): string;
 
+    public function write(string $path, string $localPath): void;
+
     /**
      * @return resource
      */

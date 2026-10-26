@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Shared\Application\CommandBus;
 
 use App\CarbonFootprint\Application\ExchangeRate\Sync\SyncExchangeRatesRequest;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
+use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
 use App\Shared\Application\CommandBus\CommandSchedule;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\ScheduledCommand;
+use App\Shared\Application\CommandBus\TimedCommand;
 use PHPUnit\Framework\TestCase;
 
 class CommandScheduleTest extends TestCase
@@ -44,5 +46,31 @@ class CommandScheduleTest extends TestCase
 
         $this->assertInstanceOf(DeferredCommand::class, $command);
         $this->assertInstanceOf(SyncExchangeRatesRequest::class, $command->command());
+    }
+
+    public function testSynchronizesTheMediaStorageEveryFiveMinutes(): void
+    {
+        $scheduled = array_values(array_filter(
+            (new CommandSchedule())->commands(),
+            static fn(ScheduledCommand $command): bool => 'library:sync-media-storage' === $command->id(),
+        ));
+
+        $this->assertCount(1, $scheduled);
+        $this->assertSame(5, $scheduled[0]->intervalInMinutes());
+
+        $command = $scheduled[0]->command();
+
+        $this->assertInstanceOf(DeferredCommand::class, $command);
+        $this->assertInstanceOf(SyncMediaStorageRequest::class, $command->command());
+    }
+
+    public function testEveryScheduledCommandReceivesTheExecutionTime(): void
+    {
+        foreach ((new CommandSchedule())->commands() as $scheduled) {
+            $command = $scheduled->command();
+
+            $this->assertInstanceOf(DeferredCommand::class, $command);
+            $this->assertInstanceOf(TimedCommand::class, $command->command(), $scheduled->id());
+        }
     }
 }

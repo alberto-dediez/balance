@@ -7,21 +7,37 @@ parameters:
     app.cookie_config_url: '%env(default::COOKIE_CONFIG_URL)%'
     app.consent_policy_version: '%env(CONSENT_POLICY_VERSION)%'
     mailer.from: '%env(MAILER_FROM)%'
+    app.uploads_dir: '%kernel.project_dir%/var/uploads'
+    app.maintenance_mode: '%env(bool:MAINTENANCE_MODE)%'
+    error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
+    error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
+    error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
+    app.ai_provider: '%env(AI_PROVIDER)%'
+    app.ai_log_enabled: '%env(bool:AI_LOG_ENABLED)%'
     app.gemini_api_key: '%env(GEMINI_API_KEY)%'
     app.gemini_model_low: '%env(GEMINI_MODEL_LOW)%'
     app.gemini_model_medium: '%env(GEMINI_MODEL_MEDIUM)%'
     app.gemini_model_high: '%env(GEMINI_MODEL_HIGH)%'
-    app.gemini_log_enabled: '%env(bool:GEMINI_LOG_ENABLED)%'
-    app.uploads_dir: '%kernel.project_dir%/var/uploads'
+    app.anthropic_api_key: '%env(ANTHROPIC_API_KEY)%'
+    app.anthropic_model_low: '%env(ANTHROPIC_MODEL_LOW)%'
+    app.anthropic_model_medium: '%env(ANTHROPIC_MODEL_MEDIUM)%'
+    app.anthropic_model_high: '%env(ANTHROPIC_MODEL_HIGH)%'
     app.chart_endpoint: '%env(CHART_ENDPOINT)%'
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     app.google_maps_enabled: '%env(bool:GOOGLE_MAPS_ENABLED)%'
     app.google_maps_region: '%env(GOOGLE_MAPS_REGION)%'
     app.carto_basemap_key: '%env(CARTO_BASEMAP_KEY)%'
-    app.maintenance_mode: '%env(bool:MAINTENANCE_MODE)%'
-    error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
-    error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
-    error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
+    ovh.s3.endpoint: '%env(OVH_S3_ENDPOINT)%'
+    ovh.s3.region: '%env(OVH_S3_REGION)%'
+    ovh.s3.bucket: '%env(OVH_S3_BUCKET)%'
+    ovh.s3.access_key: '%env(OVH_S3_ACCESS_KEY)%'
+    ovh.s3.secret_key: '%env(OVH_S3_SECRET_KEY)%'
+    ovh.s3.prefix: '%env(OVH_S3_PREFIX)%'
+    shared.health_check.queue_max_wait_minutes: '%env(int:HEALTH_CHECK_QUEUE_MAX_WAIT_MINUTES)%'
+    shared.health_check.queue_transports:
+        async_high: high
+        async: medium
+        async_low: low
 
 services:
     _defaults:
@@ -57,6 +73,7 @@ services:
         public: true
         arguments:
             $mailerFrom: '%mailer.from%'
+            $mailerDsn: '%env(MAILER_DSN)%'
 
     App\Shared\Infrastructure\Symfony\Event\EmailListener:
         public: true
@@ -90,18 +107,6 @@ services:
 
     App\Shared\Domain\Model\WhatsApp\WhatsAppSender: '@App\Shared\Infrastructure\WhatsApp\TwilioWhatsAppSender'
 
-    App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
-        arguments:
-            $apiKey: '%app.gemini_api_key%'
-            $modelLow: '%app.gemini_model_low%'
-            $modelMedium: '%app.gemini_model_medium%'
-            $modelHigh: '%app.gemini_model_high%'
-            $logEnabled: '%app.gemini_log_enabled%'
-            $logDir: '%kernel.project_dir%/var/gemini-logs'
-
-    App\Shared\Infrastructure\AI\Gemini\GeminiClient:
-        alias: App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient
-
     App\Shared\Infrastructure\Chart\ApexChartHttpClient:
         arguments:
             $endpoint: '%app.chart_endpoint%'
@@ -126,9 +131,100 @@ services:
 
     App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\CachedPlaceFinder'
 
+    App\Shared\Infrastructure\Storage\Ovh\OvhS3ClientFactory:
+        arguments:
+            $endpoint: '%ovh.s3.endpoint%'
+            $region: '%ovh.s3.region%'
+            $accessKey: '%ovh.s3.access_key%'
+            $secretKey: '%ovh.s3.secret_key%'
+            $httpClient: null
+
+    AsyncAws\S3\S3Client:
+        factory: ['@App\Shared\Infrastructure\Storage\Ovh\OvhS3ClientFactory', 'create']
+        lazy: true
+
+    App\Shared\Infrastructure\Persistence\Doctrine\DatabaseHealthIndicator:
+        tags: [{ name: shared.health_indicator, priority: 20 }]
+
+    App\Shared\Infrastructure\Symfony\Messenger\QueueHealthIndicator:
+        arguments:
+            $transportNames: '%shared.health_check.queue_transports%'
+            $maxWaitMinutes: '%shared.health_check.queue_max_wait_minutes%'
+        tags: [{ name: shared.health_indicator, priority: 10 }]
+
+when@dev:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Shared\Infrastructure\AI\AiRequestLog:
+            arguments:
+                $enabled: '%app.ai_log_enabled%'
+                $dir: '%kernel.project_dir%/var/ai-logs'
+
+        App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
+            arguments:
+                $apiKey: '%app.gemini_api_key%'
+                $modelLow: '%app.gemini_model_low%'
+                $modelMedium: '%app.gemini_model_medium%'
+                $modelHigh: '%app.gemini_model_high%'
+
+        App\Shared\Infrastructure\AI\Anthropic\AnthropicHttpClient:
+            arguments:
+                $apiKey: '%app.anthropic_api_key%'
+                $modelLow: '%app.anthropic_model_low%'
+                $modelMedium: '%app.anthropic_model_medium%'
+                $modelHigh: '%app.anthropic_model_high%'
+
+        App\Shared\Infrastructure\AI\ProviderAiClient:
+            arguments:
+                $provider: '%app.ai_provider%'
+
+        App\Shared\Infrastructure\AI\AiClient: '@App\Shared\Infrastructure\AI\ProviderAiClient'
+
+when@prod:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Shared\Infrastructure\AI\AiRequestLog:
+            arguments:
+                $enabled: '%app.ai_log_enabled%'
+                $dir: '%kernel.project_dir%/var/ai-logs'
+
+        App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
+            arguments:
+                $apiKey: '%app.gemini_api_key%'
+                $modelLow: '%app.gemini_model_low%'
+                $modelMedium: '%app.gemini_model_medium%'
+                $modelHigh: '%app.gemini_model_high%'
+
+        App\Shared\Infrastructure\AI\Anthropic\AnthropicHttpClient:
+            arguments:
+                $apiKey: '%app.anthropic_api_key%'
+                $modelLow: '%app.anthropic_model_low%'
+                $modelMedium: '%app.anthropic_model_medium%'
+                $modelHigh: '%app.anthropic_model_high%'
+
+        App\Shared\Infrastructure\AI\ProviderAiClient:
+            arguments:
+                $provider: '%app.ai_provider%'
+
+        App\Shared\Infrastructure\AI\AiClient: '@App\Shared\Infrastructure\AI\ProviderAiClient'
+
 when@test:
     parameters:
         app.uploads_dir: '%kernel.project_dir%/var/uploads_test%env(default::TEST_TOKEN)%'
 
     services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Shared\Infrastructure\Health\InMemoryHealthIndicator:
+            public: true
+            tags: [{ name: shared.health_indicator, priority: 0 }]
+
         App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\NullPlaceFinder'

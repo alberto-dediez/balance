@@ -58,6 +58,8 @@
                             {% set value = value.value | trans({}, 'transportModeType') %}
                         {% elseif field == 'operatingRegime' %}
                             {% set value = value.value | trans({}, 'operatingRegime') %}
+                        {% elseif formField.vars.choice_translation_domain is defined and formField.vars.choice_translation_domain and value is not iterable %}
+                            {% set value = (value | show_field_value) | trans({}, formField.vars.choice_translation_domain) %}
                         {% endif %}
 
                         <twig:List:FilterShow

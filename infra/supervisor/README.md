@@ -19,6 +19,8 @@ Rutas por defecto de `bin/deploy` (se pueden sobrescribir con variables de entor
 | Composer | `/usr/lib64/plesk-9.0/composer.phar` | `COMPOSER_BIN` |
 | `supervisorctl` | `/usr/bin/supervisorctl` | `SUPERVISORCTL` |
 | Grupo de Supervisor | `hydra` | `SUPERVISOR_GROUP` |
+| Log del despliegue | `<PROJECT_DIR>/var/log/deploy.log` | `DEPLOY_LOG` |
+| Webhook de resultado | *(ninguno)* | `DEPLOY_WEBHOOK_URL` (también en `.env.local`) |
 
 ## Adaptar a una plataforma
 
@@ -56,7 +58,8 @@ Así los mensajes `high` siempre tienen capacidad dedicada y ninguna cola queda 
 Opciones clave de cada `command`:
 
 - `--time-limit=3600`: el worker termina solo cada hora y Supervisor lo reinicia (libera memoria).
-- `--memory-limit=128M`: corta antes si la memoria crece demasiado.
+- `-d memory_limit=256M`: el PHP CLI de Plesk trae 128M, insuficientes para arrancar el worker si la caché no está caliente.
+- `--memory-limit=192M`: Messenger para el worker de forma limpia antes de alcanzar el límite de PHP (la comprobación se hace tras cada mensaje, así que debe quedar por debajo del `memory_limit`).
 - `--limit=200`: máximo de mensajes procesados antes de salir (defensa adicional).
 - `stopwaitsecs=3600` + `stopsignal=TERM`: al parar, el worker termina el mensaje en curso antes de morir (sin pérdida ni duplicado).
 
@@ -193,7 +196,30 @@ En *Sitios web y dominios → `<DOMINIO>` → Git → Configuración del reposit
 
   `bash` explícito por si el despliegue no conserva el permiso de ejecución del fichero. Las acciones se ejecutan desde la ruta de despliegue.
 
-La salida del script (y el error, si falla) aparece en el registro del despliegue de Plesk Git.
+La salida del script (y el error, si falla) aparece en el registro del despliegue de Plesk Git y se guarda además, acumulada por despliegues, en `var/log/deploy.log` (cada ejecución empieza con una línea `######## Deploy <fecha> (<commit>) ########`). Si la web tiene el código nuevo pero el log no tiene entrada de ese despliegue, Plesk no llegó a ejecutar la acción.
+
+### Webhook de resultado (opcional)
+
+Si `DEPLOY_WEBHOOK_URL` está definida (como variable de entorno o como línea `DEPLOY_WEBHOOK_URL=https://...` en `.env.local`), al terminar el despliegue, **también cuando falla**, el script hace un `POST` con `Content-Type: application/json`:
+
+```json
+{
+  "status": "success | failed",
+  "exit_code": 0,
+  "project": "app.example.com",
+  "host": "srv.example.com",
+  "group": "hydra",
+  "commit": "a1b2c3d",
+  "step": "Deploy completado",
+  "duration_seconds": 42,
+  "finished_at": "2026-10-19T14:50:57Z",
+  "log_tail": ""
+}
+```
+
+`step` es el último paso iniciado (en un fallo, el que ha roto) y `log_tail` trae las últimas 40 líneas del log solo cuando `status` es `failed`. Un fallo del webhook (timeout de 15 s, HTTP de error, sin `curl`) solo deja un aviso: nunca cambia el resultado del despliegue. El aviso solo muestra `scheme://host` de la URL, para no dejar su token en el registro de Plesk ni en `var/log/deploy.log`.
+
+Las plataformas con ERP obtienen la URL en «Configuración de desarrollo → Acciones → Generar URL de resultado» y la copian como `DEPLOY_WEBHOOK_URL=<URL>` en el `.env.local` del proyecto en el servidor.
 
 Para relanzar solo los pasos posteriores al código (por ejemplo, tras corregir un fallo) sin volver a desplegar, desde `root`:
 
@@ -205,7 +231,7 @@ sudo -u <PROJECT_USER> -H bash -c 'cd <PROJECT_DIR> && bash bin/deploy; echo "EX
 
 En este orden:
 
-1. **Para los workers** (`supervisorctl stop '<GRUPO>:*'`). Cada worker termina el mensaje en curso (hasta `stopwaitsecs=3600`, durante los que el despliegue de Plesk queda esperando) y Supervisor los deja parados hasta el `start`; los mensajes nuevos se acumulan en `messenger_messages`.
+1. **Para los workers** (`supervisorctl stop '<GRUPO>:*'`). Cada worker termina el mensaje en curso (hasta `stopwaitsecs=3600`, durante los que el despliegue de Plesk queda esperando) y Supervisor los deja parados hasta el `start`; los mensajes nuevos se acumulan en `messenger_messages`. Si algún worker ya estaba parado (`ERROR (not running)`, por ejemplo tras un despliegue fallido) se avisa y se continúa: `supervisorctl` devuelve error en ese caso y antes abortaba el despliegue entero sin ejecutar las migraciones.
 2. **Instala dependencias** (`composer install --optimize-autoloader --no-scripts`, con las dependencias de desarrollo) con el Composer y el PHP CLI de Plesk. Sin scripts para que Composer no limpie la caché por su cuenta; sus `auto-scripts` se ejecutan en los pasos siguientes.
 3. **Limpia la caché** (`cache:clear --no-warmup`) y la **calienta** (`cache:warmup`).
 4. **Ejecuta las migraciones**, después de la caché para que no fallen con un contenedor desactualizado.
@@ -219,15 +245,18 @@ Plesk Git actualiza los ficheros **antes** de lanzar la acción, así que los wo
 
 No usar `restart` ni `messenger:stop-workers` en el despliegue: ambos hacen que Supervisor relance los workers al instante, en mitad del borrado de la caché.
 
-Si un paso falla, el script se detiene y **deja los workers parados** a propósito (con dependencias a medias o una migración fallida es más seguro no procesar mensajes). Corregir el error y relanzar `bin/deploy`, o arrancarlos a mano con `supervisorctl start '<GRUPO>:*'`.
+Si un paso falla, el script se detiene, indica en qué paso ha fallado, notifica el webhook si está configurado y **deja los workers parados** a propósito (con dependencias a medias o una migración fallida es más seguro no procesar mensajes). Corregir el error y relanzar `bin/deploy`, o arrancarlos a mano con `supervisorctl start '<GRUPO>:*'`.
 
 ## Problemas frecuentes
 
 | Síntoma | Causa | Solución |
 |---------|-------|----------|
 | `/usr/bin/env: bad interpreter: No such file or directory` al desplegar | El usuario tiene shell `/bin/false` o `chrootsh` y Plesk ejecuta la acción en una jaula chroot | Shell `/bin/bash` (paso 2) |
+| Las migraciones (u otro paso) no se ejecutan en el despliegue pero sí a mano | El script abortó antes (p. ej. `supervisorctl stop` con los workers ya parados, `sudo` sin permiso) o Plesk no llegó a lanzarlo | Revisar `var/log/deploy.log` y el registro de Plesk Git; configurar `DEPLOY_WEBHOOK_URL` para enterarse de los fallos |
 | `sudo: a password is required` | Falta alguna regla de sudoers o está mal escrita (comillas, `reread ""`, espacios tras `\`) | Revisar el paso 5 y probar cada comando con el paso 7 |
-| `Allowed memory size of 134217728 bytes exhausted` | `memory_limit` de 128M del PHP CLI de Plesk | Ya resuelto en `bin/deploy` (`-d memory_limit=512M`) |
+| `Allowed memory size of 134217728 bytes exhausted` | `memory_limit` de 128M del PHP CLI de Plesk | Ya resuelto en `bin/deploy` (`-d memory_limit=512M`) y en los `command=` del `.ini` (`-d memory_limit=256M`) |
+| `rm: cannot remove 'var/cache/prod': Directory not empty` al desplegar | PHP-FPM regeneraba la caché mientras se borraba | Ya resuelto en `bin/deploy`: renombra `var/cache/prod` antes de borrarlo |
+| Los workers no arrancan tras el deploy (`ERROR (spawn error)` en todos) | El worker muere al arrancar, normalmente por memoria (`messenger-*.log`) o caché a medias | Revisar `/var/log/supervisor/<GRUPO>/messenger-*.log` y `grep spawnerr /var/log/supervisord.log`; relanzar `bin/deploy` |
 | `Permission denied` / `Cannot open file` en `var/` o `public/assets/` | Ficheros creados por `root` al ejecutar comandos a mano | `chown -R <PROJECT_USER>:psacln <PROJECT_DIR>` (comprobar el grupo con `ls -ld <PROJECT_DIR>`) y `rm -rf <PROJECT_DIR>/public/assets` |
 | La web falla con funciones o clases de paquetes recién añadidos (`Unknown "xxx" function`) | Un Composer distinto del de Plesk (p. ej. `/usr/bin/composer`) no instala bien el `composer.lock` | Usar `/usr/lib64/plesk-9.0/composer.phar` (valor por defecto de `COMPOSER_BIN`) |
 | `550 The from address does not match a verified Sender Identity` | `MAILER_FROM` sin definir en el servidor (se usa el de ejemplo de `.env`) o remitente no verificado en el proveedor de correo | Verificar el remitente o el dominio en el proveedor y definir `MAILER_FROM` en `.env.local` |

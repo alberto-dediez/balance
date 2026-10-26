@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Security;
 
+use App\Security\Application\EmailLog\Purge\PurgeEmailLogsRequest;
+use App\Security\Application\EmailLog\Purge\PurgeEmailLogsService;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -13,6 +15,10 @@ use App\Security\Domain\Model\Branding\BrandingRepository;
 use App\Security\Domain\Model\Branding\FontFamilyName;
 use App\Security\Domain\Model\Branding\HexColor;
 use App\Security\Domain\Model\Branding\PdfFontFamily;
+use App\Security\Domain\Model\EmailLog\EmailLogFilter;
+use App\Security\Domain\Model\EmailLog\EmailLogId;
+use App\Security\Domain\Model\EmailLog\EmailLogRepository;
+use App\Security\Domain\Model\EmailLog\EmailLogStatus;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventFilter;
 use App\Security\Domain\Model\RecordedEvent\RecordedEventRepository;
 use App\Security\Domain\Model\SignatureRequest\DocumentReference;
@@ -32,12 +38,15 @@ use App\Security\Infrastructure\Sso\Bioscore\InMemory\InMemoryBioscoreClient;
 use App\Security\Infrastructure\Sso\Bioscore\InMemory\InMemoryBioscoreJwtDecoder;
 use App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider;
 use App\Security\Infrastructure\Sso\SsoProviderRegistry;
+use App\Security\Infrastructure\Symfony\Event\UserLogged;
 use App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTotpAuthenticator;
 use App\Security\Infrastructure\Symfony\Security\TwoFactor\InMemoryTwoFactorPolicy;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Symfony\Event\EmailListener;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\EmailLog\EmailLogMother;
+use App\Tests\Unit\Security\Domain\Model\RecordedEvent\RecordedEventMother;
 use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
@@ -108,6 +117,11 @@ final class SecurityContext implements Context
     private function getRecordedEventRepository(): RecordedEventRepository
     {
         return $this->client->getContainer()->get(RecordedEventRepository::class);
+    }
+
+    private function getEmailLogRepository(): EmailLogRepository
+    {
+        return $this->client->getContainer()->get(EmailLogRepository::class);
     }
 
     private function getSsoProviderRegistry(): SsoProviderRegistry
@@ -387,6 +401,15 @@ final class SecurityContext implements Context
         $user = UserMother::fromUsernameAndRoleAndId($username, Role::User, new UserId($id));
 
         $this->getUserRepository()->add($user);
+    }
+
+    #[Given('user with id :id has logged in')]
+    public function userWithIdHasLoggedIn(string $id): void
+    {
+        $this->getRecordedEventRepository()->add(RecordedEventMother::from(
+            userId: new UserId($id),
+            event: new UserLogged(new UserId($id), 'main'),
+        ));
     }
 
     #[Given('user :username with role :role with id :id exists')]
@@ -855,6 +878,99 @@ final class SecurityContext implements Context
         foreach ($events as $event) {
             Assert::assertFalse($event->isImpersonated());
         }
+    }
+
+    #[Given('email log with id :id to :email exists')]
+    public function emailLogWithIdToExists(string $id, string $email): void
+    {
+        $this->getEmailLogRepository()->add(EmailLogMother::fromId($id, $email));
+    }
+
+    #[Given('email log with id :id to :email exists with status :status')]
+    public function emailLogWithIdToExistsWithStatus(string $id, string $email, string $status): void
+    {
+        $emailLogStatus = EmailLogStatus::tryFrom($status);
+
+        Assert::assertInstanceOf(EmailLogStatus::class, $emailLogStatus);
+
+        $now = new \DateTimeImmutable('NOW');
+
+        $emailLog = EmailLogStatus::Failed === $emailLogStatus
+            ? EmailLogMother::from(id: new EmailLogId($id), recipientEmail: $email, providerMessageId: null, status: EmailLogStatus::Failed, statusReason: 'transport down')
+            : EmailLogMother::fromId($id, $email);
+
+        match ($emailLogStatus) {
+            EmailLogStatus::Delivered => $emailLog->markAsDelivered($now),
+            EmailLogStatus::Deferred => $emailLog->markAsDeferred('deferred', $now),
+            EmailLogStatus::Bounced => $emailLog->markAsBounced('bounced', $now),
+            EmailLogStatus::Dropped => $emailLog->markAsDropped('dropped', $now),
+            EmailLogStatus::Sent, EmailLogStatus::Failed => null,
+        };
+
+        $this->getEmailLogRepository()->add($emailLog);
+    }
+
+    #[Given('email log with id :id to :email sent :days days ago exists')]
+    public function emailLogWithIdToSentDaysAgoExists(string $id, string $email, int $days): void
+    {
+        $this->getEmailLogRepository()->add(EmailLogMother::from(
+            id: new EmailLogId($id),
+            recipientEmail: $email,
+            sentAt: new \DateTimeImmutable(sprintf('-%d days', $days)),
+        ));
+    }
+
+    #[When('email logs are purged')]
+    public function emailLogsArePurged(): void
+    {
+        $purgeEmailLogs = $this->client->getContainer()->get(PurgeEmailLogsService::class);
+
+        $purgeEmailLogs(new PurgeEmailLogsRequest(new \DateTimeImmutable('NOW')), UserMother::systemUser());
+    }
+
+    #[Then('email log :id has status :status')]
+    public function emailLogHasStatus(string $id, string $status): void
+    {
+        $emailLog = $this->getEmailLogRepository()->find(new EmailLogId($id));
+
+        Assert::assertNotNull($emailLog, sprintf('No existe el email log "%s"', $id));
+        Assert::assertSame($status, $emailLog->status()->value);
+    }
+
+    #[Then('email log :id has been opened :count times')]
+    public function emailLogHasBeenOpenedTimes(string $id, int $count): void
+    {
+        $emailLog = $this->getEmailLogRepository()->find(new EmailLogId($id));
+
+        Assert::assertNotNull($emailLog, sprintf('No existe el email log "%s"', $id));
+        Assert::assertSame($count, $emailLog->openCount());
+    }
+
+    #[Then('there are :count email logs to :email')]
+    #[Then('there is :count email log to :email')]
+    public function thereAreEmailLogsTo(int $count, string $email): void
+    {
+        $emailLogs = $this->getEmailLogRepository()->findByFilter(new EmailLogFilter(recipient: $email, limit: 0));
+
+        Assert::assertCount($count, $emailLogs);
+    }
+
+    #[Then('there is :count email log to :email with status :status')]
+    public function thereIsEmailLogToWithStatus(int $count, string $email, string $status): void
+    {
+        $emailLogStatus = EmailLogStatus::tryFrom($status);
+
+        Assert::assertInstanceOf(EmailLogStatus::class, $emailLogStatus);
+
+        $emailLogs = $this->getEmailLogRepository()->findByFilter(new EmailLogFilter(recipient: $email, status: $emailLogStatus, limit: 0));
+
+        Assert::assertCount($count, $emailLogs);
+    }
+
+    #[Then('email log :id does not exist')]
+    public function emailLogDoesNotExist(string $id): void
+    {
+        Assert::assertNull($this->getEmailLogRepository()->find(new EmailLogId($id)));
     }
 
     private function setOtpVerifiedInSession(string $plainToken): void

@@ -16,6 +16,9 @@ final class EmailSent extends DomainEvent
         private readonly EmailRecipient $recipient,
         private readonly string $subject,
         private readonly string $content,
+        private readonly EmailTrackingId $trackingId,
+        private readonly string $provider,
+        private readonly ?string $providerMessageId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -37,13 +40,28 @@ final class EmailSent extends DomainEvent
         return $this->content;
     }
 
+    public function trackingId(): EmailTrackingId
+    {
+        return $this->trackingId;
+    }
+
+    public function provider(): string
+    {
+        return $this->provider;
+    }
+
+    public function providerMessageId(): ?string
+    {
+        return $this->providerMessageId;
+    }
+
     public function aggregateRootId(): ?AggregateRootId
     {
         return null;
     }
 
     /**
-     * @return array{recipient: EmailRecipient, subject: string, content: string}
+     * @return array{recipient: EmailRecipient, subject: string, content: string, trackingId: string, provider: string, providerMessageId: ?string}
      */
     public function payload(): array
     {
@@ -51,6 +69,9 @@ final class EmailSent extends DomainEvent
             'recipient' => $this->recipient,
             'subject' => $this->subject,
             'content' => $this->content,
+            'trackingId' => (string) $this->trackingId,
+            'provider' => $this->provider,
+            'providerMessageId' => $this->providerMessageId,
         ];
     }
 
@@ -66,6 +87,9 @@ final class EmailSent extends DomainEvent
             recipient: $payload['recipient'] ?? new EmailRecipient('', ''),
             subject: $payload['subject'] ?? '',
             content: $payload['content'] ?? '',
+            trackingId: new EmailTrackingId($payload['trackingId'] ?? ''),
+            provider: $payload['provider'] ?? '',
+            providerMessageId: $payload['providerMessageId'] ?? null,
             id: $id,
             occurredOn: $occurredOn,
         );

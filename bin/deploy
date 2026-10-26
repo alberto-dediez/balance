@@ -7,7 +7,11 @@
 #
 # Cada plataforma fija en SUPERVISOR_GROUP el [group:...] de su infra/supervisor/<grupo>-workers.ini.
 #
-# Variables opcionales: PHP, COMPOSER_BIN, SUPERVISORCTL, SUPERVISOR_GROUP.
+# Toda la salida se guarda además en var/log/deploy.log.
+# Al terminar (bien o mal) hace un POST JSON a DEPLOY_WEBHOOK_URL si está definida
+# (variable de entorno o línea DEPLOY_WEBHOOK_URL= en .env.local / .env).
+#
+# Variables opcionales: PHP, COMPOSER_BIN, SUPERVISORCTL, SUPERVISOR_GROUP, DEPLOY_WEBHOOK_URL, DEPLOY_LOG.
 
 set -euo pipefail
 
@@ -16,12 +20,18 @@ PHP="${PHP:-/opt/plesk/php/8.4/bin/php}"
 COMPOSER_BIN="${COMPOSER_BIN:-/usr/lib64/plesk-9.0/composer.phar}"
 SUPERVISORCTL="${SUPERVISORCTL:-/usr/bin/supervisorctl}"
 SUPERVISOR_GROUP="${SUPERVISOR_GROUP:-hydra}"
+DEPLOY_LOG="${DEPLOY_LOG:-$PROJECT_DIR/var/log/deploy.log}"
+DEPLOY_WEBHOOK_URL="${DEPLOY_WEBHOOK_URL:-}"
 
 export APP_ENV=prod
 export APP_DEBUG=0
 export COMPOSER_MEMORY_LIMIT=-1
 
+CURRENT_STEP="inicio"
+STARTED_AT="$(date +%s)"
+
 step() {
+    CURRENT_STEP="$1"
     printf '\n\033[32m==> %s\033[0m\n' "$1"
 }
 
@@ -38,6 +48,68 @@ console() {
     "$PHP" -d memory_limit=512M bin/console "$@" --env=prod --no-interaction
 }
 
+env_file_value() {
+    local name="$1" file value
+    for file in "$PROJECT_DIR/.env.local" "$PROJECT_DIR/.env"; do
+        [ -f "$file" ] || continue
+        value="$(grep -E "^${name}=" "$file" | tail -n 1 | cut -d= -f2- | sed -e 's/^["'"'"']//' -e 's/["'"'"']$//')"
+        if [ -n "$value" ]; then
+            printf '%s' "$value"
+            return
+        fi
+    done
+}
+
+json_escape() {
+    printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\t/\\t/g' -e 's/\r//g' | awk 'BEGIN { ORS = "" } NR > 1 { print "\\n" } { print }'
+}
+
+notify_webhook() {
+    local status="$1" exit_code="$2" commit duration log_tail payload
+
+    [ -n "$DEPLOY_WEBHOOK_URL" ] || return 0
+    command -v curl > /dev/null 2>&1 || { printf 'curl no disponible: no se notifica el webhook.\n' >&2; return 0; }
+
+    commit="$(git -C "$PROJECT_DIR" rev-parse --short HEAD 2> /dev/null || printf 'desconocido')"
+    duration="$(( $(date +%s) - STARTED_AT ))"
+    log_tail=""
+    if [ "$status" != "success" ] && [ -f "$DEPLOY_LOG" ]; then
+        log_tail="$(tail -n 40 "$DEPLOY_LOG" | sed -e 's/\x1b\[[0-9;]*m//g')"
+    fi
+
+    payload="$(printf '{"status":"%s","exit_code":%s,"project":"%s","host":"%s","group":"%s","commit":"%s","step":"%s","duration_seconds":%s,"finished_at":"%s","log_tail":"%s"}' \
+        "$status" \
+        "$exit_code" \
+        "$(json_escape "$(basename "$PROJECT_DIR")")" \
+        "$(json_escape "$(hostname -f 2> /dev/null || hostname)")" \
+        "$(json_escape "$SUPERVISOR_GROUP")" \
+        "$(json_escape "$commit")" \
+        "$(json_escape "$CURRENT_STEP")" \
+        "$duration" \
+        "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+        "$(json_escape "$log_tail")")"
+
+    if curl -fsS --max-time 15 -X POST -H 'Content-Type: application/json' --data "$payload" "$DEPLOY_WEBHOOK_URL" > /dev/null; then
+        printf 'Webhook de deploy notificado (%s).\n' "$status"
+    else
+        printf 'No se ha podido notificar el webhook de deploy (%s).\n' "$(printf '%s' "$DEPLOY_WEBHOOK_URL" | sed -E 's#^(https?://[^/]+).*#\1#')" >&2
+    fi
+}
+
+on_exit() {
+    local exit_code=$?
+    trap - EXIT ERR
+
+    if [ "$exit_code" -eq 0 ]; then
+        notify_webhook success 0
+        return
+    fi
+
+    printf '\n\033[31m!! El deploy ha fallado en el paso "%s" (código %s). Los workers siguen parados: corrige el error y vuelve a lanzar bin/deploy (o sudo %s start "%s:*").\033[0m\n' \
+        "$CURRENT_STEP" "$exit_code" "$SUPERVISORCTL" "$SUPERVISOR_GROUP" >&2
+    notify_webhook failed "$exit_code"
+}
+
 main() {
     [ "$(id -u)" -ne 0 ] || fail "No ejecutes el deploy como root: usa el system user de Plesk."
     [ -x "$PHP" ] || fail "No se encuentra el PHP CLI en $PHP."
@@ -45,16 +117,23 @@ main() {
 
     cd "$PROJECT_DIR"
 
-    trap 'fail "El deploy ha fallado. Los workers siguen parados: corrige el error y vuelve a lanzar bin/deploy (o sudo $SUPERVISORCTL start \"$SUPERVISOR_GROUP:*\")."' ERR
+    mkdir -p "$(dirname "$DEPLOY_LOG")"
+    exec > >(tee -a "$DEPLOY_LOG") 2>&1
+    printf '\n######## Deploy %s (%s) ########\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$(git rev-parse --short HEAD 2> /dev/null || printf 'sin git')"
+
+    [ -n "$DEPLOY_WEBHOOK_URL" ] || DEPLOY_WEBHOOK_URL="$(env_file_value DEPLOY_WEBHOOK_URL)"
+
+    trap on_exit EXIT
 
     step "Parando los workers (esperan a terminar el mensaje en curso)"
-    supervisor stop "$SUPERVISOR_GROUP:*"
+    supervisor stop "$SUPERVISOR_GROUP:*" || printf 'Algún worker ya estaba parado; se continúa.\n'
 
     step "Instalando dependencias"
     "$PHP" "$COMPOSER_BIN" install --optimize-autoloader --no-scripts --no-interaction
 
     step "Limpiando la caché"
-    rm -rf var/cache/prod
+    [ ! -d var/cache/prod ] || mv var/cache/prod "var/cache/prod.old.$$"
+    rm -rf var/cache/prod.old.* || true
     console cache:clear --no-warmup
 
     step "Calentando la caché"
@@ -77,7 +156,6 @@ main() {
     supervisor start "$SUPERVISOR_GROUP:*"
     supervisor status "$SUPERVISOR_GROUP:*" || true
 
-    trap - ERR
     step "Deploy completado"
 }
 

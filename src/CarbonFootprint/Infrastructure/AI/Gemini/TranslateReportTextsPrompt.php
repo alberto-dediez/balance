@@ -6,11 +6,11 @@ namespace App\CarbonFootprint\Infrastructure\AI\Gemini;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
-use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
-use App\Shared\Infrastructure\AI\Gemini\GeminiThinkingLevel;
+use App\Shared\Infrastructure\AI\AiModelTier;
+use App\Shared\Infrastructure\AI\AiPrompt;
+use App\Shared\Infrastructure\AI\AiThinkingLevel;
 
-final class TranslateReportTextsPrompt implements GeminiPrompt
+final class TranslateReportTextsPrompt implements AiPrompt
 {
     public function __construct(
         private readonly CarbonFootprintReportTexts $texts,
@@ -73,13 +73,13 @@ final class TranslateReportTextsPrompt implements GeminiPrompt
         ];
     }
 
-    public function thinkingLevel(): GeminiThinkingLevel
+    public function thinkingLevel(): AiThinkingLevel
     {
-        return GeminiThinkingLevel::MINIMAL;
+        return AiThinkingLevel::MINIMAL;
     }
 
-    public function modelTier(): GeminiModelTier
+    public function modelTier(): AiModelTier
     {
-        return GeminiModelTier::LOW;
+        return AiModelTier::LOW;
     }
 }

@@ -10,7 +10,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintR
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateEventReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
+use App\Shared\Infrastructure\AI\AiModelTier;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +36,7 @@ class GenerateReportTextsPromptTest extends TestCase
     {
         $prompt = new GenerateEventReportTextsPrompt(EventCarbonFootprintReportDataMother::random(), Locale::Spanish);
 
-        $this->assertSame(GeminiModelTier::MEDIUM, $prompt->modelTier());
+        $this->assertSame(AiModelTier::MEDIUM, $prompt->modelTier());
     }
 
     public function testTextIncludesTheTargetLanguage(): void

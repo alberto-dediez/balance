@@ -6,11 +6,11 @@ namespace App\CarbonFootprint\Infrastructure\AI\Gemini;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportData;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\Gemini\GeminiModelTier;
-use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
-use App\Shared\Infrastructure\AI\Gemini\GeminiThinkingLevel;
+use App\Shared\Infrastructure\AI\AiModelTier;
+use App\Shared\Infrastructure\AI\AiPrompt;
+use App\Shared\Infrastructure\AI\AiThinkingLevel;
 
-final class GenerateEventReportTextsPrompt implements GeminiPrompt
+final class GenerateEventReportTextsPrompt implements AiPrompt
 {
     private const int MAX_FACTOR_LINES = 120;
 
@@ -185,13 +185,13 @@ final class GenerateEventReportTextsPrompt implements GeminiPrompt
         return $schema;
     }
 
-    public function thinkingLevel(): GeminiThinkingLevel
+    public function thinkingLevel(): AiThinkingLevel
     {
-        return GeminiThinkingLevel::MEDIUM;
+        return AiThinkingLevel::MEDIUM;
     }
 
-    public function modelTier(): GeminiModelTier
+    public function modelTier(): AiModelTier
     {
-        return GeminiModelTier::MEDIUM;
+        return AiModelTier::MEDIUM;
     }
 }

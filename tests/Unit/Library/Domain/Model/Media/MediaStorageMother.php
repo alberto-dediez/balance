@@ -13,6 +13,20 @@ class MediaStorageMother
         return new InMemoryMediaStorage();
     }
 
+    /**
+     * @param array<string,string> $files
+     */
+    public static function inMemoryWith(array $files): InMemoryMediaStorage
+    {
+        $storage = self::inMemory();
+
+        foreach ($files as $path => $contents) {
+            $storage->write($path, self::localFile($contents));
+        }
+
+        return $storage;
+    }
+
     public static function localFile(string $contents = 'a-file'): string
     {
         $path = tempnam(sys_get_temp_dir(), 'media');

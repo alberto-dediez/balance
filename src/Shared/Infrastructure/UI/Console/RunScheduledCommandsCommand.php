@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\UI\Console;
 
 use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Application\CommandBus\Command as BusCommand;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\CommandSchedule;
 use App\Shared\Application\CommandBus\DeferredCommand;
@@ -110,7 +111,7 @@ class RunScheduledCommandsCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function commandLabel(\App\Shared\Application\CommandBus\Command $command): string
+    private function commandLabel(BusCommand $command): string
     {
         if ($command instanceof DeferredCommand) {
             return sprintf('Deferred(%s)', (new \ReflectionClass($command->command()))->getShortName());

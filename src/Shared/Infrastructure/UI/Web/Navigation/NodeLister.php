@@ -467,6 +467,15 @@ class NodeLister
             icon: 'solar:verified-check-line-duotone',
             target: $this->router->generate('admin_signature_requests'),
         );
+
+        if ($this->hasRole(Role::SuperAdmin)) {
+            $administrationItems[] = new Node(
+                label: new TranslatableMessage('Emails enviados'),
+                icon: 'solar:letter-opened-line-duotone',
+                target: $this->router->generate('admin_emails'),
+            );
+        }
+
         $administrationItems[] = new Node(
             label: new TranslatableMessage('Informes de huella'),
             icon: 'solar:document-text-line-duotone',

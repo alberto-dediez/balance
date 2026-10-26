@@ -14,15 +14,15 @@ use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateEventReportTextsPrompt;
 use App\CarbonFootprint\Infrastructure\AI\Gemini\GenerateOrganizationalReportTextsPrompt;
 use App\CarbonFootprint\Infrastructure\AI\Gemini\TranslateReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
-use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
-use App\Shared\Infrastructure\AI\Gemini\GeminiResponseException;
+use App\Shared\Infrastructure\AI\AiClient;
+use App\Shared\Infrastructure\AI\AiPrompt;
+use App\Shared\Infrastructure\AI\AiResponseException;
 
 final class GeminiCarbonFootprintReportTextsGenerator implements CarbonFootprintReportTextsGenerator
 {
     private const int MAX_ATTEMPTS = 3;
 
-    public function __construct(private readonly GeminiClient $geminiClient) {}
+    public function __construct(private readonly AiClient $aiClient) {}
 
     public function generate(CarbonFootprintReportData $data, Locale $locale): CarbonFootprintReportTexts
     {
@@ -50,14 +50,14 @@ final class GeminiCarbonFootprintReportTextsGenerator implements CarbonFootprint
      * @param list<CarbonFootprintReportSectionKey> $requiredKeys
      * @param list<CarbonFootprintReportSectionKey> $optionalKeys
      */
-    private function requestTexts(GeminiPrompt $prompt, array $requiredKeys, array $optionalKeys): CarbonFootprintReportTexts
+    private function requestTexts(AiPrompt $prompt, array $requiredKeys, array $optionalKeys): CarbonFootprintReportTexts
     {
         $lastFailure = '';
 
         for ($attempt = 1; $attempt <= self::MAX_ATTEMPTS; ++$attempt) {
             try {
-                $result = $this->geminiClient->send($prompt);
-            } catch (GeminiResponseException $exception) {
+                $result = $this->aiClient->send($prompt);
+            } catch (AiResponseException $exception) {
                 $lastFailure = $exception->getMessage();
 
                 continue;

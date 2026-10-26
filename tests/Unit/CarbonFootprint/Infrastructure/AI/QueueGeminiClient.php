@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
-use App\Shared\Infrastructure\AI\Gemini\GeminiClient;
-use App\Shared\Infrastructure\AI\Gemini\GeminiPrompt;
+use App\Shared\Infrastructure\AI\AiClient;
+use App\Shared\Infrastructure\AI\AiPrompt;
 
-final class QueueGeminiClient implements GeminiClient
+final class QueueGeminiClient implements AiClient
 {
     private int $calls = 0;
 
@@ -15,7 +15,7 @@ final class QueueGeminiClient implements GeminiClient
     public function __construct(private array $responses) {}
 
     /** @return array<mixed> */
-    public function send(GeminiPrompt $prompt): array
+    public function send(AiPrompt $prompt): array
     {
         ++$this->calls;
 

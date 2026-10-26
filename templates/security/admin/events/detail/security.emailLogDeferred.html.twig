@@ -1,0 +1,4 @@
+{% trans with {
+    '{date}': event.deferredAt | date('d/m/Y H:i'),
+    '{reason}': event.reason
+} %}Email diferido el {date}: {reason}{% endtrans %}

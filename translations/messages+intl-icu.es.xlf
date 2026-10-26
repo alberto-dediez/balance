@@ -9905,6 +9905,130 @@
         <source>Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.</source>
         <target>Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.</target>
       </trans-unit>
+      <trans-unit id="KgcF1oX" resname="El almacenamiento de la biblioteca no está disponible">
+        <source>El almacenamiento de la biblioteca no está disponible</source>
+        <target>El almacenamiento de la biblioteca no está disponible</target>
+      </trans-unit>
+      <trans-unit id="0LwiJ43" resname="El almacenamiento de la biblioteca se ha recuperado">
+        <source>El almacenamiento de la biblioteca se ha recuperado</source>
+        <target>El almacenamiento de la biblioteca se ha recuperado</target>
+      </trans-unit>
+      <trans-unit id="xcRYbVQ" resname="El almacenamiento de la biblioteca no responde. Los archivos nuevos se están guardando temporalmente en el servidor y se subirán automáticamente cuando vuelva a responder.">
+        <source>El almacenamiento de la biblioteca no responde. Los archivos nuevos se están guardando temporalmente en el servidor y se subirán automáticamente cuando vuelva a responder.</source>
+        <target>El almacenamiento de la biblioteca no responde. Los archivos nuevos se están guardando temporalmente en el servidor y se subirán automáticamente cuando vuelva a responder.</target>
+      </trans-unit>
+      <trans-unit id="QZZYuBZ" resname="El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.">
+        <source>El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.</source>
+        <target>El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.</target>
+      </trans-unit>
+      <trans-unit id="8ctFa1g" resname="Enviado desde">
+        <source>Enviado desde</source>
+        <target>Enviado desde</target>
+      </trans-unit>
+      <trans-unit id="eFp5x_9" resname="Enviado hasta">
+        <source>Enviado hasta</source>
+        <target>Enviado hasta</target>
+      </trans-unit>
+      <trans-unit id="ZRfRwWL" resname="Emails enviados">
+        <source>Emails enviados</source>
+        <target>Emails enviados</target>
+      </trans-unit>
+      <trans-unit id="3UQ0bPx" resname="Email rebotado el {date}: {reason}">
+        <source>Email rebotado el {date}: {reason}</source>
+        <target>Email rebotado el {date}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="2skzMgT" resname="Email descartado el {date}: {reason}">
+        <source>Email descartado el {date}: {reason}</source>
+        <target>Email descartado el {date}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="xvROq.s" resname="Email abierto el {date}">
+        <source>Email abierto el {date}</source>
+        <target>Email abierto el {date}</target>
+      </trans-unit>
+      <trans-unit id="lQquOJE" resname="Email entregado el {date}">
+        <source>Email entregado el {date}</source>
+        <target>Email entregado el {date}</target>
+      </trans-unit>
+      <trans-unit id="T60y_bC" resname="Email diferido el {date}: {reason}">
+        <source>Email diferido el {date}: {reason}</source>
+        <target>Email diferido el {date}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="i37LJZd" resname="Clic en el email el {date}">
+        <source>Clic en el email el {date}</source>
+        <target>Clic en el email el {date}</target>
+      </trans-unit>
+      <trans-unit id="5G64Hl9" resname="Email marcado como spam el {date}">
+        <source>Email marcado como spam el {date}</source>
+        <target>Email marcado como spam el {date}</target>
+      </trans-unit>
+      <trans-unit id="eS9kZZT" resname="Registro de email eliminado">
+        <source>Registro de email eliminado</source>
+        <target>Registro de email eliminado</target>
+      </trans-unit>
+      <trans-unit id="7hyzOUY" resname="Registrado email con asunto &quot;{subject}&quot; a {recipient} ({status})">
+        <source>Registrado email con asunto "{subject}" a {recipient} ({status})</source>
+        <target>Registrado email con asunto "{subject}" a {recipient} ({status})</target>
+      </trans-unit>
+      <trans-unit id="WxLMWQI" resname="Enviado">
+        <source>Enviado</source>
+        <target>Enviado</target>
+      </trans-unit>
+      <trans-unit id="QBu1HSr" resname="Entregado">
+        <source>Entregado</source>
+        <target>Entregado</target>
+      </trans-unit>
+      <trans-unit id="P5qL7DG" resname="Abierto">
+        <source>Abierto</source>
+        <target>Abierto</target>
+      </trans-unit>
+      <trans-unit id="3AuZCzA" resname="Ver auditoría">
+        <source>Ver auditoría</source>
+        <target>Ver auditoría</target>
+      </trans-unit>
+      <trans-unit id="0aT_lZO" resname="El proveedor configurado no envía información de entrega ni de apertura">
+        <source>El proveedor configurado no envía información de entrega ni de apertura</source>
+        <target>El proveedor configurado no envía información de entrega ni de apertura</target>
+      </trans-unit>
+      <trans-unit id="6e0qfui" resname="Id del proveedor">
+        <source>Id del proveedor</source>
+        <target>Id del proveedor</target>
+      </trans-unit>
+      <trans-unit id="Lbtl2Fb" resname="Seguimiento">
+        <source>Seguimiento</source>
+        <target>Seguimiento</target>
+      </trans-unit>
+      <trans-unit id="Uv01ULU" resname="Primera apertura">
+        <source>Primera apertura</source>
+        <target>Primera apertura</target>
+      </trans-unit>
+      <trans-unit id="5rU.Lbv" resname="Última apertura">
+        <source>Última apertura</source>
+        <target>Última apertura</target>
+      </trans-unit>
+      <trans-unit id=".1ImJxS" resname="Aperturas">
+        <source>Aperturas</source>
+        <target>Aperturas</target>
+      </trans-unit>
+      <trans-unit id="Or7xTnD" resname="Primer clic">
+        <source>Primer clic</source>
+        <target>Primer clic</target>
+      </trans-unit>
+      <trans-unit id="4GzWMKK" resname="Clics">
+        <source>Clics</source>
+        <target>Clics</target>
+      </trans-unit>
+      <trans-unit id="19zOP0f" resname="Marcado como spam">
+        <source>Marcado como spam</source>
+        <target>Marcado como spam</target>
+      </trans-unit>
+      <trans-unit id="W3YpzE2" resname="Último evento">
+        <source>Último evento</source>
+        <target>Último evento</target>
+      </trans-unit>
+      <trans-unit id="dXBo.Go" resname="El nombre de usuario no puede contener los caracteres &lt; ni &gt;">
+        <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
+        <target><![CDATA[El nombre de usuario no puede contener los caracteres < ni >]]></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
