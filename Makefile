@@ -132,7 +132,7 @@ behat-snippets:
 	@$(PHP) vendor/bin/behat --dry-run --append-snippets
 
 stripe-webhook:
-	stripe listen --skip-verify --forward-to https://events.local/webhooks/stripe
+	stripe listen --skip-verify --forward-to https://balance.local/webhooks/stripe
 
 ## —— Bugs and errors ———————————————————————————————————————————————————————
 external-php:
