@@ -2,7 +2,7 @@
 title: La página de estado comprueba que la plataforma funciona de verdad
 date: "2026-10-18 22:35"
 category: improvement
-summary: La página de estado ya no responde siempre «ok»: comprueba que la plataforma puede leer su información y que los trabajos en segundo plano avanzan, y avisa de qué parte falla.
+summary: "La página de estado ya no responde siempre «ok»: comprueba que la plataforma puede leer su información y que los trabajos en segundo plano avanzan, y avisa de qué parte falla."
 plan: 2026-10-17-health-check-database
 manual: health-check-database.pdf
 techManual: health-check-database.tech.md
