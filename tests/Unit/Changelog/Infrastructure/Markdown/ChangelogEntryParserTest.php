@@ -140,5 +140,6 @@ class ChangelogEntryParserTest extends TestCase
         yield 'unparseable date' => ['2026-09-07-unparseable-date.md'];
         yield 'unsafe manual path' => ['2026-09-08-unsafe-manual.md'];
         yield 'no frontmatter' => ['2026-09-09-no-frontmatter.md'];
+        yield 'malformed yaml' => ['2026-09-12-malformed-yaml.md'];
     }
 }
