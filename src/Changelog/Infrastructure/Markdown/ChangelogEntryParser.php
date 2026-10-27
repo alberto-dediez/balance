@@ -9,6 +9,7 @@ use App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntry;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntrySlug;
 use App\Changelog\Domain\Model\ChangelogEntry\InvalidChangelogEntryException;
 use League\CommonMark\Extension\FrontMatter\Data\SymfonyYamlFrontMatterParser;
+use League\CommonMark\Extension\FrontMatter\Exception\InvalidFrontMatterException;
 use League\CommonMark\Extension\FrontMatter\FrontMatterParser;
 
 final class ChangelogEntryParser
@@ -29,7 +30,11 @@ final class ChangelogEntryParser
 
         $parser = new FrontMatterParser(new SymfonyYamlFrontMatterParser());
 
-        $parsed = $parser->parse($contents);
+        try {
+            $parsed = $parser->parse($contents);
+        } catch (InvalidFrontMatterException $exception) {
+            throw new InvalidChangelogEntryException($fileName, $exception->getMessage());
+        }
 
         $frontMatter = $parsed->getFrontMatter();
 
