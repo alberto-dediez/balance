@@ -15,11 +15,9 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsIncompleteException;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTransitionNotAllowedException;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\UpdateCarbonFootprintReportTextsType;
+use App\Security\Application\Account\ReportPermissionsPolicy;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\Account\AccountReportPermissions;
-use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
@@ -38,7 +36,7 @@ class TextsController extends AbstractController
     public function __invoke(
         string $reportId,
         CarbonFootprintReportRepository $reportRepository,
-        AccountRepository $accountRepository,
+        ReportPermissionsPolicy $reportPermissionsPolicy,
         CarbonFootprintReportResultsRoute $resultsRoute,
         UpdateCarbonFootprintReportTextsService $updateTexts,
         SubmitCarbonFootprintReportForReviewService $submitForReview,
@@ -50,9 +48,10 @@ class TextsController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $report);
 
+        $user = $loggedUser();
+
         $results = $resultsRoute->resolve($report);
-        $accountId = $report->accountId();
-        $permissions = ($accountId instanceof AccountId ? $accountRepository->find($accountId)?->reportPermissions() : null) ?? new AccountReportPermissions();
+        $permissions = $reportPermissionsPolicy->permissionsFor($report->accountId(), $user);
 
         if (!$report->isEditableByOwner() || !$permissions->canEditTexts()) {
             $this->addFlash('warning', new TranslatableMessage('El informe no tiene textos pendientes de revisar.'));
@@ -78,8 +77,6 @@ class TextsController extends AbstractController
             $action = $clickedButton instanceof FormInterface ? $clickedButton->getName() : 'save';
 
             try {
-                $user = $loggedUser();
-
                 if ('submitForReview' === $action) {
                     $submitForReview(new SubmitCarbonFootprintReportForReviewRequest($report->id(), $sections), $user);
                     $this->addFlash('success', new TranslatableMessage('Informe enviado a revisión.'));

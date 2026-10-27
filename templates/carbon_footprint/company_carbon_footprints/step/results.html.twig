@@ -152,7 +152,7 @@
         </div>
         <div class="col-3">
             {% if companyCarbonFootprint.status.isCompleted or (report is not null and report.status.isRejected) %}
-                <twig:CarbonFootprint:ReportStatus :report="report" :canEdit="companyCarbonFootprint | is_authorized('edit')" />
+                <twig:CarbonFootprint:ReportStatus :report="report" :canEdit="companyCarbonFootprint | is_authorized('edit')" :canEditTexts="canEditReportTexts" />
             {% endif %}
 
             {% if companyCarbonFootprint.status.isCompleted and companyCarbonFootprint | is_authorized('edit') %}

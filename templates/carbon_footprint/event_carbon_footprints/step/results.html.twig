@@ -108,7 +108,7 @@
                 </div>
             </div>
             <div class="col-3">
-                <twig:CarbonFootprint:ReportStatus :report="report" :canEdit="eventCarbonFootprint | is_authorized('edit')" />
+                <twig:CarbonFootprint:ReportStatus :report="report" :canEdit="eventCarbonFootprint | is_authorized('edit')" :canEditTexts="canEditReportTexts" />
 
                 {% if report is not null and report.status.isGenerated and reportOutdated %}
                     <twig:Card title="{{ 'Informe de huella de carbono' | trans }}">

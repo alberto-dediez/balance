@@ -6,11 +6,10 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport\GenerateTexts;
 
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\CarbonFootprintReportDataCollectorRegistry;
 use App\CarbonFootprint\Application\CarbonFootprintReport\GeneratePdf\GenerateCarbonFootprintReportPdfRequest;
-use App\CarbonFootprint\Application\CarbonFootprintReport\ReportPermissionsTrait;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsGenerator;
-use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Application\Account\ReportPermissionsPolicy;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
@@ -24,13 +23,12 @@ use App\Shared\Domain\Model\Locale\Locale;
 class GenerateCarbonFootprintReportTextsService implements CommandHandler
 {
     use RegisterHandlerTrait;
-    use ReportPermissionsTrait;
 
     public function __construct(
         private CarbonFootprintReportRepository $reportRepository,
         private CarbonFootprintReportDataCollectorRegistry $collectors,
         private CarbonFootprintReportTextsGenerator $textsGenerator,
-        private AccountRepository $accountRepository,
+        private ReportPermissionsPolicy $reportPermissionsPolicy,
         private string $localeList,
     ) {}
 
@@ -78,7 +76,7 @@ class GenerateCarbonFootprintReportTextsService implements CommandHandler
             throw new \RuntimeException('Incomplete report texts');
         }
 
-        $permissions = $this->reportPermissions($report);
+        $permissions = $this->reportPermissionsPolicy->permissionsFor($report->accountId(), $user);
 
         if ($permissions->canEditTexts()) {
             $report->draftTexts($texts);

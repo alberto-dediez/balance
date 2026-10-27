@@ -6,10 +6,9 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport\Approve;
 
 use App\CarbonFootprint\Application\CarbonFootprintReport\CarbonFootprintReportAuthorizer;
 use App\CarbonFootprint\Application\CarbonFootprintReport\GeneratePdf\GenerateCarbonFootprintReportPdfRequest;
-use App\CarbonFootprint\Application\CarbonFootprintReport\ReportPermissionsTrait;
+use App\CarbonFootprint\Application\CarbonFootprintReport\ReportTextsTrait;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
 use App\Security\Application\Action as SecurityAction;
-use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
@@ -22,12 +21,11 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 class ApproveCarbonFootprintReportService implements CommandHandler
 {
     use RegisterHandlerTrait;
-    use ReportPermissionsTrait;
+    use ReportTextsTrait;
 
     public function __construct(
         private CarbonFootprintReportRepository $reportRepository,
         private CarbonFootprintReportAuthorizer $authorizer,
-        private AccountRepository $accountRepository,
     ) {}
 
     public function __invoke(ApproveCarbonFootprintReportRequest $request, User $user): void

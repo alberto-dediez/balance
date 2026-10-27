@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\CarbonFootprintReport\UpdateTexts\UpdateCarb
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSectionKey;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTransitionNotAllowedException;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\ReportServiceContextTrait;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
@@ -27,7 +28,7 @@ class UpdateCarbonFootprintReportTextsServiceTest extends TestCase
         DomainEventPublisher::instance()->reset();
         $this->initReportContext();
 
-        $this->sut = new UpdateCarbonFootprintReportTextsService($this->reportRepository, new CarbonFootprintReportAuthorizer(), $this->accountRepository);
+        $this->sut = new UpdateCarbonFootprintReportTextsService($this->reportRepository, new CarbonFootprintReportAuthorizer(), $this->reportPermissionsPolicy);
     }
 
     public function testOwnerUpdatesTheDraftWhenTheAccountCanEditTexts(): void
@@ -99,5 +100,36 @@ class UpdateCarbonFootprintReportTextsServiceTest extends TestCase
 
         $this->assertArrayNotHasKey('purpose', $report->texts()->sections);
         $this->assertSame('edited', $report->texts()->get(CarbonFootprintReportSectionKey::ExecutiveSummary));
+    }
+
+    public function testConsultantOwnerSavesADraftWithTheConsultantEditPermission(): void
+    {
+        $consultantId = $this->givenConsultantAccount(true, true);
+        $accountId = $this->givenManagedAccount($consultantId, false, true);
+        $report = $this->givenReport(CarbonFootprintReportMother::draft(accountId: $accountId));
+
+        ($this->impersonatingSut($accountId))(new UpdateCarbonFootprintReportTextsRequest($report->id(), ['executiveSummary' => 'edited']), $this->consultantOwnerUser());
+
+        $this->assertSame('edited', $report->texts()->get(CarbonFootprintReportSectionKey::ExecutiveSummary));
+    }
+
+    public function testManagedAccountOwnerCannotEditADraftWhenOnlyTheConsultantCan(): void
+    {
+        $consultantId = $this->givenConsultantAccount(true, true);
+        $accountId = $this->givenManagedAccount($consultantId, false, true);
+        $report = $this->givenReport(CarbonFootprintReportMother::draft(accountId: $accountId));
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        ($this->sut)(new UpdateCarbonFootprintReportTextsRequest($report->id(), ['executiveSummary' => 'edited']), $this->ownerUser());
+    }
+
+    private function impersonatingSut(AccountId $accountId): UpdateCarbonFootprintReportTextsService
+    {
+        return new UpdateCarbonFootprintReportTextsService(
+            $this->reportRepository,
+            $this->impersonatingAuthorizer($accountId),
+            $this->reportPermissionsPolicy,
+        );
     }
 }

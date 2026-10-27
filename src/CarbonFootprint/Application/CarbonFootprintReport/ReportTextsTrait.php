@@ -7,19 +7,9 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSectionKey;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
-use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\Account\AccountReportPermissions;
 
-trait ReportPermissionsTrait
+trait ReportTextsTrait
 {
-    private function reportPermissions(CarbonFootprintReport $report): AccountReportPermissions
-    {
-        $accountId = $report->accountId();
-        $account = $accountId instanceof AccountId ? $this->accountRepository->find($accountId) : null;
-
-        return $account?->reportPermissions() ?? new AccountReportPermissions();
-    }
-
     /** @param array<string, string> $sections */
     private function textsFrom(CarbonFootprintReport $report, array $sections): CarbonFootprintReportTexts
     {

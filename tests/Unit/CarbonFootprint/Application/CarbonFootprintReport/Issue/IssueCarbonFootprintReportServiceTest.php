@@ -11,6 +11,7 @@ use App\CarbonFootprint\Application\CarbonFootprintReport\Issue\IssueCarbonFootp
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportStatus;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTransitionNotAllowedException;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -33,7 +34,7 @@ class IssueCarbonFootprintReportServiceTest extends TestCase
         $this->initReportContext();
         $this->spyCommandBus = new SluttyCommandHandler();
 
-        $this->sut = new IssueCarbonFootprintReportService($this->reportRepository, new CarbonFootprintReportAuthorizer(), $this->accountRepository);
+        $this->sut = new IssueCarbonFootprintReportService($this->reportRepository, new CarbonFootprintReportAuthorizer(), $this->reportPermissionsPolicy);
     }
 
     public function testIssuesTheDraftAndDispatchesThePdf(): void
@@ -86,5 +87,38 @@ class IssueCarbonFootprintReportServiceTest extends TestCase
         $this->expectException(UnauthorizedActionException::class);
 
         ($this->sut)(new IssueCarbonFootprintReportRequest($report->id()), $this->ownerUser());
+    }
+
+    public function testConsultantOwnerIssuesWithTheConsultantPermissions(): void
+    {
+        $consultantId = $this->givenConsultantAccount(true, true);
+        $accountId = $this->givenManagedAccount($consultantId, false, false);
+        $report = $this->givenReport(CarbonFootprintReportMother::draft(accountId: $accountId));
+
+        ($this->impersonatingSut($accountId))(new IssueCarbonFootprintReportRequest($report->id()), $this->consultantOwnerUser());
+
+        $this->assertSame(CarbonFootprintReportStatus::GeneratingPdf, $report->status());
+        $this->assertTrue($report->isAutoApproved());
+        $this->assertCount(1, $this->spyCommandBus->commands());
+    }
+
+    public function testConsultantOwnerIsDeniedWhenTheConsultantHasNoAutoReviewAlthoughTheManagedAccountHas(): void
+    {
+        $consultantId = $this->givenConsultantAccount(true, false);
+        $accountId = $this->givenManagedAccount($consultantId, true, true);
+        $report = $this->givenReport(CarbonFootprintReportMother::draft(accountId: $accountId));
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        ($this->impersonatingSut($accountId))(new IssueCarbonFootprintReportRequest($report->id()), $this->consultantOwnerUser());
+    }
+
+    private function impersonatingSut(AccountId $accountId): IssueCarbonFootprintReportService
+    {
+        return new IssueCarbonFootprintReportService(
+            $this->reportRepository,
+            $this->impersonatingAuthorizer($accountId),
+            $this->reportPermissionsPolicy,
+        );
     }
 }

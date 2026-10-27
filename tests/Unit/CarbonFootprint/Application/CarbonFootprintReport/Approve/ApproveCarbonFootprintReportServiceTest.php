@@ -34,7 +34,7 @@ class ApproveCarbonFootprintReportServiceTest extends TestCase
         $this->initReportContext();
         $this->spyCommandBus = new SluttyCommandHandler();
 
-        $this->sut = new ApproveCarbonFootprintReportService($this->reportRepository, new CarbonFootprintReportAuthorizer(), $this->accountRepository);
+        $this->sut = new ApproveCarbonFootprintReportService($this->reportRepository, new CarbonFootprintReportAuthorizer());
     }
 
     public function testAdminApprovesWithEditedTextsAndDispatchesThePdf(): void

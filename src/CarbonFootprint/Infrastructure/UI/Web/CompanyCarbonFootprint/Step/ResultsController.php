@@ -11,6 +11,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\CompanyCarbonFootprint\GetCompanyCarbonFootprintFromIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\OrganizationalResultsView;
+use App\Security\Application\Account\ReportPermissionsPolicy;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +29,7 @@ class ResultsController extends AbstractController
         CarbonFootprintReportRepository $reportRepository,
         GetCompanyCarbonFootprintResultsService $getResults,
         OrganizationalResultsView $resultsView,
+        ReportPermissionsPolicy $reportPermissionsPolicy,
         LoggedUser $loggedUser,
     ): Response {
         $companyCarbonFootprint = $this->getCompanyCarbonFootprintFromId($companyCarbonFootprintId, $companyCarbonFootprintRepository);
@@ -45,7 +47,9 @@ class ResultsController extends AbstractController
             );
         }
 
-        $results = $getResults(new GetCompanyCarbonFootprintResultsRequest($companyCarbonFootprint->id()), $loggedUser());
+        $user = $loggedUser();
+        $results = $getResults(new GetCompanyCarbonFootprintResultsRequest($companyCarbonFootprint->id()), $user);
+        $report = $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Company, (string) $companyCarbonFootprint->id());
 
         return $this->render(
             '@carbon_footprint/company_carbon_footprints/step/results.html.twig',
@@ -61,7 +65,8 @@ class ResultsController extends AbstractController
                 'companyCarbonFootprint' => $companyCarbonFootprint,
                 'companyCarbonFootprintId' => $companyCarbonFootprintId,
                 'results' => $results,
-                'report' => $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Company, (string) $companyCarbonFootprint->id()),
+                'report' => $report,
+                'canEditReportTexts' => $reportPermissionsPolicy->permissionsFor($report?->accountId(), $user)->canEditTexts(),
             ],
         );
     }

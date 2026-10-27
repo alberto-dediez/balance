@@ -111,6 +111,7 @@ Feature:
         When I go to "/es/company-carbon-footprints/999/step/results"
         Then the response status should be 200
         Then I see a text "Los textos del informe están listos para revisar."
+        Then I do not see a text "Revisar textos del informe"
 
     Scenario: The generated event report can be downloaded from the events list
         Given account "MyCompany" with id "666" exists
@@ -135,3 +136,29 @@ Feature:
         When I go to "/es/company-carbon-footprints"
         Then the response status should be 200
         Then I see a text "/es/carbon-footprint-reports/999/download"
+
+    Scenario: The owner without edit texts permission does not see the review button on a draft
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "1111" of account "666" exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint "999" is completed
+        Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/results"
+        Then the response status should be 200
+        Then I see a text "Los textos del informe están listos para revisar."
+        Then I do not see a text "Revisar textos del informe"
+
+    Scenario: The owner without edit texts permission does not see the review button on an event draft
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given event "Evento A" with id "333" of account "666" exists
+        Given event carbon footprint with id "999" for event "333" of account "666" with breakdown answered exists
+        Given event carbon footprint "999" is completed
+        Given event carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/events/333/carbon-footprint/step/results"
+        Then the response status should be 200
+        Then I see a text "Los textos del informe están listos para revisar."
+        Then I do not see a text "Revisar textos del informe"

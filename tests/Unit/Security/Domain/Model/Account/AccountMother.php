@@ -45,6 +45,14 @@ class AccountMother
         return $account;
     }
 
+    public static function consultantAccountFromNameAndId(string $name, string $id): Account
+    {
+        $account = new Account(new AccountId($id));
+        $account->register($name, true, EmissionFactorGroupMother::default()->id(), true);
+
+        return $account;
+    }
+
     public static function fromNameWithConsultant(string $name, AccountId $consultantAccountId): Account
     {
         $account = self::fromName($name);

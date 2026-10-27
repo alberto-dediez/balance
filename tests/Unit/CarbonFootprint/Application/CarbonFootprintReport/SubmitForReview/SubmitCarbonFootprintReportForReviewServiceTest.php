@@ -11,6 +11,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubmittedForReview;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsIncompleteException;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\ReportServiceContextTrait;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
@@ -30,7 +31,7 @@ class SubmitCarbonFootprintReportForReviewServiceTest extends TestCase
         $this->initReportContext();
         $this->spySubscriber = new SpyDomainEventSubscriber();
 
-        $this->sut = new SubmitCarbonFootprintReportForReviewService($this->reportRepository, new CarbonFootprintReportAuthorizer(), $this->accountRepository);
+        $this->sut = new SubmitCarbonFootprintReportForReviewService($this->reportRepository, new CarbonFootprintReportAuthorizer(), $this->reportPermissionsPolicy);
     }
 
     public function testSubmitsTheDraftWithTheEditedTexts(): void
@@ -63,5 +64,26 @@ class SubmitCarbonFootprintReportForReviewServiceTest extends TestCase
         $this->expectException(CarbonFootprintReportTextsIncompleteException::class);
 
         ($this->sut)(new SubmitCarbonFootprintReportForReviewRequest($report->id(), ['executiveSummary' => '', 'methodology' => 'm', 'emissionFactorSources' => 's', 'analysisAndRecommendations' => 'a']), $this->ownerUser());
+    }
+
+    public function testConsultantOwnerSubmitsWithTheConsultantEditPermission(): void
+    {
+        $consultantId = $this->givenConsultantAccount(true, false);
+        $accountId = $this->givenManagedAccount($consultantId, false, false);
+        $report = $this->givenReport(CarbonFootprintReportMother::draft(accountId: $accountId));
+
+        ($this->impersonatingSut($accountId))(new SubmitCarbonFootprintReportForReviewRequest($report->id()), $this->consultantOwnerUser());
+
+        $this->assertSame(CarbonFootprintReportStatus::PendingReview, $report->status());
+        $this->assertInstanceOf(CarbonFootprintReportSubmittedForReview::class, $this->spySubscriber->lastEvent());
+    }
+
+    private function impersonatingSut(AccountId $accountId): SubmitCarbonFootprintReportForReviewService
+    {
+        return new SubmitCarbonFootprintReportForReviewService(
+            $this->reportRepository,
+            $this->impersonatingAuthorizer($accountId),
+            $this->reportPermissionsPolicy,
+        );
     }
 }

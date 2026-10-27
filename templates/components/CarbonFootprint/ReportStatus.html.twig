@@ -1,4 +1,4 @@
-{% props report = null, canEdit = false %}
+{% props report = null, canEdit = false, canEditTexts = false %}
 
 <twig:Card title="{{ 'Informe de huella de carbono' | trans }}">
     {% if report is null or report.status.isGeneratingTexts %}
@@ -10,7 +10,7 @@
             {{ 'Los textos del informe están listos para revisar.' | trans }}
         </twig:Alert:Alert>
 
-        {% if canEdit %}
+        {% if canEdit and canEditTexts %}
             <a href="{{ path('carbon_footprint_reports_texts', {reportId: report.id}) }}" class="btn btn-primary">
                 <twig:Icon name="solar:document-text-line-duotone" />
                 {{ 'Revisar textos del informe' | trans }}

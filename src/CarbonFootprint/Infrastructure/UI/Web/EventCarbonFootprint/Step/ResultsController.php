@@ -27,6 +27,7 @@ use App\CarbonFootprint\Infrastructure\UI\Web\EventCarbonFootprint\Step\View\Res
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
+use App\Security\Application\Account\ReportPermissionsPolicy;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -55,6 +56,7 @@ class ResultsController extends AbstractController
         ProvidersStepView $providersStepView,
         EmployeesStepView $employeesStepView,
         ResultsView $resultsView,
+        ReportPermissionsPolicy $reportPermissionsPolicy,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -144,6 +146,7 @@ class ResultsController extends AbstractController
             [
                 'eventId' => $eventId,
                 'report' => $report,
+                'canEditReportTexts' => $reportPermissionsPolicy->permissionsFor($report?->accountId(), $user)->canEditTexts(),
                 'compensation' => $compensation,
                 'reportOutdated' => null !== $report
                     && $report->status()->isGenerated()

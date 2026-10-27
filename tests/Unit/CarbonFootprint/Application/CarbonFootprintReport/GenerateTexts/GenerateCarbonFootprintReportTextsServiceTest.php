@@ -48,7 +48,7 @@ class GenerateCarbonFootprintReportTextsServiceTest extends TestCase
             $this->reportRepository,
             new CarbonFootprintReportDataCollectorRegistry([new StubCarbonFootprintReportDataCollector()]),
             $this->textsGenerator,
-            $this->accountRepository,
+            $this->reportPermissionsPolicy,
             'es|en',
         );
     }
@@ -138,7 +138,7 @@ class GenerateCarbonFootprintReportTextsServiceTest extends TestCase
             $this->reportRepository,
             new CarbonFootprintReportDataCollectorRegistry([new StubCarbonFootprintReportDataCollector()]),
             $this->textsGenerator,
-            $this->accountRepository,
+            $this->reportPermissionsPolicy,
             'es|en',
         );
 
@@ -178,5 +178,55 @@ class GenerateCarbonFootprintReportTextsServiceTest extends TestCase
         $this->expectException(\RuntimeException::class);
 
         ($this->sut)(new GenerateCarbonFootprintReportTextsRequest(CarbonFootprintReportMother::random()->id()), UserMother::systemUser());
+    }
+
+    public function testConsultantOwnerWithEditPermissionGetsADraftOnAManagedAccountWithoutIt(): void
+    {
+        $consultantId = $this->givenConsultantAccount(true, true);
+        $accountId = $this->givenManagedAccount($consultantId, false, true);
+        $report = $this->givenReport(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, accountId: $accountId));
+
+        ($this->sut)(new GenerateCarbonFootprintReportTextsRequest($report->id()), $this->consultantOwnerUser());
+
+        $this->assertSame(CarbonFootprintReportStatus::Draft, $report->status());
+        $this->assertInstanceOf(CarbonFootprintReportTextsDrafted::class, $this->spySubscriber->lastEvent());
+        $this->assertCount(0, $this->spyCommandBus->commands());
+    }
+
+    public function testConsultantOwnerWithAutoReviewApprovesAutomaticallyAlthoughTheManagedAccountRequiresReview(): void
+    {
+        $consultantId = $this->givenConsultantAccount(false, true);
+        $accountId = $this->givenManagedAccount($consultantId, true, false);
+        $report = $this->givenReport(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, accountId: $accountId));
+
+        ($this->sut)(new GenerateCarbonFootprintReportTextsRequest($report->id()), $this->consultantOwnerUser());
+
+        $this->assertSame(CarbonFootprintReportStatus::GeneratingPdf, $report->status());
+        $this->assertTrue($report->isAutoApproved());
+        $this->assertCount(1, $this->spyCommandBus->commands());
+    }
+
+    public function testAdminWithAnAccountUsesItsOwnAccountPermissions(): void
+    {
+        $this->givenAccount(true, true, 'admin-account-id');
+        $accountId = $this->givenAccount(false, false);
+        $report = $this->givenReport(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Event, accountId: $accountId));
+
+        ($this->sut)(new GenerateCarbonFootprintReportTextsRequest($report->id()), $this->adminUserOfAccount('admin-account-id'));
+
+        $this->assertSame(CarbonFootprintReportStatus::Draft, $report->status());
+        $this->assertInstanceOf(CarbonFootprintReportTextsDrafted::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testManagedAccountOwnerKeepsItsOwnPermissions(): void
+    {
+        $consultantId = $this->givenConsultantAccount(true, true);
+        $accountId = $this->givenManagedAccount($consultantId, false, false);
+        $report = $this->givenReport(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, accountId: $accountId));
+
+        ($this->sut)(new GenerateCarbonFootprintReportTextsRequest($report->id()), $this->ownerUser());
+
+        $this->assertSame(CarbonFootprintReportStatus::PendingReview, $report->status());
+        $this->assertInstanceOf(CarbonFootprintReportSubmittedForReview::class, $this->spySubscriber->lastEvent());
     }
 }
