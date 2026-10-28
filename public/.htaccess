@@ -20,35 +20,39 @@ DirectoryIndex index.php
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Idioma de destino de las URLs antiguas /emissions: /en/emissions -> /en/, el resto -> /es/
+    RewriteRule ^(?:es/)?emissions/?$ - [E=LEGACY_LANG:es]
+    RewriteRule ^en/emissions/?$ - [E=LEGACY_LANG:en]
+
     # sao (ota) -> calculadora de viajes de la cuenta 01a06be9-77fa-7c7e-b2e2-63b915db3cc8
     RewriteCond %{HTTP_HOST} ^balance\.bioscore\.info$ [NC]
     RewriteCond %{QUERY_STRING} (?:^|&)organization=sao(?:&|$) [NC]
-    RewriteRule ^emissions/?$ https://balance.bioscore.info/es/carbon-footprint/trip/399472939779220d60dfe598417450faaf95cb1f72d3a3cea23e8fbd29e53f4c [R=301,L,QSD]
+    RewriteRule ^(?:(?:es|en)/)?emissions/?$ https://balance.bioscore.info/%{ENV:LEGACY_LANG}/carbon-footprint/trip/399472939779220d60dfe598417450faaf95cb1f72d3a3cea23e8fbd29e53f4c [R=301,L,QSD]
 
     # lloret-sostenible (hotel) -> calculadora de viajes de la cuenta 01a17c8a-5a3b-747d-8da4-4e7941d995b8
     RewriteCond %{HTTP_HOST} ^balance\.bioscore\.info$ [NC]
     RewriteCond %{QUERY_STRING} (?:^|&)organization=lloret-sostenible(?:&|$) [NC]
-    RewriteRule ^emissions/?$ https://balance.bioscore.info/es/carbon-footprint/trip/01e77ec286327d9bb69b0592cb7c2d70ca8f4efc6777b4ba9e7dd86e0cd7eabb [R=301,L,QSD]
+    RewriteRule ^(?:(?:es|en)/)?emissions/?$ https://balance.bioscore.info/%{ENV:LEGACY_LANG}/carbon-footprint/trip/01e77ec286327d9bb69b0592cb7c2d70ca8f4efc6777b4ba9e7dd86e0cd7eabb [R=301,L,QSD]
 
     # coolrooms (hotel) -> calculadora de viajes de la cuenta 01a17c8a-5a5a-7d88-9112-467054a39ef9
     RewriteCond %{HTTP_HOST} ^balance\.bioscore\.info$ [NC]
     RewriteCond %{QUERY_STRING} (?:^|&)organization=coolrooms(?:&|$) [NC]
-    RewriteRule ^emissions/?$ https://balance.bioscore.info/es/carbon-footprint/trip/8bc81e7881ec4c07e09ae729d878f6e4c07803eb3e97764585b5ffe512e45561 [R=301,L,QSD]
+    RewriteRule ^(?:(?:es|en)/)?emissions/?$ https://balance.bioscore.info/%{ENV:LEGACY_LANG}/carbon-footprint/trip/8bc81e7881ec4c07e09ae729d878f6e4c07803eb3e97764585b5ffe512e45561 [R=301,L,QSD]
 
     # antalya-tourism-fair (fair) -> calculadora de viajes de la propiedad 01a06178-3254-7c6e-92ad-551a6be6480b
     RewriteCond %{HTTP_HOST} ^balance\.bioscore\.info$ [NC]
     RewriteCond %{QUERY_STRING} (?:^|&)organization=antalya-tourism-fair(?:&|$) [NC]
-    RewriteRule ^emissions/?$ https://balance.bioscore.info/es/carbon-footprint/property-trip/bcd44e996753b452d14f2f96cb659b1290d056311c378e0bcbebf29a8e0bdcf4 [R=301,L,QSD]
+    RewriteRule ^(?:(?:es|en)/)?emissions/?$ https://balance.bioscore.info/%{ENV:LEGACY_LANG}/carbon-footprint/property-trip/bcd44e996753b452d14f2f96cb659b1290d056311c378e0bcbebf29a8e0bdcf4 [R=301,L,QSD]
 
     # senator-hotels-and-resorts (hotel) -> calculadora de viajes de la cuenta 019fb2fd-a05e-7da9-b957-862154eb3bb1
     RewriteCond %{HTTP_HOST} ^balance\.bioscore\.info$ [NC]
     RewriteCond %{QUERY_STRING} (?:^|&)organization=senator-hotels-and-resorts(?:&|$) [NC]
-    RewriteRule ^emissions/?$ https://balance.bioscore.info/es/carbon-footprint/trip/39937f04200189d80de8971b801670ec37d331bbfa42488390a846f05393dc3f [R=301,L,QSD]
+    RewriteRule ^(?:(?:es|en)/)?emissions/?$ https://balance.bioscore.info/%{ENV:LEGACY_LANG}/carbon-footprint/trip/39937f04200189d80de8971b801670ec37d331bbfa42488390a846f05393dc3f [R=301,L,QSD]
 
     # tis-2026 (fair) -> calculadora de viajes de la propiedad 01a047c5-de93-7c22-ac19-c607aceeba46
     RewriteCond %{HTTP_HOST} ^balance\.bioscore\.info$ [NC]
     RewriteCond %{QUERY_STRING} (?:^|&)organization=tis-2026(?:&|$) [NC]
-    RewriteRule ^emissions/?$ https://balance.bioscore.info/es/carbon-footprint/property-trip/6274e2e99ba37afcd677d962f81238bfcd70247f410eeeebee9aff8d304d9cde [R=301,L,QSD]
+    RewriteRule ^(?:(?:es|en)/)?emissions/?$ https://balance.bioscore.info/%{ENV:LEGACY_LANG}/carbon-footprint/property-trip/6274e2e99ba37afcd677d962f81238bfcd70247f410eeeebee9aff8d304d9cde [R=301,L,QSD]
 
     # Determine the RewriteBase automatically and set it as environment variable.
     # If you are using Apache aliases to do mass virtual hosting or installed the
