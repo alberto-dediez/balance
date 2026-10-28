@@ -1,0 +1,8 @@
+<div class="col-12 col-md-8 col-lg-6 mb-3">
+    <div class="btn-group w-100" role="group" aria-label="{{ source | trans({}, 'source') }}">
+        <input class="btn-check" type="radio" name="mode[{{ source }}]" id="mode_{{ source }}_reported" value="reported" required {{ mode == 'reported' ? 'checked' : '' }} data-action="change->source-mode#change">
+        <label class="btn btn-outline-primary" for="mode_{{ source }}_reported">{{ 'Conozco las emisiones de mi servicio' | trans }}</label>
+        <input class="btn-check" type="radio" name="mode[{{ source }}]" id="mode_{{ source }}_activities" value="activities" {{ mode == 'activities' ? 'checked' : '' }} data-action="change->source-mode#change">
+        <label class="btn btn-outline-primary" for="mode_{{ source }}_activities">{{ 'Tengo los datos de actividad' | trans }}</label>
+    </div>
+</div>

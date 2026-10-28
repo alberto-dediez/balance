@@ -23,7 +23,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with a purchase service "PS1" of 1000 "EUR" for property "1111"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have status "scope_3_answered"
         Then company carbon footprint "999" should have 1 activities of source "purchased_goods_and_services" in scope "scope_3" for property "1111"
         Then company carbon footprint "999" should have 0 activities of source "purchased_goods_and_services" in scope "scope_3" for property "none"
@@ -33,7 +33,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with a purchase service "PS1" of 1000 "EUR" for property "none"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have 1 activities of source "purchased_goods_and_services" in scope "scope_3" for property "none"
 
     Scenario: Excluding the whole scope 3 removes the activities of every property

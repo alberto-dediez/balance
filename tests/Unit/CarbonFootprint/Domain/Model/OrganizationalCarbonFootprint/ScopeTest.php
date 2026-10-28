@@ -196,4 +196,53 @@ final class ScopeTest extends TestCase
         $this->assertSame(Scope::Scope3, Scope::ofSource(Source::DownstreamLeasedAssets));
         $this->assertSame(Scope::Scope3, Scope::ofSource(Source::Franchises));
     }
+
+    public function testProviderSources(): void
+    {
+        $this->assertSame([
+            Source::PurchasedGoodsAndServices,
+            Source::CapitalGoods,
+            Source::UpstreamTransport,
+            Source::OperationsWaste,
+            Source::BusinessTravel,
+            Source::EmployeeCommuting,
+            Source::DownstreamTransport,
+            Source::SoldProductsEndOfLife,
+        ], Scope::Scope3->providerSources());
+        $this->assertSame([], Scope::Scope1->providerSources());
+        $this->assertSame([], Scope::Scope2->providerSources());
+    }
+
+    public function testReportedSectionForEveryProviderSource(): void
+    {
+        foreach (Scope::Scope3->providerSources() as $source) {
+            $section = Scope::Scope3->reportedSectionFor($source);
+
+            $this->assertSame($source->value . '_reported', $section->key);
+            $this->assertSame($source, $section->source);
+            $this->assertSame(ActivityType::ReportedEmissions, $section->activityType);
+        }
+    }
+
+    public function testReportedSectionForInvestmentsThrows(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Scope::Scope3->reportedSectionFor(Source::Investments);
+    }
+
+    public function testReportedSectionForDerivedSourceThrows(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Scope::Scope3->reportedSectionFor(Source::FuelAndEnergyRelated);
+    }
+
+    public function testProviderSectionsForBusinessTravel(): void
+    {
+        $sections = Scope::Scope3->providerSectionsFor([Source::BusinessTravel]);
+
+        $this->assertCount(3, $sections);
+        $this->assertSame(['businessTravel', 'businessTravelStays', 'business_travel_reported'], array_map(static fn($section) => $section->key, $sections));
+    }
 }

@@ -9447,147 +9447,147 @@
       </trans-unit>
       <trans-unit id="UtXzlwW" resname="Alcance completo">
         <source>Alcance completo</source>
-        <target>NEW_Alcance completo</target>
+        <target>Kapsamın tamamı</target>
       </trans-unit>
       <trans-unit id="83EUIek" resname="(excluido)">
         <source>(excluido)</source>
-        <target>NEW_(excluido)</target>
+        <target>(hariç tutuldu)</target>
       </trans-unit>
       <trans-unit id="Gv8tTw7" resname="Los datos de alcance 1, alcance 2 y alcance 3 dependen del tipo de instalaciones, equipos y cadena de valor de la organización.">
         <source>Los datos de alcance 1, alcance 2 y alcance 3 dependen del tipo de instalaciones, equipos y cadena de valor de la organización.</source>
-        <target>NEW_Los datos de alcance 1, alcance 2 y alcance 3 dependen del tipo de instalaciones, equipos y cadena de valor de la organización.</target>
+        <target>Kapsam 1, kapsam 2 ve kapsam 3 verileri kuruluşun tesislerinin, ekipmanlarının ve değer zincirinin türüne bağlıdır.</target>
       </trans-unit>
       <trans-unit id="0JTDzfr" resname="No se incluyen las emisiones de alcance 3: {reason}">
         <source>No se incluyen las emisiones de alcance 3: {reason}</source>
-        <target>NEW_No se incluyen las emisiones de alcance 3: {reason}</target>
+        <target>Kapsam 3 emisyonları dahil edilmemiştir: {reason}</target>
       </trans-unit>
       <trans-unit id="OSw3AnB" resname="Alcance 3: excluido">
         <source>Alcance 3: excluido</source>
-        <target>NEW_Alcance 3: excluido</target>
+        <target>Kapsam 3: hariç tutuldu</target>
       </trans-unit>
       <trans-unit id="dCxsN8T" resname="Alcance 3: {total} kg de CO₂eq">
         <source>Alcance 3: {total} kg de CO₂eq</source>
-        <target>NEW_Alcance 3: {total} kg de CO₂eq</target>
+        <target>Kapsam 3: {total} kg CO₂eq</target>
       </trans-unit>
       <trans-unit id="dkSquDp" resname="Excluido">
         <source>Excluido</source>
-        <target>NEW_Excluido</target>
+        <target>Hariç tutuldu</target>
       </trans-unit>
       <trans-unit id="uJAxj21" resname="Alcance excluido">
         <source>Alcance excluido</source>
-        <target>NEW_Alcance excluido</target>
+        <target>Hariç tutulan kapsam</target>
       </trans-unit>
       <trans-unit id="VjN8x47" resname="No calcular el alcance 3">
         <source>No calcular el alcance 3</source>
-        <target>NEW_No calcular el alcance 3</target>
+        <target>Kapsam 3’ü hesaplama</target>
       </trans-unit>
       <trans-unit id="DvywdHp" resname="Alcance 3">
         <source>Alcance 3</source>
-        <target>NEW_Alcance 3</target>
+        <target>Kapsam 3</target>
       </trans-unit>
       <trans-unit id="18ivyac" resname="Emisiones aguas arriba de combustibles y energía">
         <source>Emisiones aguas arriba de combustibles y energía</source>
-        <target>NEW_Emisiones aguas arriba de combustibles y energía</target>
+        <target>Yakıt ve enerjinin yukarı akış emisyonları</target>
       </trans-unit>
       <trans-unit id="jOXuTJx" resname="Aguas arriba">
         <source>Aguas arriba</source>
-        <target>NEW_Aguas arriba</target>
+        <target>Yukarı akış</target>
       </trans-unit>
       <trans-unit id="fhvUL0f" resname="Aguas abajo">
         <source>Aguas abajo</source>
-        <target>NEW_Aguas abajo</target>
+        <target>Aşağı akış</target>
       </trans-unit>
       <trans-unit id="jUFuV.6" resname="Compras de bienes y servicios">
         <source>Compras de bienes y servicios</source>
-        <target>NEW_Compras de bienes y servicios</target>
+        <target>Mal ve hizmet alımları</target>
       </trans-unit>
       <trans-unit id="VGDtp21" resname="Adquisiciones de bienes de capital">
         <source>Adquisiciones de bienes de capital</source>
-        <target>NEW_Adquisiciones de bienes de capital</target>
+        <target>Sermaye malı alımları</target>
       </trans-unit>
       <trans-unit id="..amkBQ" resname="Transportes de mercancías recibidas">
         <source>Transportes de mercancías recibidas</source>
-        <target>NEW_Transportes de mercancías recibidas</target>
+        <target>Teslim alınan malların taşınması</target>
       </trans-unit>
       <trans-unit id="dB_UXWH" resname="Residuos generados">
         <source>Residuos generados</source>
-        <target>NEW_Residuos generados</target>
+        <target>Oluşan atıklar</target>
       </trans-unit>
       <trans-unit id="I_Hz8SC" resname="Desplazamientos de negocio">
         <source>Desplazamientos de negocio</source>
-        <target>NEW_Desplazamientos de negocio</target>
+        <target>İş seyahatleri</target>
       </trans-unit>
       <trans-unit id=".Wt3zjm" resname="Alojamientos de negocio">
         <source>Alojamientos de negocio</source>
-        <target>NEW_Alojamientos de negocio</target>
+        <target>İş konaklamaları</target>
       </trans-unit>
       <trans-unit id="EI2VDoP" resname="Desplazamientos al trabajo">
         <source>Desplazamientos al trabajo</source>
-        <target>NEW_Desplazamientos al trabajo</target>
+        <target>İşe gidiş gelişler</target>
       </trans-unit>
       <trans-unit id="786olnF" resname="Transportes de mercancías vendidas">
         <source>Transportes de mercancías vendidas</source>
-        <target>NEW_Transportes de mercancías vendidas</target>
+        <target>Satılan malların taşınması</target>
       </trans-unit>
       <trans-unit id="nyiH6wQ" resname="Procesamiento de productos vendidos">
         <source>Procesamiento de productos vendidos</source>
-        <target>NEW_Procesamiento de productos vendidos</target>
+        <target>Satılan ürünlerin işlenmesi</target>
       </trans-unit>
       <trans-unit id="3DWGJpr" resname="Uso de productos vendidos">
         <source>Uso de productos vendidos</source>
-        <target>NEW_Uso de productos vendidos</target>
+        <target>Satılan ürünlerin kullanımı</target>
       </trans-unit>
       <trans-unit id="XKDGalo" resname="Fin de vida de productos vendidos">
         <source>Fin de vida de productos vendidos</source>
-        <target>NEW_Fin de vida de productos vendidos</target>
+        <target>Satılan ürünlerin kullanım ömrü sonu</target>
       </trans-unit>
       <trans-unit id="TKLpwjT" resname="Valor manual">
         <source>Valor manual</source>
-        <target>NEW_Valor manual</target>
+        <target>Manuel değer</target>
       </trans-unit>
       <trans-unit id="mjji6QE" resname="Huella de la propiedad">
         <source>Huella de la propiedad</source>
-        <target>NEW_Huella de la propiedad</target>
+        <target>Mülkün ayak izi</target>
       </trans-unit>
       <trans-unit id=".Tm9Cm_" resname="Sin datos">
         <source>Sin datos</source>
-        <target>NEW_Sin datos</target>
+        <target>Veri yok</target>
       </trans-unit>
       <trans-unit id="yBIfsFC" resname="Régimen de explotación">
         <source>Régimen de explotación</source>
-        <target>NEW_Régimen de explotación</target>
+        <target>İşletme rejimi</target>
       </trans-unit>
       <trans-unit id="w4xjzUO" resname="Las propiedades franquiciadas o arrendadas a terceros no se incluyen en los alcances 1 y 2 de la huella de empresa: se calculan en su alcance 3.">
         <source>Las propiedades franquiciadas o arrendadas a terceros no se incluyen en los alcances 1 y 2 de la huella de empresa: se calculan en su alcance 3.</source>
-        <target>NEW_Las propiedades franquiciadas o arrendadas a terceros no se incluyen en los alcances 1 y 2 de la huella de empresa: se calculan en su alcance 3.</target>
+        <target>Franchise verilen veya üçüncü taraflara kiralanan mülkler şirket ayak izinin kapsam 1 ve 2’sine dahil edilmez: kapsam 3’te hesaplanır.</target>
       </trans-unit>
       <trans-unit id="iV2QT2D" resname="Todos los regímenes">
         <source>Todos los regímenes</source>
-        <target>NEW_Todos los regímenes</target>
+        <target>Tüm rejimler</target>
       </trans-unit>
       <trans-unit id="AHetpxZ" resname="No hay propiedades de la empresa con este régimen de explotación.">
         <source>No hay propiedades de la empresa con este régimen de explotación.</source>
-        <target>NEW_No hay propiedades de la empresa con este régimen de explotación.</target>
+        <target>Şirketin bu işletme rejimine sahip mülkü yok.</target>
       </trans-unit>
       <trans-unit id="UAq3Hux" resname="Emisiones calculadas (kg CO₂eq)">
         <source>Emisiones calculadas (kg CO₂eq)</source>
-        <target>NEW_Emisiones calculadas (kg CO₂eq)</target>
+        <target>Hesaplanan emisyonlar (kg CO₂eq)</target>
       </trans-unit>
       <trans-unit id="Ijnb6nF" resname="Emisiones a aplicar (kg CO₂eq)">
         <source>Emisiones a aplicar (kg CO₂eq)</source>
-        <target>NEW_Emisiones a aplicar (kg CO₂eq)</target>
+        <target>Uygulanacak emisyonlar (kg CO₂eq)</target>
       </trans-unit>
       <trans-unit id="Hrz_nhL" resname="Huella {year} completada">
         <source>Huella {year} completada</source>
-        <target>NEW_Huella {year} completada</target>
+        <target>{year} ayak izi tamamlandı</target>
       </trans-unit>
       <trans-unit id="lHt7S0O" resname="Propiedades franquiciadas">
         <source>Propiedades franquiciadas</source>
-        <target>NEW_Propiedades franquiciadas</target>
+        <target>Franchise verilen mülkler</target>
       </trans-unit>
       <trans-unit id="71S1fF6" resname="Propiedades arrendadas a terceros">
         <source>Propiedades arrendadas a terceros</source>
-        <target>NEW_Propiedades arrendadas a terceros</target>
+        <target>Üçüncü taraflara kiralanan mülkler</target>
       </trans-unit>
       <trans-unit id="o0zW6wu" resname="Destinos permitidos">
         <source>Destinos permitidos</source>
@@ -9820,6 +9820,266 @@
       <trans-unit id="XXqqXlj" resname="Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.">
         <source>Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.</source>
         <target>Ülkesi ve yılı için elektrik karışımı faktörü olmayan elektrik faaliyetleri: {count}. Konuma dayalı yönteme dahil edilmezler ve konuma dayalı toplamda piyasaya dayalı değerlerini korurlar.</target>
+      </trans-unit>
+      <trans-unit id="ZRfRwWL" resname="Emails enviados">
+        <source>Emails enviados</source>
+        <target>Gönderilen e-postalar</target>
+      </trans-unit>
+      <trans-unit id="8ctFa1g" resname="Enviado desde">
+        <source>Enviado desde</source>
+        <target>Gönderim başlangıcı</target>
+      </trans-unit>
+      <trans-unit id="eFp5x_9" resname="Enviado hasta">
+        <source>Enviado hasta</source>
+        <target>Gönderim bitişi</target>
+      </trans-unit>
+      <trans-unit id="oLPYbMa" resname="Se ha reactivado la aportación de {name}">
+        <source>Se ha reactivado la aportación de {name}</source>
+        <target>{name} katkısı yeniden etkinleştirildi</target>
+      </trans-unit>
+      <trans-unit id="QY1LOy2" resname="No se ha podido reactivar la aportación de {name}">
+        <source>No se ha podido reactivar la aportación de {name}</source>
+        <target>{name} katkısı yeniden etkinleştirilemedi</target>
+      </trans-unit>
+      <trans-unit id="SJ8O2im" resname="Se ha descartado la aportación de {name}">
+        <source>Se ha descartado la aportación de {name}</source>
+        <target>{name} katkısından vazgeçildi</target>
+      </trans-unit>
+      <trans-unit id="MREoP9G" resname="No se ha podido descartar la aportación de {name}">
+        <source>No se ha podido descartar la aportación de {name}</source>
+        <target>{name} katkısından vazgeçilemedi</target>
+      </trans-unit>
+      <trans-unit id="4k7EMoZ" resname="Se ha reenviado la solicitud a {name}">
+        <source>Se ha reenviado la solicitud a {name}</source>
+        <target>Talep {name} adresine yeniden gönderildi</target>
+      </trans-unit>
+      <trans-unit id="U8ah8et" resname="No se ha podido reenviar la solicitud a {name}">
+        <source>No se ha podido reenviar la solicitud a {name}</source>
+        <target>Talep {name} adresine yeniden gönderilemedi</target>
+      </trans-unit>
+      <trans-unit id="hUtjAwO" resname="El proveedor no tiene usuario vinculado">
+        <source>El proveedor no tiene usuario vinculado</source>
+        <target>Tedarikçinin bağlı bir kullanıcısı yok</target>
+      </trans-unit>
+      <trans-unit id="qTv5aoc" resname="Aportación de proveedor registrada: {name}">
+        <source>Aportación de proveedor registrada: {name}</source>
+        <target>Tedarikçi katkısı kaydedildi: {name}</target>
+      </trans-unit>
+      <trans-unit id="3liwYos" resname="Ya existe una aportación de este proveedor para esta huella">
+        <source>Ya existe una aportación de este proveedor para esta huella</source>
+        <target>Bu ayak izi için bu tedarikçinin zaten bir katkısı var</target>
+      </trans-unit>
+      <trans-unit id="y1n_3c4" resname="No se ha podido registrar la aportación del proveedor">
+        <source>No se ha podido registrar la aportación del proveedor</source>
+        <target>Tedarikçi katkısı kaydedilemedi</target>
+      </trans-unit>
+      <trans-unit id="8MrZGhX" resname="Aportación de proveedor actualizada con éxito">
+        <source>Aportación de proveedor actualizada con éxito</source>
+        <target>Tedarikçi katkısı başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id=".T5kfwm" resname="Se ha eliminado la aportación de {name}">
+        <source>Se ha eliminado la aportación de {name}</source>
+        <target>{name} katkısı silindi</target>
+      </trans-unit>
+      <trans-unit id="VyU7L11" resname="No se ha podido eliminar la aportación de {name}">
+        <source>No se ha podido eliminar la aportación de {name}</source>
+        <target>{name} katkısı silinemedi</target>
+      </trans-unit>
+      <trans-unit id="n6u98jq" resname="Selecciona un proveedor">
+        <source>Selecciona un proveedor</source>
+        <target>Bir tedarikçi seçin</target>
+      </trans-unit>
+      <trans-unit id="uMASCYm" resname="Aporta tus datos de emisiones de {year} para {subject}">
+        <source>Aporta tus datos de emisiones de {year} para {subject}</source>
+        <target>{subject} için {year} emisyon verilerinizi paylaşın</target>
+      </trans-unit>
+      <trans-unit id="dXBo.Go" resname="El nombre de usuario no puede contener los caracteres &lt; ni &gt;">
+        <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
+        <target><![CDATA[Kullanıcı adı < veya > karakterlerini içeremez]]></target>
+      </trans-unit>
+      <trans-unit id="3UQ0bPx" resname="Email rebotado el {date}: {reason}">
+        <source>Email rebotado el {date}: {reason}</source>
+        <target>E-posta {date} tarihinde geri döndü: {reason}</target>
+      </trans-unit>
+      <trans-unit id="2skzMgT" resname="Email descartado el {date}: {reason}">
+        <source>Email descartado el {date}: {reason}</source>
+        <target>E-posta {date} tarihinde reddedildi: {reason}</target>
+      </trans-unit>
+      <trans-unit id="xvROq.s" resname="Email abierto el {date}">
+        <source>Email abierto el {date}</source>
+        <target>E-posta {date} tarihinde açıldı</target>
+      </trans-unit>
+      <trans-unit id="lQquOJE" resname="Email entregado el {date}">
+        <source>Email entregado el {date}</source>
+        <target>E-posta {date} tarihinde teslim edildi</target>
+      </trans-unit>
+      <trans-unit id="T60y_bC" resname="Email diferido el {date}: {reason}">
+        <source>Email diferido el {date}: {reason}</source>
+        <target>E-posta {date} tarihinde ertelendi: {reason}</target>
+      </trans-unit>
+      <trans-unit id="i37LJZd" resname="Clic en el email el {date}">
+        <source>Clic en el email el {date}</source>
+        <target>E-postaya {date} tarihinde tıklandı</target>
+      </trans-unit>
+      <trans-unit id="5G64Hl9" resname="Email marcado como spam el {date}">
+        <source>Email marcado como spam el {date}</source>
+        <target>E-posta {date} tarihinde spam olarak işaretlendi</target>
+      </trans-unit>
+      <trans-unit id="eS9kZZT" resname="Registro de email eliminado">
+        <source>Registro de email eliminado</source>
+        <target>E-posta kaydı silindi</target>
+      </trans-unit>
+      <trans-unit id="7hyzOUY" resname="Registrado email con asunto &quot;{subject}&quot; a {recipient} ({status})">
+        <source>Registrado email con asunto "{subject}" a {recipient} ({status})</source>
+        <target>{recipient} alıcısına "{subject}" konulu e-posta kaydedildi ({status})</target>
+      </trans-unit>
+      <trans-unit id="WxLMWQI" resname="Enviado">
+        <source>Enviado</source>
+        <target>Gönderildi</target>
+      </trans-unit>
+      <trans-unit id="QBu1HSr" resname="Entregado">
+        <source>Entregado</source>
+        <target>Teslim edildi</target>
+      </trans-unit>
+      <trans-unit id="P5qL7DG" resname="Abierto">
+        <source>Abierto</source>
+        <target>Açıldı</target>
+      </trans-unit>
+      <trans-unit id="3AuZCzA" resname="Ver auditoría">
+        <source>Ver auditoría</source>
+        <target>Denetimi görüntüle</target>
+      </trans-unit>
+      <trans-unit id="0aT_lZO" resname="El proveedor configurado no envía información de entrega ni de apertura">
+        <source>El proveedor configurado no envía información de entrega ni de apertura</source>
+        <target>Yapılandırılan sağlayıcı teslim veya açılma bilgisi göndermiyor</target>
+      </trans-unit>
+      <trans-unit id="6e0qfui" resname="Id del proveedor">
+        <source>Id del proveedor</source>
+        <target>Sağlayıcı kimliği</target>
+      </trans-unit>
+      <trans-unit id="Lbtl2Fb" resname="Seguimiento">
+        <source>Seguimiento</source>
+        <target>Takip</target>
+      </trans-unit>
+      <trans-unit id="Uv01ULU" resname="Primera apertura">
+        <source>Primera apertura</source>
+        <target>İlk açılma</target>
+      </trans-unit>
+      <trans-unit id="5rU.Lbv" resname="Última apertura">
+        <source>Última apertura</source>
+        <target>Son açılma</target>
+      </trans-unit>
+      <trans-unit id=".1ImJxS" resname="Aperturas">
+        <source>Aperturas</source>
+        <target>Açılmalar</target>
+      </trans-unit>
+      <trans-unit id="Or7xTnD" resname="Primer clic">
+        <source>Primer clic</source>
+        <target>İlk tıklama</target>
+      </trans-unit>
+      <trans-unit id="4GzWMKK" resname="Clics">
+        <source>Clics</source>
+        <target>Tıklamalar</target>
+      </trans-unit>
+      <trans-unit id="19zOP0f" resname="Marcado como spam">
+        <source>Marcado como spam</source>
+        <target>Spam olarak işaretlendi</target>
+      </trans-unit>
+      <trans-unit id="W3YpzE2" resname="Último evento">
+        <source>Último evento</source>
+        <target>Son olay</target>
+      </trans-unit>
+      <trans-unit id="Ft_XWmv" resname="Añadir proveedor">
+        <source>Añadir proveedor</source>
+        <target>Tedarikçi ekle</target>
+      </trans-unit>
+      <trans-unit id="m.0VcOE" resname="Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.">
+        <source>Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.</source>
+        <target>Tedarikçilerinizin size bildirdiği verileri kaydedin veya e-posta ile talep edin. Emisyonları, belirttiğiniz kapsam 3 kategorisine eklenir.</target>
+      </trans-unit>
+      <trans-unit id="OryCxsF" resname="No hay aportaciones de proveedores para esta huella.">
+        <source>No hay aportaciones de proveedores para esta huella.</source>
+        <target>Bu ayak izi için tedarikçi katkısı yok.</target>
+      </trans-unit>
+      <trans-unit id="0cw.ZRK" resname="Se eliminarán también las actividades aportadas por este proveedor">
+        <source>Se eliminarán también las actividades aportadas por este proveedor</source>
+        <target>Bu tedarikçinin sağladığı faaliyetler de silinecek</target>
+      </trans-unit>
+      <trans-unit id="3Z5_6a5" resname="Aportaciones de proveedores">
+        <source>Aportaciones de proveedores</source>
+        <target>Tedarikçi katkıları</target>
+      </trans-unit>
+      <trans-unit id="6GwWK5i" resname="Contribución de proveedor - Emisiones">
+        <source>Contribución de proveedor - Emisiones</source>
+        <target>Tedarikçi katkısı - Emisyonlar</target>
+      </trans-unit>
+      <trans-unit id="8aax6KA" resname="Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.">
+        <source>Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.</source>
+        <target>Her kategori için hizmetinizin emisyonlarını bilip bilmediğinizi veya faaliyet verilerini ayrıntılı girmeyi tercih edip etmediğinizi belirtin.</target>
+      </trans-unit>
+      <trans-unit id="UOMZqxn" resname="Emisiones comunicadas">
+        <source>Emisiones comunicadas</source>
+        <target>Bildirilen emisyonlar</target>
+      </trans-unit>
+      <trans-unit id="ywtBGrx" resname="Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono siga abierta.">
+        <source>Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono siga abierta.</source>
+        <target>Sağladığınız veriler başarıyla kaydedildi. Karbon ayak izi açık kaldığı sürece verileri gözden geçirmek veya değiştirmek için bu bağlantıya istediğiniz zaman geri dönebilirsiniz.</target>
+      </trans-unit>
+      <trans-unit id="nNrJZTH" resname="La organización ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.">
+        <source>La organización ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.</source>
+        <target>Kuruluş karbon ayak izini zaten hesapladı ve kapattı; bu nedenle daha fazla değişiklik kabul edilmiyor.</target>
+      </trans-unit>
+      <trans-unit id="5WXPtmR" resname="Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.">
+        <source>Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.</source>
+        <target>Bize sağladığınız hizmetlerin emisyon verileriyle kuruluşumuzun karbon ayak izini hesaplamamıza yardımcı olun. Yalnızca birkaç dakikanızı alacak.</target>
+      </trans-unit>
+      <trans-unit id="XTqFduY" resname="Conozco las emisiones de mi servicio">
+        <source>Conozco las emisiones de mi servicio</source>
+        <target>Hizmetimin emisyonlarını biliyorum</target>
+      </trans-unit>
+      <trans-unit id="eGC.6bB" resname="Tengo los datos de actividad">
+        <source>Tengo los datos de actividad</source>
+        <target>Faaliyet verilerine sahibim</target>
+      </trans-unit>
+      <trans-unit id="YukrTJe" resname="Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.">
+        <source>Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.</source>
+        <target>Merhaba {name}, {subject} karbon ayak izini hesaplamak için {year} yılında sağladığınız hizmetlerin emisyon verilerini talep ediyor.</target>
+      </trans-unit>
+      <trans-unit id="cX0nonj" resname="Consentimiento">
+        <source>Consentimiento</source>
+        <target>Onay</target>
+      </trans-unit>
+      <trans-unit id="IkeT25q" resname="Datos de proveedores">
+        <source>Datos de proveedores</source>
+        <target>Tedarikçi verileri</target>
+      </trans-unit>
+      <trans-unit id="KgcF1oX" resname="El almacenamiento de la biblioteca no está disponible">
+        <source>El almacenamiento de la biblioteca no está disponible</source>
+        <target>Kütüphane depolama alanı kullanılamıyor</target>
+      </trans-unit>
+      <trans-unit id="0LwiJ43" resname="El almacenamiento de la biblioteca se ha recuperado">
+        <source>El almacenamiento de la biblioteca se ha recuperado</source>
+        <target>Kütüphane depolama alanı yeniden kullanılabilir durumda</target>
+      </trans-unit>
+      <trans-unit id="xcRYbVQ" resname="El almacenamiento de la biblioteca no responde. Los archivos nuevos se están guardando temporalmente en el servidor y se subirán automáticamente cuando vuelva a responder.">
+        <source>El almacenamiento de la biblioteca no responde. Los archivos nuevos se están guardando temporalmente en el servidor y se subirán automáticamente cuando vuelva a responder.</source>
+        <target>Kütüphane depolama alanı yanıt vermiyor. Yeni dosyalar geçici olarak sunucuya kaydediliyor ve depolama yeniden yanıt verdiğinde otomatik olarak yüklenecek.</target>
+      </trans-unit>
+      <trans-unit id="QZZYuBZ" resname="El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.">
+        <source>El almacenamiento de la biblioteca vuelve a responder. Se han subido {uploaded} archivos que estaban guardados temporalmente en el servidor.</source>
+        <target>Kütüphane depolama alanı yeniden yanıt veriyor. Sunucuda geçici olarak saklanan {uploaded} dosya yüklendi.</target>
+      </trans-unit>
+      <trans-unit id="UNVnbNs" resname="Elige cómo quieres informar las emisiones de cada categoría.">
+        <source>Elige cómo quieres informar las emisiones de cada categoría.</source>
+        <target>Her kategorinin emisyonlarını nasıl bildirmek istediğinizi seçin.</target>
+      </trans-unit>
+      <trans-unit id="ZUosixj" resname="Emisiones (CO₂eq)">
+        <source>Emisiones (CO₂eq)</source>
+        <target>Emisyonlar (CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="pfc2k4V" resname="{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.">
+        <source>{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.</source>
+        <target>{count, plural, one {Yanıt bekleyen # talep var.} other {Yanıt bekleyen # talep var.}} Devam edebilirsiniz; tedarikçi, ayak izini tamamlayana kadar yanıt verebilir.</target>
       </trans-unit>
     </body>
   </file>

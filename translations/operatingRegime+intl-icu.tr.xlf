@@ -7,23 +7,23 @@
     <body>
       <trans-unit id="bv6ILwU" resname="owned">
         <source>owned</source>
-        <target>NEW_owned</target>
+        <target>Mülkiyette</target>
       </trans-unit>
       <trans-unit id="Z3roLsp" resname="leased">
         <source>leased</source>
-        <target>NEW_leased</target>
+        <target>Kiralık (şirket tarafından işletilen)</target>
       </trans-unit>
       <trans-unit id="829NCDY" resname="managed">
         <source>managed</source>
-        <target>NEW_managed</target>
+        <target>Yönetimde</target>
       </trans-unit>
       <trans-unit id="n.1A4lI" resname="franchised">
         <source>franchised</source>
-        <target>NEW_franchised</target>
+        <target>Franchise</target>
       </trans-unit>
       <trans-unit id="9_fB13S" resname="leased_out">
         <source>leased_out</source>
-        <target>NEW_leased_out</target>
+        <target>Üçüncü taraflara kiralanmış</target>
       </trans-unit>
     </body>
   </file>

@@ -10029,6 +10029,142 @@
         <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
         <target><![CDATA[The username cannot contain the characters < or >]]></target>
       </trans-unit>
+      <trans-unit id="oLPYbMa" resname="Se ha reactivado la aportación de {name}">
+        <source>Se ha reactivado la aportación de {name}</source>
+        <target>The contribution from {name} has been reactivated</target>
+      </trans-unit>
+      <trans-unit id="QY1LOy2" resname="No se ha podido reactivar la aportación de {name}">
+        <source>No se ha podido reactivar la aportación de {name}</source>
+        <target>The contribution from {name} could not be reactivated</target>
+      </trans-unit>
+      <trans-unit id="SJ8O2im" resname="Se ha descartado la aportación de {name}">
+        <source>Se ha descartado la aportación de {name}</source>
+        <target>The contribution from {name} has been discarded</target>
+      </trans-unit>
+      <trans-unit id="MREoP9G" resname="No se ha podido descartar la aportación de {name}">
+        <source>No se ha podido descartar la aportación de {name}</source>
+        <target>The contribution from {name} could not be discarded</target>
+      </trans-unit>
+      <trans-unit id="4k7EMoZ" resname="Se ha reenviado la solicitud a {name}">
+        <source>Se ha reenviado la solicitud a {name}</source>
+        <target>The request has been resent to {name}</target>
+      </trans-unit>
+      <trans-unit id="U8ah8et" resname="No se ha podido reenviar la solicitud a {name}">
+        <source>No se ha podido reenviar la solicitud a {name}</source>
+        <target>The request could not be resent to {name}</target>
+      </trans-unit>
+      <trans-unit id="hUtjAwO" resname="El proveedor no tiene usuario vinculado">
+        <source>El proveedor no tiene usuario vinculado</source>
+        <target>The provider has no linked user</target>
+      </trans-unit>
+      <trans-unit id="qTv5aoc" resname="Aportación de proveedor registrada: {name}">
+        <source>Aportación de proveedor registrada: {name}</source>
+        <target>Provider contribution registered: {name}</target>
+      </trans-unit>
+      <trans-unit id="3liwYos" resname="Ya existe una aportación de este proveedor para esta huella">
+        <source>Ya existe una aportación de este proveedor para esta huella</source>
+        <target>A contribution from this provider already exists for this footprint</target>
+      </trans-unit>
+      <trans-unit id="y1n_3c4" resname="No se ha podido registrar la aportación del proveedor">
+        <source>No se ha podido registrar la aportación del proveedor</source>
+        <target>The provider contribution could not be registered</target>
+      </trans-unit>
+      <trans-unit id="8MrZGhX" resname="Aportación de proveedor actualizada con éxito">
+        <source>Aportación de proveedor actualizada con éxito</source>
+        <target>Provider contribution updated successfully</target>
+      </trans-unit>
+      <trans-unit id=".T5kfwm" resname="Se ha eliminado la aportación de {name}">
+        <source>Se ha eliminado la aportación de {name}</source>
+        <target>The contribution from {name} has been removed</target>
+      </trans-unit>
+      <trans-unit id="VyU7L11" resname="No se ha podido eliminar la aportación de {name}">
+        <source>No se ha podido eliminar la aportación de {name}</source>
+        <target>The contribution from {name} could not be removed</target>
+      </trans-unit>
+      <trans-unit id="n6u98jq" resname="Selecciona un proveedor">
+        <source>Selecciona un proveedor</source>
+        <target>Select a provider</target>
+      </trans-unit>
+      <trans-unit id="uMASCYm" resname="Aporta tus datos de emisiones de {year} para {subject}">
+        <source>Aporta tus datos de emisiones de {year} para {subject}</source>
+        <target>Provide your {year} emissions data for {subject}</target>
+      </trans-unit>
+      <trans-unit id="Ft_XWmv" resname="Añadir proveedor">
+        <source>Añadir proveedor</source>
+        <target>Add provider</target>
+      </trans-unit>
+      <trans-unit id="m.0VcOE" resname="Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.">
+        <source>Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.</source>
+        <target>Record the data your providers have reported to you or request it from them by email. Their emissions are added to the scope 3 category you indicate.</target>
+      </trans-unit>
+      <trans-unit id="OryCxsF" resname="No hay aportaciones de proveedores para esta huella.">
+        <source>No hay aportaciones de proveedores para esta huella.</source>
+        <target>There are no provider contributions for this footprint.</target>
+      </trans-unit>
+      <trans-unit id="0cw.ZRK" resname="Se eliminarán también las actividades aportadas por este proveedor">
+        <source>Se eliminarán también las actividades aportadas por este proveedor</source>
+        <target>The activities contributed by this provider will also be removed</target>
+      </trans-unit>
+      <trans-unit id="3Z5_6a5" resname="Aportaciones de proveedores">
+        <source>Aportaciones de proveedores</source>
+        <target>Provider contributions</target>
+      </trans-unit>
+      <trans-unit id="6GwWK5i" resname="Contribución de proveedor - Emisiones">
+        <source>Contribución de proveedor - Emisiones</source>
+        <target>Provider contribution - Emissions</target>
+      </trans-unit>
+      <trans-unit id="8aax6KA" resname="Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.">
+        <source>Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.</source>
+        <target>For each category, indicate whether you know the emissions of your service or prefer to provide the activity data.</target>
+      </trans-unit>
+      <trans-unit id="UOMZqxn" resname="Emisiones comunicadas">
+        <source>Emisiones comunicadas</source>
+        <target>Reported emissions</target>
+      </trans-unit>
+      <trans-unit id="ywtBGrx" resname="Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono siga abierta.">
+        <source>Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono siga abierta.</source>
+        <target>Your data has been saved successfully. You can return to this link at any time to review or modify it while the carbon footprint remains open.</target>
+      </trans-unit>
+      <trans-unit id="nNrJZTH" resname="La organización ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.">
+        <source>La organización ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.</source>
+        <target>The organization has already calculated and closed its carbon footprint, so no further changes are accepted.</target>
+      </trans-unit>
+      <trans-unit id="5WXPtmR" resname="Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.">
+        <source>Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.</source>
+        <target>Help us calculate our organization's carbon footprint with the emissions data of the services you provide us. It will only take a few minutes.</target>
+      </trans-unit>
+      <trans-unit id="XTqFduY" resname="Conozco las emisiones de mi servicio">
+        <source>Conozco las emisiones de mi servicio</source>
+        <target>I know the emissions of my service</target>
+      </trans-unit>
+      <trans-unit id="eGC.6bB" resname="Tengo los datos de actividad">
+        <source>Tengo los datos de actividad</source>
+        <target>I have the activity data</target>
+      </trans-unit>
+      <trans-unit id="YukrTJe" resname="Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.">
+        <source>Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.</source>
+        <target>Hello {name}, {subject} is requesting the emissions data of the services you provided in {year} to calculate its carbon footprint.</target>
+      </trans-unit>
+      <trans-unit id="cX0nonj" resname="Consentimiento">
+        <source>Consentimiento</source>
+        <target>Consent</target>
+      </trans-unit>
+      <trans-unit id="IkeT25q" resname="Datos de proveedores">
+        <source>Datos de proveedores</source>
+        <target>Provider data</target>
+      </trans-unit>
+      <trans-unit id="UNVnbNs" resname="Elige cómo quieres informar las emisiones de cada categoría.">
+        <source>Elige cómo quieres informar las emisiones de cada categoría.</source>
+        <target>Choose how you want to report the emissions of each category.</target>
+      </trans-unit>
+      <trans-unit id="ZUosixj" resname="Emisiones (CO₂eq)">
+        <source>Emisiones (CO₂eq)</source>
+        <target>Emissions (CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="pfc2k4V" resname="{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.">
+        <source>{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.</source>
+        <target>{count, plural, one {There is # request awaiting a response.} other {There are # requests awaiting a response.}} You can continue; the provider will be able to answer until you complete the footprint.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

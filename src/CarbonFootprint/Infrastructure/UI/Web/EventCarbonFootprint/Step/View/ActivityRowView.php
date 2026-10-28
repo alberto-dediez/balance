@@ -24,5 +24,6 @@ final class ActivityRowView
         public readonly ?float $weight = null,
         public readonly ?string $weightUnit = null,
         public readonly ?float $distanceKm = null,
+        public readonly ?string $description = null,
     ) {}
 }

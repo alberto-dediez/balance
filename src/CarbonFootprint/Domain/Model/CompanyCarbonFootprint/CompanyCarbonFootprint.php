@@ -107,6 +107,25 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
                 ),
             );
         }
+
+        if (Scope::Scope3 === $scope && $this->scope3Excluded) {
+            $this->answerProviders();
+        }
+    }
+
+    public function answerProviders(): void
+    {
+        $this->ensureIsEditable();
+
+        if ($this->status->isProvidersAnswered()) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintProvidersAnswered(
+                companyCarbonFootprintId: $this->id,
+            ),
+        );
     }
 
     public function addActivity(ActivityId $activityId, ActivityPlacement $placement): void
@@ -133,6 +152,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
                 scope: $scope,
                 source: $placement->source,
                 propertyId: $placement->propertyId,
+                providerId: $placement->providerId,
             ),
         );
     }
@@ -182,15 +202,6 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
                 if ($nonConsolidatedProperty->source() === $source) {
                     $this->removeNonConsolidatedProperty($nonConsolidatedProperty->propertyId());
                 }
-            }
-        }
-    }
-
-    private function removeActivitiesOfSource(Scope $scope, Source $source): void
-    {
-        foreach ($this->activityReferences() as $reference) {
-            if ($reference->placement->stage->key() === $scope->key() && $reference->placement->source === $source) {
-                $this->removeActivity($reference->activityId);
             }
         }
     }
@@ -419,8 +430,8 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
     {
         $this->ensureIsEditable();
 
-        if (OrganizationalCarbonFootprintStatus::Scope3Answered !== $this->status) {
-            throw new OrganizationalCarbonFootprintNotReadyToCompleteException('Organizational carbon footprint cannot be completed until scope 3 is answered');
+        if (OrganizationalCarbonFootprintStatus::ProvidersAnswered !== $this->status) {
+            throw new OrganizationalCarbonFootprintNotReadyToCompleteException('Organizational carbon footprint cannot be completed until providers step is answered');
         }
 
         $this->recordApplyAndPublish(
@@ -468,6 +479,12 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         $this->updatedAt = $event->occurredOn();
     }
 
+    public function applyCompanyCarbonFootprintProvidersAnswered(CompanyCarbonFootprintProvidersAnswered $event): void
+    {
+        $this->status = $this->status->advancedTo(OrganizationalCarbonFootprintStatus::ProvidersAnswered);
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function applyCompanyCarbonFootprintMitigationPlanStarted(CompanyCarbonFootprintMitigationPlanStarted $event): void
     {
         $this->mitigationPlanStarted = true;
@@ -483,6 +500,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
             scope: $event->scope(),
             source: $event->source(),
             propertyId: $event->propertyId(),
+            providerId: $event->providerId(),
             addedAt: $event->occurredOn(),
         ));
     }
@@ -578,7 +596,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
 
     public function applyCompanyCarbonFootprintReopened(CompanyCarbonFootprintReopened $event): void
     {
-        $this->status = OrganizationalCarbonFootprintStatus::Scope3Answered;
+        $this->status = OrganizationalCarbonFootprintStatus::ProvidersAnswered;
         $this->totalEmissions = new Emissions();
         $this->updatedAt = $event->occurredOn();
     }

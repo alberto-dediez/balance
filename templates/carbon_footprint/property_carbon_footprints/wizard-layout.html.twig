@@ -34,15 +34,24 @@
     ~ ' '
     ~ propertyCarbonFootprint.year %}
 
-{% set wizard_active = propertyCarbonFootprint.status.stepNumber %}
+{% set providersStepShown = not propertyCarbonFootprint.scope3Excluded %}
+
+{% set wizard_active = propertyCarbonFootprint.status.stepNumber - ((not providersStepShown and propertyCarbonFootprint.status.stepNumber >= 4) ? 1 : 0) %}
 
 {% block content %}
     {% set wizard_steps = [
         {label: 'Alcance 1' | trans, href: path('property_carbon_footprints_scope_1', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
         {label: 'Alcance 2' | trans, href: path('property_carbon_footprints_scope_2', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
         {label: 'Alcance 3' | trans, href: path('property_carbon_footprints_scope_3', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
+    ] %}
+    {% if providersStepShown %}
+        {% set wizard_steps = wizard_steps | merge([
+            {label: 'Proveedores' | trans, href: path('property_carbon_footprints_providers', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
+        ]) %}
+    {% endif %}
+    {% set wizard_steps = wizard_steps | merge([
         {label: 'Medidas de Reducción y Mitigación' | trans, href: path('property_carbon_footprints_mitigation_plan', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
         {label: 'Resultados' | trans, href: path('property_carbon_footprints_results', {propertyCarbonFootprintId: propertyCarbonFootprintId})},
-    ] %}
+    ]) %}
     {{ parent() }}
 {% endblock %}

@@ -95,7 +95,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "generated" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -119,7 +119,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "999" has a combustible "CB1" activity of "1000" kg with "210" kg well-to-tank
         Given property carbon footprint "999" has a purchase service activity "PS1" in scope 3
         When I am logged as "owner@dediez.software"

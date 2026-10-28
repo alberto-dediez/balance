@@ -53,7 +53,7 @@ class ReopenCarbonFootprintOnCarbonFootprintReportRejectedSubscriberTest extends
     {
         [$sut, $reports, , $properties] = $this->createSUT();
 
-        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id');
+        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id');
         $footprint->complete(new Emissions());
         $properties->add($footprint);
 
@@ -69,7 +69,7 @@ class ReopenCarbonFootprintOnCarbonFootprintReportRejectedSubscriberTest extends
     {
         [$sut, $reports, , , $companies] = $this->createSUT();
 
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id');
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id');
         $footprint->complete(new Emissions());
         $companies->add($footprint);
 

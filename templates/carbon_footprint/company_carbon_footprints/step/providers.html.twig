@@ -1,0 +1,99 @@
+{% extends '@carbon_footprint/company_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 4 %}
+
+{% block top_actions %}
+    {{ parent() }}
+    {% if not readOnly %}
+        <twig:TopAction path="{{ path('company_carbon_footprints_providers_register', {carbonFootprintId: companyCarbonFootprintId}) }}">
+            <twig:Icon name="solar:add-circle-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Añadir proveedor' | trans }}
+        </twig:TopAction>
+    {% endif %}
+{% endblock %}
+
+{% block wizard_panels %}
+    {% if pendingCount > 0 and not readOnly %}
+        <twig:Alert:Alert type="info">
+            {{ '{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.' | trans({'count': pendingCount}) }}
+        </twig:Alert:Alert>
+    {% endif %}
+
+    <twig:Card title="{{ 'Aportaciones de proveedores' | trans }}">
+        <p class="text-muted">
+            {{ 'Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.' | trans }}
+        </p>
+
+        {% if contributions is empty %}
+            <p class="mb-0">{{ 'No hay aportaciones de proveedores para esta huella.' | trans }}</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Proveedor' | trans }}</th>
+                            <th>{{ 'Email de contacto' | trans }}</th>
+                            <th>{{ 'Propiedad' | trans }}</th>
+                            <th>{{ 'Modo' | trans }}</th>
+                            <th>{{ 'Categorías' | trans }}</th>
+                            <th>{{ 'Estado' | trans }}</th>
+                            <th class="text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for summary in contributions %}
+                            {% set contribution = summary.contribution %}
+                            {% set routeParameters = {carbonFootprintId: companyCarbonFootprintId, contributionId: contribution.id} %}
+                            <tr>
+                                <td>{{ summary.provider ? summary.provider.name : (contribution.companyName ?? '---') }}</td>
+                                <td>{{ summary.provider ? summary.provider.contact.email : '---' }}</td>
+                                <td>{{ summary.property ? summary.property.name : ('Sin asignar a propiedad' | trans) }}</td>
+                                <td>{{ contribution.mode.value | trans({}, 'providerContributionMode') }}</td>
+                                <td>{{ contribution.sources | map(source => source.value | trans({}, 'source')) | join(', ') }}</td>
+                                <td>
+                                    <span class="badge {{ contribution.status.style }}">{{ contribution.status.value | trans({}, 'providerContributionStatus') }}</span>
+                                </td>
+                                <td class="text-end">{{ summary.total.co2eq | number_format(2, ',', '.') }}</td>
+                                <td class="text-end text-nowrap">
+                                    <twig:List:Action:Responses path="{{ path('company_carbon_footprints_providers_show', routeParameters) }}" />
+                                    {% if not readOnly %}
+                                        {% if contribution.isRequested and not contribution.status.isIgnored %}
+                                            <twig:List:Action:Resend path="{{ path('company_carbon_footprints_providers_resend', routeParameters) }}" />
+                                        {% endif %}
+                                        {% if contribution.status.isIgnored %}
+                                            <twig:List:Action:Unignore path="{{ path('company_carbon_footprints_providers_unignore', routeParameters) }}" />
+                                        {% else %}
+                                            <twig:List:Action:Ignore path="{{ path('company_carbon_footprints_providers_ignore', routeParameters) }}" />
+                                        {% endif %}
+                                        <twig:List:Action:Edit path="{{ path('company_carbon_footprints_providers_edit', routeParameters) }}" />
+                                        <twig:List:Action:Delete
+                                            path="{{ path('company_carbon_footprints_providers_remove', routeParameters) }}"
+                                            confirmText="{{ 'Se eliminarán también las actividades aportadas por este proveedor' | trans }}"
+                                        />
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </twig:Card>
+
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('providers_' ~ companyCarbonFootprint.id) }}">
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            {% if not readOnly %}
+                <button type="submit" class="btn btn-primary">
+                    {{ 'Siguiente' | trans }} &rarr;
+                </button>
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}

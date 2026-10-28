@@ -55,59 +55,59 @@
       </trans-unit>
       <trans-unit id="tqatE0q" resname="purchased_goods_and_services">
         <source>purchased_goods_and_services</source>
-        <target>NEW_purchased_goods_and_services</target>
+        <target>Satın alınan mal ve hizmetler</target>
       </trans-unit>
       <trans-unit id="1q0_Cjp" resname="capital_goods">
         <source>capital_goods</source>
-        <target>NEW_capital_goods</target>
+        <target>Sermaye malları</target>
       </trans-unit>
       <trans-unit id="8mfq4.L" resname="fuel_and_energy_related">
         <source>fuel_and_energy_related</source>
-        <target>NEW_fuel_and_energy_related</target>
+        <target>Yakıt ve enerjiyle ilgili faaliyetler</target>
       </trans-unit>
       <trans-unit id="G2VfSNF" resname="upstream_transport">
         <source>upstream_transport</source>
-        <target>NEW_upstream_transport</target>
+        <target>Yukarı akış taşımacılık ve dağıtım</target>
       </trans-unit>
       <trans-unit id="lLFbEyu" resname="operations_waste">
         <source>operations_waste</source>
-        <target>NEW_operations_waste</target>
+        <target>Operasyonlarda oluşan atıklar</target>
       </trans-unit>
       <trans-unit id="ZSnX1Nr" resname="business_travel">
         <source>business_travel</source>
-        <target>NEW_business_travel</target>
+        <target>İş seyahatleri</target>
       </trans-unit>
       <trans-unit id="q76ngop" resname="employee_commuting">
         <source>employee_commuting</source>
-        <target>NEW_employee_commuting</target>
+        <target>Çalışanların işe gidiş gelişi</target>
       </trans-unit>
       <trans-unit id="V4cpw.A" resname="downstream_transport">
         <source>downstream_transport</source>
-        <target>NEW_downstream_transport</target>
+        <target>Aşağı akış taşımacılık ve dağıtım</target>
       </trans-unit>
       <trans-unit id="BNsk0jL" resname="sold_products_processing">
         <source>sold_products_processing</source>
-        <target>NEW_sold_products_processing</target>
+        <target>Satılan ürünlerin işlenmesi</target>
       </trans-unit>
       <trans-unit id="8FVkae_" resname="sold_products_use">
         <source>sold_products_use</source>
-        <target>NEW_sold_products_use</target>
+        <target>Satılan ürünlerin kullanımı</target>
       </trans-unit>
       <trans-unit id="oRsRGdM" resname="sold_products_end_of_life">
         <source>sold_products_end_of_life</source>
-        <target>NEW_sold_products_end_of_life</target>
+        <target>Satılan ürünlerin kullanım ömrü sonu işlemleri</target>
       </trans-unit>
       <trans-unit id="krPTarr" resname="investments">
         <source>investments</source>
-        <target>NEW_investments</target>
+        <target>Yatırımlar</target>
       </trans-unit>
       <trans-unit id="o3qn.LF" resname="downstream_leased_assets">
         <source>downstream_leased_assets</source>
-        <target>NEW_downstream_leased_assets</target>
+        <target>Aşağı akış kiralanan varlıklar</target>
       </trans-unit>
       <trans-unit id="kYfgk8s" resname="franchises">
         <source>franchises</source>
-        <target>NEW_franchises</target>
+        <target>Franchise’lar</target>
       </trans-unit>
     </body>
   </file>

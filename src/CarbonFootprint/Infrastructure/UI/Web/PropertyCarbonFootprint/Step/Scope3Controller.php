@@ -85,7 +85,10 @@ class Scope3Controller extends AbstractController
                 return $this->redirectToRoute('property_carbon_footprints_scope_3', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
             }
 
-            return $this->redirectToRoute('property_carbon_footprints_mitigation_plan', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
+            return $this->redirectToRoute(
+                $propertyCarbonFootprint->scope3Excluded() ? 'property_carbon_footprints_mitigation_plan' : 'property_carbon_footprints_providers',
+                ['propertyCarbonFootprintId' => $propertyCarbonFootprintId],
+            );
         }
 
         $response = $getScope(new GetPropertyCarbonFootprintScopeRequest($propertyCarbonFootprint->id(), Scope::Scope3), $loggedUser());
@@ -106,6 +109,7 @@ class Scope3Controller extends AbstractController
                 ],
                 'derivedEmissions' => $response->derivedEmissions,
                 'derivedLines' => $response->derivedLines,
+                'providerContributions' => $response->providerContributions,
                 'currencies' => Unit::currencies(),
                 'upstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->upstreamSources()),
                 'downstreamSources' => array_map(

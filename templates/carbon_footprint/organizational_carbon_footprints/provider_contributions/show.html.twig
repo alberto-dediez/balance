@@ -1,0 +1,56 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set providerName = provider ? provider.name : (contribution.companyName ?? '---') %}
+
+{% import '@carbon_footprint/organizational_carbon_footprints/provider_contributions/_macros.html.twig' as contributionMacros %}
+
+{% set page_title = contributionMacros.breadcrumb(subjectType, carbonFootprint)
+    ~ ' > '
+    ~ ('Proveedores' | trans)
+    ~ ' > '
+    ~ providerName %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ stepPath }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Datos de la empresa' | trans }}">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Empresa' | trans }}">{{ contribution.companyName ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Servicio prestado' | trans }}">{{ contribution.service ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Estado' | trans }}">
+                    <span class="badge {{ contribution.status.style }}">{{ contribution.status.value | trans({}, 'providerContributionStatus') }}</span>
+                </twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Consentimiento' | trans }}">
+                    {{ contribution.hasConsent | show_field_value | trans }}
+                    {% if contribution.hasConsent %}
+                        · {{ contribution.consentProof.consentedAt | date('d/m/Y H:i') }}
+                    {% endif %}
+                </twig:View:Field>
+                <twig:View:Field label="{{ 'Fecha de respuesta' | trans }}">{{ contribution.answeredAt ? contribution.answeredAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                {% if subjectType == 'company' %}
+                    <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ property ? property.name : ('Sin asignar a propiedad' | trans) }}</twig:View:Field>
+                {% endif %}
+            </div>
+        </div>
+    </twig:Card>
+
+    {% for source, view in sectionsBySource %}
+        <twig:Card>
+            <h6 class="fw-semibold mb-3">{{ source | trans({}, 'source') }}</h6>
+
+            {% include '@carbon_footprint/organizational_carbon_footprints/_scope_3_tables.html.twig' with {source: source, blocks: [{sections: view.sections, units: view.units}], readOnly: true} only %}
+
+            <twig:CarbonFootprint:ReportedEmissionsActivityTable
+                title="{{ 'Emisiones comunicadas' | trans }}"
+                prefix="{{ 'reported[' ~ source ~ ']' }}"
+                :rows="view.sections[source ~ '_reported'].rows ?? []"
+                :readOnly="true"
+            />
+        </twig:Card>
+    {% endfor %}
+{% endblock %}

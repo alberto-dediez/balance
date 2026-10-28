@@ -62,6 +62,22 @@ class ProviderMother
         return $provider;
     }
 
+    public static function withoutEmail(string $name, string $accountId, string $id): Provider
+    {
+        $provider = new Provider(
+            id: new ProviderId($id),
+        );
+        $provider->register(
+            name: $name,
+            vatNumber: 'B12345678',
+            address: new Address(),
+            contact: new Contact(),
+            accountId: new AccountId($accountId),
+        );
+
+        return $provider;
+    }
+
     public static function random(): Provider
     {
         return self::from(

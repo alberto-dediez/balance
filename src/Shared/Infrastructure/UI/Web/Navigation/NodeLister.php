@@ -598,6 +598,12 @@ class NodeLister
         }
 
         $nodes[] = new Node(
+            label: new TranslatableMessage('Proveedores'),
+            icon: 'solar:users-group-rounded-line-duotone',
+            target: $this->router->generate('providers'),
+        );
+
+        $nodes[] = new Node(
             label: new TranslatableMessage('Eventos'),
             icon: 'ic:twotone-event-available',
             items: [
@@ -605,11 +611,6 @@ class NodeLister
                     label: new TranslatableMessage('Eventos'),
                     icon: 'ic:twotone-event-available',
                     target: $this->router->generate('events'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Proveedores'),
-                    icon: 'streamline-plump:food-truck-event-fair',
-                    target: $this->router->generate('providers'),
                 ),
             ],
         );

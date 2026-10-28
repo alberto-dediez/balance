@@ -83,6 +83,10 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContribution;
+use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionId;
+use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepository;
+use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\ProviderContributionMode;
 use App\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepository;
 use App\CarbonFootprint\Domain\Model\Process\ProcessRepository;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
@@ -161,6 +165,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationM
 use App\Tests\Unit\CarbonFootprint\Domain\Model\UseProfile\UseProfileMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
 use Behat\Step\Then;
@@ -2205,6 +2210,48 @@ final readonly class CarbonFootprintContext implements Context
         );
     }
 
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with scope 3 answered and later excluded exists')]
+    public function propertyCarbonFootprintWithScope3AnsweredAndLaterExcludedExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::withScope3Answered($propertyId, $id, $account, (int) $year);
+        $propertyCarbonFootprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->getPropertyCarbonFootprintRepository()->add($propertyCarbonFootprint);
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with scope 3 answered and later excluded exists')]
+    public function companyCarbonFootprintWithScope3AnsweredAndLaterExcludedExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $companyCarbonFootprint = CompanyCarbonFootprintMother::withScope3Answered($companyId, $id, $account, (int) $year);
+        $companyCarbonFootprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->getCompanyCarbonFootprintRepository()->add($companyCarbonFootprint);
+    }
+
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with providers answered exists')]
+    public function propertyCarbonFootprintWithProvidersAnsweredExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getPropertyCarbonFootprintRepository()->add(
+            PropertyCarbonFootprintMother::withProvidersAnswered($propertyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with providers answered exists')]
+    public function companyCarbonFootprintWithProvidersAnsweredExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::withProvidersAnswered($companyId, $id, $account, (int) $year),
+        );
+    }
+
     #[Given(':subjectType carbon footprint :id has a purchase service activity :itemId in scope 3')]
     #[Given(':subjectType carbon footprint :id has a purchase service activity :itemId in scope 3 for property :propertyId')]
     public function carbonFootprintHasAPurchaseServiceActivityInScope3(string $subjectType, string $id, string $itemId, ?string $propertyId = null): void
@@ -2585,6 +2632,239 @@ final readonly class CarbonFootprintContext implements Context
         );
     }
 
+    #[Given('organizational provider contribution with id :id for :subjectType carbon footprint :footprintId and provider :providerId of account :account in mode :mode with token :token covering :sources exists')]
+    public function organizationalProviderContributionExists(string $id, string $subjectType, string $footprintId, string $providerId, string $account, string $mode, string $token, string $sources): void
+    {
+        $this->registerOrganizationalProviderContribution($id, $subjectType, $footprintId, $providerId, $account, $mode, $token, $sources, null);
+    }
+
+    #[Given('organizational provider contribution with id :id for company carbon footprint :footprintId and provider :providerId of account :account in mode :mode with token :token covering :sources for property :propertyId exists')]
+    public function organizationalProviderContributionForPropertyExists(string $id, string $footprintId, string $providerId, string $account, string $mode, string $token, string $sources, string $propertyId): void
+    {
+        $this->registerOrganizationalProviderContribution($id, 'company', $footprintId, $providerId, $account, $mode, $token, $sources, new PropertyId($propertyId));
+    }
+
+    #[Given('organizational provider contribution :id is ignored')]
+    public function organizationalProviderContributionIsIgnored(string $id): void
+    {
+        $contribution = $this->getOrganizationalProviderContributionRepository()->find(new OrganizationalProviderContributionId($id));
+
+        Assert::assertNotNull($contribution);
+
+        $contribution->ignore();
+
+        $this->getOrganizationalProviderContributionRepository()->add($contribution);
+    }
+
+    #[Given('organizational provider contribution :id has consent')]
+    public function organizationalProviderContributionHasConsent(string $id): void
+    {
+        $contribution = $this->getOrganizationalProviderContributionRepository()->find(new OrganizationalProviderContributionId($id));
+
+        Assert::assertNotNull($contribution);
+
+        $contribution->grantConsent(ConsentProofMother::granted());
+
+        $this->getOrganizationalProviderContributionRepository()->add($contribution);
+    }
+
+    #[When('I save the provider contribution form with reported emissions :rows in source :source')]
+    public function iSaveTheProviderContributionFormWithReportedEmissions(string $rows, string $source): void
+    {
+        $this->saveProviderContributionForm($rows, $source, null);
+    }
+
+    #[When('I save the provider contribution form with categories :sources and reported emissions :rows in source :source')]
+    public function iSaveTheProviderContributionFormWithCategoriesAndReportedEmissions(string $sources, string $rows, string $source): void
+    {
+        $this->saveProviderContributionForm($rows, $source, 'none' === $sources ? [] : array_map(static fn(string $value): Source => Source::from(trim($value)), explode(',', $sources)));
+    }
+
+    /** @param list<Source>|null $sources */
+    private function saveProviderContributionForm(string $rows, string $source, ?array $sources): void
+    {
+        $form = $this->client->getCrawler()->filter('button[name$="[save]"]')->form();
+
+        $reported = [];
+        foreach (explode(',', $rows) as $row) {
+            [$description, $quantity, $unit] = explode(':', $row);
+            $reported[] = ['description' => $description, 'quantity' => $quantity, 'unit' => $unit, 'activityId' => ''];
+        }
+
+        $parameters = $form->getPhpValues();
+        $parameters['reported'][$source] = $reported;
+
+        if (null !== $sources) {
+            $choices = [];
+            foreach (Scope::Scope3->providerSources() as $index => $choice) {
+                if (in_array($choice, $sources, true)) {
+                    $choices[$index] = $choice->value;
+                }
+            }
+            $parameters['change_organizational_provider_contribution_sources']['sources'] = $choices;
+        }
+
+        $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $parameters, [], ['HTTP_REFERER' => $form->getUri()]);
+    }
+
+    #[When('I submit the provider emissions form in mode :mode for source :source with rows :rows')]
+    public function iSubmitTheProviderEmissionsForm(string $mode, string $source, string $rows): void
+    {
+        $this->submitScopeStep($this->providerEmissionsParameters($mode, $source, $rows));
+    }
+
+    #[When('I post the provider emissions of token :token in mode :mode for source :source with rows :rows')]
+    public function iPostTheProviderEmissionsOfToken(string $token, string $mode, string $source, string $rows): void
+    {
+        $csrfToken = 'acceptance-csrf-token';
+        $this->client->setSessionValue('_csrf/provider_contribution_emissions_' . $token, $csrfToken);
+
+        $this->client->requestWithFiles(
+            'POST',
+            '/es/carbon-footprint/provider-contribution/' . $token . '/emissions',
+            ['_token' => $csrfToken] + $this->providerEmissionsParameters($mode, $source, $rows),
+        );
+    }
+
+    /** @return array<string, mixed> */
+    private function providerEmissionsParameters(string $mode, string $source, string $rows): array
+    {
+        $sourceEnum = Source::from($source);
+        $sectionKey = 'reported' === $mode
+            ? Scope::Scope3->reportedSectionFor($sourceEnum)->key
+            : array_values(array_filter(Scope::Scope3->sections(), static fn($section): bool => $section->source === $sourceEnum))[0]->key;
+
+        $answers = [];
+        foreach (explode(',', $rows) as $row) {
+            [$field, $quantity, $unit] = explode(':', $row);
+            $answers[] = ('reported' === $mode ? ['description' => $field] : ['itemId' => $field]) + ['quantity' => $quantity, 'unit' => $unit, 'activityId' => ''];
+        }
+
+        return ['mode' => [$source => $mode], $sectionKey => $answers];
+    }
+
+    #[When('I submit the provider emissions form without choosing the mode for source :source with rows :rows')]
+    public function iSubmitTheProviderEmissionsFormWithoutMode(string $source, string $rows): void
+    {
+        $answers = [];
+        foreach (explode(',', $rows) as $row) {
+            [$description, $quantity, $unit] = explode(':', $row);
+            $answers[] = ['description' => $description, 'quantity' => $quantity, 'unit' => $unit, 'activityId' => ''];
+        }
+
+        $this->submitScopeStep([Scope::Scope3->reportedSectionFor(Source::from($source))->key => $answers]);
+    }
+
+    #[Then('organizational provider contribution :id should have status :status')]
+    public function organizationalProviderContributionShouldHaveStatus(string $id, string $status): void
+    {
+        $contribution = $this->getOrganizationalProviderContributionRepository()->find(new OrganizationalProviderContributionId($id));
+
+        Assert::assertNotNull($contribution);
+        Assert::assertSame($status, $contribution->status()->value);
+    }
+
+    #[Then('organizational provider contribution :id should cover :sources')]
+    public function organizationalProviderContributionShouldCover(string $id, string $sources): void
+    {
+        $contribution = $this->getOrganizationalProviderContributionRepository()->find(new OrganizationalProviderContributionId($id));
+
+        Assert::assertNotNull($contribution);
+        Assert::assertSame(
+            array_map(static fn(string $source): string => trim($source), explode(',', $sources)),
+            array_map(static fn(Source $source): string => $source->value, $contribution->sources()),
+        );
+    }
+
+    #[Then('the previous step link should point to :href')]
+    public function thePreviousStepLinkShouldPointTo(string $href): void
+    {
+        $links = $this->client->getCrawler()->selectLink('Anterior');
+
+        Assert::assertCount(1, $links);
+        Assert::assertSame($href, $links->attr('href'));
+    }
+
+    #[Then('organizational provider contribution :id should be removed')]
+    public function organizationalProviderContributionShouldBeRemoved(string $id): void
+    {
+        $contribution = $this->getOrganizationalProviderContributionRepository()->find(new OrganizationalProviderContributionId($id));
+
+        Assert::assertTrue(null === $contribution || $contribution->isRemoved());
+    }
+
+    #[Then('there should be :count active organizational provider contributions for :subjectType carbon footprint :footprintId')]
+    public function thereShouldBeActiveOrganizationalProviderContributions(string $count, string $subjectType, string $footprintId): void
+    {
+        Assert::assertCount((int) $count, $this->getOrganizationalProviderContributionRepository()->findActiveByFootprint(CarbonFootprintReportSubjectType::from($subjectType), $footprintId));
+    }
+
+    #[Then(':subjectType carbon footprint :id should have :count activities of provider :providerId in source :source')]
+    public function carbonFootprintShouldHaveActivitiesOfProviderInSource(string $subjectType, string $id, string $count, string $providerId, string $source): void
+    {
+        $carbonFootprint = $this->findCarbonFootprint($subjectType, $id);
+        $providerIdObject = new ProviderId($providerId);
+
+        $references = array_filter(
+            $carbonFootprint->activityReferences(),
+            static fn($reference): bool => Source::from($source) === $reference->placement->source
+                && null !== $reference->placement->providerId
+                && $providerIdObject->equals($reference->placement->providerId),
+        );
+
+        Assert::assertCount((int) $count, $references);
+    }
+
+    #[Then(':subjectType carbon footprint :id should have :count activities of provider :providerId in source :source for property :propertyId')]
+    public function carbonFootprintShouldHaveActivitiesOfProviderInSourceForProperty(string $subjectType, string $id, string $count, string $providerId, string $source, string $propertyId): void
+    {
+        $carbonFootprint = $this->findCarbonFootprint($subjectType, $id);
+        $providerIdObject = new ProviderId($providerId);
+        $propertyIdObject = 'unassigned' === $propertyId ? null : new PropertyId($propertyId);
+
+        $references = array_filter(
+            $carbonFootprint->activityReferences(),
+            static fn($reference): bool => Source::from($source) === $reference->placement->source
+                && null !== $reference->placement->providerId
+                && $providerIdObject->equals($reference->placement->providerId)
+                && (null === $propertyIdObject ? null === $reference->placement->propertyId : null !== $reference->placement->propertyId && $propertyIdObject->equals($reference->placement->propertyId)),
+        );
+
+        Assert::assertCount((int) $count, $references);
+    }
+
+    private function registerOrganizationalProviderContribution(
+        string $id,
+        string $subjectType,
+        string $footprintId,
+        string $providerId,
+        string $account,
+        string $mode,
+        string $token,
+        string $sources,
+        ?PropertyId $propertyId,
+    ): void {
+        $contribution = new OrganizationalProviderContribution(new OrganizationalProviderContributionId($id));
+        $contribution->register(
+            subjectType: CarbonFootprintReportSubjectType::from($subjectType),
+            carbonFootprintId: $footprintId,
+            accountId: new AccountId($account),
+            providerId: new ProviderId($providerId),
+            propertyId: $propertyId,
+            mode: ProviderContributionMode::from($mode),
+            token: $token,
+            sources: array_map(static fn(string $source): Source => Source::from(trim($source)), explode(',', $sources)),
+            companyName: 'Provider Company',
+        );
+
+        $this->getOrganizationalProviderContributionRepository()->add($contribution);
+    }
+
+    private function getOrganizationalProviderContributionRepository(): OrganizationalProviderContributionRepository
+    {
+        return $this->client->getContainer()->get(OrganizationalProviderContributionRepository::class);
+    }
+
     private function findCarbonFootprint(string $subjectType, string $id): CarbonFootprint
     {
         $carbonFootprint = match ($subjectType) {
@@ -2707,6 +2987,30 @@ final readonly class CarbonFootprintContext implements Context
         $companyCarbonFootprint->answerScope(Scope::Scope3);
 
         $this->getCompanyCarbonFootprintRepository()->add($companyCarbonFootprint);
+    }
+
+    #[When('I submit the providers step form')]
+    public function iSubmitTheProvidersStepForm(): void
+    {
+        $this->client->submit($this->client->getCrawler()->selectButton('Siguiente')->form());
+    }
+
+    #[Then('the wizard should show the step :label')]
+    public function theWizardShouldShowTheStep(string $label): void
+    {
+        Assert::assertContains($label, $this->wizardStepLabels());
+    }
+
+    #[Then('the wizard should not show the step :label')]
+    public function theWizardShouldNotShowTheStep(string $label): void
+    {
+        Assert::assertNotContains($label, $this->wizardStepLabels());
+    }
+
+    /** @return list<string> */
+    private function wizardStepLabels(): array
+    {
+        return $this->client->getCrawler()->filter('.steps li span.d-none')->each(static fn($node): string => trim($node->text()));
     }
 
     #[When('I submit the mitigation plan step form')]

@@ -25,7 +25,7 @@ Feature:
         Then I do not see a text "Hotel Arrendado"
 
     Scenario: The scope 3 step shows the franchise with the scope 1 and 2 emissions of its completed property footprint
-        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
@@ -39,7 +39,7 @@ Feature:
         Then I see a text "Sin datos"
 
     Scenario: A franchise whose property footprint is not completed has no data
-        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
         When I am logged as "owner@dediez.software"
@@ -54,19 +54,19 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "4500" for property "3333"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have "4500" kg in source "downstream_leased_assets"
         Then company carbon footprint "999" should have "0" kg in source "franchises"
 
     Scenario: Excluding the franchises leaves them out of the total
-        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the scope "scope_3" step form excluding source "franchises" with reason "not_significant" and comment "Poco relevante"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have "0" kg in source "franchises"
 
     Scenario: Saving the scope 1 step removes the activities of a property that became franchised
@@ -80,10 +80,10 @@ Feature:
         Then company carbon footprint "999" should have 0 activities of source "fixed_facilities" in scope "scope_1" for property "2222"
 
     Scenario: Reopening the property footprint after completing the company footprint does not change its total
-        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 3 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with providers answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/mitigation-plan"
         When I submit the mitigation plan step form
@@ -97,7 +97,7 @@ Feature:
         Then company carbon footprint "999" should have "3000" kg in source "franchises"
 
     Scenario: The mitigation plan step shows the franchise as an emission source with its property
-        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
@@ -106,6 +106,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "" for property "2222"
+        Then I am redirected to route "company_carbon_footprints_providers"
+        When I submit the providers step form
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         Then the response status should be 200
         Then I see a text "Franquicias"
@@ -114,31 +116,33 @@ Feature:
         Then I see a text "2.400,00"
 
     Scenario: Saving the scope 3 step again updates the manual emissions of a franchise
-        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "4500" for property "2222"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have "4500" kg in source "franchises"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "5000" for property "2222"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have "5000" kg in source "franchises"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "" for property "2222"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have "3000" kg in source "franchises"
 
     Scenario: Completing the company footprint after the property footprint is completed refreshes the franchise
-        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with scope 3 answered exists
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with providers answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "" for property "2222"
+        Then I am redirected to route "company_carbon_footprints_providers"
+        When I submit the providers step form
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         Then company carbon footprint "999" should have "0" kg in source "franchises"
         Given property carbon footprint "P2" is completed
@@ -153,8 +157,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the scope "scope_3" step form excluding source "franchises" with reason "not_significant" and comment "Poco relevante"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the scope "scope_3" step form excluding source "franchises" with reason "no_data_available" and comment "Sin datos"
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_providers"
         Then company carbon footprint "999" should have "0" kg in source "franchises"

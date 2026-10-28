@@ -69,6 +69,10 @@
         <source>refrigerant_gas</source>
         <target>Gas refrigerante</target>
       </trans-unit>
+      <trans-unit id="CMdplBG" resname="reported_emissions">
+        <source>reported_emissions</source>
+        <target>Emisiones comunicadas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -24,6 +24,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
@@ -48,7 +49,7 @@ class GetPropertyCarbonFootprintResultsServiceTest extends TestCase
         $this->sut = new GetPropertyCarbonFootprintResultsService(
             $this->repository,
             new PropertyCarbonFootprintAuthorizer(),
-            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
+            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
         );
     }
 

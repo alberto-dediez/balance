@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\DomainEvent;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
@@ -22,6 +23,7 @@ final class CompanyCarbonFootprintActivityAdded extends DomainEvent
         private Scope $scope,
         private Source $source,
         private ?PropertyId $propertyId = null,
+        private ?ProviderId $providerId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -53,6 +55,11 @@ final class CompanyCarbonFootprintActivityAdded extends DomainEvent
         return $this->propertyId;
     }
 
+    public function providerId(): ?ProviderId
+    {
+        return $this->providerId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->companyCarbonFootprintId;
@@ -66,6 +73,7 @@ final class CompanyCarbonFootprintActivityAdded extends DomainEvent
             'scope' => $this->scope->value,
             'source' => $this->source->value,
             'propertyId' => $this->propertyId instanceof PropertyId ? (string) $this->propertyId : null,
+            'providerId' => $this->providerId instanceof ProviderId ? (string) $this->providerId : null,
         ];
     }
 
@@ -86,6 +94,7 @@ final class CompanyCarbonFootprintActivityAdded extends DomainEvent
             scope: $scope,
             source: $source,
             propertyId: isset($payload['propertyId']) ? new PropertyId($payload['propertyId']) : null,
+            providerId: isset($payload['providerId']) ? new ProviderId($payload['providerId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

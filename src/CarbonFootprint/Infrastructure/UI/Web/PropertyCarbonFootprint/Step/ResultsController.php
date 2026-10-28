@@ -36,9 +36,10 @@ class ResultsController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::View->value, $propertyCarbonFootprint);
 
-        if (!$propertyCarbonFootprint->status()->isScope3Answered()) {
+        if (!$propertyCarbonFootprint->status()->isProvidersAnswered()) {
             return $this->redirectToRoute(
                 match (true) {
+                    $propertyCarbonFootprint->status()->isScope3Answered() => 'property_carbon_footprints_providers',
                     $propertyCarbonFootprint->status()->isScope2Answered() => 'property_carbon_footprints_scope_3',
                     $propertyCarbonFootprint->status()->isScope1Answered() => 'property_carbon_footprints_scope_2',
                     default => 'property_carbon_footprints_scope_1',

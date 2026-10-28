@@ -29,6 +29,7 @@ use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
@@ -59,7 +60,7 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
         $this->sut = new NonConsolidatedPropertyEmissionsResolver(
             new CompanyProperties($this->propertyRepository),
             $this->propertyCarbonFootprintRepository,
-            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
+            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
         );
     }
 
@@ -150,7 +151,7 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
 
     private function propertyFootprint(string $propertyId, string $accountId = self::ACCOUNT_ID): PropertyCarbonFootprint
     {
-        $propertyFootprint = PropertyCarbonFootprintMother::withScope3Answered($propertyId, (string) PropertyCarbonFootprintId::generate(), $accountId);
+        $propertyFootprint = PropertyCarbonFootprintMother::withProvidersAnswered($propertyId, (string) PropertyCarbonFootprintId::generate(), $accountId);
         $this->propertyCarbonFootprintRepository->add($propertyFootprint);
 
         return $propertyFootprint;
@@ -173,6 +174,6 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
 
     private function companyFootprint(): CompanyCarbonFootprint
     {
-        return CompanyCarbonFootprintMother::withScope3Answered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        return CompanyCarbonFootprintMother::withProvidersAnswered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
     }
 }

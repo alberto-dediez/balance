@@ -1,0 +1,35 @@
+{% set scope3Tables = {
+    purchased_goods_and_services: [{key: 'purchasedGoodsAndServices', component: 'PurchaseServiceActivityTable', title: 'Compras de bienes y servicios' | trans}],
+    capital_goods: [{key: 'capitalGoods', component: 'CapitalGoodActivityTable', title: 'Adquisiciones de bienes de capital' | trans}],
+    upstream_transport: [{key: 'upstreamTransport', component: 'TransportActivityTable', title: 'Transportes de mercancías recibidas' | trans}],
+    operations_waste: [{key: 'operationsWaste', component: 'WasteActivityTable', title: 'Residuos generados' | trans}],
+    business_travel: [
+        {key: 'businessTravel', component: 'MobilityActivityTable', title: 'Desplazamientos de negocio' | trans},
+        {key: 'businessTravelStays', component: 'OvernightStayActivityTable', title: 'Alojamientos de negocio' | trans},
+    ],
+    employee_commuting: [{key: 'employeeCommuting', component: 'MobilityActivityTable', title: 'Desplazamientos al trabajo' | trans}],
+    downstream_transport: [{key: 'downstreamTransport', component: 'TransportActivityTable', title: 'Transportes de mercancías vendidas' | trans}],
+    sold_products_processing: [{key: 'soldProductsProcessing', component: 'ProcessActivityTable', title: 'Procesamiento de productos vendidos' | trans}],
+    sold_products_use: [{key: 'soldProductsUse', component: 'UseProfileActivityTable', title: 'Uso de productos vendidos' | trans}],
+    sold_products_end_of_life: [{key: 'soldProductsEndOfLife', component: 'WasteActivityTable', title: 'Fin de vida de productos vendidos' | trans}],
+    investments: [{key: 'investments', component: 'EconomicSectorActivityTable', title: 'Inversiones' | trans}],
+} %}
+{% set unassignedLabel = unassignedLabel | default(null) %}
+{% set calculateUrl = calculateUrl | default(null) %}
+{% set readOnly = readOnly | default(false) %}
+
+{% for table in scope3Tables[source] ?? [] %}
+    {% for block in blocks %}
+        {% set blockProperty = block.property ?? null %}
+        {% set prefixBase = block.prefixBase ?? '' %}
+        {{ component('CarbonFootprint:' ~ table.component, {
+            title: blockProperty ? blockProperty.name ~ ' · ' ~ table.title : (unassignedLabel ? unassignedLabel ~ ' · ' ~ table.title : table.title),
+            prefix: prefixBase is empty ? table.key : prefixBase ~ '[' ~ table.key ~ ']',
+            rows: block.sections[table.key].rows ?? [],
+            items: block.sections[table.key].catalog ?? [],
+            units: table.key == 'investments' ? currencies : block.units,
+            calculateUrl: calculateUrl,
+            readOnly: readOnly,
+        }) }}
+    {% endfor %}
+{% endfor %}

@@ -1,0 +1,47 @@
+{% props title, prefix, rows = [], readOnly = false %}
+
+{% set proto %}{{ component('CarbonFootprint:ReportedEmissionsActivityRow', { prefix: prefix, index: '__name__' }) }}{% endset %}
+
+<twig:Card :title="title">
+    <div
+        {% if not readOnly %}
+        data-controller="collection"
+        data-collection-prototype-value="{{ proto | e('html_attr') }}"
+        {% endif %}
+    >
+        <div class="table-responsive overflow-visible">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th class="col-7">{{ 'Concepto' | trans }}</th>
+                        <th class="col-4">{{ 'Emisiones (CO₂eq)' | trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="collection">
+                    {% for row in rows %}
+                        <twig:CarbonFootprint:ReportedEmissionsActivityRow
+                            prefix="{{ prefix }}"
+                            :index="loop.index0"
+                            :row="row"
+                            :readOnly="readOnly"
+                        />
+                    {% else %}
+                        {% if readOnly %}
+                            <tr><td colspan="3" class="text-muted">{{ 'No hay actividades registradas.' | trans }}</td></tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if not readOnly %}
+            <div class="mt-2">
+                <button type="button" class="btn btn-outline-info" data-action="collection#add">
+                    <twig:Icon name="solar:add-circle-outline" />
+                    {{ 'Añadir' | trans }}
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</twig:Card>

@@ -17,6 +17,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
@@ -155,6 +156,6 @@ final class DerivedSourceEmissionsCalculatorTest extends TestCase
 
     private function createSUT(): DerivedSourceEmissionsCalculator
     {
-        return new DerivedSourceEmissionsCalculator($this->activityRepository);
+        return new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create());
     }
 }

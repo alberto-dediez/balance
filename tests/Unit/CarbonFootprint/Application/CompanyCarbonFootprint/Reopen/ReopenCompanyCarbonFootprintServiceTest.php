@@ -44,7 +44,7 @@ class ReopenCompanyCarbonFootprintServiceTest extends TestCase
 
         ($this->sut)(new ReopenCompanyCarbonFootprintRequest($footprint->id()), $this->ownerUser());
 
-        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope3Answered, $footprint->status());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
         $this->assertSame('0', $footprint->totalEmissions()->co2eq());
     }
 
@@ -87,7 +87,7 @@ class ReopenCompanyCarbonFootprintServiceTest extends TestCase
 
     private function completedFootprint(): CompanyCarbonFootprint
     {
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
         $footprint->complete(new Emissions('30', '30', '0', '0'));
 
         return $footprint;

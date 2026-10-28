@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CarbonFootprint;
 
+use App\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferences;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
@@ -18,6 +19,7 @@ final class EmissionsBreakdownBuilder
     public function __construct(
         private ActivityRepository $activityRepository,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
+        private CountedActivityReferences $countedActivityReferences,
     ) {}
 
     /** @param list<CalculationStage> $stages */
@@ -45,7 +47,7 @@ final class EmissionsBreakdownBuilder
         /** @var array<string, ActivityPlacement> $placements */
         $placements = [];
         $activityIds = [];
-        foreach ($carbonFootprint->activityReferences() as $reference) {
+        foreach ($this->countedActivityReferences->of($carbonFootprint) as $reference) {
             $activityIds[] = $reference->activityId;
             $placements[(string) $reference->activityId] = $reference->placement;
         }

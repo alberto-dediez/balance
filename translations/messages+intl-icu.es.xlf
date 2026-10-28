@@ -10029,6 +10029,142 @@
         <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
         <target><![CDATA[El nombre de usuario no puede contener los caracteres < ni >]]></target>
       </trans-unit>
+      <trans-unit id="oLPYbMa" resname="Se ha reactivado la aportación de {name}">
+        <source>Se ha reactivado la aportación de {name}</source>
+        <target>Se ha reactivado la aportación de {name}</target>
+      </trans-unit>
+      <trans-unit id="QY1LOy2" resname="No se ha podido reactivar la aportación de {name}">
+        <source>No se ha podido reactivar la aportación de {name}</source>
+        <target>No se ha podido reactivar la aportación de {name}</target>
+      </trans-unit>
+      <trans-unit id="SJ8O2im" resname="Se ha descartado la aportación de {name}">
+        <source>Se ha descartado la aportación de {name}</source>
+        <target>Se ha descartado la aportación de {name}</target>
+      </trans-unit>
+      <trans-unit id="MREoP9G" resname="No se ha podido descartar la aportación de {name}">
+        <source>No se ha podido descartar la aportación de {name}</source>
+        <target>No se ha podido descartar la aportación de {name}</target>
+      </trans-unit>
+      <trans-unit id="4k7EMoZ" resname="Se ha reenviado la solicitud a {name}">
+        <source>Se ha reenviado la solicitud a {name}</source>
+        <target>Se ha reenviado la solicitud a {name}</target>
+      </trans-unit>
+      <trans-unit id="U8ah8et" resname="No se ha podido reenviar la solicitud a {name}">
+        <source>No se ha podido reenviar la solicitud a {name}</source>
+        <target>No se ha podido reenviar la solicitud a {name}</target>
+      </trans-unit>
+      <trans-unit id="hUtjAwO" resname="El proveedor no tiene usuario vinculado">
+        <source>El proveedor no tiene usuario vinculado</source>
+        <target>El proveedor no tiene usuario vinculado</target>
+      </trans-unit>
+      <trans-unit id="qTv5aoc" resname="Aportación de proveedor registrada: {name}">
+        <source>Aportación de proveedor registrada: {name}</source>
+        <target>Aportación de proveedor registrada: {name}</target>
+      </trans-unit>
+      <trans-unit id="3liwYos" resname="Ya existe una aportación de este proveedor para esta huella">
+        <source>Ya existe una aportación de este proveedor para esta huella</source>
+        <target>Ya existe una aportación de este proveedor para esta huella</target>
+      </trans-unit>
+      <trans-unit id="y1n_3c4" resname="No se ha podido registrar la aportación del proveedor">
+        <source>No se ha podido registrar la aportación del proveedor</source>
+        <target>No se ha podido registrar la aportación del proveedor</target>
+      </trans-unit>
+      <trans-unit id="8MrZGhX" resname="Aportación de proveedor actualizada con éxito">
+        <source>Aportación de proveedor actualizada con éxito</source>
+        <target>Aportación de proveedor actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id=".T5kfwm" resname="Se ha eliminado la aportación de {name}">
+        <source>Se ha eliminado la aportación de {name}</source>
+        <target>Se ha eliminado la aportación de {name}</target>
+      </trans-unit>
+      <trans-unit id="VyU7L11" resname="No se ha podido eliminar la aportación de {name}">
+        <source>No se ha podido eliminar la aportación de {name}</source>
+        <target>No se ha podido eliminar la aportación de {name}</target>
+      </trans-unit>
+      <trans-unit id="n6u98jq" resname="Selecciona un proveedor">
+        <source>Selecciona un proveedor</source>
+        <target>Selecciona un proveedor</target>
+      </trans-unit>
+      <trans-unit id="uMASCYm" resname="Aporta tus datos de emisiones de {year} para {subject}">
+        <source>Aporta tus datos de emisiones de {year} para {subject}</source>
+        <target>Aporta tus datos de emisiones de {year} para {subject}</target>
+      </trans-unit>
+      <trans-unit id="Ft_XWmv" resname="Añadir proveedor">
+        <source>Añadir proveedor</source>
+        <target>Añadir proveedor</target>
+      </trans-unit>
+      <trans-unit id="m.0VcOE" resname="Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.">
+        <source>Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.</source>
+        <target>Registra los datos que te han comunicado tus proveedores o solicítaselos por correo. Sus emisiones se suman en la categoría del alcance 3 que indiques.</target>
+      </trans-unit>
+      <trans-unit id="OryCxsF" resname="No hay aportaciones de proveedores para esta huella.">
+        <source>No hay aportaciones de proveedores para esta huella.</source>
+        <target>No hay aportaciones de proveedores para esta huella.</target>
+      </trans-unit>
+      <trans-unit id="0cw.ZRK" resname="Se eliminarán también las actividades aportadas por este proveedor">
+        <source>Se eliminarán también las actividades aportadas por este proveedor</source>
+        <target>Se eliminarán también las actividades aportadas por este proveedor</target>
+      </trans-unit>
+      <trans-unit id="3Z5_6a5" resname="Aportaciones de proveedores">
+        <source>Aportaciones de proveedores</source>
+        <target>Aportaciones de proveedores</target>
+      </trans-unit>
+      <trans-unit id="6GwWK5i" resname="Contribución de proveedor - Emisiones">
+        <source>Contribución de proveedor - Emisiones</source>
+        <target>Contribución de proveedor - Emisiones</target>
+      </trans-unit>
+      <trans-unit id="8aax6KA" resname="Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.">
+        <source>Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.</source>
+        <target>Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.</target>
+      </trans-unit>
+      <trans-unit id="UOMZqxn" resname="Emisiones comunicadas">
+        <source>Emisiones comunicadas</source>
+        <target>Emisiones comunicadas</target>
+      </trans-unit>
+      <trans-unit id="ywtBGrx" resname="Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono siga abierta.">
+        <source>Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono siga abierta.</source>
+        <target>Se han guardado correctamente los datos aportados. Puedes volver a este enlace en cualquier momento para revisarlos o modificarlos mientras la huella de carbono siga abierta.</target>
+      </trans-unit>
+      <trans-unit id="nNrJZTH" resname="La organización ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.">
+        <source>La organización ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.</source>
+        <target>La organización ya ha calculado y cerrado su huella de carbono, por lo que no admite más cambios.</target>
+      </trans-unit>
+      <trans-unit id="5WXPtmR" resname="Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.">
+        <source>Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.</source>
+        <target>Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.</target>
+      </trans-unit>
+      <trans-unit id="XTqFduY" resname="Conozco las emisiones de mi servicio">
+        <source>Conozco las emisiones de mi servicio</source>
+        <target>Conozco las emisiones de mi servicio</target>
+      </trans-unit>
+      <trans-unit id="eGC.6bB" resname="Tengo los datos de actividad">
+        <source>Tengo los datos de actividad</source>
+        <target>Tengo los datos de actividad</target>
+      </trans-unit>
+      <trans-unit id="YukrTJe" resname="Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.">
+        <source>Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.</source>
+        <target>Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.</target>
+      </trans-unit>
+      <trans-unit id="cX0nonj" resname="Consentimiento">
+        <source>Consentimiento</source>
+        <target>Consentimiento</target>
+      </trans-unit>
+      <trans-unit id="IkeT25q" resname="Datos de proveedores">
+        <source>Datos de proveedores</source>
+        <target>Datos de proveedores</target>
+      </trans-unit>
+      <trans-unit id="UNVnbNs" resname="Elige cómo quieres informar las emisiones de cada categoría.">
+        <source>Elige cómo quieres informar las emisiones de cada categoría.</source>
+        <target>Elige cómo quieres informar las emisiones de cada categoría.</target>
+      </trans-unit>
+      <trans-unit id="ZUosixj" resname="Emisiones (CO₂eq)">
+        <source>Emisiones (CO₂eq)</source>
+        <target>Emisiones (CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="pfc2k4V" resname="{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.">
+        <source>{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.</source>
+        <target>{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,0 +1,41 @@
+{% props prefix, index, row = null, readOnly = false %}
+
+{% set units = ['kg', 't'] %}
+
+{% if readOnly %}
+    <tr>
+        <td>{{ row and row.description ? row.description : '—' }}</td>
+        <td class="text-nowrap">{{ row ? row.quantity | number_format(2, ',', '.') : '—' }} {{ row ? (row.unit | trans({}, 'unitType')) }}</td>
+        <td></td>
+    </tr>
+{% else %}
+<tr class="collection-element">
+    <td>
+        <input type="hidden" name="{{ prefix }}[{{ index }}][activityId]" value="{{ row ? row.activityId : '' }}">
+        <input type="text" name="{{ prefix }}[{{ index }}][description]" class="form-control" maxlength="255" value="{{ row and row.description ? row.description : '' }}" data-field="description" required="required">
+    </td>
+    <td>
+        <div class="input-group">
+            <input
+                type="number"
+                name="{{ prefix }}[{{ index }}][quantity]"
+                class="form-control"
+                step="any"
+                min="0"
+                value="{{ row ? row.quantity : '0' }}"
+                data-field="quantity"
+            >
+            <select name="{{ prefix }}[{{ index }}][unit]" class="form-select" data-field="unit">
+                {% for unit in units %}
+                    <option value="{{ unit }}"{{ row and row.unit == unit ? ' selected' }}>{{ unit | trans({}, 'unitType') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </td>
+    <td class="text-end">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+            <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+        </button>
+    </td>
+</tr>
+{% endif %}

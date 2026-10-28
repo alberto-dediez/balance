@@ -29,12 +29,15 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOrganizationalProviderContributionRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\ListOrganizationalProviderContributionsServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodRepositoryMother;
@@ -43,6 +46,8 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorRep
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Process\ProcessRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
@@ -60,6 +65,7 @@ class GetPropertyCarbonFootprintScopeServiceTest extends TestCase
     private \App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository $repository;
     private GetPropertyCarbonFootprintScopeService $sut;
     private InMemoryActivityRepository $activityRepository;
+    private InMemoryOrganizationalProviderContributionRepository $contributionRepository;
 
     protected function setUp(): void
     {
@@ -82,12 +88,18 @@ class GetPropertyCarbonFootprintScopeServiceTest extends TestCase
             new EconomicSectorCatalogProvider(EconomicSectorRepositoryMother::inMemory()),
         ]);
         $this->activityRepository = ActivityRepositoryMother::inMemory();
+        $this->contributionRepository = OrganizationalProviderContributionRepositoryMother::inMemory();
 
         $this->sut = new GetPropertyCarbonFootprintScopeService(
             $this->repository,
             new PropertyCarbonFootprintAuthorizer(),
             new StageSectionsBuilder($catalogProviders, $this->activityRepository),
-            new DerivedSourceEmissionsCalculator($this->activityRepository),
+            new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()),
+            ListOrganizationalProviderContributionsServiceMother::create(
+                propertyCarbonFootprintRepository: $this->repository,
+                contributionRepository: $this->contributionRepository,
+                activityRepository: $this->activityRepository,
+            ),
         );
     }
 
@@ -165,6 +177,18 @@ class GetPropertyCarbonFootprintScopeServiceTest extends TestCase
         $this->expectException(UnauthorizedActionException::class);
 
         ($this->sut)(new GetPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1), $this->ownerUser());
+    }
+
+    public function testScope3IncludesProviderContributions(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $this->contributionRepository->add(OrganizationalProviderContributionMother::manual(carbonFootprintId: (string) $footprint->id(), accountId: 'account-id-test'));
+
+        $scope3 = ($this->sut)(new GetPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3), $this->ownerUser());
+        $scope1 = ($this->sut)(new GetPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1), $this->ownerUser());
+
+        $this->assertCount(1, $scope3->providerContributions);
+        $this->assertSame([], $scope1->providerContributions);
     }
 
     private function registeredFootprint(string $accountId = 'account-id-test'): \App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint

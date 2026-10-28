@@ -1,0 +1,58 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ stepPath }}" />
+{% endblock %}
+
+{% set providerName = provider ? provider.name : (contribution.companyName ?? '---') %}
+
+{% import '@carbon_footprint/organizational_carbon_footprints/provider_contributions/_macros.html.twig' as contributionMacros %}
+
+{% set page_title = contributionMacros.breadcrumb(subjectType, carbonFootprint)
+    ~ ' > '
+    ~ ('Proveedores' | trans)
+    ~ ' > '
+    ~ providerName %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card title="{{ 'Proveedor' | trans }}">
+            <div class="row">
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Nombre' | trans }}">{{ providerName }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Email de contacto' | trans }}">{{ provider ? provider.contact.email : '---' }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Modo' | trans }}">{{ contribution.mode.value | trans({}, 'providerContributionMode') }}</twig:View:Field>
+                    {% if subjectType == 'company' %}
+                        <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ property ? property.name : ('Sin asignar a propiedad' | trans) }}</twig:View:Field>
+                    {% endif %}
+
+                    {{ form_row(form.sources) }}
+                </div>
+            </div>
+        </twig:Card>
+
+        {% if contribution.isManual %}
+            <twig:Card>
+                <h6 class="fw-semibold mb-3">{{ 'Emisiones comunicadas' | trans }}</h6>
+
+                {% for source in contribution.sources %}
+                    <twig:CarbonFootprint:ReportedEmissionsActivityTable
+                        title="{{ source.value | trans({}, 'source') }}"
+                        prefix="{{ 'reported[' ~ source.value ~ ']' }}"
+                        :rows="reportedRows[source.value] ?? []"
+                        :readOnly="readOnly"
+                    />
+                {% endfor %}
+            </twig:Card>
+        {% endif %}
+
+        {% if not readOnly %}
+            <twig:Card>
+                <twig:ActionBar>
+                    <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                    <twig:ActionBar:Button type="primary" :button="form.save" />
+                </twig:ActionBar>
+            </twig:Card>
+        {% endif %}
+    {{ form_end(form, {render_rest: not readOnly}) }}
+{% endblock %}

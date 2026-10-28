@@ -1,6 +1,6 @@
 {% extends '@carbon_footprint/company_carbon_footprints/wizard-layout.html.twig' %}
 
-{% set wizard_selected = 4 %}
+{% set wizard_selected = companyCarbonFootprint.scope3Excluded ? 4 : 5 %}
 
 {% block top_actions %}
     {{ parent() }}
@@ -20,6 +20,6 @@
 {% block wizard_panels %}
     {% include '@carbon_footprint/organizational_carbon_footprints/_mitigation_plan.html.twig' with {
         carbonFootprint: companyCarbonFootprint,
-        previousPath: path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId}),
+        previousPath: path(companyCarbonFootprint.scope3Excluded ? 'company_carbon_footprints_scope_3' : 'company_carbon_footprints_providers', {companyCarbonFootprintId: companyCarbonFootprintId}),
     } %}
 {% endblock %}

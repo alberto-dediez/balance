@@ -741,6 +741,10 @@
         <source>El valor de reducción de esta medida debe estar dentro del rango establecido</source>
         <target>Bu önlemin azaltım değeri belirlenen aralıkta olmalıdır</target>
       </trans-unit>
+      <trans-unit id="dXBo.Go" resname="El nombre de usuario no puede contener los caracteres &lt; ni &gt;">
+        <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
+        <target><![CDATA[Kullanıcı adı < veya > karakterlerini içeremez]]></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

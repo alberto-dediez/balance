@@ -6,13 +6,19 @@ namespace App\CarbonFootprint\Application\MitigationAction;
 
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
+use App\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferences;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationEmissionSource;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
+use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class MitigationEmissionSourcesBuilder
 {
@@ -21,6 +27,9 @@ final class MitigationEmissionSourcesBuilder
         private ActivityItemNameResolver $itemNameResolver,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
         private PropertyRepository $propertyRepository,
+        private ProviderRepository $providerRepository,
+        private TranslatorInterface $translator,
+        private CountedActivityReferences $countedActivityReferences,
     ) {}
 
     /** @return list<MitigationEmissionSource> */
@@ -29,7 +38,7 @@ final class MitigationEmissionSourcesBuilder
         /** @var array<string, ActivityPlacement> $placements */
         $placements = [];
         $activityIds = [];
-        foreach ($carbonFootprint->activityReferences() as $reference) {
+        foreach ($this->countedActivityReferences->of($carbonFootprint) as $reference) {
             $activityIds[] = $reference->activityId;
             $placements[(string) $reference->activityId] = $reference->placement;
         }
@@ -52,7 +61,8 @@ final class MitigationEmissionSourcesBuilder
                 continue;
             }
 
-            $itemId = $this->itemNameResolver->itemId($activity) ?? '';
+            $isReported = $activity instanceof ReportedEmissionsActivity;
+            $itemId = $isReported ? (string) $placement->providerId : ($this->itemNameResolver->itemId($activity) ?? '');
             $key = $placement->source->value . '|' . $itemId;
             $groupKeyByActivityId[(string) $activity->id()] = $key;
 
@@ -61,7 +71,9 @@ final class MitigationEmissionSourcesBuilder
                     'scope' => $scope,
                     'placement' => $placement,
                     'itemId' => $itemId,
-                    'itemName' => $this->itemNameResolver->resolve($activity, $carbonFootprint->calculationYear(), $carbonFootprint->emissionFactorGroupId()),
+                    'itemName' => $isReported
+                        ? $this->reportedEmissionsName($placement->providerId)
+                        : $this->itemNameResolver->resolve($activity, $carbonFootprint->calculationYear(), $carbonFootprint->emissionFactorGroupId()),
                     'emissions' => 0.0,
                 ];
             }
@@ -102,6 +114,14 @@ final class MitigationEmissionSourcesBuilder
         }
 
         return array_merge($emissionSources, $this->derivedEmissionSources($carbonFootprint, $groups, $groupKeyByActivityId));
+    }
+
+    private function reportedEmissionsName(?ProviderId $providerId): string
+    {
+        $typeName = $this->translator->trans(ActivityType::ReportedEmissions->value, [], 'activityType');
+        $providerName = $providerId instanceof ProviderId ? $this->providerRepository->find($providerId)?->name() : null;
+
+        return null !== $providerName && '' !== $providerName ? $providerName . ' · ' . $typeName : $typeName;
     }
 
     /**

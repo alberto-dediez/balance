@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\Common\Collections\Collection;
 
@@ -56,6 +57,11 @@ trait OrganizationalCarbonFootprintTrait
     public function isMitigationPlanStarted(): bool
     {
         return $this->mitigationPlanStarted;
+    }
+
+    public function scope3Excluded(): bool
+    {
+        return $this->scope3Excluded;
     }
 
     public function isRemoved(): bool
@@ -107,6 +113,24 @@ trait OrganizationalCarbonFootprintTrait
 
             if (!$kept) {
                 $this->removeActivity($existingId);
+            }
+        }
+    }
+
+    private function removeActivitiesOfSource(Scope $scope, Source $source): void
+    {
+        foreach ($this->activityReferences() as $reference) {
+            if ($reference->placement->stage->key() === $scope->key() && $reference->placement->source === $source) {
+                $this->removeActivity($reference->activityId);
+            }
+        }
+    }
+
+    public function removeActivitiesOfProvider(ProviderId $providerId): void
+    {
+        foreach ($this->activityReferences() as $reference) {
+            if (null !== $reference->placement->providerId && $reference->placement->providerId->equals($providerId)) {
+                $this->removeActivity($reference->activityId);
             }
         }
     }

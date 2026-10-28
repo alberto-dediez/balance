@@ -49,12 +49,15 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryC
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEventCarbonFootprintRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationActionRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationMeasureRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOrganizationalProviderContributionRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository;
+use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryProviderRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
@@ -62,7 +65,9 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityM
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
@@ -78,6 +83,8 @@ trait MitigationPlanContextTrait
     private ElectricityMarketerId $marketerId;
     private MitigationEmissionSourcesBuilder $emissionSourcesBuilder;
     private InMemoryPropertyRepository $properties;
+    private InMemoryProviderRepository $providers;
+    private InMemoryOrganizationalProviderContributionRepository $providerContributions;
 
     private function initMitigationPlan(): void
     {
@@ -89,6 +96,8 @@ trait MitigationPlanContextTrait
         $this->naturalGasId = CombustibleId::generate();
         $this->marketerId = ElectricityMarketerId::generate();
         $this->properties = PropertyRepositoryMother::inMemory();
+        $this->providers = ProviderRepositoryMother::inMemory();
+        $this->providerContributions = OrganizationalProviderContributionRepositoryMother::inMemory();
         $this->emissionSourcesBuilder = new MitigationEmissionSourcesBuilder(
             $this->activities,
             new ActivityItemNameResolver(
@@ -99,8 +108,11 @@ trait MitigationPlanContextTrait
                 ]),
                 new FakeTranslator(),
             ),
-            new DerivedSourceEmissionsCalculator($this->activities),
+            new DerivedSourceEmissionsCalculator($this->activities, CountedActivityReferencesMother::create($this->providerContributions)),
             $this->properties,
+            $this->providers,
+            new FakeTranslator(),
+            CountedActivityReferencesMother::create($this->providerContributions),
         );
     }
 
@@ -166,7 +178,7 @@ trait MitigationPlanContextTrait
 
     private function propertyFootprint(int $year = 2025, ?PropertyId $propertyId = null, string $accountId = 'account-id', bool $withActivities = true): PropertyCarbonFootprint
     {
-        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) ($propertyId ?? PropertyId::generate()), (string) PropertyCarbonFootprintId::generate(), $accountId, $year);
+        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) ($propertyId ?? PropertyId::generate()), (string) PropertyCarbonFootprintId::generate(), $accountId, $year);
 
         if ($withActivities) {
             $footprint->addActivity($this->naturalGasActivity('600')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -181,7 +193,7 @@ trait MitigationPlanContextTrait
 
     private function companyFootprint(int $year = 2025, string $companyId = 'company-id'): CompanyCarbonFootprint
     {
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered($companyId, (string) CompanyCarbonFootprintId::generate(), 'account-id', $year);
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered($companyId, (string) CompanyCarbonFootprintId::generate(), 'account-id', $year);
         $footprint->addActivity($this->naturalGasActivity('600')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
         $footprint->addActivity($this->naturalGasActivity('300')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
         $footprint->addActivity($this->naturalGasActivity('100')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));

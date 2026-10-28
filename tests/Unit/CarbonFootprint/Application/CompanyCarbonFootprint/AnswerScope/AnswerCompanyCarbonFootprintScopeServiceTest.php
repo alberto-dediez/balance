@@ -70,6 +70,7 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
@@ -199,7 +200,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             new NonConsolidatedPropertiesSynchronizer(new NonConsolidatedPropertyEmissionsResolver(
                 $companyProperties,
                 PropertyCarbonFootprintRepositoryMother::inMemory(),
-                new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
+                new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
             )),
         );
     }
@@ -304,7 +305,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
         ), $this->ownerUser());
 
-        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope3Answered, $footprint->status());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
         $this->assertTrue($footprint->isStageExcluded(Scope::Scope3));
         $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices, propertyId: $this->firstPropertyId)));
         $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices)));

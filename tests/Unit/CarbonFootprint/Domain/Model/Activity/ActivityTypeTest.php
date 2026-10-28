@@ -49,4 +49,9 @@ class ActivityTypeTest extends TestCase
     {
         $this->assertSame(ActivityType::Combustible, ActivityType::fromActivity(CombustibleActivityMother::registered()));
     }
+
+    public function testFromActivityResolvesReportedEmissions(): void
+    {
+        $this->assertSame(ActivityType::ReportedEmissions, ActivityType::fromActivity(ReportedEmissionsActivityMother::registered()));
+    }
 }

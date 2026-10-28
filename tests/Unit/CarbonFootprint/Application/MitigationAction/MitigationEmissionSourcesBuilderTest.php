@@ -10,12 +10,16 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MobilityActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use PHPUnit\Framework\TestCase;
 
@@ -57,6 +61,75 @@ class MitigationEmissionSourcesBuilderTest extends TestCase
         $this->assertCount(1, $sources);
         $this->assertSame(Source::BusinessTravel, $sources[0]->source);
         $this->assertSame(Scope::Scope3, $sources[0]->scope);
+    }
+
+    public function testTheReportedEmissionsOfAProviderFormASingleElementNamedAfterTheProvider(): void
+    {
+        $footprint = $this->propertyFootprint(withActivities: false);
+        $provider = ProviderMother::fromNameAndAccountAndId('Logística Sur', 'account-id', (string) ProviderId::generate());
+        $this->providers->add($provider);
+        $delivery = ReportedEmissionsActivityMother::registered(description: 'Reparto 2025', kilograms: 3200.0);
+        $lastMile = ReportedEmissionsActivityMother::registered(description: 'Última milla', kilograms: 800.0);
+        $this->activities->save($delivery);
+        $this->activities->save($lastMile);
+        $footprint->addActivity($delivery->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $provider->id()));
+        $footprint->addActivity($lastMile->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $provider->id()));
+
+        $sources = $this->emissionSourcesBuilder()->build($footprint);
+
+        $this->assertCount(1, $sources);
+        $this->assertSame(Scope::Scope3, $sources[0]->scope);
+        $this->assertSame(Source::UpstreamTransport, $sources[0]->source);
+        $this->assertSame((string) $provider->id(), $sources[0]->itemId);
+        $this->assertSame('Logística Sur · reported_emissions', $sources[0]->itemName);
+        $this->assertSame(4000.0, $sources[0]->emissions);
+    }
+
+    public function testTheReportedEmissionsOfEachProviderFormTheirOwnElement(): void
+    {
+        $footprint = $this->propertyFootprint(withActivities: false);
+        $south = ProviderMother::fromNameAndAccountAndId('Logística Sur', 'account-id', (string) ProviderId::generate());
+        $north = ProviderMother::fromNameAndAccountAndId('Transportes Norte', 'account-id', (string) ProviderId::generate());
+        $this->providers->add($south);
+        $this->providers->add($north);
+        $southDelivery = ReportedEmissionsActivityMother::registered(description: 'Reparto 2025', kilograms: 3200.0);
+        $northDelivery = ReportedEmissionsActivityMother::registered(description: 'Rutas norte', kilograms: 500.0);
+        $this->activities->save($southDelivery);
+        $this->activities->save($northDelivery);
+        $footprint->addActivity($southDelivery->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $south->id()));
+        $footprint->addActivity($northDelivery->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $north->id()));
+
+        $sources = $this->emissionSourcesBuilder()->build($footprint);
+
+        $this->assertCount(2, $sources);
+        $this->assertSame('Logística Sur · reported_emissions', $sources[0]->itemName);
+        $this->assertSame(3200.0, $sources[0]->emissions);
+        $this->assertSame('Transportes Norte · reported_emissions', $sources[1]->itemName);
+        $this->assertSame(500.0, $sources[1]->emissions);
+    }
+
+    public function testTheReportedEmissionsOfAnIgnoredContributionAreLeftOut(): void
+    {
+        $footprint = $this->propertyFootprint(withActivities: false);
+        $south = ProviderMother::fromNameAndAccountAndId('Logística Sur', 'account-id', (string) ProviderId::generate());
+        $north = ProviderMother::fromNameAndAccountAndId('Transportes Norte', 'account-id', (string) ProviderId::generate());
+        $this->providers->add($south);
+        $this->providers->add($north);
+        $ignored = OrganizationalProviderContributionMother::manual(carbonFootprintId: (string) $footprint->id(), providerId: (string) $south->id());
+        $ignored->ignore();
+        $this->providerContributions->add($ignored);
+        $southDelivery = ReportedEmissionsActivityMother::registered(description: 'Reparto 2025', kilograms: 3200.0);
+        $northDelivery = ReportedEmissionsActivityMother::registered(description: 'Rutas norte', kilograms: 500.0);
+        $this->activities->save($southDelivery);
+        $this->activities->save($northDelivery);
+        $footprint->addActivity($southDelivery->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $south->id()));
+        $footprint->addActivity($northDelivery->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $north->id()));
+
+        $sources = $this->emissionSourcesBuilder()->build($footprint);
+
+        $this->assertCount(1, $sources);
+        $this->assertSame('Transportes Norte · reported_emissions', $sources[0]->itemName);
+        $this->assertSame(500.0, $sources[0]->emissions);
     }
 
     public function testSumsThePropertiesOfACompany(): void

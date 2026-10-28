@@ -16,6 +16,7 @@ use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootpri
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedProperty;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedPropertyRecorded;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedPropertyRemoved;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintProvidersAnswered;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRegistered;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintReopened;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintScopeExcluded;
@@ -29,6 +30,7 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Organizationa
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Property\Domain\Model\Property\PropertyId;
 use PHPUnit\Framework\TestCase;
 
@@ -229,9 +231,9 @@ final class CompanyCarbonFootprintTest extends TestCase
         $footprint->answerScope(Scope::Scope1);
     }
 
-    public function testCompleteFromScope3AnsweredSetsTheStatusAndTheTotal(): void
+    public function testCompleteFromProvidersAnsweredSetsTheStatusAndTheTotal(): void
     {
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered('company-1', 'footprint-1');
 
         $footprint->complete(new Emissions('3930', '3900', '10', '20'));
 
@@ -240,6 +242,15 @@ final class CompanyCarbonFootprintTest extends TestCase
         $this->assertSame(OrganizationalCarbonFootprintStatus::Completed, $footprint->status());
         $this->assertTrue($footprint->isCompleted());
         $this->assertSame('3930', $footprint->totalEmissions()->co2eq());
+    }
+
+    public function testCompleteFromScope3AnsweredThrows(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+
+        $this->expectException(OrganizationalCarbonFootprintNotReadyToCompleteException::class);
+
+        $footprint->complete(new Emissions());
     }
 
     public function testCompleteFromScope2AnsweredThrows(): void
@@ -262,7 +273,7 @@ final class CompanyCarbonFootprintTest extends TestCase
 
     public function testCompletedFootprintRejectsActivitiesExclusionsAndAnswers(): void
     {
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered('company-1', 'footprint-1');
         $footprint->complete(new Emissions());
 
         $failures = 0;
@@ -282,16 +293,16 @@ final class CompanyCarbonFootprintTest extends TestCase
         $this->assertSame(3, $failures);
     }
 
-    public function testReopenReturnsToScope3AnsweredWithZeroTotal(): void
+    public function testReopenReturnsToProvidersAnsweredWithZeroTotal(): void
     {
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered('company-1', 'footprint-1');
         $footprint->complete(new Emissions('3930', '3900', '10', '20'));
 
         $footprint->reopen();
 
         $reopened = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintReopened);
         $this->assertCount(1, $reopened);
-        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope3Answered, $footprint->status());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
         $this->assertFalse($footprint->isCompleted());
         $this->assertSame('0', $footprint->totalEmissions()->co2eq());
     }
@@ -303,6 +314,44 @@ final class CompanyCarbonFootprintTest extends TestCase
         $this->expectException(OrganizationalCarbonFootprintNotCompletedException::class);
 
         $footprint->reopen();
+    }
+
+    public function testAnswerProvidersAdvancesTheStatus(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+
+        $footprint->answerProviders();
+
+        $answered = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintProvidersAnswered);
+        $this->assertCount(1, $answered);
+        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
+    }
+
+    public function testAnswerProvidersIsIdempotent(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered('company-1', 'footprint-1');
+
+        $footprint->answerProviders();
+
+        $answered = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintProvidersAnswered);
+        $this->assertCount(1, $answered);
+        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
+    }
+
+    public function testAnsweringAnExcludedScope3AlsoAnswersTheProviders(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Excluded('company-1', 'footprint-1');
+
+        $this->assertTrue($footprint->scope3Excluded());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
+    }
+
+    public function testAnsweringAnIncludedScope3DoesNotAnswerTheProviders(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+
+        $this->assertFalse($footprint->scope3Excluded());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope3Answered, $footprint->status());
     }
 
     public function testAnsweringScope1DoesNotStartTheMitigationPlan(): void
@@ -585,7 +634,7 @@ final class CompanyCarbonFootprintTest extends TestCase
 
     public function testCompletedFootprintCannotRecordNonConsolidatedProperties(): void
     {
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered('company-1', 'footprint-1');
         $footprint->complete(new Emissions('1'));
 
         $this->expectException(OrganizationalCarbonFootprintAlreadyCompletedException::class);
@@ -617,5 +666,52 @@ final class CompanyCarbonFootprintTest extends TestCase
         }
 
         return $ids;
+    }
+
+    public function testAddActivityWithProviderAndPropertyIsOnlyRecoveredWithTheSamePlacement(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope2Answered('company-1', 'footprint-1');
+        $providerId = ProviderId::generate();
+        $propertyId = new PropertyId('property-1');
+        $placement = new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $providerId, propertyId: $propertyId);
+
+        $footprint->addActivity(ActivityId::generate(), $placement);
+
+        $this->assertCount(1, $footprint->activityIds($placement));
+        $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $providerId)));
+        $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, propertyId: $propertyId)));
+    }
+
+    public function testExcludeSourceAndStageAlsoRemoveProviderActivities(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope2Answered('company-1', 'footprint-1');
+        $transport = new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: ProviderId::generate());
+        $waste = new ActivityPlacement(Scope::Scope3, Source::OperationsWaste, providerId: ProviderId::generate());
+        $footprint->addActivity(ActivityId::generate(), $transport);
+        $footprint->addActivity(ActivityId::generate(), $waste);
+
+        $footprint->excludeSource(Scope::Scope3, Source::UpstreamTransport, ExclusionReason::NoDataAvailable);
+
+        $this->assertCount(0, $footprint->activityIds($transport));
+        $this->assertCount(1, $footprint->activityIds($waste));
+
+        $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->assertCount(0, $footprint->activityIds($waste));
+    }
+
+    public function testRemoveActivitiesOfProviderKeepsOwnerActivities(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope2Answered('company-1', 'footprint-1');
+        $providerId = ProviderId::generate();
+        $ownerPlacement = new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport);
+        $providerPlacement = new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $providerId, propertyId: new PropertyId('property-1'));
+        $footprint->addActivity(ActivityId::generate(), $ownerPlacement);
+        $footprint->addActivity(ActivityId::generate(), $providerPlacement);
+
+        $footprint->removeActivitiesOfProvider($providerId);
+
+        $this->assertCount(1, $footprint->activityIds($ownerPlacement));
+        $this->assertCount(0, $footprint->activityIds($providerPlacement));
     }
 }

@@ -30,7 +30,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-3"
         When I submit the scope 3 step form with a purchase service "PS1" of 1000 "EUR"
-        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "property_carbon_footprints_providers"
         Then property carbon footprint "999" should have status "scope_3_answered"
         Then property carbon footprint "999" should have 1 activities in scope 3
         Then property carbon footprint "999" should have 1 activities of source "purchased_goods_and_services" in scope "scope_3"
@@ -51,7 +51,7 @@ Feature:
         When I go to "/es/property-carbon-footprints/999/step/scope-3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
-        Then property carbon footprint "999" should have status "scope_3_answered"
+        Then property carbon footprint "999" should have status "providers_answered"
         Then property carbon footprint "999" should have scope 3 excluded with reason "no_data_available"
         Then property carbon footprint "999" should have 0 activities in scope 3
         Then I see a text "Medidas de Reducción y Mitigación"
@@ -72,7 +72,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-3"
         When I submit the scope 3 step form with a business trip "M1" of 500 km and a stay "OS1" of 2 nights for 3 people
-        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "property_carbon_footprints_providers"
         Then property carbon footprint "999" should have 2 activities of source "business_travel" in scope "scope_3"
 
     Scenario: Excluding the business travel category removes both of its sections
@@ -82,10 +82,10 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-3"
         When I submit the scope 3 step form with a business trip "M1" of 500 km and a stay "OS1" of 2 nights for 3 people
-        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "property_carbon_footprints_providers"
         When I go to "/es/property-carbon-footprints/999/step/scope-3"
         When I submit the scope "scope_3" step form excluding source "business_travel" with reason "not_applicable" and comment "Sin viajes"
-        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "property_carbon_footprints_providers"
         Then property carbon footprint "999" should have source "business_travel" excluded in scope "scope_3"
         Then property carbon footprint "999" should have 0 activities of source "business_travel" in scope "scope_3"
 

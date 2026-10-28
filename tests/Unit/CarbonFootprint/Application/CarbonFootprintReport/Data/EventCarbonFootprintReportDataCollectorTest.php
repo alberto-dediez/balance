@@ -30,6 +30,7 @@ use App\Tests\Unit\Balance\Application\ContributionCertificate\Generate\FakeCont
 use App\Tests\Unit\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
@@ -167,7 +168,7 @@ class EventCarbonFootprintReportDataCollectorTest extends TestCase
             $eventRepository,
             $emissionFactorGroupRepository,
             $activityRepository,
-            new EmissionsBreakdownBuilder($activityRepository, new DerivedSourceEmissionsCalculator($activityRepository)),
+            new EmissionsBreakdownBuilder($activityRepository, new DerivedSourceEmissionsCalculator($activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
             new ActivityItemNameResolver(
                 new ActivityCatalogProviderRegistry([
                     new MaterialCatalogProvider($materialRepository),

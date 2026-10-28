@@ -7,67 +7,71 @@
     <body>
       <trans-unit id="GcgVL0w" resname="material">
         <source>material</source>
-        <target>NEW_material</target>
+        <target>Malzeme</target>
       </trans-unit>
       <trans-unit id="STNXA1b" resname="catering_item">
         <source>catering_item</source>
-        <target>NEW_catering_item</target>
+        <target>İkram</target>
       </trans-unit>
       <trans-unit id="QuthK2r" resname="merchandising_item">
         <source>merchandising_item</source>
-        <target>NEW_merchandising_item</target>
+        <target>Promosyon ürünü</target>
       </trans-unit>
       <trans-unit id="sAtpbvr" resname="purchase_service">
         <source>purchase_service</source>
-        <target>NEW_purchase_service</target>
+        <target>Mal ve hizmet alımı</target>
       </trans-unit>
       <trans-unit id="_A_eLiB" resname="capital_good">
         <source>capital_good</source>
-        <target>NEW_capital_good</target>
+        <target>Sermaye malı</target>
       </trans-unit>
       <trans-unit id="hq7Za3R" resname="use_profile">
         <source>use_profile</source>
-        <target>NEW_use_profile</target>
+        <target>Satılan ürünlerin kullanımı</target>
       </trans-unit>
       <trans-unit id="nG619ZC" resname="process">
         <source>process</source>
-        <target>NEW_process</target>
+        <target>Satılan ürünlerin işlenmesi</target>
       </trans-unit>
       <trans-unit id="IwWzB3r" resname="economic_sector">
         <source>economic_sector</source>
-        <target>NEW_economic_sector</target>
+        <target>Ekonomik sektör</target>
       </trans-unit>
       <trans-unit id="dtnBSsv" resname="combustible">
         <source>combustible</source>
-        <target>NEW_combustible</target>
+        <target>Yakıt</target>
       </trans-unit>
       <trans-unit id="aQLcZ8C" resname="electricity">
         <source>electricity</source>
-        <target>NEW_electricity</target>
+        <target>Elektrik</target>
       </trans-unit>
       <trans-unit id="nUnzxCh" resname="machinery_fuel">
         <source>machinery_fuel</source>
-        <target>NEW_machinery_fuel</target>
+        <target>Makine yakıtı</target>
       </trans-unit>
       <trans-unit id="PNcBVeE" resname="mobility">
         <source>mobility</source>
-        <target>NEW_mobility</target>
+        <target>Hareketlilik</target>
       </trans-unit>
       <trans-unit id="Dahp53j" resname="overnight_stay">
         <source>overnight_stay</source>
-        <target>NEW_overnight_stay</target>
+        <target>Konaklama</target>
       </trans-unit>
       <trans-unit id="Hlo_yJt" resname="transport">
         <source>transport</source>
-        <target>NEW_transport</target>
+        <target>Taşımacılık</target>
       </trans-unit>
       <trans-unit id="Ien2BhG" resname="waste">
         <source>waste</source>
-        <target>NEW_waste</target>
+        <target>Atık</target>
       </trans-unit>
       <trans-unit id="rBJzlJf" resname="refrigerant_gas">
         <source>refrigerant_gas</source>
-        <target>NEW_refrigerant_gas</target>
+        <target>Soğutucu gaz</target>
+      </trans-unit>
+      <trans-unit id="CMdplBG" resname="reported_emissions">
+        <source>reported_emissions</source>
+        <target>Bildirilen emisyonlar</target>
       </trans-unit>
     </body>
   </file>

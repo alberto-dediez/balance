@@ -1,0 +1,9 @@
+{% macro breadcrumb(subjectType, carbonFootprint) -%}
+    {%- autoescape false -%}
+        {%- if subjectType == 'property' -%}
+            {{- ('Propiedades' | trans) ~ ' > ' ~ (carbonFootprint.propertyId | property_name) ~ ' > ' ~ ('Huella de Carbono' | trans) ~ ' ' ~ carbonFootprint.year -}}
+        {%- else -%}
+            {{- ('Empresas' | trans) ~ ' > ' ~ (carbonFootprint.companyId | company_name) ~ ' > ' ~ ('Huella de Carbono' | trans) ~ ' ' ~ carbonFootprint.year -}}
+        {%- endif -%}
+    {%- endautoescape -%}
+{%- endmacro %}

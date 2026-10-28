@@ -1,0 +1,11 @@
+{% extends theme_template('@shared/layout/public-wizard.html.twig') %}
+
+{% set wizard_active = contribution.hasConsent ? 2 : 1 %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'General' | trans, href: path('public_organizational_provider_contribution_general', {token: token})},
+        {label: 'Emisiones' | trans, href: path('public_organizational_provider_contribution_emissions', {token: token})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

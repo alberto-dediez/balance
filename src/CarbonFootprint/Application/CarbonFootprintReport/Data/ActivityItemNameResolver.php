@@ -20,6 +20,7 @@ use App\CarbonFootprint\Domain\Model\Activity\OvernightStayActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ProcessActivity;
 use App\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivity;
 use App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity;
+use App\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivity;
 use App\CarbonFootprint\Domain\Model\Activity\TransportActivity;
 use App\CarbonFootprint\Domain\Model\Activity\UseProfileActivity;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
@@ -38,6 +39,10 @@ final class ActivityItemNameResolver
 
     public function resolve(Activity $activity, int $year, ?EmissionFactorGroupId $emissionFactorGroupId): string
     {
+        if ($activity instanceof ReportedEmissionsActivity) {
+            return $activity->description();
+        }
+
         $activityType = ActivityType::fromActivity($activity);
         $itemId = $this->itemId($activity);
 

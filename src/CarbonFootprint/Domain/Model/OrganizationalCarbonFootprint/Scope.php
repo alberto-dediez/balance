@@ -146,6 +146,55 @@ enum Scope: string implements CalculationStage
         };
     }
 
+    /** @return list<Source> */
+    public function providerSources(): array
+    {
+        return match ($this) {
+            self::Scope1, self::Scope2 => [],
+            self::Scope3 => [
+                Source::PurchasedGoodsAndServices,
+                Source::CapitalGoods,
+                Source::UpstreamTransport,
+                Source::OperationsWaste,
+                Source::BusinessTravel,
+                Source::EmployeeCommuting,
+                Source::DownstreamTransport,
+                Source::SoldProductsEndOfLife,
+            ],
+        };
+    }
+
+    public function reportedSectionFor(Source $source): SectionDefinition
+    {
+        if (!in_array($source, $this->providerSources(), true)) {
+            throw new \InvalidArgumentException(sprintf('Source "%s" does not accept provider data in "%s".', $source->value, $this->value));
+        }
+
+        return new SectionDefinition($source->value . '_reported', $source, ActivityType::ReportedEmissions);
+    }
+
+    /**
+     * @param list<Source> $sources
+     *
+     * @return list<SectionDefinition>
+     */
+    public function providerSectionsFor(array $sources): array
+    {
+        $sections = [];
+
+        foreach ($sources as $source) {
+            foreach ($this->sections() as $section) {
+                if ($section->source === $source) {
+                    $sections[] = $section;
+                }
+            }
+
+            $sections[] = $this->reportedSectionFor($source);
+        }
+
+        return $sections;
+    }
+
     public function isExcludable(): bool
     {
         return self::Scope3 === $this;

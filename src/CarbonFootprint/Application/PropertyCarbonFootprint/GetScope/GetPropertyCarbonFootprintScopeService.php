@@ -7,7 +7,11 @@ namespace App\CarbonFootprint\Application\PropertyCarbonFootprint\GetScope;
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
+use App\CarbonFootprint\Application\OrganizationalProviderContribution\List\ListOrganizationalProviderContributionsRequest;
+use App\CarbonFootprint\Application\OrganizationalProviderContribution\List\ListOrganizationalProviderContributionsService;
+use App\CarbonFootprint\Application\OrganizationalProviderContribution\OrganizationalProviderContributionSummary;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\PropertyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
@@ -21,6 +25,7 @@ final class GetPropertyCarbonFootprintScopeService
         private PropertyCarbonFootprintAuthorizer $authorizer,
         private StageSectionsBuilder $sectionsBuilder,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
+        private ListOrganizationalProviderContributionsService $listProviderContributions,
     ) {}
 
     public function __invoke(GetPropertyCarbonFootprintScopeRequest $request, User $user): GetPropertyCarbonFootprintScopeResponse
@@ -41,6 +46,7 @@ final class GetPropertyCarbonFootprintScopeService
             stageExclusion: $this->stageExclusion($propertyCarbonFootprint, $request->scope),
             derivedEmissions: $this->derivedSourceEmissionsCalculator->calculate($propertyCarbonFootprint, $request->scope),
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($propertyCarbonFootprint, $request->scope),
+            providerContributions: $this->providerContributions($request->scope, (string) $request->propertyCarbonFootprintId, $user),
         );
     }
 
@@ -53,5 +59,18 @@ final class GetPropertyCarbonFootprintScopeService
         }
 
         return new StageExclusionAnswer($reason, $propertyCarbonFootprint->stageExclusionComment($scope));
+    }
+
+    /** @return list<OrganizationalProviderContributionSummary> */
+    private function providerContributions(Scope $scope, string $carbonFootprintId, User $user): array
+    {
+        if (Scope::Scope3 !== $scope) {
+            return [];
+        }
+
+        return ($this->listProviderContributions)(
+            new ListOrganizationalProviderContributionsRequest(CarbonFootprintReportSubjectType::Property, $carbonFootprintId),
+            $user,
+        )->contributions;
     }
 }

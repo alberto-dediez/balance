@@ -1,0 +1,51 @@
+{% extends theme_template('@carbon_footprint/public/provider_contribution/layout.html.twig') %}
+
+{% set page_title = 'Contribución de proveedor' | trans %}
+{% set wizard_selected = 1 %}
+
+{% block wizard_panels %}
+    <p class="text-muted">
+        {{ 'Ayúdanos a calcular la huella de carbono de nuestra organización con los datos de emisiones de los servicios que nos prestas. Solo te llevará unos minutos.' | trans }}
+    </p>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ 'Datos de la huella' | trans }}</h5></div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">{{ contribution.subjectType.value == 'company' ? 'Empresa' | trans : 'Propiedad' | trans }}</dt>
+                <dd class="col-sm-9">{{ subjectName }}</dd>
+
+                <dt class="col-sm-3">{{ 'Año' | trans }}</dt>
+                <dd class="col-sm-9">{{ year }}</dd>
+
+                <dt class="col-sm-3">{{ 'Categorías' | trans }}</dt>
+                <dd class="col-sm-9">{{ contribution.sources | map(source => source.value | trans({}, 'source')) | join(', ') }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Datos de la empresa' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="general">
+                <input type="hidden" name="_token" value="{{ csrf_token('provider_contribution_general_' ~ token) }}">
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Nombre de la empresa' | trans }}</label>
+                    <input type="text" class="form-control" name="general[companyName]" value="{{ contribution.companyName }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Servicio prestado' | trans }}</label>
+                    <input type="text" class="form-control" name="general[service]" value="{{ contribution.service }}">
+                </div>
+
+                {% include '@shared/form/_consent_field.html.twig' %}
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">{{ 'Siguiente' | trans }} &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

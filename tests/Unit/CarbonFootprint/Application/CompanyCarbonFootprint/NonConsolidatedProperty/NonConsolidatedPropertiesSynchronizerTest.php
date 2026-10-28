@@ -26,6 +26,7 @@ use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
@@ -60,7 +61,7 @@ class NonConsolidatedPropertiesSynchronizerTest extends TestCase
         $this->sut = new NonConsolidatedPropertiesSynchronizer(new NonConsolidatedPropertyEmissionsResolver(
             new CompanyProperties($this->propertyRepository),
             $this->propertyCarbonFootprintRepository,
-            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
+            new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
         ));
     }
 
@@ -83,7 +84,7 @@ class NonConsolidatedPropertiesSynchronizerTest extends TestCase
         $footprint = $this->companyFootprint();
         $this->sut->sync($footprint, [new NonConsolidatedPropertyAnswer(new PropertyId('leased-out-1'), '4500')]);
 
-        $propertyFootprint = PropertyCarbonFootprintMother::withScope3Answered('franchised-1', (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        $propertyFootprint = PropertyCarbonFootprintMother::withProvidersAnswered('franchised-1', (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
         $activity = CombustibleActivityMother::registered(new AccountId(self::ACCOUNT_ID));
         $this->activityRepository->save($activity);
         $propertyFootprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -135,6 +136,6 @@ class NonConsolidatedPropertiesSynchronizerTest extends TestCase
 
     private function companyFootprint(): CompanyCarbonFootprint
     {
-        return CompanyCarbonFootprintMother::withScope3Answered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        return CompanyCarbonFootprintMother::withProvidersAnswered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
     }
 }

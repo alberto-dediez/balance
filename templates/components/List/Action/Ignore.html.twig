@@ -1,0 +1,10 @@
+{% props path %}
+
+{% set separator = '?' in path ? '&' : '?' %}
+
+<twig:List:Action path="{{ path ~ separator ~ '_token=' ~ csrf_token('ignore') | url_encode }}"
+    title="{{ 'Descartar' | trans }}"
+    :attributes="attributes"
+>
+    <twig:Icon name="solar:eye-closed-line-duotone" size="lg" />
+</twig:List:Action>

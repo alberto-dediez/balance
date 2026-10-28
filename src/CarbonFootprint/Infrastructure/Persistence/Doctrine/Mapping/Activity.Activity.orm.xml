@@ -24,6 +24,7 @@
             <discriminator-mapping value="transport" class="App\CarbonFootprint\Domain\Model\Activity\TransportActivity" />
             <discriminator-mapping value="waste" class="App\CarbonFootprint\Domain\Model\Activity\WasteActivity" />
             <discriminator-mapping value="refrigerant_gas" class="App\CarbonFootprint\Domain\Model\Activity\RefrigerantGasActivity" />
+            <discriminator-mapping value="reported_emissions" class="App\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivity" />
         </discriminator-map>
 
         <id name="id" type="activity_id" column="id">

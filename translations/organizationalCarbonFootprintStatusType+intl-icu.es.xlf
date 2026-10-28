@@ -25,6 +25,10 @@
         <source>scope_3_answered</source>
         <target>Alcance 3 respondido</target>
       </trans-unit>
+      <trans-unit id="BTMXzaB" resname="providers_answered">
+        <source>providers_answered</source>
+        <target>Proveedores respondido</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

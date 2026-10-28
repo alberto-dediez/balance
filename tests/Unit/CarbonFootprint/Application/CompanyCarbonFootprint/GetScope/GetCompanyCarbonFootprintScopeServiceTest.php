@@ -29,11 +29,13 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOrganizationalProviderContributionRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\OperatingRegime;
@@ -44,6 +46,8 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\ListOrganizationalProviderContributionsServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodRepositoryMother;
@@ -54,6 +58,8 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorRep
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Process\ProcessRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
@@ -75,6 +81,7 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
     private InMemoryActivityRepository $activityRepository;
     private InMemoryPropertyRepository $propertyRepository;
     private InMemoryPropertyCarbonFootprintRepository $propertyCarbonFootprintRepository;
+    private InMemoryOrganizationalProviderContributionRepository $contributionRepository;
 
     protected function setUp(): void
     {
@@ -101,17 +108,24 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
         $this->propertyRepository = PropertyRepositoryMother::inMemory();
         $this->propertyCarbonFootprintRepository = PropertyCarbonFootprintRepositoryMother::inMemory();
         $companyProperties = new CompanyProperties($this->propertyRepository);
+        $this->contributionRepository = OrganizationalProviderContributionRepositoryMother::inMemory();
 
         $this->sut = new GetCompanyCarbonFootprintScopeService(
             $this->repository,
             $companyProperties,
             new CompanyCarbonFootprintAuthorizer(),
             new StageSectionsBuilder($catalogProviders, $this->activityRepository),
-            new DerivedSourceEmissionsCalculator($this->activityRepository),
+            new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()),
             new NonConsolidatedPropertyEmissionsResolver(
                 $companyProperties,
                 $this->propertyCarbonFootprintRepository,
-                new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository)),
+                new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
+            ),
+            ListOrganizationalProviderContributionsServiceMother::create(
+                companyCarbonFootprintRepository: $this->repository,
+                contributionRepository: $this->contributionRepository,
+                propertyRepository: $this->propertyRepository,
+                activityRepository: $this->activityRepository,
             ),
         );
     }
@@ -213,7 +227,7 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
         $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Hotel Franquiciado', new CompanyId('company-1'), new PropertyId('franchised-1'), OperatingRegime::Franchised));
         $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Hotel Arrendado', new CompanyId('company-1'), new PropertyId('leased-out-1'), OperatingRegime::LeasedOut));
 
-        $propertyFootprint = PropertyCarbonFootprintMother::withScope3Answered('franchised-1', (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
+        $propertyFootprint = PropertyCarbonFootprintMother::withProvidersAnswered('franchised-1', (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
         $activity = CombustibleActivityMother::registered();
         $this->activityRepository->save($activity);
         $propertyFootprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -252,6 +266,7 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
         $footprint->answerScope(Scope::Scope2);
         $footprint->answerScope(Scope::Scope3);
         $footprint->recordNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, null, new Emissions('5000'), null);
+        $footprint->answerProviders();
         $footprint->complete(new Emissions('5000'));
 
         $property = $this->propertyRepository->find(new PropertyId('franchised-1'));
@@ -264,6 +279,22 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
         $this->assertSame('Hotel Franquiciado', $response->nonConsolidatedProperties[0]->property?->name());
         $this->assertSame(Source::Franchises, $response->nonConsolidatedProperties[0]->source);
         $this->assertSame('5000', $response->nonConsolidatedProperties[0]->emissions->co2eq());
+    }
+
+    public function testScope3IncludesProviderContributions(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $this->contributionRepository->add(OrganizationalProviderContributionMother::manual(
+            carbonFootprintId: (string) $footprint->id(),
+            subjectType: CarbonFootprintReportSubjectType::Company,
+            accountId: 'account-id-test',
+        ));
+
+        $scope3 = ($this->sut)(new GetCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3), $this->ownerUser());
+        $scope1 = ($this->sut)(new GetCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1), $this->ownerUser());
+
+        $this->assertCount(1, $scope3->providerContributions);
+        $this->assertSame([], $scope1->providerContributions);
     }
 
     private function registeredFootprint(string $accountId = 'account-id-test', ?string $companyId = null): \App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint

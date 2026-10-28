@@ -1,0 +1,10 @@
+{% props path %}
+
+{% set separator = '?' in path ? '&' : '?' %}
+
+<twig:List:Action path="{{ path ~ separator ~ '_token=' ~ csrf_token('resend') | url_encode }}"
+    title="{{ 'Reenviar' | trans }}"
+    :attributes="attributes"
+>
+    <twig:Icon name="solar:plain-line-duotone" size="lg" />
+</twig:List:Action>

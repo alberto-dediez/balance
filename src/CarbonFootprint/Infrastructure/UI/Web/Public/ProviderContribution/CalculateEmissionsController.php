@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\ProviderContribution\CalculateEmissions\Calc
 use App\CarbonFootprint\Application\ProviderContribution\CalculateEmissions\CalculateProviderContributionActivityEmissionsService;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
+use App\CarbonFootprint\Domain\Model\ExchangeRate\ExchangeRateNotFoundException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionIgnoredException;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\Quantity;
@@ -67,7 +68,7 @@ class CalculateEmissionsController extends AbstractController
             $this->penalizeProviderContributionInvalidToken($this->providerContributionInvalidTokenLimiter, $request);
 
             return $this->json(['error' => 'Invalid token'], Response::HTTP_NOT_FOUND);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException|ExchangeRateNotFoundException $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

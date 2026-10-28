@@ -30,12 +30,14 @@ use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationActionRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 
@@ -54,18 +56,18 @@ trait OrganizationalCollectorContextTrait
     {
         return new MitigationPlanReportBuilder(
             $this->mitigationActionRepository,
-            new MitigationEmissionSourcesBuilder($this->activityRepository, $this->itemNameResolver(), $this->derivedSourceEmissionsCalculator(), PropertyRepositoryMother::inMemory()),
+            new MitigationEmissionSourcesBuilder($this->activityRepository, $this->itemNameResolver(), $this->derivedSourceEmissionsCalculator(), PropertyRepositoryMother::inMemory(), ProviderRepositoryMother::inMemory(), new FakeTranslator(), CountedActivityReferencesMother::create()),
         );
     }
 
     private function breakdownBuilder(): EmissionsBreakdownBuilder
     {
-        return new EmissionsBreakdownBuilder($this->activityRepository, $this->derivedSourceEmissionsCalculator());
+        return new EmissionsBreakdownBuilder($this->activityRepository, $this->derivedSourceEmissionsCalculator(), CountedActivityReferencesMother::create());
     }
 
     private function derivedSourceEmissionsCalculator(): DerivedSourceEmissionsCalculator
     {
-        return new DerivedSourceEmissionsCalculator($this->activityRepository);
+        return new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create());
     }
 
     private function linesBuilder(): OrganizationalCarbonFootprintReportLinesBuilder
@@ -73,6 +75,8 @@ trait OrganizationalCollectorContextTrait
         return new OrganizationalCarbonFootprintReportLinesBuilder(
             $this->activityRepository,
             $this->itemNameResolver(),
+            ProviderRepositoryMother::inMemory(),
+            CountedActivityReferencesMother::create(),
         );
     }
 

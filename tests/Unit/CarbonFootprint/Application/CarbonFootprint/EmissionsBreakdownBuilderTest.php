@@ -15,26 +15,34 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOrganizationalProviderContributionRepository;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use PHPUnit\Framework\TestCase;
 
 class EmissionsBreakdownBuilderTest extends TestCase
 {
     private InMemoryActivityRepository $activityRepository;
+    private InMemoryOrganizationalProviderContributionRepository $contributionRepository;
 
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
 
         $this->activityRepository = ActivityRepositoryMother::inMemory();
+        $this->contributionRepository = OrganizationalProviderContributionRepositoryMother::inMemory();
     }
 
     public function testAggregatesThePropertyFootprintByScopeAndBySource(): void
@@ -57,6 +65,57 @@ class EmissionsBreakdownBuilderTest extends TestCase
         $this->assertSame('15', $breakdown->bySource[Source::FixedFacilities->value]->co2eq());
         $this->assertSame('15', $breakdown->byStageAndSource[Scope::Scope2->key()][Source::BuildingElectricity->value]->co2eq());
         $this->assertSame('0', $breakdown->byStageAndSource[Scope::Scope1->key()][Source::BuildingElectricity->value]->co2eq());
+    }
+
+    public function testAddsUpOwnerAndProviderActivitiesInTheSameSource(): void
+    {
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+
+        $ownerActivity = PurchaseServiceActivityMother::registered();
+        $reported = ReportedEmissionsActivityMother::registered(kilograms: 3200.0);
+        $this->activityRepository->save($ownerActivity);
+        $this->activityRepository->save($reported);
+
+        $propertyCarbonFootprint->addActivity($ownerActivity->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+        $propertyCarbonFootprint->addActivity($reported->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices, providerId: ProviderId::generate()));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $expected = (float) $ownerActivity->emissions()->co2eq() + 3200.0;
+        $this->assertSame($expected, (float) $breakdown->bySource[Source::PurchasedGoodsAndServices->value]->co2eq());
+        $this->assertSame($expected, (float) $breakdown->byStage[Scope::Scope3->key()]->co2eq());
+    }
+
+    public function testLeavesOutTheActivitiesOfAnIgnoredProviderContribution(): void
+    {
+        $footprintId = (string) PropertyCarbonFootprintId::generate();
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', $footprintId);
+        $providerId = ProviderId::generate();
+        $contribution = OrganizationalProviderContributionMother::manual(carbonFootprintId: $footprintId, providerId: (string) $providerId, sources: [Source::PurchasedGoodsAndServices]);
+        $contribution->ignore();
+        $this->contributionRepository->add($contribution);
+
+        $ownerActivity = PurchaseServiceActivityMother::registered();
+        $reported = ReportedEmissionsActivityMother::registered(kilograms: 3200.0);
+        $this->activityRepository->save($ownerActivity);
+        $this->activityRepository->save($reported);
+
+        $propertyCarbonFootprint->addActivity($ownerActivity->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+        $propertyCarbonFootprint->addActivity($reported->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices, providerId: $providerId));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $expected = (float) $ownerActivity->emissions()->co2eq();
+        $this->assertSame($expected, (float) $breakdown->total->co2eq());
+        $this->assertSame($expected, (float) $breakdown->bySource[Source::PurchasedGoodsAndServices->value]->co2eq());
+        $this->assertSame($expected, (float) $breakdown->byStage[Scope::Scope3->key()]->co2eq());
+
+        $contribution->unignore();
+        $this->contributionRepository->add($contribution);
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $this->assertSame($expected + 3200.0, (float) $breakdown->total->co2eq());
     }
 
     public function testAddsUpTheLocationBasedElectricityOnlyForActivitiesThatHaveIt(): void
@@ -301,6 +360,6 @@ class EmissionsBreakdownBuilderTest extends TestCase
 
     private function createSUT(): EmissionsBreakdownBuilder
     {
-        return new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository));
+        return new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create($this->contributionRepository)), CountedActivityReferencesMother::create($this->contributionRepository));
     }
 }

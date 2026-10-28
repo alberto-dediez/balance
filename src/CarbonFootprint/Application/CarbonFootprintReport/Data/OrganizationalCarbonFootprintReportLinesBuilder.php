@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
+use App\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferences;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
@@ -12,12 +13,19 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportActivityLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
+use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 
 final class OrganizationalCarbonFootprintReportLinesBuilder
 {
+    /** @var array<string, string> */
+    private array $providerNamesById = [];
+
     public function __construct(
         private ActivityRepository $activityRepository,
         private ActivityItemNameResolver $itemNameResolver,
+        private ProviderRepository $providerRepository,
+        private CountedActivityReferences $countedActivityReferences,
     ) {}
 
     /**
@@ -32,7 +40,7 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
 
         $lines = [];
 
-        foreach ($carbonFootprint->activityReferences() as $reference) {
+        foreach ($this->countedActivityReferences->of($carbonFootprint) as $reference) {
             $activity = $this->activityRepository->findById($reference->activityId);
             $scope = $reference->placement->stage;
 
@@ -42,12 +50,18 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
 
             $propertyId = $reference->placement->propertyId;
             $locationBasedEmissions = $activity instanceof ElectricityActivity ? $activity->locationBasedEmissions() : null;
+            $itemName = $this->itemNameResolver->resolve($activity, $year, $emissionFactorGroupId);
+            $providerId = $reference->placement->providerId;
+
+            if (null !== $providerId) {
+                $itemName = sprintf('%s · %s', $this->providerName($providerId), $itemName);
+            }
 
             $lines[] = new OrganizationalCarbonFootprintReportActivityLine(
                 scope: $scope,
                 source: $reference->placement->source,
                 propertyName: null !== $propertyId ? ($propertyNamesById[(string) $propertyId] ?? (string) $propertyId) : null,
-                itemName: $this->itemNameResolver->resolve($activity, $year, $emissionFactorGroupId),
+                itemName: $itemName,
                 activityType: ActivityType::fromActivity($activity),
                 quantity: $activity->quantity()->value(),
                 unit: $activity->quantity()->unit(),
@@ -106,6 +120,17 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
         }
 
         return $lines;
+    }
+
+    private function providerName(ProviderId $providerId): string
+    {
+        $key = (string) $providerId;
+
+        if (!isset($this->providerNamesById[$key])) {
+            $this->providerNamesById[$key] = $this->providerRepository->find($providerId)?->name() ?? $key;
+        }
+
+        return $this->providerNamesById[$key];
     }
 
     private static function sourcePosition(Source $source): int

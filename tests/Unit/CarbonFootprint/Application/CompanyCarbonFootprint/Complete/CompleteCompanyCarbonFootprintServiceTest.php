@@ -32,6 +32,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivityMother;
@@ -61,7 +62,7 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
 
         $this->propertyRepository = PropertyRepositoryMother::inMemory();
         $this->propertyCarbonFootprintRepository = PropertyCarbonFootprintRepositoryMother::inMemory();
-        $breakdownBuilder = new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository));
+        $breakdownBuilder = new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create());
 
         $this->sut = new CompleteCompanyCarbonFootprintService(
             $this->repository,
@@ -158,7 +159,7 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
 
     public function testRefreshesTheCalculatedEmissionsKeepingTheManualOnesAndAddsThemToTheTotal(): void
     {
-        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered('company-1', (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
         $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Franquicia', new CompanyId('company-1'), new PropertyId('franchised-1'), OperatingRegime::Franchised));
         $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Arrendada', new CompanyId('company-1'), new PropertyId('leased-out-1'), OperatingRegime::LeasedOut));
         $this->completedPropertyFootprint('franchised-1');
@@ -195,7 +196,7 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
 
     private function completedPropertyFootprint(string $propertyId): void
     {
-        $propertyFootprint = PropertyCarbonFootprintMother::withScope3Answered($propertyId, (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
+        $propertyFootprint = PropertyCarbonFootprintMother::withProvidersAnswered($propertyId, (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
         $activity = CombustibleActivityMother::registered(new AccountId('account-id-test'));
         $this->activityRepository->save($activity);
         $propertyFootprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -205,7 +206,7 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
 
     private function scope3AnsweredFootprint(): CompanyCarbonFootprint
     {
-        return CompanyCarbonFootprintMother::withScope3Answered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
+        return CompanyCarbonFootprintMother::withProvidersAnswered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
     }
 
     private function ownerUser(): User

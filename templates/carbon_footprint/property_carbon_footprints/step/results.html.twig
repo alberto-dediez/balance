@@ -1,6 +1,6 @@
 {% extends '@carbon_footprint/property_carbon_footprints/wizard-layout.html.twig' %}
 
-{% set wizard_selected = 5 %}
+{% set wizard_selected = propertyCarbonFootprint.scope3Excluded ? 5 : 6 %}
 
 {% block wizard_panels %}
     <div class="row">

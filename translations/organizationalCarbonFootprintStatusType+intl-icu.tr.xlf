@@ -23,7 +23,11 @@
       </trans-unit>
       <trans-unit id="DifPWua" resname="scope_3_answered">
         <source>scope_3_answered</source>
-        <target>NEW_scope_3_answered</target>
+        <target>Kapsam 3 yanıtlandı</target>
+      </trans-unit>
+      <trans-unit id="BTMXzaB" resname="providers_answered">
+        <source>providers_answered</source>
+        <target>Tedarikçiler yanıtladı</target>
       </trans-unit>
     </body>
   </file>

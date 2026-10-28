@@ -1,0 +1,42 @@
+{% extends theme_template('@carbon_footprint/public/provider_contribution/layout.html.twig') %}
+
+{% set page_title = 'Contribución de proveedor - Emisiones' | trans %}
+{% set wizard_selected = 2 %}
+
+{% block wizard_panels %}
+    <p class="text-muted">
+        {{ 'Para cada categoría indica si conoces las emisiones de tu servicio o si prefieres detallar los datos de actividad.' | trans }}
+    </p>
+
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('provider_contribution_emissions_' ~ token) }}">
+
+        {% for source, view in sectionsBySource %}
+            <div class="card mb-3" data-controller="source-mode">
+                <div class="card-header"><h5 class="mb-0">{{ source | trans({}, 'source') }}</h5></div>
+                <div class="card-body">
+                    {% include '@carbon_footprint/public/provider_contribution/_source_mode.html.twig' with {source: source, mode: modes[source] ?? null} only %}
+
+                    <div data-source-mode-target="reported">
+                        <twig:CarbonFootprint:ReportedEmissionsActivityTable
+                            title="{{ 'Emisiones comunicadas' | trans }}"
+                            prefix="{{ source ~ '_reported' }}"
+                            :rows="view.sections[source ~ '_reported'].rows ?? []"
+                        />
+                    </div>
+
+                    <div data-source-mode-target="activities">
+                        {% include '@carbon_footprint/organizational_carbon_footprints/_scope_3_tables.html.twig' with {source: source, blocks: [{sections: view.sections, units: view.units}], calculateUrl: path('public_organizational_provider_contribution_emissions_calculate', {token: token})} only %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('public_organizational_provider_contribution_general', {token: token}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <button type="submit" class="btn btn-primary">{{ 'Enviar' | trans }}</button>
+        </div>
+    </form>
+{% endblock %}

@@ -3,7 +3,7 @@
 {% block content %}
     <h3>{% trans -%}Aporta tus datos de emisiones para el evento{%- endtrans %}</h3>
     <p>
-        {% trans with {'{name}': contactName ?? companyName ?? ''} -%}
+        {% trans with {'{name}': (contactName ?? companyName ?? '')|e} -%}
             Hola {name}, se te ha solicitado aportar los datos de emisiones de tu empresa para este evento (combustible, combustible de maquinaria, pernoctación y movilidad).
         {%- endtrans %}
     </p>

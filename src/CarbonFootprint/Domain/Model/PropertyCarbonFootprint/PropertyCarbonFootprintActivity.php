@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintActivity;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 
 class PropertyCarbonFootprintActivity implements OrganizationalCarbonFootprintActivity
 {
@@ -18,6 +19,7 @@ class PropertyCarbonFootprintActivity implements OrganizationalCarbonFootprintAc
         private ActivityId $activityId,
         private Scope $scope,
         private Source $source,
+        private ?ProviderId $providerId = null,
         private \DateTimeImmutable $addedAt = new \DateTimeImmutable('NOW'),
     ) {}
 
@@ -46,9 +48,14 @@ class PropertyCarbonFootprintActivity implements OrganizationalCarbonFootprintAc
         return $this->source;
     }
 
+    public function providerId(): ?ProviderId
+    {
+        return $this->providerId;
+    }
+
     public function placement(): ActivityPlacement
     {
-        return new ActivityPlacement($this->scope, $this->source);
+        return new ActivityPlacement($this->scope, $this->source, providerId: $this->providerId);
     }
 
     public function addedAt(): \DateTimeImmutable

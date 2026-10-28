@@ -60,6 +60,7 @@ class RegisterUserOnProviderRegisteredSubscriber implements DomainEventSubscribe
                 username: $this->generateUsername($event->name()),
                 password: UuidGenerator::v4(),
                 accountId: $event->accountId(),
+                welcome: false,
             ),
             $performBy,
         );
