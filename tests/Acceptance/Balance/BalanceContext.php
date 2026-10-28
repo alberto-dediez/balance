@@ -39,7 +39,13 @@ use App\Notifications\Domain\Model\Notification\NotificationRepository;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Payment\PaymentRepository;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
+use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\PropertyFilter;
+use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
@@ -63,7 +69,11 @@ final class BalanceContext implements Context
 {
     private const int MAX_QUEUE_ROUNDS = 10;
 
-    private const string LEGACY_REDIRECTS_FILE = 'tests/Acceptance/Balance/fixtures/legacy-balance/redirects.txt';
+    /** @var list<string> */
+    private const array LEGACY_REDIRECTS_FILES = [
+        'tests/Acceptance/Balance/fixtures/legacy-balance/redirects.txt',
+        'tests/Acceptance/Balance/fixtures/legacy-greenhost/redirects.txt',
+    ];
 
     /** @var list<string> */
     private const array TRANSPORTS = [
@@ -85,11 +95,63 @@ final class BalanceContext implements Context
     #[AfterScenario('@legacy-import')]
     public function removeLegacyRedirectsFile(): void
     {
-        $path = $this->projectPath(self::LEGACY_REDIRECTS_FILE);
+        foreach (self::LEGACY_REDIRECTS_FILES as $file) {
+            $path = $this->projectPath($file);
 
-        if (file_exists($path)) {
-            unlink($path);
+            if (file_exists($path)) {
+                unlink($path);
+            }
         }
+    }
+
+    #[Then('account :name should have consultant :consultant')]
+    public function accountShouldHaveConsultant(string $name, string $consultant): void
+    {
+        $consultantAccountId = $this->accountByName($name)->consultantAccountId();
+
+        Assert::assertNotNull($consultantAccountId);
+        Assert::assertSame($consultant, $this->getAccountRepository()->find($consultantAccountId)?->name());
+    }
+
+    #[Then('account :name should be a consultant')]
+    public function accountShouldBeAConsultant(string $name): void
+    {
+        $account = $this->accountByName($name);
+
+        Assert::assertTrue($account->isConsultant());
+        Assert::assertNull($account->consultantAccountId());
+    }
+
+    #[Then('account :name should have :count properties')]
+    public function accountShouldHaveProperties(string $name, int $count): void
+    {
+        $properties = $this->getPropertyRepository()->findByFilter(
+            new PropertyFilter(accountId: $this->accountByName($name)->id(), limit: 0),
+        );
+
+        Assert::assertCount($count, $properties);
+    }
+
+    #[Then('property with bioscore id :id should belong to account :name')]
+    public function propertyWithBioscoreIdShouldBelongToAccount(string $id, string $name): void
+    {
+        $property = $this->getPropertyRepository()->findBySourceAndExternalId(
+            ExternalSource::Bioscore,
+            ExternalId::fromSourceAndId(ExternalSource::Bioscore, $id),
+        );
+
+        Assert::assertNotNull($property);
+        Assert::assertNotNull($property->accountId());
+        Assert::assertTrue($this->accountByName($name)->id()->equals($property->accountId()));
+    }
+
+    private function accountByName(string $name): Account
+    {
+        $account = $this->getAccountRepository()->findByName($name);
+
+        Assert::assertNotNull($account, sprintf('Account "%s" not found', $name));
+
+        return $account;
     }
 
     #[Then('file :path contains :text')]
@@ -133,6 +195,16 @@ final class BalanceContext implements Context
     public function getUserRepository(): UserRepository
     {
         return $this->client->getContainer()->get(UserRepository::class);
+    }
+
+    public function getAccountRepository(): AccountRepository
+    {
+        return $this->client->getContainer()->get(AccountRepository::class);
+    }
+
+    public function getPropertyRepository(): PropertyRepository
+    {
+        return $this->client->getContainer()->get(PropertyRepository::class);
     }
 
     #[Given('project :name with id :id exists')]

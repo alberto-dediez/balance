@@ -1,0 +1,8 @@
+[
+  {"_id": {"$oid": "6686b6100000000000000b01"}, "active": true, "created_at": {"$date": "2024-07-04T10:00:00.000Z"}, "member_id": "6686b60000000000000000a1", "organization_id": "6686b69ded6c140f792e0001", "role_names": ["organization-admin"]},
+  {"_id": {"$oid": "6686b6100000000000000b02"}, "active": true, "created_at": {"$date": "2024-07-05T10:00:00.000Z"}, "member_id": "6686b60000000000000000a2", "organization_id": "6686b69ded6c140f792e0002", "role_names": ["organization-admin"]},
+  {"_id": {"$oid": "6686b6100000000000000b03"}, "active": true, "created_at": {"$date": "2024-07-06T10:00:00.000Z"}, "member_id": "6686b60000000000000000a2", "organization_id": "6686b69ded6c140f792e0003", "role_names": ["organization-admin"]},
+  {"_id": {"$oid": "6686b6100000000000000b04"}, "active": true, "created_at": {"$date": "2025-10-24T10:00:00.000Z"}, "member_id": "6686b60000000000000000a3", "organization_id": "6686b69ded6c140f792e0004", "role_names": ["organization-admin"]},
+  {"_id": {"$oid": "6686b6100000000000000b05"}, "active": true, "created_at": {"$date": "2025-11-12T10:00:00.000Z"}, "member_id": "6686b60000000000000000a4", "organization_id": "6686b69ded6c140f792e0005", "role_names": ["organization-admin"]},
+  {"_id": {"$oid": "6686b6100000000000000b06"}, "active": true, "created_at": {"$date": "2024-07-07T10:00:00.000Z"}, "member_id": "6686b60000000000000000a5", "organization_id": "6686b69ded6c140f792e0006", "role_names": ["organization-admin"]}
+]

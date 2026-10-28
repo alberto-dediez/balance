@@ -21,5 +21,7 @@ final readonly class ImportOptions
         public array $properties = [],
         public array $projects = [],
         public array $mobilities = [],
+        public ?string $consultant = null,
+        public bool $createProperties = false,
     ) {}
 }

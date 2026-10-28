@@ -1,0 +1,7 @@
+[
+  {"_id": {"$oid": "6686b60000000000000000a1"}, "created_at": {"$date": "2024-07-04T10:00:00.000Z"}, "email": "calidad@asociacion.test", "global_permissions": [], "hashed_password": "$2a$10$x", "provider": "local"},
+  {"_id": {"$oid": "6686b60000000000000000a2"}, "created_at": {"$date": "2024-07-05T10:00:00.000Z"}, "email": "marketing@grupo-a.test", "global_permissions": [], "hashed_password": "$2a$10$x", "provider": "local"},
+  {"_id": {"$oid": "6686b60000000000000000a3"}, "created_at": {"$date": "2025-10-24T10:00:00.000Z"}, "email": "hotel@duplicado.test", "global_permissions": [], "hashed_password": "$2a$10$x", "provider": "local"},
+  {"_id": {"$oid": "6686b60000000000000000a4"}, "created_at": {"$date": "2025-11-12T10:00:00.000Z"}, "email": "recepcion@duplicado.test", "global_permissions": [], "hashed_password": "$2a$10$x", "provider": "local"},
+  {"_id": {"$oid": "6686b60000000000000000a5"}, "created_at": {"$date": "2024-07-07T10:00:00.000Z"}, "email": "hotel@independiente.test", "global_permissions": [], "hashed_password": "$2a$10$x", "provider": "local"}
+]

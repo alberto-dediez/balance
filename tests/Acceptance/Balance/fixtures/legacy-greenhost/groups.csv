@@ -1,0 +1,5 @@
+organization_id;slug;display_name;group;bioscore_hotel_id;latitude;longitude;address;postal_code;match;users
+6686b69ded6c140f792e0002;grupo-a-uno;Hotel Grupo A Uno;Grupo A;1;38.5411;-0.1225;Avenida del Mediterráneo 1;03503;exacto;marketing@grupo-a.test
+6686b69ded6c140f792e0003;grupo-a-dos;Hotel Grupo A Dos;Grupo A;2;38.5352;-0.1310;Calle Gerona 2;03503;exacto;marketing@grupo-a.test
+6686b69ded6c140f792e0004;duplicado;Hotel Duplicado;Duplicado;3;;;;;exacto;hotel@duplicado.test
+6686b69ded6c140f792e0005;duplicado;Hotel Duplicado;Duplicado;3;;;;;exacto;recepcion@duplicado.test

@@ -1,0 +1,8 @@
+[
+  {"_id": {"$oid": "6686b69ded6c140f792e0001"}, "active": true, "created_at": {"$date": "2024-07-04T10:00:00.000Z"}, "display_name": "Asociación Test", "organizationType": "hotel", "sluglified_name": "asociacion", "theme": null},
+  {"_id": {"$oid": "6686b69ded6c140f792e0002"}, "active": true, "created_at": {"$date": "2024-07-05T10:00:00.000Z"}, "display_name": "Hotel Grupo A Uno", "organizationType": "hotel", "sluglified_name": "grupo-a-uno", "theme": null},
+  {"_id": {"$oid": "6686b69ded6c140f792e0003"}, "active": false, "created_at": {"$date": "2024-07-06T10:00:00.000Z"}, "display_name": "Hotel Grupo A Dos", "organizationType": "hotel", "sluglified_name": "grupo-a-dos", "theme": null},
+  {"_id": {"$oid": "6686b69ded6c140f792e0004"}, "active": true, "created_at": {"$date": "2025-10-24T10:00:00.000Z"}, "display_name": "Hotel Duplicado", "organizationType": "hotel", "sluglified_name": "duplicado", "theme": null},
+  {"_id": {"$oid": "6686b69ded6c140f792e0005"}, "active": true, "created_at": {"$date": "2025-11-12T10:00:00.000Z"}, "display_name": "Hotel Duplicado", "organizationType": "hotel", "sluglified_name": "duplicado", "theme": null},
+  {"_id": {"$oid": "6686b69ded6c140f792e0006"}, "active": true, "created_at": {"$date": "2024-07-07T10:00:00.000Z"}, "display_name": "Hotel Independiente", "organizationType": "hotel", "sluglified_name": "independiente", "theme": null}
+]

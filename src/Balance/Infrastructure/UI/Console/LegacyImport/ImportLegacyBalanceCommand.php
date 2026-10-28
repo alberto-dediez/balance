@@ -20,6 +20,9 @@ use App\Balance\Infrastructure\LegacyImport\LegacyBalanceDatasetReader;
 use App\Balance\Infrastructure\LegacyImport\LegacyCalculation;
 use App\Balance\Infrastructure\LegacyImport\LegacyCalculationMapper;
 use App\Balance\Infrastructure\LegacyImport\LegacyDonation;
+use App\Balance\Infrastructure\LegacyImport\LegacyGroupAssignment;
+use App\Balance\Infrastructure\LegacyImport\LegacyGroups;
+use App\Balance\Infrastructure\LegacyImport\LegacyGroupsReader;
 use App\Balance\Infrastructure\LegacyImport\LegacyMembership;
 use App\Balance\Infrastructure\LegacyImport\LegacyOrganization;
 use App\Balance\Infrastructure\LegacyImport\LegacyUser;
@@ -38,13 +41,24 @@ use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PublicTripRoutes;
+use App\Property\Application\Property\Register\RegisterPropertyRequest;
+use App\Property\Application\Property\Register\RegisterPropertyService;
+use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Property\Domain\Model\Property\PropertyType;
+use App\Security\Application\Account\AssignConsultant\AssignConsultantRequest;
+use App\Security\Application\Account\AssignConsultant\AssignConsultantService;
+use App\Security\Application\Account\ChangeConsultantStatus\ChangeConsultantStatusRequest;
+use App\Security\Application\Account\ChangeConsultantStatus\ChangeConsultantStatusService;
 use App\Security\Application\Account\Register\RegisterAccountRequest;
 use App\Security\Application\Account\Register\RegisterAccountService;
 use App\Security\Application\User\GrantRole\GrantRoleRequest;
 use App\Security\Application\User\GrantRole\GrantRoleService;
 use App\Security\Application\User\Register\RegisterUserRequest;
 use App\Security\Application\User\Register\RegisterUserService;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -73,6 +87,8 @@ class ImportLegacyBalanceCommand extends Command
 
     private const string NO_PROJECT = 'Sin equivalente (omitir sus donaciones)';
 
+    private const string NO_CONSULTANT = 'Ninguna';
+
     private const string DRY_RUN_MARKER = '{{DRY_RUN}}';
 
     private const string REDIRECTS_FILE = 'redirects.txt';
@@ -91,11 +107,14 @@ class ImportLegacyBalanceCommand extends Command
 
     private bool $dryRun = false;
 
+    private bool $askConsultant = false;
+
     /** @var array<string, array<string, int>> */
     private array $summary = [];
 
     public function __construct(
         private readonly LegacyBalanceDatasetReader $datasetReader,
+        private readonly LegacyGroupsReader $groupsReader,
         private readonly ImportDecisionsResolver $decisionsResolver,
         private readonly RedirectRulesWriter $redirectRulesWriter,
         private readonly LegacyCalculationMapper $legacyCalculationMapper,
@@ -111,6 +130,9 @@ class ImportLegacyBalanceCommand extends Command
         private readonly ProjectRepository $projectRepository,
         private readonly ProjectContributionRepository $projectContributionRepository,
         private readonly ImportPaidProjectContributionService $importPaidProjectContribution,
+        private readonly RegisterPropertyService $registerProperty,
+        private readonly ChangeConsultantStatusService $changeConsultantStatus,
+        private readonly AssignConsultantService $assignConsultant,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly string $projectDir,
     ) {
@@ -123,7 +145,7 @@ class ImportLegacyBalanceCommand extends Command
             ->addArgument('directory', InputArgument::REQUIRED, 'Directorio con los JSON exportados de la plataforma Balance')
             ->addOption('legacy-url', null, InputOption::VALUE_REQUIRED, 'URL de la plataforma antigua (p. ej. https://balance.bioscore.info)')
             ->addOption('skip', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Organización a omitir (slug)')
-            ->addOption('staff', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Organización cuyos miembros son personal de la plataforma (slug)')
+            ->addOption('staff', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Organización cuyos miembros son personal de la plataforma (slug, o nombre del grupo si está agrupada)')
             ->addOption('account', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Cuenta existente de una organización (slug=accountId)')
             ->addOption('property', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Propiedad de una organización (slug=propertyId)')
             ->addOption('project', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Proyecto equivalente de un proyecto antiguo (oldEcoProjectId=projectId)')
@@ -131,6 +153,9 @@ class ImportLegacyBalanceCommand extends Command
             ->addOption('mobility-car', null, InputOption::VALUE_REQUIRED, 'Medio de transporte para los cálculos en coche (MobilityId)')
             ->addOption('mobility-train', null, InputOption::VALUE_REQUIRED, 'Medio de transporte para los cálculos en tren (MobilityId)')
             ->addOption('mobility-bus', null, InputOption::VALUE_REQUIRED, 'Medio de transporte para los cálculos en autobús (MobilityId)')
+            ->addOption('groups', null, InputOption::VALUE_REQUIRED, 'Fichero CSV con el grupo (cuenta) de cada organización')
+            ->addOption('consultant', null, InputOption::VALUE_REQUIRED, 'Organización que será la consultora de las demás cuentas (slug)')
+            ->addOption('create-properties', null, InputOption::VALUE_NONE, 'Crea una propiedad por organización cuando su cuenta no tiene una equivalente')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Pregunta igual pero no escribe en base de datos')
         ;
     }
@@ -160,7 +185,19 @@ class ImportLegacyBalanceCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->showTotals($dataset);
+        $groupsFile = $input->getOption('groups');
+
+        try {
+            $groups = is_string($groupsFile) && '' !== $groupsFile
+                ? $this->groupsReader->read($this->directory($groupsFile), $dataset)
+                : LegacyGroups::empty();
+        } catch (\RuntimeException|\InvalidArgumentException $exception) {
+            $this->io->error($exception->getMessage());
+
+            return Command::FAILURE;
+        }
+
+        $this->showTotals($dataset, $groups);
 
         $legacyUrl = $this->legacyUrl($input);
 
@@ -170,7 +207,7 @@ class ImportLegacyBalanceCommand extends Command
 
         try {
             $options = $this->options($input);
-            $decisions = $this->decisionsResolver->resolve($dataset, $options, $legacyUrl, $input->isInteractive());
+            $decisions = $this->decisionsResolver->resolve($dataset, $options, $groups, $legacyUrl, $input->isInteractive());
         } catch (\InvalidArgumentException $exception) {
             $this->io->error($exception->getMessage());
 
@@ -179,9 +216,13 @@ class ImportLegacyBalanceCommand extends Command
 
         $this->reportOrphanMemberships($dataset);
 
+        $this->askConsultant = null !== $options->consultant || $options->createProperties || is_string($groupsFile);
+
         try {
+            $this->consultantChoiceStep($dataset, $decisions);
             $this->organizationsStep($dataset, $decisions);
             $this->propertiesStep($dataset, $decisions, $options);
+            $this->consultantAssignmentStep($dataset, $decisions);
             $this->usersStep($dataset, $decisions);
             $this->calculationsStep($dataset, $decisions);
             $this->contributionsStep($dataset, $decisions);
@@ -202,8 +243,13 @@ class ImportLegacyBalanceCommand extends Command
         return str_starts_with($directory, '/') ? $directory : $this->projectDir . '/' . $directory;
     }
 
-    private function showTotals(LegacyBalanceDataset $dataset): void
+    private function showTotals(LegacyBalanceDataset $dataset, LegacyGroups $groups): void
     {
+        $groupNames = array_unique(array_filter(array_map(
+            static fn(LegacyGroupAssignment $assignment): ?string => $assignment->group,
+            array_values($groups->assignments),
+        )));
+
         $this->io->table(
             ['Fichero', 'Registros'],
             [
@@ -213,6 +259,7 @@ class ImportLegacyBalanceCommand extends Command
                 ['CalculatedEmissions.json', count($dataset->calculations)],
                 ['Donation.json', count($dataset->donations)],
                 ['EcoProject.json', count($dataset->ecoProjects)],
+                ['Grupos (CSV)', sprintf('%d asignaciones, %d grupos', count($groups->assignments), count($groupNames))],
             ],
         );
     }
@@ -265,6 +312,8 @@ class ImportLegacyBalanceCommand extends Command
             properties: $this->pairsOption($input, 'property'),
             projects: $this->pairsOption($input, 'project'),
             mobilities: $mobilities,
+            consultant: is_string($input->getOption('consultant')) && '' !== $input->getOption('consultant') ? $input->getOption('consultant') : null,
+            createProperties: (bool) $input->getOption('create-properties'),
         );
     }
 
@@ -313,9 +362,51 @@ class ImportLegacyBalanceCommand extends Command
         }
     }
 
+    private function consultantChoiceStep(LegacyBalanceDataset $dataset, ImportDecisions $decisions): void
+    {
+        if (!$this->askConsultant) {
+            return;
+        }
+
+        $this->io->section('Consultora');
+
+        $choices = [];
+
+        foreach ($dataset->organizations as $organization) {
+            $label = sprintf('%s (%s)', $organization->displayName, $organization->slug);
+
+            if (!$this->decision($decisions, $organization)->isSkipped() && !isset($choices[$label])) {
+                $choices[$label] = $organization->id;
+            }
+        }
+
+        $default = null !== $decisions->consultantOrganizationId ? array_search($decisions->consultantOrganizationId, $choices, true) : false;
+
+        $answer = $this->io->choice(
+            'Organización consultora',
+            array_merge([self::NO_CONSULTANT], array_keys($choices)),
+            false !== $default ? $default : self::NO_CONSULTANT,
+        );
+
+        $consultantOrganizationId = $choices[$answer] ?? null;
+
+        foreach ($decisions->organizations as $organizationId => $decision) {
+            $decision->consultant = $organizationId === $consultantOrganizationId;
+        }
+
+        $decisions->consultantOrganizationId = $consultantOrganizationId;
+        $consultant = $decisions->consultantDecision();
+
+        if (null !== $consultant && count($decisions->decisionsOfAccountKey($consultant->accountKey)) > 1) {
+            throw new \InvalidArgumentException('La consultora no puede compartir cuenta con otras organizaciones.');
+        }
+    }
+
     private function organizationsStep(LegacyBalanceDataset $dataset, ImportDecisions $decisions): void
     {
         $this->io->section('Organizaciones y cuentas');
+
+        $this->missingGroupAccounts($dataset, $decisions);
 
         $accounts = [];
 
@@ -323,11 +414,9 @@ class ImportLegacyBalanceCommand extends Command
             $accounts[sprintf('%s (%s)', $account->name(), $account->id())] = $account->id();
         }
 
-        $rows = [];
-
-        foreach ($dataset->organizations as $organization) {
-            $decision = $this->decision($decisions, $organization);
-            $create = sprintf('Crear cuenta nueva "%s"', $organization->displayName);
+        foreach ($this->accountGroups($dataset, $decisions) as $members) {
+            [$organization, $decision] = $members[0];
+            $create = sprintf('Crear cuenta nueva "%s"', $this->accountName($organization, $decision));
 
             $default = match ($decision->target) {
                 OrganizationTarget::Skip => self::SKIP,
@@ -335,59 +424,85 @@ class ImportLegacyBalanceCommand extends Command
                 OrganizationTarget::Reuse => (string) array_search($decision->accountId, $accounts, false),
             };
 
+            $question = null === $decision->group
+                ? sprintf('Destino de la organización "%s" (%s, %s)', $organization->displayName, $organization->slug, $organization->type)
+                : sprintf(
+                    'Destino del grupo "%s" (%d organizaciones: %s)',
+                    $decision->group,
+                    count($members),
+                    implode(', ', array_map(static fn(array $member): string => $member[0]->slug, $members)),
+                );
+
             $answer = $this->io->choice(
-                sprintf('Destino de la organización "%s" (%s, %s)', $organization->displayName, $organization->slug, $organization->type),
+                $question,
                 array_merge([self::SKIP, $create], array_keys($accounts)),
                 '' !== $default ? $default : $create,
             );
 
-            $decision->target = match ($answer) {
+            $target = match ($answer) {
                 self::SKIP => OrganizationTarget::Skip,
                 $create => OrganizationTarget::Create,
                 default => OrganizationTarget::Reuse,
             };
-            $decision->accountId = OrganizationTarget::Reuse === $decision->target ? $accounts[$answer] : null;
-            $decision->staff = $this->io->confirm(
-                sprintf('¿Los miembros de "%s" son personal de la plataforma y no deben importarse?', $organization->slug),
+            $staff = $this->io->confirm(
+                sprintf('¿Los miembros de "%s" son personal de la plataforma y no deben importarse?', $decision->group ?? $organization->slug),
                 $decision->staff,
             );
 
+            foreach ($members as [, $member]) {
+                $member->target = $target;
+                $member->accountId = OrganizationTarget::Reuse === $target ? $accounts[$answer] : null;
+                $member->staff = $staff;
+            }
+        }
+
+        $rows = [];
+
+        foreach ($dataset->organizations as $organization) {
+            $decision = $this->decision($decisions, $organization);
+
             $rows[] = [
                 $organization->slug,
+                $decision->group ?? '-',
                 $organization->type,
                 $this->targetLabel($decision->target),
                 null !== $decision->accountId ? (string) $decision->accountId : '-',
                 $decision->staff ? 'sí' : 'no',
             ];
+
+            if ($decision->isSkipped()) {
+                $this->count('Cuentas', self::SKIPPED);
+            }
         }
 
-        $this->io->table(['Organización', 'Tipo', 'Destino', 'Cuenta', 'Personal'], $rows);
+        $this->io->table(['Organización', 'Grupo', 'Tipo', 'Destino', 'Cuenta', 'Personal'], $rows);
 
-        $toCreate = array_filter(
-            $dataset->organizations,
-            fn(LegacyOrganization $organization): bool => OrganizationTarget::Create === $this->decision($decisions, $organization)->target,
-        );
+        $toCreate = [];
 
-        foreach ($dataset->organizations as $organization) {
-            $target = $this->decision($decisions, $organization)->target;
+        foreach ($this->accountGroups($dataset, $decisions) as $members) {
+            $target = $members[0][1]->target;
 
             if (OrganizationTarget::Reuse === $target) {
                 $this->count('Cuentas', self::REUSED);
             }
 
-            if (OrganizationTarget::Skip === $target) {
-                $this->count('Cuentas', self::SKIPPED);
+            if (OrganizationTarget::Create === $target) {
+                $toCreate[] = $members;
             }
         }
+
+        $this->markConsultantAccount($decisions);
 
         if ([] === $toCreate) {
             return;
         }
 
         if (!$this->io->confirm('¿Crear las cuentas marcadas como "Crear"?', true)) {
-            foreach ($toCreate as $organization) {
-                $this->decision($decisions, $organization)->target = OrganizationTarget::Skip;
-                $this->count('Cuentas', self::SKIPPED);
+            foreach ($toCreate as $members) {
+                foreach ($members as [, $decision]) {
+                    $decision->target = OrganizationTarget::Skip;
+                    $this->count('Cuentas', self::SKIPPED);
+                }
             }
 
             $this->io->warning('Paso omitido: las organizaciones marcadas como "Crear" se omiten en el resto de pasos.');
@@ -395,27 +510,138 @@ class ImportLegacyBalanceCommand extends Command
             return;
         }
 
-        foreach ($toCreate as $organization) {
+        foreach ($toCreate as $members) {
+            [$organization, $decision] = $members[0];
+            $name = $this->accountName($organization, $decision);
+
             if ($this->dryRun) {
-                $this->io->writeln(sprintf('Cuenta "%s": se crearía', $organization->displayName));
+                $this->io->writeln(sprintf('Cuenta "%s": se crearía', $name));
                 $this->count('Cuentas', self::CREATED);
 
                 continue;
             }
 
+            $active = [] !== array_filter($members, static fn(array $member): bool => $member[0]->active);
+
             try {
                 $response = $this->registerAccount->__invoke(
-                    new RegisterAccountRequest(name: $organization->displayName, active: $organization->active),
+                    new RegisterAccountRequest(name: $name, active: $active, consultant: $decision->consultant),
                     $this->user,
                 );
 
-                $this->decision($decisions, $organization)->accountId = $response->accountId;
-                $this->io->writeln(sprintf('Cuenta "%s" creada: %s', $organization->displayName, $response->accountId));
+                foreach ($members as [, $member]) {
+                    $member->accountId = $response->accountId;
+                }
+
+                $this->io->writeln(sprintf('Cuenta "%s" creada: %s', $name, $response->accountId));
                 $this->count('Cuentas', self::CREATED);
             } catch (\Throwable $exception) {
-                $this->decision($decisions, $organization)->target = OrganizationTarget::Skip;
-                $this->error('Cuentas', sprintf('Cuenta "%s": %s', $organization->displayName, $exception->getMessage()));
+                foreach ($members as [, $member]) {
+                    $member->target = OrganizationTarget::Skip;
+                }
+
+                $this->error('Cuentas', sprintf('Cuenta "%s": %s', $name, $exception->getMessage()));
             }
+        }
+    }
+
+    private function missingGroupAccounts(LegacyBalanceDataset $dataset, ImportDecisions $decisions): void
+    {
+        $missing = [];
+
+        foreach ($dataset->organizations as $organization) {
+            $decision = $this->decision($decisions, $organization);
+
+            if ($decision->isSkipped() || null === $decision->group || OrganizationTarget::Create !== $decision->target || null !== $decision->accountId) {
+                continue;
+            }
+
+            $missing[$decision->group] = ($missing[$decision->group] ?? 0) + 1;
+        }
+
+        if ([] === $missing) {
+            return;
+        }
+
+        $rows = [];
+
+        foreach ($missing as $group => $organizations) {
+            $similar = array_map(
+                static fn(Account $account): string => sprintf('%s (%s)', $account->name(), $account->id()),
+                $this->decisionsResolver->similarAccounts((string) $group),
+            );
+
+            $rows[] = [(string) $group, $organizations, [] !== $similar ? implode("\n", $similar) : 'ninguna'];
+        }
+
+        $this->io->section('Grupos sin cuenta en Balance');
+        $this->io->table(['Grupo', 'Organizaciones', 'Cuentas parecidas'], $rows);
+        $this->io->warning(sprintf(
+            '%d grupos se crearán como cuentas nuevas. Si alguno debía ir a una cuenta existente, corrige "group" en el CSV o usa --account=<grupo>=<accountId>.',
+            count($missing),
+        ));
+
+        $this->count('Grupos sin cuenta', self::SKIPPED, count($missing));
+    }
+
+    /** @return list<non-empty-list<array{0: LegacyOrganization, 1: OrganizationDecision}>> */
+    private function accountGroups(LegacyBalanceDataset $dataset, ImportDecisions $decisions): array
+    {
+        $all = [];
+        $pending = [];
+
+        foreach ($dataset->organizations as $organization) {
+            $decision = $this->decision($decisions, $organization);
+            $all[$decision->accountKey][] = [$organization, $decision];
+
+            if (!$decision->isSkipped()) {
+                $pending[$decision->accountKey][] = [$organization, $decision];
+            }
+        }
+
+        $groups = [];
+
+        foreach ($all as $key => $members) {
+            $groups[] = $pending[$key] ?? $members;
+        }
+
+        return $groups;
+    }
+
+    private function accountName(LegacyOrganization $organization, OrganizationDecision $decision): string
+    {
+        return $decision->group ?? $organization->displayName;
+    }
+
+    private function markConsultantAccount(ImportDecisions $decisions): void
+    {
+        $decision = $decisions->consultantDecision();
+
+        if (null === $decision || OrganizationTarget::Reuse !== $decision->target || null === $decision->accountId) {
+            return;
+        }
+
+        $account = $this->decisionsResolver->account($decision->accountId);
+
+        if (!$account instanceof Account || $account->isConsultant()) {
+            return;
+        }
+
+        if ($this->dryRun) {
+            $this->io->writeln(sprintf('Cuenta "%s": se marcaría como consultora', $account->name()));
+
+            return;
+        }
+
+        try {
+            $this->changeConsultantStatus->__invoke(new ChangeConsultantStatusRequest($decision->accountId, consultant: true), $this->user);
+
+            $this->io->writeln(sprintf('Cuenta "%s" marcada como consultora', $account->name()));
+        } catch (\Throwable $exception) {
+            $decision->consultant = false;
+            $decisions->consultantOrganizationId = null;
+
+            $this->error('Consultora', sprintf('Cuenta "%s": %s', $account->name(), $exception->getMessage()));
         }
     }
 
@@ -424,49 +650,233 @@ class ImportLegacyBalanceCommand extends Command
         $this->io->section('Propiedades');
 
         $rows = [];
+        $toCreate = [];
 
         foreach ($dataset->organizations as $organization) {
             $decision = $this->decision($decisions, $organization);
 
-            if ($organization->isOta() || $decision->isSkipped()) {
+            if ($decision->usesAccountCalculator($organization) || $decision->isSkipped()) {
                 continue;
             }
 
-            $decision->propertyId = null;
-            $properties = null !== $decision->accountId ? $this->decisionsResolver->properties($decision->accountId) : [];
+            $assignment = $decisions->groups->assignment($organization->id);
 
-            if ([] !== $properties) {
-                $choices = [];
+            try {
+                $decision->propertyId = $this->decisionsResolver->property($organization, $decision, $options, $assignment);
+            } catch (\InvalidArgumentException) {
+                $decision->propertyId = null;
+                $decision->createProperty = false;
+            }
 
-                foreach ($properties as $property) {
-                    $choices[sprintf('%s (%s)', $property->name(), $property->id())] = $property->id();
-                }
+            $choices = [];
 
-                try {
-                    $preselected = $this->decisionsResolver->property($organization, $decision, $options);
-                } catch (\InvalidArgumentException) {
-                    $preselected = null;
-                }
+            foreach (null !== $decision->accountId ? $this->decisionsResolver->properties($decision->accountId) : [] as $property) {
+                $choices[sprintf('%s (%s)', $property->name(), $property->id())] = $property->id();
+            }
 
-                $default = null !== $preselected ? array_search($preselected, $choices, false) : false;
+            $create = sprintf('Crear propiedad nueva "%s"', $organization->displayName);
+            $default = null !== $decision->propertyId ? array_search($decision->propertyId, $choices, false) : false;
 
-                $answer = $this->io->choice(
-                    sprintf('Propiedad de "%s" (%s)', $organization->displayName, $organization->slug),
-                    array_merge(array_keys($choices), [self::NO_PROPERTY]),
-                    false !== $default ? $default : self::NO_PROPERTY,
-                );
+            if (false === $default) {
+                $default = $decision->createProperty ? $create : self::NO_PROPERTY;
+            }
 
-                $decision->propertyId = $choices[$answer] ?? null;
+            $answer = $this->io->choice(
+                sprintf('Propiedad de "%s" (%s)', $organization->displayName, $organization->slug),
+                array_merge(array_keys($choices), [$create, self::NO_PROPERTY]),
+                $default,
+            );
+
+            $decision->propertyId = $choices[$answer] ?? null;
+            $decision->createProperty = $create === $answer;
+
+            if ($decision->createProperty) {
+                $toCreate[] = [$organization, $decision];
             }
 
             $rows[] = [
                 $organization->slug,
+                $decision->group ?? '-',
                 null !== $decision->accountId ? (string) $decision->accountId : 'nueva',
-                null !== $decision->propertyId ? (string) $decision->propertyId : 'sin propiedad',
+                match (true) {
+                    null !== $decision->propertyId => (string) $decision->propertyId,
+                    $decision->createProperty => 'se creará',
+                    default => 'sin propiedad',
+                },
+                $assignment->bioscoreHotelId ?? '-',
             ];
         }
 
-        $this->io->table(['Organización', 'Cuenta', 'Propiedad'], $rows);
+        $this->io->table(['Organización', 'Grupo', 'Cuenta', 'Propiedad', 'Id Bioscore'], $rows);
+
+        if ([] === $toCreate) {
+            return;
+        }
+
+        if (!$this->io->confirm(sprintf('¿Crear las %d propiedades marcadas como "Crear"?', count($toCreate)), true)) {
+            foreach ($toCreate as [, $decision]) {
+                $decision->createProperty = false;
+                $this->count('Propiedades', self::SKIPPED);
+            }
+
+            $this->io->warning('Paso omitido: las organizaciones marcadas como "Crear" quedan sin propiedad.');
+
+            return;
+        }
+
+        $created = [];
+
+        foreach ($toCreate as [$organization, $decision]) {
+            $assignment = $decisions->groups->assignment($organization->id);
+            $key = $decision->accountKey . '|' . ($assignment->bioscoreHotelId ?? ImportDecisionsResolver::normalizeName($organization->displayName));
+
+            if (isset($created[$key])) {
+                [$propertyId, $slug] = $created[$key];
+                $decision->propertyId = $propertyId;
+                $decision->createProperty = null === $propertyId;
+
+                $this->io->writeln(sprintf('Propiedad de "%s": misma propiedad que %s', $organization->slug, $slug));
+                $this->count('Propiedades', self::REUSED);
+
+                continue;
+            }
+
+            $name = trim(preg_replace('/\s+/u', ' ', $organization->displayName) ?? $organization->displayName);
+
+            if ($this->dryRun || null === $decision->accountId) {
+                $created[$key] = [null, $organization->slug];
+                $this->io->writeln(sprintf('Propiedad "%s": se crearía', $name));
+                $this->count('Propiedades', self::CREATED);
+
+                continue;
+            }
+
+            try {
+                $response = $this->registerProperty->__invoke(
+                    new RegisterPropertyRequest(
+                        name: $name,
+                        accountId: $decision->accountId,
+                        info: new PropertyInfo(
+                            propertyType: PropertyType::Hotel,
+                            address: $assignment?->address,
+                            postalCode: $assignment?->postalCode,
+                            longitude: $assignment?->longitude,
+                            latitude: $assignment?->latitude,
+                        ),
+                        externalId: null !== $assignment?->bioscoreHotelId
+                            ? ExternalId::fromSourceAndId(ExternalSource::Bioscore, $assignment->bioscoreHotelId)
+                            : null,
+                    ),
+                    $this->user,
+                );
+
+                $decision->propertyId = $response->propertyId;
+                $decision->createProperty = false;
+                $created[$key] = [$response->propertyId, $organization->slug];
+
+                $this->io->writeln(sprintf('Propiedad "%s" creada: %s', $name, $response->propertyId));
+                $this->count('Propiedades', self::CREATED);
+            } catch (\Throwable $exception) {
+                $decision->propertyId = null;
+                $decision->createProperty = false;
+
+                $this->error('Propiedades', sprintf('Propiedad "%s": %s', $name, $exception->getMessage()));
+            }
+        }
+    }
+
+    private function consultantAssignmentStep(LegacyBalanceDataset $dataset, ImportDecisions $decisions): void
+    {
+        $consultant = $decisions->consultantDecision();
+
+        if (null === $consultant || $consultant->isSkipped()) {
+            return;
+        }
+
+        $this->io->section('Consultora de las cuentas');
+
+        $consultantNames = [];
+
+        foreach ($this->decisionsResolver->consultants() as $account) {
+            $consultantNames[(string) $account->id()] = $account->name();
+        }
+
+        $rows = [];
+        $toAssign = [];
+        $seen = [];
+
+        foreach ($dataset->organizations as $organization) {
+            $decision = $this->decision($decisions, $organization);
+
+            if ($decision->isSkipped() || $decision->staff || $decision->consultant || isset($seen[$decision->accountKey])) {
+                continue;
+            }
+
+            $seen[$decision->accountKey] = true;
+            $account = null !== $decision->accountId ? $this->decisionsResolver->account($decision->accountId) : null;
+            $current = $account?->consultantAccountId();
+            $action = $this->consultantAction($account, $consultant->accountId);
+            $label = $account instanceof Account
+                ? sprintf('%s (%s)', $account->name(), $account->id())
+                : sprintf('%s (nueva)', $this->accountName($organization, $decision));
+
+            $rows[] = [
+                $label,
+                null !== $current ? $consultantNames[(string) $current] ?? (string) $current : '-',
+                $action,
+            ];
+
+            if ('asignar' === $action || 'se asignaría' === $action) {
+                $toAssign[] = [$label, $decision->accountId, $action];
+            } elseif ('ya asignada' === $action) {
+                $this->count('Consultora', self::REUSED);
+            } else {
+                $this->count('Consultora', self::SKIPPED);
+            }
+        }
+
+        $this->io->table(['Cuenta', 'Consultora actual', 'Acción'], $rows);
+
+        if ([] === $toAssign) {
+            return;
+        }
+
+        if (!$this->io->confirm(sprintf('¿Asignar la consultora a las %d cuentas?', count($toAssign)), true)) {
+            $this->io->warning('Paso omitido: no se asigna la consultora a ninguna cuenta.');
+
+            return;
+        }
+
+        foreach ($toAssign as [$label, $accountId, $action]) {
+            if ('se asignaría' === $action || null === $accountId || null === $consultant->accountId) {
+                $this->io->writeln(sprintf('Cuenta %s: se asignaría la consultora', $label));
+                $this->count('Consultora', self::CREATED);
+
+                continue;
+            }
+
+            try {
+                $this->assignConsultant->__invoke(new AssignConsultantRequest($accountId, $consultant->accountId), $this->user);
+
+                $this->io->writeln(sprintf('Consultora asignada a la cuenta %s', $label));
+                $this->count('Consultora', self::CREATED);
+            } catch (\Throwable $exception) {
+                $this->error('Consultora', sprintf('Cuenta %s: %s', $label, $exception->getMessage()));
+            }
+        }
+    }
+
+    private function consultantAction(?Account $account, ?AccountId $consultantAccountId): string
+    {
+        $current = $account?->consultantAccountId();
+
+        return match (true) {
+            null !== $account && $account->isConsultant() => 'es consultora, no se asigna',
+            null !== $current && null !== $consultantAccountId && $current->equals($consultantAccountId) => 'ya asignada',
+            null !== $current => 'tiene otra consultora, se mantiene',
+            $this->dryRun || null === $account || null === $consultantAccountId => 'se asignaría',
+            default => 'asignar',
+        };
     }
 
     private function usersStep(LegacyBalanceDataset $dataset, ImportDecisions $decisions): void
@@ -567,16 +977,27 @@ class ImportLegacyBalanceCommand extends Command
         }
 
         $first = array_shift($valid);
-        $notApplied = array_map(
+        $accountKey = $this->membershipDecision($dataset, $decisions, $first)?->accountKey;
+        $notApplied = array_values(array_map(
             static fn(LegacyMembership $membership): string => $dataset->organizationById($membership->organizationId)->slug ?? $membership->organizationId,
-            $valid,
-        );
+            array_filter(
+                $valid,
+                fn(LegacyMembership $membership): bool => $this->membershipDecision($dataset, $decisions, $membership)?->accountKey !== $accountKey,
+            ),
+        ));
 
         if ($this->userRepository->findByUsername($legacyUser->email) instanceof User) {
             return [$first, 'ya existía', $notApplied];
         }
 
         return [$first, 'crear', $notApplied];
+    }
+
+    private function membershipDecision(LegacyBalanceDataset $dataset, ImportDecisions $decisions, LegacyMembership $membership): ?OrganizationDecision
+    {
+        $organization = $dataset->organizationById($membership->organizationId);
+
+        return null !== $organization ? $this->decision($decisions, $organization) : null;
     }
 
     private function role(LegacyMembership $membership): Role
@@ -614,7 +1035,7 @@ class ImportLegacyBalanceCommand extends Command
             $decision = $this->decision($decisions, $organization);
             $calculations = $dataset->calculationsOfOrganization($organization->slug);
 
-            if ([] === $calculations) {
+            if ([] === $calculations || $this->isDuplicated($dataset, $organization)) {
                 continue;
             }
 
@@ -625,7 +1046,7 @@ class ImportLegacyBalanceCommand extends Command
                 continue;
             }
 
-            if (!$organization->isOta() && null === $decision->propertyId) {
+            if (!$decision->usesAccountCalculator($organization) && !$decision->hasProperty()) {
                 $rows[] = [$organization->slug, '-', 0, 0, sprintf('%d (sin propiedad)', count($calculations))];
                 $this->count('Cálculos', self::SKIPPED, count($calculations));
 
@@ -843,7 +1264,13 @@ class ImportLegacyBalanceCommand extends Command
                 continue;
             }
 
-            if (!$organization->isOta() && null === $decision->propertyId) {
+            if ($this->isDuplicated($dataset, $organization)) {
+                $rows[] = [$organization->slug, $organization->type, sprintf('duplicada de %s', $dataset->organizationBySlug($organization->slug)->id ?? '-')];
+
+                continue;
+            }
+
+            if (!$decision->usesAccountCalculator($organization) && !$decision->hasProperty()) {
                 $rows[] = [$organization->slug, $organization->type, sprintf('{{PROPERTY_TRIP_URL:%s}}', $organization->slug)];
 
                 continue;
@@ -866,7 +1293,9 @@ class ImportLegacyBalanceCommand extends Command
         $rules = [];
 
         foreach ($dataset->organizations as $organization) {
-            $rules[] = $this->redirectRule($organization, $this->decision($decisions, $organization));
+            if (!$this->isDuplicated($dataset, $organization)) {
+                $rules[] = $this->redirectRule($organization, $this->decision($decisions, $organization));
+            }
         }
 
         $this->redirectRulesWriter->write($path, $decisions->legacyUrl, $rules);
@@ -884,7 +1313,7 @@ class ImportLegacyBalanceCommand extends Command
             return new RedirectRule($organization->slug, $organization->type, null, 'omitida', skipped: true);
         }
 
-        if (!$organization->isOta() && null === $decision->propertyId) {
+        if (!$decision->usesAccountCalculator($organization) && !$decision->hasProperty()) {
             return new RedirectRule(
                 $organization->slug,
                 $organization->type,
@@ -899,7 +1328,7 @@ class ImportLegacyBalanceCommand extends Command
             $link = $this->registerLink($organization, $decision);
         }
 
-        $comment = $organization->isOta()
+        $comment = $decision->usesAccountCalculator($organization)
             ? sprintf('calculadora de viajes de la cuenta %s', $account)
             : sprintf('calculadora de viajes de la propiedad %s', $decision->propertyId);
 
@@ -913,7 +1342,7 @@ class ImportLegacyBalanceCommand extends Command
 
     private function existingLink(LegacyOrganization $organization, OrganizationDecision $decision): ?TripCalculationLink
     {
-        if ($organization->isOta()) {
+        if ($decision->usesAccountCalculator($organization)) {
             return null !== $decision->accountId ? $this->tripCalculationLinkRepository->findForAccount($decision->accountId) : null;
         }
 
@@ -922,7 +1351,7 @@ class ImportLegacyBalanceCommand extends Command
 
     private function registerLink(LegacyOrganization $organization, OrganizationDecision $decision): TripCalculationLink
     {
-        if ($organization->isOta()) {
+        if ($decision->usesAccountCalculator($organization)) {
             return $this->registerAccountTripCalculationLink->__invoke(
                 new RegisterAccountTripCalculationLinkRequest($decision->accountId),
                 $this->user,
@@ -941,9 +1370,9 @@ class ImportLegacyBalanceCommand extends Command
 
     private function linkLabel(LegacyOrganization $organization, OrganizationDecision $decision): string
     {
-        return $organization->isOta()
+        return $decision->usesAccountCalculator($organization)
             ? sprintf('cuenta %s', null !== $decision->accountId ? $decision->accountId : 'nueva')
-            : sprintf('propiedad %s', $decision->propertyId);
+            : sprintf('propiedad %s', null !== $decision->propertyId ? $decision->propertyId : 'nueva');
     }
 
     private function linkUrl(TripCalculationLink $link): string
@@ -957,8 +1386,13 @@ class ImportLegacyBalanceCommand extends Command
 
     private function decision(ImportDecisions $decisions, LegacyOrganization $organization): OrganizationDecision
     {
-        return $decisions->organization($organization->slug)
+        return $decisions->organization($organization->id)
             ?? throw new \LogicException(sprintf('Sin decisión para la organización "%s".', $organization->slug));
+    }
+
+    private function isDuplicated(LegacyBalanceDataset $dataset, LegacyOrganization $organization): bool
+    {
+        return $dataset->organizationBySlug($organization->slug)?->id !== $organization->id;
     }
 
     private function targetLabel(OrganizationTarget $target): string
@@ -987,7 +1421,7 @@ class ImportLegacyBalanceCommand extends Command
 
         $rows = [];
 
-        foreach (['Cuentas', 'Usuarios', 'Cálculos', 'Aportaciones', 'Redirecciones'] as $type) {
+        foreach (['Cuentas', 'Grupos sin cuenta', 'Propiedades', 'Consultora', 'Usuarios', 'Cálculos', 'Aportaciones', 'Redirecciones'] as $type) {
             $rows[] = [
                 $type,
                 $this->summary[$type][self::CREATED] ?? 0,

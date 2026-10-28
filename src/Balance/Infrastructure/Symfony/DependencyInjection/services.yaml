@@ -16,7 +16,7 @@ services:
     App\Balance\Infrastructure\LegacyImport\:
         resource: '../../../Infrastructure/LegacyImport/'
         exclude:
-            - '../../../Infrastructure/LegacyImport/{ImportDecisions,ImportOptions,LegacyBalanceDataset,LegacyCalculation,LegacyDonation,LegacyEcoProject,LegacyMembership,LegacyOrganization,LegacyPlace,LegacyUser,OrganizationDecision,OrganizationTarget,RedirectRule}.php'
+            - '../../../Infrastructure/LegacyImport/{ImportDecisions,ImportOptions,LegacyBalanceDataset,LegacyCalculation,LegacyDonation,LegacyEcoProject,LegacyGroupAssignment,LegacyGroups,LegacyMembership,LegacyOrganization,LegacyPlace,LegacyUser,OrganizationDecision,OrganizationTarget,RedirectRule}.php'
 
     App\Balance\Infrastructure\UI\Console\LegacyImport\ImportLegacyBalanceCommand:
         arguments:

@@ -16,13 +16,29 @@ final class ImportDecisions
      */
     public function __construct(
         public string $legacyUrl,
+        public LegacyGroups $groups,
         public array $organizations = [],
         public array $mobilities = [],
         public array $projects = [],
+        public ?string $consultantOrganizationId = null,
     ) {}
 
-    public function organization(string $slug): ?OrganizationDecision
+    public function organization(string $organizationId): ?OrganizationDecision
     {
-        return $this->organizations[$slug] ?? null;
+        return $this->organizations[$organizationId] ?? null;
+    }
+
+    public function consultantDecision(): ?OrganizationDecision
+    {
+        return null !== $this->consultantOrganizationId ? $this->organization($this->consultantOrganizationId) : null;
+    }
+
+    /** @return list<OrganizationDecision> */
+    public function decisionsOfAccountKey(string $key): array
+    {
+        return array_values(array_filter(
+            $this->organizations,
+            static fn(OrganizationDecision $decision): bool => $decision->accountKey === $key,
+        ));
     }
 }

@@ -15,10 +15,24 @@ final class OrganizationDecision
         public ?AccountId $accountId = null,
         public bool $staff = false,
         public ?PropertyId $propertyId = null,
+        public string $accountKey = '',
+        public ?string $group = null,
+        public bool $consultant = false,
+        public bool $createProperty = false,
     ) {}
 
     public function isSkipped(): bool
     {
         return OrganizationTarget::Skip === $this->target;
+    }
+
+    public function hasProperty(): bool
+    {
+        return null !== $this->propertyId || $this->createProperty;
+    }
+
+    public function usesAccountCalculator(LegacyOrganization $organization): bool
+    {
+        return $organization->isOta() || $this->consultant;
     }
 }

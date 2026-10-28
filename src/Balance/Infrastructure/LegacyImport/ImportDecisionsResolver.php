@@ -23,6 +23,13 @@ use App\Security\Domain\Model\Account\AccountRepository;
 
 final class ImportDecisionsResolver
 {
+    private const array LEGAL_FORMS = ['sl', 'slu', 'sa', 'sau', 'sll', 'scoop', 'cb'];
+
+    private const int SIMILAR_ACCOUNTS = 3;
+
+    /** @var list<Account>|null */
+    private ?array $accounts = null;
+
     public function __construct(
         private AccountRepository $accountRepository,
         private PropertyRepository $propertyRepository,
@@ -30,15 +37,17 @@ final class ImportDecisionsResolver
         private ProjectRepository $projectRepository,
     ) {}
 
-    public function resolve(LegacyBalanceDataset $dataset, ImportOptions $options, string $legacyUrl, bool $interactive): ImportDecisions
+    public function resolve(LegacyBalanceDataset $dataset, ImportOptions $options, LegacyGroups $groups, string $legacyUrl, bool $interactive): ImportDecisions
     {
-        $decisions = new ImportDecisions($legacyUrl);
+        $decisions = new ImportDecisions($legacyUrl, $groups);
+        $decisions->consultantOrganizationId = $this->consultantOrganization($dataset, $options)?->id;
 
         foreach ($dataset->organizations as $organization) {
-            $decision = $this->organization($organization, $options);
-            $decision->propertyId = $this->property($organization, $decision, $options);
+            $decision = $this->organization($organization, $options, $groups);
+            $decision->consultant = $organization->id === $decisions->consultantOrganizationId;
+            $decision->propertyId = $this->property($organization, $decision, $options, $groups->assignment($organization->id));
 
-            $decisions->organizations[$organization->slug] = $decision;
+            $decisions->organizations[$organization->id] = $decision;
         }
 
         foreach ($this->transports($dataset, $decisions) as $transport) {
@@ -58,36 +67,53 @@ final class ImportDecisionsResolver
         return $decisions;
     }
 
-    public function organization(LegacyOrganization $organization, ImportOptions $options): OrganizationDecision
+    public function organization(LegacyOrganization $organization, ImportOptions $options, LegacyGroups $groups): OrganizationDecision
     {
-        $staff = in_array($organization->slug, $options->staff, true);
+        $group = $groups->groupOf($organization->id);
+        $accountKey = $group ?? $organization->id;
 
-        if (in_array($organization->slug, $options->skip, true)) {
-            return new OrganizationDecision($organization->slug, OrganizationTarget::Skip, staff: $staff);
-        }
-
-        if (isset($options->accounts[$organization->slug])) {
-            $account = $this->accountRepository->find(new AccountId($options->accounts[$organization->slug]));
-
-            if (!$account instanceof Account) {
-                throw new \InvalidArgumentException(sprintf('La cuenta "%s" indicada en --account para "%s" no existe.', $options->accounts[$organization->slug], $organization->slug));
+        if (null !== $group && $group !== $organization->slug) {
+            if (isset($options->accounts[$organization->slug])) {
+                throw new \InvalidArgumentException(sprintf('La organización "%s" indicada en --account pertenece al grupo "%s": usa el nombre del grupo como clave.', $organization->slug, $group));
             }
 
-            return new OrganizationDecision($organization->slug, OrganizationTarget::Reuse, $account->id(), $staff);
+            if (in_array($organization->slug, $options->staff, true)) {
+                throw new \InvalidArgumentException(sprintf('La organización "%s" indicada en --staff pertenece al grupo "%s": usa el nombre del grupo.', $organization->slug, $group));
+            }
         }
 
-        $account = $this->accountRepository->findByName($organization->displayName);
+        $staff = in_array($organization->slug, $options->staff, true) || (null !== $group && in_array($group, $options->staff, true));
+
+        if (in_array($organization->slug, $options->skip, true)) {
+            return new OrganizationDecision($organization->slug, OrganizationTarget::Skip, staff: $staff, accountKey: $accountKey, group: $group);
+        }
+
+        $optionKey = null !== $group && isset($options->accounts[$group]) ? $group : $organization->slug;
+
+        if (isset($options->accounts[$optionKey])) {
+            $account = $this->accountRepository->find(new AccountId($options->accounts[$optionKey]));
+
+            if (!$account instanceof Account) {
+                throw new \InvalidArgumentException(sprintf('La cuenta "%s" indicada en --account para "%s" no existe.', $options->accounts[$optionKey], $optionKey));
+            }
+
+            return new OrganizationDecision($organization->slug, OrganizationTarget::Reuse, $account->id(), $staff, accountKey: $accountKey, group: $group);
+        }
+
+        $account = $this->accountRepository->findByName($group ?? $organization->displayName);
 
         if ($account instanceof Account) {
-            return new OrganizationDecision($organization->slug, OrganizationTarget::Reuse, $account->id(), $staff);
+            return new OrganizationDecision($organization->slug, OrganizationTarget::Reuse, $account->id(), $staff, accountKey: $accountKey, group: $group);
         }
 
-        return new OrganizationDecision($organization->slug, OrganizationTarget::Create, staff: $staff);
+        return new OrganizationDecision($organization->slug, OrganizationTarget::Create, staff: $staff, accountKey: $accountKey, group: $group);
     }
 
-    public function property(LegacyOrganization $organization, OrganizationDecision $decision, ImportOptions $options): ?PropertyId
+    public function property(LegacyOrganization $organization, OrganizationDecision $decision, ImportOptions $options, ?LegacyGroupAssignment $assignment = null): ?PropertyId
     {
-        if ($organization->isOta() || $decision->isSkipped()) {
+        $decision->createProperty = false;
+
+        if ($decision->usesAccountCalculator($organization) || $decision->isSkipped()) {
             return null;
         }
 
@@ -108,12 +134,37 @@ final class ImportDecisionsResolver
         }
 
         if (null === $decision->accountId) {
+            $decision->createProperty = $options->createProperties;
+
             return null;
         }
 
         $properties = $this->properties($decision->accountId);
+        $bioscoreHotelId = $assignment?->bioscoreHotelId;
 
-        return 1 === count($properties) ? $properties[0]->id() : null;
+        if (null !== $bioscoreHotelId) {
+            foreach ($properties as $property) {
+                if ($property->externalId()->bioscore() === $bioscoreHotelId) {
+                    return $property->id();
+                }
+            }
+        }
+
+        $name = self::normalizeName($organization->displayName);
+
+        foreach ($properties as $property) {
+            if (self::normalizeName($property->name()) === $name) {
+                return $property->id();
+            }
+        }
+
+        if (null === $decision->group && 1 === count($properties)) {
+            return $properties[0]->id();
+        }
+
+        $decision->createProperty = $options->createProperties;
+
+        return null;
     }
 
     public function mobility(string $transport, ImportOptions $options, bool $interactive): ?MobilityId
@@ -185,7 +236,7 @@ final class ImportDecisionsResolver
 
         foreach ($dataset->donations as $donation) {
             $organization = $dataset->organizationById($donation->organizationId);
-            $decision = null !== $organization ? $decisions->organization($organization->slug) : null;
+            $decision = null !== $organization ? $decisions->organization($organization->id) : null;
 
             if (null !== $decision && !$decision->isSkipped()) {
                 $ecoProjectIds[] = $donation->ecoProjectId;
@@ -199,6 +250,41 @@ final class ImportDecisionsResolver
     public function accounts(): array
     {
         return $this->accountRepository->findByFilter(new AccountFilter(limit: 0));
+    }
+
+    public function account(AccountId $accountId): ?Account
+    {
+        return $this->accountRepository->find($accountId);
+    }
+
+    /** @return list<Account> */
+    public function consultants(): array
+    {
+        return array_values(array_filter(
+            $this->accountRepository->findByFilter(new AccountFilter(limit: 0)),
+            static fn(Account $account): bool => $account->isConsultant(),
+        ));
+    }
+
+    /** @return list<Account> */
+    public function similarAccounts(string $name): array
+    {
+        $key = self::nameKey($name);
+
+        if ('' === $key) {
+            return [];
+        }
+
+        $this->accounts ??= $this->accounts();
+
+        $similar = array_values(array_filter(
+            $this->accounts,
+            static fn(Account $account): bool => $account->name() !== $name && self::isSimilarKey($key, self::nameKey($account->name())),
+        ));
+
+        usort($similar, static fn(Account $a, Account $b): int => $a->name() <=> $b->name());
+
+        return array_slice($similar, 0, self::SIMILAR_ACCOUNTS);
     }
 
     /** @return list<Property> */
@@ -227,6 +313,51 @@ final class ImportDecisionsResolver
         return trim(preg_replace('/\s+/u', ' ', $normalized) ?? $normalized);
     }
 
+    public static function nameKey(string $name): string
+    {
+        $normalized = str_replace('.', '', self::normalizeName($name));
+        $words = array_values(array_filter(
+            explode(' ', preg_replace('/[^\p{L}\p{N} ]+/u', ' ', $normalized) ?? $normalized),
+            static fn(string $word): bool => '' !== $word,
+        ));
+
+        while (count($words) > 1 && in_array($words[count($words) - 1], self::LEGAL_FORMS, true)) {
+            array_pop($words);
+        }
+
+        return implode(' ', $words);
+    }
+
+    private static function isSimilarKey(string $key, string $other): bool
+    {
+        if ('' === $other) {
+            return false;
+        }
+
+        return $key === $other
+            || str_contains(' ' . $key . ' ', ' ' . $other . ' ')
+            || str_contains(' ' . $other . ' ', ' ' . $key . ' ');
+    }
+
+    private function consultantOrganization(LegacyBalanceDataset $dataset, ImportOptions $options): ?LegacyOrganization
+    {
+        if (null === $options->consultant) {
+            return null;
+        }
+
+        $organization = $dataset->organizationBySlug($options->consultant);
+
+        if (!$organization instanceof LegacyOrganization) {
+            throw new \InvalidArgumentException(sprintf('La organización "%s" indicada en --consultant no existe.', $options->consultant));
+        }
+
+        if (in_array($organization->slug, $options->skip, true)) {
+            throw new \InvalidArgumentException(sprintf('La organización "%s" indicada en --consultant no puede omitirse.', $options->consultant));
+        }
+
+        return $organization;
+    }
+
     private function isImportable(LegacyCalculation $calculation, LegacyBalanceDataset $dataset, ImportDecisions $decisions): bool
     {
         if (null === $calculation->referralSlug) {
@@ -234,12 +365,12 @@ final class ImportDecisionsResolver
         }
 
         $organization = $dataset->organizationBySlug($calculation->referralSlug);
-        $decision = $decisions->organization($calculation->referralSlug);
+        $decision = null !== $organization ? $decisions->organization($organization->id) : null;
 
         if (null === $organization || null === $decision || $decision->isSkipped()) {
             return false;
         }
 
-        return $organization->isOta() || null !== $decision->propertyId;
+        return $decision->usesAccountCalculator($organization) || $decision->hasProperty();
     }
 }
