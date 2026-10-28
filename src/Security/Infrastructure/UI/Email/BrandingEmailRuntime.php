@@ -31,7 +31,9 @@ class BrandingEmailRuntime implements RuntimeExtensionInterface
         $logoMediaId = $tokens?->logoMediaId;
 
         if (!$logoMediaId instanceof MediaId) {
-            return $this->packages->getUrl('images/logo-dark.png');
+            $themeLogo = null === $tokens ? null : $this->themeRegistry->get($tokens->themeSlug)->logo();
+
+            return $this->packages->getUrl($themeLogo ?? 'images/logo-dark.png');
         }
 
         return $this->urlGenerator->generate(

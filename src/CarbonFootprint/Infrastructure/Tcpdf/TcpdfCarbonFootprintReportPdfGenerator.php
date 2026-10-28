@@ -15,8 +15,10 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintR
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\Shared\Domain\Model\Branding\PdfBranding;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Shared\Domain\Model\Theme\ThemeRegistry;
 use App\Shared\Infrastructure\Tcpdf\GenericGenerator;
 use App\Shared\Infrastructure\Tcpdf\ReportTcpdf;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,7 +28,10 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
     use GenericGenerator;
     use CarbonFootprintReportFiguresTrait;
 
-    public function __construct(private readonly TranslatorInterface $translator) {}
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly ThemeRegistry $themeRegistry,
+    ) {}
 
     public function generate(
         CarbonFootprintReportData $data,
@@ -39,7 +44,8 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         LocaleGetter::setLocale($locale);
 
         try {
-            $pdf = $this->createPDF($data->subjectName());
+            $theme = $this->themeRegistry->get($themeSlug);
+            $pdf = $this->createPDF($data->subjectName(), PdfBranding::bioscore()->withThemeLogos($theme->logo(), $theme->inverseLogo()));
 
             match (true) {
                 $data instanceof EventCarbonFootprintReportData => $this->renderEventReport($pdf, $data, $texts, $charts, $locale),

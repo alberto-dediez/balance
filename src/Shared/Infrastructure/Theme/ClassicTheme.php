@@ -32,4 +32,14 @@ final class ClassicTheme implements Theme
     {
         return null;
     }
+
+    public function logo(): ?string
+    {
+        return null;
+    }
+
+    public function inverseLogo(): ?string
+    {
+        return null;
+    }
 }

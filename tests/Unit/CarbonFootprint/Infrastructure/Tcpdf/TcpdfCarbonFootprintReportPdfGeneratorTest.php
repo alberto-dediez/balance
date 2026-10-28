@@ -15,10 +15,12 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Infrastructure\Theme\GreenhostTheme;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportChartsMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
+use App\Tests\Unit\Shared\Infrastructure\Theme\ThemeRegistryMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\Loader\XliffFileLoader;
 use Symfony\Component\Translation\Translator;
@@ -30,7 +32,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
     /** @return iterable<string, array{0: string, 1: string, 2: Locale}> */
     public static function previews(): iterable
     {
-        foreach (['default', 'classic'] as $theme) {
+        foreach (['default', 'classic', 'greenhost'] as $theme) {
             yield $theme . ' event es' => [$theme, 'event', Locale::Spanish];
             yield $theme . ' event en' => [$theme, 'event', Locale::English];
             yield $theme . ' event electricity without mix es' => [$theme, 'event-electricity-without-mix', Locale::Spanish];
@@ -240,7 +242,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
     {
         return 'classic' === $theme
             ? new ClassicTcpdfCarbonFootprintReportPdfGenerator($this->translator())
-            : new TcpdfCarbonFootprintReportPdfGenerator($this->translator());
+            : new TcpdfCarbonFootprintReportPdfGenerator($this->translator(), ThemeRegistryMother::withThemes([new GreenhostTheme()]));
     }
 
     private function translator(): Translator

@@ -45,4 +45,14 @@ class FakeTheme implements Theme
     {
         return 'styles/themes/aurora.css';
     }
+
+    public function logo(): ?string
+    {
+        return null;
+    }
+
+    public function inverseLogo(): ?string
+    {
+        return null;
+    }
 }

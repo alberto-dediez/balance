@@ -13,4 +13,8 @@ interface Theme
     public function defaults(): ThemeDefaults;
 
     public function stylesheet(): ?string;
+
+    public function logo(): ?string;
+
+    public function inverseLogo(): ?string;
 }

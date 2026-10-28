@@ -95,7 +95,7 @@ final class TcpdfContributionCertificatePdfGenerator implements ContributionCert
     {
         $pdf->Rect(0, 0, self::SIDE_BAR_WIDTH, self::PAGE_HEIGHT, 'F', [], $this->pdfBranding()->secondary);
 
-        $logoPath = $this->pdfBranding()->logoPath ?? $this->getImagePath('logo-dark.png');
+        $logoPath = $this->logoPath();
 
         if (is_file($logoPath)) {
             $pdf->Image(file: $logoPath, x: self::LEFT, y: 12, w: 45, h: 14, resize: false, dpi: 300, fitbox: 'LM');

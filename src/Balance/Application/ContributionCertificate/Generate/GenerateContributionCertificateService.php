@@ -22,6 +22,7 @@ use App\Shared\Application\CommandBus\RegisterHandlerTrait;
 use App\Shared\Domain\Model\Branding\PdfBranding;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
+use App\Shared\Domain\Model\Theme\ThemeRegistry;
 
 class GenerateContributionCertificateService implements CommandHandler
 {
@@ -35,6 +36,7 @@ class GenerateContributionCertificateService implements CommandHandler
         private ContributionCertificateVerificationUrlGenerator $verificationUrlGenerator,
         private BrandingResolver $brandingResolver,
         private CertificateLogoDownloader $logoDownloader,
+        private ThemeRegistry $themeRegistry,
         private string $localeList,
         private string $documentAuthor,
     ) {}
@@ -62,7 +64,8 @@ class GenerateContributionCertificateService implements CommandHandler
 
         $tokens = $this->brandingResolver->resolve($contributionCertificate->accountId());
         $logoPath = $this->logoDownloader->download($tokens->logoMediaId);
-        $branding = PdfBranding::fromTokens($tokens, $this->documentAuthor, $logoPath);
+        $theme = $this->themeRegistry->get($tokens->themeSlug);
+        $branding = PdfBranding::fromTokens($tokens, $this->documentAuthor, $logoPath)->withThemeLogos($theme->logo(), $theme->inverseLogo());
 
         $previousLocale = LocaleGetter::locale();
         $files = [];

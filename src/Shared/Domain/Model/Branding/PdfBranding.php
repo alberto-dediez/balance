@@ -33,6 +33,8 @@ final readonly class PdfBranding
         public string $documentAuthor,
         public string $themeSlug = 'default',
         public ?string $logoPath = null,
+        public ?string $themeLogo = null,
+        public ?string $themeInverseLogo = null,
     ) {}
 
     public static function bioscore(?string $documentAuthor = null): self
@@ -89,6 +91,28 @@ final readonly class PdfBranding
             documentAuthor: $this->documentAuthor,
             themeSlug: $this->themeSlug,
             logoPath: $logoPath,
+            themeLogo: $this->themeLogo,
+            themeInverseLogo: $this->themeInverseLogo,
+        );
+    }
+
+    public function withThemeLogos(?string $themeLogo, ?string $themeInverseLogo): self
+    {
+        return new self(
+            primary: $this->primary,
+            secondary: $this->secondary,
+            dark: $this->dark,
+            darkShade: $this->darkShade,
+            lightShade: $this->lightShade,
+            subtle: $this->subtle,
+            bodyText: $this->bodyText,
+            faintLine: $this->faintLine,
+            fontFamily: $this->fontFamily,
+            documentAuthor: $this->documentAuthor,
+            themeSlug: $this->themeSlug,
+            logoPath: $this->logoPath,
+            themeLogo: $themeLogo,
+            themeInverseLogo: $themeInverseLogo,
         );
     }
 

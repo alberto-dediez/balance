@@ -135,6 +135,7 @@ class GenerateContributionCertificateServiceTest extends TestCase
                 new BrandingPalette(),
             ),
             new CertificateLogoDownloader(MediaRepositoryMother::inMemory(), MediaStorageMother::inMemory()),
+            ThemeRegistryMother::withThemes(),
             self::LOCALE_LIST,
             'Bioscore Sustainability',
         ))(new GenerateContributionCertificateRequest($certificate->id()), UserMother::systemUser());

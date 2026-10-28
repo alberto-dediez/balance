@@ -98,6 +98,16 @@ trait GenericGenerator
         return $this->getRootDir() . 'assets/images/' . $imageName;
     }
 
+    private function logoPath(): string
+    {
+        return $this->pdfBranding()->logoPath ?? $this->themeImagePath($this->pdfBranding()->themeLogo, 'logo-dark.png');
+    }
+
+    private function themeImagePath(?string $themeImage, string $defaultImageName): string
+    {
+        return null === $themeImage ? $this->getImagePath($defaultImageName) : $this->getRootDir() . 'assets/' . $themeImage;
+    }
+
     /** @param string|array{0: int, 1: int, 2: int} $color */
     private function setFont(\TCPDF $pdf, int|float $size, string $type = self::FONT_STYLE_REGULAR, string|array $color = self::COLOR_PRIMARY): void
     {
@@ -189,9 +199,9 @@ trait GenericGenerator
         $pdf->Circle(52, 230, 28, 0, 360, 'F', [], $this->pdfBranding()->lightShade);
         $pdf->Circle(28, 271, 10, 0, 360, 'F', [], $this->pdfBranding()->lightShade);
 
-        $logoPath = $this->getImagePath('logo-white.png');
+        $logoPath = $this->themeImagePath($this->pdfBranding()->themeInverseLogo, 'logo-white.png');
         if (is_file($logoPath)) {
-            $pdf->Image($logoPath, 20, 20, 60, 20, '', '', '', false, 300);
+            $pdf->Image($logoPath, 20, 20, 60, 20, '', '', '', false, 300, '', false, false, 0, 'LM');
         }
 
         $this->setFont($pdf, 8, self::FONT_STYLE_MEDIUM, $this->pdfBranding()->subtle);
@@ -234,9 +244,9 @@ trait GenericGenerator
     {
         $pdf->Rect(0, 36, 2.4, 220, 'F', [], $this->pdfBranding()->secondary);
 
-        $logoPath = $this->getImagePath('logo-dark.png');
+        $logoPath = $this->logoPath();
         if (is_file($logoPath)) {
-            $pdf->Image($logoPath, 14, 12, 42, 14, '', '', '', false, 300);
+            $pdf->Image($logoPath, 14, 12, 42, 14, '', '', '', false, 300, '', false, false, 0, 'LM');
         }
 
         $this->setFont($pdf, 8, self::FONT_STYLE_SEMIBOLD, $this->pdfBranding()->primary);

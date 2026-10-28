@@ -1,0 +1,43 @@
+// ------------------------------------------------------------------
+// Greenhost theme
+//
+// Like assets/styles/_branding.scss, every rule MUST stay inside
+// `body.branded-page`. The isolation is enforced by
+// tests/Unit/Shared/Infrastructure/Styles/BrandingStylesheetTest.
+// ------------------------------------------------------------------
+
+body.branded-page {
+  .card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 52, 50, 0.06);
+  }
+
+  .card-header {
+    background-color: var(--brand-light);
+  }
+
+  .btn {
+    border-radius: 8px;
+    border-width: 2px;
+    font-weight: 600;
+  }
+
+  .btn-outline-secondary {
+    background-color: #fff;
+  }
+
+  h1, .h1 {
+    color: var(--brand-primary);
+    font-weight: 700;
+  }
+
+  .topbar {
+    background-color: var(--brand-body-bg);
+    border-bottom: 1px solid var(--brand-light);
+  }
+
+  .table > thead th {
+    background-color: var(--brand-light);
+  }
+}

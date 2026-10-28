@@ -54,10 +54,11 @@ class BrandingRuntime implements RuntimeExtensionInterface
 
     public function logoUrl(): string
     {
-        $logoMediaId = $this->context->tokens()->logoMediaId;
+        $tokens = $this->context->tokens();
+        $logoMediaId = $tokens->logoMediaId;
 
         if (!$logoMediaId instanceof MediaId) {
-            return $this->packages->getUrl('images/logo-dark.png');
+            return $this->packages->getUrl($this->themeRegistry->get($tokens->themeSlug)->logo() ?? 'images/logo-dark.png');
         }
 
         return $this->urlGenerator->generate('library_media_public_show', ['mediaId' => (string) $logoMediaId]);
