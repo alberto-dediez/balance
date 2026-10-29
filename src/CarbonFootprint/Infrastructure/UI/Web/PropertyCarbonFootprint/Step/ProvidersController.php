@@ -72,7 +72,7 @@ class ProvidersController extends AbstractController
                 throw $this->createAccessDeniedException($e->getMessage());
             }
 
-            return $this->redirectToRoute('property_carbon_footprints_mitigation_plan', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
+            return $this->redirectToRoute('property_carbon_footprints_employees', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
         }
 
         try {

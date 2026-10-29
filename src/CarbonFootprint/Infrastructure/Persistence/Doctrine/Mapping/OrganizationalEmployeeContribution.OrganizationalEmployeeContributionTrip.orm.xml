@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionTrip" table="organizational_employee_contribution_trips">
+        <id name="id" type="organizational_employee_contribution_trip_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="contribution" target-entity="App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\OrganizationalEmployeeContribution" inversed-by="trips">
+            <join-column name="contribution_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="mobilityId" type="mobility_id" column="mobility_id" nullable="false"/>
+        <field name="distanceKm" type="float" column="distance_km" nullable="false"/>
+        <field name="trips" type="smallint" column="trips" nullable="false"/>
+        <field name="vehicleOccupants" type="smallint" column="vehicle_occupants" nullable="false"/>
+        <field name="hotelNights" type="smallint" column="hotel_nights" nullable="false"/>
+    </entity>
+
+</doctrine-mapping>

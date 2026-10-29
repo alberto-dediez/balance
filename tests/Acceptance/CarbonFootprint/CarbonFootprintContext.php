@@ -60,6 +60,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContribution;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionId;
 use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionRepository;
+use App\CarbonFootprint\Domain\Model\EmployeeContribution\EmployeeContributionStatus;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
@@ -83,6 +84,11 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\CommuteAnswer;
+use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\OrganizationalEmployeeContribution;
+use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionId;
+use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionRepository;
+use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\TripAnswer;
 use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContribution;
 use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionId;
 use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepository;
@@ -2252,6 +2258,58 @@ final readonly class CarbonFootprintContext implements Context
         );
     }
 
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with providers answered and later excluded exists')]
+    public function propertyCarbonFootprintWithProvidersAnsweredAndLaterExcludedExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::withProvidersAnswered($propertyId, $id, $account, (int) $year);
+        $propertyCarbonFootprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->getPropertyCarbonFootprintRepository()->add($propertyCarbonFootprint);
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with providers answered and later excluded exists')]
+    public function companyCarbonFootprintWithProvidersAnsweredAndLaterExcludedExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $companyCarbonFootprint = CompanyCarbonFootprintMother::withProvidersAnswered($companyId, $id, $account, (int) $year);
+        $companyCarbonFootprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->getCompanyCarbonFootprintRepository()->add($companyCarbonFootprint);
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with scope 3 excluded exists')]
+    public function companyCarbonFootprintWithScope3ExcludedExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::withScope3Excluded($companyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with employees answered exists')]
+    public function propertyCarbonFootprintWithEmployeesAnsweredExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getPropertyCarbonFootprintRepository()->add(
+            PropertyCarbonFootprintMother::withEmployeesAnswered($propertyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with employees answered exists')]
+    public function companyCarbonFootprintWithEmployeesAnsweredExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::withEmployeesAnswered($companyId, $id, $account, (int) $year),
+        );
+    }
+
     #[Given(':subjectType carbon footprint :id has a purchase service activity :itemId in scope 3')]
     #[Given(':subjectType carbon footprint :id has a purchase service activity :itemId in scope 3 for property :propertyId')]
     public function carbonFootprintHasAPurchaseServiceActivityInScope3(string $subjectType, string $id, string $itemId, ?string $propertyId = null): void
@@ -2863,6 +2921,207 @@ final readonly class CarbonFootprintContext implements Context
     private function getOrganizationalProviderContributionRepository(): OrganizationalProviderContributionRepository
     {
         return $this->client->getContainer()->get(OrganizationalProviderContributionRepository::class);
+    }
+
+    #[Given('organizational employee contribution with id :id for :subjectType carbon footprint :footprintId and employee :employeeId of account :account with token :token exists')]
+    public function organizationalEmployeeContributionExists(string $id, string $subjectType, string $footprintId, string $employeeId, string $account, string $token): void
+    {
+        $contribution = new OrganizationalEmployeeContribution(new OrganizationalEmployeeContributionId($id));
+        $contribution->register(
+            subjectType: CarbonFootprintReportSubjectType::from($subjectType),
+            carbonFootprintId: $footprintId,
+            accountId: new AccountId($account),
+            employeeId: new EmployeeId($employeeId),
+            token: $token,
+            employeeName: 'Employee ' . $employeeId,
+        );
+
+        $this->getOrganizationalEmployeeContributionRepository()->add($contribution);
+    }
+
+    #[Given('organizational employee contribution :id is answered with :weeks weeks, commute :commuteMobilityId :commuteKm km :days days :commuteOccupants occupants and trip :tripMobilityId :tripKm km :trips trips :tripOccupants occupants :nights nights')]
+    public function organizationalEmployeeContributionIsAnswered(
+        string $id,
+        string $weeks,
+        string $commuteMobilityId,
+        string $commuteKm,
+        string $days,
+        string $commuteOccupants,
+        string $tripMobilityId,
+        string $tripKm,
+        string $trips,
+        string $tripOccupants,
+        string $nights,
+    ): void {
+        $contribution = $this->organizationalEmployeeContribution($id);
+        $contribution->answerCommuting(
+            $contribution->workplacePropertyId(),
+            (int) $weeks,
+            [new CommuteAnswer(new MobilityId($commuteMobilityId), (float) $commuteKm, (int) $days, (int) $commuteOccupants)],
+        );
+        $contribution->answerBusinessTravel([new TripAnswer(new MobilityId($tripMobilityId), (float) $tripKm, (int) $trips, (int) $tripOccupants, (int) $nights)]);
+
+        $this->getOrganizationalEmployeeContributionRepository()->add($contribution);
+    }
+
+    #[Given('organizational employee contribution :id has workplace :propertyId')]
+    public function organizationalEmployeeContributionHasWorkplace(string $id, string $propertyId): void
+    {
+        $contribution = $this->organizationalEmployeeContribution($id);
+        $contribution->answerCommuting(new PropertyId($propertyId), null, []);
+
+        $this->getOrganizationalEmployeeContributionRepository()->add($contribution);
+    }
+
+    #[Given('organizational employee contribution :id is ignored')]
+    public function organizationalEmployeeContributionIsIgnored(string $id): void
+    {
+        $contribution = $this->organizationalEmployeeContribution($id);
+        $contribution->ignore();
+
+        $this->getOrganizationalEmployeeContributionRepository()->add($contribution);
+    }
+
+    #[When('I submit the employees step form with employees :ids and total :total')]
+    public function iSubmitTheEmployeesStepForm(string $ids, string $total): void
+    {
+        $this->iSubmitTheEmployeesStepFormWithButton('Siguiente', $ids, $total);
+    }
+
+    #[When('I submit the employees step form with button :button, employees :ids and total :total')]
+    public function iSubmitTheEmployeesStepFormWithButton(string $button, string $ids, string $total): void
+    {
+        $selected = '' === $ids ? [] : explode(',', $ids);
+        $form = $this->client->getCrawler()->selectButton($button)->form();
+        $form['totalEmployees'] = $total;
+
+        foreach ($form->all() as $name => $field) {
+            if (!str_starts_with($name, 'employees[employeeIds]') || !$field instanceof ChoiceFormField) {
+                continue;
+            }
+
+            if (in_array($field->availableOptionValues()[0] ?? null, $selected, true)) {
+                $field->tick();
+            } else {
+                $field->untick();
+            }
+        }
+
+        $this->client->submit($form);
+    }
+
+    #[Then('organizational employee contribution :id should have status :status')]
+    public function organizationalEmployeeContributionShouldHaveStatus(string $id, string $status): void
+    {
+        Assert::assertSame(EmployeeContributionStatus::from($status), $this->organizationalEmployeeContribution($id)->status());
+    }
+
+    #[Then('organizational employee contribution :id should have :commutes commutes and :trips trips')]
+    public function organizationalEmployeeContributionShouldHaveCommutesAndTrips(string $id, string $commutes, string $trips): void
+    {
+        $contribution = $this->organizationalEmployeeContribution($id);
+
+        Assert::assertCount((int) $commutes, $contribution->commutes());
+        Assert::assertCount((int) $trips, $contribution->trips());
+    }
+
+    #[Then('organizational employee contribution :id should have commute :mobilityId :km km :days days :occupants occupants and :weeks weeks')]
+    public function organizationalEmployeeContributionShouldHaveCommute(string $id, string $mobilityId, string $km, string $days, string $occupants, string $weeks): void
+    {
+        $contribution = $this->organizationalEmployeeContribution($id);
+        $commutes = $contribution->commutes();
+
+        Assert::assertCount(1, $commutes);
+        Assert::assertSame($mobilityId, (string) $commutes[0]->mobilityId());
+        Assert::assertEqualsWithDelta((float) $km, $commutes[0]->distanceKm(), 0.001);
+        Assert::assertSame((int) $days, $commutes[0]->daysPerWeek());
+        Assert::assertSame((int) $occupants, $commutes[0]->vehicleOccupants());
+        Assert::assertSame((int) $weeks, $contribution->commutingWeeksPerYear());
+    }
+
+    #[Then('organizational employee contribution :id should have trip :mobilityId :km km :trips trips :occupants occupants :nights nights')]
+    public function organizationalEmployeeContributionShouldHaveTrip(string $id, string $mobilityId, string $km, string $trips, string $occupants, string $nights): void
+    {
+        $contributionTrips = $this->organizationalEmployeeContribution($id)->trips();
+
+        Assert::assertCount(1, $contributionTrips);
+        Assert::assertSame($mobilityId, (string) $contributionTrips[0]->mobilityId());
+        Assert::assertEqualsWithDelta((float) $km, $contributionTrips[0]->distanceKm(), 0.001);
+        Assert::assertSame((int) $trips, $contributionTrips[0]->trips());
+        Assert::assertSame((int) $occupants, $contributionTrips[0]->vehicleOccupants());
+        Assert::assertSame((int) $nights, $contributionTrips[0]->hotelNights());
+    }
+
+    #[Then('organizational employee contribution :id should have workplace :propertyId')]
+    public function organizationalEmployeeContributionShouldHaveWorkplace(string $id, string $propertyId): void
+    {
+        Assert::assertSame($propertyId, (string) $this->organizationalEmployeeContribution($id)->workplacePropertyId());
+    }
+
+    #[Then(':subjectType carbon footprint :id should have :count organizational employee contributions')]
+    public function carbonFootprintShouldHaveOrganizationalEmployeeContributions(string $subjectType, string $id, string $count): void
+    {
+        Assert::assertCount((int) $count, $this->getOrganizationalEmployeeContributionRepository()->findByCarbonFootprint(CarbonFootprintReportSubjectType::from($subjectType), $id));
+    }
+
+    #[Then(':subjectType carbon footprint :id should have :count organizational employee contributions with status :status')]
+    public function carbonFootprintShouldHaveOrganizationalEmployeeContributionsWithStatus(string $subjectType, string $id, string $count, string $status): void
+    {
+        $contributions = array_filter(
+            $this->getOrganizationalEmployeeContributionRepository()->findByCarbonFootprint(CarbonFootprintReportSubjectType::from($subjectType), $id),
+            static fn(OrganizationalEmployeeContribution $contribution): bool => EmployeeContributionStatus::from($status) === $contribution->status(),
+        );
+
+        Assert::assertCount((int) $count, $contributions);
+    }
+
+    #[Then(':subjectType carbon footprint :id should have :count employee activities in source :source')]
+    public function carbonFootprintShouldHaveEmployeeActivitiesInSource(string $subjectType, string $id, string $count, string $source): void
+    {
+        $references = array_filter(
+            $this->findCarbonFootprint($subjectType, $id)->activityReferences(),
+            static fn($reference): bool => $reference->placement->fromEmployees && Source::from($source) === $reference->placement->source,
+        );
+
+        Assert::assertCount((int) $count, $references);
+    }
+
+    #[Then('company carbon footprint :id should have :count employee activities in source :source for property :propertyId')]
+    public function companyCarbonFootprintShouldHaveEmployeeActivitiesInSourceForProperty(string $id, string $count, string $source, string $propertyId): void
+    {
+        $references = array_filter(
+            $this->companyCarbonFootprint($id)->activityReferences(),
+            static fn($reference): bool => $reference->placement->fromEmployees
+                && Source::from($source) === $reference->placement->source
+                && ('' === $propertyId ? null === $reference->placement->propertyId : $propertyId === (string) $reference->placement->propertyId),
+        );
+
+        Assert::assertCount((int) $count, $references);
+    }
+
+    #[Then('property carbon footprint :id should have :co2eq kg in source :source')]
+    public function propertyCarbonFootprintShouldHaveEmissionsInSource(string $id, string $co2eq, string $source): void
+    {
+        /** @var EmissionsBreakdownBuilder $breakdownBuilder */
+        $breakdownBuilder = $this->client->getContainer()->get(EmissionsBreakdownBuilder::class);
+
+        $breakdown = $breakdownBuilder->build($this->propertyCarbonFootprint($id), Scope::cases());
+
+        Assert::assertEqualsWithDelta((float) $co2eq, (float) $breakdown->bySource[Source::from($source)->value]->co2eq(), 0.0001);
+    }
+
+    private function organizationalEmployeeContribution(string $id): OrganizationalEmployeeContribution
+    {
+        $contribution = $this->getOrganizationalEmployeeContributionRepository()->find(new OrganizationalEmployeeContributionId($id));
+
+        Assert::assertNotNull($contribution);
+
+        return $contribution;
+    }
+
+    private function getOrganizationalEmployeeContributionRepository(): OrganizationalEmployeeContributionRepository
+    {
+        return $this->client->getContainer()->get(OrganizationalEmployeeContributionRepository::class);
     }
 
     private function findCarbonFootprint(string $subjectType, string $id): CarbonFootprint

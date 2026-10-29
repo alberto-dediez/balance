@@ -86,6 +86,24 @@ class EmissionsBreakdownBuilderTest extends TestCase
         $this->assertSame($expected, (float) $breakdown->byStage[Scope::Scope3->key()]->co2eq());
     }
 
+    public function testAddsUpOwnerAndEmployeeActivitiesInTheSameSource(): void
+    {
+        $propertyCarbonFootprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+
+        $ownerActivity = ReportedEmissionsActivityMother::registered(kilograms: 1200.0);
+        $employeeActivity = ReportedEmissionsActivityMother::registered(kilograms: 800.0);
+        $this->activityRepository->save($ownerActivity);
+        $this->activityRepository->save($employeeActivity);
+
+        $propertyCarbonFootprint->addActivity($ownerActivity->id(), new ActivityPlacement(Scope::Scope3, Source::EmployeeCommuting));
+        $propertyCarbonFootprint->addActivity($employeeActivity->id(), new ActivityPlacement(Scope::Scope3, Source::EmployeeCommuting, fromEmployees: true));
+
+        $breakdown = $this->createSUT()->build($propertyCarbonFootprint, Scope::cases());
+
+        $this->assertSame(2000.0, (float) $breakdown->bySource[Source::EmployeeCommuting->value]->co2eq());
+        $this->assertSame(2000.0, (float) $breakdown->byStage[Scope::Scope3->key()]->co2eq());
+    }
+
     public function testLeavesOutTheActivitiesOfAnIgnoredProviderContribution(): void
     {
         $footprintId = (string) PropertyCarbonFootprintId::generate();

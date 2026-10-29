@@ -7117,14 +7117,6 @@
         <source>Utilizaremos tu correo electrónico únicamente para enviarte lo que has solicitado. Consulta la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
         <target><![CDATA[We will use your email address only to send you what you asked for. See the <a href="{url}" target="_blank" rel="noopener noreferrer">privacy policy</a>.]]></target>
       </trans-unit>
-      <trans-unit id="EYIQKjp" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento, tal y como se describe en la &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;política de privacidad&lt;/a&gt;.">
-        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento, tal y como se describe en la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
-        <target><![CDATA[I have read and accept the processing of my personal data by {company} in order to calculate and aggregate the carbon footprint of the event, as described in the <a href="{url}" target="_blank" rel="noopener noreferrer">privacy policy</a>.]]></target>
-      </trans-unit>
-      <trans-unit id="WYsIysu" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento.">
-        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento.</source>
-        <target>I have read and accept the processing of my personal data by {company} in order to calculate and aggregate the carbon footprint of the event.</target>
-      </trans-unit>
       <trans-unit id="m0O8wOv" resname="El pago se procesa íntegramente por nuestro proveedor de pagos; no almacenamos los datos de tu tarjeta.">
         <source>El pago se procesa íntegramente por nuestro proveedor de pagos; no almacenamos los datos de tu tarjeta.</source>
         <target>The payment is processed entirely by our payment provider; we do not store your card details.</target>
@@ -10164,6 +10156,270 @@
       <trans-unit id="pfc2k4V" resname="{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.">
         <source>{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.</source>
         <target>{count, plural, one {There is # request awaiting a response.} other {There are # requests awaiting a response.}} You can continue; the provider will be able to answer until you complete the footprint.</target>
+      </trans-unit>
+      <trans-unit id="Pt4Rc1g" resname="El total de empleados debe ser al menos 1">
+        <source>El total de empleados debe ser al menos 1</source>
+        <target>The total number of employees must be at least 1</target>
+      </trans-unit>
+      <trans-unit id="DEq_3Ct" resname="No hay ninguna pernoctación del equipo organizador en el catálogo: las noches de hotel no se han contabilizado">
+        <source>No hay ninguna pernoctación del equipo organizador en el catálogo: las noches de hotel no se han contabilizado</source>
+        <target>There is no organising team overnight stay in the catalogue: hotel nights have not been counted</target>
+      </trans-unit>
+      <trans-unit id="o9lKzXE" resname="Se ha reenviado la encuesta a {name}">
+        <source>Se ha reenviado la encuesta a {name}</source>
+        <target>The survey has been resent to {name}</target>
+      </trans-unit>
+      <trans-unit id="M.vZEDJ" resname="No se ha podido reenviar la encuesta a {name}">
+        <source>No se ha podido reenviar la encuesta a {name}</source>
+        <target>The survey could not be resent to {name}</target>
+      </trans-unit>
+      <trans-unit id="JZZU1mE" resname="Aporta tus desplazamientos y viajes de {year} para {subject}">
+        <source>Aporta tus desplazamientos y viajes de {year} para {subject}</source>
+        <target>Share your {year} commuting and business travel for {subject}</target>
+      </trans-unit>
+      <trans-unit id="Q5yKnsL" resname="del evento">
+        <source>del evento</source>
+        <target>of the event</target>
+      </trans-unit>
+      <trans-unit id="unxmCj1" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}, tal y como se describe en la &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;política de privacidad&lt;/a&gt;.">
+        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}, tal y como se describe en la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
+        <target><![CDATA[I have read and accept the processing of my personal data by {company} in order to calculate and aggregate the carbon footprint {purpose}, as described in the <a href="{url}" target="_blank" rel="noopener noreferrer">privacy policy</a>.]]></target>
+      </trans-unit>
+      <trans-unit id="eBYmAdD" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}.">
+        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}.</source>
+        <target>I have read and accept the processing of my personal data by {company} in order to calculate and aggregate the carbon footprint {purpose}.</target>
+      </trans-unit>
+      <trans-unit id="rr_w8yo" resname="La categoría {source} está excluida: los datos de los empleados no se contabilizarán en ella.">
+        <source>La categoría {source} está excluida: los datos de los empleados no se contabilizarán en ella.</source>
+        <target>The category {source} is excluded: employee data will not be counted in it.</target>
+      </trans-unit>
+      <trans-unit id="1fWdHWa" resname="Selecciona a los empleados a los que pedir sus desplazamientos al trabajo y viajes de negocio. Sus respuestas se extrapolan al total de plantilla y se suman en las categorías 6 y 7 del alcance 3.">
+        <source>Selecciona a los empleados a los que pedir sus desplazamientos al trabajo y viajes de negocio. Sus respuestas se extrapolan al total de plantilla y se suman en las categorías 6 y 7 del alcance 3.</source>
+        <target>Select the employees you want to ask for their commuting and business travel. Their answers are extrapolated to the total workforce and added to categories 6 and 7 of scope 3.</target>
+      </trans-unit>
+      <trans-unit id="UA96ba8" resname="Registrar empleado">
+        <source>Registrar empleado</source>
+        <target>Register employee</target>
+      </trans-unit>
+      <trans-unit id="0oUMOiv" resname="Emisiones extrapoladas (kg CO₂eq)">
+        <source>Emisiones extrapoladas (kg CO₂eq)</source>
+        <target>Extrapolated emissions (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="8tVRMSK" resname="Todavía no has invitado a ningún empleado.">
+        <source>Todavía no has invitado a ningún empleado.</source>
+        <target>You have not invited any employee yet.</target>
+      </trans-unit>
+      <trans-unit id="1Fvg7Pg" resname="Centro de trabajo">
+        <source>Centro de trabajo</source>
+        <target>Workplace</target>
+      </trans-unit>
+      <trans-unit id="g2DvGBJ" resname="Viajes de negocio">
+        <source>Viajes de negocio</source>
+        <target>Business travel</target>
+      </trans-unit>
+      <trans-unit id="t1.JUqv" resname="No he hecho viajes de negocio">
+        <source>No he hecho viajes de negocio</source>
+        <target>I have not made any business trips</target>
+      </trans-unit>
+      <trans-unit id="Mt86g1N" resname="Km">
+        <source>Km</source>
+        <target>Km</target>
+      </trans-unit>
+      <trans-unit id="fZl02OW" resname="Nº de viajes">
+        <source>Nº de viajes</source>
+        <target>No. of trips</target>
+      </trans-unit>
+      <trans-unit id="KifhTcI" resname="Sin indicar">
+        <source>Sin indicar</source>
+        <target>Not specified</target>
+      </trans-unit>
+      <trans-unit id="pN9_5fW" resname="No me desplazo al centro de trabajo">
+        <source>No me desplazo al centro de trabajo</source>
+        <target>I do not commute to the workplace</target>
+      </trans-unit>
+      <trans-unit id="EI_5GTv" resname="Semanas al año">
+        <source>Semanas al año</source>
+        <target>Weeks per year</target>
+      </trans-unit>
+      <trans-unit id="fFhkydV" resname="Km por trayecto">
+        <source>Km por trayecto</source>
+        <target>Km per one-way trip</target>
+      </trans-unit>
+      <trans-unit id="Zq9ugzN" resname="Días por semana">
+        <source>Días por semana</source>
+        <target>Days per week</target>
+      </trans-unit>
+      <trans-unit id="thYBVJR" resname="de la organización">
+        <source>de la organización</source>
+        <target>of the organisation</target>
+      </trans-unit>
+      <trans-unit id="ge2mbHR" resname="Gracias por tu aportación">
+        <source>Gracias por tu aportación</source>
+        <target>Thank you for your contribution</target>
+      </trans-unit>
+      <trans-unit id="IESPCe_" resname="Se han guardado correctamente tus desplazamientos y viajes. Puedes volver a este enlace para revisarlos o modificarlos mientras la huella de carbono siga abierta.">
+        <source>Se han guardado correctamente tus desplazamientos y viajes. Puedes volver a este enlace para revisarlos o modificarlos mientras la huella de carbono siga abierta.</source>
+        <target>Your commuting and travel have been saved successfully. You can return to this link to review or modify them while the carbon footprint remains open.</target>
+      </trans-unit>
+      <trans-unit id="pi.5dvl" resname="{subject} te pide tus desplazamientos al trabajo y viajes de negocio de {year}.">
+        <source>{subject} te pide tus desplazamientos al trabajo y viajes de negocio de {year}.</source>
+        <target>{subject} is asking for your {year} commuting and business travel.</target>
+      </trans-unit>
+      <trans-unit id="9fZRo6Z" resname="Responder la encuesta">
+        <source>Responder la encuesta</source>
+        <target>Answer the survey</target>
+      </trans-unit>
+      <trans-unit id="19bbYpI" resname="Hola {name}, {subject} está calculando su huella de carbono de {year} y necesita conocer cómo te desplazas al trabajo y qué viajes de negocio has hecho.">
+        <source>Hola {name}, {subject} está calculando su huella de carbono de {year} y necesita conocer cómo te desplazas al trabajo y qué viajes de negocio has hecho.</source>
+        <target>Hello {name}, {subject} is calculating its {year} carbon footprint and needs to know how you commute to work and which business trips you have made.</target>
+      </trans-unit>
+      <trans-unit id=".Rdx2zs" resname="No se desplaza al centro de trabajo.">
+        <source>No se desplaza al centro de trabajo.</source>
+        <target>Does not commute to the workplace.</target>
+      </trans-unit>
+      <trans-unit id="ZM_22c2" resname="Medio">
+        <source>Medio</source>
+        <target>Means of transport</target>
+      </trans-unit>
+      <trans-unit id="9DI5bC0" resname="Ocupantes">
+        <source>Ocupantes</source>
+        <target>Occupants</target>
+      </trans-unit>
+      <trans-unit id=".CLKZka" resname="Sin viajes de negocio.">
+        <source>Sin viajes de negocio.</source>
+        <target>No business travel.</target>
+      </trans-unit>
+      <trans-unit id="DYm_53L" resname="Total de plantilla">
+        <source>Total de plantilla</source>
+        <target>Total workforce</target>
+      </trans-unit>
+      <trans-unit id="YZcFy3u" resname="Datos de empleados">
+        <source>Datos de empleados</source>
+        <target>Employee data</target>
+      </trans-unit>
+      <trans-unit id="sHMaqbq" resname="Sin factor de emisión para {items}: sus datos de empleados no se han contabilizado">
+        <source>Sin factor de emisión para {items}: sus datos de empleados no se han contabilizado</source>
+        <target>No emission factor for {items}: their employee data has not been counted</target>
+      </trans-unit>
+      <trans-unit id="3HOd7WW" resname="Sin factor de emisión del año de la huella; se ha usado el del año más cercano para {items}">
+        <source>Sin factor de emisión del año de la huella; se ha usado el del año más cercano para {items}</source>
+        <target>No emission factor for the footprint year; the nearest year has been used for {items}</target>
+      </trans-unit>
+      <trans-unit id="C.cWlVh" resname="Las semanas al año deben estar entre 1 y 53">
+        <source>Las semanas al año deben estar entre 1 y 53</source>
+        <target>Weeks per year must be between 1 and 53</target>
+      </trans-unit>
+      <trans-unit id="IMTC8Qz" resname="Los kilómetros por trayecto deben ser mayores que 0">
+        <source>Los kilómetros por trayecto deben ser mayores que 0</source>
+        <target>Kilometres per trip must be greater than 0</target>
+      </trans-unit>
+      <trans-unit id="WCvm58x" resname="Los días por semana deben estar entre 1 y 7">
+        <source>Los días por semana deben estar entre 1 y 7</source>
+        <target>Days per week must be between 1 and 7</target>
+      </trans-unit>
+      <trans-unit id="4qLz.Rs" resname="Los ocupantes del vehículo deben estar entre 1 y 100">
+        <source>Los ocupantes del vehículo deben estar entre 1 y 100</source>
+        <target>Vehicle occupants must be between 1 and 100</target>
+      </trans-unit>
+      <trans-unit id=".Zk2yLH" resname="Los kilómetros del viaje deben ser mayores que 0">
+        <source>Los kilómetros del viaje deben ser mayores que 0</source>
+        <target>Trip kilometres must be greater than 0</target>
+      </trans-unit>
+      <trans-unit id="_dwpN7l" resname="El número de viajes debe estar entre 1 y 1000">
+        <source>El número de viajes debe estar entre 1 y 1000</source>
+        <target>The number of trips must be between 1 and 1000</target>
+      </trans-unit>
+      <trans-unit id="_t1Qxf." resname="Las noches de hotel deben estar entre 0 y 366">
+        <source>Las noches de hotel deben estar entre 0 y 366</source>
+        <target>Hotel nights must be between 0 and 366</target>
+      </trans-unit>
+      <trans-unit id="u_EisUY" resname="A property carbon footprint does not accept a workplace">
+        <source>A property carbon footprint does not accept a workplace</source>
+        <target>A property carbon footprint does not accept a workplace</target>
+      </trans-unit>
+      <trans-unit id="xZUNFJ6" resname="Property is not consolidated in the company">
+        <source>Property is not consolidated in the company</source>
+        <target>The property is not consolidated in the company</target>
+      </trans-unit>
+      <trans-unit id="BdqFKh6" resname="El número total de empleados no puede ser inferior al número de empleados seleccionados">
+        <source>El número total de empleados no puede ser inferior al número de empleados seleccionados</source>
+        <target>The total number of employees cannot be lower than the number of selected employees</target>
+      </trans-unit>
+      <trans-unit id="RC7m7sZ" resname="Employee not found">
+        <source>Employee not found</source>
+        <target>Employee not found</target>
+      </trans-unit>
+      <trans-unit id="IgkxxO0" resname="CarbonFootprint has no accountId">
+        <source>CarbonFootprint has no accountId</source>
+        <target>The carbon footprint has no associated account</target>
+      </trans-unit>
+      <trans-unit id="TUm47CD" resname="Pendiente de respuesta.">
+        <source>Pendiente de respuesta.</source>
+        <target>Pending response.</target>
+      </trans-unit>
+      <trans-unit id="xWX819W" resname="Provider not found">
+        <source>Provider not found</source>
+        <target>Provider not found</target>
+      </trans-unit>
+      <trans-unit id="57YcGyj" resname="ProviderContribution not found">
+        <source>ProviderContribution not found</source>
+        <target>Provider contribution not found</target>
+      </trans-unit>
+      <trans-unit id="9x9XspX" resname="Cannot resend notification for an ignored ProviderContribution">
+        <source>Cannot resend notification for an ignored ProviderContribution</source>
+        <target>The notification of a rejected provider contribution cannot be resent</target>
+      </trans-unit>
+      <trans-unit id="pz3bBf4" resname="La fase de materiales no está disponible para proveedores">
+        <source>La fase de materiales no está disponible para proveedores</source>
+        <target>The materials phase is not available to providers</target>
+      </trans-unit>
+      <trans-unit id="yDKDJ4H" resname="OrganizationalProviderContribution not found">
+        <source>OrganizationalProviderContribution not found</source>
+        <target>Provider contribution not found</target>
+      </trans-unit>
+      <trans-unit id="QxC3gc4" resname="OrganizationalProviderContribution has no provider">
+        <source>OrganizationalProviderContribution has no provider</source>
+        <target>The contribution has no provider</target>
+      </trans-unit>
+      <trans-unit id="zlV8Edo" resname="Only manual provider contributions accept emissions from the owner">
+        <source>Only manual provider contributions accept emissions from the owner</source>
+        <target>Only manual provider contributions accept emissions entered by the owner</target>
+      </trans-unit>
+      <trans-unit id="Gnd.EN9" resname="A provider contribution must cover at least one source">
+        <source>A provider contribution must cover at least one source</source>
+        <target>A provider contribution must cover at least one source</target>
+      </trans-unit>
+      <trans-unit id="BMZAs5Q" resname="CarbonFootprint not found">
+        <source>CarbonFootprint not found</source>
+        <target>Carbon footprint not found</target>
+      </trans-unit>
+      <trans-unit id="2.W0_GV" resname="Provider contributions of organizational footprints are not available for events">
+        <source>Provider contributions of organizational footprints are not available for events</source>
+        <target>Provider contributions of organizational footprints are not available for events</target>
+      </trans-unit>
+      <trans-unit id="_Im269B" resname="EventCarbonFootprint not found">
+        <source>EventCarbonFootprint not found</source>
+        <target>Event carbon footprint not found</target>
+      </trans-unit>
+      <trans-unit id="3Bo8T4V" resname="EventCarbonFootprint has no accountId">
+        <source>EventCarbonFootprint has no accountId</source>
+        <target>The event carbon footprint has no account</target>
+      </trans-unit>
+      <trans-unit id="h_2u.mT" resname="El número total de empleados debe ser al menos 1">
+        <source>El número total de empleados debe ser al menos 1</source>
+        <target>The total number of employees must be at least 1</target>
+      </trans-unit>
+      <trans-unit id=".km0DLH" resname="EmployeeContribution not found">
+        <source>EmployeeContribution not found</source>
+        <target>Employee contribution not found</target>
+      </trans-unit>
+      <trans-unit id="PLBa9S8" resname="Cannot resend notification for an ignored EmployeeContribution">
+        <source>Cannot resend notification for an ignored EmployeeContribution</source>
+        <target>The notification of a rejected employee contribution cannot be resent</target>
+      </trans-unit>
+      <trans-unit id="EJqDuuV" resname="La fase de materiales no está disponible para empleados">
+        <source>La fase de materiales no está disponible para empleados</source>
+        <target>The materials phase is not available to employees</target>
       </trans-unit>
     </body>
   </file>

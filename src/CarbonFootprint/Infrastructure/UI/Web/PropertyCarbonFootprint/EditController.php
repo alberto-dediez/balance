@@ -29,6 +29,7 @@ class EditController extends AbstractController
                 'scope-2' => 'property_carbon_footprints_scope_2',
                 'scope-3' => 'property_carbon_footprints_scope_3',
                 'providers' => 'property_carbon_footprints_providers',
+                'employees' => 'property_carbon_footprints_employees',
                 'mitigation-plan' => 'property_carbon_footprints_mitigation_plan',
                 default => 'property_carbon_footprints_results',
             },

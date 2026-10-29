@@ -146,6 +146,55 @@ class MobilityTest extends TestCase
         $this->assertSame('1.0', $factor2023->co2eq());
     }
 
+    public function testNearestYearForGroupReturnsTheSameYearWhenItHasAFactor(): void
+    {
+        $mobility = $this->mobility();
+        $mobility->setEmissionFactor($this->emissionFactor(2023, '1.0'));
+        $mobility->setEmissionFactor($this->emissionFactor(2025, '2.0'));
+
+        $this->assertSame(2025, $mobility->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupReturnsThePreviousYearWhenItIsTheClosest(): void
+    {
+        $mobility = $this->mobility();
+        $mobility->setEmissionFactor($this->emissionFactor(2023, '1.0'));
+        $mobility->setEmissionFactor($this->emissionFactor(2028, '2.0'));
+
+        $this->assertSame(2023, $mobility->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupReturnsTheNextYearWhenItIsTheClosest(): void
+    {
+        $mobility = $this->mobility();
+        $mobility->setEmissionFactor($this->emissionFactor(2020, '1.0'));
+        $mobility->setEmissionFactor($this->emissionFactor(2026, '2.0'));
+
+        $this->assertSame(2026, $mobility->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupPrefersThePreviousYearOnATie(): void
+    {
+        $mobility = $this->mobility();
+        $mobility->setEmissionFactor($this->emissionFactor(2026, '2.0'));
+        $mobility->setEmissionFactor($this->emissionFactor(2024, '1.0'));
+
+        $this->assertSame(2024, $mobility->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupIgnoresOtherGroups(): void
+    {
+        $mobility = $this->mobility();
+        $mobility->setEmissionFactor($this->emissionFactor(2024, '1.0'));
+
+        $this->assertNull($mobility->emissionFactors()->nearestYearForGroup(2024, EmissionFactorGroupMother::random()->id()));
+    }
+
+    public function testNearestYearForGroupIsNullWithoutFactors(): void
+    {
+        $this->assertNull($this->mobility()->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
     public function testRemoveEmissionFactor(): void
     {
         $mobility = $this->mobility();

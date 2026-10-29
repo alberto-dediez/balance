@@ -1,10 +1,12 @@
+{% set consent_purpose = consent_purpose | default('del evento' | trans) %}
+
 <div class="form-check mt-4">
     <input class="form-check-input" type="checkbox" name="consent_accepted" id="consent_accepted" value="1" required>
     <label class="form-check-label" for="consent_accepted">
         {% if privacy_policy_url %}
-            {{ 'He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento, tal y como se describe en la <a href="{url}" target="_blank" rel="noopener noreferrer">política de privacidad</a>.' | trans({'{company}': company_name|e('html'), '{url}': privacy_policy_url|e('html_attr')}) | raw }}
+            {{ 'He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}, tal y como se describe en la <a href="{url}" target="_blank" rel="noopener noreferrer">política de privacidad</a>.' | trans({'{company}': company_name|e('html'), '{purpose}': consent_purpose|e('html'), '{url}': privacy_policy_url|e('html_attr')}) | raw }}
         {% else %}
-            {{ 'He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento.' | trans({'{company}': company_name}) }}
+            {{ 'He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}.' | trans({'{company}': company_name, '{purpose}': consent_purpose}) }}
         {% endif %}
     </label>
 </div>

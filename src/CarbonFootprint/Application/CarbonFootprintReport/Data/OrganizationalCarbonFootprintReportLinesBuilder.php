@@ -15,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonF
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrganizationalCarbonFootprintReportLinesBuilder
 {
@@ -26,6 +27,7 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
         private ActivityItemNameResolver $itemNameResolver,
         private ProviderRepository $providerRepository,
         private CountedActivityReferences $countedActivityReferences,
+        private TranslatorInterface $translator,
     ) {}
 
     /**
@@ -55,6 +57,10 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
 
             if (null !== $providerId) {
                 $itemName = sprintf('%s · %s', $this->providerName($providerId), $itemName);
+            }
+
+            if ($reference->placement->fromEmployees) {
+                $itemName = sprintf('%s · %s', $this->translator->trans('Empleados'), $itemName);
             }
 
             $lines[] = new OrganizationalCarbonFootprintReportActivityLine(

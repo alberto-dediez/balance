@@ -85,7 +85,7 @@ class EmissionsController extends AbstractController
             } catch (OrganizationalProviderContributionConsentRequiredException) {
                 return $this->redirectToRoute('public_organizational_provider_contribution_general', ['token' => $token]);
             } catch (\InvalidArgumentException|ExchangeRateNotFoundException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                 return $this->redirectToRoute('public_organizational_provider_contribution_emissions', ['token' => $token]);
             }

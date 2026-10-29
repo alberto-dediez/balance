@@ -68,7 +68,7 @@ Feature:
         Then I am redirected to route "property_carbon_footprints_scope_2"
 
     Scenario: An owner registers a manual measure
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
         When I click on link "Añadir medida al plan"
@@ -78,7 +78,7 @@ Feature:
         Then the only mitigation action of property carbon footprint "999" should be named "Paneles solares" in "es"
 
     Scenario: A manual measure requires a name
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/mitigation-actions/property/999/register"
         When I submit a form with "name:|targetYear:2030" and button "Registrar"
@@ -88,7 +88,7 @@ Feature:
 
     Scenario: A measure registered from a suggested one generates its effects and copies its translations
         Given combustible "Gas natural" with id "CB1" and emission factor for year "2025" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" has a combustible "CB1" activity of "1000" kg
         Given mitigation measure category "Energía" with id "C1" exists
         Given mitigation measure "Caldera eficiente" with id "M1" of category "C1" reducing source "fixed_facilities" between "0.1" and "0.3" exists
@@ -102,7 +102,7 @@ Feature:
         Then the only mitigation action of property carbon footprint "999" should be named "Efficient boiler" in "en"
 
     Scenario: A measure registered from a suggested one can reduce a scope 3 source
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" has a purchase service activity "PS1" in scope 3
         Given mitigation measure category "Compras" with id "C1" exists
         Given mitigation measure "Compra responsable" with id "M1" of category "C1" reducing source "purchased_goods_and_services" between "0.1" and "0.3" exists
@@ -113,7 +113,7 @@ Feature:
         Then the only mitigation action of property carbon footprint "999" should reduce source "purchased_goods_and_services" item "PS1" by "0.1"
 
     Scenario: Editing a measure in English stores the English translation
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Paneles solares" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
         When I am logged as "owner@dediez.software"
         When I go to "/en/mitigation-actions/A1/edit"
@@ -125,7 +125,7 @@ Feature:
 
     Scenario: A reduction out of the range of the effect is rejected
         Given combustible "Gas natural" with id "CB1" and emission factor for year "2025" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" has a combustible "CB1" activity of "1000" kg
         Given mitigation measure category "Energía" with id "C1" exists
         Given mitigation measure "Caldera eficiente" with id "M1" of category "C1" reducing source "fixed_facilities" between "0.1" and "0.3" exists
@@ -139,7 +139,7 @@ Feature:
         Then the only mitigation action of property carbon footprint "999" should reduce source "fixed_facilities" item "CB1" by "0.1"
 
     Scenario: A target year that is not after the base year is rejected
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Paneles solares" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/mitigation-actions/A1/edit"
@@ -148,7 +148,7 @@ Feature:
         Then I see a text "Este valor debería ser mayor que 2025"
 
     Scenario: An owner removes a measure
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Paneles solares" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/mitigation-actions/A1/remove" with csrf token "remove"
@@ -159,7 +159,7 @@ Feature:
     Scenario: Importing the previous measures replaces the current ones
         Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with scope 2 answered exists
         Given mitigation action "Caldera de condensación" with id "A1" for property carbon footprint "998" of account "666" with target year "2030" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Medida propia" with id "A3" for property carbon footprint "999" of account "666" with target year "2030" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
@@ -171,7 +171,7 @@ Feature:
         Then property carbon footprint "999" should have 1 mitigation actions
 
     Scenario: Without a previous footprint the import is not offered
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
         Then the response status should be 200
@@ -179,7 +179,7 @@ Feature:
 
     Scenario: The projection of the plan is shown in the step
         Given combustible "Gas natural" with id "CB1" and emission factor for year "2025" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" has a combustible "CB1" activity of "1000" kg
         Given mitigation action "Caldera de condensación" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
         Given mitigation action "A1" reduces source "fixed_facilities" item "CB1" by "0.2"
@@ -191,7 +191,7 @@ Feature:
         Then I see a text "800,00"
 
     Scenario: Next completes the footprint and registers its report
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
         When I submit the mitigation plan step form
@@ -201,7 +201,7 @@ Feature:
 
     Scenario: The step of a completed footprint is read only
         Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with scope 2 answered exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Paneles solares" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
         Given property carbon footprint "999" is completed
         When I am logged as "owner@dediez.software"
@@ -213,7 +213,7 @@ Feature:
         Then I do not see a text "Importar acciones previas"
 
     Scenario: Posting the step of a completed footprint redirects with a warning
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         When I am logged as "owner@dediez.software"
         When I make a POST request to "/es/property-carbon-footprints/999/step/mitigation-plan"
@@ -223,7 +223,7 @@ Feature:
     Scenario: An owner of another account cannot access the measures
         Given account "OtherCompany" with id "777" exists
         Given user "other@dediez.software" with role "ROLE_OWNER" of account "777" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Paneles solares" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
         When I am logged as "other@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
@@ -235,7 +235,7 @@ Feature:
 
     Scenario: A user with the User role cannot access the measures
         Given user "user@dediez.software" with role "ROLE_USER" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Paneles solares" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
         When I am logged as "user@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
@@ -243,12 +243,12 @@ Feature:
         When I go to "/es/mitigation-actions/A1/edit"
         Then the response status should be 403
 
-    Scenario: Previous in the mitigation plan step leads to the providers step
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+    Scenario: Previous in the mitigation plan step leads to the employees step
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
         Then the response status should be 200
-        Then the previous step link should point to "/es/property-carbon-footprints/999/step/providers"
+        Then the previous step link should point to "/es/property-carbon-footprints/999/step/employees"
 
     Scenario: Previous in the mitigation plan step leads to scope 3 when scope 3 is excluded
         Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 3 excluded exists

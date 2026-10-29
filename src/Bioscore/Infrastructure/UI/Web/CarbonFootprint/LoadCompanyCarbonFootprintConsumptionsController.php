@@ -71,7 +71,7 @@ class LoadCompanyCarbonFootprintConsumptionsController extends AbstractControlle
 
             return $redirect;
         } catch (\InvalidArgumentException|\DomainException $e) {
-            $this->addFlash('danger', new TranslatableMessage('No se han podido cargar los consumos: {error}', ['{error}' => $e->getMessage()]));
+            $this->addFlash('danger', new TranslatableMessage('No se han podido cargar los consumos: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
             return $redirect;
         }

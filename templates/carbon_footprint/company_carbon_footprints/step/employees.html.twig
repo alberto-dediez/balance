@@ -1,0 +1,169 @@
+{% extends '@carbon_footprint/company_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 5 %}
+
+{% block top_actions %}
+    {{ parent() }}
+{% endblock %}
+
+{% block wizard_panels %}
+    {% for source in excludedSources %}
+        <twig:Alert:Alert type="warning">
+            {{ 'La categoría {source} está excluida: los datos de los empleados no se contabilizarán en ella.' | trans({'{source}': source.value | trans({}, 'source')}) }}
+        </twig:Alert:Alert>
+    {% endfor %}
+
+    {% set participation = overview.participation %}
+
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('employees_' ~ companyCarbonFootprint.id) }}">
+
+        <twig:Card title="{{ 'Empleados' | trans }}">
+            <p class="text-muted">
+                {{ 'Selecciona a los empleados a los que pedir sus desplazamientos al trabajo y viajes de negocio. Sus respuestas se extrapolan al total de plantilla y se suman en las categorías 6 y 7 del alcance 3.' | trans }}
+            </p>
+
+            {% if readOnly %}
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <twig:View:Field label="{{ 'Total de empleados' | trans }}">{{ participation ? (participation.totalEmployees ?? '---') : '---' }}</twig:View:Field>
+                    </div>
+                    <div class="col-md-6">
+                        <twig:View:Field label="{{ 'Nivel de confianza' | trans }}">{{ participation and participation.confidenceLevel ? participation.confidenceLevel.value ~ ' %' : '---' }}</twig:View:Field>
+                    </div>
+                </div>
+            {% else %}
+                {% set selectedConfidenceLevel = participation and participation.confidenceLevel ? participation.confidenceLevel.value : 95 %}
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="totalEmployees">{{ 'Total de empleados' | trans }}</label>
+                        <input type="number" min="1" step="1" class="form-control" id="totalEmployees" name="totalEmployees" value="{{ participation ? participation.totalEmployees : '' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="confidenceLevel">{{ 'Nivel de confianza' | trans }}</label>
+                        <select class="form-select" id="confidenceLevel" name="confidenceLevel">
+                            {% for level in confidenceLevels %}
+                                <option value="{{ level.value }}" {{ selectedConfidenceLevel == level.value ? 'selected' : '' }}>{{ level.value }} %</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if employees is empty %}
+                <p class="mb-0">
+                    {{ 'No hay empleados registrados para esta cuenta.' | trans }}
+                    {% if not readOnly and canRegisterEmployee %}
+                        <a href="{{ path('employees_register') }}">{{ 'Registrar empleado' | trans }}</a>
+                    {% endif %}
+                </p>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>{{ 'Empleado' | trans }}</th>
+                                <th>{{ 'Email' | trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employees %}
+                                {% set isAssigned = assignedEmployeeIds[employee.id ~ ''] is defined %}
+                                <tr>
+                                    <td>
+                                        {% if readOnly %}
+                                            {% if isAssigned %}
+                                                <twig:Icon name="solar:check-circle-bold" class="text-success" />
+                                            {% endif %}
+                                        {% else %}
+                                            <input type="checkbox" class="form-check-input" name="employees[employeeIds][]" value="{{ employee.id }}" {{ isAssigned ? 'checked' : '' }}>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ employee.name }}</td>
+                                    <td>{{ employee.email }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </twig:Card>
+
+        <twig:Card title="{{ 'Contribuciones' | trans }}">
+            <dl class="row">
+                <dt class="col-sm-4">{{ 'Pendientes' | trans }}</dt>
+                <dd class="col-sm-8">{{ overview.pendingCount }}</dd>
+
+                <dt class="col-sm-4">{{ 'Contestadas' | trans }}</dt>
+                <dd class="col-sm-8">{{ overview.answeredCount }}</dd>
+
+                <dt class="col-sm-4">{{ '% contestado' | trans }}</dt>
+                <dd class="col-sm-8">{{ overview.answeredPercentage is not null ? overview.answeredPercentage | number_format(2, ',', '.') ~ ' %' : '---' }}</dd>
+
+                {% if participation and participation.marginOfError is not null %}
+                    <dt class="col-sm-4">{{ 'Margen de error' | trans }}</dt>
+                    <dd class="col-sm-8">{{ (participation.marginOfError * 100) | number_format(2, ',', '.') }} %</dd>
+                {% endif %}
+
+                {% for source in employeeSources %}
+                    <dt class="col-sm-4">{{ 'Emisiones extrapoladas (kg CO₂eq)' | trans }} · {{ source.value | trans({}, 'source') }}</dt>
+                    <dd class="col-sm-8">{{ overview.emissionsFor(source.value).co2eq | number_format(2, ',', '.') }}</dd>
+                {% endfor %}
+            </dl>
+
+            {% if overview.contributions is empty %}
+                <p class="mb-0">{{ 'Todavía no has invitado a ningún empleado.' | trans }}</p>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Empleado' | trans }}</th>
+                                <th>{{ 'Email' | trans }}</th>
+                                <th>{{ 'Centro de trabajo' | trans }}</th>
+                                <th>{{ 'Estado' | trans }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contribution in overview.contributions %}
+                                {% set routeParameters = {carbonFootprintId: companyCarbonFootprintId, contributionId: contribution.id} %}
+                                <tr>
+                                    <td>{{ contribution.employeeName ?? '---' }}</td>
+                                    <td>{{ overview.employeesById[contribution.employeeId ~ ''] is defined ? overview.employeesById[contribution.employeeId ~ ''].email : '---' }}</td>
+                                    <td>{{ overview.propertiesById[contribution.workplacePropertyId ~ ''] is defined ? overview.propertiesById[contribution.workplacePropertyId ~ ''].name : ('Sin asignar a propiedad' | trans) }}</td>
+                                    <td>
+                                        <span class="badge {{ contribution.status.style }}">{{ contribution.status.value | trans({}, 'employeeContributionStatus') }}</span>
+                                    </td>
+                                    <td class="text-end text-nowrap">
+                                        <twig:List:Action:Responses path="{{ path('company_carbon_footprints_employees_show', routeParameters) }}" />
+                                        {% if not readOnly %}
+                                            {% if contribution.status.isIgnored %}
+                                                <twig:List:Action:Unignore path="{{ path('company_carbon_footprints_employees_unignore', routeParameters) }}" />
+                                            {% else %}
+                                                <twig:List:Action:Resend path="{{ path('company_carbon_footprints_employees_resend', routeParameters) }}" />
+                                                <twig:List:Action:Ignore path="{{ path('company_carbon_footprints_employees_ignore', routeParameters) }}" />
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </twig:Card>
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('company_carbon_footprints_providers', {companyCarbonFootprintId: companyCarbonFootprintId}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            {% if not readOnly %}
+                <button type="submit" class="btn btn-primary">
+                    {{ 'Siguiente' | trans }} &rarr;
+                </button>
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}

@@ -27,7 +27,8 @@ Feature:
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
         Then the wizard should not show the step "Proveedores"
-        Then company carbon footprint "999" should have status "providers_answered"
+        Then the wizard should not show the step "Empleados"
+        Then company carbon footprint "999" should have status "employees_answered"
         When I go to "/es/company-carbon-footprints/999/step/providers"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
 
@@ -46,14 +47,14 @@ Feature:
         Then I am redirected to route "company_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
-        Then company carbon footprint "999" should have status "providers_answered"
+        Then company carbon footprint "999" should have status "employees_answered"
 
-    Scenario: Next answers the providers step and leads to the mitigation plan
+    Scenario: Next answers the providers step and leads to the employees step
         Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 3 answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/providers"
         When I submit the providers step form
-        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then I am redirected to route "company_carbon_footprints_employees"
         Then company carbon footprint "999" should have status "providers_answered"
 
     Scenario: The mitigation plan step redirects to the providers step when it has not been answered
@@ -74,7 +75,7 @@ Feature:
         Then company carbon footprint "999" should not be completed
 
     Scenario: Posting the providers step of a completed footprint redirects with a warning
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with providers answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with employees answered exists
         Given company carbon footprint "999" is completed
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/providers"

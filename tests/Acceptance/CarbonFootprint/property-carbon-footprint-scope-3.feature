@@ -51,7 +51,7 @@ Feature:
         When I go to "/es/property-carbon-footprints/999/step/scope-3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
-        Then property carbon footprint "999" should have status "providers_answered"
+        Then property carbon footprint "999" should have status "employees_answered"
         Then property carbon footprint "999" should have scope 3 excluded with reason "no_data_available"
         Then property carbon footprint "999" should have 0 activities in scope 3
         Then I see a text "Medidas de Reducción y Mitigación"

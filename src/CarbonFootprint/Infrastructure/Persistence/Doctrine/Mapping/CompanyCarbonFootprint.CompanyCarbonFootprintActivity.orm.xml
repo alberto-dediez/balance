@@ -19,6 +19,11 @@
         <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\Source" nullable="false" />
         <field name="propertyId" type="property_id" column="property_id" nullable="true" />
         <field name="providerId" type="provider_id" column="provider_id" nullable="true" />
+        <field name="fromEmployees" type="boolean" column="from_employees" nullable="false">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
         <field name="addedAt" type="datetime_immutable" column="added_at" nullable="false" />
     </entity>
 

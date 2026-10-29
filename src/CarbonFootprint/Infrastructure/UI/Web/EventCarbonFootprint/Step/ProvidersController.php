@@ -75,7 +75,7 @@ class ProvidersController extends AbstractController
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido asignar los proveedores: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se han podido asignar los proveedores: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                 return $this->redirectToRoute('events_carbon_footprint_providers', ['eventId' => $eventId]);
             }

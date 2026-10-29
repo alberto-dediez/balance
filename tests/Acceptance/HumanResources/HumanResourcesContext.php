@@ -41,4 +41,12 @@ final readonly class HumanResourcesContext implements Context
 
         $this->getEmployeeRepository()->add($employee);
     }
+
+    #[Given('employee :name with email :email and id :id of account :account exists')]
+    public function employeeWithEmailAndIdOfAccountExists(string $name, string $email, string $id, string $account): void
+    {
+        $employee = EmployeeMother::from($name, $email, $id, $account);
+
+        $this->getEmployeeRepository()->add($employee);
+    }
 }

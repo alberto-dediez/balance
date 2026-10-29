@@ -42,9 +42,10 @@ class MitigationPlanController extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $propertyCarbonFootprint);
 
-        if (!$propertyCarbonFootprint->status()->isProvidersAnswered()) {
+        if (!$propertyCarbonFootprint->status()->isEmployeesAnswered()) {
             return $this->redirectToRoute(
                 match (true) {
+                    $propertyCarbonFootprint->status()->isProvidersAnswered() => 'property_carbon_footprints_employees',
                     $propertyCarbonFootprint->status()->isScope3Answered() => 'property_carbon_footprints_providers',
                     $propertyCarbonFootprint->status()->isScope2Answered() => 'property_carbon_footprints_scope_3',
                     $propertyCarbonFootprint->status()->isScope1Answered() => 'property_carbon_footprints_scope_2',

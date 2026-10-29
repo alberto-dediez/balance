@@ -78,6 +78,7 @@ class GetOrganizationalProviderContributionGeneralInfoServiceTest extends Organi
         $this->assertInstanceOf(PropertyId::class, $propertyId);
         $this->propertyRepository->add(PropertyMother::fromNameAndAccountAndId('Hotel Sol', self::ACCOUNT_ID, (string) $propertyId));
         $footprint->answerProviders();
+        $footprint->answerEmployees();
         $footprint->complete($this->completedEmissions());
         $contribution = $this->requestedContribution((string) $footprint->id(), $this->linkedProvider());
 

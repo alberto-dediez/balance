@@ -106,7 +106,7 @@ Feature:
         Then the response status should be 403
 
     Scenario: A completed footprint does not allow adding providers
-        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with providers answered exists
+        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with employees answered exists
         Given property carbon footprint "998" is completed
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/998/step/providers"
@@ -114,7 +114,7 @@ Feature:
         Then I do not see a text "Añadir proveedor"
 
     Scenario: A manual contribution of a completed footprint can still be consulted
-        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with providers answered exists
+        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with employees answered exists
         Given organizational provider contribution with id "778" for property carbon footprint "998" and provider "444" of account "666" in mode "manual" with token "" covering "upstream_transport" exists
         Given property carbon footprint "998" is completed
         When I am logged as "owner@dediez.software"

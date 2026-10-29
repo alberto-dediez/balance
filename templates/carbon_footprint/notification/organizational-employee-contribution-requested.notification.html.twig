@@ -1,0 +1,6 @@
+<p>{% trans with {'{subject}': subjectName, '{year}': year} -%}{subject} te pide tus desplazamientos al trabajo y viajes de negocio de {year}.{%- endtrans %}</p>
+<p>
+    <a href="{{ url('public_organizational_employee_contribution', {token: token}) }}">
+        {% trans -%}Responder la encuesta{%- endtrans -%}
+    </a>
+</p>

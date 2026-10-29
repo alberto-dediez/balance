@@ -41,7 +41,7 @@ class RetryController extends AbstractController
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
         } catch (CarbonFootprintReportTransitionNotAllowedException $e) {
-            $this->addFlash('danger', new TranslatableMessage('No se ha podido volver a generar el informe: {error}', ['{error}' => $e->getMessage()]));
+            $this->addFlash('danger', new TranslatableMessage('No se ha podido volver a generar el informe: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
         }
 
         $results = $resultsRoute->resolve($report);

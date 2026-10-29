@@ -214,7 +214,7 @@ final class ContributionCheckoutHandler
 
             return null;
         } catch (ProjectNotContributableException|\InvalidArgumentException $e) {
-            $this->addFlash($request, 'danger', new TranslatableMessage('No hemos podido preparar tu aportación: {error}', ['{error}' => $e->getMessage()]));
+            $this->addFlash($request, 'danger', new TranslatableMessage('No hemos podido preparar tu aportación: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
             return null;
         } catch (PaymentGatewayException) {

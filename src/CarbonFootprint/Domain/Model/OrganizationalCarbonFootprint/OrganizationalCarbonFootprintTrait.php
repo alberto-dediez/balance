@@ -135,6 +135,15 @@ trait OrganizationalCarbonFootprintTrait
         }
     }
 
+    public function removeEmployeeActivities(): void
+    {
+        foreach ($this->activityReferences() as $reference) {
+            if ($reference->placement->fromEmployees) {
+                $this->removeActivity($reference->activityId);
+            }
+        }
+    }
+
     /** @return list<ActivityReference> */
     public function activityReferences(): array
     {

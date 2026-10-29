@@ -77,6 +77,7 @@ trait OrganizationalCollectorContextTrait
             $this->itemNameResolver(),
             ProviderRepositoryMother::inMemory(),
             CountedActivityReferencesMother::create(),
+            new FakeTranslator(),
         );
     }
 

@@ -39,7 +39,7 @@ class IgnoreOrganizationalProviderContributionServiceTest extends Organizational
 
     public function testCompletedFootprintThrows(): void
     {
-        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
         $footprint->complete(new Emissions('1', '1', '0', '0'));
         $this->propertyCarbonFootprintRepository->add($footprint);
         $contribution = OrganizationalProviderContributionMother::requested(carbonFootprintId: (string) $footprint->id());

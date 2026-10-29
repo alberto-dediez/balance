@@ -1,0 +1,105 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% import '@carbon_footprint/organizational_carbon_footprints/provider_contributions/_macros.html.twig' as contributionMacros %}
+
+{% set page_title = contributionMacros.breadcrumb(subjectType, carbonFootprint)
+    ~ ' > '
+    ~ ('Empleados' | trans)
+    ~ ' > '
+    ~ (contribution.employeeName ?? '---') %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ stepPath }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Empleado' | trans }}">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Nombre' | trans }}">{{ contribution.employeeName ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Email' | trans }}">{{ employee ? employee.email : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Estado' | trans }}">
+                    <span class="badge {{ contribution.status.style }}">{{ contribution.status.value | trans({}, 'employeeContributionStatus') }}</span>
+                </twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Consentimiento' | trans }}">
+                    {{ contribution.hasConsent | show_field_value | trans }}
+                    {% if contribution.hasConsent %}
+                        · {{ contribution.consentProof.consentedAt | date('d/m/Y H:i') }}
+                    {% endif %}
+                </twig:View:Field>
+                <twig:View:Field label="{{ 'Fecha de respuesta' | trans }}">{{ contribution.answeredAt ? contribution.answeredAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                {% if subjectType == 'company' %}
+                    <twig:View:Field label="{{ 'Centro de trabajo' | trans }}">{{ workplace ? workplace.name : ('Sin asignar a propiedad' | trans) }}</twig:View:Field>
+                {% endif %}
+            </div>
+        </div>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Desplazamientos al trabajo' | trans }}">
+        {% if not contribution.stepStatus.isCommutingAnswered %}
+            <p class="mb-0">{{ 'Pendiente de respuesta.' | trans }}</p>
+        {% elseif contribution.commutes is empty %}
+            <p class="mb-0">{{ 'No se desplaza al centro de trabajo.' | trans }}</p>
+        {% else %}
+            <twig:View:Field label="{{ 'Semanas al año' | trans }}">{{ contribution.commutingWeeksPerYear ?? '---' }}</twig:View:Field>
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Medio' | trans }}</th>
+                            <th class="text-end">{{ 'Km por trayecto' | trans }}</th>
+                            <th class="text-end">{{ 'Días por semana' | trans }}</th>
+                            <th class="text-end">{{ 'Ocupantes' | trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for commute in contribution.commutes %}
+                            <tr>
+                                <td>{{ mobilitiesById[commute.mobilityId ~ ''] is defined ? mobilitiesById[commute.mobilityId ~ ''].name : '---' }}</td>
+                                <td class="text-end">{{ commute.distanceKm | number_format(2, ',', '.') }}</td>
+                                <td class="text-end">{{ commute.daysPerWeek }}</td>
+                                <td class="text-end">{{ commute.vehicleOccupants }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </twig:Card>
+
+    <twig:Card title="{{ 'Viajes de negocio' | trans }}">
+        {% if not contribution.stepStatus.isCompleted %}
+            <p class="mb-0">{{ 'Pendiente de respuesta.' | trans }}</p>
+        {% elseif contribution.trips is empty %}
+            <p class="mb-0">{{ 'Sin viajes de negocio.' | trans }}</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Medio' | trans }}</th>
+                            <th class="text-end">{{ 'Km' | trans }}</th>
+                            <th class="text-end">{{ 'Nº de viajes' | trans }}</th>
+                            <th class="text-end">{{ 'Ocupantes' | trans }}</th>
+                            <th class="text-end">{{ 'Noches de hotel' | trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trip in contribution.trips %}
+                            <tr>
+                                <td>{{ mobilitiesById[trip.mobilityId ~ ''] is defined ? mobilitiesById[trip.mobilityId ~ ''].name : '---' }}</td>
+                                <td class="text-end">{{ trip.distanceKm | number_format(2, ',', '.') }}</td>
+                                <td class="text-end">{{ trip.trips }}</td>
+                                <td class="text-end">{{ trip.vehicleOccupants }}</td>
+                                <td class="text-end">{{ trip.hotelNights }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

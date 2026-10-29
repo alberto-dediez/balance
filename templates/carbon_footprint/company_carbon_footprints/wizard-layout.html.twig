@@ -36,7 +36,7 @@
 
 {% set providersStepShown = not companyCarbonFootprint.scope3Excluded %}
 
-{% set wizard_active = companyCarbonFootprint.status.stepNumber - ((not providersStepShown and companyCarbonFootprint.status.stepNumber >= 4) ? 1 : 0) %}
+{% set wizard_active = companyCarbonFootprint.status.stepNumber - ((not providersStepShown and companyCarbonFootprint.status.stepNumber >= 4) ? 2 : 0) %}
 
 {% block content %}
     {% set wizard_steps = [
@@ -47,6 +47,7 @@
     {% if providersStepShown %}
         {% set wizard_steps = wizard_steps | merge([
             {label: 'Proveedores' | trans, href: path('company_carbon_footprints_providers', {companyCarbonFootprintId: companyCarbonFootprintId})},
+            {label: 'Empleados' | trans, href: path('company_carbon_footprints_employees', {companyCarbonFootprintId: companyCarbonFootprintId})},
         ]) %}
     {% endif %}
     {% set wizard_steps = wizard_steps | merge([

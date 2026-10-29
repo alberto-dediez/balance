@@ -102,6 +102,8 @@
                     {% include '@carbon_footprint/organizational_carbon_footprints/_scope_3_tables.html.twig' with {source: source, blocks: blocks, unassignedLabel: unassignedLabel, calculateUrl: calculateUrl, readOnly: readOnly} %}
 
                     {% include '@carbon_footprint/organizational_carbon_footprints/_scope_3_provider_contributions.html.twig' with {source: source, providerContributions: providerContributions | default([])} %}
+
+                    {% include '@carbon_footprint/organizational_carbon_footprints/_scope_3_employee_contributions.html.twig' with {source: source, employeeContributions: employeeContributions | default(null), unassignedLabel: unassignedLabel} %}
                 {% endif %}
             </twig:CarbonFootprint:SourceSection>
         {% endfor %}

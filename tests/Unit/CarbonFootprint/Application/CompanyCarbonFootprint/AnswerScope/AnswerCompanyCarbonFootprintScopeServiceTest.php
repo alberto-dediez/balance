@@ -305,7 +305,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
         ), $this->ownerUser());
 
-        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::EmployeesAnswered, $footprint->status());
         $this->assertTrue($footprint->isStageExcluded(Scope::Scope3));
         $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices, propertyId: $this->firstPropertyId)));
         $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices)));

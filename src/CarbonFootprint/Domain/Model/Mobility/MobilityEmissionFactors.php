@@ -51,6 +51,29 @@ class MobilityEmissionFactors implements \IteratorAggregate, \Countable
         return null !== $this->forYearAndGroup($year, $groupId);
     }
 
+    public function nearestYearForGroup(int $year, EmissionFactorGroupId $groupId): ?int
+    {
+        $nearestYear = null;
+
+        foreach ($this->items->toArray() as $emissionFactor) {
+            if (!$emissionFactor->emissionFactorGroupId()->equals($groupId)) {
+                continue;
+            }
+
+            $candidate = $emissionFactor->year();
+
+            if (
+                null === $nearestYear
+                || abs($candidate - $year) < abs($nearestYear - $year)
+                || (abs($candidate - $year) === abs($nearestYear - $year) && $candidate < $nearestYear)
+            ) {
+                $nearestYear = $candidate;
+            }
+        }
+
+        return $nearestYear;
+    }
+
     public function removeForYearAndGroup(int $year, EmissionFactorGroupId $groupId): void
     {
         foreach ($this->items->toArray() as $emissionFactor) {

@@ -29,6 +29,10 @@
         <source>providers_answered</source>
         <target>Proveedores respondido</target>
       </trans-unit>
+      <trans-unit id="cTbHl7X" resname="employees_answered">
+        <source>employees_answered</source>
+        <target>Empleados respondido</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

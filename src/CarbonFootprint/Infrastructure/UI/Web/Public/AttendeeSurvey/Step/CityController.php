@@ -104,7 +104,7 @@ class CityController extends AbstractController
                 } catch (AttendeeSurveyClosedException) {
                     return $this->attendeeSurveyClosedResponse();
                 } catch (\InvalidArgumentException $e) {
-                    $this->addFlash('danger', new TranslatableMessage('No se ha podido guardar la respuesta: {error}', ['{error}' => $e->getMessage()]));
+                    $this->addFlash('danger', new TranslatableMessage('No se ha podido guardar la respuesta: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                     return $this->redirectToRoute('public_carbon_footprint_attendee_survey_city', ['token' => $token]);
                 }

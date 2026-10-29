@@ -20,6 +20,7 @@ class PropertyCarbonFootprintActivity implements OrganizationalCarbonFootprintAc
         private Scope $scope,
         private Source $source,
         private ?ProviderId $providerId = null,
+        private bool $fromEmployees = false,
         private \DateTimeImmutable $addedAt = new \DateTimeImmutable('NOW'),
     ) {}
 
@@ -53,9 +54,14 @@ class PropertyCarbonFootprintActivity implements OrganizationalCarbonFootprintAc
         return $this->providerId;
     }
 
+    public function fromEmployees(): bool
+    {
+        return $this->fromEmployees;
+    }
+
     public function placement(): ActivityPlacement
     {
-        return new ActivityPlacement($this->scope, $this->source, providerId: $this->providerId);
+        return new ActivityPlacement($this->scope, $this->source, providerId: $this->providerId, fromEmployees: $this->fromEmployees);
     }
 
     public function addedAt(): \DateTimeImmutable

@@ -44,7 +44,7 @@ class ReopenController extends AbstractController
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
         } catch (\InvalidArgumentException $e) {
-            $this->addFlash('danger', new TranslatableMessage('No se ha podido reabrir el cálculo: {error}', ['{error}' => $e->getMessage()]));
+            $this->addFlash('danger', new TranslatableMessage('No se ha podido reabrir el cálculo: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
             return $this->redirectToRoute('company_carbon_footprints_results', ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
         }

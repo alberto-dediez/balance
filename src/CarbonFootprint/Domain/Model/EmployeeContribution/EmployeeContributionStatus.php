@@ -24,4 +24,13 @@ enum EmployeeContributionStatus: string
     {
         return self::Ignored === $this;
     }
+
+    public function style(): string
+    {
+        return match ($this) {
+            self::Answered => 'bg-success',
+            self::Pending  => 'bg-warning text-dark',
+            self::Ignored  => 'bg-secondary',
+        };
+    }
 }

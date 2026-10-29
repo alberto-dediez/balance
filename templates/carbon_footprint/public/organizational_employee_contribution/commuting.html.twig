@@ -1,0 +1,103 @@
+{% extends theme_template('@carbon_footprint/public/organizational_employee_contribution/layout.html.twig') %}
+
+{% set page_title = 'Desplazamientos al trabajo' | trans %}
+{% set wizard_selected = 1 %}
+
+{% block wizard_panels %}
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ subjectName }}</h5></div>
+        <div class="card-body">
+            <p class="text-muted mb-0">{{ 'Huella de carbono {year}' | trans({'{year}': year}) }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Desplazamientos al trabajo' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="commuting">
+                <input type="hidden" name="_token" value="{{ csrf_token('employee_contribution_commuting_' ~ token) }}">
+
+                {% if isCompany %}
+                    <div class="mb-3">
+                        <label class="form-label" for="workplacePropertyId">{{ 'Centro de trabajo' | trans }}</label>
+                        <select class="form-select" id="workplacePropertyId" name="workplacePropertyId">
+                            <option value="">{{ 'Sin indicar' | trans }}</option>
+                            {% for workplace in workplaces %}
+                                <option value="{{ workplace.id }}" {{ contribution.workplacePropertyId is not null and (contribution.workplacePropertyId ~ '') == (workplace.id ~ '') ? 'selected' : '' }}>{{ workplace.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
+                {% set noCommuting = contribution.stepStatus.isCommutingAnswered and contribution.commutes is empty %}
+
+                <div class="form-check form-switch mb-3">
+                    <input type="checkbox" class="form-check-input" id="noCommuting" name="noCommuting" value="1" {{ noCommuting ? 'checked' : '' }}>
+                    <label class="form-check-label" for="noCommuting">{{ 'No me desplazo al centro de trabajo' | trans }}</label>
+                </div>
+
+                <div data-controller="showable" data-showable-selector-value="#noCommuting" data-showable-condition-value="" class="{{ noCommuting ? 'd-none' : '' }}">
+                    <div class="mb-3">
+                        <label class="form-label" for="weeksPerYear">{{ 'Semanas al año' | trans }}</label>
+                        <input type="number" min="1" max="53" step="1" inputmode="numeric" class="form-control" id="weeksPerYear" name="weeksPerYear" value="{{ contribution.commutingWeeksPerYear }}">
+                    </div>
+
+                    {% import _self as rows %}
+
+                    <div data-controller="collection" data-collection-prototype-value="{{ rows.commuteRow('__name__', null, mobilities) | e('html_attr') }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{{ 'Medio de transporte' | trans }}</th>
+                                    <th>{{ 'Km por trayecto' | trans }}</th>
+                                    <th>{{ 'Días por semana' | trans }}</th>
+                                    <th>{{ 'Ocupantes del vehículo' | trans }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="collection">
+                                {% for element in (contribution.commutes is empty ? [null] : contribution.commutes) %}
+                                    {{ rows.commuteRow(loop.index0, element, mobilities) }}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <div class="mt-2 mb-3">
+                            <button type="button" class="btn btn-outline-info" data-action="collection#add">
+                                <twig:Icon name="solar:add-circle-outline" />
+                                {{ 'Añadir' | trans }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {% include '@shared/form/_consent_field.html.twig' with {consent_purpose: 'de la organización' | trans} %}
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">{{ 'Siguiente' | trans }} &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro commuteRow(index, element, mobilities) %}
+    <tr class="collection-element">
+        <td>
+            <select class="form-select" name="commutes[{{ index }}][mobilityId]">
+                <option value="">{{ 'Selecciona un medio de transporte' | trans }}</option>
+                {% for mobility in mobilities %}
+                    <option value="{{ mobility.id }}" {{ element is not null and (element.mobilityId ~ '') == (mobility.id ~ '') ? 'selected' : '' }}>{{ mobility.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td><input type="number" min="0" step="0.1" inputmode="decimal" class="form-control" name="commutes[{{ index }}][distanceKm]" value="{{ element ? element.distanceKm : '' }}"></td>
+        <td><input type="number" min="1" max="7" step="1" inputmode="numeric" class="form-control" name="commutes[{{ index }}][daysPerWeek]" value="{{ element ? element.daysPerWeek : 5 }}"></td>
+        <td><input type="number" min="1" max="100" step="1" inputmode="numeric" class="form-control" name="commutes[{{ index }}][vehicleOccupants]" value="{{ element ? element.vehicleOccupants : 1 }}"></td>
+        <td class="col-2 text-end">
+            <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+                <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+            </button>
+        </td>
+    </tr>
+{% endmacro %}

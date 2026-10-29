@@ -245,4 +245,21 @@ final class ScopeTest extends TestCase
         $this->assertCount(3, $sections);
         $this->assertSame(['businessTravel', 'businessTravelStays', 'business_travel_reported'], array_map(static fn($section) => $section->key, $sections));
     }
+
+    public function testEmployeeSections(): void
+    {
+        $sections = Scope::Scope3->employeeSections();
+
+        $this->assertCount(3, $sections);
+        $this->assertSame(['businessTravel', 'businessTravelStays', 'employeeCommuting'], array_map(static fn($section) => $section->key, $sections));
+        $this->assertSame([], Scope::Scope1->employeeSections());
+        $this->assertSame([], Scope::Scope2->employeeSections());
+    }
+
+    public function testEmployeeSources(): void
+    {
+        $this->assertSame([Source::BusinessTravel, Source::EmployeeCommuting], Scope::Scope3->employeeSources());
+        $this->assertSame([], Scope::Scope1->employeeSources());
+        $this->assertSame([], Scope::Scope2->employeeSources());
+    }
 }

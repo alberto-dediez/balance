@@ -75,7 +75,7 @@ class BreakdownController extends AbstractController
             } catch (ProviderContributionClosedException) {
                 return $this->providerContributionClosedResponse();
             } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                 return $this->redirectToRoute('public_carbon_footprint_contribution_breakdown', ['token' => $token]);
             }

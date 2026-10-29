@@ -80,7 +80,7 @@ class AssemblyController extends AbstractController
                 } catch (EmployeeContributionClosedException) {
                     return $this->employeeContributionClosedResponse();
                 } catch (\InvalidArgumentException $e) {
-                    $this->addFlash('danger', new TranslatableMessage('No se han podido guardar los datos: {error}', ['{error}' => $e->getMessage()]));
+                    $this->addFlash('danger', new TranslatableMessage('No se han podido guardar los datos: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                     return $this->redirectToRoute('public_carbon_footprint_employee_contribution_assembly', ['token' => $token]);
                 }

@@ -13,7 +13,7 @@ Feature:
         Given combustible "Gas natural" with id "CB1" and emission factor for year "2025" exists
 
     Scenario: The step aggregates the emissions of the properties by element
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with providers answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with employees answered exists
         Given company carbon footprint "999" has a combustible "CB1" activity of "600" kg for property "1111"
         Given company carbon footprint "999" has a combustible "CB1" activity of "300" kg for property "2222"
         Given company carbon footprint "999" has a combustible "CB1" activity of "100" kg
@@ -40,16 +40,16 @@ Feature:
         Then I see a text "Caldera de condensación"
 
     Scenario: Next completes the company footprint
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with providers answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/mitigation-plan"
         When I submit the mitigation plan step form
         Then I am redirected to route "company_carbon_footprints_results"
         Then company carbon footprint "999" should be completed
 
-    Scenario: Previous in the mitigation plan step leads to the providers step
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with providers answered exists
+    Scenario: Previous in the mitigation plan step leads to the employees step
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with employees answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/mitigation-plan"
         Then the response status should be 200
-        Then the previous step link should point to "/es/company-carbon-footprints/999/step/providers"
+        Then the previous step link should point to "/es/company-carbon-footprints/999/step/employees"

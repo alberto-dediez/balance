@@ -120,6 +120,19 @@ class PropertyCarbonFootprintMother
         return $propertyCarbonFootprint;
     }
 
+    public static function withEmployeesAnswered(
+        string $propertyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): PropertyCarbonFootprint {
+        $propertyCarbonFootprint = self::withProvidersAnswered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $propertyCarbonFootprint->answerEmployees();
+
+        return $propertyCarbonFootprint;
+    }
+
     public static function withMitigationPlanStarted(
         string $propertyId,
         string $id,
@@ -127,6 +140,6 @@ class PropertyCarbonFootprintMother
         int $year = 2025,
         ?EmissionFactorGroupId $emissionFactorGroupId = null,
     ): PropertyCarbonFootprint {
-        return self::withProvidersAnswered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
+        return self::withEmployeesAnswered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
     }
 }

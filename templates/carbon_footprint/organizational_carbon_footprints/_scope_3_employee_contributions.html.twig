@@ -1,0 +1,47 @@
+{% set participation = employeeContributions ? employeeContributions.participation : null %}
+
+{% if source in ['business_travel', 'employee_commuting'] and participation is not null and participation.aggregatedAt is not null %}
+    <twig:Card title="{{ 'Datos de empleados' | trans }}">
+        <dl class="row">
+            <dt class="col-sm-4">{{ 'Contestadas' | trans }}</dt>
+            <dd class="col-sm-8">{{ participation.answeredCount ?? 0 }}</dd>
+
+            <dt class="col-sm-4">{{ 'Total de plantilla' | trans }}</dt>
+            <dd class="col-sm-8">{{ participation.totalEmployees ?? '---' }}</dd>
+
+            <dt class="col-sm-4">{{ 'Margen de error' | trans }}</dt>
+            <dd class="col-sm-8">{{ participation.marginOfError is not null ? (participation.marginOfError * 100) | number_format(2, ',', '.') ~ ' %' : '---' }}</dd>
+        </dl>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        {% if unassignedLabel %}
+                            <th>{{ 'Propiedad' | trans }}</th>
+                        {% endif %}
+                        <th class="text-end">{{ 'Emisiones extrapoladas (kg CO₂eq)' | trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in employeeContributions.blockRows(source) %}
+                        <tr>
+                            {% if unassignedLabel %}
+                                <td>{{ row.property ? row.property.name : unassignedLabel }}</td>
+                            {% endif %}
+                            <td class="text-end">{{ row.emissions.co2eq | number_format(2, ',', '.') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        {% if unassignedLabel %}
+                            <th>{{ 'Total' | trans }}</th>
+                        {% endif %}
+                        <th class="text-end">{{ employeeContributions.emissionsFor(source).co2eq | number_format(2, ',', '.') }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </twig:Card>
+{% endif %}

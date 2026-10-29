@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\PropertyCarbonFootprint\Complete;
 
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
+use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\Sync\SyncOrganizationalEmployeeActivitiesRequest;
+use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\Sync\SyncOrganizationalEmployeeActivitiesService;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\PropertyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -23,6 +26,7 @@ class CompletePropertyCarbonFootprintService implements CommandHandler
         private PropertyCarbonFootprintRepository $propertyCarbonFootprintRepository,
         private PropertyCarbonFootprintAuthorizer $authorizer,
         private EmissionsBreakdownBuilder $breakdownBuilder,
+        private SyncOrganizationalEmployeeActivitiesService $syncEmployeeActivities,
     ) {}
 
     public function __invoke(CompletePropertyCarbonFootprintRequest $request, User $user): void
@@ -34,6 +38,15 @@ class CompletePropertyCarbonFootprintService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($propertyCarbonFootprint, SecurityAction::Edit, $user);
+
+        $propertyCarbonFootprint->ensureCanBeCompleted();
+
+        ($this->syncEmployeeActivities)(
+            new SyncOrganizationalEmployeeActivitiesRequest(CarbonFootprintReportSubjectType::Property, (string) $propertyCarbonFootprint->id()),
+            $user,
+        );
+
+        $propertyCarbonFootprint = $this->propertyCarbonFootprintRepository->find($request->propertyCarbonFootprintId) ?? $propertyCarbonFootprint;
 
         $total = $this->breakdownBuilder->build($propertyCarbonFootprint, Scope::cases())->total;
 

@@ -88,6 +88,7 @@ class AnswerOrganizationalProviderContributionEmissionsServiceTest extends Organ
     {
         $footprint = $this->propertyFootprint();
         $footprint->answerProviders();
+        $footprint->answerEmployees();
         $footprint->complete($this->completedEmissions());
         $contribution = $this->requestedContribution((string) $footprint->id(), $this->linkedProvider());
 

@@ -1,0 +1,16 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans with {'{year}': year, '{subject}': subjectName} -%}Aporta tus desplazamientos y viajes de {year} para {subject}{%- endtrans %}</h3>
+    <p>
+        {% trans with {'{name}': employeeName ?? '', '{subject}': subjectName, '{year}': year} -%}
+            Hola {name}, {subject} está calculando su huella de carbono de {year} y necesita conocer cómo te desplazas al trabajo y qué viajes de negocio has hecho.
+        {%- endtrans %}
+    </p>
+    <p>{% trans -%}Por favor, accede al siguiente enlace para completar los datos:{%- endtrans %}</p>
+    <p>
+        <a href="{{ url('public_organizational_employee_contribution', {token: token}) }}" class="btn btn-primary">
+            {% trans -%}Responder la encuesta{%- endtrans %}
+        </a>
+    </p>
+{% endblock %}

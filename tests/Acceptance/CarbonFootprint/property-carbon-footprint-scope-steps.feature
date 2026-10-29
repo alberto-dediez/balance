@@ -45,7 +45,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given electricity marketer "Comercializadora" with id "EM1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/results"

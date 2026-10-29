@@ -44,7 +44,7 @@ class ReopenPropertyCarbonFootprintServiceTest extends TestCase
 
         ($this->sut)(new ReopenPropertyCarbonFootprintRequest($footprint->id()), $this->ownerUser());
 
-        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
+        $this->assertSame(OrganizationalCarbonFootprintStatus::EmployeesAnswered, $footprint->status());
         $this->assertSame('0', $footprint->totalEmissions()->co2eq());
     }
 
@@ -87,7 +87,7 @@ class ReopenPropertyCarbonFootprintServiceTest extends TestCase
 
     private function completedFootprint(): PropertyCarbonFootprint
     {
-        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
         $footprint->complete(new Emissions('30', '30', '0', '0'));
 
         return $footprint;

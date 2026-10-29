@@ -91,7 +91,7 @@ abstract class OrganizationalProviderContributionServiceTestCase extends TestCas
 
     protected function completedPropertyFootprint(): PropertyCarbonFootprint
     {
-        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
         $footprint->complete(new Emissions('1', '1', '0', '0'));
         $this->propertyCarbonFootprintRepository->add($footprint);
 

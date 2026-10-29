@@ -36,6 +36,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalEmployeeContribution\ListOrganizationalEmployeeContributionsServiceMother;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\ListOrganizationalProviderContributionsServiceMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
@@ -98,6 +99,10 @@ class GetPropertyCarbonFootprintScopeServiceTest extends TestCase
             ListOrganizationalProviderContributionsServiceMother::create(
                 propertyCarbonFootprintRepository: $this->repository,
                 contributionRepository: $this->contributionRepository,
+                activityRepository: $this->activityRepository,
+            ),
+            ListOrganizationalEmployeeContributionsServiceMother::create(
+                propertyCarbonFootprintRepository: $this->repository,
                 activityRepository: $this->activityRepository,
             ),
         );

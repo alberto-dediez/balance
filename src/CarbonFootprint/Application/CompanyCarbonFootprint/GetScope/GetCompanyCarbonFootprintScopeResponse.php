@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope;
 
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
+use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionsOverview;
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\OrganizationalProviderContributionSummary;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
@@ -28,5 +29,6 @@ final class GetCompanyCarbonFootprintScopeResponse
         public readonly array $derivedLines = [],
         public readonly array $nonConsolidatedProperties = [],
         public readonly array $providerContributions = [],
+        public readonly ?OrganizationalEmployeeContributionsOverview $employeeContributions = null,
     ) {}
 }

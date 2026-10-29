@@ -123,6 +123,55 @@ class OvernightStayTest extends TestCase
         ]);
     }
 
+    public function testNearestYearForGroupReturnsTheSameYearWhenItHasAFactor(): void
+    {
+        $overnightStay = $this->overnightStay();
+        $overnightStay->setEmissionFactor($this->emissionFactor(2023, '1.0'));
+        $overnightStay->setEmissionFactor($this->emissionFactor(2025, '2.0'));
+
+        $this->assertSame(2025, $overnightStay->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupReturnsThePreviousYearWhenItIsTheClosest(): void
+    {
+        $overnightStay = $this->overnightStay();
+        $overnightStay->setEmissionFactor($this->emissionFactor(2023, '1.0'));
+        $overnightStay->setEmissionFactor($this->emissionFactor(2028, '2.0'));
+
+        $this->assertSame(2023, $overnightStay->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupReturnsTheNextYearWhenItIsTheClosest(): void
+    {
+        $overnightStay = $this->overnightStay();
+        $overnightStay->setEmissionFactor($this->emissionFactor(2020, '1.0'));
+        $overnightStay->setEmissionFactor($this->emissionFactor(2026, '2.0'));
+
+        $this->assertSame(2026, $overnightStay->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupPrefersThePreviousYearOnATie(): void
+    {
+        $overnightStay = $this->overnightStay();
+        $overnightStay->setEmissionFactor($this->emissionFactor(2026, '2.0'));
+        $overnightStay->setEmissionFactor($this->emissionFactor(2024, '1.0'));
+
+        $this->assertSame(2024, $overnightStay->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
+    public function testNearestYearForGroupIgnoresOtherGroups(): void
+    {
+        $overnightStay = $this->overnightStay();
+        $overnightStay->setEmissionFactor($this->emissionFactor(2024, '1.0'));
+
+        $this->assertNull($overnightStay->emissionFactors()->nearestYearForGroup(2024, EmissionFactorGroupMother::random()->id()));
+    }
+
+    public function testNearestYearForGroupIsNullWithoutFactors(): void
+    {
+        $this->assertNull($this->overnightStay()->emissionFactors()->nearestYearForGroup(2025, $this->groupId()));
+    }
+
     public function testRemoveEmissionFactor(): void
     {
         $overnightStay = $this->overnightStay();

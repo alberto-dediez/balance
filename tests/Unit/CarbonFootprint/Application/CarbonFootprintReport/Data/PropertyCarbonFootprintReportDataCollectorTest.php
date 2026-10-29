@@ -63,7 +63,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
         $emissionFactorGroups->add(EmissionFactorGroupMother::default());
 
-        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
         $footprint->addActivity($this->combustibleActivity('180')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
         $footprint->addActivity($this->electricityActivity('2500', '2000')->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
         $footprint->addActivity($this->transportActivity('1250')->id(), new ActivityPlacement(Scope::Scope1, Source::OwnVehicles));
@@ -124,7 +124,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
         $emissionFactorGroups->add(EmissionFactorGroupMother::default());
 
-        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
         $activity = $this->combustibleActivity('1000');
         assert($activity instanceof CombustibleActivity);
         $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));

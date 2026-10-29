@@ -225,7 +225,7 @@ final class OwnerContributionCheckoutHandler
 
             return null;
         } catch (ProjectNotContributableException|\InvalidArgumentException $e) {
-            $this->addFlash($request, 'danger', new TranslatableMessage('No hemos podido registrar la compensación: {error}', ['{error}' => $e->getMessage()]));
+            $this->addFlash($request, 'danger', new TranslatableMessage('No hemos podido registrar la compensación: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
             return null;
         }

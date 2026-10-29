@@ -103,6 +103,10 @@ doctrine:
             trip_calculation_link_destination_property_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\TripCalculationLinkDestinationPropertyIdType
             employee_participation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeParticipationIdType
             employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\EmployeeContributionIdType
+            organizational_employee_participation_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OrganizationalEmployeeParticipationIdType
+            organizational_employee_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OrganizationalEmployeeContributionIdType
+            organizational_employee_contribution_commute_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OrganizationalEmployeeContributionCommuteIdType
+            organizational_employee_contribution_trip_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OrganizationalEmployeeContributionTripIdType
             carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CarbonFootprintReportIdType
             public_landing_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingIdType
             public_landing_block_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingBlockIdType

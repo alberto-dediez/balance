@@ -65,6 +65,20 @@ final readonly class MailContext implements Context
         Assert::fail(sprintf('No se ha enviado ningún email con asunto "%s".', $subject));
     }
 
+    #[Then('an email with subject :subject was sent to :address')]
+    public function anEmailWithSubjectWasSentTo(string $subject, string $address): void
+    {
+        foreach ($this->getEmailListener()->getMessages() as $message) {
+            Assert::assertInstanceOf(Email::class, $message);
+
+            if ($subject === $message->getSubject() && $address === ($message->getTo()[0] ?? null)?->getAddress()) {
+                return;
+            }
+        }
+
+        Assert::fail(sprintf('No se ha enviado ningún email con asunto "%s" a "%s".', $subject, $address));
+    }
+
     #[Then('I received an email with subject :subject to :address')]
     public function iReceivedAnEmailWithSubjectTo(string $subject, string $address): void
     {

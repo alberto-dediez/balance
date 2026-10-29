@@ -1,0 +1,87 @@
+{% extends theme_template('@carbon_footprint/public/organizational_employee_contribution/layout.html.twig') %}
+
+{% set page_title = 'Viajes de negocio' | trans %}
+{% set wizard_selected = 2 %}
+
+{% block wizard_panels %}
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ subjectName }}</h5></div>
+        <div class="card-body">
+            <p class="text-muted mb-0">{{ 'Huella de carbono {year}' | trans({'{year}': year}) }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Viajes de negocio' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="business_travel">
+                <input type="hidden" name="_token" value="{{ csrf_token('employee_contribution_business_travel_' ~ token) }}">
+
+                {% set noTrips = contribution.stepStatus.isCompleted and contribution.trips is empty %}
+
+                <div class="form-check form-switch mb-3">
+                    <input type="checkbox" class="form-check-input" id="noTrips" name="noTrips" value="1" {{ noTrips ? 'checked' : '' }}>
+                    <label class="form-check-label" for="noTrips">{{ 'No he hecho viajes de negocio' | trans }}</label>
+                </div>
+
+                <div data-controller="showable" data-showable-selector-value="#noTrips" data-showable-condition-value="" class="{{ noTrips ? 'd-none' : '' }}">
+                    {% import _self as rows %}
+
+                    <div data-controller="collection" data-collection-prototype-value="{{ rows.tripRow('__name__', null, mobilities) | e('html_attr') }}">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{{ 'Medio de transporte' | trans }}</th>
+                                    <th>{{ 'Km' | trans }}</th>
+                                    <th>{{ 'Nº de viajes' | trans }}</th>
+                                    <th>{{ 'Ocupantes del vehículo' | trans }}</th>
+                                    <th>{{ 'Noches de hotel' | trans }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="collection">
+                                {% for element in (contribution.trips is empty ? [null] : contribution.trips) %}
+                                    {{ rows.tripRow(loop.index0, element, mobilities) }}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <div class="mt-2 mb-3">
+                            <button type="button" class="btn btn-outline-info" data-action="collection#add">
+                                <twig:Icon name="solar:add-circle-outline" />
+                                {{ 'Añadir' | trans }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{{ path('public_organizational_employee_contribution_commuting', {token: token}) }}" class="btn btn-outline-primary">&larr; {{ 'Anterior' | trans }}</a>
+                    <button type="submit" class="btn btn-primary">{{ 'Enviar' | trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% macro tripRow(index, element, mobilities) %}
+    <tr class="collection-element">
+        <td>
+            <select class="form-select" name="trips[{{ index }}][mobilityId]">
+                <option value="">{{ 'Selecciona un medio de transporte' | trans }}</option>
+                {% for mobility in mobilities %}
+                    <option value="{{ mobility.id }}" {{ element is not null and (element.mobilityId ~ '') == (mobility.id ~ '') ? 'selected' : '' }}>{{ mobility.name }}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td><input type="number" min="0" step="0.1" inputmode="decimal" class="form-control" name="trips[{{ index }}][distanceKm]" value="{{ element ? element.distanceKm : '' }}"></td>
+        <td><input type="number" min="1" max="1000" step="1" inputmode="numeric" class="form-control" name="trips[{{ index }}][trips]" value="{{ element ? element.trips : 1 }}"></td>
+        <td><input type="number" min="1" max="100" step="1" inputmode="numeric" class="form-control" name="trips[{{ index }}][vehicleOccupants]" value="{{ element ? element.vehicleOccupants : 1 }}"></td>
+        <td><input type="number" min="0" max="366" step="1" inputmode="numeric" class="form-control" name="trips[{{ index }}][hotelNights]" value="{{ element ? element.hotelNights : 0 }}"></td>
+        <td class="col-2 text-end">
+            <button type="button" class="btn btn-sm btn-outline-danger" data-action="collection#remove">
+                <twig:Icon name="solar:trash-bin-minimalistic-outline" />
+            </button>
+        </td>
+    </tr>
+{% endmacro %}

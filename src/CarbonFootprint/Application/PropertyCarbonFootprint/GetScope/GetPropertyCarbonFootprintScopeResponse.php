@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\PropertyCarbonFootprint\GetScope;
 
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSection;
+use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionsOverview;
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\OrganizationalProviderContributionSummary;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
@@ -27,5 +28,6 @@ final class GetPropertyCarbonFootprintScopeResponse
         public readonly array $derivedEmissions = [],
         public readonly array $derivedLines = [],
         public readonly array $providerContributions = [],
+        public readonly ?OrganizationalEmployeeContributionsOverview $employeeContributions = null,
     ) {}
 }

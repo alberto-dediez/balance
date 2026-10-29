@@ -31,7 +31,7 @@ class MitigationPlanReportBuilderTest extends TestCase
         DomainEventPublisher::instance()->reset();
         $this->initActivities();
 
-        $this->footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $this->footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
         $activity = $this->combustibleActivity('1000');
         assert($activity instanceof CombustibleActivity);
         $this->combustibleId = (string) $activity->combustibleId();
@@ -80,7 +80,7 @@ class MitigationPlanReportBuilderTest extends TestCase
     {
         $activity = $this->combustibleActivityWithWellToTank('500', '50');
         assert($activity instanceof CombustibleActivity);
-        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
         $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
         $action = MitigationActionMother::manual(carbonFootprintId: (string) $footprint->id(), name: 'Caldera');
         $action->setEffect(Source::FixedFacilities, (string) $activity->combustibleId(), 'Gas natural', 0.2);

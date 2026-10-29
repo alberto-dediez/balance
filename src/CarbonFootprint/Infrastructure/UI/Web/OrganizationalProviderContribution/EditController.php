@@ -122,7 +122,7 @@ class EditController extends AbstractController
 
                 return $this->redirectToRoute($stepRoute, $stepParameters);
             } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
             }
         }
 

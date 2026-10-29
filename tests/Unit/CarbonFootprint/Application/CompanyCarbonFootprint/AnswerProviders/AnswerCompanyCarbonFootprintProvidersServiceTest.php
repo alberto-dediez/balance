@@ -67,7 +67,7 @@ class AnswerCompanyCarbonFootprintProvidersServiceTest extends TestCase
 
     public function testCompletedFootprintThrows(): void
     {
-        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
+        $footprint = CompanyCarbonFootprintMother::withEmployeesAnswered((string) CompanyId::generate(), (string) CompanyCarbonFootprintId::generate(), 'account-id-test');
         $footprint->complete(new Emissions('30', '30', '0', '0'));
         $this->repository->add($footprint);
 

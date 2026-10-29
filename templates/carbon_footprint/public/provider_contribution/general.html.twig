@@ -40,7 +40,7 @@
                     <input type="text" class="form-control" name="general[service]" value="{{ contribution.service }}">
                 </div>
 
-                {% include '@shared/form/_consent_field.html.twig' %}
+                {% include '@shared/form/_consent_field.html.twig' with {consent_purpose: 'de la organización' | trans} %}
 
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">{{ 'Siguiente' | trans }} &rarr;</button>

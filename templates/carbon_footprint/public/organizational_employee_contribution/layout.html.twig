@@ -1,0 +1,11 @@
+{% extends theme_template('@shared/layout/public-wizard.html.twig') %}
+
+{% set wizard_active = contribution.stepStatus.activeStepNumber %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'Desplazamientos al trabajo' | trans, href: path('public_organizational_employee_contribution_commuting', {token: token})},
+        {label: 'Viajes de negocio' | trans, href: path('public_organizational_employee_contribution_business_travel', {token: token})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

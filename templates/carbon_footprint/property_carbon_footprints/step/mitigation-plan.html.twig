@@ -1,6 +1,6 @@
 {% extends '@carbon_footprint/property_carbon_footprints/wizard-layout.html.twig' %}
 
-{% set wizard_selected = propertyCarbonFootprint.scope3Excluded ? 4 : 5 %}
+{% set wizard_selected = propertyCarbonFootprint.scope3Excluded ? 4 : 6 %}
 
 {% block top_actions %}
     {{ parent() }}
@@ -20,6 +20,6 @@
 {% block wizard_panels %}
     {% include '@carbon_footprint/organizational_carbon_footprints/_mitigation_plan.html.twig' with {
         carbonFootprint: propertyCarbonFootprint,
-        previousPath: path(propertyCarbonFootprint.scope3Excluded ? 'property_carbon_footprints_scope_3' : 'property_carbon_footprints_providers', {propertyCarbonFootprintId: propertyCarbonFootprintId}),
+        previousPath: path(propertyCarbonFootprint.scope3Excluded ? 'property_carbon_footprints_scope_3' : 'property_carbon_footprints_employees', {propertyCarbonFootprintId: propertyCarbonFootprintId}),
     } %}
 {% endblock %}

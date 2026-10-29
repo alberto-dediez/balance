@@ -7,6 +7,9 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\Complete;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
+use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\Sync\SyncOrganizationalEmployeeActivitiesRequest;
+use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\Sync\SyncOrganizationalEmployeeActivitiesService;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Security\Application\Action as SecurityAction;
@@ -24,6 +27,7 @@ class CompleteCompanyCarbonFootprintService implements CommandHandler
         private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private EmissionsBreakdownBuilder $breakdownBuilder,
+        private SyncOrganizationalEmployeeActivitiesService $syncEmployeeActivities,
         private NonConsolidatedPropertiesSynchronizer $nonConsolidatedPropertiesSynchronizer,
     ) {}
 
@@ -36,6 +40,15 @@ class CompleteCompanyCarbonFootprintService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::Edit, $user);
+
+        $companyCarbonFootprint->ensureCanBeCompleted();
+
+        ($this->syncEmployeeActivities)(
+            new SyncOrganizationalEmployeeActivitiesRequest(CarbonFootprintReportSubjectType::Company, (string) $companyCarbonFootprint->id()),
+            $user,
+        );
+
+        $companyCarbonFootprint = $this->companyCarbonFootprintRepository->find($request->companyCarbonFootprintId) ?? $companyCarbonFootprint;
 
         if (!$companyCarbonFootprint->isStageExcluded(Scope::Scope3)) {
             $this->nonConsolidatedPropertiesSynchronizer->sync($companyCarbonFootprint, null);

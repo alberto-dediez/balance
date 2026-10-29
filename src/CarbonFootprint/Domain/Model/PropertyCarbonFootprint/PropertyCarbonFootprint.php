@@ -103,6 +103,7 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
 
         if (Scope::Scope3 === $scope && $this->scope3Excluded) {
             $this->answerProviders();
+            $this->answerEmployees();
         }
     }
 
@@ -116,6 +117,21 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
 
         $this->recordApplyAndPublish(
             new PropertyCarbonFootprintProvidersAnswered(
+                propertyCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function answerEmployees(): void
+    {
+        $this->ensureIsEditable();
+
+        if ($this->status->isEmployeesAnswered()) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintEmployeesAnswered(
                 propertyCarbonFootprintId: $this->id,
             ),
         );
@@ -145,6 +161,7 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
                 scope: $scope,
                 source: $placement->source,
                 providerId: $placement->providerId,
+                fromEmployees: $placement->fromEmployees,
             ),
         );
     }
@@ -266,13 +283,18 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
-    public function complete(Emissions $totalEmissions): void
+    public function ensureCanBeCompleted(): void
     {
         $this->ensureIsEditable();
 
-        if (OrganizationalCarbonFootprintStatus::ProvidersAnswered !== $this->status) {
-            throw new OrganizationalCarbonFootprintNotReadyToCompleteException('Organizational carbon footprint cannot be completed until providers step is answered');
+        if (OrganizationalCarbonFootprintStatus::EmployeesAnswered !== $this->status) {
+            throw new OrganizationalCarbonFootprintNotReadyToCompleteException('Organizational carbon footprint cannot be completed until employees step is answered');
         }
+    }
+
+    public function complete(Emissions $totalEmissions): void
+    {
+        $this->ensureCanBeCompleted();
 
         $this->recordApplyAndPublish(
             new PropertyCarbonFootprintCompleted(
@@ -325,6 +347,12 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         $this->updatedAt = $event->occurredOn();
     }
 
+    public function applyPropertyCarbonFootprintEmployeesAnswered(PropertyCarbonFootprintEmployeesAnswered $event): void
+    {
+        $this->status = $this->status->advancedTo(OrganizationalCarbonFootprintStatus::EmployeesAnswered);
+        $this->updatedAt = $event->occurredOn();
+    }
+
     public function applyPropertyCarbonFootprintMitigationPlanStarted(PropertyCarbonFootprintMitigationPlanStarted $event): void
     {
         $this->mitigationPlanStarted = true;
@@ -340,6 +368,7 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
             scope: $event->scope(),
             source: $event->source(),
             providerId: $event->providerId(),
+            fromEmployees: $event->fromEmployees(),
             addedAt: $event->occurredOn(),
         ));
     }
@@ -401,7 +430,7 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
 
     public function applyPropertyCarbonFootprintReopened(PropertyCarbonFootprintReopened $event): void
     {
-        $this->status = OrganizationalCarbonFootprintStatus::ProvidersAnswered;
+        $this->status = OrganizationalCarbonFootprintStatus::EmployeesAnswered;
         $this->totalEmissions = new Emissions();
         $this->updatedAt = $event->occurredOn();
     }

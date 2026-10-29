@@ -4401,14 +4401,6 @@
         <source>Utilizaremos tu correo electrónico únicamente para enviarte lo que has solicitado. Consulta la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
         <target><![CDATA[E-posta adresinizi yalnızca talep ettiğiniz şeyi göndermek için kullanacağız. <a href="{url}" target="_blank" rel="noopener noreferrer">Gizlilik politikasına</a> göz atın.]]></target>
       </trans-unit>
-      <trans-unit id="EYIQKjp" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento, tal y como se describe en la &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;política de privacidad&lt;/a&gt;.">
-        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento, tal y como se describe en la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
-        <target><![CDATA[<a href="{url}" target="_blank" rel="noopener noreferrer">Gizlilik politikasında</a> açıklandığı şekilde, etkinliğin karbon ayak izini hesaplamak ve toplamak amacıyla kişisel verilerimin {company} tarafından işlenmesini okudum ve kabul ediyorum.]]></target>
-      </trans-unit>
-      <trans-unit id="WYsIysu" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento.">
-        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono del evento.</source>
-        <target>Etkinliğin karbon ayak izini hesaplamak ve toplamak amacıyla kişisel verilerimin {company} tarafından işlenmesini okudum ve kabul ediyorum.</target>
-      </trans-unit>
       <trans-unit id="fewNgWT" resname="Bienvenido">
         <source>Bienvenido</source>
         <target>Hoş geldiniz</target>
@@ -10080,6 +10072,270 @@
       <trans-unit id="pfc2k4V" resname="{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.">
         <source>{count, plural, one {Hay # solicitud pendiente de respuesta.} other {Hay # solicitudes pendientes de respuesta.}} Puedes continuar; el proveedor podrá contestar hasta que completes la huella.</source>
         <target>{count, plural, one {Yanıt bekleyen # talep var.} other {Yanıt bekleyen # talep var.}} Devam edebilirsiniz; tedarikçi, ayak izini tamamlayana kadar yanıt verebilir.</target>
+      </trans-unit>
+      <trans-unit id="Pt4Rc1g" resname="El total de empleados debe ser al menos 1">
+        <source>El total de empleados debe ser al menos 1</source>
+        <target>Toplam çalışan sayısı en az 1 olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="DEq_3Ct" resname="No hay ninguna pernoctación del equipo organizador en el catálogo: las noches de hotel no se han contabilizado">
+        <source>No hay ninguna pernoctación del equipo organizador en el catálogo: las noches de hotel no se han contabilizado</source>
+        <target>Katalogda organizasyon ekibine ait konaklama yok: otel geceleri hesaba katılmadı</target>
+      </trans-unit>
+      <trans-unit id="o9lKzXE" resname="Se ha reenviado la encuesta a {name}">
+        <source>Se ha reenviado la encuesta a {name}</source>
+        <target>Anket {name} adlı kişiye yeniden gönderildi</target>
+      </trans-unit>
+      <trans-unit id="M.vZEDJ" resname="No se ha podido reenviar la encuesta a {name}">
+        <source>No se ha podido reenviar la encuesta a {name}</source>
+        <target>Anket {name} adlı kişiye yeniden gönderilemedi</target>
+      </trans-unit>
+      <trans-unit id="JZZU1mE" resname="Aporta tus desplazamientos y viajes de {year} para {subject}">
+        <source>Aporta tus desplazamientos y viajes de {year} para {subject}</source>
+        <target>{subject} için {year} yılı işe gidiş-geliş ve iş seyahatlerinizi paylaşın</target>
+      </trans-unit>
+      <trans-unit id="Q5yKnsL" resname="del evento">
+        <source>del evento</source>
+        <target>etkinliğin</target>
+      </trans-unit>
+      <trans-unit id="unxmCj1" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}, tal y como se describe en la &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;política de privacidad&lt;/a&gt;.">
+        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}, tal y como se describe en la &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;política de privacidad&lt;/a&gt;.</source>
+        <target><![CDATA[<a href="{url}" target="_blank" rel="noopener noreferrer">Gizlilik politikasında</a> açıklandığı şekilde, {purpose} karbon ayak izini hesaplamak ve toplamak amacıyla kişisel verilerimin {company} tarafından işlenmesini okudum ve kabul ediyorum.]]></target>
+      </trans-unit>
+      <trans-unit id="eBYmAdD" resname="He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}.">
+        <source>He leído y acepto el tratamiento de mis datos personales por parte de {company} para calcular y agregar la huella de carbono {purpose}.</source>
+        <target>{purpose} karbon ayak izini hesaplamak ve toplamak amacıyla kişisel verilerimin {company} tarafından işlenmesini okudum ve kabul ediyorum.</target>
+      </trans-unit>
+      <trans-unit id="rr_w8yo" resname="La categoría {source} está excluida: los datos de los empleados no se contabilizarán en ella.">
+        <source>La categoría {source} está excluida: los datos de los empleados no se contabilizarán en ella.</source>
+        <target>{source} kategorisi hariç tutuldu: çalışan verileri bu kategoride hesaba katılmayacak.</target>
+      </trans-unit>
+      <trans-unit id="1fWdHWa" resname="Selecciona a los empleados a los que pedir sus desplazamientos al trabajo y viajes de negocio. Sus respuestas se extrapolan al total de plantilla y se suman en las categorías 6 y 7 del alcance 3.">
+        <source>Selecciona a los empleados a los que pedir sus desplazamientos al trabajo y viajes de negocio. Sus respuestas se extrapolan al total de plantilla y se suman en las categorías 6 y 7 del alcance 3.</source>
+        <target>İşe gidiş-geliş ve iş seyahatlerini sormak istediğiniz çalışanları seçin. Yanıtları toplam çalışan sayısına göre ölçeklendirilir ve kapsam 3'ün 6. ve 7. kategorilerine eklenir.</target>
+      </trans-unit>
+      <trans-unit id="UA96ba8" resname="Registrar empleado">
+        <source>Registrar empleado</source>
+        <target>Çalışan kaydet</target>
+      </trans-unit>
+      <trans-unit id="0oUMOiv" resname="Emisiones extrapoladas (kg CO₂eq)">
+        <source>Emisiones extrapoladas (kg CO₂eq)</source>
+        <target>Ölçeklendirilmiş emisyonlar (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="8tVRMSK" resname="Todavía no has invitado a ningún empleado.">
+        <source>Todavía no has invitado a ningún empleado.</source>
+        <target>Henüz hiçbir çalışanı davet etmediniz.</target>
+      </trans-unit>
+      <trans-unit id="1Fvg7Pg" resname="Centro de trabajo">
+        <source>Centro de trabajo</source>
+        <target>İş yeri</target>
+      </trans-unit>
+      <trans-unit id="g2DvGBJ" resname="Viajes de negocio">
+        <source>Viajes de negocio</source>
+        <target>İş seyahatleri</target>
+      </trans-unit>
+      <trans-unit id="t1.JUqv" resname="No he hecho viajes de negocio">
+        <source>No he hecho viajes de negocio</source>
+        <target>İş seyahati yapmadım</target>
+      </trans-unit>
+      <trans-unit id="Mt86g1N" resname="Km">
+        <source>Km</source>
+        <target>Km</target>
+      </trans-unit>
+      <trans-unit id="fZl02OW" resname="Nº de viajes">
+        <source>Nº de viajes</source>
+        <target>Seyahat sayısı</target>
+      </trans-unit>
+      <trans-unit id="KifhTcI" resname="Sin indicar">
+        <source>Sin indicar</source>
+        <target>Belirtilmedi</target>
+      </trans-unit>
+      <trans-unit id="pN9_5fW" resname="No me desplazo al centro de trabajo">
+        <source>No me desplazo al centro de trabajo</source>
+        <target>İş yerine gidip gelmiyorum</target>
+      </trans-unit>
+      <trans-unit id="EI_5GTv" resname="Semanas al año">
+        <source>Semanas al año</source>
+        <target>Yılda hafta</target>
+      </trans-unit>
+      <trans-unit id="fFhkydV" resname="Km por trayecto">
+        <source>Km por trayecto</source>
+        <target>Tek yön km</target>
+      </trans-unit>
+      <trans-unit id="Zq9ugzN" resname="Días por semana">
+        <source>Días por semana</source>
+        <target>Haftada gün</target>
+      </trans-unit>
+      <trans-unit id="thYBVJR" resname="de la organización">
+        <source>de la organización</source>
+        <target>kuruluşun</target>
+      </trans-unit>
+      <trans-unit id="ge2mbHR" resname="Gracias por tu aportación">
+        <source>Gracias por tu aportación</source>
+        <target>Katkınız için teşekkürler</target>
+      </trans-unit>
+      <trans-unit id="IESPCe_" resname="Se han guardado correctamente tus desplazamientos y viajes. Puedes volver a este enlace para revisarlos o modificarlos mientras la huella de carbono siga abierta.">
+        <source>Se han guardado correctamente tus desplazamientos y viajes. Puedes volver a este enlace para revisarlos o modificarlos mientras la huella de carbono siga abierta.</source>
+        <target>İşe gidiş-geliş ve seyahatleriniz başarıyla kaydedildi. Karbon ayak izi açık kaldığı sürece bunları gözden geçirmek veya değiştirmek için bu bağlantıya geri dönebilirsiniz.</target>
+      </trans-unit>
+      <trans-unit id="pi.5dvl" resname="{subject} te pide tus desplazamientos al trabajo y viajes de negocio de {year}.">
+        <source>{subject} te pide tus desplazamientos al trabajo y viajes de negocio de {year}.</source>
+        <target>{subject}, {year} yılı işe gidiş-geliş ve iş seyahatlerinizi istiyor.</target>
+      </trans-unit>
+      <trans-unit id="9fZRo6Z" resname="Responder la encuesta">
+        <source>Responder la encuesta</source>
+        <target>Anketi yanıtla</target>
+      </trans-unit>
+      <trans-unit id="19bbYpI" resname="Hola {name}, {subject} está calculando su huella de carbono de {year} y necesita conocer cómo te desplazas al trabajo y qué viajes de negocio has hecho.">
+        <source>Hola {name}, {subject} está calculando su huella de carbono de {year} y necesita conocer cómo te desplazas al trabajo y qué viajes de negocio has hecho.</source>
+        <target>Merhaba {name}, {subject} {year} yılı karbon ayak izini hesaplıyor ve işe nasıl gidip geldiğinizi ve hangi iş seyahatlerini yaptığınızı bilmesi gerekiyor.</target>
+      </trans-unit>
+      <trans-unit id=".Rdx2zs" resname="No se desplaza al centro de trabajo.">
+        <source>No se desplaza al centro de trabajo.</source>
+        <target>İş yerine gidip gelmiyor.</target>
+      </trans-unit>
+      <trans-unit id="ZM_22c2" resname="Medio">
+        <source>Medio</source>
+        <target>Ulaşım aracı</target>
+      </trans-unit>
+      <trans-unit id="9DI5bC0" resname="Ocupantes">
+        <source>Ocupantes</source>
+        <target>Yolcu sayısı</target>
+      </trans-unit>
+      <trans-unit id=".CLKZka" resname="Sin viajes de negocio.">
+        <source>Sin viajes de negocio.</source>
+        <target>İş seyahati yok.</target>
+      </trans-unit>
+      <trans-unit id="DYm_53L" resname="Total de plantilla">
+        <source>Total de plantilla</source>
+        <target>Toplam çalışan sayısı</target>
+      </trans-unit>
+      <trans-unit id="YZcFy3u" resname="Datos de empleados">
+        <source>Datos de empleados</source>
+        <target>Çalışan verileri</target>
+      </trans-unit>
+      <trans-unit id="sHMaqbq" resname="Sin factor de emisión para {items}: sus datos de empleados no se han contabilizado">
+        <source>Sin factor de emisión para {items}: sus datos de empleados no se han contabilizado</source>
+        <target>{items} için emisyon faktörü yok: çalışan verileri hesaba katılmadı</target>
+      </trans-unit>
+      <trans-unit id="3HOd7WW" resname="Sin factor de emisión del año de la huella; se ha usado el del año más cercano para {items}">
+        <source>Sin factor de emisión del año de la huella; se ha usado el del año más cercano para {items}</source>
+        <target>Ayak izi yılı için emisyon faktörü yok; {items} için en yakın yılınki kullanıldı</target>
+      </trans-unit>
+      <trans-unit id="C.cWlVh" resname="Las semanas al año deben estar entre 1 y 53">
+        <source>Las semanas al año deben estar entre 1 y 53</source>
+        <target>Yıllık hafta sayısı 1 ile 53 arasında olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="IMTC8Qz" resname="Los kilómetros por trayecto deben ser mayores que 0">
+        <source>Los kilómetros por trayecto deben ser mayores que 0</source>
+        <target>Yolculuk başına kilometre 0'dan büyük olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="WCvm58x" resname="Los días por semana deben estar entre 1 y 7">
+        <source>Los días por semana deben estar entre 1 y 7</source>
+        <target>Haftalık gün sayısı 1 ile 7 arasında olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="4qLz.Rs" resname="Los ocupantes del vehículo deben estar entre 1 y 100">
+        <source>Los ocupantes del vehículo deben estar entre 1 y 100</source>
+        <target>Araçtaki kişi sayısı 1 ile 100 arasında olmalıdır</target>
+      </trans-unit>
+      <trans-unit id=".Zk2yLH" resname="Los kilómetros del viaje deben ser mayores que 0">
+        <source>Los kilómetros del viaje deben ser mayores que 0</source>
+        <target>Seyahat kilometresi 0'dan büyük olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="_dwpN7l" resname="El número de viajes debe estar entre 1 y 1000">
+        <source>El número de viajes debe estar entre 1 y 1000</source>
+        <target>Seyahat sayısı 1 ile 1000 arasında olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="_t1Qxf." resname="Las noches de hotel deben estar entre 0 y 366">
+        <source>Las noches de hotel deben estar entre 0 y 366</source>
+        <target>Otel gecesi sayısı 0 ile 366 arasında olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="u_EisUY" resname="A property carbon footprint does not accept a workplace">
+        <source>A property carbon footprint does not accept a workplace</source>
+        <target>Bir tesis karbon ayak izi çalışma yeri kabul etmez</target>
+      </trans-unit>
+      <trans-unit id="xZUNFJ6" resname="Property is not consolidated in the company">
+        <source>Property is not consolidated in the company</source>
+        <target>Tesis şirkette konsolide edilmemiştir</target>
+      </trans-unit>
+      <trans-unit id="BdqFKh6" resname="El número total de empleados no puede ser inferior al número de empleados seleccionados">
+        <source>El número total de empleados no puede ser inferior al número de empleados seleccionados</source>
+        <target>Toplam çalışan sayısı seçilen çalışan sayısından az olamaz</target>
+      </trans-unit>
+      <trans-unit id="RC7m7sZ" resname="Employee not found">
+        <source>Employee not found</source>
+        <target>Çalışan bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="IgkxxO0" resname="CarbonFootprint has no accountId">
+        <source>CarbonFootprint has no accountId</source>
+        <target>Karbon ayak izinin ilişkili hesabı yok</target>
+      </trans-unit>
+      <trans-unit id="TUm47CD" resname="Pendiente de respuesta.">
+        <source>Pendiente de respuesta.</source>
+        <target>Yanıt bekleniyor.</target>
+      </trans-unit>
+      <trans-unit id="xWX819W" resname="Provider not found">
+        <source>Provider not found</source>
+        <target>Tedarikçi bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="57YcGyj" resname="ProviderContribution not found">
+        <source>ProviderContribution not found</source>
+        <target>Tedarikçi katkısı bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="9x9XspX" resname="Cannot resend notification for an ignored ProviderContribution">
+        <source>Cannot resend notification for an ignored ProviderContribution</source>
+        <target>Vazgeçilmiş bir tedarikçi katkısının bildirimi yeniden gönderilemez</target>
+      </trans-unit>
+      <trans-unit id="pz3bBf4" resname="La fase de materiales no está disponible para proveedores">
+        <source>La fase de materiales no está disponible para proveedores</source>
+        <target>Malzeme aşaması tedarikçiler için kullanılamaz</target>
+      </trans-unit>
+      <trans-unit id="yDKDJ4H" resname="OrganizationalProviderContribution not found">
+        <source>OrganizationalProviderContribution not found</source>
+        <target>Tedarikçi katkısı bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="QxC3gc4" resname="OrganizationalProviderContribution has no provider">
+        <source>OrganizationalProviderContribution has no provider</source>
+        <target>Katkının tedarikçisi yok</target>
+      </trans-unit>
+      <trans-unit id="zlV8Edo" resname="Only manual provider contributions accept emissions from the owner">
+        <source>Only manual provider contributions accept emissions from the owner</source>
+        <target>Yalnızca manuel tedarikçi katkıları sahibin girdiği emisyonları kabul eder</target>
+      </trans-unit>
+      <trans-unit id="Gnd.EN9" resname="A provider contribution must cover at least one source">
+        <source>A provider contribution must cover at least one source</source>
+        <target>Tedarikçi katkısı en az bir kaynağı kapsamalıdır</target>
+      </trans-unit>
+      <trans-unit id="BMZAs5Q" resname="CarbonFootprint not found">
+        <source>CarbonFootprint not found</source>
+        <target>Karbon ayak izi bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="2.W0_GV" resname="Provider contributions of organizational footprints are not available for events">
+        <source>Provider contributions of organizational footprints are not available for events</source>
+        <target>Kurumsal ayak izlerinin tedarikçi katkıları etkinlikler için kullanılamaz</target>
+      </trans-unit>
+      <trans-unit id="_Im269B" resname="EventCarbonFootprint not found">
+        <source>EventCarbonFootprint not found</source>
+        <target>Etkinlik karbon ayak izi bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="3Bo8T4V" resname="EventCarbonFootprint has no accountId">
+        <source>EventCarbonFootprint has no accountId</source>
+        <target>Etkinlik karbon ayak izinin hesabı yok</target>
+      </trans-unit>
+      <trans-unit id="h_2u.mT" resname="El número total de empleados debe ser al menos 1">
+        <source>El número total de empleados debe ser al menos 1</source>
+        <target>Toplam çalışan sayısı en az 1 olmalıdır</target>
+      </trans-unit>
+      <trans-unit id=".km0DLH" resname="EmployeeContribution not found">
+        <source>EmployeeContribution not found</source>
+        <target>Çalışan katkısı bulunamadı</target>
+      </trans-unit>
+      <trans-unit id="PLBa9S8" resname="Cannot resend notification for an ignored EmployeeContribution">
+        <source>Cannot resend notification for an ignored EmployeeContribution</source>
+        <target>Vazgeçilmiş bir çalışan katkısının bildirimi yeniden gönderilemez</target>
+      </trans-unit>
+      <trans-unit id="EJqDuuV" resname="La fase de materiales no está disponible para empleados">
+        <source>La fase de materiales no está disponible para empleados</source>
+        <target>Malzeme aşaması çalışanlar için kullanılamaz</target>
       </trans-unit>
     </body>
   </file>

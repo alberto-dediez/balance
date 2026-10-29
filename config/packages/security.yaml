@@ -73,6 +73,7 @@ security:
         - { path: '^/[a-z]{2}/carbon-footprint/contribution', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/provider-contribution', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/employee-contribution', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/carbon-footprint/organizational-employee-contribution', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/attendee-survey', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/property-trip/', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/trip/', roles: PUBLIC_ACCESS }

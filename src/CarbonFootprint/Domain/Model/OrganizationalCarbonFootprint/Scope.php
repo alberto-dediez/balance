@@ -164,6 +164,28 @@ enum Scope: string implements CalculationStage
         };
     }
 
+    /** @return list<SectionDefinition> */
+    public function employeeSections(): array
+    {
+        if (self::Scope3 !== $this) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            $this->sections(),
+            static fn(SectionDefinition $section): bool => in_array($section->key, ['businessTravel', 'businessTravelStays', 'employeeCommuting'], true),
+        ));
+    }
+
+    /** @return list<Source> */
+    public function employeeSources(): array
+    {
+        return match ($this) {
+            self::Scope1, self::Scope2 => [],
+            self::Scope3 => [Source::BusinessTravel, Source::EmployeeCommuting],
+        };
+    }
+
     public function reportedSectionFor(Source $source): SectionDefinition
     {
         if (!in_array($source, $this->providerSources(), true)) {

@@ -21,6 +21,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContributi
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderRepositoryMother;
+use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
 
 class OrganizationalCarbonFootprintReportLinesBuilderTest extends TestCase
@@ -70,6 +71,19 @@ class OrganizationalCarbonFootprintReportLinesBuilderTest extends TestCase
         $this->assertSame($providerId . ' · Última milla', $lines[0]->itemName);
     }
 
+    public function testPrefixesTheItemNameOfTheEmployeeActivities(): void
+    {
+        $activity = $this->save(ReportedEmissionsActivityMother::registered(description: 'Tren'));
+
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope3, Source::EmployeeCommuting, fromEmployees: true));
+
+        $lines = $this->sut()->activityLines($footprint, []);
+
+        $this->assertCount(1, $lines);
+        $this->assertSame('Empleados · Tren', $lines[0]->itemName);
+    }
+
     public function testLeavesOutTheActivitiesOfAnIgnoredContribution(): void
     {
         $provider = ProviderMother::fromNameAndAccountAndId('Logística Sur', 'account-id', (string) ProviderId::generate());
@@ -98,6 +112,7 @@ class OrganizationalCarbonFootprintReportLinesBuilderTest extends TestCase
             $this->itemNameResolver(),
             $this->providerRepository,
             CountedActivityReferencesMother::create($this->contributionRepository),
+            new FakeTranslator(),
         );
     }
 }

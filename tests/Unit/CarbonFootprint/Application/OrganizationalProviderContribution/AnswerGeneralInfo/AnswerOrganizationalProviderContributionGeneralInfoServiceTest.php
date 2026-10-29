@@ -48,6 +48,7 @@ class AnswerOrganizationalProviderContributionGeneralInfoServiceTest extends Org
     {
         $footprint = $this->propertyFootprint();
         $footprint->answerProviders();
+        $footprint->answerEmployees();
         $footprint->complete($this->completedEmissions());
         $contribution = $this->requestedContribution((string) $footprint->id(), $this->linkedProvider());
 

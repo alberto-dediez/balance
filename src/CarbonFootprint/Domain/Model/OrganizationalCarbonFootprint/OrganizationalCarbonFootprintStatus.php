@@ -11,12 +11,13 @@ enum OrganizationalCarbonFootprintStatus: string
     case Scope2Answered = 'scope_2_answered';
     case Scope3Answered    = 'scope_3_answered';
     case ProvidersAnswered = 'providers_answered';
+    case EmployeesAnswered = 'employees_answered';
     case Completed         = 'completed';
 
     public function isScope1Answered(): bool
     {
         return match ($this) {
-            self::Scope1Answered, self::Scope2Answered, self::Scope3Answered, self::ProvidersAnswered, self::Completed => true,
+            self::Scope1Answered, self::Scope2Answered, self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -24,7 +25,7 @@ enum OrganizationalCarbonFootprintStatus: string
     public function isScope2Answered(): bool
     {
         return match ($this) {
-            self::Scope2Answered, self::Scope3Answered, self::ProvidersAnswered, self::Completed => true,
+            self::Scope2Answered, self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -32,7 +33,7 @@ enum OrganizationalCarbonFootprintStatus: string
     public function isScope3Answered(): bool
     {
         return match ($this) {
-            self::Scope3Answered, self::ProvidersAnswered, self::Completed => true,
+            self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -40,7 +41,15 @@ enum OrganizationalCarbonFootprintStatus: string
     public function isProvidersAnswered(): bool
     {
         return match ($this) {
-            self::ProvidersAnswered, self::Completed => true,
+            self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isEmployeesAnswered(): bool
+    {
+        return match ($this) {
+            self::EmployeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -58,7 +67,8 @@ enum OrganizationalCarbonFootprintStatus: string
             self::Scope2Answered => 3,
             self::Scope3Answered    => 4,
             self::ProvidersAnswered => 5,
-            self::Completed         => 6,
+            self::EmployeesAnswered => 6,
+            self::Completed         => 7,
         };
     }
 
@@ -69,7 +79,8 @@ enum OrganizationalCarbonFootprintStatus: string
             self::Scope1Answered => 'scope-2',
             self::Scope2Answered => 'scope-3',
             self::Scope3Answered    => 'providers',
-            self::ProvidersAnswered => 'mitigation-plan',
+            self::ProvidersAnswered => 'employees',
+            self::EmployeesAnswered => 'mitigation-plan',
             self::Completed         => 'results',
         };
     }

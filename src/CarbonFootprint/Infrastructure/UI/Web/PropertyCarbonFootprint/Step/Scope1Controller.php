@@ -69,7 +69,7 @@ class Scope1Controller extends AbstractController
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                 return $this->redirectToRoute('property_carbon_footprints_scope_1', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]);
             }

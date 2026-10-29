@@ -139,6 +139,19 @@ class CompanyCarbonFootprintMother
         return $companyCarbonFootprint;
     }
 
+    public static function withEmployeesAnswered(
+        string $companyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = self::withProvidersAnswered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $companyCarbonFootprint->answerEmployees();
+
+        return $companyCarbonFootprint;
+    }
+
     public static function withMitigationPlanStarted(
         string $companyId,
         string $id,
@@ -146,6 +159,6 @@ class CompanyCarbonFootprintMother
         int $year = 2025,
         ?EmissionFactorGroupId $emissionFactorGroupId = null,
     ): CompanyCarbonFootprint {
-        return self::withProvidersAnswered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        return self::withEmployeesAnswered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
     }
 }

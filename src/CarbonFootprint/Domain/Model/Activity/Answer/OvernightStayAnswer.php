@@ -18,6 +18,7 @@ final class OvernightStayAnswer extends ActivityAnswer
         ?string $source = null,
         public readonly ?int $nights = null,
         public readonly ?int $people = null,
+        public readonly ?int $emissionFactorYear = null,
     ) {
         parent::__construct($quantity, $existingActivityId, $source);
     }

@@ -151,7 +151,7 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
 
     private function propertyFootprint(string $propertyId, string $accountId = self::ACCOUNT_ID): PropertyCarbonFootprint
     {
-        $propertyFootprint = PropertyCarbonFootprintMother::withProvidersAnswered($propertyId, (string) PropertyCarbonFootprintId::generate(), $accountId);
+        $propertyFootprint = PropertyCarbonFootprintMother::withEmployeesAnswered($propertyId, (string) PropertyCarbonFootprintId::generate(), $accountId);
         $this->propertyCarbonFootprintRepository->add($propertyFootprint);
 
         return $propertyFootprint;
@@ -174,6 +174,6 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
 
     private function companyFootprint(): CompanyCarbonFootprint
     {
-        return CompanyCarbonFootprintMother::withProvidersAnswered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        return CompanyCarbonFootprintMother::withEmployeesAnswered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
     }
 }

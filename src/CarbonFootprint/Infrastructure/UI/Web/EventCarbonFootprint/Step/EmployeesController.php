@@ -90,7 +90,7 @@ class EmployeesController extends AbstractController
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido asignar los empleados: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se han podido asignar los empleados: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                 return $this->redirectToRoute('events_carbon_footprint_employees', ['eventId' => $eventId]);
             }

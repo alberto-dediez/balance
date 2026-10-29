@@ -84,7 +84,7 @@ class NonConsolidatedPropertiesSynchronizerTest extends TestCase
         $footprint = $this->companyFootprint();
         $this->sut->sync($footprint, [new NonConsolidatedPropertyAnswer(new PropertyId('leased-out-1'), '4500')]);
 
-        $propertyFootprint = PropertyCarbonFootprintMother::withProvidersAnswered('franchised-1', (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        $propertyFootprint = PropertyCarbonFootprintMother::withEmployeesAnswered('franchised-1', (string) PropertyCarbonFootprintId::generate(), self::ACCOUNT_ID);
         $activity = CombustibleActivityMother::registered(new AccountId(self::ACCOUNT_ID));
         $this->activityRepository->save($activity);
         $propertyFootprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -136,6 +136,6 @@ class NonConsolidatedPropertiesSynchronizerTest extends TestCase
 
     private function companyFootprint(): CompanyCarbonFootprint
     {
-        return CompanyCarbonFootprintMother::withProvidersAnswered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
+        return CompanyCarbonFootprintMother::withEmployeesAnswered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), self::ACCOUNT_ID);
     }
 }

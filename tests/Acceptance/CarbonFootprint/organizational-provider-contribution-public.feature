@@ -70,7 +70,7 @@ Feature:
         Then the response status should be 404
 
     Scenario: Answering a contribution of a completed footprint is refused
-        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with providers answered exists
+        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with employees answered exists
         Given organizational provider contribution with id "778" for property carbon footprint "998" and provider "444" of account "666" in mode "requested" with token "tok-778" covering "upstream_transport" exists
         Given organizational provider contribution "778" has consent
         Given property carbon footprint "998" is completed
@@ -79,7 +79,7 @@ Feature:
         Then property carbon footprint "998" should have 0 activities of provider "444" in source "upstream_transport"
 
     Scenario Outline: The link of a completed footprint shows the closed message instead of the form
-        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with providers answered exists
+        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with employees answered exists
         Given organizational provider contribution with id "778" for property carbon footprint "998" and provider "444" of account "666" in mode "requested" with token "tok-778" covering "upstream_transport" exists
         Given organizational provider contribution "778" has consent
         Given property carbon footprint "998" is completed

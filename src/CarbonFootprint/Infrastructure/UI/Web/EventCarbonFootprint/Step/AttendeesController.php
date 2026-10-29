@@ -107,7 +107,7 @@ class AttendeesController extends AbstractController
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se ha podido cerrar la encuesta: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se ha podido cerrar la encuesta: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                 return $this->redirectToRoute('events_carbon_footprint_attendees', ['eventId' => $eventId]);
             }

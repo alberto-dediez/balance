@@ -15,6 +15,7 @@ final class MobilityAnswer extends ActivityAnswer
         public readonly MobilityId $mobilityId,
         Quantity $quantity,
         ?ActivityId $existingActivityId = null,
+        public readonly ?int $emissionFactorYear = null,
     ) {
         parent::__construct($quantity, $existingActivityId);
     }

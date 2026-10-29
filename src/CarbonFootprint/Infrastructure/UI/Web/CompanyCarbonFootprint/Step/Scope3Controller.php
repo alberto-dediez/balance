@@ -86,7 +86,7 @@ class Scope3Controller extends AbstractController
             } catch (UnauthorizedActionException $e) {
                 throw $this->createAccessDeniedException($e->getMessage());
             } catch (\InvalidArgumentException|ExchangeRateNotFoundException $e) {
-                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => $e->getMessage()]));
+                $this->addFlash('danger', new TranslatableMessage('No se han podido guardar las actividades: {error}', ['{error}' => new TranslatableMessage($e->getMessage())]));
 
                 return $this->redirectToRoute('company_carbon_footprints_scope_3', ['companyCarbonFootprintId' => $companyCarbonFootprintId]);
             }
@@ -124,6 +124,7 @@ class Scope3Controller extends AbstractController
                 'derivedEmissions' => $response->derivedEmissions,
                 'derivedLines' => $response->derivedLines,
                 'providerContributions' => $response->providerContributions,
+                'employeeContributions' => $response->employeeContributions,
                 'nonConsolidated' => NonConsolidatedPropertiesView::build($response->nonConsolidatedProperties),
                 'currencies' => Unit::currencies(),
                 'upstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->upstreamSources()),

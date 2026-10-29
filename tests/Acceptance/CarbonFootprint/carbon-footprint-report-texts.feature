@@ -6,7 +6,7 @@ Feature:
         Given account "666" has report permissions can edit texts "1" and auto review "1"
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -29,7 +29,7 @@ Feature:
         Given account "666" has report permissions can edit texts "1" and auto review "1"
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -44,7 +44,7 @@ Feature:
         Given account "666" has report permissions can edit texts "1" and auto review "0"
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -61,7 +61,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -76,7 +76,7 @@ Feature:
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given user "other@dediez.software" with role "ROLE_OWNER" of account "777" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "other@dediez.software"
@@ -88,7 +88,7 @@ Feature:
         Given account "666" has report permissions can edit texts "1" and auto review "0"
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "pending_review" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -104,7 +104,7 @@ Feature:
         Given account "666" has report permissions can edit texts "0" and auto review "1"
         Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-id" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "consultant@dediez.software"
         When I am logged as "consultant@dediez.software"
@@ -127,7 +127,7 @@ Feature:
         Given account "666" has report permissions can edit texts "1" and auto review "1"
         Given user "consultant@dediez.software" with role "ROLE_OWNER" of account "consultant-id" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "consultant@dediez.software"
         When I am logged as "consultant@dediez.software"
@@ -147,7 +147,7 @@ Feature:
         Given account "666" has report permissions can edit texts "1" and auto review "1"
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"
@@ -163,7 +163,7 @@ Feature:
         Given user "admin@dediez.software" with role "ROLE_ADMIN" of account "admin-account-id" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "admin@dediez.software"
@@ -180,7 +180,7 @@ Feature:
         Given account "666" has report permissions can edit texts "0" and auto review "1"
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with providers answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "999" is completed
         Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
         When I am logged as "owner@dediez.software"

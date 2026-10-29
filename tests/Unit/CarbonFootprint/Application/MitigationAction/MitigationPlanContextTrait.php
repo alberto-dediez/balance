@@ -178,7 +178,7 @@ trait MitigationPlanContextTrait
 
     private function propertyFootprint(int $year = 2025, ?PropertyId $propertyId = null, string $accountId = 'account-id', bool $withActivities = true): PropertyCarbonFootprint
     {
-        $footprint = PropertyCarbonFootprintMother::withProvidersAnswered((string) ($propertyId ?? PropertyId::generate()), (string) PropertyCarbonFootprintId::generate(), $accountId, $year);
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) ($propertyId ?? PropertyId::generate()), (string) PropertyCarbonFootprintId::generate(), $accountId, $year);
 
         if ($withActivities) {
             $footprint->addActivity($this->naturalGasActivity('600')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
@@ -193,7 +193,7 @@ trait MitigationPlanContextTrait
 
     private function companyFootprint(int $year = 2025, string $companyId = 'company-id'): CompanyCarbonFootprint
     {
-        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered($companyId, (string) CompanyCarbonFootprintId::generate(), 'account-id', $year);
+        $footprint = CompanyCarbonFootprintMother::withEmployeesAnswered($companyId, (string) CompanyCarbonFootprintId::generate(), 'account-id', $year);
         $footprint->addActivity($this->naturalGasActivity('600')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
         $footprint->addActivity($this->naturalGasActivity('300')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: PropertyId::generate()));
         $footprint->addActivity($this->naturalGasActivity('100')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));

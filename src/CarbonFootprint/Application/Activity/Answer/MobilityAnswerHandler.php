@@ -37,7 +37,7 @@ final class MobilityAnswerHandler implements ActivityAnswerHandler
             accountId: $accountId,
             mobilityId: $answer->mobilityId,
             quantity: $answer->quantity,
-            year: $year,
+            year: $answer->emissionFactorYear ?? $year,
             emissionFactorGroupId: $emissionFactorGroupId,
         ), $user);
 
@@ -53,7 +53,7 @@ final class MobilityAnswerHandler implements ActivityAnswerHandler
             activityId: $answer->existingActivityId,
             mobilityId: $answer->mobilityId,
             quantity: $answer->quantity,
-            year: $year,
+            year: $answer->emissionFactorYear ?? $year,
             emissionFactorGroupId: $emissionFactorGroupId,
         ), $user);
     }
