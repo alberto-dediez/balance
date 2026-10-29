@@ -10,6 +10,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseCancelled;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseNotPendingException;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRangeCorrected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseReceived;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRejected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRequested;
@@ -278,6 +279,7 @@ class CreditPurchaseTest extends TestCase
             projectId: $projectId,
             purchasedTonnes: 100.0,
             offsetTonnes: 30.0,
+            upperOffsetTonnes: 0.0,
             amount: 700.0,
             paymentType: CreditPurchasePaymentType::PaidByBioscore,
             reference: 'SERIAL-1',
@@ -293,6 +295,8 @@ class CreditPurchaseTest extends TestCase
         $this->assertSame(70.0, $destination->availableTonnes());
         $this->assertSame(70.0, $destination->requestedTonnes());
         $this->assertSame(30.0, $destination->offsetTonnes());
+        $this->assertSame(0.0, $destination->upperOffsetTonnes());
+        $this->assertSame(100.0, $destination->ceilingTonnes());
         $this->assertSame(2, $destination->lotNumber());
         $this->assertSame(10.0, $destination->pricePerTonne());
         $this->assertFalse($destination->isPartiallyFulfilled());
@@ -300,6 +304,114 @@ class CreditPurchaseTest extends TestCase
         $this->assertSame([], $destination->notifiedThresholds());
 
         $this->assertInstanceOf(CreditPurchaseReceived::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testReceiveWithAnUpperOffsetOwnsOnlyItsRange(): void
+    {
+        $destination = CreditPurchaseMother::receivedLot(
+            reference: 'SERIAL-1',
+            purchasedTonnes: 100.0,
+            offsetTonnes: 40.0,
+            upperOffsetTonnes: 40.0,
+            lotNumber: 3,
+        );
+
+        $this->assertSame(20.0, $destination->availableTonnes());
+        $this->assertSame(20.0, $destination->requestedTonnes());
+        $this->assertSame(60.0, $destination->ceilingTonnes());
+        $this->assertSame(40.0, $destination->upperOffsetTonnes());
+        $this->assertFalse($destination->isTransferred());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseReceived::class, $lastEvent);
+        $this->assertSame(40.0, $lastEvent->upperOffsetTonnes());
+        $this->assertSame(20.0, $lastEvent->receivedTonnes());
+    }
+
+    public function testReceivedPayloadWithoutUpperOffsetIsRebuiltWithZero(): void
+    {
+        CreditPurchaseMother::receivedLot(reference: 'SERIAL-1', upperOffsetTonnes: 10.0);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseReceived::class, $lastEvent);
+
+        $payload = $lastEvent->payload();
+        unset($payload['upperOffsetTonnes']);
+
+        $rebuilt = CreditPurchaseReceived::rebuildFromPayload($lastEvent->id(), $lastEvent->occurredOn(), $payload);
+
+        $this->assertSame(0.0, $rebuilt->upperOffsetTonnes());
+        $this->assertSame(70.0, $rebuilt->receivedTonnes());
+    }
+
+    public function testCeilingTonnesMovesDownWithEachTransfer(): void
+    {
+        $creditPurchase = $this->bioscorePurchase(100.0, null);
+
+        $this->assertSame(100.0, $creditPurchase->ceilingTonnes());
+
+        foreach ([40.0, 20.0] as $tonnes) {
+            $creditPurchase->transfer(
+                tonnes: $tonnes,
+                amount: 0.0,
+                destinationCreditPurchaseId: CreditPurchaseId::generate(),
+                destinationAccountId: AccountId::generate(),
+                transferredBy: UserId::generate(),
+            );
+        }
+
+        $this->assertSame(40.0, $creditPurchase->ceilingTonnes());
+        $this->assertSame(40.0, $creditPurchase->availableTonnes());
+    }
+
+    public function testCorrectRangePublishesCreditPurchaseRangeCorrected(): void
+    {
+        $lot = CreditPurchaseMother::receivedLot(reference: 'SERIAL-1', offsetTonnes: 40.0, lotNumber: 3);
+
+        $lot->correctRange(offsetTonnes: 40.0, upperOffsetTonnes: 40.0);
+
+        $this->assertSame(40.0, $lot->offsetTonnes());
+        $this->assertSame(40.0, $lot->upperOffsetTonnes());
+        $this->assertSame(20.0, $lot->requestedTonnes());
+        $this->assertSame(20.0, $lot->availableTonnes());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseRangeCorrected::class, $lastEvent);
+        $this->assertSame(40.0, $lastEvent->previousOffsetTonnes());
+        $this->assertSame(0.0, $lastEvent->previousUpperOffsetTonnes());
+        $this->assertSame(40.0, $lastEvent->offsetTonnes());
+        $this->assertSame(40.0, $lastEvent->upperOffsetTonnes());
+    }
+
+    public function testCorrectRangeDoesNothingWhenTheRangeMatches(): void
+    {
+        $lot = CreditPurchaseMother::receivedLot(reference: 'SERIAL-1', offsetTonnes: 40.0, upperOffsetTonnes: 40.0);
+        $eventsBefore = count($this->spySubscriber->events());
+
+        $lot->correctRange(offsetTonnes: 40.0000001, upperOffsetTonnes: 40.0);
+
+        $this->assertCount($eventsBefore, $this->spySubscriber->events());
+    }
+
+    public function testCorrectRangeOfTheFirstLotThrows(): void
+    {
+        $creditPurchase = $this->bioscorePurchase(100.0, null);
+
+        $this->expectException(NonTransferableCreditPurchaseException::class);
+
+        $creditPurchase->correctRange(offsetTonnes: 10.0, upperOffsetTonnes: 0.0);
+    }
+
+    public function testCorrectRangeOfANonValidatedLotThrows(): void
+    {
+        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate(), lotNumber: 2);
+
+        $this->expectException(NonTransferableCreditPurchaseException::class);
+
+        $creditPurchase->correctRange(offsetTonnes: 10.0, upperOffsetTonnes: 0.0);
     }
 
     private function bioscorePurchase(float $tonnes, ?float $amount): CreditPurchase

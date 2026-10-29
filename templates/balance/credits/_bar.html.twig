@@ -1,17 +1,17 @@
 {#
-    Variables expected: allocations, purchasedTonnes, availableTonnes; optional: offsetTonnes, voidedTonnes, height, labels
+    Variables expected: allocations, purchasedTonnes, availableTonnes; optional: offsetTonnes, upperOffsetTonnes, voidedTonnes, height, labels
 #}
-{% macro transferred(tonnes, purchasedTonnes, labels) %}
+{% macro segment(tonnes, purchasedTonnes, labels, label, classes) %}
     {% if tonnes > 0 and purchasedTonnes > 0 %}
         {% set percent = tonnes / purchasedTonnes * 100 %}
-        <div class="progress-bar progress-bar-striped bg-secondary bg-opacity-50 text-dark"
+        <div class="progress-bar {{ classes }}"
              role="progressbar"
              style="width: {{ percent }}%"
              aria-valuenow="{{ percent }}"
              aria-valuemin="0"
              aria-valuemax="100"
-             title="{{ 'Transferido' | trans }}: {{ tonnes | number_format(4, ',', '.') }} t">
-            {% if labels and percent >= 8 %}{{ 'Transferido' | trans }}{% endif %}
+             title="{{ label }}: {{ tonnes | number_format(4, ',', '.') }} t">
+            {% if labels and percent >= 8 %}{{ label }}{% endif %}
         </div>
     {% endif %}
 {% endmacro %}
@@ -22,10 +22,13 @@
 {% set height = height | default(12) %}
 {% set labels = labels | default(false) %}
 {% set offsetTonnes = offsetTonnes | default(0) %}
+{% set upperOffsetTonnes = upperOffsetTonnes | default(0) %}
 {% set voidedTonnes = voidedTonnes | default(0) %}
+{% set transferredClasses = 'progress-bar-striped bg-secondary bg-opacity-50 text-dark' %}
+{% set otherLotsClasses = 'bg-dark bg-opacity-10 text-dark' %}
 
 <div class="progress" style="height: {{ height }}px;">
-    {{ bar.transferred(offsetTonnes, purchasedTonnes, labels) }}
+    {{ bar.segment(offsetTonnes, purchasedTonnes, labels, 'Otros lotes del serial' | trans, otherLotsClasses) }}
 
     {% for allocation in allocations %}
         {% set percent = purchasedTonnes > 0 ? (allocation.tonnes / purchasedTonnes * 100) : 0 %}
@@ -53,7 +56,8 @@
         </div>
     {% endif %}
 
-    {{ bar.transferred(voidedTonnes, purchasedTonnes, labels) }}
+    {{ bar.segment(voidedTonnes, purchasedTonnes, labels, 'Transferido' | trans, transferredClasses) }}
+    {{ bar.segment(upperOffsetTonnes, purchasedTonnes, labels, 'Otros lotes del serial' | trans, otherLotsClasses) }}
 </div>
 
 {% if labels %}
@@ -72,10 +76,17 @@
             </span>
         {% endif %}
 
-        {% if offsetTonnes + voidedTonnes > 0 %}
+        {% if voidedTonnes > 0 %}
             <span>
                 <span class="badge bg-secondary bg-opacity-50 border">&nbsp;</span>
                 {{ 'Transferido' | trans }}
+            </span>
+        {% endif %}
+
+        {% if offsetTonnes + upperOffsetTonnes > 0 %}
+            <span>
+                <span class="badge bg-dark bg-opacity-10 border">&nbsp;</span>
+                {{ 'Otros lotes del serial' | trans }}
             </span>
         {% endif %}
     </div>

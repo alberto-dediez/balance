@@ -10425,6 +10425,34 @@
         <source>de mi viaje</source>
         <target>of my trip</target>
       </trans-unit>
+      <trans-unit id="ikiZien" resname="Se han transferido {tonnes} t a {accounts} cuentas ({share} t por cuenta), de las que {absorbed} t se han aplicado a aportaciones pendientes">
+        <source>Se han transferido {tonnes} t a {accounts} cuentas ({share} t por cuenta), de las que {absorbed} t se han aplicado a aportaciones pendientes</source>
+        <target>{tonnes} t transferred to {accounts} accounts ({share} t per account), of which {absorbed} t were applied to pending contributions</target>
+      </trans-unit>
+      <trans-unit id="6dNw5sd" resname="Quedan {retained} t sin repartir en el lote de origen">
+        <source>Quedan {retained} t sin repartir en el lote de origen</source>
+        <target>{retained} t remain undistributed in the source lot</target>
+      </trans-unit>
+      <trans-unit id="HrETWDC" resname="La cuenta {account} recibe {extra} t adicionales del resto no divisible">
+        <source>La cuenta {account} recibe {extra} t adicionales del resto no divisible</source>
+        <target>Account {account} receives {extra} additional t from the indivisible remainder</target>
+      </trans-unit>
+      <trans-unit id="iZ1qvMx" resname="Cuentas de destino">
+        <source>Cuentas de destino</source>
+        <target>Destination accounts</target>
+      </trans-unit>
+      <trans-unit id="9JfNuD1" resname="Selecciona las cuentas">
+        <source>Selecciona las cuentas</source>
+        <target>Select the accounts</target>
+      </trans-unit>
+      <trans-unit id="DKa82F." resname="Déjalo vacío para repartir todo el remanente. Las toneladas se reparten a partes iguales entre las cuentas seleccionadas; lo que no se pueda dividir se queda en este lote o, si se reparte todo el remanente, en la última cuenta.">
+        <source>Déjalo vacío para repartir todo el remanente. Las toneladas se reparten a partes iguales entre las cuentas seleccionadas; lo que no se pueda dividir se queda en este lote o, si se reparte todo el remanente, en la última cuenta.</source>
+        <target>Leave it empty to distribute the whole remainder. The tonnes are split equally between the selected accounts; whatever cannot be divided stays in this lot or, if the whole remainder is distributed, goes to the last account.</target>
+      </trans-unit>
+      <trans-unit id="H2d8REK" resname="Otros lotes del serial">
+        <source>Otros lotes del serial</source>
+        <target>Other lots of the serial</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

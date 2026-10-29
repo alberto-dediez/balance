@@ -55,7 +55,7 @@ Feature:
         Then contribution "C3" should consume the range "0" to "8" of serial "REF-SPLIT"
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/credits/3333/transfer"
-        When I submit a form with "destinationAccountId:999" and button "Transferir crédito"
+        When I submit a form with "destinationAccountIds:[999]" and button "Transferir crédito"
         When I follow redirect
         Given contribution "C4" of account "999" for project "1111" with "5" tonnes is pending until "+12 hours"
         When the gateway notifies that the payment of contribution "C4" succeeded

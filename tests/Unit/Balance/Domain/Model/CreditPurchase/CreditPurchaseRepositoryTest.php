@@ -133,6 +133,43 @@ abstract class CreditPurchaseRepositoryTest extends KernelTestCase
         $this->assertSame(100.0, $repository->purchasedTonnesForProject($projectId));
     }
 
+    public function testBalancesDiscountTheUpperOffsetOfReceivedLots(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $firstDestinationAccountId = AccountId::generate();
+        $secondDestinationAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $source = CreditPurchaseMother::transferred($accountId, $projectId, 100.0, 60.0);
+        $repository->add($source);
+
+        $repository->add(CreditPurchaseMother::receivedLot(
+            reference: (string) $source->reference(),
+            purchasedTonnes: 100.0,
+            offsetTonnes: 60.0,
+            lotNumber: 2,
+            accountId: $firstDestinationAccountId,
+            projectId: $projectId,
+        ));
+
+        $repository->add(CreditPurchaseMother::receivedLot(
+            reference: (string) $source->reference(),
+            purchasedTonnes: 100.0,
+            offsetTonnes: 40.0,
+            upperOffsetTonnes: 40.0,
+            lotNumber: 3,
+            accountId: $secondDestinationAccountId,
+            projectId: $projectId,
+        ));
+
+        $this->assertSame(40.0, $repository->balanceFor($accountId, $projectId)->purchasedTonnes());
+        $this->assertSame(40.0, $repository->balanceFor($firstDestinationAccountId, $projectId)->purchasedTonnes());
+        $this->assertSame(20.0, $repository->balanceFor($secondDestinationAccountId, $projectId)->purchasedTonnes());
+        $this->assertSame(100.0, $repository->purchasedTonnesForProject($projectId));
+    }
+
     public function testBalancesByAccountSumsValidatedPurchasesByProject(): void
     {
         $repository = $this->createSUT();

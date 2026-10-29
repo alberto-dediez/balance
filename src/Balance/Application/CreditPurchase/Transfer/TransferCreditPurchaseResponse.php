@@ -9,11 +9,15 @@ use App\Shared\Application\CommandBus\CommandResponse;
 
 class TransferCreditPurchaseResponse implements CommandResponse
 {
+    /** @param list<TransferredLot> $lots */
     public function __construct(
         public CreditPurchaseId $creditPurchaseId,
-        public CreditPurchaseId $destinationCreditPurchaseId,
+        public array $lots,
         public float $transferredTonnes,
         public ?float $transferredAmount,
+        public float $tonnesPerAccount,
+        public float $retainedTonnes,
+        public float $lastAccountExtraTonnes,
         public float $absorbedTonnes,
     ) {}
 }

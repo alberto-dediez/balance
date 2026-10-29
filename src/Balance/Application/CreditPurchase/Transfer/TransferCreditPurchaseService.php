@@ -31,6 +31,9 @@ class TransferCreditPurchaseService implements CommandHandler
     use RegisterHandlerTrait;
     use CommandInvokeHandlerTrait;
 
+    private const int MICRO_TONNES = 1_000_000;
+    private const int CENTS = 100;
+
     public function __construct(
         private CreditPurchaseRepository $creditPurchaseRepository,
         private TransferableCredit $transferableCredit,
@@ -53,7 +56,6 @@ class TransferCreditPurchaseService implements CommandHandler
         $sourceAccountId = $source->accountId();
         $projectId = $source->projectId();
         $reference = $source->reference();
-        $destinationAccountId = $request->destinationAccountId;
 
         if (
             !$sourceAccountId instanceof AccountId
@@ -64,67 +66,191 @@ class TransferCreditPurchaseService implements CommandHandler
             throw new NonTransferableCreditPurchaseException($source->id());
         }
 
-        if (!$destinationAccountId instanceof AccountId || $destinationAccountId->equals($sourceAccountId)) {
-            throw new NonTransferableCreditPurchaseException($source->id());
+        $destinationAccountIds = $this->destinationAccountIds($source, $sourceAccountId, $request->destinationAccountIds);
+
+        $this->split($source, $request->tonnes, count($destinationAccountIds));
+
+        foreach ($destinationAccountIds as $destinationAccountId) {
+            $this->selectProject->__invoke(
+                new SelectProjectRequest(accountId: $destinationAccountId, projectId: $projectId),
+                $user,
+            );
         }
 
-        $this->selectProject->__invoke(
-            new SelectProjectRequest(accountId: $destinationAccountId, projectId: $projectId),
-            $user,
-        );
-
-        /** @var array{destination: CreditPurchase, tonnes: float, amount: ?float} $transfer */
-        $transfer = $this->creditReservationLock->withLock(
+        /** @var array{split: array{share: float, lastShare: float, retained: float, emptied: bool}, transfers: list<array{accountId: AccountId, destination: CreditPurchase, tonnes: float, amount: ?float}>} $result */
+        $result = $this->creditReservationLock->withLock(
             $sourceAccountId,
             $projectId,
-            fn(): array => $this->transfer($source, $projectId, $destinationAccountId, $reference, $request->tonnes, $user),
+            function () use ($source, $projectId, $destinationAccountIds, $reference, $request, $user): array {
+                $split = $this->split($source, $request->tonnes, count($destinationAccountIds));
+                $amounts = $this->amounts($source, $split, count($destinationAccountIds));
+                $lastIndex = array_key_last($destinationAccountIds);
+                $transfers = [];
+
+                foreach ($destinationAccountIds as $index => $destinationAccountId) {
+                    $isLast = $index === $lastIndex;
+
+                    $transfers[] = $this->transfer(
+                        $source,
+                        $projectId,
+                        $destinationAccountId,
+                        $reference,
+                        null === $amounts ? null : ($isLast ? $amounts['lastShare'] : $amounts['share']),
+                        $isLast ? $split['lastShare'] : $split['share'],
+                        $user,
+                    );
+                }
+
+                return ['split' => $split, 'transfers' => $transfers];
+            },
         );
 
-        $reallocation = $this->reallocateUnderallocatedContributions->__invoke(
-            new ReallocateUnderallocatedContributionsRequest(accountId: $destinationAccountId, projectId: $projectId),
-        );
+        $lots = [];
+
+        foreach ($result['transfers'] as $transfer) {
+            $reallocation = $this->reallocateUnderallocatedContributions->__invoke(
+                new ReallocateUnderallocatedContributionsRequest(accountId: $transfer['accountId'], projectId: $projectId),
+            );
+
+            $lots[] = new TransferredLot(
+                destinationAccountId: $transfer['accountId'],
+                destinationCreditPurchaseId: $transfer['destination']->id(),
+                tonnes: $transfer['tonnes'],
+                amount: $transfer['amount'],
+                absorbedTonnes: $reallocation->reallocatedTonnes,
+            );
+        }
+
+        $split = $result['split'];
+        $amounts = array_values(array_filter(
+            array_map(static fn(TransferredLot $lot): ?float => $lot->amount, $lots),
+            static fn(?float $amount): bool => null !== $amount,
+        ));
 
         return new TransferCreditPurchaseResponse(
             creditPurchaseId: $source->id(),
-            destinationCreditPurchaseId: $transfer['destination']->id(),
-            transferredTonnes: $transfer['tonnes'],
-            transferredAmount: $transfer['amount'],
-            absorbedTonnes: $reallocation->reallocatedTonnes,
+            lots: $lots,
+            transferredTonnes: round(array_sum(array_map(static fn(TransferredLot $lot): float => $lot->tonnes, $lots)), 6),
+            transferredAmount: [] === $amounts ? null : round(array_sum($amounts), 2),
+            tonnesPerAccount: $split['share'],
+            retainedTonnes: $split['retained'],
+            lastAccountExtraTonnes: round($split['lastShare'] - $split['share'], 6),
+            absorbedTonnes: array_sum(array_map(static fn(TransferredLot $lot): float => $lot->absorbedTonnes, $lots)),
         );
     }
 
-    /** @return array{destination: CreditPurchase, tonnes: float, amount: ?float} */
+    /**
+     * @param list<AccountId> $requestedAccountIds
+     *
+     * @return non-empty-list<AccountId>
+     */
+    private function destinationAccountIds(CreditPurchase $source, AccountId $sourceAccountId, array $requestedAccountIds): array
+    {
+        $destinationAccountIds = [];
+
+        foreach ($requestedAccountIds as $requestedAccountId) {
+            if ($requestedAccountId->equals($sourceAccountId)) {
+                throw new NonTransferableCreditPurchaseException($source->id());
+            }
+
+            foreach ($destinationAccountIds as $destinationAccountId) {
+                if ($destinationAccountId->equals($requestedAccountId)) {
+                    continue 2;
+                }
+            }
+
+            $destinationAccountIds[] = $requestedAccountId;
+        }
+
+        if ([] === $destinationAccountIds) {
+            throw new NonTransferableCreditPurchaseException($source->id());
+        }
+
+        return $destinationAccountIds;
+    }
+
+    /** @return array{share: float, lastShare: float, retained: float, emptied: bool} */
+    private function split(CreditPurchase $source, ?float $requestedTonnes, int $accounts): array
+    {
+        $transferable = $this->transferableCredit->forPurchase($source);
+
+        if ($transferable <= CreditBalance::TONNE_TOLERANCE) {
+            throw new InsufficientTransferableCreditException($source->id());
+        }
+
+        $total = round(min($requestedTonnes ?? $transferable, $transferable), 6);
+        $micro = (int) round($total * self::MICRO_TONNES);
+        $shareMicro = intdiv($micro, $accounts);
+        $remainderMicro = $micro - $shareMicro * $accounts;
+
+        if (0 === $shareMicro) {
+            throw new InsufficientTransferableCreditException($source->id());
+        }
+
+        $share = $shareMicro / self::MICRO_TONNES;
+
+        if ($total < $transferable - CreditBalance::TONNE_TOLERANCE) {
+            return ['share' => $share, 'lastShare' => $share, 'retained' => $remainderMicro / self::MICRO_TONNES, 'emptied' => false];
+        }
+
+        return ['share' => $share, 'lastShare' => ($shareMicro + $remainderMicro) / self::MICRO_TONNES, 'retained' => 0.0, 'emptied' => true];
+    }
+
+    /**
+     * @param array{share: float, lastShare: float, retained: float, emptied: bool} $split
+     *
+     * @return array{share: float, lastShare: float}|null
+     */
+    private function amounts(CreditPurchase $source, array $split, int $accounts): ?array
+    {
+        $pricePerTonne = $source->pricePerTonne();
+        $sourceAmount = $source->amount();
+
+        if (null === $pricePerTonne || null === $sourceAmount) {
+            return null;
+        }
+
+        $tonnes = round($split['share'] * ($accounts - 1) + $split['lastShare'], 6);
+        $cents = (int) round(min(round($pricePerTonne * $tonnes, 2), $sourceAmount) * self::CENTS);
+        $shareCents = intdiv($cents, $accounts);
+        $remainderCents = $split['emptied'] ? $cents - $shareCents * $accounts : 0;
+
+        return [
+            'share' => $shareCents / self::CENTS,
+            'lastShare' => ($shareCents + $remainderCents) / self::CENTS,
+        ];
+    }
+
+    /** @return array{accountId: AccountId, destination: CreditPurchase, tonnes: float, amount: ?float} */
     private function transfer(
         CreditPurchase $source,
         ProjectId $projectId,
         AccountId $destinationAccountId,
         string $reference,
-        ?float $requestedTonnes,
+        ?float $destinationAmount,
+        float $tonnes,
         User $user,
     ): array {
-        $transferTonnes = $this->transferTonnes($source, $requestedTonnes);
-
-        $pricePerTonne = $source->pricePerTonne();
-        $destinationAmount = null !== $pricePerTonne ? round($pricePerTonne * $transferTonnes, 2) : null;
+        $purchasedTonnes = $source->purchasedTonnes() ?? 0.0;
+        $ceiling = $source->ceilingTonnes();
 
         $destination = new CreditPurchase(id: CreditPurchaseId::generate());
 
         $source->transfer(
-            tonnes: $transferTonnes,
+            tonnes: $tonnes,
             amount: $destinationAmount ?? 0.0,
             destinationCreditPurchaseId: $destination->id(),
             destinationAccountId: $destinationAccountId,
             transferredBy: $user->id(),
         );
 
-        $purchasedTonnes = $source->purchasedTonnes() ?? 0.0;
-
         $destination->receive(
             sourceCreditPurchaseId: $source->id(),
             accountId: $destinationAccountId,
             projectId: $projectId,
             purchasedTonnes: $purchasedTonnes,
-            offsetTonnes: round($purchasedTonnes - $source->voidedTonnes(), 6),
+            offsetTonnes: round($ceiling - $tonnes, 6),
+            upperOffsetTonnes: round($purchasedTonnes - $ceiling, 6),
             amount: $destinationAmount,
             paymentType: CreditPurchasePaymentType::PaidByBioscore,
             reference: $reference,
@@ -136,18 +262,12 @@ class TransferCreditPurchaseService implements CommandHandler
         $this->creditPurchaseRepository->add($source);
         $this->creditPurchaseRepository->add($destination);
 
-        return ['destination' => $destination, 'tonnes' => $transferTonnes, 'amount' => $destinationAmount];
-    }
-
-    private function transferTonnes(CreditPurchase $source, ?float $requestedTonnes): float
-    {
-        $remaining = $this->transferableCredit->forPurchase($source);
-
-        if ($remaining <= CreditBalance::TONNE_TOLERANCE) {
-            throw new InsufficientTransferableCreditException($source->id());
-        }
-
-        return round(min($requestedTonnes ?? $remaining, $remaining), 6);
+        return [
+            'accountId' => $destinationAccountId,
+            'destination' => $destination,
+            'tonnes' => $tonnes,
+            'amount' => $destinationAmount,
+        ];
     }
 
     public function isHandled(Command $command): bool

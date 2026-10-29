@@ -23,6 +23,7 @@ final class CreditPurchaseReceived extends DomainEvent
         private ProjectId $projectId,
         private float $purchasedTonnes,
         private float $offsetTonnes,
+        private float $upperOffsetTonnes,
         private ?float $amount,
         private CreditPurchasePaymentType $paymentType,
         private string $reference,
@@ -65,9 +66,14 @@ final class CreditPurchaseReceived extends DomainEvent
         return $this->offsetTonnes;
     }
 
+    public function upperOffsetTonnes(): float
+    {
+        return $this->upperOffsetTonnes;
+    }
+
     public function receivedTonnes(): float
     {
-        return $this->purchasedTonnes - $this->offsetTonnes;
+        return $this->purchasedTonnes - $this->offsetTonnes - $this->upperOffsetTonnes;
     }
 
     public function amount(): ?float
@@ -114,6 +120,7 @@ final class CreditPurchaseReceived extends DomainEvent
             'projectId' => (string) $this->projectId,
             'purchasedTonnes' => $this->purchasedTonnes,
             'offsetTonnes' => $this->offsetTonnes,
+            'upperOffsetTonnes' => $this->upperOffsetTonnes,
             'amount' => $this->amount,
             'paymentType' => $this->paymentType->value,
             'reference' => $this->reference,
@@ -135,6 +142,7 @@ final class CreditPurchaseReceived extends DomainEvent
             projectId: new ProjectId($payload['projectId']),
             purchasedTonnes: (float) $payload['purchasedTonnes'],
             offsetTonnes: (float) $payload['offsetTonnes'],
+            upperOffsetTonnes: (float) ($payload['upperOffsetTonnes'] ?? 0.0),
             amount: isset($payload['amount']) ? (float) $payload['amount'] : null,
             paymentType: CreditPurchasePaymentType::tryFrom((string) ($payload['paymentType'] ?? ''))
                 ?? CreditPurchasePaymentType::PaidByBioscore,

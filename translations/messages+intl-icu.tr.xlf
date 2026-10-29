@@ -10341,6 +10341,34 @@
         <source>de mi viaje</source>
         <target>seyahatimin</target>
       </trans-unit>
+      <trans-unit id="ikiZien" resname="Se han transferido {tonnes} t a {accounts} cuentas ({share} t por cuenta), de las que {absorbed} t se han aplicado a aportaciones pendientes">
+        <source>Se han transferido {tonnes} t a {accounts} cuentas ({share} t por cuenta), de las que {absorbed} t se han aplicado a aportaciones pendientes</source>
+        <target>{tonnes} t {accounts} hesaba aktarıldı (hesap başına {share} t), bunun {absorbed} t kadarı bekleyen katkılara uygulandı</target>
+      </trans-unit>
+      <trans-unit id="6dNw5sd" resname="Quedan {retained} t sin repartir en el lote de origen">
+        <source>Quedan {retained} t sin repartir en el lote de origen</source>
+        <target>Kaynak partide {retained} t dağıtılmadan kaldı</target>
+      </trans-unit>
+      <trans-unit id="HrETWDC" resname="La cuenta {account} recibe {extra} t adicionales del resto no divisible">
+        <source>La cuenta {account} recibe {extra} t adicionales del resto no divisible</source>
+        <target>{account} hesabı bölünemeyen kalandan {extra} t ek alır</target>
+      </trans-unit>
+      <trans-unit id="iZ1qvMx" resname="Cuentas de destino">
+        <source>Cuentas de destino</source>
+        <target>Hedef hesaplar</target>
+      </trans-unit>
+      <trans-unit id="9JfNuD1" resname="Selecciona las cuentas">
+        <source>Selecciona las cuentas</source>
+        <target>Hesapları seçin</target>
+      </trans-unit>
+      <trans-unit id="DKa82F." resname="Déjalo vacío para repartir todo el remanente. Las toneladas se reparten a partes iguales entre las cuentas seleccionadas; lo que no se pueda dividir se queda en este lote o, si se reparte todo el remanente, en la última cuenta.">
+        <source>Déjalo vacío para repartir todo el remanente. Las toneladas se reparten a partes iguales entre las cuentas seleccionadas; lo que no se pueda dividir se queda en este lote o, si se reparte todo el remanente, en la última cuenta.</source>
+        <target>Kalanın tamamını dağıtmak için boş bırakın. Tonlar seçilen hesaplar arasında eşit olarak paylaştırılır; bölünemeyen kısım bu partide kalır veya kalanın tamamı dağıtılıyorsa son hesaba eklenir.</target>
+      </trans-unit>
+      <trans-unit id="H2d8REK" resname="Otros lotes del serial">
+        <source>Otros lotes del serial</source>
+        <target>Serinin diğer lotları</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

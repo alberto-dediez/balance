@@ -15,6 +15,7 @@ use App\Balance\Infrastructure\Symfony\Form\TransferCreditPurchaseType;
 use App\Balance\Infrastructure\UI\Web\CreditPurchase\GetCreditPurchaseFromIdTrait;
 use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\EditTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +36,7 @@ class TransferController extends AbstractController
         CreditPurchaseRepository $creditPurchaseRepository,
         TransferCreditPurchaseService $transferCreditPurchase,
         TransferableCredit $transferableCredit,
+        AccountRepository $accountRepository,
         LoggedUser $loggedUser,
         Request $request,
     ): Response {
@@ -55,9 +57,11 @@ class TransferController extends AbstractController
         $failed = false;
 
         try {
-            $form = $this->createForm(TransferCreditPurchaseType::class, $transferRequest);
+            $form = $this->createForm(TransferCreditPurchaseType::class, $transferRequest, [
+                'source_account_id' => $creditPurchase->accountId(),
+            ]);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($transferCreditPurchase, $loggedUser, &$failed) {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($transferCreditPurchase, $accountRepository, $loggedUser, &$failed) {
                 try {
                     $response = $transferCreditPurchase($form->getData(), $loggedUser());
                 } catch (NonTransferableCreditPurchaseException|InsufficientTransferableCreditException $e) {
@@ -68,13 +72,44 @@ class TransferController extends AbstractController
                     return;
                 }
 
-                $this->addFlash('success', new TranslatableMessage(
-                    'Se han transferido {tonnes} t, de las que {absorbed} t se han aplicado a aportaciones pendientes',
-                    [
-                        '{tonnes}' => number_format($response->transferredTonnes, 4, ',', '.'),
-                        '{absorbed}' => number_format($response->absorbedTonnes, 4, ',', '.'),
-                    ],
-                ));
+                if (1 === count($response->lots)) {
+                    $this->addFlash('success', new TranslatableMessage(
+                        'Se han transferido {tonnes} t, de las que {absorbed} t se han aplicado a aportaciones pendientes',
+                        [
+                            '{tonnes}' => number_format($response->transferredTonnes, 6, ',', '.'),
+                            '{absorbed}' => number_format($response->absorbedTonnes, 4, ',', '.'),
+                        ],
+                    ));
+                } else {
+                    $this->addFlash('success', new TranslatableMessage(
+                        'Se han transferido {tonnes} t a {accounts} cuentas ({share} t por cuenta), de las que {absorbed} t se han aplicado a aportaciones pendientes',
+                        [
+                            '{tonnes}' => number_format($response->transferredTonnes, 6, ',', '.'),
+                            '{accounts}' => count($response->lots),
+                            '{share}' => number_format($response->tonnesPerAccount, 6, ',', '.'),
+                            '{absorbed}' => number_format($response->absorbedTonnes, 4, ',', '.'),
+                        ],
+                    ));
+                }
+
+                if ($response->retainedTonnes > 0.0) {
+                    $this->addFlash('info', new TranslatableMessage(
+                        'Quedan {retained} t sin repartir en el lote de origen',
+                        ['{retained}' => number_format($response->retainedTonnes, 6, ',', '.')],
+                    ));
+                }
+
+                $lastLot = end($response->lots);
+
+                if (false !== $lastLot && $response->lastAccountExtraTonnes > 0.0) {
+                    $this->addFlash('info', new TranslatableMessage(
+                        'La cuenta {account} recibe {extra} t adicionales del resto no divisible',
+                        [
+                            '{account}' => (string) $accountRepository->find($lastLot->destinationAccountId),
+                            '{extra}' => number_format($response->lastAccountExtraTonnes, 6, ',', '.'),
+                        ],
+                    ));
+                }
             });
 
             if ($needsRedirect && !$failed) {

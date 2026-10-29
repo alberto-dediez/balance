@@ -34,6 +34,7 @@ class CreditPurchase
         private ?string $rejectionReason = null,
         private array $notifiedThresholds = [],
         private float $offsetTonnes = 0.0,
+        private float $upperOffsetTonnes = 0.0,
         private float $voidedTonnes = 0.0,
         private int $lotNumber = 1,
         array $events = [],
@@ -87,6 +88,11 @@ class CreditPurchase
     public function offsetTonnes(): float
     {
         return $this->offsetTonnes;
+    }
+
+    public function upperOffsetTonnes(): float
+    {
+        return $this->upperOffsetTonnes;
     }
 
     public function voidedTonnes(): float
@@ -182,7 +188,12 @@ class CreditPurchase
             return 0.0;
         }
 
-        return max(0.0, $this->purchasedTonnes - $this->offsetTonnes - $this->voidedTonnes);
+        return max(0.0, $this->purchasedTonnes - $this->offsetTonnes - $this->upperOffsetTonnes - $this->voidedTonnes);
+    }
+
+    public function ceilingTonnes(): float
+    {
+        return ($this->purchasedTonnes ?? 0.0) - $this->upperOffsetTonnes - $this->voidedTonnes;
     }
 
     public function request(AccountId $accountId, ProjectId $projectId, UserId $requestedBy, float $tonnes): void
@@ -305,6 +316,7 @@ class CreditPurchase
         ProjectId $projectId,
         float $purchasedTonnes,
         float $offsetTonnes,
+        float $upperOffsetTonnes,
         ?float $amount,
         CreditPurchasePaymentType $paymentType,
         string $reference,
@@ -320,12 +332,37 @@ class CreditPurchase
                 projectId: $projectId,
                 purchasedTonnes: $purchasedTonnes,
                 offsetTonnes: $offsetTonnes,
+                upperOffsetTonnes: $upperOffsetTonnes,
                 amount: $amount,
                 paymentType: $paymentType,
                 reference: $reference,
                 lotNumber: $lotNumber,
                 certificate: $certificate,
                 transferredBy: $transferredBy,
+            ),
+        );
+    }
+
+    public function correctRange(float $offsetTonnes, float $upperOffsetTonnes): void
+    {
+        if (CreditPurchaseStatus::Validated !== $this->status || $this->lotNumber <= 1) {
+            throw new NonTransferableCreditPurchaseException($this->id());
+        }
+
+        if (
+            abs($offsetTonnes - $this->offsetTonnes) <= CreditBalance::TONNE_TOLERANCE
+            && abs($upperOffsetTonnes - $this->upperOffsetTonnes) <= CreditBalance::TONNE_TOLERANCE
+        ) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CreditPurchaseRangeCorrected(
+                creditPurchaseId: $this->id(),
+                previousOffsetTonnes: $this->offsetTonnes,
+                previousUpperOffsetTonnes: $this->upperOffsetTonnes,
+                offsetTonnes: $offsetTonnes,
+                upperOffsetTonnes: $upperOffsetTonnes,
             ),
         );
     }
@@ -349,6 +386,7 @@ class CreditPurchase
         $this->status = CreditPurchaseStatus::Validated;
         $this->purchasedTonnes = $event->purchasedTonnes();
         $this->offsetTonnes = $event->offsetTonnes();
+        $this->upperOffsetTonnes = $event->upperOffsetTonnes();
         $this->amount = $event->amount();
         $this->paymentType = $event->paymentType();
         $this->reference = $event->reference();
@@ -356,6 +394,13 @@ class CreditPurchase
         $this->certificate = null !== $event->certificate() ? (string) $event->certificate() : null;
         $this->requestedAt = $event->occurredOn();
         $this->resolvedAt = $event->occurredOn();
+    }
+
+    public function applyCreditPurchaseRangeCorrected(CreditPurchaseRangeCorrected $event): void
+    {
+        $this->offsetTonnes = $event->offsetTonnes();
+        $this->upperOffsetTonnes = $event->upperOffsetTonnes();
+        $this->requestedTonnes = round(($this->purchasedTonnes ?? 0.0) - $this->offsetTonnes - $this->upperOffsetTonnes, 6);
     }
 
     public function reachThreshold(

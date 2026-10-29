@@ -168,7 +168,7 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
         $qb = $this->manager->createQueryBuilder();
 
         $rows = $qb
-            ->select('cp.projectId as projectId, SUM(cp.purchasedTonnes - cp.offsetTonnes - cp.voidedTonnes) as purchasedTonnes, COUNT(cp) as purchasesCount')
+            ->select('cp.projectId as projectId, SUM(cp.purchasedTonnes - cp.offsetTonnes - cp.upperOffsetTonnes - cp.voidedTonnes) as purchasedTonnes, COUNT(cp) as purchasesCount')
             ->from(CreditPurchase::class, 'cp')
             ->andWhere($qb->expr()->eq('cp.accountId', ':accountId'))
             ->andWhere($qb->expr()->eq('cp.status', ':status'))
@@ -211,7 +211,7 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
         $qb = $this->manager->createQueryBuilder();
 
         return (float) $qb
-            ->select('COALESCE(SUM(cp.purchasedTonnes - cp.offsetTonnes - cp.voidedTonnes), 0)')
+            ->select('COALESCE(SUM(cp.purchasedTonnes - cp.offsetTonnes - cp.upperOffsetTonnes - cp.voidedTonnes), 0)')
             ->from(CreditPurchase::class, 'cp')
             ->andWhere($qb->expr()->eq('cp.projectId', ':projectId'))
             ->andWhere($qb->expr()->eq('cp.status', ':status'))

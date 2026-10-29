@@ -209,6 +209,33 @@ class CheckCreditAlertsServiceTest extends TestCase
         $this->assertSame(7.0, $event->availableTonnes());
     }
 
+    public function testThresholdsOfALotReceivedBelowTheTopOfTheSerialAreMeasuredOnItsOwnRange(): void
+    {
+        $lot = CreditPurchaseMother::receivedLot(
+            reference: 'SERIAL-1',
+            purchasedTonnes: 100.0,
+            offsetTonnes: 40.0,
+            upperOffsetTonnes: 40.0,
+            lotNumber: 3,
+            accountId: $this->accountId,
+            projectId: $this->projectId,
+        );
+        $this->creditPurchaseRepository->add($lot);
+
+        $this->consume($lot, 16.0);
+
+        $response = $this->check();
+
+        $this->assertSame(1, $response->alerted);
+        $this->assertSame([CreditAlertThreshold::Warning], $this->thresholdEvents());
+
+        $event = $this->lastThresholdEvent();
+
+        $this->assertSame(20.0, $event->purchasedTonnes());
+        $this->assertSame(16.0, $event->consumedTonnes());
+        $this->assertSame(4.0, $event->availableTonnes());
+    }
+
     private function lastThresholdEvent(): CreditThresholdReached
     {
         $events = array_values(array_filter(

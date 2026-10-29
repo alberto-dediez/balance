@@ -10,9 +10,10 @@ use App\Shared\Application\CommandBus\Command;
 
 class TransferCreditPurchaseRequest implements Command
 {
+    /** @param list<AccountId> $destinationAccountIds */
     public function __construct(
         public CreditPurchaseId $creditPurchaseId,
-        public ?AccountId $destinationAccountId = null,
+        public array $destinationAccountIds = [],
         public ?float $tonnes = null,
     ) {}
 }
