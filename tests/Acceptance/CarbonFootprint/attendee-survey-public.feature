@@ -18,6 +18,7 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_attendee_survey_city"
         When I go to "/es/carbon-footprint/attendee-survey/token-abc/city"
         Then the response status should be 200
+        Then I see a text "para calcular y agregar la huella de carbono del evento"
         When I tick the checkbox "consent_accepted"
         When I submit a form with "moved:yes|originPlaceReference:hotel|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|roundTrip:yes|trips:3" and button "Enviar respuesta"
         Then I am redirected to route "public_carbon_footprint_attendee_survey_thanks"

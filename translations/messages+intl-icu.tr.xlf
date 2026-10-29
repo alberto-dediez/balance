@@ -10337,6 +10337,10 @@
         <source>La fase de materiales no está disponible para empleados</source>
         <target>Malzeme aşaması çalışanlar için kullanılamaz</target>
       </trans-unit>
+      <trans-unit id="vpCRUPo" resname="de mi viaje">
+        <source>de mi viaje</source>
+        <target>seyahatimin</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

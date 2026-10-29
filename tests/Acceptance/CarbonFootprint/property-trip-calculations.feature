@@ -20,6 +20,7 @@ Feature:
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         Given the places provider is disabled
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        Then I see a text "para calcular y agregar la huella de carbono de mi viaje"
         When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:120|roundTrip:no|trips:1|overnight:no" and button "Calcular mi huella"
         When I am logged as "owner@dediez.software"

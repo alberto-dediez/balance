@@ -10,6 +10,7 @@ Feature:
         Given provider contribution with id "111" for event carbon footprint "999" and provider "444" of account "666" with token "token-abc" exists
         When I go to "/es/carbon-footprint/contribution/token-abc/general"
         Then the response status should be 200
+        Then I see a text "para calcular y agregar la huella de carbono del evento"
         Then I see a text "Evento A"
         Then I see a text "Provider Company"
 

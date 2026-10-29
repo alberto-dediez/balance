@@ -19,6 +19,8 @@ Feature:
         Then I see a text "¿Cuál es el destino de tu viaje?"
         Then I see a text "¿Tu viaje incluye desplazamiento?"
         Then I see a text "¿Incluye noches de alojamiento?"
+        Then I see a text "para calcular y agregar la huella de carbono de mi viaje"
+        Then I do not see a text "huella de carbono del evento"
         Then I do not see a text "¿Te has desplazado desde otra ciudad?"
         Then I see a text "¿Hasta dónde llegas en este medio?"
         Then I do not see a text "¿Hasta dónde llegaste en este medio?"

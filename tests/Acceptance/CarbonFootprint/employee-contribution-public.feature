@@ -10,6 +10,7 @@ Feature:
         Given employee contribution with id "222" for event carbon footprint "999" and employee "555" of account "666" with token "token-emp" exists
         When I go to "/es/carbon-footprint/employee-contribution/token-emp/assembly"
         Then the response status should be 200
+        Then I see a text "para calcular y agregar la huella de carbono del evento"
         Then I see a text "Montaje"
         When I tick the checkbox "consent_accepted"
         When I tick the checkbox "worked"

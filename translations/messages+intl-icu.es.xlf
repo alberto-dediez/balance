@@ -10421,6 +10421,10 @@
         <source>La fase de materiales no está disponible para empleados</source>
         <target>La fase de materiales no está disponible para empleados</target>
       </trans-unit>
+      <trans-unit id="vpCRUPo" resname="de mi viaje">
+        <source>de mi viaje</source>
+        <target>de mi viaje</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

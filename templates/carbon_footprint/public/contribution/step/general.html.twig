@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-                {% include '@shared/form/_consent_field.html.twig' %}
+                {% include '@shared/form/_consent_field.html.twig' with {consent_purpose: 'del evento' | trans} %}
 
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">{{ 'Siguiente' | trans }} &rarr;</button>
