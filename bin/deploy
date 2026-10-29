@@ -10,8 +10,10 @@
 # Toda la salida se guarda además en var/log/deploy.log.
 # Al terminar (bien o mal) hace un POST JSON a DEPLOY_WEBHOOK_URL si está definida
 # (variable de entorno o línea DEPLOY_WEBHOOK_URL= en .env.local / .env).
+# Plesk despliega sin .git: DEPLOY_GIT_DIR es la ruta del repositorio bare de Plesk
+# (/var/www/vhosts/<dominio>/git/<repo>.git) del que se lee el commit desplegado.
 #
-# Variables opcionales: PHP, COMPOSER_BIN, SUPERVISORCTL, SUPERVISOR_GROUP, DEPLOY_WEBHOOK_URL, DEPLOY_LOG.
+# Variables opcionales: PHP, COMPOSER_BIN, SUPERVISORCTL, SUPERVISOR_GROUP, DEPLOY_WEBHOOK_URL, DEPLOY_GIT_DIR, DEPLOY_GIT_REF, DEPLOY_LOG.
 
 set -euo pipefail
 
@@ -22,6 +24,8 @@ SUPERVISORCTL="${SUPERVISORCTL:-/usr/bin/supervisorctl}"
 SUPERVISOR_GROUP="${SUPERVISOR_GROUP:-balance}"
 DEPLOY_LOG="${DEPLOY_LOG:-$PROJECT_DIR/var/log/deploy.log}"
 DEPLOY_WEBHOOK_URL="${DEPLOY_WEBHOOK_URL:-}"
+DEPLOY_GIT_DIR="${DEPLOY_GIT_DIR:-}"
+DEPLOY_GIT_REF="${DEPLOY_GIT_REF:-}"
 
 export APP_ENV=prod
 export APP_DEBUG=0
@@ -29,6 +33,7 @@ export COMPOSER_MEMORY_LIMIT=-1
 
 CURRENT_STEP="inicio"
 STARTED_AT="$(date +%s)"
+DEPLOY_COMMIT="desconocido"
 
 step() {
     CURRENT_STEP="$1"
@@ -60,17 +65,38 @@ env_file_value() {
     done
 }
 
+resolve_commit() {
+    local fallback="$1" ref="${DEPLOY_GIT_REF:-HEAD}" commit
+
+    command -v git > /dev/null 2>&1 || { printf 'git no disponible: el commit del deploy queda como "%s".\n' "$fallback" >&2; printf '%s' "$fallback"; return; }
+
+    if [ -d "$PROJECT_DIR/.git" ]; then
+        commit="$(git -C "$PROJECT_DIR" rev-parse --short "$ref" 2> /dev/null || true)"
+        [ -z "$commit" ] || { printf '%s' "$commit"; return; }
+    fi
+
+    if [ -n "$DEPLOY_GIT_DIR" ]; then
+        commit="$(git --git-dir="$DEPLOY_GIT_DIR" rev-parse --short "$ref" 2> /dev/null || true)"
+        [ -z "$commit" ] || { printf '%s' "$commit"; return; }
+        printf 'No se ha podido leer %s de DEPLOY_GIT_DIR (%s): no es un repositorio git legible o la referencia no existe; el commit del deploy queda como "%s".\n' "$ref" "$DEPLOY_GIT_DIR" "$fallback" >&2
+        printf '%s' "$fallback"
+        return
+    fi
+
+    printf 'Sin commit legible en %s (ref %s) y sin DEPLOY_GIT_DIR (ruta del repositorio de Plesk, p. ej. /var/www/vhosts/<dominio>/git/<repo>.git): el commit del deploy queda como "%s".\n' "$PROJECT_DIR" "$ref" "$fallback" >&2
+    printf '%s' "$fallback"
+}
+
 json_escape() {
     printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\t/\\t/g' -e 's/\r//g' | awk 'BEGIN { ORS = "" } NR > 1 { print "\\n" } { print }'
 }
 
 notify_webhook() {
-    local status="$1" exit_code="$2" commit duration log_tail payload
+    local status="$1" exit_code="$2" duration log_tail payload
 
     [ -n "$DEPLOY_WEBHOOK_URL" ] || return 0
     command -v curl > /dev/null 2>&1 || { printf 'curl no disponible: no se notifica el webhook.\n' >&2; return 0; }
 
-    commit="$(git -C "$PROJECT_DIR" rev-parse --short HEAD 2> /dev/null || printf 'desconocido')"
     duration="$(( $(date +%s) - STARTED_AT ))"
     log_tail=""
     if [ "$status" != "success" ] && [ -f "$DEPLOY_LOG" ]; then
@@ -83,7 +109,7 @@ notify_webhook() {
         "$(json_escape "$(basename "$PROJECT_DIR")")" \
         "$(json_escape "$(hostname -f 2> /dev/null || hostname)")" \
         "$(json_escape "$SUPERVISOR_GROUP")" \
-        "$(json_escape "$commit")" \
+        "$(json_escape "$DEPLOY_COMMIT")" \
         "$(json_escape "$CURRENT_STEP")" \
         "$duration" \
         "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
@@ -119,9 +145,13 @@ main() {
 
     mkdir -p "$(dirname "$DEPLOY_LOG")"
     exec > >(tee -a "$DEPLOY_LOG") 2>&1
-    printf '\n######## Deploy %s (%s) ########\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$(git rev-parse --short HEAD 2> /dev/null || printf 'sin git')"
 
     [ -n "$DEPLOY_WEBHOOK_URL" ] || DEPLOY_WEBHOOK_URL="$(env_file_value DEPLOY_WEBHOOK_URL)"
+    [ -n "$DEPLOY_GIT_DIR" ] || DEPLOY_GIT_DIR="$(env_file_value DEPLOY_GIT_DIR)"
+    [ -n "$DEPLOY_GIT_REF" ] || DEPLOY_GIT_REF="$(env_file_value DEPLOY_GIT_REF)"
+    DEPLOY_COMMIT="$(resolve_commit desconocido)"
+
+    printf '\n######## Deploy %s (%s) ########\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$([ "$DEPLOY_COMMIT" != desconocido ] && printf '%s' "$DEPLOY_COMMIT" || printf 'sin git')"
 
     trap on_exit EXIT
 

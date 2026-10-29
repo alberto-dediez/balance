@@ -30,6 +30,8 @@ Rutas por defecto de `bin/deploy` (se pueden sobrescribir con variables de entor
 | Grupo de Supervisor | `hydra` | `SUPERVISOR_GROUP` |
 | Log del despliegue | `<PROJECT_DIR>/var/log/deploy.log` | `DEPLOY_LOG` |
 | Webhook de resultado | *(ninguno)* | `DEPLOY_WEBHOOK_URL` (también en `.env.local`) |
+| Repositorio git de Plesk (commit del deploy) | *(ninguno: commit `desconocido`)* | `DEPLOY_GIT_DIR` (también en `.env.local`) |
+| Referencia git para el commit | `HEAD` | `DEPLOY_GIT_REF` (también en `.env.local`) |
 
 ## Adaptar a una plataforma
 
@@ -189,7 +191,7 @@ Entrecomillar siempre `'<GRUPO>:*'` para que bash no expanda el `*`. `sudo -n` f
 
 ## Despliegue (Plesk Git)
 
-El código lo actualiza **Plesk Git**; [`bin/deploy`](../../bin/deploy) no hace nada con git y se lanza como acción de despliegue adicional, con el system user de la suscripción.
+El código lo actualiza **Plesk Git**; [`bin/deploy`](../../bin/deploy) con git solo lee el commit desplegado, del `.git` local si existe o del repositorio bare de Plesk indicado en `DEPLOY_GIT_DIR` (nunca escribe en él), y se lanza como acción de despliegue adicional, con el system user de la suscripción.
 
 ### Configuración del repositorio en Plesk
 
@@ -205,7 +207,19 @@ En *Sitios web y dominios → `<DOMINIO>` → Git → Configuración del reposit
 
   `bash` explícito por si el despliegue no conserva el permiso de ejecución del fichero. Las acciones se ejecutan desde la ruta de despliegue.
 
-La salida del script (y el error, si falla) aparece en el registro del despliegue de Plesk Git y se guarda además, acumulada por despliegues, en `var/log/deploy.log` (cada ejecución empieza con una línea `######## Deploy <fecha> (<commit>) ########`). Si la web tiene el código nuevo pero el log no tiene entrada de ese despliegue, Plesk no llegó a ejecutar la acción.
+La salida del script (y el error, si falla) aparece en el registro del despliegue de Plesk Git y se guarda además, acumulada por despliegues, en `var/log/deploy.log` (cada ejecución empieza con una línea `######## Deploy <fecha> (<commit>) ########`; cuando no se ha podido resolver el commit muestra `sin git` y el motivo aparece en la línea anterior del log). Si la web tiene el código nuevo pero el log no tiene entrada de ese despliegue, Plesk no llegó a ejecutar la acción.
+
+### Commit del despliegue
+
+Plesk Git despliega el árbol de trabajo en `<PROJECT_DIR>` **sin** carpeta `.git`: el repositorio es un clon bare que Plesk guarda en `/var/www/vhosts/<dominio principal>/git/<repositorio>.git` (por ejemplo, para Balance: `/var/www/vhosts/bioscore.info/git/balance.git`). Para que la cabecera de `var/log/deploy.log` y el campo `commit` del webhook lleven el hash real, copiar esa ruta como `DEPLOY_GIT_DIR=<ruta>` en el `.env.local` del proyecto en el servidor, junto a `DEPLOY_WEBHOOK_URL`. Sin ella (y sin `.git` local), `commit` vale `desconocido`.
+
+Comprobar la ruta desde `root`:
+
+```bash
+sudo -u <PROJECT_USER> -H git --git-dir=<ruta> rev-parse --short HEAD
+```
+
+Si el `HEAD` del repositorio bare no es la rama desplegada (`git --git-dir=<ruta> symbolic-ref HEAD` lo muestra), indicar la rama con `DEPLOY_GIT_REF=refs/heads/<rama>`.
 
 ### Webhook de resultado (opcional)
 
@@ -262,6 +276,7 @@ Si un paso falla, el script se detiene, indica en qué paso ha fallado, notifica
 |---------|-------|----------|
 | `/usr/bin/env: bad interpreter: No such file or directory` al desplegar | El usuario tiene shell `/bin/false` o `chrootsh` y Plesk ejecuta la acción en una jaula chroot | Shell `/bin/bash` (paso 2) |
 | Las migraciones (u otro paso) no se ejecutan en el despliegue pero sí a mano | El script abortó antes (p. ej. `supervisorctl stop` con los workers ya parados, `sudo` sin permiso) o Plesk no llegó a lanzarlo | Revisar `var/log/deploy.log` y el registro de Plesk Git; configurar `DEPLOY_WEBHOOK_URL` para enterarse de los fallos |
+| El webhook llega con `"commit": "desconocido"` (o la cabecera del log dice `sin git`) | Plesk despliega sin `.git` y falta `DEPLOY_GIT_DIR`, o apunta a una ruta errónea, o `DEPLOY_GIT_REF` no existe | Leer el aviso previo a la cabecera en `var/log/deploy.log` y definir `DEPLOY_GIT_DIR=/var/www/vhosts/<dominio>/git/<repo>.git` en `.env.local` (ver «Commit del despliegue») |
 | `sudo: a password is required` | Falta alguna regla de sudoers o está mal escrita (comillas, `reread ""`, espacios tras `\`) | Revisar el paso 5 y probar cada comando con el paso 7 |
 | `Allowed memory size of 134217728 bytes exhausted` | `memory_limit` de 128M del PHP CLI de Plesk | Ya resuelto en `bin/deploy` (`-d memory_limit=512M`) y en los `command=` del `.ini` (`-d memory_limit=256M`) |
 | `rm: cannot remove 'var/cache/prod': Directory not empty` al desplegar | PHP-FPM regeneraba la caché mientras se borraba | Ya resuelto en `bin/deploy`: renombra `var/cache/prod` antes de borrarlo |
