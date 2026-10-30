@@ -7,7 +7,7 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/notifications"
         Then the response status should be 200
-        Then I see a table with 2 rows
+        Then I see a table with 3 rows
         Then I see a text "Marcar todas como leídas"
 
     Scenario: As a user I can read one of my notifications

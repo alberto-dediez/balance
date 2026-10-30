@@ -2029,7 +2029,7 @@
         <source>Borrar búsqueda</source>
         <target>Borrar búsqueda</target>
       </trans-unit>
-      <trans-unit id="sYsTeM1" resname="Sistema">
+      <trans-unit id="jfbi5SU" resname="Sistema">
         <source>Sistema</source>
         <target>Sistema</target>
       </trans-unit>
@@ -2764,6 +2764,34 @@
       <trans-unit id="dXBo.Go" resname="El nombre de usuario no puede contener los caracteres &lt; ni &gt;">
         <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
         <target><![CDATA[El nombre de usuario no puede contener los caracteres < ni >]]></target>
+      </trans-unit>
+      <trans-unit id="o8S5aZs" resname="Marcar como leída">
+        <source>Marcar como leída</source>
+        <target>Marcar como leída</target>
+      </trans-unit>
+      <trans-unit id="Z4Gtfjc" resname="Se ha marcado como leída la notificación «{subject}»">
+        <source>Se ha marcado como leída la notificación «{subject}»</source>
+        <target>Se ha marcado como leída la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="SytIFYg" resname="No se ha podido marcar como leída la notificación «{subject}»">
+        <source>No se ha podido marcar como leída la notificación «{subject}»</source>
+        <target>No se ha podido marcar como leída la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="AHC1Q3W" resname="Se ha eliminado la notificación «{subject}»">
+        <source>Se ha eliminado la notificación «{subject}»</source>
+        <target>Se ha eliminado la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="JZF1hJq" resname="No se ha podido eliminar la notificación «{subject}»">
+        <source>No se ha podido eliminar la notificación «{subject}»</source>
+        <target>No se ha podido eliminar la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id=".kupvtK" resname="La selección ha cambiado; revisa los elementos y vuelve a intentarlo">
+        <source>La selección ha cambiado; revisa los elementos y vuelve a intentarlo</source>
+        <target>La selección ha cambiado; revisa los elementos y vuelve a intentarlo</target>
+      </trans-unit>
+      <trans-unit id="UNDybjO" resname="No se ha podido realizar la acción; revisa el formulario y vuelve a intentarlo">
+        <source>No se ha podido realizar la acción; revisa el formulario y vuelve a intentarlo</source>
+        <target>No se ha podido realizar la acción; revisa el formulario y vuelve a intentarlo</target>
       </trans-unit>
     </body>
   </file>
