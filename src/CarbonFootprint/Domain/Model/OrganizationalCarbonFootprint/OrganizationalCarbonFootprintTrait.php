@@ -59,6 +59,11 @@ trait OrganizationalCarbonFootprintTrait
         return $this->mitigationPlanStarted;
     }
 
+    public function isPrecalculated(): bool
+    {
+        return $this->precalculated;
+    }
+
     public function scope3Excluded(): bool
     {
         return $this->scope3Excluded;
@@ -121,6 +126,15 @@ trait OrganizationalCarbonFootprintTrait
     {
         foreach ($this->activityReferences() as $reference) {
             if ($reference->placement->stage->key() === $scope->key() && $reference->placement->source === $source) {
+                $this->removeActivity($reference->activityId);
+            }
+        }
+    }
+
+    private function removeActivitiesOfStage(Scope $scope): void
+    {
+        foreach ($this->activityReferences() as $reference) {
+            if ($reference->placement->stage->key() === $scope->key()) {
                 $this->removeActivity($reference->activityId);
             }
         }

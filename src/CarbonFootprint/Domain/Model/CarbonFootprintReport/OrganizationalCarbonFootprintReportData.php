@@ -44,6 +44,7 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         public readonly ?string $scope3ExclusionComment = null,
         public readonly array $derivedLines = [],
         public readonly array $nonConsolidatedPropertyLines = [],
+        public readonly bool $precalculated = false,
     ) {}
 
     public function subjectType(): CarbonFootprintReportSubjectType

@@ -33,6 +33,11 @@ class OrganizationalCarbonFootprintReportDataMother
         return self::build(CarbonFootprintReportSubjectType::Property, 'Hotel Sol', 'Hotelera del Sur', 'España', null);
     }
 
+    public static function precalculated(): OrganizationalCarbonFootprintReportData
+    {
+        return self::build(CarbonFootprintReportSubjectType::Property, 'Hotel Sol', 'Hotelera del Sur', 'España', null, precalculated: true);
+    }
+
     public static function withElectricityWithoutLocationBasedResult(): OrganizationalCarbonFootprintReportData
     {
         return self::build(CarbonFootprintReportSubjectType::Property, 'Hotel Sol', 'Hotelera del Sur', 'España', null, electricityActivitiesWithoutLocationBased: 1);
@@ -202,6 +207,7 @@ class OrganizationalCarbonFootprintReportDataMother
         bool $scope3 = false,
         bool $scope3Excluded = false,
         int $electricityActivitiesWithoutLocationBased = 0,
+        bool $precalculated = false,
     ): OrganizationalCarbonFootprintReportData {
         $emissionsBySource = [];
         foreach (Source::cases() as $source) {
@@ -260,6 +266,24 @@ class OrganizationalCarbonFootprintReportDataMother
             $locationBasedTotalEmissions = new Emissions('8920', '8920', '0', '0');
         }
 
+        $locationBasedElectricityEmissions = new Emissions('2000', '2000', '0', '0');
+
+        if ($precalculated) {
+            $emissionsBySource[Source::FuelAndEnergyRelated->value] = new Emissions('590', '590', '0', '0');
+            $emissionsByScope[Scope::Scope3->value] = new Emissions('590', '590', '0', '0');
+            $emissionsByScopeAndSource[Scope::Scope3->value][Source::FuelAndEnergyRelated->value] = new Emissions('590', '590', '0', '0');
+            $activityLines = [
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::FixedFacilities, $isCompany ? 'Hotel Sol' : null, 'Caldera comunicada', ActivityType::ReportedEmissions, 180.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '180'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::OwnVehicles, null, 'Flota comunicada', ActivityType::ReportedEmissions, 1250.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '1250'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope2, Source::BuildingElectricity, $isCompany ? 'Hotel Sol' : null, 'Electricidad comunicada', ActivityType::ReportedEmissions, 2500.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '2500'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::FuelAndEnergyRelated, $isCompany ? 'Hotel Sol' : null, 'Combustibles y energía comunicados', ActivityType::ReportedEmissions, 590.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '590'),
+            ];
+            $derivedLines = [];
+            $totalEmissions = new Emissions('4520', '4520', '0', '0');
+            $locationBasedElectricityEmissions = new Emissions();
+            $locationBasedTotalEmissions = new Emissions('4520', '4520', '0', '0');
+        }
+
         if ($scope3Excluded) {
             array_unshift($exclusionLines, new OrganizationalCarbonFootprintReportExclusionLine(Scope::Scope3, null, ExclusionReason::NoDataAvailable, 'Sin datos de proveedores'));
         }
@@ -272,7 +296,7 @@ class OrganizationalCarbonFootprintReportDataMother
             emissionFactorGroupName: 'MITECO 2025',
             calculationYear: 2025,
             totalEmissions: $totalEmissions,
-            locationBasedElectricityEmissions: new Emissions('2000', '2000', '0', '0'),
+            locationBasedElectricityEmissions: $locationBasedElectricityEmissions,
             locationBasedTotalEmissions: $locationBasedTotalEmissions,
             electricityActivitiesWithoutLocationBased: $electricityActivitiesWithoutLocationBased,
             emissionsBySource: $emissionsBySource,
@@ -286,6 +310,7 @@ class OrganizationalCarbonFootprintReportDataMother
             scope3ExclusionReason: $scope3Excluded ? ExclusionReason::NoDataAvailable : null,
             scope3ExclusionComment: $scope3Excluded ? 'Sin datos de proveedores' : null,
             derivedLines: $derivedLines,
+            precalculated: $precalculated,
         );
     }
 }

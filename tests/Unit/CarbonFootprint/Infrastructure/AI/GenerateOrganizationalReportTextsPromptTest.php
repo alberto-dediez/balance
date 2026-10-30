@@ -71,6 +71,20 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringContainsString('- scope_3 | (whole scope) | no_data_available | Sin datos de proveedores', $text);
     }
 
+    public function testAPrecalculatedFootprintDeclaresTheAlreadyCalculatedResults(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::precalculated(), Locale::English);
+
+        $this->assertStringContainsString('already calculated results', $prompt->text());
+    }
+
+    public function testAFootprintNotPrecalculatedDoesNotDeclareAlreadyCalculatedResults(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::English);
+
+        $this->assertStringNotContainsString('already calculated results', $prompt->text());
+    }
+
     public function testTextIncludesTheBreakdownByPropertyForACompany(): void
     {
         $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), Locale::Spanish);

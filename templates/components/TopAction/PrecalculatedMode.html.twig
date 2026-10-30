@@ -1,0 +1,16 @@
+{% props path, precalculated = false %}
+
+<twig:TopAction
+    :path="path"
+    data-controller="confirm"
+    data-confirm-text-param="{{ 'Al cambiar el modo de introducción de datos se eliminarán las actividades registradas en los alcances 1 y 2 y las emisiones comunicadas de la categoría «Actividades relacionadas con combustibles y energía». ¿Desea continuar?' | trans }}"
+    data-action="confirm#link:prevent"
+>
+    <twig:Icon name="solar:clipboard-check-line-duotone" size="lg" class="me-2" />
+
+    {% if precalculated %}
+        {{ 'Introducir datos por actividades' | trans }}
+    {% else %}
+        {{ 'Huella ya calculada' | trans }}
+    {% endif %}
+</twig:TopAction>

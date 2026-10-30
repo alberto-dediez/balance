@@ -64,6 +64,10 @@ class RegisterPropertyCarbonFootprintService implements CommandHandler
             year: $request->year,
         );
 
+        if ($request->precalculated) {
+            $propertyCarbonFootprint->markAsPrecalculated();
+        }
+
         $this->propertyCarbonFootprintRepository->add($propertyCarbonFootprint);
 
         return new RegisterPropertyCarbonFootprintResponse($propertyCarbonFootprint->id());

@@ -60,11 +60,13 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
             $answersByPropertyKey[(string) $propertyId] = $block;
         }
 
-        $validatedExclusions = $this->answersProcessor->validate($request->scope, [], $request->exclusions, $request->stageExclusion);
+        $sections = $request->scope->sectionsFor($companyCarbonFootprint->isPrecalculated());
+
+        $validatedExclusions = $this->answersProcessor->validate($request->scope, [], $request->exclusions, $request->stageExclusion, $sections);
 
         if (null !== $validatedExclusions->stageExclusion) {
             foreach ($answersByPropertyKey as $block) {
-                $this->answersProcessor->validate($request->scope, $block->sectionAnswers, [], $validatedExclusions->stageExclusion);
+                $this->answersProcessor->validate($request->scope, $block->sectionAnswers, [], $validatedExclusions->stageExclusion, $sections);
             }
         }
 
@@ -81,13 +83,13 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
             foreach ($blocks as $key => $propertyId) {
                 $block = $answersByPropertyKey[$key] ?? null;
 
-                $validated = $this->answersProcessor->validate($request->scope, null !== $block ? $block->sectionAnswers : [], $request->exclusions);
+                $validated = $this->answersProcessor->validate($request->scope, null !== $block ? $block->sectionAnswers : [], $request->exclusions, sections: $sections);
 
-                $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, propertyId: $propertyId);
+                $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, sections: $sections, propertyId: $propertyId);
             }
 
             foreach ($this->companyProperties->nonConsolidated($companyId) as $property) {
-                $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, [], $user, propertyId: $property->id());
+                $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, [], $user, sections: $sections, propertyId: $property->id());
             }
 
             if (Scope::Scope3 === $request->scope) {

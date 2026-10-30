@@ -46,6 +46,7 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         private bool $scope3Excluded = false,
         private ?ExclusionReason $scope3ExclusionReason = null,
         private ?string $scope3ExclusionComment = null,
+        private bool $precalculated = false,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -255,8 +256,8 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
             ),
         );
 
-        foreach ($scope->sections() as $section) {
-            $this->removeActivitiesOfSource($scope, $section->source);
+        foreach ($scope->allSources() as $source) {
+            $this->removeActivitiesOfSource($scope, $source);
         }
 
         foreach ($this->exclusionsFor($scope) as $exclusion) {
@@ -281,6 +282,47 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
                 scope: $scope,
             ),
         );
+    }
+
+    public function markAsPrecalculated(): void
+    {
+        $this->ensureIsEditable();
+
+        if ($this->precalculated) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintMarkedAsPrecalculated(
+                propertyCarbonFootprintId: $this->id,
+            ),
+        );
+
+        $this->removePrecalculatedSourcesActivities();
+    }
+
+    public function unmarkAsPrecalculated(): void
+    {
+        $this->ensureIsEditable();
+
+        if (!$this->precalculated) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintUnmarkedAsPrecalculated(
+                propertyCarbonFootprintId: $this->id,
+            ),
+        );
+
+        $this->removePrecalculatedSourcesActivities();
+    }
+
+    private function removePrecalculatedSourcesActivities(): void
+    {
+        $this->removeActivitiesOfStage(Scope::Scope1);
+        $this->removeActivitiesOfStage(Scope::Scope2);
+        $this->removeActivitiesOfSource(Scope::Scope3, Source::FuelAndEnergyRelated);
     }
 
     public function ensureCanBeCompleted(): void
@@ -356,6 +398,18 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
     public function applyPropertyCarbonFootprintMitigationPlanStarted(PropertyCarbonFootprintMitigationPlanStarted $event): void
     {
         $this->mitigationPlanStarted = true;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintMarkedAsPrecalculated(PropertyCarbonFootprintMarkedAsPrecalculated $event): void
+    {
+        $this->precalculated = true;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintUnmarkedAsPrecalculated(PropertyCarbonFootprintUnmarkedAsPrecalculated $event): void
+    {
+        $this->precalculated = false;
         $this->updatedAt = $event->occurredOn();
     }
 

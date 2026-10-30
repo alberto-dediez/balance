@@ -14,6 +14,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\OvernightStayCatalogProvide
 use App\CarbonFootprint\Application\Activity\Catalog\ProcessCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\PurchaseServiceCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\RefrigerantGasCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\ReportedEmissionsCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\UseProfileCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\WasteCatalogProvider;
@@ -87,6 +88,7 @@ class GetPropertyCarbonFootprintScopeServiceTest extends TestCase
             new ProcessCatalogProvider(ProcessRepositoryMother::inMemory()),
             new UseProfileCatalogProvider(UseProfileRepositoryMother::inMemory()),
             new EconomicSectorCatalogProvider(EconomicSectorRepositoryMother::inMemory()),
+            new ReportedEmissionsCatalogProvider(),
         ]);
         $this->activityRepository = ActivityRepositoryMother::inMemory();
         $this->contributionRepository = OrganizationalProviderContributionRepositoryMother::inMemory();
@@ -166,6 +168,38 @@ class GetPropertyCarbonFootprintScopeServiceTest extends TestCase
         $this->assertSame(ExclusionReason::NoDataAvailable, $response->stageExclusion->reason);
         $this->assertSame('Sin datos', $response->stageExclusion->comment);
         $this->assertSame('0', $response->derivedEmissions[Source::FuelAndEnergyRelated->value]->co2eq());
+    }
+
+    public function testAPrecalculatedFootprintReturnsTheReportedSectionsInScope1(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
+        $this->repository->add($footprint);
+
+        $response = ($this->sut)(new GetPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1), $this->ownerUser());
+
+        $this->assertSame(['fixed_facilities_reported', 'own_vehicles_reported', 'refrigerant_leaks_reported'], array_map(static fn($s) => $s->definition->key, $response->sections));
+        $this->assertSame(ActivityType::ReportedEmissions, $response->sections[0]->definition->activityType);
+    }
+
+    public function testAPrecalculatedFootprintReturnsTheReportedSectionInScope2(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
+        $this->repository->add($footprint);
+
+        $response = ($this->sut)(new GetPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope2), $this->ownerUser());
+
+        $this->assertSame(['building_electricity_reported'], array_map(static fn($s) => $s->definition->key, $response->sections));
+    }
+
+    public function testAPrecalculatedFootprintAddsTheFuelAndEnergyRelatedReportedSectionInScope3(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id-test');
+        $this->repository->add($footprint);
+
+        $response = ($this->sut)(new GetPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3), $this->ownerUser());
+
+        $this->assertCount(13, $response->sections);
+        $this->assertSame('fuel_and_energy_related_reported', $response->sections[12]->definition->key);
     }
 
     public function testUnknownFootprintThrows(): void

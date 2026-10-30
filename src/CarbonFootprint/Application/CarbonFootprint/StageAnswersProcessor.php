@@ -15,11 +15,14 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 final class StageAnswersProcessor
 {
     /**
-     * @param list<SectionAnswer>   $sectionAnswers
-     * @param list<ExclusionAnswer> $exclusions
+     * @param list<SectionAnswer>      $sectionAnswers
+     * @param list<ExclusionAnswer>    $exclusions
+     * @param ?list<SectionDefinition> $sections
      */
-    public function validate(CalculationStage $stage, array $sectionAnswers, array $exclusions, ?StageExclusionAnswer $stageExclusion = null): ValidatedStageAnswers
+    public function validate(CalculationStage $stage, array $sectionAnswers, array $exclusions, ?StageExclusionAnswer $stageExclusion = null, ?array $sections = null): ValidatedStageAnswers
     {
+        $sections ??= $stage->sections();
+
         if (null !== $stageExclusion) {
             if (!$stage instanceof Scope || !$stage->isExcludable()) {
                 throw new \InvalidArgumentException(sprintf('Stage "%s" cannot be excluded.', $stage->key()));
@@ -37,7 +40,7 @@ final class StageAnswersProcessor
         }
 
         $sectionsByKey = [];
-        foreach ($stage->sections() as $section) {
+        foreach ($sections as $section) {
             $sectionsByKey[$section->key] = $section;
         }
 

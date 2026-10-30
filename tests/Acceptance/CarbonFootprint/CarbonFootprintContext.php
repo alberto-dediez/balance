@@ -129,6 +129,7 @@ use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\HumanResources\Domain\Model\Employee\EmployeeId;
+use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -1579,6 +1580,30 @@ final readonly class CarbonFootprintContext implements Context
         $this->getPropertyCarbonFootprintRepository()->add($propertyCarbonFootprint);
     }
 
+    #[Given('property carbon footprint :id is precalculated')]
+    public function propertyCarbonFootprintIsPrecalculated(string $id): void
+    {
+        $propertyCarbonFootprint = $this->getPropertyCarbonFootprintRepository()->find(new PropertyCarbonFootprintId($id));
+
+        Assert::assertNotNull($propertyCarbonFootprint);
+
+        $propertyCarbonFootprint->markAsPrecalculated();
+
+        $this->getPropertyCarbonFootprintRepository()->add($propertyCarbonFootprint);
+    }
+
+    #[Given('company carbon footprint :id is precalculated')]
+    public function companyCarbonFootprintIsPrecalculated(string $id): void
+    {
+        $companyCarbonFootprint = $this->getCompanyCarbonFootprintRepository()->find(new CompanyCarbonFootprintId($id));
+
+        Assert::assertNotNull($companyCarbonFootprint);
+
+        $companyCarbonFootprint->markAsPrecalculated();
+
+        $this->getCompanyCarbonFootprintRepository()->add($companyCarbonFootprint);
+    }
+
     #[Given('company carbon footprint :id is completed')]
     public function companyCarbonFootprintIsCompleted(string $id): void
     {
@@ -2156,6 +2181,26 @@ final readonly class CarbonFootprintContext implements Context
         );
     }
 
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year precalculated exists')]
+    public function precalculatedPropertyCarbonFootprintExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getPropertyCarbonFootprintRepository()->add(
+            PropertyCarbonFootprintMother::precalculated($propertyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year precalculated exists')]
+    public function precalculatedCompanyCarbonFootprintExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::precalculated($companyId, $id, $account, (int) $year),
+        );
+    }
+
     #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year exists')]
     public function companyCarbonFootprintExists(string $id, string $companyId, string $account, string $year): void
     {
@@ -2522,6 +2567,70 @@ final readonly class CarbonFootprintContext implements Context
         $uri = $this->client->getRequest()->getUri();
 
         $this->client->requestWithFiles('POST', $uri, ['_token' => $token, $sectionKey => [$row]], [], ['HTTP_REFERER' => $uri]);
+    }
+
+    #[When('I submit the scope step form with reported emissions :description of :quantity :unit for source :source')]
+    public function iSubmitTheScopeStepFormWithReportedEmissions(string $description, string $quantity, string $unit, string $source): void
+    {
+        $this->submitScopeStep([$source . '_reported' => [$this->reportedEmissionsRow($description, $quantity, $unit)]]);
+    }
+
+    #[When('I submit the scope step form with reported emissions :description of :quantity :unit for source :source for property :propertyId')]
+    public function iSubmitTheScopeStepFormWithReportedEmissionsForProperty(string $description, string $quantity, string $unit, string $source, string $propertyId): void
+    {
+        $rows = [$source . '_reported' => [$this->reportedEmissionsRow($description, $quantity, $unit)]];
+
+        $this->submitScopeStep('none' === $propertyId ? ['unassigned' => $rows] : ['properties' => [$propertyId => $rows]]);
+    }
+
+    #[When('I submit the scope step form with reported emissions :propertyDescription of :propertyQuantity :propertyUnit for source :source for property :propertyId and :unassignedDescription of :unassignedQuantity :unassignedUnit unassigned')]
+    public function iSubmitTheScopeStepFormWithReportedEmissionsForPropertyAndUnassigned(
+        string $propertyDescription,
+        string $propertyQuantity,
+        string $propertyUnit,
+        string $source,
+        string $propertyId,
+        string $unassignedDescription,
+        string $unassignedQuantity,
+        string $unassignedUnit,
+    ): void {
+        $this->submitScopeStep([
+            'properties' => [$propertyId => [$source . '_reported' => [$this->reportedEmissionsRow($propertyDescription, $propertyQuantity, $propertyUnit)]]],
+            'unassigned' => [$source . '_reported' => [$this->reportedEmissionsRow($unassignedDescription, $unassignedQuantity, $unassignedUnit)]],
+        ]);
+    }
+
+    /** @return array<string, string> */
+    private function reportedEmissionsRow(string $description, string $quantity, string $unit): array
+    {
+        return ['description' => $description, 'quantity' => $quantity, 'unit' => $unit, 'activityId' => ''];
+    }
+
+    #[When('I load the Bioscore consumptions of :subjectType carbon footprint :id for scope :scope')]
+    public function iLoadTheBioscoreConsumptionsOfCarbonFootprint(string $subjectType, string $id, string $scope): void
+    {
+        $csrfToken = $this->csrfTokenInCurrentSession('bioscore_load_' . $id);
+
+        $this->client->request('GET', sprintf('/es/%s-carbon-footprints/%s/step/%s/bioscore?_token=%s', $subjectType, $id, $scope, urlencode($csrfToken)));
+    }
+
+    private function csrfTokenInCurrentSession(string $tokenId): string
+    {
+        $session = $this->client->getContainer()->get('session.factory')->createSession();
+
+        $cookie = $this->client->getCookieJar()->get($session->getName());
+        if (null !== $cookie) {
+            $session->setId($cookie->getValue());
+        }
+
+        $csrfToken = 'acceptance-csrf-token';
+        $session->start();
+        $session->set('_csrf/' . $tokenId, $csrfToken);
+        $session->save();
+
+        $this->client->setCookie($session->getName(), $session->getId());
+
+        return $csrfToken;
     }
 
     #[When('I submit the company scope :scope step form with a combustible :itemId of :quantity :unit for property :propertyId')]
@@ -3099,6 +3208,36 @@ final readonly class CarbonFootprintContext implements Context
         Assert::assertCount((int) $count, $references);
     }
 
+    #[Then(':subjectType carbon footprint :id should be precalculated')]
+    public function carbonFootprintShouldBePrecalculated(string $subjectType, string $id): void
+    {
+        Assert::assertTrue($this->organizationalCarbonFootprint($subjectType, $id)->isPrecalculated());
+    }
+
+    #[Then(':subjectType carbon footprint :id should not be precalculated')]
+    public function carbonFootprintShouldNotBePrecalculated(string $subjectType, string $id): void
+    {
+        Assert::assertFalse($this->organizationalCarbonFootprint($subjectType, $id)->isPrecalculated());
+    }
+
+    #[Then('property carbon footprint for property :propertyId and year :year should be precalculated')]
+    public function propertyCarbonFootprintForPropertyAndYearShouldBePrecalculated(string $propertyId, int $year): void
+    {
+        $footprint = $this->getPropertyCarbonFootprintRepository()->findByPropertyIdAndYear(new PropertyId($propertyId), $year);
+
+        Assert::assertNotNull($footprint);
+        Assert::assertTrue($footprint->isPrecalculated());
+    }
+
+    #[Then('company carbon footprint for company :companyId and year :year should be precalculated')]
+    public function companyCarbonFootprintForCompanyAndYearShouldBePrecalculated(string $companyId, int $year): void
+    {
+        $footprint = $this->getCompanyCarbonFootprintRepository()->findByCompanyIdAndYear(new CompanyId($companyId), $year);
+
+        Assert::assertNotNull($footprint);
+        Assert::assertTrue($footprint->isPrecalculated());
+    }
+
     #[Then('property carbon footprint :id should have :co2eq kg in source :source')]
     public function propertyCarbonFootprintShouldHaveEmissionsInSource(string $id, string $co2eq, string $source): void
     {
@@ -3341,6 +3480,11 @@ final readonly class CarbonFootprintContext implements Context
         Assert::assertNotNull($propertyCarbonFootprint);
 
         return $propertyCarbonFootprint;
+    }
+
+    private function organizationalCarbonFootprint(string $subjectType, string $id): PropertyCarbonFootprint|CompanyCarbonFootprint
+    {
+        return 'property' === $subjectType ? $this->propertyCarbonFootprint($id) : $this->companyCarbonFootprint($id);
     }
 
     private function companyCarbonFootprint(string $id): CompanyCarbonFootprint

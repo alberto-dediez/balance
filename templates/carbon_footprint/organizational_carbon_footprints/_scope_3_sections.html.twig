@@ -1,5 +1,6 @@
 {% set readOnly = readOnly | default(false) %}
 {% set unassignedLabel = unassignedLabel | default(null) %}
+{% set precalculated = precalculated | default(false) %}
 
 <twig:CarbonFootprint:StageExclusion
     stage="scope_3"
@@ -18,38 +19,49 @@
                 :readOnly="readOnly"
             >
                 {% if source == 'fuel_and_energy_related' %}
-                    <twig:Card title="{{ 'Emisiones aguas arriba de combustibles y energía' | trans }}">
-                        <div class="table-responsive">
-                            <table class="table align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>{{ 'Alcance' | trans }}</th>
-                                        <th>{{ 'Fuente' | trans }}</th>
-                                        <th>{{ 'Tipo' | trans }}</th>
-                                        <th class="text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for line in derivedLines %}
+                    {% if precalculated %}
+                        {% for block in blocks %}
+                            <twig:CarbonFootprint:ReportedEmissionsActivityTable
+                                title="{{ block.property ? block.property.name : (unassignedLabel ?? ('Emisiones aguas arriba de combustibles y energía' | trans)) }}"
+                                prefix="{{ block.prefixBase is empty ? 'fuel_and_energy_related_reported' : block.prefixBase ~ '[fuel_and_energy_related_reported]' }}"
+                                :rows="block.sections['fuel_and_energy_related_reported'].rows ?? []"
+                                :readOnly="readOnly"
+                            />
+                        {% endfor %}
+                    {% else %}
+                        <twig:Card title="{{ 'Emisiones aguas arriba de combustibles y energía' | trans }}">
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead>
                                         <tr>
-                                            <td>{{ line.origin.stage.value | trans({}, 'scope') }}</td>
-                                            <td>{{ line.origin.source.value | trans({}, 'source') }}</td>
-                                            <td>{{ line.activityType.value | trans({}, 'activityType') }}</td>
-                                            <td class="text-end">{{ line.emissions.co2eq | number_format(2, ',', '.') }}</td>
+                                            <th>{{ 'Alcance' | trans }}</th>
+                                            <th>{{ 'Fuente' | trans }}</th>
+                                            <th>{{ 'Tipo' | trans }}</th>
+                                            <th class="text-end">{{ 'Emisiones (kg CO₂eq)' | trans }}</th>
                                         </tr>
-                                    {% else %}
-                                        <tr><td colspan="4" class="text-muted">{{ 'No hay actividades registradas.' | trans }}</td></tr>
-                                    {% endfor %}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th colspan="3">{{ 'Total' | trans }}</th>
-                                        <th class="text-end">{{ (derivedEmissions[source] ?? null) ? derivedEmissions[source].co2eq | number_format(2, ',', '.') : '---' }}</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </twig:Card>
+                                    </thead>
+                                    <tbody>
+                                        {% for line in derivedLines %}
+                                            <tr>
+                                                <td>{{ line.origin.stage.value | trans({}, 'scope') }}</td>
+                                                <td>{{ line.origin.source.value | trans({}, 'source') }}</td>
+                                                <td>{{ line.activityType.value | trans({}, 'activityType') }}</td>
+                                                <td class="text-end">{{ line.emissions.co2eq | number_format(2, ',', '.') }}</td>
+                                            </tr>
+                                        {% else %}
+                                            <tr><td colspan="4" class="text-muted">{{ 'No hay actividades registradas.' | trans }}</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3">{{ 'Total' | trans }}</th>
+                                            <th class="text-end">{{ (derivedEmissions[source] ?? null) ? derivedEmissions[source].co2eq | number_format(2, ',', '.') : '---' }}</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </twig:Card>
+                    {% endif %}
                 {% elseif source in ['downstream_leased_assets', 'franchises'] %}
                     {% set nonConsolidatedSource = (nonConsolidated | default({}))[source] ?? {rows: [], total: '0'} %}
                     <twig:Card title="{{ source == 'franchises' ? 'Propiedades franquiciadas' | trans : 'Propiedades arrendadas a terceros' | trans }}">

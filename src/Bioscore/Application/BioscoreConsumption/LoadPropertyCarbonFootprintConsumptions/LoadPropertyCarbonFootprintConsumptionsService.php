@@ -40,6 +40,10 @@ class LoadPropertyCarbonFootprintConsumptionsService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($propertyCarbonFootprint, SecurityAction::Edit, $user);
 
+        if ($propertyCarbonFootprint->isPrecalculated()) {
+            throw new \InvalidArgumentException('No se pueden cargar consumos de Bioscore en una huella ya calculada');
+        }
+
         $accountId = $propertyCarbonFootprint->accountId()
             ?? throw new \InvalidArgumentException('PropertyCarbonFootprint has no account');
         $propertyId = $propertyCarbonFootprint->propertyId()

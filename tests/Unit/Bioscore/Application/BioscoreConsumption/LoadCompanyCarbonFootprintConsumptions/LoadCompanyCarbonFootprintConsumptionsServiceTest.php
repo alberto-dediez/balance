@@ -294,6 +294,20 @@ class LoadCompanyCarbonFootprintConsumptionsServiceTest extends TestCase
         $this->assertSame([], $this->gateway->queries());
     }
 
+    public function testAPrecalculatedFootprintIsRejectedBeforeCallingBioscore(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->markAsPrecalculated();
+
+        try {
+            ($this->sut)(new LoadCompanyCarbonFootprintConsumptionsRequest($footprint->id(), Scope::Scope1), $this->ownerUser());
+            $this->fail('Expected InvalidArgumentException');
+        } catch (\InvalidArgumentException) {
+        }
+
+        $this->assertSame([], $this->gateway->queries());
+    }
+
     public function testIsHandled(): void
     {
         $this->assertTrue($this->sut->isHandled(new LoadCompanyCarbonFootprintConsumptionsRequest(CompanyCarbonFootprintId::generate(), Scope::Scope1)));

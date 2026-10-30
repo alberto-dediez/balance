@@ -209,6 +209,32 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertNull($data->exclusionLines[0]->source);
     }
 
+    public function testIncludesThePrecalculatedFlag(): void
+    {
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel Sol', new AccountId('account-id'), new PropertyInfo(), null, null);
+        $properties = PropertyRepositoryMother::inMemory();
+        $properties->add($property);
+
+        $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroups->add(EmissionFactorGroupMother::default());
+
+        $precalculated = PropertyCarbonFootprintMother::precalculated((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $notPrecalculated = PropertyCarbonFootprintMother::from((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2024);
+
+        $footprints = PropertyCarbonFootprintRepositoryMother::inMemory();
+        $footprints->add($precalculated);
+        $footprints->add($notPrecalculated);
+
+        $sut = $this->collectorFor($footprints, $properties, $emissionFactorGroups);
+        $precalculatedData = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $precalculated->id()));
+        $notPrecalculatedData = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $notPrecalculated->id()));
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $precalculatedData);
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $notPrecalculatedData);
+        $this->assertTrue($precalculatedData->precalculated);
+        $this->assertFalse($notPrecalculatedData->precalculated);
+    }
+
     public function testSupportsOnlyProperties(): void
     {
         $sut = new PropertyCarbonFootprintReportDataCollector(

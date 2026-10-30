@@ -10453,6 +10453,46 @@
         <source>Otros lotes del serial</source>
         <target>Other lots of the serial</target>
       </trans-unit>
+      <trans-unit id="lKnp1zi" resname="Los resultados de alcance 1 y alcance 2 han sido aportados por la organización como emisiones ya calculadas, sin desglose por actividades.">
+        <source>Los resultados de alcance 1 y alcance 2 han sido aportados por la organización como emisiones ya calculadas, sin desglose por actividades.</source>
+        <target>Scope 1 and scope 2 results were provided by the organisation as already calculated emissions, without an activity breakdown.</target>
+      </trans-unit>
+      <trans-unit id="8WD4jSG" resname="No se ha podido cambiar el modo de introducción de datos: {error}">
+        <source>No se ha podido cambiar el modo de introducción de datos: {error}</source>
+        <target>The data entry mode could not be changed: {error}</target>
+      </trans-unit>
+      <trans-unit id="tZ_QB3J" resname="Huella marcada como ya calculada: introduce las emisiones de cada fuente directamente.">
+        <source>Huella marcada como ya calculada: introduce las emisiones de cada fuente directamente.</source>
+        <target>Footprint marked as already calculated: enter the emissions of each source directly.</target>
+      </trans-unit>
+      <trans-unit id="FfGmtR3" resname="La huella vuelve a calcularse por actividades.">
+        <source>La huella vuelve a calcularse por actividades.</source>
+        <target>The footprint is calculated from activities again.</target>
+      </trans-unit>
+      <trans-unit id="4olAZWc" resname="Huella ya calculada">
+        <source>Huella ya calculada</source>
+        <target>Already calculated footprint</target>
+      </trans-unit>
+      <trans-unit id="YWtFVAc" resname="Marca esta opción si ya dispones de los resultados de alcance 1 y alcance 2: los introducirás directamente, sin desglose de actividades.">
+        <source>Marca esta opción si ya dispones de los resultados de alcance 1 y alcance 2: los introducirás directamente, sin desglose de actividades.</source>
+        <target>Tick this option if you already have the scope 1 and scope 2 results: you will enter them directly, without an activity breakdown.</target>
+      </trans-unit>
+      <trans-unit id="5RdxjPH" resname="Introducir datos por actividades">
+        <source>Introducir datos por actividades</source>
+        <target>Enter data by activities</target>
+      </trans-unit>
+      <trans-unit id="eD47Tle" resname="Al cambiar el modo de introducción de datos se eliminarán las actividades registradas en los alcances 1 y 2 y las emisiones comunicadas de la categoría «Actividades relacionadas con combustibles y energía». ¿Desea continuar?">
+        <source>Al cambiar el modo de introducción de datos se eliminarán las actividades registradas en los alcances 1 y 2 y las emisiones comunicadas de la categoría «Actividades relacionadas con combustibles y energía». ¿Desea continuar?</source>
+        <target>Changing the data entry mode will delete the activities recorded in scopes 1 and 2 and the reported emissions of the “Fuel- and energy-related activities” category. Do you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="1OEJxF5" resname="Huella ya calculada: introduce por cada fuente las emisiones que ya tienes calculadas (concepto y kg o t de CO₂eq). Para volver a desglosar actividades usa «Introducir datos por actividades».">
+        <source>Huella ya calculada: introduce por cada fuente las emisiones que ya tienes calculadas (concepto y kg o t de CO₂eq). Para volver a desglosar actividades usa «Introducir datos por actividades».</source>
+        <target>Already calculated footprint: enter for each source the emissions you have already calculated (concept and kg or t of CO₂eq). To go back to an activity breakdown use “Enter data by activities”.</target>
+      </trans-unit>
+      <trans-unit id="N.eIu2H" resname="No se pueden cargar consumos de Bioscore en una huella ya calculada">
+        <source>No se pueden cargar consumos de Bioscore en una huella ya calculada</source>
+        <target>Bioscore consumptions cannot be loaded into an already calculated footprint</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

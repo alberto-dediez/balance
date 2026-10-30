@@ -5,6 +5,9 @@
 {% block top_actions %}
     {{ parent() }}
     {% if not readOnly %}
+        <twig:TopAction:PrecalculatedMode :precalculated="precalculated" path="{{ path('property_carbon_footprints_precalculated_mode', {propertyCarbonFootprintId: propertyCarbonFootprintId, precalculated: precalculated ? 0 : 1, _token: csrf_token('remove')}) }}" />
+    {% endif %}
+    {% if not readOnly and not precalculated %}
         <twig:TopAction:BioscoreConsumptions path="{{ path('property_carbon_footprints_bioscore_load', {propertyCarbonFootprintId: propertyCarbonFootprintId, scope: 'scope_2', _token: csrf_token('bioscore_load_' ~ propertyCarbonFootprint.id)}) }}" />
     {% endif %}
 {% endblock %}
@@ -12,6 +15,10 @@
 {% block wizard_panels %}
     <form method="post">
         <input type="hidden" name="_token" value="{{ csrf_token('scope_2_' ~ propertyCarbonFootprint.id) }}">
+
+        {% if precalculated and not readOnly %}
+            <twig:Alert:Alert type="info">{{ 'Huella ya calculada: introduce por cada fuente las emisiones que ya tienes calculadas (concepto y kg o t de CO₂eq). Para volver a desglosar actividades usa «Introducir datos por actividades».' | trans }}</twig:Alert:Alert>
+        {% endif %}
 
         {% include '@carbon_footprint/organizational_carbon_footprints/_scope_2_sections.html.twig' %}
 

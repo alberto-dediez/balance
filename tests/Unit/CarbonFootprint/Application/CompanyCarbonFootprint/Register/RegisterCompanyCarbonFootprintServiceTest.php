@@ -55,6 +55,28 @@ class RegisterCompanyCarbonFootprintServiceTest extends TestCase
         $this->assertSame((string) $companyId, (string) $footprint->companyId());
     }
 
+    public function testRegistersAPrecalculatedFootprint(): void
+    {
+        $companyId = $this->givenACompany('account-id-test');
+        $request = $this->request($companyId, 'account-id-test');
+        $request->precalculated = true;
+
+        $response = ($this->sut)($request, $this->ownerUser());
+
+        $footprint = $this->repository->find($response->companyCarbonFootprintId);
+        $this->assertNotNull($footprint);
+        $this->assertTrue($footprint->isPrecalculated());
+    }
+
+    public function testRegistersAFootprintNotPrecalculatedByDefault(): void
+    {
+        $companyId = $this->givenACompany('account-id-test');
+
+        $response = ($this->sut)($this->request($companyId, 'account-id-test'), $this->ownerUser());
+
+        $this->assertFalse($this->repository->find($response->companyCarbonFootprintId)?->isPrecalculated());
+    }
+
     public function testCompanyFromAnotherAccountIsRejected(): void
     {
         $companyId = $this->givenACompany('other-account-id');

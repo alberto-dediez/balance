@@ -53,6 +53,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         private bool $scope3Excluded = false,
         private ?ExclusionReason $scope3ExclusionReason = null,
         private ?string $scope3ExclusionComment = null,
+        private bool $precalculated = false,
         private bool $removed = false,
         array $events = [],
         private \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
@@ -267,8 +268,8 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
             ),
         );
 
-        foreach ($scope->sections() as $section) {
-            $this->removeActivitiesOfSource($scope, $section->source);
+        foreach ($scope->allSources() as $source) {
+            $this->removeActivitiesOfSource($scope, $source);
         }
 
         foreach ($this->exclusionsFor($scope) as $exclusion) {
@@ -443,6 +444,47 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         }
     }
 
+    public function markAsPrecalculated(): void
+    {
+        $this->ensureIsEditable();
+
+        if ($this->precalculated) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintMarkedAsPrecalculated(
+                companyCarbonFootprintId: $this->id,
+            ),
+        );
+
+        $this->removePrecalculatedSourcesActivities();
+    }
+
+    public function unmarkAsPrecalculated(): void
+    {
+        $this->ensureIsEditable();
+
+        if (!$this->precalculated) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintUnmarkedAsPrecalculated(
+                companyCarbonFootprintId: $this->id,
+            ),
+        );
+
+        $this->removePrecalculatedSourcesActivities();
+    }
+
+    private function removePrecalculatedSourcesActivities(): void
+    {
+        $this->removeActivitiesOfStage(Scope::Scope1);
+        $this->removeActivitiesOfStage(Scope::Scope2);
+        $this->removeActivitiesOfSource(Scope::Scope3, Source::FuelAndEnergyRelated);
+    }
+
     public function ensureCanBeCompleted(): void
     {
         $this->ensureIsEditable();
@@ -516,6 +558,18 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
     public function applyCompanyCarbonFootprintMitigationPlanStarted(CompanyCarbonFootprintMitigationPlanStarted $event): void
     {
         $this->mitigationPlanStarted = true;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintMarkedAsPrecalculated(CompanyCarbonFootprintMarkedAsPrecalculated $event): void
+    {
+        $this->precalculated = true;
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintUnmarkedAsPrecalculated(CompanyCarbonFootprintUnmarkedAsPrecalculated $event): void
+    {
+        $this->precalculated = false;
         $this->updatedAt = $event->occurredOn();
     }
 

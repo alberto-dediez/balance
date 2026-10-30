@@ -55,6 +55,28 @@ class RegisterPropertyCarbonFootprintServiceTest extends TestCase
         $this->assertSame((string) $propertyId, (string) $footprint->propertyId());
     }
 
+    public function testRegistersAPrecalculatedFootprint(): void
+    {
+        $propertyId = $this->givenAProperty('account-id-test');
+        $request = $this->request($propertyId, 'account-id-test');
+        $request->precalculated = true;
+
+        $response = ($this->sut)($request, $this->ownerUser());
+
+        $footprint = $this->repository->find($response->propertyCarbonFootprintId);
+        $this->assertNotNull($footprint);
+        $this->assertTrue($footprint->isPrecalculated());
+    }
+
+    public function testRegistersAFootprintNotPrecalculatedByDefault(): void
+    {
+        $propertyId = $this->givenAProperty('account-id-test');
+
+        $response = ($this->sut)($this->request($propertyId, 'account-id-test'), $this->ownerUser());
+
+        $this->assertFalse($this->repository->find($response->propertyCarbonFootprintId)?->isPrecalculated());
+    }
+
     public function testPropertyFromAnotherAccountIsRejected(): void
     {
         $propertyId = $this->givenAProperty('other-account-id');

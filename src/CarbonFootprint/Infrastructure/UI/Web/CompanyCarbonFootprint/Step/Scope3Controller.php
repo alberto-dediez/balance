@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\PropertyS
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope\GetCompanyCarbonFootprintScopeRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope\GetCompanyCarbonFootprintScopeService;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\ExchangeRate\ExchangeRateNotFoundException;
@@ -76,7 +77,7 @@ class Scope3Controller extends AbstractController
                     new AnswerCompanyCarbonFootprintScopeRequest(
                         $companyCarbonFootprint->id(),
                         Scope::Scope3,
-                        $this->answersByProperty($request, $answerMapper, Scope::Scope3),
+                        $this->answersByProperty($request, $answerMapper, Scope::Scope3->sectionsFor($companyCarbonFootprint->isPrecalculated())),
                         $exclusionMapper->map($request, Scope::Scope3),
                         $exclusionMapper->mapStage($request, Scope::Scope3),
                         $nonConsolidatedMapper->map($request),
@@ -113,6 +114,7 @@ class Scope3Controller extends AbstractController
                 'companyCarbonFootprint' => $companyCarbonFootprint,
                 'companyCarbonFootprintId' => $companyCarbonFootprintId,
                 'readOnly' => $companyCarbonFootprint->isCompleted(),
+                'precalculated' => $companyCarbonFootprint->isPrecalculated(),
                 'blocks' => $blocks,
                 'exclusions' => StepExclusionsView::build($response->exclusions),
                 'exclusionReasons' => ExclusionReason::cases(),
@@ -134,12 +136,12 @@ class Scope3Controller extends AbstractController
     }
 
     /**
+     * @param list<SectionDefinition> $sections
+     *
      * @return list<PropertySectionAnswers>
      */
-    private function answersByProperty(Request $request, StageAnswerHttpMapper $answerMapper, Scope $scope): array
+    private function answersByProperty(Request $request, StageAnswerHttpMapper $answerMapper, array $sections): array
     {
-        $sections = $scope->sections();
-
         $blocks = [new PropertySectionAnswers(null, $answerMapper->map($request->request->all('unassigned'), $sections))];
 
         foreach ($request->request->all('properties') as $propertyId => $block) {

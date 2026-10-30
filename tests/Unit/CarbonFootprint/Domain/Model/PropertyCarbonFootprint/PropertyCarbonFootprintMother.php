@@ -52,6 +52,14 @@ class PropertyCarbonFootprintMother
         return $propertyCarbonFootprint;
     }
 
+    public static function precalculated(string $propertyId, string $id, string $accountId = 'account-id', int $year = 2025): PropertyCarbonFootprint
+    {
+        $propertyCarbonFootprint = self::from($propertyId, $id, $accountId, $year);
+        $propertyCarbonFootprint->markAsPrecalculated();
+
+        return $propertyCarbonFootprint;
+    }
+
     public static function withScope1Answered(
         string $propertyId,
         string $id,

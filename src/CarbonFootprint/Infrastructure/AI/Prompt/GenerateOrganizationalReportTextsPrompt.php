@@ -190,6 +190,17 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
 
     private function boundaries(): string
     {
+        $boundaries = $this->scopeBoundaries();
+
+        if (!$this->data->precalculated) {
+            return $boundaries;
+        }
+
+        return $boundaries . '; scope 1 and scope 2 figures were provided by the organization as already calculated results, without activity breakdown';
+    }
+
+    private function scopeBoundaries(): string
+    {
         if (!$this->data->scope3Excluded) {
             return 'the scope 1, scope 2 and scope 3 boundaries';
         }

@@ -48,16 +48,17 @@ final class GetCompanyCarbonFootprintScopeService
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::View, $user);
 
         $properties = $this->companyProperties->consolidated($companyCarbonFootprint->companyId());
+        $sections = $request->scope->sectionsFor($companyCarbonFootprint->isPrecalculated());
 
         $blocks = [new PropertyStageSections(
             null,
-            $this->sectionsBuilder->build($companyCarbonFootprint, $request->scope)->sections,
+            $this->sectionsBuilder->build($companyCarbonFootprint, $request->scope, $sections)->sections,
         )];
 
         foreach ($properties as $property) {
             $blocks[] = new PropertyStageSections(
                 $property,
-                $this->sectionsBuilder->build($companyCarbonFootprint, $request->scope, propertyId: $property->id())->sections,
+                $this->sectionsBuilder->build($companyCarbonFootprint, $request->scope, $sections, propertyId: $property->id())->sections,
             );
         }
 

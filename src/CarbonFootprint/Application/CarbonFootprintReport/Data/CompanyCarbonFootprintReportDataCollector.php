@@ -105,6 +105,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
             scope3ExclusionComment: $companyCarbonFootprint->stageExclusionComment(Scope::Scope3),
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($companyCarbonFootprint, Scope::Scope3),
             nonConsolidatedPropertyLines: $this->derivedSourceEmissionsCalculator->nonConsolidatedPropertyLines($companyCarbonFootprint, Scope::Scope3),
+            precalculated: $companyCarbonFootprint->isPrecalculated(),
         );
     }
 }

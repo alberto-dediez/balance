@@ -161,16 +161,11 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
                 continue;
             }
 
-            $isElectricity = Source::BuildingElectricity === $source;
-            $isDerived = Source::FuelAndEnergyRelated === $source;
+            $isElectricity = Source::BuildingElectricity === $source && !$data->precalculated;
+            $isDerived = Source::FuelAndEnergyRelated === $source && !$data->precalculated;
             $isNonConsolidated = in_array($source, [Source::DownstreamLeasedAssets, Source::Franchises], true);
 
-            [$header, $rows, $widths, $hasTotal] = match (true) {
-                $isElectricity => $this->electricityTable($data, $locale, $isCompany),
-                $isDerived => $this->derivedSourceTable($data, $locale),
-                $isNonConsolidated => $this->nonConsolidatedPropertyTable($data, $source, $locale),
-                default => $this->sourceTable($data, $scope, $source, $locale, $isCompany),
-            };
+            [$header, $rows, $widths, $hasTotal] = $this->organizationalSourceTable($data, $scope, $source, $locale, $isCompany);
 
             $groupHeaderCells = $isDerived || $isNonConsolidated ? [] : [
                 ['', $isCompany ? 2 : 1],
@@ -405,6 +400,17 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
     }
 
     private function scope3IncludedEmissionsText(OrganizationalCarbonFootprintReportData $data, Locale $locale): string
+    {
+        $text = $this->scope3InclusionText($data, $locale);
+
+        if (!$data->precalculated) {
+            return $text;
+        }
+
+        return $this->trans('Los resultados de alcance 1 y alcance 2 han sido aportados por la organización como emisiones ya calculadas, sin desglose por actividades.', $locale) . ' ' . $text;
+    }
+
+    private function scope3InclusionText(OrganizationalCarbonFootprintReportData $data, Locale $locale): string
     {
         if (!$data->scope3Excluded) {
             return $this->trans('Los datos de alcance 1, alcance 2 y alcance 3 dependen del tipo de instalaciones, equipos y cadena de valor de la organización.', $locale);

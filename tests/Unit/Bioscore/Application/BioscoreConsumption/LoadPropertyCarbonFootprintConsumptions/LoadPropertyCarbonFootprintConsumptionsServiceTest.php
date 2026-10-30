@@ -359,6 +359,20 @@ class LoadPropertyCarbonFootprintConsumptionsServiceTest extends TestCase
         );
     }
 
+    public function testAPrecalculatedFootprintIsRejectedBeforeCallingBioscore(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->markAsPrecalculated();
+
+        try {
+            ($this->sut)(new LoadPropertyCarbonFootprintConsumptionsRequest($footprint->id(), Scope::Scope1), $this->ownerUser());
+            $this->fail('Expected InvalidArgumentException');
+        } catch (\InvalidArgumentException) {
+        }
+
+        $this->assertSame([], $this->gateway->queries());
+    }
+
     public function testIsHandled(): void
     {
         $this->assertTrue($this->sut->isHandled(new LoadPropertyCarbonFootprintConsumptionsRequest(PropertyCarbonFootprintId::generate(), Scope::Scope1)));

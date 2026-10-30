@@ -20,6 +20,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintCompleted;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintEmployeesAnswered;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMarkedAsPrecalculated;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMitigationPlanStarted;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintProvidersAnswered;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRegistered;
@@ -27,6 +28,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintScopeExcluded;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintScopeIncluded;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintSourceExcluded;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintUnmarkedAsPrecalculated;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use PHPUnit\Framework\TestCase;
 
@@ -641,5 +643,133 @@ final class PropertyCarbonFootprintTest extends TestCase
         $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
 
         $this->assertCount(0, $footprint->activityIds($travelPlacement));
+    }
+
+    public function testMarkAsPrecalculatedPublishesTheEventAndSetsTheFlag(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::from('property-1', 'footprint-1');
+
+        $this->assertFalse($footprint->isPrecalculated());
+
+        $footprint->markAsPrecalculated();
+
+        $events = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintMarkedAsPrecalculated);
+        $this->assertCount(1, $events);
+        $this->assertTrue($footprint->isPrecalculated());
+    }
+
+    public function testMarkAsPrecalculatedIsIdempotent(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated('property-1', 'footprint-1');
+        $footprint->clearEvents();
+
+        $footprint->markAsPrecalculated();
+
+        $this->assertSame([], $footprint->recordedEvents());
+        $this->assertTrue($footprint->isPrecalculated());
+    }
+
+    public function testMarkAsPrecalculatedRemovesScope1Scope2AndFuelAndEnergyRelatedActivities(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('property-1', 'footprint-1');
+        $fixedFacilities = new ActivityPlacement(Scope::Scope1, Source::FixedFacilities);
+        $electricity = new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity);
+        $fuelAndEnergy = new ActivityPlacement(Scope::Scope3, Source::FuelAndEnergyRelated);
+        $purchases = new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices);
+        $footprint->addActivity(ActivityId::generate(), $fixedFacilities);
+        $footprint->addActivity(ActivityId::generate(), $electricity);
+        $footprint->addActivity(ActivityId::generate(), $fuelAndEnergy);
+        $footprint->addActivity(ActivityId::generate(), $purchases);
+        $footprint->excludeSource(Scope::Scope1, Source::RefrigerantLeaks, ExclusionReason::NotApplicable);
+
+        $footprint->markAsPrecalculated();
+
+        $this->assertCount(0, $footprint->activityIds($fixedFacilities));
+        $this->assertCount(0, $footprint->activityIds($electricity));
+        $this->assertCount(0, $footprint->activityIds($fuelAndEnergy));
+        $this->assertCount(1, $footprint->activityIds($purchases));
+        $this->assertTrue($footprint->isSourceExcluded(Scope::Scope1, Source::RefrigerantLeaks));
+        $this->assertSame(OrganizationalCarbonFootprintStatus::Scope2Answered, $footprint->status());
+    }
+
+    public function testUnmarkAsPrecalculatedPublishesTheEventAndClearsTheFlag(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated('property-1', 'footprint-1');
+        $footprint->clearEvents();
+
+        $footprint->unmarkAsPrecalculated();
+
+        $events = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintUnmarkedAsPrecalculated);
+        $this->assertCount(1, $events);
+        $this->assertFalse($footprint->isPrecalculated());
+    }
+
+    public function testUnmarkAsPrecalculatedIsIdempotent(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::from('property-1', 'footprint-1');
+        $footprint->clearEvents();
+
+        $footprint->unmarkAsPrecalculated();
+
+        $this->assertSame([], $footprint->recordedEvents());
+        $this->assertFalse($footprint->isPrecalculated());
+    }
+
+    public function testUnmarkAsPrecalculatedRemovesScope1Scope2AndFuelAndEnergyRelatedActivities(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated('property-1', 'footprint-1');
+        $fixedFacilities = new ActivityPlacement(Scope::Scope1, Source::FixedFacilities);
+        $electricity = new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity);
+        $fuelAndEnergy = new ActivityPlacement(Scope::Scope3, Source::FuelAndEnergyRelated);
+        $purchases = new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices);
+        $footprint->addActivity(ActivityId::generate(), $fixedFacilities);
+        $footprint->addActivity(ActivityId::generate(), $electricity);
+        $footprint->addActivity(ActivityId::generate(), $fuelAndEnergy);
+        $footprint->addActivity(ActivityId::generate(), $purchases);
+        $footprint->excludeSource(Scope::Scope3, Source::Investments, ExclusionReason::NotApplicable);
+
+        $footprint->unmarkAsPrecalculated();
+
+        $this->assertCount(0, $footprint->activityIds($fixedFacilities));
+        $this->assertCount(0, $footprint->activityIds($electricity));
+        $this->assertCount(0, $footprint->activityIds($fuelAndEnergy));
+        $this->assertCount(1, $footprint->activityIds($purchases));
+        $this->assertTrue($footprint->isSourceExcluded(Scope::Scope3, Source::Investments));
+    }
+
+    public function testMarkAsPrecalculatedOnACompletedFootprintThrows(): void
+    {
+        $footprint = new PropertyCarbonFootprint(
+            id: PropertyCarbonFootprintId::generate(),
+            status: OrganizationalCarbonFootprintStatus::Completed,
+        );
+
+        $this->expectException(OrganizationalCarbonFootprintAlreadyCompletedException::class);
+
+        $footprint->markAsPrecalculated();
+    }
+
+    public function testUnmarkAsPrecalculatedOnACompletedFootprintThrows(): void
+    {
+        $footprint = new PropertyCarbonFootprint(
+            id: PropertyCarbonFootprintId::generate(),
+            status: OrganizationalCarbonFootprintStatus::Completed,
+            precalculated: true,
+        );
+
+        $this->expectException(OrganizationalCarbonFootprintAlreadyCompletedException::class);
+
+        $footprint->unmarkAsPrecalculated();
+    }
+
+    public function testExcludeStageRemovesFuelAndEnergyRelatedActivities(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated('property-1', 'footprint-1');
+        $fuelAndEnergy = new ActivityPlacement(Scope::Scope3, Source::FuelAndEnergyRelated);
+        $footprint->addActivity(ActivityId::generate(), $fuelAndEnergy);
+
+        $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+
+        $this->assertCount(0, $footprint->activityIds($fuelAndEnergy));
     }
 }

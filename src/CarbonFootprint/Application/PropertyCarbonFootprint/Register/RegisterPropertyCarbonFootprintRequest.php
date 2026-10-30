@@ -16,5 +16,6 @@ class RegisterPropertyCarbonFootprintRequest implements Command
         public int $year = 0,
         public ?AccountId $accountId = null,
         public ?EmissionFactorGroupId $emissionFactorGroupId = null,
+        public bool $precalculated = false,
     ) {}
 }

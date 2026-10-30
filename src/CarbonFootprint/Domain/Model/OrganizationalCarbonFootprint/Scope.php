@@ -186,10 +186,42 @@ enum Scope: string implements CalculationStage
         };
     }
 
+    /** @return list<Source> */
+    public function precalculatedSources(): array
+    {
+        return match ($this) {
+            self::Scope1 => [Source::FixedFacilities, Source::OwnVehicles, Source::RefrigerantLeaks],
+            self::Scope2 => [Source::BuildingElectricity],
+            self::Scope3 => [Source::FuelAndEnergyRelated],
+        };
+    }
+
+    /** @return list<SectionDefinition> */
+    public function precalculatedSections(): array
+    {
+        return array_map(
+            fn(Source $source): SectionDefinition => $this->reportedSectionFor($source),
+            $this->precalculatedSources(),
+        );
+    }
+
+    /** @return list<SectionDefinition> */
+    public function sectionsFor(bool $precalculated): array
+    {
+        if (!$precalculated) {
+            return $this->sections();
+        }
+
+        return match ($this) {
+            self::Scope1, self::Scope2 => $this->precalculatedSections(),
+            self::Scope3 => [...$this->sections(), ...$this->precalculatedSections()],
+        };
+    }
+
     public function reportedSectionFor(Source $source): SectionDefinition
     {
-        if (!in_array($source, $this->providerSources(), true)) {
-            throw new \InvalidArgumentException(sprintf('Source "%s" does not accept provider data in "%s".', $source->value, $this->value));
+        if (!in_array($source, [...$this->providerSources(), ...$this->precalculatedSources()], true)) {
+            throw new \InvalidArgumentException(sprintf('Source "%s" does not accept reported emissions in "%s".', $source->value, $this->value));
         }
 
         return new SectionDefinition($source->value . '_reported', $source, ActivityType::ReportedEmissions);

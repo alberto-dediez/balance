@@ -235,7 +235,60 @@ final class ScopeTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        Scope::Scope3->reportedSectionFor(Source::FuelAndEnergyRelated);
+        Scope::Scope3->reportedSectionFor(Source::DownstreamLeasedAssets);
+    }
+
+    public function testReportedSectionForFixedFacilities(): void
+    {
+        $section = Scope::Scope1->reportedSectionFor(Source::FixedFacilities);
+
+        $this->assertSame('fixed_facilities_reported', $section->key);
+        $this->assertSame(ActivityType::ReportedEmissions, $section->activityType);
+    }
+
+    public function testReportedSectionForFuelAndEnergyRelated(): void
+    {
+        $section = Scope::Scope3->reportedSectionFor(Source::FuelAndEnergyRelated);
+
+        $this->assertSame('fuel_and_energy_related_reported', $section->key);
+        $this->assertSame(Source::FuelAndEnergyRelated, $section->source);
+    }
+
+    public function testPrecalculatedSources(): void
+    {
+        $this->assertSame([Source::FixedFacilities, Source::OwnVehicles, Source::RefrigerantLeaks], Scope::Scope1->precalculatedSources());
+        $this->assertSame([Source::BuildingElectricity], Scope::Scope2->precalculatedSources());
+        $this->assertSame([Source::FuelAndEnergyRelated], Scope::Scope3->precalculatedSources());
+    }
+
+    public function testPrecalculatedSections(): void
+    {
+        $sections = Scope::Scope1->precalculatedSections();
+
+        $this->assertSame(['fixed_facilities_reported', 'own_vehicles_reported', 'refrigerant_leaks_reported'], array_map(static fn($section) => $section->key, $sections));
+        foreach ($sections as $section) {
+            $this->assertSame(ActivityType::ReportedEmissions, $section->activityType);
+        }
+        $this->assertSame(['building_electricity_reported'], array_map(static fn($section) => $section->key, Scope::Scope2->precalculatedSections()));
+    }
+
+    public function testSectionsForNotPrecalculatedAreTheUsualSections(): void
+    {
+        foreach (Scope::cases() as $scope) {
+            $this->assertEquals($scope->sections(), $scope->sectionsFor(false));
+        }
+    }
+
+    public function testSectionsForPrecalculated(): void
+    {
+        $this->assertEquals(Scope::Scope1->precalculatedSections(), Scope::Scope1->sectionsFor(true));
+        $this->assertEquals(Scope::Scope2->precalculatedSections(), Scope::Scope2->sectionsFor(true));
+
+        $scope3Sections = Scope::Scope3->sectionsFor(true);
+
+        $this->assertCount(13, $scope3Sections);
+        $this->assertSame('fuel_and_energy_related_reported', $scope3Sections[12]->key);
+        $this->assertSame(Source::FuelAndEnergyRelated, $scope3Sections[12]->source);
     }
 
     public function testProviderSectionsForBusinessTravel(): void

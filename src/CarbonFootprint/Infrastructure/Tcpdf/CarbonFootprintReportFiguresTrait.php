@@ -74,7 +74,9 @@ trait CarbonFootprintReportFiguresTrait
                 ? new PdfKeyFigure($this->translator->trans(Scope::Scope3->value, [], 'scope', $locale->value), $this->trans('Excluido', $locale))
                 : new PdfKeyFigure($this->translator->trans(Scope::Scope3->value, [], 'scope', $locale->value), $this->tonnes(($data->emissionsByScope[Scope::Scope3->value] ?? new Emissions())->co2eq()), 't CO₂eq'),
             new PdfKeyFigure($this->trans('Fuente con más emisiones', $locale), $this->translator->trans($this->maxKey($data->emissionsBySource, Source::FixedFacilities->value), [], 'source', $locale->value)),
-            new PdfKeyFigure($this->trans('Alcance 2 · localización', $locale), $this->tonnes($data->locationBasedElectricityEmissions->co2eq()), 't CO₂eq'),
+            $data->precalculated
+                ? new PdfKeyFigure($this->trans('Alcance 2 · localización', $locale), '---')
+                : new PdfKeyFigure($this->trans('Alcance 2 · localización', $locale), $this->tonnes($data->locationBasedElectricityEmissions->co2eq()), 't CO₂eq'),
         ];
 
         if (CarbonFootprintReportSubjectType::Company === $data->subjectType) {
@@ -368,6 +370,17 @@ trait CarbonFootprintReportFiguresTrait
     }
 
     /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
+    private function organizationalSourceTable(OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source, Locale $locale, bool $isCompany): array
+    {
+        return match (true) {
+            Source::BuildingElectricity === $source && !$data->precalculated => $this->electricityTable($data, $locale, $isCompany),
+            Source::FuelAndEnergyRelated === $source && !$data->precalculated => $this->derivedSourceTable($data, $locale),
+            in_array($source, [Source::DownstreamLeasedAssets, Source::Franchises], true) => $this->nonConsolidatedPropertyTable($data, $source, $locale),
+            default => $this->sourceTable($data, $scope, $source, $locale, $isCompany),
+        };
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
     private function sourceTable(OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source, Locale $locale, bool $isCompany): array
     {
         $header = [$this->trans('Elemento', $locale)];
@@ -543,7 +556,7 @@ trait CarbonFootprintReportFiguresTrait
     {
         $rows = [
             [$this->trans('Alcance 2 · método de mercado (kg CO₂eq)', $locale), $this->number(($data->emissionsByScope[Scope::Scope2->value] ?? new Emissions())->co2eq())],
-            [$this->trans('Alcance 2 · método de localización (kg CO₂eq)', $locale), $this->number($data->locationBasedElectricityEmissions->co2eq())],
+            [$this->trans('Alcance 2 · método de localización (kg CO₂eq)', $locale), $data->precalculated ? '---' : $this->number($data->locationBasedElectricityEmissions->co2eq())],
             [$this->trans('Total · método de localización (kg CO₂eq)', $locale), $this->number($data->locationBasedTotalEmissions->co2eq())],
         ];
 

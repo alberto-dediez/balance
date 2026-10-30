@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\Activity\Answer\CombustibleAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\EconomicSectorAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\ElectricityAnswerHandler;
 use App\CarbonFootprint\Application\Activity\Answer\PurchaseServiceAnswerHandler;
+use App\CarbonFootprint\Application\Activity\Answer\ReportedEmissionsAnswerHandler;
 use App\CarbonFootprint\Application\Activity\CombustibleEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\EconomicSectorEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\ElectricityEmissionFactorSelector;
@@ -19,10 +20,13 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterCombustibleActivit
 use App\CarbonFootprint\Application\Activity\Register\RegisterEconomicSectorActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Register\RegisterPurchaseServiceActivityService;
+use App\CarbonFootprint\Application\Activity\Register\RegisterReportedEmissionsActivityService;
+use App\CarbonFootprint\Application\Activity\ReportedEmissionsEmissionFactorSelector;
 use App\CarbonFootprint\Application\Activity\Update\UpdateCombustibleActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateEconomicSectorActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateElectricityActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdatePurchaseServiceActivityService;
+use App\CarbonFootprint\Application\Activity\Update\UpdateReportedEmissionsActivityService;
 use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
@@ -41,6 +45,7 @@ use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\EconomicSectorAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\ElectricityAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\PurchaseServiceAnswer;
+use App\CarbonFootprint\Domain\Model\Activity\Answer\ReportedEmissionsAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
@@ -169,6 +174,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
         $mixResolver = new ElectricityMixEmissionsResolver($electricityMixRepository, $calculator);
         $purchaseServiceSelector = new PurchaseServiceEmissionFactorSelector($purchaseServiceRepository);
         $economicSectorSelector = new EconomicSectorEmissionFactorSelector($economicSectorRepository);
+        $reportedEmissionsSelector = new ReportedEmissionsEmissionFactorSelector();
 
         $handlers = new ActivityAnswerHandlerRegistry([
             new CombustibleAnswerHandler(
@@ -186,6 +192,10 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             new EconomicSectorAnswerHandler(
                 new RegisterEconomicSectorActivityService($this->activityRepository, $authorizer, $economicSectorSelector, $calculator),
                 new UpdateEconomicSectorActivityService($this->activityRepository, $authorizer, $economicSectorSelector, $calculator),
+            ),
+            new ReportedEmissionsAnswerHandler(
+                new RegisterReportedEmissionsActivityService($this->activityRepository, $authorizer, $reportedEmissionsSelector, $calculator),
+                new UpdateReportedEmissionsActivityService($this->activityRepository, $authorizer, $reportedEmissionsSelector, $calculator),
             ),
         ]);
 
@@ -410,6 +420,83 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
         ), $this->ownerUser());
     }
 
+    public function testAPrecalculatedFootprintRegistersReportedEmissionsByPropertyAndInTheUnassignedBlock(): void
+    {
+        $footprint = $this->registeredFootprint(precalculated: true);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, [
+            new PropertySectionAnswers(null, [$this->reportedSection(Scope::Scope1, Source::FixedFacilities, 'Caldera', new Quantity(2.0, Unit::Tonne))]),
+            new PropertySectionAnswers($this->firstPropertyId, [$this->reportedSection(Scope::Scope1, Source::FixedFacilities, 'Caldera hotel', new Quantity(800.0, Unit::Kilogram))]),
+        ]), $this->ownerUser());
+
+        $unassigned = $footprint->activityIds(new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $firstProperty = $footprint->activityIds(new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: $this->firstPropertyId));
+        $this->assertCount(1, $unassigned);
+        $this->assertCount(1, $firstProperty);
+        $this->assertSame(2000.0, (float) $this->activityRepository->findById($unassigned[0])?->emissions()->co2eq());
+        $this->assertSame(800.0, (float) $this->activityRepository->findById($firstProperty[0])?->emissions()->co2eq());
+    }
+
+    public function testAPrecalculatedFootprintRejectsActivitySections(): void
+    {
+        $footprint = $this->registeredFootprint(precalculated: true);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, [
+            new PropertySectionAnswers($this->firstPropertyId, [$this->combustibleSection()]),
+        ]), $this->ownerUser());
+    }
+
+    public function testAFootprintNotPrecalculatedRejectsReportedSectionsInScope1(): void
+    {
+        $footprint = $this->registeredFootprint();
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, [
+            new PropertySectionAnswers(null, [$this->reportedSection(Scope::Scope1, Source::FixedFacilities, 'Caldera', new Quantity(2.0, Unit::Tonne))]),
+        ]), $this->ownerUser());
+    }
+
+    public function testAPrecalculatedFootprintRegistersReportedEmissionsInFuelAndEnergyRelated(): void
+    {
+        $footprint = $this->registeredFootprint(precalculated: true);
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3, [
+            new PropertySectionAnswers($this->firstPropertyId, [$this->reportedSection(Scope::Scope3, Source::FuelAndEnergyRelated, 'WTT gas', new Quantity(300.0, Unit::Kilogram))]),
+        ]), $this->ownerUser());
+
+        $activityIds = $footprint->activityIds(new ActivityPlacement(Scope::Scope3, Source::FuelAndEnergyRelated, propertyId: $this->firstPropertyId));
+        $this->assertCount(1, $activityIds);
+        $this->assertSame(300.0, (float) $this->activityRepository->findById($activityIds[0])?->emissions()->co2eq());
+    }
+
+    public function testSavingAnEmptyReportedSectionRemovesTheExistingRow(): void
+    {
+        $footprint = $this->registeredFootprint(precalculated: true);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, [
+            new PropertySectionAnswers(null, [$this->reportedSection(Scope::Scope1, Source::FixedFacilities, 'Caldera', new Quantity(2.0, Unit::Tonne))]),
+        ]), $this->ownerUser());
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope1, [
+            new PropertySectionAnswers(null, [new SectionAnswer(Scope::Scope1->reportedSectionFor(Source::FixedFacilities), [])]),
+        ]), $this->ownerUser());
+
+        $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope1, Source::FixedFacilities)));
+    }
+
+    private function reportedSection(Scope $scope, Source $source, string $description, Quantity $quantity): SectionAnswer
+    {
+        return new SectionAnswer(
+            $scope->reportedSectionFor($source),
+            [new ReportedEmissionsAnswer($description, $quantity)],
+        );
+    }
+
     private function purchasesSection(): SectionAnswer
     {
         return new SectionAnswer(
@@ -437,7 +524,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
         );
     }
 
-    private function registeredFootprint(): CompanyCarbonFootprint
+    private function registeredFootprint(bool $precalculated = false): CompanyCarbonFootprint
     {
         $footprint = CompanyCarbonFootprintMother::from(
             companyId: self::COMPANY_ID,
@@ -445,6 +532,9 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             accountId: 'account-id-test',
             year: self::YEAR,
         );
+        if ($precalculated) {
+            $footprint->markAsPrecalculated();
+        }
         $this->repository->add($footprint);
 
         return $footprint;

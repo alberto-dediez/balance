@@ -23,7 +23,7 @@
                     <dd class="col-sm-8">{{ results.emissionsByScope['scope_2'].co2eq | number_format(2, ',', '.') }}</dd>
 
                     <dt class="col-sm-4">{{ 'Alcance 2 · método de localización (kg CO₂eq)' | trans }}</dt>
-                    <dd class="col-sm-8">{{ results.locationBasedElectricityEmissions.co2eq | number_format(2, ',', '.') }}</dd>
+                    <dd class="col-sm-8">{{ precalculated ? '---' : results.locationBasedElectricityEmissions.co2eq | number_format(2, ',', '.') }}</dd>
 
                     <dt class="col-sm-4">{{ 'Total · método de localización (kg CO₂eq)' | trans }}</dt>
                     <dd class="col-sm-8">{{ results.locationBasedTotalEmissions.co2eq | number_format(2, ',', '.') }}</dd>

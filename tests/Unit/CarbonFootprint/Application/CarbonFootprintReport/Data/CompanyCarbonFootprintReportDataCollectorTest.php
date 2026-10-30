@@ -167,6 +167,33 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertNull($excludedData->exclusionLines[0]->source);
     }
 
+    public function testIncludesThePrecalculatedFlag(): void
+    {
+        $company = CompanyMother::fromName('Hotelera');
+        $companies = CompanyRepositoryMother::inMemory();
+        $companies->add($company);
+
+        $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroups->add(EmissionFactorGroupMother::default());
+
+        $precalculated = CompanyCarbonFootprintMother::precalculated((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
+        $notPrecalculated = CompanyCarbonFootprintMother::from((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2024);
+
+        $footprints = CompanyCarbonFootprintRepositoryMother::inMemory();
+        $footprints->add($precalculated);
+        $footprints->add($notPrecalculated);
+
+        $sut = new CompanyCarbonFootprintReportDataCollector($footprints, $companies, new CompanyProperties(PropertyRepositoryMother::inMemory()), $emissionFactorGroups, $this->breakdownBuilder(), $this->linesBuilder(), new FakeTranslator(), $this->mitigationPlanBuilder(), $this->derivedSourceEmissionsCalculator());
+
+        $precalculatedData = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, (string) $precalculated->id()));
+        $notPrecalculatedData = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Company, (string) $notPrecalculated->id()));
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $precalculatedData);
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $notPrecalculatedData);
+        $this->assertTrue($precalculatedData->precalculated);
+        $this->assertFalse($notPrecalculatedData->precalculated);
+    }
+
     public function testOmitsTheUnassignedRowWhenItHasNoEmissions(): void
     {
         $company = CompanyMother::fromName('Hotelera');

@@ -42,7 +42,7 @@ final class GetPropertyCarbonFootprintScopeService
 
         $this->authorizer->denyUnlessCanDoThat($propertyCarbonFootprint, SecurityAction::View, $user);
 
-        $stageSections = $this->sectionsBuilder->build($propertyCarbonFootprint, $request->scope);
+        $stageSections = $this->sectionsBuilder->build($propertyCarbonFootprint, $request->scope, $request->scope->sectionsFor($propertyCarbonFootprint->isPrecalculated()));
 
         return new GetPropertyCarbonFootprintScopeResponse(
             sections: $stageSections->sections,

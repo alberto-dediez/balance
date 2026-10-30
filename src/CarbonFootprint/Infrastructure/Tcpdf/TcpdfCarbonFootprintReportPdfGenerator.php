@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Tcpdf;
 
-use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportCharts;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator;
@@ -229,6 +228,12 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         ];
 
         $pdf->writeHTML($this->buildTableHtml($header, $this->includedEmissionsRows($data, $locale), ['14%', '30%', '10%', '20%', '26%']), true, false, true, false, '');
+
+        if ($data->precalculated) {
+            $pdf->Ln(4);
+            $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->MultiCell(0, 5, $this->trans('Los resultados de alcance 1 y alcance 2 han sido aportados por la organización como emisiones ya calculadas, sin desglose por actividades.', $locale), 0, 'L');
+        }
     }
 
     private function renderScopeSourceSections(\TCPDF $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
@@ -248,12 +253,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
                 continue;
             }
 
-            [$header, $rows, $widths] = match ($source) {
-                Source::BuildingElectricity => $this->electricityTable($data, $locale, $isCompany),
-                Source::FuelAndEnergyRelated => $this->derivedSourceTable($data, $locale),
-                Source::DownstreamLeasedAssets, Source::Franchises => $this->nonConsolidatedPropertyTable($data, $source, $locale),
-                default => $this->sourceTable($data, $scope, $source, $locale, $isCompany),
-            };
+            [$header, $rows, $widths] = $this->organizationalSourceTable($data, $scope, $source, $locale, $isCompany);
 
             if ([] === $rows) {
                 $pdf->writeHTML($this->markdownToStyledHtml($this->trans('No hay datos reportados', $locale)), true, false, true, false, '');

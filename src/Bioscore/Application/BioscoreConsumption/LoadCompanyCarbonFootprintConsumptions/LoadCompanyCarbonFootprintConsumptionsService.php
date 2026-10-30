@@ -45,6 +45,10 @@ class LoadCompanyCarbonFootprintConsumptionsService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::Edit, $user);
 
+        if ($companyCarbonFootprint->isPrecalculated()) {
+            throw new \InvalidArgumentException('No se pueden cargar consumos de Bioscore en una huella ya calculada');
+        }
+
         $accountId = $companyCarbonFootprint->accountId()
             ?? throw new \InvalidArgumentException('CompanyCarbonFootprint has no account');
         $companyId = $companyCarbonFootprint->companyId()

@@ -64,6 +64,10 @@ class RegisterCompanyCarbonFootprintService implements CommandHandler
             year: $request->year,
         );
 
+        if ($request->precalculated) {
+            $companyCarbonFootprint->markAsPrecalculated();
+        }
+
         $this->companyCarbonFootprintRepository->add($companyCarbonFootprint);
 
         return new RegisterCompanyCarbonFootprintResponse($companyCarbonFootprint->id());

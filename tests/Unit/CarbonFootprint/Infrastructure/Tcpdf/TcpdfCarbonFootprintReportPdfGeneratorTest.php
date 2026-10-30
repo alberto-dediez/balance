@@ -15,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Shared\Infrastructure\Tcpdf\PdfKeyFigure;
 use App\Shared\Infrastructure\Theme\GreenhostTheme;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportChartsMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsMother;
@@ -46,6 +47,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             yield $theme . ' company scope 3 es' => [$theme, 'company-scope-3', Locale::Spanish];
             yield $theme . ' property scope 3 excluded es' => [$theme, 'property-scope-3-excluded', Locale::Spanish];
             yield $theme . ' company non consolidated properties es' => [$theme, 'company-non-consolidated', Locale::Spanish];
+            yield $theme . ' property precalculated es' => [$theme, 'property-precalculated', Locale::Spanish];
         }
     }
 
@@ -173,6 +175,65 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $this->assertSame(['Actividades de electricidad sin factor de mix eléctrico', '1'], $withoutMix[3]);
     }
 
+    /** @dataProvider themes */
+    public function testAPrecalculatedReportListsTheReportedEmissionsOfTheFuelAndEnergyRelatedSource(string $theme): void
+    {
+        $table = $this->organizationalSourceTable($theme, OrganizationalCarbonFootprintReportDataMother::precalculated(), Scope::Scope3, Source::FuelAndEnergyRelated);
+
+        $this->assertCount(2, $table[1]);
+        $this->assertSame('Combustibles y energía comunicados', $table[1][0][0]);
+        $this->assertSame('590,00', $table[1][1][5]);
+    }
+
+    /** @dataProvider themes */
+    public function testAPrecalculatedReportListsTheReportedElectricityEmissionsWithoutTheElectricityColumns(string $theme): void
+    {
+        $table = $this->organizationalSourceTable($theme, OrganizationalCarbonFootprintReportDataMother::precalculated(), Scope::Scope2, Source::BuildingElectricity);
+
+        $this->assertNotContains('kWh', $table[0]);
+        $this->assertSame('Electricidad comunicada', $table[1][0][0]);
+        $this->assertSame('2.500,00', $table[1][0][5]);
+    }
+
+    /** @dataProvider themes */
+    public function testAReportNotPrecalculatedKeepsTheElectricityAndDerivedTables(string $theme): void
+    {
+        $electricity = $this->organizationalSourceTable($theme, OrganizationalCarbonFootprintReportDataMother::withScope3(), Scope::Scope2, Source::BuildingElectricity);
+        $derived = $this->organizationalSourceTable($theme, OrganizationalCarbonFootprintReportDataMother::withScope3(), Scope::Scope3, Source::FuelAndEnergyRelated);
+
+        $this->assertContains('kWh', $electricity[0]);
+        $this->assertCount(3, $derived[1]);
+        $this->assertSame('590,00', $derived[1][2][3]);
+    }
+
+    /** @dataProvider themes */
+    public function testAPrecalculatedReportDoesNotDeclareALocationBasedScope2Figure(string $theme): void
+    {
+        $rows = $this->organizationalDualReportingRows($theme, OrganizationalCarbonFootprintReportDataMother::precalculated());
+
+        $this->assertSame('---', $rows[1][1]);
+
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<PdfKeyFigure> $figures */
+        $figures = (new \ReflectionMethod($generator, 'organizationalKeyFigures'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::precalculated(), Locale::Spanish);
+        $locationBased = array_values(array_filter($figures, static fn(PdfKeyFigure $figure): bool => 'Alcance 2 · localización' === $figure->label));
+
+        $this->assertCount(1, $locationBased);
+        $this->assertSame('---', $locationBased[0]->value);
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
+    private function organizationalSourceTable(string $theme, OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source): array
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} $table */
+        $table = (new \ReflectionMethod($generator, 'organizationalSourceTable'))->invoke($generator, $data, $scope, $source, Locale::Spanish, false);
+
+        return $table;
+    }
+
     /** @return list<list<string>> */
     private function organizationalDualReportingRows(string $theme, OrganizationalCarbonFootprintReportData $data): array
     {
@@ -233,6 +294,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             'company-scope-3' => [OrganizationalCarbonFootprintReportDataMother::withScope3(CarbonFootprintReportSubjectType::Company), CarbonFootprintReportTextsMother::forOrganization()],
             'company-non-consolidated' => [OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-scope-3-excluded' => [OrganizationalCarbonFootprintReportDataMother::withScope3Excluded(), CarbonFootprintReportTextsMother::forOrganization()],
+            'property-precalculated' => [OrganizationalCarbonFootprintReportDataMother::precalculated(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-long-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(targetYear: 2035), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             default => [OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), CarbonFootprintReportTextsMother::forOrganization()],
         };

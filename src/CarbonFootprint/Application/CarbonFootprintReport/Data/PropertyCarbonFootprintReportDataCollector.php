@@ -86,6 +86,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             scope3ExclusionReason: $propertyCarbonFootprint->stageExclusionReason(Scope::Scope3),
             scope3ExclusionComment: $propertyCarbonFootprint->stageExclusionComment(Scope::Scope3),
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($propertyCarbonFootprint, Scope::Scope3),
+            precalculated: $propertyCarbonFootprint->isPrecalculated(),
         );
     }
 }

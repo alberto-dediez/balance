@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Infrastructure\Symfony\Form;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\Register\RegisterPropertyCarbonFootprintRequest;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyIdType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,6 +38,11 @@ class RegisterPropertyCarbonFootprintType extends AbstractType
                     new Assert\NotNull(),
                     new Assert\Range(min: 2000, max: $currentYear),
                 ],
+            ])
+            ->add('precalculated', CheckboxType::class, [
+                'label' => new TranslatableMessage('Huella ya calculada'),
+                'required' => false,
+                'help' => new TranslatableMessage('Marca esta opción si ya dispones de los resultados de alcance 1 y alcance 2: los introducirás directamente, sin desglose de actividades.'),
             ])
             ->add('register', SubmitType::class, [
                 'label' => new TranslatableMessage('Registrar'),

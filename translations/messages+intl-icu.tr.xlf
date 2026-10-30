@@ -10369,6 +10369,46 @@
         <source>Otros lotes del serial</source>
         <target>Serinin diğer lotları</target>
       </trans-unit>
+      <trans-unit id="lKnp1zi" resname="Los resultados de alcance 1 y alcance 2 han sido aportados por la organización como emisiones ya calculadas, sin desglose por actividades.">
+        <source>Los resultados de alcance 1 y alcance 2 han sido aportados por la organización como emisiones ya calculadas, sin desglose por actividades.</source>
+        <target>NEW_Los resultados de alcance 1 y alcance 2 han sido aportados por la organización como emisiones ya calculadas, sin desglose por actividades.</target>
+      </trans-unit>
+      <trans-unit id="8WD4jSG" resname="No se ha podido cambiar el modo de introducción de datos: {error}">
+        <source>No se ha podido cambiar el modo de introducción de datos: {error}</source>
+        <target>NEW_No se ha podido cambiar el modo de introducción de datos: {error}</target>
+      </trans-unit>
+      <trans-unit id="tZ_QB3J" resname="Huella marcada como ya calculada: introduce las emisiones de cada fuente directamente.">
+        <source>Huella marcada como ya calculada: introduce las emisiones de cada fuente directamente.</source>
+        <target>NEW_Huella marcada como ya calculada: introduce las emisiones de cada fuente directamente.</target>
+      </trans-unit>
+      <trans-unit id="FfGmtR3" resname="La huella vuelve a calcularse por actividades.">
+        <source>La huella vuelve a calcularse por actividades.</source>
+        <target>NEW_La huella vuelve a calcularse por actividades.</target>
+      </trans-unit>
+      <trans-unit id="4olAZWc" resname="Huella ya calculada">
+        <source>Huella ya calculada</source>
+        <target>NEW_Huella ya calculada</target>
+      </trans-unit>
+      <trans-unit id="YWtFVAc" resname="Marca esta opción si ya dispones de los resultados de alcance 1 y alcance 2: los introducirás directamente, sin desglose de actividades.">
+        <source>Marca esta opción si ya dispones de los resultados de alcance 1 y alcance 2: los introducirás directamente, sin desglose de actividades.</source>
+        <target>NEW_Marca esta opción si ya dispones de los resultados de alcance 1 y alcance 2: los introducirás directamente, sin desglose de actividades.</target>
+      </trans-unit>
+      <trans-unit id="5RdxjPH" resname="Introducir datos por actividades">
+        <source>Introducir datos por actividades</source>
+        <target>NEW_Introducir datos por actividades</target>
+      </trans-unit>
+      <trans-unit id="eD47Tle" resname="Al cambiar el modo de introducción de datos se eliminarán las actividades registradas en los alcances 1 y 2 y las emisiones comunicadas de la categoría «Actividades relacionadas con combustibles y energía». ¿Desea continuar?">
+        <source>Al cambiar el modo de introducción de datos se eliminarán las actividades registradas en los alcances 1 y 2 y las emisiones comunicadas de la categoría «Actividades relacionadas con combustibles y energía». ¿Desea continuar?</source>
+        <target>NEW_Al cambiar el modo de introducción de datos se eliminarán las actividades registradas en los alcances 1 y 2 y las emisiones comunicadas de la categoría «Actividades relacionadas con combustibles y energía». ¿Desea continuar?</target>
+      </trans-unit>
+      <trans-unit id="1OEJxF5" resname="Huella ya calculada: introduce por cada fuente las emisiones que ya tienes calculadas (concepto y kg o t de CO₂eq). Para volver a desglosar actividades usa «Introducir datos por actividades».">
+        <source>Huella ya calculada: introduce por cada fuente las emisiones que ya tienes calculadas (concepto y kg o t de CO₂eq). Para volver a desglosar actividades usa «Introducir datos por actividades».</source>
+        <target>NEW_Huella ya calculada: introduce por cada fuente las emisiones que ya tienes calculadas (concepto y kg o t de CO₂eq). Para volver a desglosar actividades usa «Introducir datos por actividades».</target>
+      </trans-unit>
+      <trans-unit id="N.eIu2H" resname="No se pueden cargar consumos de Bioscore en una huella ya calculada">
+        <source>No se pueden cargar consumos de Bioscore en una huella ya calculada</source>
+        <target>NEW_No se pueden cargar consumos de Bioscore en una huella ya calculada</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

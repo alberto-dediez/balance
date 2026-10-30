@@ -55,6 +55,14 @@ class CompanyCarbonFootprintMother
         return $companyCarbonFootprint;
     }
 
+    public static function precalculated(string $companyId, string $id, string $accountId = 'account-id', int $year = 2025): CompanyCarbonFootprint
+    {
+        $companyCarbonFootprint = self::from($companyId, $id, $accountId, $year);
+        $companyCarbonFootprint->markAsPrecalculated();
+
+        return $companyCarbonFootprint;
+    }
+
     public static function withScope1Answered(
         string $companyId,
         string $id,

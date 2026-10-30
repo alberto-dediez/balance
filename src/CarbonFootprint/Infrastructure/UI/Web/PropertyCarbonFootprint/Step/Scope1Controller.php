@@ -61,7 +61,7 @@ class Scope1Controller extends AbstractController
                     new AnswerPropertyCarbonFootprintScopeRequest(
                         $propertyCarbonFootprint->id(),
                         Scope::Scope1,
-                        $answerMapper->map($request->request->all(), Scope::Scope1->sections()),
+                        $answerMapper->map($request->request->all(), Scope::Scope1->sectionsFor($propertyCarbonFootprint->isPrecalculated())),
                         $exclusionMapper->map($request, Scope::Scope1),
                     ),
                     $loggedUser(),
@@ -86,6 +86,7 @@ class Scope1Controller extends AbstractController
                 'propertyCarbonFootprint' => $propertyCarbonFootprint,
                 'propertyCarbonFootprintId' => $propertyCarbonFootprintId,
                 'readOnly' => $propertyCarbonFootprint->isCompleted(),
+                'precalculated' => $propertyCarbonFootprint->isPrecalculated(),
                 'exclusions' => StepExclusionsView::build($response->exclusions),
                 'exclusionReasons' => ExclusionReason::cases(),
                 'calculateUrl' => $this->generateUrl('property_carbon_footprints_emissions_calculate', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]),

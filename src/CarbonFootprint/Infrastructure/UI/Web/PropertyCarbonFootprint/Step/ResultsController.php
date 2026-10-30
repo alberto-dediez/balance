@@ -64,6 +64,7 @@ class ResultsController extends AbstractController
             ) + [
                 'propertyCarbonFootprint' => $propertyCarbonFootprint,
                 'propertyCarbonFootprintId' => $propertyCarbonFootprintId,
+                'precalculated' => $propertyCarbonFootprint->isPrecalculated(),
                 'results' => $results,
                 'report' => $report,
                 'canEditReportTexts' => $reportPermissionsPolicy->permissionsFor($report?->accountId(), $user)->canEditTexts(),

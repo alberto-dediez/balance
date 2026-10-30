@@ -36,14 +36,16 @@ class AnswerPropertyCarbonFootprintScopeService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($propertyCarbonFootprint, SecurityAction::Edit, $user);
 
-        $validated = $this->answersProcessor->validate($request->scope, $request->sectionAnswers, $request->exclusions, $request->stageExclusion);
+        $sections = $request->scope->sectionsFor($propertyCarbonFootprint->isPrecalculated());
+
+        $validated = $this->answersProcessor->validate($request->scope, $request->sectionAnswers, $request->exclusions, $request->stageExclusion, $sections);
 
         $this->answersProcessor->applyStageExclusion($propertyCarbonFootprint, $request->scope, $validated->stageExclusion);
 
         if (null === $validated->stageExclusion) {
             $this->answersProcessor->applyExclusions($propertyCarbonFootprint, $request->scope, $validated->exclusionsBySource);
 
-            $this->answersSynchronizer->sync($propertyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user);
+            $this->answersSynchronizer->sync($propertyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, $sections);
         }
 
         $propertyCarbonFootprint->answerScope($request->scope);
