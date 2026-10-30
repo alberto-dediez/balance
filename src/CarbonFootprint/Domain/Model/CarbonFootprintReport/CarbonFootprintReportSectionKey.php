@@ -16,13 +16,14 @@ enum CarbonFootprintReportSectionKey: string
     case SustainableDevelopmentGoals = 'sustainableDevelopmentGoals';
     case Conclusion                 = 'conclusion';
     case MitigationPlan             = 'mitigationPlan';
+    case Uncertainty                = 'uncertainty';
 
     /** @return list<self> */
     public static function requiredFor(CarbonFootprintReportSubjectType $type): array
     {
         return match ($type) {
             CarbonFootprintReportSubjectType::Event => [self::ExecutiveSummary, self::Methodology, self::EmissionFactorSources, self::AnalysisAndRecommendations],
-            CarbonFootprintReportSubjectType::Property, CarbonFootprintReportSubjectType::Company => [self::Purpose, self::RegulatoryContext, self::SustainableDevelopmentGoals, self::Conclusion],
+            CarbonFootprintReportSubjectType::Property, CarbonFootprintReportSubjectType::Company => [self::Purpose, self::RegulatoryContext, self::Methodology, self::EmissionFactorSources, self::Uncertainty, self::SustainableDevelopmentGoals, self::Conclusion],
         };
     }
 
@@ -48,6 +49,7 @@ enum CarbonFootprintReportSectionKey: string
             self::SustainableDevelopmentGoals => 'Relación con los ODS',
             self::Conclusion => 'Conclusión',
             self::MitigationPlan => 'Medidas de reducción y mitigación',
+            self::Uncertainty => 'Incertidumbre y calidad de los datos',
         };
     }
 

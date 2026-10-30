@@ -26,4 +26,21 @@ class UpdateCarbonFootprintReportTextsTypeTest extends KernelTestCase
         $this->assertFalse($form->get('mitigationPlan')->getConfig()->getRequired());
         $this->assertTrue($form->get('conclusion')->getConfig()->getRequired());
     }
+
+    public function testThePropertyFormHasTheUncertaintySection(): void
+    {
+        $keys = [
+            ...CarbonFootprintReportSectionKey::requiredFor(CarbonFootprintReportSubjectType::Property),
+            ...CarbonFootprintReportSectionKey::optionalFor(CarbonFootprintReportSubjectType::Property),
+        ];
+
+        $formFactory = self::getContainer()->get(FormFactoryInterface::class);
+
+        $form = $formFactory->create(UpdateCarbonFootprintReportTextsType::class, null, ['keys' => $keys]);
+
+        $this->assertTrue($form->has('uncertainty'));
+        $this->assertTrue($form->get('uncertainty')->getConfig()->getRequired());
+        $this->assertTrue($form->has('methodology'));
+        $this->assertTrue($form->has('emissionFactorSources'));
+    }
 }

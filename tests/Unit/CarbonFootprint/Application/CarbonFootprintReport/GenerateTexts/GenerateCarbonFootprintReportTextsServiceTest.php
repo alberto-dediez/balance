@@ -62,7 +62,7 @@ class GenerateCarbonFootprintReportTextsServiceTest extends TestCase
 
         $this->assertSame(CarbonFootprintReportStatus::Draft, $report->status());
         $this->assertInstanceOf(CarbonFootprintReportTextsDrafted::class, $this->spySubscriber->lastEvent());
-        $this->assertCount(4, $report->sections());
+        $this->assertCount(7, $report->sections());
         $this->assertCount(0, $this->spyCommandBus->commands());
     }
 

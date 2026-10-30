@@ -6,14 +6,18 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport;
 
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportActivityLine;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBoundaryLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportEmployeeSurvey;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMitigationAction;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMitigationPlan;
@@ -24,6 +28,7 @@ use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\Unit;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionMother;
 
@@ -107,6 +112,109 @@ class OrganizationalCarbonFootprintReportDataMother
                 new NonConsolidatedPropertyLine(Source::Franchises, new PropertyId('property-franquicia'), $franchiseFromOperatorContribution ? null : PropertyCarbonFootprintId::generate(), $franchiseFromOperatorContribution ? OperatorContributionId::generate() : null, $franchise, null, $franchise),
                 new NonConsolidatedPropertyLine(Source::DownstreamLeasedAssets, new PropertyId('property-arrendada'), null, null, new Emissions(), '4500', $leasedOut),
             ],
+            gwpCh4: $data->gwpCh4,
+            gwpN2O: $data->gwpN2O,
+        );
+    }
+
+    public static function forCompanyWithBoundaryLines(?Source $excludedSource = null, bool $scope3Excluded = false): OrganizationalCarbonFootprintReportData
+    {
+        $data = self::withNonConsolidatedProperties();
+
+        $exclusionLines = $data->exclusionLines;
+        if (null !== $excludedSource) {
+            $exclusionLines[] = new OrganizationalCarbonFootprintReportExclusionLine(Scope::Scope3, $excludedSource, ExclusionReason::NotSignificant, null);
+        }
+        if ($scope3Excluded) {
+            array_unshift($exclusionLines, new OrganizationalCarbonFootprintReportExclusionLine(Scope::Scope3, null, ExclusionReason::NoDataAvailable, 'Sin datos de proveedores'));
+        }
+
+        return new OrganizationalCarbonFootprintReportData(
+            subjectType: $data->subjectType,
+            subjectName: $data->subjectName,
+            companyName: $data->companyName,
+            countryName: $data->countryName,
+            emissionFactorGroupName: $data->emissionFactorGroupName,
+            calculationYear: $data->calculationYear,
+            totalEmissions: $data->totalEmissions,
+            locationBasedElectricityEmissions: $data->locationBasedElectricityEmissions,
+            locationBasedTotalEmissions: $data->locationBasedTotalEmissions,
+            electricityActivitiesWithoutLocationBased: $data->electricityActivitiesWithoutLocationBased,
+            emissionsBySource: $data->emissionsBySource,
+            emissionsByScope: $data->emissionsByScope,
+            emissionsByScopeAndSource: $data->emissionsByScopeAndSource,
+            emissionsByProperty: $data->emissionsByProperty,
+            activityLines: $data->activityLines,
+            exclusionLines: $exclusionLines,
+            scope3Excluded: $scope3Excluded,
+            scope3ExclusionReason: $scope3Excluded ? ExclusionReason::NoDataAvailable : null,
+            scope3ExclusionComment: $scope3Excluded ? 'Sin datos de proveedores' : null,
+            derivedLines: $data->derivedLines,
+            nonConsolidatedPropertyLines: $data->nonConsolidatedPropertyLines,
+            gwpCh4: $data->gwpCh4,
+            gwpN2O: $data->gwpN2O,
+            boundaryLines: [
+                new OrganizationalCarbonFootprintReportBoundaryLine('Hotel Arrendado', OperatingRegime::LeasedOut, false, Source::DownstreamLeasedAssets),
+                new OrganizationalCarbonFootprintReportBoundaryLine('Hotel Franquicia', OperatingRegime::Franchised, false, Source::Franchises),
+                new OrganizationalCarbonFootprintReportBoundaryLine('Hotel Luna', OperatingRegime::Managed, true, null),
+                new OrganizationalCarbonFootprintReportBoundaryLine('Hotel Sol', OperatingRegime::Owned, true, null),
+            ],
+        );
+    }
+
+    public static function withMixedMethods(): OrganizationalCarbonFootprintReportData
+    {
+        $data = self::withScope3();
+
+        $spend = new Emissions('3000', '3000', '0', '0');
+        $supplier = new Emissions('1200', '1200', '0', '0');
+        $commuting = new Emissions('900', '900', '0', '0');
+        $purchased = $spend->add($supplier);
+        $scope3 = $purchased->add($commuting)->add(new Emissions('590', '590', '0', '0'));
+
+        $emissionsBySource = $data->emissionsBySource;
+        $emissionsBySource[Source::PurchasedGoodsAndServices->value] = $purchased;
+        $emissionsBySource[Source::BusinessTravel->value] = new Emissions();
+        $emissionsBySource[Source::EmployeeCommuting->value] = $commuting;
+
+        $emissionsByScope = $data->emissionsByScope;
+        $emissionsByScope[Scope::Scope3->value] = $scope3;
+
+        $emissionsByScopeAndSource = $data->emissionsByScopeAndSource;
+        $emissionsByScopeAndSource[Scope::Scope3->value][Source::PurchasedGoodsAndServices->value] = $purchased;
+        $emissionsByScopeAndSource[Scope::Scope3->value][Source::BusinessTravel->value] = new Emissions();
+        $emissionsByScopeAndSource[Scope::Scope3->value][Source::EmployeeCommuting->value] = $commuting;
+
+        $activityLines = array_values(array_filter(
+            $data->activityLines,
+            static fn(OrganizationalCarbonFootprintReportActivityLine $line): bool => Scope::Scope3 !== $line->scope,
+        ));
+        $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, null, 'Servicios de limpieza', ActivityType::PurchaseService, CalculationMethod::SpendBased, 6000.0, Unit::Euro, '0.5', Unit::Euro, 2025, 'EXIOBASE', '3000');
+        $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, null, 'Lavandería Norte · Lavandería 2025', ActivityType::ReportedEmissions, CalculationMethod::SupplierSpecific, 1200.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '1200');
+        $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::EmployeeCommuting, null, 'Empleados · Coche diésel', ActivityType::Mobility, CalculationMethod::EmployeeSurveyExtrapolation, 4500.0, Unit::Kilometer, '0.2', Unit::Kilometer, 2024, 'DEFRA', '900');
+
+        return new OrganizationalCarbonFootprintReportData(
+            subjectType: $data->subjectType,
+            subjectName: $data->subjectName,
+            companyName: $data->companyName,
+            countryName: $data->countryName,
+            emissionFactorGroupName: $data->emissionFactorGroupName,
+            calculationYear: $data->calculationYear,
+            totalEmissions: new Emissions('9620', '9620', '0', '0'),
+            locationBasedElectricityEmissions: $data->locationBasedElectricityEmissions,
+            locationBasedTotalEmissions: new Emissions('9120', '9120', '0', '0'),
+            electricityActivitiesWithoutLocationBased: $data->electricityActivitiesWithoutLocationBased,
+            emissionsBySource: $emissionsBySource,
+            emissionsByScope: $emissionsByScope,
+            emissionsByScopeAndSource: $emissionsByScopeAndSource,
+            emissionsByProperty: $data->emissionsByProperty,
+            activityLines: $activityLines,
+            exclusionLines: $data->exclusionLines,
+            derivedLines: $data->derivedLines,
+            gwpCh4: $data->gwpCh4,
+            gwpN2O: $data->gwpN2O,
+            operatingRegime: $data->operatingRegime,
+            employeeSurvey: new OrganizationalCarbonFootprintReportEmployeeSurvey(40, 25, ConfidenceLevel::NinetyFive, 0.065),
         );
     }
 
@@ -238,9 +346,9 @@ class OrganizationalCarbonFootprintReportDataMother
         $isCompany = CarbonFootprintReportSubjectType::Company === $subjectType;
 
         $activityLines = [
-            new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::FixedFacilities, $isCompany ? 'Hotel Sol' : null, 'Gas natural', ActivityType::Combustible, 100.0, Unit::KWhPCS, '1.8', Unit::KWhPCS, 2025, 'MITECO', '180'),
-            new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::OwnVehicles, null, 'Furgoneta diésel', ActivityType::Transport, 5000.0, Unit::Kilometer, '0.25', Unit::Kilometer, 2025, 'MITECO', '1250'),
-            new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope2, Source::BuildingElectricity, $isCompany ? 'Hotel Sol' : null, 'Comercializadora Verde', ActivityType::Electricity, 10000.0, Unit::KWh, '0.25', Unit::KWh, 2025, 'Comercializadora', '2500', '2000'),
+            new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::FixedFacilities, $isCompany ? 'Hotel Sol' : null, 'Gas natural', ActivityType::Combustible, CalculationMethod::ActivityBased, 100.0, Unit::KWhPCS, '1.8', Unit::KWhPCS, 2025, 'MITECO', '180'),
+            new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::OwnVehicles, null, 'Furgoneta diésel', ActivityType::Transport, CalculationMethod::ActivityBased, 5000.0, Unit::Kilometer, '0.25', Unit::Kilometer, 2025, 'MITECO', '1250'),
+            new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope2, Source::BuildingElectricity, $isCompany ? 'Hotel Sol' : null, 'Comercializadora Verde', ActivityType::Electricity, CalculationMethod::ActivityBased, 10000.0, Unit::KWh, '0.25', Unit::KWh, 2025, 'Comercializadora', '2500', '2000'),
         ];
         $exclusionLines = [
             new OrganizationalCarbonFootprintReportExclusionLine(Scope::Scope1, Source::RefrigerantLeaks, ExclusionReason::NotApplicable, 'Sin equipos de refrigeración'),
@@ -257,8 +365,8 @@ class OrganizationalCarbonFootprintReportDataMother
             $emissionsByScopeAndSource[Scope::Scope3->value][Source::PurchasedGoodsAndServices->value] = new Emissions('4000', '4000', '0', '0');
             $emissionsByScopeAndSource[Scope::Scope3->value][Source::BusinessTravel->value] = new Emissions('900', '900', '0', '0');
             $emissionsByScopeAndSource[Scope::Scope3->value][Source::FuelAndEnergyRelated->value] = new Emissions('590', '590', '0', '0');
-            $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, $isCompany ? 'Hotel Sol' : null, 'Servicios de limpieza', ActivityType::PurchaseService, 8000.0, Unit::Euro, '0.5', Unit::Euro, 2025, 'EXIOBASE', '4000');
-            $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::BusinessTravel, $isCompany ? 'Hotel Sol' : null, 'Avión corto radio', ActivityType::Mobility, 6000.0, Unit::Kilometer, '0.15', Unit::Kilometer, 2025, 'DEFRA', '900');
+            $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, $isCompany ? 'Hotel Sol' : null, 'Servicios de limpieza', ActivityType::PurchaseService, CalculationMethod::SpendBased, 8000.0, Unit::Euro, '0.5', Unit::Euro, 2025, 'EXIOBASE', '4000');
+            $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::BusinessTravel, $isCompany ? 'Hotel Sol' : null, 'Avión corto radio', ActivityType::Mobility, CalculationMethod::ActivityBased, 6000.0, Unit::Kilometer, '0.15', Unit::Kilometer, 2025, 'DEFRA', '900');
             $derivedLines = [
                 new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope1, Source::FixedFacilities), ActivityType::Combustible, new Emissions('210', '210', '0', '0'), ActivityId::generate()),
                 new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity), ActivityType::Electricity, new Emissions('380', '380', '0', '0'), ActivityId::generate()),
@@ -274,10 +382,10 @@ class OrganizationalCarbonFootprintReportDataMother
             $emissionsByScope[Scope::Scope3->value] = new Emissions('590', '590', '0', '0');
             $emissionsByScopeAndSource[Scope::Scope3->value][Source::FuelAndEnergyRelated->value] = new Emissions('590', '590', '0', '0');
             $activityLines = [
-                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::FixedFacilities, $isCompany ? 'Hotel Sol' : null, 'Caldera comunicada', ActivityType::ReportedEmissions, 180.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '180'),
-                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::OwnVehicles, null, 'Flota comunicada', ActivityType::ReportedEmissions, 1250.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '1250'),
-                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope2, Source::BuildingElectricity, $isCompany ? 'Hotel Sol' : null, 'Electricidad comunicada', ActivityType::ReportedEmissions, 2500.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '2500'),
-                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::FuelAndEnergyRelated, $isCompany ? 'Hotel Sol' : null, 'Combustibles y energía comunicados', ActivityType::ReportedEmissions, 590.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '590'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::FixedFacilities, $isCompany ? 'Hotel Sol' : null, 'Caldera comunicada', ActivityType::ReportedEmissions, CalculationMethod::ReportedByOrganization, 180.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '180'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::OwnVehicles, null, 'Flota comunicada', ActivityType::ReportedEmissions, CalculationMethod::ReportedByOrganization, 1250.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '1250'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope2, Source::BuildingElectricity, $isCompany ? 'Hotel Sol' : null, 'Electricidad comunicada', ActivityType::ReportedEmissions, CalculationMethod::ReportedByOrganization, 2500.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '2500'),
+                new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::FuelAndEnergyRelated, $isCompany ? 'Hotel Sol' : null, 'Combustibles y energía comunicados', ActivityType::ReportedEmissions, CalculationMethod::ReportedByOrganization, 590.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '590'),
             ];
             $derivedLines = [];
             $totalEmissions = new Emissions('4520', '4520', '0', '0');
@@ -312,6 +420,9 @@ class OrganizationalCarbonFootprintReportDataMother
             scope3ExclusionComment: $scope3Excluded ? 'Sin datos de proveedores' : null,
             derivedLines: $derivedLines,
             precalculated: $precalculated,
+            gwpCh4: 27.9,
+            gwpN2O: 273.0,
+            operatingRegime: $isCompany ? null : OperatingRegime::Owned,
         );
     }
 }

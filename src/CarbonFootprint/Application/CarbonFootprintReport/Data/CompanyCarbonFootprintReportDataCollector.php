@@ -10,12 +10,15 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBoundaryLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportEmployeeSurvey;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationRepository;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -31,6 +34,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
         private TranslatorInterface $translator,
         private MitigationPlanReportBuilder $mitigationPlanBuilder,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
+        private OrganizationalEmployeeParticipationRepository $employeeParticipationRepository,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -61,8 +65,15 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
         }
 
         $propertyNamesById = [];
+        $boundaryLines = [];
         foreach ($this->companyProperties->all($company->id()) as $property) {
             $propertyNamesById[(string) $property->id()] = $property->name();
+            $boundaryLines[] = new OrganizationalCarbonFootprintReportBoundaryLine(
+                propertyName: $property->name(),
+                regime: $property->operatingRegime(),
+                consolidated: $property->operatingRegime()->isConsolidated(),
+                scope3Source: Scope::sourceForOperatingRegime($property->operatingRegime()),
+            );
         }
 
         $breakdown = $this->breakdownBuilder->build($companyCarbonFootprint, Scope::cases());
@@ -81,6 +92,8 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
                 'emissions' => $unassigned,
             ];
         }
+
+        $employeeParticipation = $this->employeeParticipationRepository->findByCarbonFootprint(CarbonFootprintReportSubjectType::Company, (string) $companyCarbonFootprint->id());
 
         return new OrganizationalCarbonFootprintReportData(
             subjectType: CarbonFootprintReportSubjectType::Company,
@@ -106,6 +119,10 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($companyCarbonFootprint, Scope::Scope3),
             nonConsolidatedPropertyLines: $this->derivedSourceEmissionsCalculator->nonConsolidatedPropertyLines($companyCarbonFootprint, Scope::Scope3),
             precalculated: $companyCarbonFootprint->isPrecalculated(),
+            gwpCh4: $emissionFactorGroup->gwp()->gwpCh4(),
+            gwpN2O: $emissionFactorGroup->gwp()->gwpN2O(),
+            boundaryLines: $boundaryLines,
+            employeeSurvey: null === $employeeParticipation ? null : OrganizationalCarbonFootprintReportEmployeeSurvey::fromParticipation($employeeParticipation),
         );
     }
 }

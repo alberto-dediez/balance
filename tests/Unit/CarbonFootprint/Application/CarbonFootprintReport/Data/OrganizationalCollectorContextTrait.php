@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 use App\CarbonFootprint\Application\Activity\Catalog\ActivityCatalogProviderRegistry;
 use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\PurchaseServiceCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
@@ -29,6 +30,7 @@ use App\CarbonFootprint\Domain\Model\Transport\TransportId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationActionRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOrganizationalEmployeeParticipationRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
@@ -36,6 +38,8 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositor
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
@@ -45,11 +49,13 @@ trait OrganizationalCollectorContextTrait
 {
     private InMemoryActivityRepository $activityRepository;
     private InMemoryMitigationActionRepository $mitigationActionRepository;
+    private InMemoryOrganizationalEmployeeParticipationRepository $employeeParticipationRepository;
 
     private function initActivities(): void
     {
         $this->activityRepository = ActivityRepositoryMother::inMemory();
         $this->mitigationActionRepository = new InMemoryMitigationActionRepository();
+        $this->employeeParticipationRepository = OrganizationalEmployeeParticipationRepositoryMother::inMemory();
     }
 
     private function mitigationPlanBuilder(): MitigationPlanReportBuilder
@@ -88,6 +94,7 @@ trait OrganizationalCollectorContextTrait
                 new CombustibleCatalogProvider(CombustibleRepositoryMother::inMemory()),
                 new TransportCatalogProvider(TransportRepositoryMother::inMemory()),
                 new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
+                new PurchaseServiceCatalogProvider(PurchaseServiceRepositoryMother::inMemory()),
             ]),
             new FakeTranslator(),
         );

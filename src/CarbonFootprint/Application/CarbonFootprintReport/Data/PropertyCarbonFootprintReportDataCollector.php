@@ -10,8 +10,10 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportEmployeeSurvey;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationRepository;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\Property\Domain\Model\Company\CompanyRepository;
@@ -30,6 +32,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
         private OrganizationalCarbonFootprintReportLinesBuilder $linesBuilder,
         private MitigationPlanReportBuilder $mitigationPlanBuilder,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
+        private OrganizationalEmployeeParticipationRepository $employeeParticipationRepository,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -64,6 +67,8 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
 
         $breakdown = $this->breakdownBuilder->build($propertyCarbonFootprint, Scope::cases());
 
+        $employeeParticipation = $this->employeeParticipationRepository->findByCarbonFootprint(CarbonFootprintReportSubjectType::Property, (string) $propertyCarbonFootprint->id());
+
         return new OrganizationalCarbonFootprintReportData(
             subjectType: CarbonFootprintReportSubjectType::Property,
             subjectName: $property->name(),
@@ -87,6 +92,10 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             scope3ExclusionComment: $propertyCarbonFootprint->stageExclusionComment(Scope::Scope3),
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($propertyCarbonFootprint, Scope::Scope3),
             precalculated: $propertyCarbonFootprint->isPrecalculated(),
+            gwpCh4: $emissionFactorGroup->gwp()->gwpCh4(),
+            gwpN2O: $emissionFactorGroup->gwp()->gwpN2O(),
+            operatingRegime: $property->operatingRegime(),
+            employeeSurvey: null === $employeeParticipation ? null : OrganizationalCarbonFootprintReportEmployeeSurvey::fromParticipation($employeeParticipation),
         );
     }
 }

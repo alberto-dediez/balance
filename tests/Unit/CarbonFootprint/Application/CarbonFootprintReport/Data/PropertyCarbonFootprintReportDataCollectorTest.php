@@ -6,6 +6,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\PropertyCarbonFootprintReportDataCollector;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
+use App\CarbonFootprint\Domain\Model\AttendeeSurvey\ConfidenceLevel;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -16,6 +17,7 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository;
+use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
@@ -26,6 +28,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFoot
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
@@ -83,6 +86,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->linesBuilder(),
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
+            $this->employeeParticipationRepository,
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
@@ -113,6 +117,40 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertSame(Source::RefrigerantLeaks, $data->exclusionLines[0]->source);
         $this->assertSame('Sin equipos', $data->exclusionLines[0]->comment);
         $this->assertNull($data->mitigationPlan);
+
+        $this->assertSame(27.9, $data->gwpCh4);
+        $this->assertSame(273.0, $data->gwpN2O);
+        $this->assertSame(OperatingRegime::Owned, $data->operatingRegime);
+        $this->assertSame([], $data->boundaryLines);
+        $this->assertNull($data->employeeSurvey);
+    }
+
+    public function testIncludesTheEmployeeSurvey(): void
+    {
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel Sol', new AccountId('account-id'), new PropertyInfo(), null, null);
+        $properties = PropertyRepositoryMother::inMemory();
+        $properties->add($property);
+
+        $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroups->add(EmissionFactorGroupMother::default());
+
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+
+        $footprints = PropertyCarbonFootprintRepositoryMother::inMemory();
+        $footprints->add($footprint);
+
+        $participation = OrganizationalEmployeeParticipationMother::withTotal(CarbonFootprintReportSubjectType::Property, (string) $footprint->id(), 40, confidenceLevel: ConfidenceLevel::Ninety);
+        $participation->recordAggregation(25, 0.065);
+        $this->employeeParticipationRepository->add($participation);
+
+        $data = $this->collectorFor($footprints, $properties, $emissionFactorGroups)->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $data);
+        $this->assertNotNull($data->employeeSurvey);
+        $this->assertSame(40, $data->employeeSurvey->totalEmployees);
+        $this->assertSame(25, $data->employeeSurvey->answeredCount);
+        $this->assertSame(ConfidenceLevel::Ninety, $data->employeeSurvey->confidenceLevel);
+        $this->assertSame(0.065, $data->employeeSurvey->marginOfError);
     }
 
     public function testIncludesTheMitigationPlan(): void
@@ -147,6 +185,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->linesBuilder(),
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
+            $this->employeeParticipationRepository,
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
@@ -247,6 +286,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->linesBuilder(),
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
+            $this->employeeParticipationRepository,
         );
 
         $this->assertTrue($sut->supports(CarbonFootprintReportSubjectType::Property));
@@ -265,6 +305,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->linesBuilder(),
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
+            $this->employeeParticipationRepository,
         );
 
         $this->expectException(\RuntimeException::class);
@@ -287,6 +328,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->linesBuilder(),
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
+            $this->employeeParticipationRepository,
         );
     }
 }

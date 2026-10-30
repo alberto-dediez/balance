@@ -20,6 +20,9 @@ Feature:
         Then the response status should be 200
         Then I see a text "Hotel"
         Then I see a text "Propósito"
+        Then I see a form field "methodology"
+        Then I see a form field "emissionFactorSources"
+        Then I see a form field "uncertainty"
         Then I see a text "Aprobar y emitir"
         Then I see a text "Rechazar"
 

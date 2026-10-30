@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\AI\Prompt;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBoundaryLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\AiModelTier;
 use App\Shared\Infrastructure\AI\AiPrompt;
@@ -30,7 +35,10 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             sprintf('Company: %s', $this->data->companyName ?? 'n/a'),
             sprintf('Country: %s', $this->data->countryName ?? 'n/a'),
             sprintf('Emission factor group: %s', $this->data->emissionFactorGroupName),
+            sprintf('Global warming potentials of the emission factor group: CO2 1, CH4 %s, N2O %s', $this->data->gwpCh4, $this->data->gwpN2O),
             sprintf('Calculation year: %d', $this->data->calculationYear),
+            'Consolidation approach: operational control (franchised and leased-out properties are reported in scope 3 categories 14 and 13)',
+            sprintf('Operating regime: %s', $this->data->operatingRegime->value ?? 'n/a'),
             '',
             sprintf('Total emissions: %s kg CO2eq, %s kg CO2, %s kg CH4, %s kg N2O', $this->data->totalEmissions->co2eq(), $this->data->totalEmissions->co2(), $this->data->totalEmissions->ch4(), $this->data->totalEmissions->n2o()),
             sprintf('Location-based electricity emissions: %s kg CO2eq', $this->data->locationBasedElectricityEmissions->co2eq()),
@@ -65,6 +73,46 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
                 $lines[] = sprintf('- %s: %s', $row['name'], $row['emissions']->co2eq());
             }
         }
+
+        if ([] !== $this->data->boundaryLines) {
+            $lines[] = '';
+            $lines[] = 'Organizational boundary (property | operating regime | treatment):';
+            foreach ($this->data->boundaryLines as $boundaryLine) {
+                $lines[] = sprintf('- %s | %s | %s', $boundaryLine->propertyName, $boundaryLine->regime->value, $this->boundaryTreatment($boundaryLine));
+            }
+        }
+
+        if (CarbonFootprintReportSubjectType::Property === $this->data->subjectType && !$this->data->scope3Excluded) {
+            $lines[] = '';
+            $lines[] = sprintf(
+                'Scope 3 categories %s are not applicable to a property: they are reported in the footprint of the company (leased-out or franchised properties)',
+                implode(' and ', array_map(static fn(Source $source): string => (string) $source->ghgProtocolCategory(), Scope::Scope3->companyOnlySources())),
+            );
+        }
+
+        $lines[] = '';
+        $lines[] = 'Calculation methods by category (scope | source | GHG Protocol category | method | kg CO2eq | data quality):';
+        foreach ($this->methodLines() as $methodLine) {
+            $lines[] = sprintf('- %s', $methodLine);
+        }
+
+        $lines[] = '';
+        $lines[] = 'Emission factor sources (source | factor years | activity lines | kg CO2eq):';
+        foreach ($this->factorSourceLines() as $factorSourceLine) {
+            $lines[] = sprintf('- %s', $factorSourceLine);
+        }
+
+        $employeeSurvey = $this->data->employeeSurvey;
+        $lines[] = '';
+        $lines[] = null === $employeeSurvey
+            ? 'Employee survey: no survey data'
+            : sprintf(
+                'Employee survey: %s employees, %s answers, confidence level %s, margin of error %s',
+                $employeeSurvey->totalEmployees ?? 'n/a',
+                $employeeSurvey->answeredCount ?? 'n/a',
+                null !== $employeeSurvey->confidenceLevel ? $employeeSurvey->confidenceLevel->value . ' %' : 'n/a',
+                null !== $employeeSurvey->marginOfError ? number_format($employeeSurvey->marginOfError * 100, 2, '.', '') . ' %' : 'n/a',
+            );
 
         $lines[] = '';
         $lines[] = 'Applied emission factors (item | factor kgCO2eq/unit | year | source), aggregated and capped:';
@@ -105,14 +153,17 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         }
 
         $lines[] = '';
-        $lines[] = null !== $mitigationPlan ? 'Write five sections:' : 'Write four sections:';
+        $lines[] = null !== $mitigationPlan ? 'Write eight sections:' : 'Write seven sections:';
         $lines[] = '1. purpose: the purpose of the report, presenting the carbon footprint as an environmental indicator of the activity and as the first step to reduce emissions, with a reference to the carbon footprint registry of the Spanish Ministry for the Ecological Transition (MITECO).';
         $lines[] = sprintf('2. regulatoryContext: the regulatory context: the GHG Protocol and its five principles (completeness, consistency, transparency, relevance and accuracy), %s, ISO 14064-1 as a reference and the MITECO carbon footprint registry; describe the limits of the calculation including the excluded sources.', $this->boundaries());
-        $lines[] = '3. sustainableDevelopmentGoals: the relation of the footprint with the Sustainable Development Goals 13 (climate action), 7 (affordable and clean energy) and 12 (responsible consumption and production), applied to the activity of the subject.';
-        $lines[] = '4. conclusion: the main results with the figures supplied above, the most relevant sources and concrete reduction lines, without relying on excluded sources.';
+        $lines[] = '3. methodology: the calculation methodology: the GHG Protocol Corporate Standard and Scope 3 Standard, the operational control consolidation approach, the formula activity data multiplied by emission factor, the global warming potentials supplied above, the market-based and location-based methods for scope 2, the well-to-tank emissions of category 3, the minimum boundary of categories 13 and 14, the spend-based method against the activity-based method, the emissions reported by suppliers or by the organization and the extrapolation of the employee survey; mention only the methods that appear in the calculation methods listed above and do not invent figures.';
+        $lines[] = '4. emissionFactorSources: comment on the emission factor sources listed above, their years, the emission factor group and its global warming potentials, without inventing sources nor figures.';
+        $lines[] = '5. uncertainty: comment on the data quality by category listed above, the margin of error and confidence level of the employee survey when supplied, and the limitations of the spend-based method; recommend improvements in the data collection without new figures.';
+        $lines[] = '6. sustainableDevelopmentGoals: the relation of the footprint with the Sustainable Development Goals 13 (climate action), 7 (affordable and clean energy) and 12 (responsible consumption and production), applied to the activity of the subject.';
+        $lines[] = '7. conclusion: the main results with the figures supplied above, the most relevant sources and concrete reduction lines, without relying on excluded sources.';
 
         if (null !== $mitigationPlan) {
-            $lines[] = '5. mitigationPlan: present the improvement plan and its goal; list ALL the measures of the mitigation plan in a bullet list, each one with its exact name as supplied, its target year and the sources it reduces; explain that the projection assumes the activity level remains every year at the level of the calculated year and that the reductions come from an improvement in efficiency; do not invent figures nor measures.';
+            $lines[] = '8. mitigationPlan: present the improvement plan and its goal; list ALL the measures of the mitigation plan in a bullet list, each one with its exact name as supplied, its target year and the sources it reduces; explain that the projection assumes the activity level remains every year at the level of the calculated year and that the reductions come from an improvement in efficiency; do not invent figures nor measures.';
         }
 
         if ([] !== $this->data->exclusionLines) {
@@ -128,8 +179,8 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         $lines[] = '';
         $lines[] = 'Respond strictly as a JSON object with this exact shape:';
         $lines[] = null !== $mitigationPlan
-            ? '{"purpose": "string", "regulatoryContext": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string", "mitigationPlan": "string"}'
-            : '{"purpose": "string", "regulatoryContext": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string"}';
+            ? '{"purpose": "string", "regulatoryContext": "string", "methodology": "string", "emissionFactorSources": "string", "uncertainty": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string", "mitigationPlan": "string"}'
+            : '{"purpose": "string", "regulatoryContext": "string", "methodology": "string", "emissionFactorSources": "string", "uncertainty": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string"}';
 
         return implode("\n", $lines);
     }
@@ -158,11 +209,53 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         return $lines;
     }
 
+    /** @return list<string> */
+    private function methodLines(): array
+    {
+        $lines = [];
+
+        foreach ($this->data->categoryMethodEmissions() as [$scope, $source, $methods]) {
+            foreach ($methods as $method => $total) {
+                $calculationMethod = CalculationMethod::from($method);
+
+                $lines[] = sprintf('%s | %s | %s | %s | %s | %s', $scope->value, $source->value, $source->ghgProtocolCategory() ?? 'n/a', $calculationMethod->value, number_format($total, 2, '.', ''), $calculationMethod->dataQuality()->value);
+            }
+        }
+
+        return $lines;
+    }
+
+    /** @return list<string> */
+    private function factorSourceLines(): array
+    {
+        $lines = [];
+
+        foreach ($this->data->emissionFactorSourceSummary() as $row) {
+            $lines[] = sprintf('%s | %s | %d | %s', $row['method']->value ?? $row['source'] ?? 'n/a', [] === $row['years'] ? 'n/a' : implode(', ', $row['years']), $row['lines'], number_format($row['emissions'], 2, '.', ''));
+        }
+
+        return $lines;
+    }
+
+    private function boundaryTreatment(OrganizationalCarbonFootprintReportBoundaryLine $boundaryLine): string
+    {
+        if ($boundaryLine->consolidated) {
+            return 'consolidated in scopes 1 and 2';
+        }
+
+        $source = $this->data->boundaryTreatment($boundaryLine);
+
+        return null === $source ? 'outside the calculation (excluded)' : sprintf('scope 3 category %d', $source->ghgProtocolCategory());
+    }
+
     public function responseSchema(): array
     {
         $properties = [
             'purpose' => ['type' => 'STRING'],
             'regulatoryContext' => ['type' => 'STRING'],
+            'methodology' => ['type' => 'STRING'],
+            'emissionFactorSources' => ['type' => 'STRING'],
+            'uncertainty' => ['type' => 'STRING'],
             'sustainableDevelopmentGoals' => ['type' => 'STRING'],
             'conclusion' => ['type' => 'STRING'],
         ];
@@ -174,7 +267,7 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         return [
             'type' => 'OBJECT',
             'properties' => $properties,
-            'required' => ['purpose', 'regulatoryContext', 'sustainableDevelopmentGoals', 'conclusion'],
+            'required' => ['purpose', 'regulatoryContext', 'methodology', 'emissionFactorSources', 'uncertainty', 'sustainableDevelopmentGoals', 'conclusion'],
         ];
     }
 

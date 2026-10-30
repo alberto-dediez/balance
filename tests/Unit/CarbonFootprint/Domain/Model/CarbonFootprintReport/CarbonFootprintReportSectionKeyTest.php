@@ -23,7 +23,15 @@ class CarbonFootprintReportSectionKeyTest extends TestCase
     {
         foreach ([CarbonFootprintReportSubjectType::Property, CarbonFootprintReportSubjectType::Company] as $type) {
             $this->assertSame(
-                [CarbonFootprintReportSectionKey::Purpose, CarbonFootprintReportSectionKey::RegulatoryContext, CarbonFootprintReportSectionKey::SustainableDevelopmentGoals, CarbonFootprintReportSectionKey::Conclusion],
+                [
+                    CarbonFootprintReportSectionKey::Purpose,
+                    CarbonFootprintReportSectionKey::RegulatoryContext,
+                    CarbonFootprintReportSectionKey::Methodology,
+                    CarbonFootprintReportSectionKey::EmissionFactorSources,
+                    CarbonFootprintReportSectionKey::Uncertainty,
+                    CarbonFootprintReportSectionKey::SustainableDevelopmentGoals,
+                    CarbonFootprintReportSectionKey::Conclusion,
+                ],
                 CarbonFootprintReportSectionKey::requiredFor($type),
             );
             $this->assertSame([CarbonFootprintReportSectionKey::MitigationPlan], CarbonFootprintReportSectionKey::optionalFor($type));
@@ -35,6 +43,12 @@ class CarbonFootprintReportSectionKeyTest extends TestCase
         foreach (CarbonFootprintReportSectionKey::cases() as $key) {
             $this->assertNotSame('', $key->label());
         }
+    }
+
+    public function testUncertaintyHasALabelAndIsRequired(): void
+    {
+        $this->assertSame('Incertidumbre y calidad de los datos', CarbonFootprintReportSectionKey::Uncertainty->label());
+        $this->assertFalse(CarbonFootprintReportSectionKey::Uncertainty->isOptional());
     }
 
     public function testOnlyCompensationAndMitigationPlanAreOptional(): void

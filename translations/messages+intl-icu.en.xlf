@@ -10785,6 +10785,146 @@
         <source>Se eliminarán también los datos aportados por el franquiciado o arrendatario</source>
         <target>The data provided by the franchisee or lessee will also be removed</target>
       </trans-unit>
+      <trans-unit id="8b6BmZR" resname="% del total">
+        <source>% del total</source>
+        <target>% of total</target>
+      </trans-unit>
+      <trans-unit id="JgK_S6r" resname="Límites del inventario y enfoque de consolidación">
+        <source>Límites del inventario y enfoque de consolidación</source>
+        <target>Inventory boundaries and consolidation approach</target>
+      </trans-unit>
+      <trans-unit id="TuqX.Vz" resname="Tratamiento">
+        <source>Tratamiento</source>
+        <target>Treatment</target>
+      </trans-unit>
+      <trans-unit id="bYxA8lY" resname="Métodos de cálculo por categoría">
+        <source>Métodos de cálculo por categoría</source>
+        <target>Calculation methods by category</target>
+      </trans-unit>
+      <trans-unit id="AH1.Y.S" resname="% de la categoría">
+        <source>% de la categoría</source>
+        <target>% of category</target>
+      </trans-unit>
+      <trans-unit id="b3ZOCWM" resname="Años">
+        <source>Años</source>
+        <target>Years</target>
+      </trans-unit>
+      <trans-unit id="rNTF4GL" resname="Líneas">
+        <source>Líneas</source>
+        <target>Lines</target>
+      </trans-unit>
+      <trans-unit id="SqaGfVN" resname="Incertidumbre y calidad de los datos">
+        <source>Incertidumbre y calidad de los datos</source>
+        <target>Uncertainty and data quality</target>
+      </trans-unit>
+      <trans-unit id="6EJmHSm" resname="Calidad de los datos">
+        <source>Calidad de los datos</source>
+        <target>Data quality</target>
+      </trans-unit>
+      <trans-unit id="eWdt8dF" resname="Observación">
+        <source>Observación</source>
+        <target>Remark</target>
+      </trans-unit>
+      <trans-unit id="RIKmQ96" resname="Límite organizacional">
+        <source>Límite organizacional</source>
+        <target>Organizational boundary</target>
+      </trans-unit>
+      <trans-unit id="5.E7b6t" resname="Cat. {number}">
+        <source>Cat. {number}</source>
+        <target>Cat. {number}</target>
+      </trans-unit>
+      <trans-unit id="m_selAT" resname="Enfoque de consolidación">
+        <source>Enfoque de consolidación</source>
+        <target>Consolidation approach</target>
+      </trans-unit>
+      <trans-unit id="jGkBg.y" resname="Control operacional">
+        <source>Control operacional</source>
+        <target>Operational control</target>
+      </trans-unit>
+      <trans-unit id="pc6gsJd" resname="Alcances incluidos">
+        <source>Alcances incluidos</source>
+        <target>Included scopes</target>
+      </trans-unit>
+      <trans-unit id="va1OpgJ" resname="Categorías del alcance 3 contempladas">
+        <source>Categorías del alcance 3 contempladas</source>
+        <target>Scope 3 categories covered</target>
+      </trans-unit>
+      <trans-unit id="ruMNq5K" resname="Activos arrendados aguas arriba">
+        <source>Activos arrendados aguas arriba</source>
+        <target>Upstream leased assets</target>
+      </trans-unit>
+      <trans-unit id="81g0LgZ" resname="No aplicable con el enfoque de control operacional">
+        <source>No aplicable con el enfoque de control operacional</source>
+        <target>Not applicable under the operational control approach</target>
+      </trans-unit>
+      <trans-unit id="t6pciuH" resname="Consolidada: alcances 1 y 2">
+        <source>Consolidada: alcances 1 y 2</source>
+        <target>Consolidated: scopes 1 and 2</target>
+      </trans-unit>
+      <trans-unit id="Zzow9ba" resname="Fuera del cálculo">
+        <source>Fuera del cálculo</source>
+        <target>Outside the calculation</target>
+      </trans-unit>
+      <trans-unit id=".hx_Zxx" resname="Sin fuente declarada">
+        <source>Sin fuente declarada</source>
+        <target>No declared source</target>
+      </trans-unit>
+      <trans-unit id="QVhYmT9" resname="Potencial de calentamiento global CH₄">
+        <source>Potencial de calentamiento global CH₄</source>
+        <target>Global warming potential CH₄</target>
+      </trans-unit>
+      <trans-unit id="X2uisef" resname="Potencial de calentamiento global N₂O">
+        <source>Potencial de calentamiento global N₂O</source>
+        <target>Global warming potential N₂O</target>
+      </trans-unit>
+      <trans-unit id="3kwy7St" resname="Sin datos de encuesta">
+        <source>Sin datos de encuesta</source>
+        <target>No survey data</target>
+      </trans-unit>
+      <trans-unit id="Ioxzmsc" resname="Sin factor de mix eléctrico">
+        <source>Sin factor de mix eléctrico</source>
+        <target>No electricity mix factor</target>
+      </trans-unit>
+      <trans-unit id="X.ZRcZJ" resname="Específico del proveedor">
+        <source>Específico del proveedor</source>
+        <target>Supplier-specific</target>
+      </trans-unit>
+      <trans-unit id="4Uqd9Az" resname="Comunicado por la organización">
+        <source>Comunicado por la organización</source>
+        <target>Reported by the organization</target>
+      </trans-unit>
+      <trans-unit id="FG_f5mA" resname="Basado en datos de actividad">
+        <source>Basado en datos de actividad</source>
+        <target>Activity-based</target>
+      </trans-unit>
+      <trans-unit id="mg8CaIA" resname="Basado en gasto">
+        <source>Basado en gasto</source>
+        <target>Spend-based</target>
+      </trans-unit>
+      <trans-unit id="1oyPUCj" resname="Extrapolación de la encuesta de empleados">
+        <source>Extrapolación de la encuesta de empleados</source>
+        <target>Employee survey extrapolation</target>
+      </trans-unit>
+      <trans-unit id="3KxOmUV" resname="Derivado: emisiones del pozo al tanque (WTT)">
+        <source>Derivado: emisiones del pozo al tanque (WTT)</source>
+        <target>Derived: well-to-tank emissions (WTT)</target>
+      </trans-unit>
+      <trans-unit id="cx5xJZp" resname="Alta">
+        <source>Alta</source>
+        <target>High</target>
+      </trans-unit>
+      <trans-unit id="wbmyMpt" resname="Media">
+        <source>Media</source>
+        <target>Medium</target>
+      </trans-unit>
+      <trans-unit id="rWvkB6e" resname="Baja">
+        <source>Baja</source>
+        <target>Low</target>
+      </trans-unit>
+      <trans-unit id="A6ZMqwd" resname="Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)">
+        <source>Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)</source>
+        <target>Reported in the company footprint (leased-out or franchised properties)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

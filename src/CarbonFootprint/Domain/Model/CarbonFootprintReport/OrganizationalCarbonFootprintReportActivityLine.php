@@ -17,6 +17,7 @@ final class OrganizationalCarbonFootprintReportActivityLine
         public readonly ?string $propertyName,
         public readonly string $itemName,
         public readonly ActivityType $activityType,
+        public readonly CalculationMethod $method,
         public readonly float $quantity,
         public readonly Unit $unit,
         public readonly string $factorCo2eq,

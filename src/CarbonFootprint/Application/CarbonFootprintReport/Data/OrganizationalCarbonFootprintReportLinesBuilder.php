@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferences;
+use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportActivityLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
@@ -69,6 +72,7 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
                 propertyName: null !== $propertyId ? ($propertyNamesById[(string) $propertyId] ?? (string) $propertyId) : null,
                 itemName: $itemName,
                 activityType: ActivityType::fromActivity($activity),
+                method: $this->methodFor($activity, $reference->placement),
                 quantity: $activity->quantity()->value(),
                 unit: $activity->quantity()->unit(),
                 factorCo2eq: $activity->emissionFactor()->co2eq(),
@@ -126,6 +130,19 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
         }
 
         return $lines;
+    }
+
+    private function methodFor(Activity $activity, ActivityPlacement $placement): CalculationMethod
+    {
+        if ($placement->fromEmployees) {
+            return CalculationMethod::EmployeeSurveyExtrapolation;
+        }
+
+        if (ActivityType::ReportedEmissions === ActivityType::fromActivity($activity)) {
+            return null !== $placement->providerId ? CalculationMethod::SupplierSpecific : CalculationMethod::ReportedByOrganization;
+        }
+
+        return $activity->quantity()->unit()->isCurrency() ? CalculationMethod::SpendBased : CalculationMethod::ActivityBased;
     }
 
     private function providerName(ProviderId $providerId): string

@@ -46,6 +46,9 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $client->setResponse([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
+            'methodology' => 'Methodology text',
+            'emissionFactorSources' => 'Sources text',
+            'uncertainty' => 'Uncertainty text',
             'sustainableDevelopmentGoals' => 'SDG text',
             'conclusion' => 'Conclusion text',
         ]);
@@ -54,7 +57,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
 
         $texts = $sut->generate(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish);
 
-        $this->assertSame(['purpose', 'regulatoryContext', 'sustainableDevelopmentGoals', 'conclusion'], array_keys($texts->sections));
+        $this->assertSame(['purpose', 'regulatoryContext', 'methodology', 'emissionFactorSources', 'uncertainty', 'sustainableDevelopmentGoals', 'conclusion'], array_keys($texts->sections));
         $this->assertSame('Conclusion text', $texts->sections['conclusion']);
         $this->assertInstanceOf(GenerateOrganizationalReportTextsPrompt::class, $client->lastPrompt());
     }
@@ -65,6 +68,9 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $client->setResponse([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
+            'methodology' => 'Methodology text',
+            'emissionFactorSources' => 'Sources text',
+            'uncertainty' => 'Uncertainty text',
             'sustainableDevelopmentGoals' => 'SDG text',
             'conclusion' => 'Conclusion text',
             'mitigationPlan' => 'Plan text',
@@ -81,6 +87,9 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $client->setResponse([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
+            'methodology' => 'Methodology text',
+            'emissionFactorSources' => 'Sources text',
+            'uncertainty' => 'Uncertainty text',
             'sustainableDevelopmentGoals' => 'SDG text',
             'conclusion' => 'Conclusion text',
             'mitigationPlan' => '',

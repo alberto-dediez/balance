@@ -20,7 +20,7 @@ class TranslateReportTextsPromptTest extends TestCase
         $schema = $prompt->responseSchema();
 
         $this->assertSame('OBJECT', $schema['type']);
-        $this->assertSame(['purpose', 'regulatoryContext', 'sustainableDevelopmentGoals', 'conclusion'], $schema['required']);
+        $this->assertSame(['purpose', 'regulatoryContext', 'methodology', 'emissionFactorSources', 'uncertainty', 'sustainableDevelopmentGoals', 'conclusion'], $schema['required']);
         foreach ($schema['required'] as $property) {
             $this->assertSame('STRING', $schema['properties'][$property]['type']);
         }

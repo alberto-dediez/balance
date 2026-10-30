@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\OrganizationalCarbonFootprintReportLinesBuilder;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOrganizationalProviderContributionRepository;
@@ -15,6 +16,7 @@ use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryP
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepositoryMother;
@@ -103,6 +105,55 @@ class OrganizationalCarbonFootprintReportLinesBuilderTest extends TestCase
 
         $this->assertCount(1, $lines);
         $this->assertSame(Source::FixedFacilities, $lines[0]->source);
+    }
+
+    public function testTheReportedEmissionsOfAProviderAreSupplierSpecific(): void
+    {
+        $provider = ProviderMother::fromNameAndAccountAndId('Logística Sur', 'account-id', (string) ProviderId::generate());
+        $this->providerRepository->add($provider);
+        $activity = $this->save(ReportedEmissionsActivityMother::registered(description: 'Reparto 2025'));
+
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $provider->id()));
+
+        $this->assertSame(CalculationMethod::SupplierSpecific, $this->sut()->activityLines($footprint, [])[0]->method);
+    }
+
+    public function testTheReportedEmissionsWithoutProviderAreReportedByTheOrganization(): void
+    {
+        $activity = $this->save(ReportedEmissionsActivityMother::registered(description: 'Caldera comunicada'));
+
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+
+        $this->assertSame(CalculationMethod::ReportedByOrganization, $this->sut()->activityLines($footprint, [])[0]->method);
+    }
+
+    public function testAnActivityWithAPhysicalUnitIsActivityBased(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($this->combustibleActivity('180')->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $footprint->addActivity($this->electricityActivity('2500', '2000')->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+
+        $lines = $this->sut()->activityLines($footprint, []);
+
+        $this->assertSame([CalculationMethod::ActivityBased, CalculationMethod::ActivityBased], array_map(static fn($line) => $line->method, $lines));
+    }
+
+    public function testAnActivityInACurrencyIsSpendBased(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($this->save(PurchaseServiceActivityMother::registered())->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+
+        $this->assertSame(CalculationMethod::SpendBased, $this->sut()->activityLines($footprint, [])[0]->method);
+    }
+
+    public function testAnEmployeeActivityIsAnExtrapolationOfTheSurvey(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($this->transportActivity('900')->id(), new ActivityPlacement(Scope::Scope3, Source::EmployeeCommuting, fromEmployees: true));
+
+        $this->assertSame(CalculationMethod::EmployeeSurveyExtrapolation, $this->sut()->activityLines($footprint, [])[0]->method);
     }
 
     private function sut(): OrganizationalCarbonFootprintReportLinesBuilder

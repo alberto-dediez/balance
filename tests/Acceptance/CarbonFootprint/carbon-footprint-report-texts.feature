@@ -24,6 +24,24 @@ Feature:
         Then the report of property carbon footprint "999" should be "draft"
         Then the report of property carbon footprint "999" should have section "purpose" with "Propósito corregido"
 
+    Scenario: The owner edits the methodology and uncertainty sections of a property report
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has report permissions can edit texts "1" and auto review "1"
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "1111" of account "666" exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
+        Given property carbon footprint "999" is completed
+        Given property carbon footprint "999" has a report "draft" requested by "owner@dediez.software"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/carbon-footprint-reports/999/texts"
+        Then the response status should be 200
+        Then I see a text "Metodología de cálculo"
+        Then I see a text "Incertidumbre y calidad de los datos"
+        When I submit a form with "methodology:Metodología corregida|uncertainty:Incertidumbre corregida" and button "Guardar borrador"
+        Then I am redirected to route "carbon_footprint_reports_texts"
+        Then the report of property carbon footprint "999" should have section "methodology" with "Metodología corregida"
+        Then the report of property carbon footprint "999" should have section "uncertainty" with "Incertidumbre corregida"
+
     Scenario: The owner issues the report directly when the account has auto review
         Given account "MyCompany" with id "666" exists
         Given account "666" has report permissions can edit texts "1" and auto review "1"

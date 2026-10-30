@@ -10701,6 +10701,146 @@
         <source>Se eliminarán también los datos aportados por el franquiciado o arrendatario</source>
         <target>NEW_Se eliminarán también los datos aportados por el franquiciado o arrendatario</target>
       </trans-unit>
+      <trans-unit id="8b6BmZR" resname="% del total">
+        <source>% del total</source>
+        <target>Toplamın %'si</target>
+      </trans-unit>
+      <trans-unit id="JgK_S6r" resname="Límites del inventario y enfoque de consolidación">
+        <source>Límites del inventario y enfoque de consolidación</source>
+        <target>Envanter sınırları ve konsolidasyon yaklaşımı</target>
+      </trans-unit>
+      <trans-unit id="TuqX.Vz" resname="Tratamiento">
+        <source>Tratamiento</source>
+        <target>İşlem</target>
+      </trans-unit>
+      <trans-unit id="bYxA8lY" resname="Métodos de cálculo por categoría">
+        <source>Métodos de cálculo por categoría</source>
+        <target>Kategoriye göre hesaplama yöntemleri</target>
+      </trans-unit>
+      <trans-unit id="AH1.Y.S" resname="% de la categoría">
+        <source>% de la categoría</source>
+        <target>Kategorinin %'si</target>
+      </trans-unit>
+      <trans-unit id="b3ZOCWM" resname="Años">
+        <source>Años</source>
+        <target>Yıllar</target>
+      </trans-unit>
+      <trans-unit id="rNTF4GL" resname="Líneas">
+        <source>Líneas</source>
+        <target>Satırlar</target>
+      </trans-unit>
+      <trans-unit id="SqaGfVN" resname="Incertidumbre y calidad de los datos">
+        <source>Incertidumbre y calidad de los datos</source>
+        <target>Belirsizlik ve veri kalitesi</target>
+      </trans-unit>
+      <trans-unit id="6EJmHSm" resname="Calidad de los datos">
+        <source>Calidad de los datos</source>
+        <target>Veri kalitesi</target>
+      </trans-unit>
+      <trans-unit id="eWdt8dF" resname="Observación">
+        <source>Observación</source>
+        <target>Açıklama</target>
+      </trans-unit>
+      <trans-unit id="RIKmQ96" resname="Límite organizacional">
+        <source>Límite organizacional</source>
+        <target>Kurumsal sınır</target>
+      </trans-unit>
+      <trans-unit id="5.E7b6t" resname="Cat. {number}">
+        <source>Cat. {number}</source>
+        <target>Kat. {number}</target>
+      </trans-unit>
+      <trans-unit id="m_selAT" resname="Enfoque de consolidación">
+        <source>Enfoque de consolidación</source>
+        <target>Konsolidasyon yaklaşımı</target>
+      </trans-unit>
+      <trans-unit id="jGkBg.y" resname="Control operacional">
+        <source>Control operacional</source>
+        <target>Operasyonel kontrol</target>
+      </trans-unit>
+      <trans-unit id="pc6gsJd" resname="Alcances incluidos">
+        <source>Alcances incluidos</source>
+        <target>Dahil edilen kapsamlar</target>
+      </trans-unit>
+      <trans-unit id="va1OpgJ" resname="Categorías del alcance 3 contempladas">
+        <source>Categorías del alcance 3 contempladas</source>
+        <target>Kapsanan kapsam 3 kategorileri</target>
+      </trans-unit>
+      <trans-unit id="ruMNq5K" resname="Activos arrendados aguas arriba">
+        <source>Activos arrendados aguas arriba</source>
+        <target>Tedarik zinciri yukarı yönlü kiralanan varlıklar</target>
+      </trans-unit>
+      <trans-unit id="81g0LgZ" resname="No aplicable con el enfoque de control operacional">
+        <source>No aplicable con el enfoque de control operacional</source>
+        <target>Operasyonel kontrol yaklaşımında uygulanamaz</target>
+      </trans-unit>
+      <trans-unit id="t6pciuH" resname="Consolidada: alcances 1 y 2">
+        <source>Consolidada: alcances 1 y 2</source>
+        <target>Konsolide: kapsam 1 ve 2</target>
+      </trans-unit>
+      <trans-unit id="Zzow9ba" resname="Fuera del cálculo">
+        <source>Fuera del cálculo</source>
+        <target>Hesaplama dışında</target>
+      </trans-unit>
+      <trans-unit id=".hx_Zxx" resname="Sin fuente declarada">
+        <source>Sin fuente declarada</source>
+        <target>Beyan edilmiş kaynak yok</target>
+      </trans-unit>
+      <trans-unit id="QVhYmT9" resname="Potencial de calentamiento global CH₄">
+        <source>Potencial de calentamiento global CH₄</source>
+        <target>Küresel ısınma potansiyeli CH₄</target>
+      </trans-unit>
+      <trans-unit id="X2uisef" resname="Potencial de calentamiento global N₂O">
+        <source>Potencial de calentamiento global N₂O</source>
+        <target>Küresel ısınma potansiyeli N₂O</target>
+      </trans-unit>
+      <trans-unit id="3kwy7St" resname="Sin datos de encuesta">
+        <source>Sin datos de encuesta</source>
+        <target>Anket verisi yok</target>
+      </trans-unit>
+      <trans-unit id="Ioxzmsc" resname="Sin factor de mix eléctrico">
+        <source>Sin factor de mix eléctrico</source>
+        <target>Elektrik karışımı faktörü yok</target>
+      </trans-unit>
+      <trans-unit id="X.ZRcZJ" resname="Específico del proveedor">
+        <source>Específico del proveedor</source>
+        <target>Tedarikçiye özgü</target>
+      </trans-unit>
+      <trans-unit id="4Uqd9Az" resname="Comunicado por la organización">
+        <source>Comunicado por la organización</source>
+        <target>Kuruluş tarafından bildirilen</target>
+      </trans-unit>
+      <trans-unit id="FG_f5mA" resname="Basado en datos de actividad">
+        <source>Basado en datos de actividad</source>
+        <target>Faaliyet verisine dayalı</target>
+      </trans-unit>
+      <trans-unit id="mg8CaIA" resname="Basado en gasto">
+        <source>Basado en gasto</source>
+        <target>Harcamaya dayalı</target>
+      </trans-unit>
+      <trans-unit id="1oyPUCj" resname="Extrapolación de la encuesta de empleados">
+        <source>Extrapolación de la encuesta de empleados</source>
+        <target>Çalışan anketinin ekstrapolasyonu</target>
+      </trans-unit>
+      <trans-unit id="3KxOmUV" resname="Derivado: emisiones del pozo al tanque (WTT)">
+        <source>Derivado: emisiones del pozo al tanque (WTT)</source>
+        <target>Türetilmiş: kuyudan tanka emisyonları (WTT)</target>
+      </trans-unit>
+      <trans-unit id="cx5xJZp" resname="Alta">
+        <source>Alta</source>
+        <target>Yüksek</target>
+      </trans-unit>
+      <trans-unit id="wbmyMpt" resname="Media">
+        <source>Media</source>
+        <target>Orta</target>
+      </trans-unit>
+      <trans-unit id="rWvkB6e" resname="Baja">
+        <source>Baja</source>
+        <target>Düşük</target>
+      </trans-unit>
+      <trans-unit id="A6ZMqwd" resname="Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)">
+        <source>Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)</source>
+        <target>Şirketin karbon ayak izinde raporlanır (üçüncü taraflara kiralanan veya franchise verilen mülkler)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

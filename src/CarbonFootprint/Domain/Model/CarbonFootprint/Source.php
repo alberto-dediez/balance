@@ -32,4 +32,25 @@ enum Source: string
     case DownstreamLeasedAssets       = 'downstream_leased_assets';
     case Franchises                   = 'franchises';
     case Investments                  = 'investments';
+
+    public function ghgProtocolCategory(): ?int
+    {
+        return match ($this) {
+            self::PurchasedGoodsAndServices => 1,
+            self::CapitalGoods => 2,
+            self::FuelAndEnergyRelated => 3,
+            self::UpstreamTransport => 4,
+            self::OperationsWaste => 5,
+            self::BusinessTravel => 6,
+            self::EmployeeCommuting => 7,
+            self::DownstreamTransport => 9,
+            self::SoldProductsProcessing => 10,
+            self::SoldProductsUse => 11,
+            self::SoldProductsEndOfLife => 12,
+            self::DownstreamLeasedAssets => 13,
+            self::Franchises => 14,
+            self::Investments => 15,
+            default => null,
+        };
+    }
 }

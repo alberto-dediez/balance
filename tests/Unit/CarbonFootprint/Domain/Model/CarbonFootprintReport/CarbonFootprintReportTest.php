@@ -124,7 +124,7 @@ class CarbonFootprintReportTest extends TestCase
 
         $this->assertSame(CarbonFootprintReportStatus::PendingReview, $report->status());
         $this->assertNotNull($report->submittedAt());
-        $this->assertCount(4, $report->sections());
+        $this->assertCount(7, $report->sections());
         $this->assertInstanceOf(CarbonFootprintReportSubmittedForReview::class, $this->spySubscriber->lastEvent());
     }
 
@@ -150,6 +150,17 @@ class CarbonFootprintReportTest extends TestCase
             'emissionFactorSources' => 'sources',
             'analysisAndRecommendations' => 'analysis',
         ]));
+    }
+
+    public function testSubmitForReviewAnOrganizationalReportWithoutUncertaintyThrows(): void
+    {
+        $report = CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property);
+        $sections = CarbonFootprintReportTextsMother::forOrganization()->sections;
+        unset($sections[CarbonFootprintReportSectionKey::Uncertainty->value]);
+
+        $this->expectException(CarbonFootprintReportTextsIncompleteException::class);
+
+        $report->submitForReview(new CarbonFootprintReportTexts($sections));
     }
 
     public function testAutomaticApprovalFromGeneratingTexts(): void
