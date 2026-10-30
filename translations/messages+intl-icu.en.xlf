@@ -10493,6 +10493,138 @@
         <source>No se pueden cargar consumos de Bioscore en una huella ya calculada</source>
         <target>Bioscore consumptions cannot be loaded into an already calculated footprint</target>
       </trans-unit>
+      <trans-unit id="cS1fWJk" resname="Certificado de huella">
+        <source>Certificado de huella</source>
+        <target>Footprint certificate</target>
+      </trans-unit>
+      <trans-unit id="s4oohCk" resname="Certificado de huella de carbono">
+        <source>Certificado de huella de carbono</source>
+        <target>Carbon footprint certificate</target>
+      </trans-unit>
+      <trans-unit id="OT4IOiW" resname="Año de la huella">
+        <source>Año de la huella</source>
+        <target>Footprint year</target>
+      </trans-unit>
+      <trans-unit id="F7jg8Ld" resname="Organización">
+        <source>Organización</source>
+        <target>Organisation</target>
+      </trans-unit>
+      <trans-unit id="ZkBuAAe" resname="Huella por estancia">
+        <source>Huella por estancia</source>
+        <target>Footprint per stay</target>
+      </trans-unit>
+      <trans-unit id="CW8__nr" resname="kg CO₂eq / estancia">
+        <source>kg CO₂eq / estancia</source>
+        <target>kg CO₂eq / stay</target>
+      </trans-unit>
+      <trans-unit id="ihIgV7X" resname="Estancias del año">
+        <source>Estancias del año</source>
+        <target>Stays in the year</target>
+      </trans-unit>
+      <trans-unit id="7Y43mxL" resname="pernoctaciones">
+        <source>pernoctaciones</source>
+        <target>overnight stays</target>
+      </trans-unit>
+      <trans-unit id="Q8HRpa6" resname="Excluido del cálculo">
+        <source>Excluido del cálculo</source>
+        <target>Excluded from the calculation</target>
+      </trans-unit>
+      <trans-unit id=".CDPtfI" resname="Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1, 2 y 3 del GHG Protocol (método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.">
+        <source>Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1, 2 y 3 del GHG Protocol (método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.</source>
+        <target>This certificate attests the carbon footprint of the property for the stated year, calculated on this platform in accordance with scopes 1, 2 and 3 of the GHG Protocol (market-based method). The figure per stay results from dividing the total emissions by the overnight stays declared by the organisation. It is valid as the footprint for that year unless revoked; its validity can be checked with the QR code.</target>
+      </trans-unit>
+      <trans-unit id="7IbW4K8" resname="Se está volviendo a generar el certificado de huella.">
+        <source>Se está volviendo a generar el certificado de huella.</source>
+        <target>The footprint certificate is being generated again.</target>
+      </trans-unit>
+      <trans-unit id="j3sqK7V" resname="No se ha podido emitir el certificado de huella.">
+        <source>No se ha podido emitir el certificado de huella.</source>
+        <target>The footprint certificate could not be issued.</target>
+      </trans-unit>
+      <trans-unit id="G80Zb6P" resname="Certificado de huella emitido. El PDF estará disponible en unos minutos.">
+        <source>Certificado de huella emitido. El PDF estará disponible en unos minutos.</source>
+        <target>Footprint certificate issued. The PDF will be available in a few minutes.</target>
+      </trans-unit>
+      <trans-unit id="MP4UJ41" resname="La huella debe estar completada y su informe generado para emitir el certificado.">
+        <source>La huella debe estar completada y su informe generado para emitir el certificado.</source>
+        <target>The footprint must be completed and its report generated to issue the certificate.</target>
+      </trans-unit>
+      <trans-unit id="6Ewd9PO" resname="Pernoctaciones de la propiedad en el año de la huella. Se usan para calcular los kg de CO₂eq por estancia.">
+        <source>Pernoctaciones de la propiedad en el año de la huella. Se usan para calcular los kg de CO₂eq por estancia.</source>
+        <target>Overnight stays at the property in the footprint year. They are used to calculate the kg of CO₂eq per stay.</target>
+      </trans-unit>
+      <trans-unit id="Oot8SRD" resname="Emitir certificado">
+        <source>Emitir certificado</source>
+        <target>Issue certificate</target>
+      </trans-unit>
+      <trans-unit id="3MGWXPv" resname="Descargar certificado de huella">
+        <source>Descargar certificado de huella</source>
+        <target>Download footprint certificate</target>
+      </trans-unit>
+      <trans-unit id="eT_64Uy" resname="Verificación de certificado de huella">
+        <source>Verificación de certificado de huella</source>
+        <target>Footprint certificate verification</target>
+      </trans-unit>
+      <trans-unit id="4P60Q50" resname="Certificado revocado">
+        <source>Certificado revocado</source>
+        <target>Certificate revoked</target>
+      </trans-unit>
+      <trans-unit id="cAK9UY8" resname="Estancias">
+        <source>Estancias</source>
+        <target>Stays</target>
+      </trans-unit>
+      <trans-unit id="NCKOvvY" resname="kg CO₂eq por estancia">
+        <source>kg CO₂eq por estancia</source>
+        <target>kg CO₂eq per stay</target>
+      </trans-unit>
+      <trans-unit id="BNxg4zM" resname="Fecha de revocación">
+        <source>Fecha de revocación</source>
+        <target>Revocation date</target>
+      </trans-unit>
+      <trans-unit id="sPke5ZK" resname="El certificado acredita la huella de carbono de la propiedad para el año indicado y vale mientras no sea revocado. Si la organización reabre y modifica el cálculo, este certificado queda revocado y puede emitirse uno nuevo.">
+        <source>El certificado acredita la huella de carbono de la propiedad para el año indicado y vale mientras no sea revocado. Si la organización reabre y modifica el cálculo, este certificado queda revocado y puede emitirse uno nuevo.</source>
+        <target>The certificate attests the carbon footprint of the property for the stated year and is valid unless revoked. If the organisation reopens and changes the calculation, this certificate is revoked and a new one can be issued.</target>
+      </trans-unit>
+      <trans-unit id="vH5kItq" resname="Descargar PDF">
+        <source>Descargar PDF</source>
+        <target>Download PDF</target>
+      </trans-unit>
+      <trans-unit id="mkHg_M1" resname="El PDF se está generando.">
+        <source>El PDF se está generando.</source>
+        <target>The PDF is being generated.</target>
+      </trans-unit>
+      <trans-unit id="bXwDHur" resname="Reintentar">
+        <source>Reintentar</source>
+        <target>Retry</target>
+      </trans-unit>
+      <trans-unit id="GRty7HD" resname="El certificado de huella se puede emitir cuando el informe esté generado.">
+        <source>El certificado de huella se puede emitir cuando el informe esté generado.</source>
+        <target>The footprint certificate can be issued once the report has been generated.</target>
+      </trans-unit>
+      <trans-unit id="D7w.jcd" resname="Emite el certificado de huella por estancia del año {year} para comunicarla en tu web y canales de venta.">
+        <source>Emite el certificado de huella por estancia del año {year} para comunicarla en tu web y canales de venta.</source>
+        <target>Issue the footprint-per-stay certificate for {year} to communicate it on your website and sales channels.</target>
+      </trans-unit>
+      <trans-unit id="tP0aes0" resname="Enlace de verificación">
+        <source>Enlace de verificación</source>
+        <target>Verification link</target>
+      </trans-unit>
+      <trans-unit id="R95znAR" resname="Al reabrir el cálculo podrás volver a editar los alcances. Se conservarán los datos introducidos, pero se eliminará el informe generado y se revocará el certificado de huella.">
+        <source>Al reabrir el cálculo podrás volver a editar los alcances. Se conservarán los datos introducidos, pero se eliminará el informe generado y se revocará el certificado de huella.</source>
+        <target>By reopening the calculation you will be able to edit the scopes again. The data entered will be kept, but the generated report will be deleted and the footprint certificate will be revoked.</target>
+      </trans-unit>
+      <trans-unit id="0l1FDVc" resname="¿Seguro que quieres reabrir el cálculo? Se eliminará el informe generado y se revocará el certificado de huella.">
+        <source>¿Seguro que quieres reabrir el cálculo? Se eliminará el informe generado y se revocará el certificado de huella.</source>
+        <target>Are you sure you want to reopen the calculation? The generated report will be deleted and the footprint certificate will be revoked.</target>
+      </trans-unit>
+      <trans-unit id="1MkRe98" resname="La huella ya tiene un certificado vigente.">
+        <source>La huella ya tiene un certificado vigente.</source>
+        <target>The footprint already has a current certificate.</target>
+      </trans-unit>
+      <trans-unit id="sm3PYJh" resname="No se ha podido generar el certificado de huella: {error}">
+        <source>No se ha podido generar el certificado de huella: {error}</source>
+        <target>The footprint certificate could not be generated: {error}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

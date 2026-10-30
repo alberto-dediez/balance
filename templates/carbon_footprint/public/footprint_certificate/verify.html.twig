@@ -1,0 +1,91 @@
+{% extends theme_template('@shared/layout/public.html.twig') %}
+
+{% set page_title = 'Verificación de certificado de huella' | trans %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if certificate.valid %}
+                            <twig:Icon name="solar:verified-check-bold" size="xl" class="text-success mb-3" />
+                            <h5 class="text-success mb-1">{{ 'Certificado válido' | trans }}</h5>
+                        {% elseif certificate.status.isRevoked %}
+                            <twig:Icon name="solar:close-circle-bold" size="xl" class="text-danger mb-3" />
+                            <h5 class="text-danger mb-1">{{ 'Certificado revocado' | trans }}</h5>
+                        {% else %}
+                            <twig:Icon name="solar:clock-circle-bold" size="xl" class="text-warning mb-3" />
+                            <h5 class="mb-1">{{ 'Certificado en preparación' | trans }}</h5>
+                        {% endif %}
+                        <p class="mb-1"><code class="text-break">{{ certificate.code }}</code></p>
+                        <p class="text-muted small mb-0">
+                            {{ 'Esta referencia debe coincidir con la impresa en el documento' | trans }}
+                        </p>
+                    </div>
+
+                    <div class="border-top">
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Propiedad' | trans }}</div>
+                            <div class="text-sm-end text-break">{{ certificate.propertyName }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Organización' | trans }}</div>
+                            <div class="text-sm-end text-break">{{ certificate.accountName }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Año' | trans }}</div>
+                            <div class="text-sm-end fw-semibold">{{ certificate.year }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Estancias' | trans }}</div>
+                            <div class="text-sm-end text-nowrap">{{ certificate.stays | number_format(0, ',', '.') }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'kg CO₂eq por estancia' | trans }}</div>
+                            <div class="text-sm-end text-nowrap fw-semibold">{{ certificate.co2eqKgPerStay | number_format(2, ',', '.') }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Emisiones totales' | trans }}</div>
+                            <div class="text-sm-end text-nowrap">{{ certificate.totalCo2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Alcance 1' | trans }}</div>
+                            <div class="text-sm-end text-nowrap">{{ certificate.scope1Co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Alcance 2' | trans }}</div>
+                            <div class="text-sm-end text-nowrap">{{ certificate.scope2Co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}</div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Alcance 3' | trans }}</div>
+                            <div class="text-sm-end text-nowrap">
+                                {% if certificate.scope3Co2eqKg is not null %}
+                                    {{ certificate.scope3Co2eqKg | number_format(2, ',', '.') }} {{ 'kg CO₂eq' | trans }}
+                                {% else %}
+                                    {{ 'Excluido del cálculo' | trans }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                            <div class="text-muted small flex-shrink-0">{{ 'Fecha de emisión' | trans }}</div>
+                            <div class="text-sm-end">{{ certificate.issuedAt | date('d/m/Y') }}</div>
+                        </div>
+                        {% if certificate.status.isRevoked and certificate.revokedAt is not null %}
+                            <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3 py-2 border-bottom">
+                                <div class="text-muted small flex-shrink-0">{{ 'Fecha de revocación' | trans }}</div>
+                                <div class="text-sm-end">{{ certificate.revokedAt | date('d/m/Y') }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-muted small mt-3 mb-0">
+                        {{ 'El certificado acredita la huella de carbono de la propiedad para el año indicado y vale mientras no sea revocado. Si la organización reabre y modifica el cálculo, este certificado queda revocado y puede emitirse uno nuevo.' | trans }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

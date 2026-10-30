@@ -81,6 +81,8 @@ doctrine:
             property_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintIdType
             property_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintActivityIdType
             property_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintExclusionIdType
+            property_carbon_footprint_certificate_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintCertificateIdType
+            property_carbon_footprint_certificate_file_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintCertificateFileIdType
             company_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintIdType
             company_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintActivityIdType
             company_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintExclusionIdType

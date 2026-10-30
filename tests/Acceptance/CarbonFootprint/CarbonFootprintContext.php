@@ -98,6 +98,11 @@ use App\CarbonFootprint\Domain\Model\Process\ProcessRepository;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificate;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateId;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateRepository;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateStatus;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateStorage;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
@@ -136,6 +141,7 @@ use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
@@ -180,6 +186,7 @@ use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final readonly class CarbonFootprintContext implements Context
 {
@@ -2017,6 +2024,12 @@ final readonly class CarbonFootprintContext implements Context
             default => throw new \InvalidArgumentException(sprintf('Unknown report status "%s"', $status)),
         };
 
+        $existing = $this->getCarbonFootprintReportRepository()->findBySubject($type, $id);
+
+        if (null !== $existing) {
+            $this->getCarbonFootprintReportRepository()->remove($existing);
+        }
+
         $this->getCarbonFootprintReportRepository()->add($report);
     }
 
@@ -3513,5 +3526,127 @@ final readonly class CarbonFootprintContext implements Context
     private function getActivityRepository(): ActivityRepository
     {
         return $this->client->getContainer()->get(ActivityRepository::class);
+    }
+
+    #[Given('property carbon footprint :id is completed with :co2eq kg CO₂eq')]
+    public function propertyCarbonFootprintIsCompletedWith(string $id, string $co2eq): void
+    {
+        $propertyCarbonFootprint = $this->getPropertyCarbonFootprintRepository()->find(new PropertyCarbonFootprintId($id));
+
+        Assert::assertNotNull($propertyCarbonFootprint);
+
+        $propertyCarbonFootprint->complete(new Emissions($co2eq));
+
+        $this->getPropertyCarbonFootprintRepository()->add($propertyCarbonFootprint);
+    }
+
+    #[Given('property carbon footprint :id has a generated certificate with code :code and token :token and :stays stays')]
+    public function propertyCarbonFootprintHasAGeneratedCertificate(string $id, string $code, string $token, int $stays): void
+    {
+        $propertyCarbonFootprint = $this->getPropertyCarbonFootprintRepository()->find(new PropertyCarbonFootprintId($id));
+
+        Assert::assertNotNull($propertyCarbonFootprint);
+
+        $propertyId = $propertyCarbonFootprint->propertyId();
+        $accountId = $propertyCarbonFootprint->accountId();
+
+        Assert::assertNotNull($propertyId);
+        Assert::assertNotNull($accountId);
+
+        $certificate = new PropertyCarbonFootprintCertificate(new PropertyCarbonFootprintCertificateId($id));
+        $certificate->issue(
+            propertyCarbonFootprintId: $propertyCarbonFootprint->id(),
+            propertyId: $propertyId,
+            accountId: $accountId,
+            year: $propertyCarbonFootprint->year(),
+            code: $code,
+            verificationToken: $token,
+            locale: Locale::Spanish,
+            propertyName: $this->client->getContainer()->get(PropertyRepository::class)->find($propertyId)?->name() ?? '',
+            accountName: $this->client->getContainer()->get(AccountRepository::class)->find($accountId)?->name() ?? '',
+            stays: $stays,
+            totalCo2eqKg: (float) $propertyCarbonFootprint->totalEmissions()->co2eq(),
+            scope1Co2eqKg: 0.0,
+            scope2Co2eqKg: 0.0,
+            scope3Co2eqKg: null,
+        );
+
+        $localPath = sprintf('%s/%s.pdf', sys_get_temp_dir(), uniqid('footprint-certificate-', true));
+        file_put_contents($localPath, '%PDF-1.7');
+
+        try {
+            $path = $this->getPropertyCarbonFootprintCertificateStorage()->store($certificate->id(), $accountId, Locale::Spanish, $localPath);
+        } finally {
+            @unlink($localPath);
+        }
+
+        $certificate->markGenerated([Locale::Spanish->value => $path]);
+
+        $this->getPropertyCarbonFootprintCertificateRepository()->add($certificate);
+    }
+
+    #[When('I issue the certificate of property carbon footprint :id with :stays stays')]
+    public function iIssueTheCertificateOfPropertyCarbonFootprint(string $id, string $stays): void
+    {
+        $token = $this->client->getContainer()->get(CsrfTokenManagerInterface::class)->getToken('submit')->getValue();
+
+        $this->client->requestWithFiles(
+            'POST',
+            sprintf('/es/property-carbon-footprints/%s/certificate/issue', $id),
+            ['issue_property_carbon_footprint_certificate' => ['stays' => $stays, '_token' => $token]],
+            [],
+            ['HTTP_SEC_FETCH_SITE' => 'same-origin'],
+        );
+    }
+
+    #[Then('the certificate of property carbon footprint :id should be :status')]
+    public function theCertificateOfPropertyCarbonFootprintShouldBe(string $id, string $status): void
+    {
+        $certificate = $this->latestPropertyCarbonFootprintCertificate($id);
+
+        Assert::assertSame(PropertyCarbonFootprintCertificateStatus::from($status), $certificate->status(), (string) $certificate->failureReason());
+    }
+
+    #[Then('the certificate of property carbon footprint :id should have :value kg per stay')]
+    public function theCertificateOfPropertyCarbonFootprintShouldHaveKgPerStay(string $id, string $value): void
+    {
+        Assert::assertSame((float) $value, $this->latestPropertyCarbonFootprintCertificate($id)->co2eqKgPerStay());
+    }
+
+    #[Then('property carbon footprint :id should have no certificate')]
+    public function propertyCarbonFootprintShouldHaveNoCertificate(string $id): void
+    {
+        Assert::assertSame([], $this->getPropertyCarbonFootprintCertificateRepository()->findByPropertyCarbonFootprintId(new PropertyCarbonFootprintId($id)));
+    }
+
+    #[When('I go to the verification page of the certificate of property carbon footprint :id')]
+    public function iGoToTheVerificationPageOfTheCertificateOfPropertyCarbonFootprint(string $id): void
+    {
+        $this->client->request('GET', '/es/footprint-certificate/' . $this->latestPropertyCarbonFootprintCertificate($id)->verificationToken());
+    }
+
+    #[When('I download the certificate of property carbon footprint :id')]
+    public function iDownloadTheCertificateOfPropertyCarbonFootprint(string $id): void
+    {
+        $this->client->request('GET', sprintf('/es/property-carbon-footprint-certificates/%s/download', $this->latestPropertyCarbonFootprintCertificate($id)->id()));
+    }
+
+    private function latestPropertyCarbonFootprintCertificate(string $id): PropertyCarbonFootprintCertificate
+    {
+        $certificates = $this->getPropertyCarbonFootprintCertificateRepository()->findByPropertyCarbonFootprintId(new PropertyCarbonFootprintId($id));
+
+        Assert::assertNotEmpty($certificates);
+
+        return $certificates[0];
+    }
+
+    private function getPropertyCarbonFootprintCertificateRepository(): PropertyCarbonFootprintCertificateRepository
+    {
+        return $this->client->getContainer()->get(PropertyCarbonFootprintCertificateRepository::class);
+    }
+
+    private function getPropertyCarbonFootprintCertificateStorage(): PropertyCarbonFootprintCertificateStorage
+    {
+        return $this->client->getContainer()->get(PropertyCarbonFootprintCertificateStorage::class);
     }
 }

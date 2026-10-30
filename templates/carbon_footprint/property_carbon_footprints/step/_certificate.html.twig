@@ -1,0 +1,61 @@
+<twig:Card title="{{ 'Certificado de huella' | trans }}">
+    {% if certificate is null %}
+        {% if not reportGenerated %}
+            <p class="text-muted">{{ 'El certificado de huella se puede emitir cuando el informe esté generado.' | trans }}</p>
+        {% elseif propertyCarbonFootprint | is_authorized('edit') %}
+            <p class="text-muted">{{ 'Emite el certificado de huella por estancia del año {year} para comunicarla en tu web y canales de venta.' | trans({'{year}': propertyCarbonFootprint.year}) }}</p>
+
+            {{ form_start(certificateForm) }}
+                {{ form_row(certificateForm.stays) }}
+
+                <twig:ActionBar>
+                    <twig:ActionBar:Button type="primary" :button="certificateForm.issue" />
+                </twig:ActionBar>
+            {{ form_end(certificateForm) }}
+        {% endif %}
+    {% else %}
+        <p>
+            <span class="badge {{ certificate.status.style }}">{{ certificate.status.value | trans({}, 'propertyCarbonFootprintCertificateStatus') }}</span>
+        </p>
+
+        <twig:View:Field label="{{ 'Código' | trans }}"><code>{{ certificate.code }}</code></twig:View:Field>
+        <twig:View:Field label="{{ 'Año' | trans }}">{{ certificate.year }}</twig:View:Field>
+        <twig:View:Field label="{{ 'kg CO₂eq por estancia' | trans }}">{{ certificate.co2eqKgPerStay | number_format(2, ',', '.') }}</twig:View:Field>
+        <twig:View:Field label="{{ 'Estancias' | trans }}">{{ certificate.stays | number_format(0, ',', '.') }}</twig:View:Field>
+        <twig:View:Field label="{{ 'Fecha de emisión' | trans }}">{{ certificate.issuedAt | date('d/m/Y') }}</twig:View:Field>
+
+        {% if certificate.isGenerated %}
+            <twig:Link path="{{ path('property_carbon_footprint_certificates_download', {certificateId: certificate.id}) }}" color="outlinePrimary" target="_blank" class="mb-3">
+                <twig:Icon name="solar:diploma-line-duotone" class="me-2" />
+                {{ 'Descargar PDF' | trans }}
+            </twig:Link>
+
+            <label class="form-label">{{ 'Enlace de verificación' | trans }}</label>
+            <div class="input-group">
+                <input type="text" class="form-control" value="{{ url('public_property_carbon_footprint_certificate_verify', {token: certificate.verificationToken}) }}" readonly data-footprint-certificate-url>
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    onclick="navigator.clipboard.writeText(this.parentElement.querySelector('[data-footprint-certificate-url]').value)"
+                >
+                    {{ 'Copiar' | trans }}
+                </button>
+            </div>
+        {% elseif certificate.status.isPending %}
+            <twig:Alert:Alert type="info">
+                {{ 'El PDF se está generando.' | trans }}
+            </twig:Alert:Alert>
+        {% elseif certificate.status.isFailed %}
+            <twig:Alert:Alert type="danger">
+                {{ 'No se ha podido generar el certificado de huella: {error}' | trans({'{error}': certificate.failureReason}) }}
+            </twig:Alert:Alert>
+
+            {% if certificate | is_authorized('view') %}
+                <twig:Link path="{{ path('property_carbon_footprint_certificates_retry', {certificateId: certificate.id, _token: csrf_token('retry')}) }}" color="outlinePrimary">
+                    <twig:Icon name="solar:refresh-line-duotone" class="me-2" />
+                    {{ 'Reintentar' | trans }}
+                </twig:Link>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</twig:Card>

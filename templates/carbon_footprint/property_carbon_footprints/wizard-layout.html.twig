@@ -23,6 +23,16 @@
         {% endif %}
     {% endif %}
 
+    {% set certificate = property_carbon_footprint_certificate(propertyCarbonFootprintId) %}
+
+    {% if certificate is not null and certificate.isGenerated and certificate | is_authorized('view') %}
+        <twig:TopAction path="{{ path('property_carbon_footprint_certificates_download', {certificateId: certificate.id}) }}" target="_blank">
+            <twig:Icon name="solar:diploma-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Descargar certificado' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('property_carbon_footprints') }}" />
 {% endblock %}
 

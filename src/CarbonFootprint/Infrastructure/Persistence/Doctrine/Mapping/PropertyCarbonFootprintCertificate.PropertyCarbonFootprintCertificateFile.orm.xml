@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateFile" table="property_carbon_footprint_certificate_files">
+        <unique-constraints>
+            <unique-constraint columns="certificate_id,locale" name="uniq_pcf_certificate_file_locale"/>
+        </unique-constraints>
+
+        <id name="id" type="property_carbon_footprint_certificate_file_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="certificate" target-entity="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificate" inversed-by="files">
+            <join-column name="certificate_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
+        </many-to-one>
+
+        <field name="locale" type="string" column="locale" length="5" enum-type="App\Shared\Domain\Model\Locale\Locale" nullable="false"/>
+        <field name="path" type="string" column="path" length="255" nullable="false"/>
+    </entity>
+
+</doctrine-mapping>

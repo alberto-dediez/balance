@@ -6,9 +6,12 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\PropertyCarbonFootprint\Step
 
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\GetResults\GetPropertyCarbonFootprintResultsRequest;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\GetResults\GetPropertyCarbonFootprintResultsService;
+use App\CarbonFootprint\Application\PropertyCarbonFootprintCertificate\Issue\IssuePropertyCarbonFootprintCertificateRequest;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateRepository;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\IssuePropertyCarbonFootprintCertificateType;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\OrganizationalResultsView;
 use App\CarbonFootprint\Infrastructure\UI\Web\PropertyCarbonFootprint\GetPropertyCarbonFootprintFromIdTrait;
 use App\Security\Application\Account\ReportPermissionsPolicy;
@@ -27,6 +30,7 @@ class ResultsController extends AbstractController
         string $propertyCarbonFootprintId,
         PropertyCarbonFootprintRepository $propertyCarbonFootprintRepository,
         CarbonFootprintReportRepository $reportRepository,
+        PropertyCarbonFootprintCertificateRepository $certificateRepository,
         GetPropertyCarbonFootprintResultsService $getResults,
         OrganizationalResultsView $resultsView,
         ReportPermissionsPolicy $reportPermissionsPolicy,
@@ -52,6 +56,11 @@ class ResultsController extends AbstractController
         $user = $loggedUser();
         $results = $getResults(new GetPropertyCarbonFootprintResultsRequest($propertyCarbonFootprint->id()), $user);
         $report = $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Property, (string) $propertyCarbonFootprint->id());
+        $certificateForm = $this->createForm(
+            IssuePropertyCarbonFootprintCertificateType::class,
+            new IssuePropertyCarbonFootprintCertificateRequest($propertyCarbonFootprint->id()),
+            ['action' => $this->generateUrl('property_carbon_footprints_certificate_issue', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId])],
+        );
 
         return $this->render(
             '@carbon_footprint/property_carbon_footprints/step/results.html.twig',
@@ -68,6 +77,9 @@ class ResultsController extends AbstractController
                 'results' => $results,
                 'report' => $report,
                 'canEditReportTexts' => $reportPermissionsPolicy->permissionsFor($report?->accountId(), $user)->canEditTexts(),
+                'reportGenerated' => null !== $report && $report->status()->isGenerated(),
+                'certificate' => $certificateRepository->findCurrentByPropertyCarbonFootprintId($propertyCarbonFootprint->id()),
+                'certificateForm' => $certificateForm->createView(),
             ],
         );
     }

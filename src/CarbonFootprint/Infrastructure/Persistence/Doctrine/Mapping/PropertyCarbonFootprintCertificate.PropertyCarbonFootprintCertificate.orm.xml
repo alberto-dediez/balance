@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificate" table="property_carbon_footprint_certificates">
+        <unique-constraints>
+            <unique-constraint columns="code" name="uniq_pcf_certificate_code"/>
+            <unique-constraint columns="verification_token" name="uniq_pcf_certificate_verification_token"/>
+        </unique-constraints>
+
+        <indexes>
+            <index columns="property_carbon_footprint_id" name="idx_pcf_certificate_footprint"/>
+            <index columns="account_id" name="idx_pcf_certificate_account"/>
+        </indexes>
+
+        <id name="id" type="property_carbon_footprint_certificate_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="propertyCarbonFootprintId" type="property_carbon_footprint_id" column="property_carbon_footprint_id" nullable="false"/>
+        <field name="propertyId" type="property_id" column="property_id" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="year" type="integer" column="year" nullable="false"/>
+        <field name="code" type="string" column="code" length="20" nullable="false"/>
+        <field name="verificationToken" type="string" column="verification_token" length="64" nullable="false"/>
+        <field name="status" type="string" column="status" length="20" enum-type="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateStatus" nullable="false"/>
+        <field name="locale" type="string" column="locale" length="5" enum-type="App\Shared\Domain\Model\Locale\Locale" nullable="false"/>
+        <field name="propertyName" type="string" column="property_name" length="255" nullable="false"/>
+        <field name="accountName" type="string" column="account_name" length="255" nullable="false"/>
+        <field name="stays" type="integer" column="stays" nullable="false"/>
+        <field name="totalCo2eqKg" type="float" column="total_co2eq_kg" nullable="false"/>
+        <field name="co2eqKgPerStay" type="float" column="co2eq_kg_per_stay" nullable="false"/>
+        <field name="scope1Co2eqKg" type="float" column="scope_1_co2eq_kg" nullable="false"/>
+        <field name="scope2Co2eqKg" type="float" column="scope_2_co2eq_kg" nullable="false"/>
+        <field name="scope3Co2eqKg" type="float" column="scope_3_co2eq_kg" nullable="true"/>
+        <field name="failureReason" type="text" column="failure_reason" nullable="true"/>
+        <field name="issuedAt" type="datetime_immutable" column="issued_at" nullable="false"/>
+        <field name="generatedAt" type="datetime_immutable" column="generated_at" nullable="true"/>
+        <field name="failedAt" type="datetime_immutable" column="failed_at" nullable="true"/>
+        <field name="revokedAt" type="datetime_immutable" column="revoked_at" nullable="true"/>
+
+        <one-to-many field="files" target-entity="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateFile" mapped-by="certificate" orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+                <cascade-remove />
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

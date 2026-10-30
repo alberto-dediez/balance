@@ -78,6 +78,7 @@ security:
         - { path: '^/[a-z]{2}/carbon-footprint/property-trip/', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/carbon-footprint/trip/', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/certificate/', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/footprint-certificate/', roles: PUBLIC_ACCESS }
         - { path: '^/[a-z]{2}/cookie-consent', roles: PUBLIC_ACCESS }
         - { path: /recover-password, roles: PUBLIC_ACCESS }
         - { path: /login, roles: PUBLIC_ACCESS }

@@ -60,6 +60,30 @@ services:
 
     App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator: '@App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator'
 
+    App\CarbonFootprint\Application\PropertyCarbonFootprintCertificate\Generate\GeneratePropertyCarbonFootprintCertificateService:
+        arguments:
+            $localeList: '%app.locale_list%'
+            $documentAuthor: '%company.name%'
+
+    App\CarbonFootprint\Infrastructure\Tcpdf\ThemeAwarePropertyCarbonFootprintCertificatePdfGenerator:
+        arguments:
+            $themeGenerators: !tagged_locator { tag: 'app.theme.footprint_certificate_generator', index_by: 'theme' }
+
+    App\CarbonFootprint\Infrastructure\Storage\LocalPropertyCarbonFootprintCertificateStorage:
+        arguments:
+            $basePath: '%app.uploads_dir%/footprint-certificates'
+
+    App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyCarbonFootprintCertificate\VerifyController:
+        arguments:
+            $certificateVerificationLimiter: '@limiter.certificate_verification'
+        tags: ['controller.service_arguments']
+
+    App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateStorage: '@App\CarbonFootprint\Infrastructure\Storage\LocalPropertyCarbonFootprintCertificateStorage'
+    App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificatePdfGenerator: '@App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfPropertyCarbonFootprintCertificatePdfGenerator'
+    App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateCodeGenerator: '@App\CarbonFootprint\Infrastructure\Certificate\RandomPropertyCarbonFootprintCertificateCodeGenerator'
+    App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateVerificationTokenGenerator: '@App\CarbonFootprint\Infrastructure\Certificate\RandomPropertyCarbonFootprintCertificateVerificationTokenGenerator'
+    App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateVerificationUrlGenerator: '@App\CarbonFootprint\Infrastructure\Certificate\RouterPropertyCarbonFootprintCertificateVerificationUrlGenerator'
+
     App\CarbonFootprint\Domain\Model\Trip\TripLegsResolver:
         arguments:
             $maxLegs: '%app.trip_max_legs%'

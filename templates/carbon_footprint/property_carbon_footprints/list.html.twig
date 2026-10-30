@@ -33,6 +33,12 @@
                 <twig:List:Action:Download path="{{ path('carbon_footprint_reports_download', {'reportId': carbonFootprintReport.id}) }}" />
             {% endif %}
 
+            {% set certificate = property_carbon_footprint_certificate(element.id) %}
+
+            {% if certificate is not null and certificate.isGenerated and certificate | is_authorized('view') %}
+                <twig:List:Action:Certificate path="{{ path('property_carbon_footprint_certificates_download', {'certificateId': certificate.id}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('property_carbon_footprints_edit', {'propertyCarbonFootprintId': element.id}) }}" />
             {% endif %}
