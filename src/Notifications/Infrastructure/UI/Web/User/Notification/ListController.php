@@ -9,8 +9,13 @@ use App\Notifications\Application\Notification\List\ListNotificationsService;
 use App\Notifications\Application\Notification\Unread\UnreadNotificationsProvider;
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Notifications\Infrastructure\Symfony\Form\ListUserNotificationsType;
+use App\Notifications\Infrastructure\UI\Web\User\Notification\Bulk\MarkAsReadAction;
+use App\Notifications\Infrastructure\UI\Web\User\Notification\Bulk\RemoveAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Infrastructure\Symfony\Form\BulkType;
+use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
+use App\Shared\Infrastructure\UI\Web\CRUD\BulkTrait;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +28,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ListController extends AbstractController
 {
     use FilterTrait;
+    use BulkTrait;
 
     private const LIMIT = 15;
 
@@ -61,7 +67,20 @@ class ListController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         }
 
+        $bulkForm = $this->createForm(BulkType::class, new BulkRequest(), [
+            'elements' => $response->notifications,
+            'actions' => [
+                new MarkAsReadAction(),
+                new RemoveAction(),
+            ],
+        ]);
+
+        if ($this->bulkActions($request, $bulkForm, $user)) {
+            return $this->redirect($request->getRequestUri());
+        }
+
         return $this->render('@notifications/user/list.html.twig', [
+            'bulkForm' => $bulkForm->createView(),
             'notifications' => $response->notifications,
             'totalResults' => $response->totalResults,
             'unreadCount' => $unreadNotifications->count(),

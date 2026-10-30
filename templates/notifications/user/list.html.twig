@@ -17,7 +17,7 @@
         }
     ] %}
 
-    <twig:List:Table :columns="columns" :elements="notifications">
+    <twig:List:Table :columns="columns" :elements="notifications" :bulkForm="bulkForm">
         <td style="width: 48px;">
             <span class="d-flex align-items-center justify-content-center rounded round {{ element.isRead ? 'bg-body-secondary text-body-secondary' : 'bg-primary-subtle text-primary' }}"
                   data-notification-icon>
