@@ -8,6 +8,7 @@ use App\Property\Application\Property\Update\UpdatePropertyRequest;
 use App\Property\Infrastructure\Symfony\Form\Type\CompanyIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\ExternalIdType;
 use App\Property\Infrastructure\Symfony\Form\Type\OperatingRegimeType;
+use App\Property\Infrastructure\Symfony\Form\Type\OperatorContactType;
 use App\Property\Infrastructure\Symfony\Form\Type\PropertyInfoType;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Form\Type\AccountIdType;
@@ -48,6 +49,11 @@ class UpdatePropertyType extends AbstractType
                 'label' => new TranslatableMessage('Régimen de explotación'),
                 'required' => true,
                 'help' => new TranslatableMessage('Las propiedades franquiciadas o arrendadas a terceros no se incluyen en los alcances 1 y 2 de la huella de empresa: se calculan en su alcance 3.'),
+            ])
+            ->add('operatorContact', OperatorContactType::class, [
+                'label' => new TranslatableMessage('Contacto del franquiciado o arrendatario'),
+                'required' => false,
+                'help' => new TranslatableMessage('Persona a la que se le pedirán los consumos de alcance 1 y 2 cuando la propiedad sea franquiciada o arrendada a terceros.'),
             ])
         ;
 

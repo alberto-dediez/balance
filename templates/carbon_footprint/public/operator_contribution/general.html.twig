@@ -1,0 +1,58 @@
+{% extends theme_template('@carbon_footprint/public/operator_contribution/layout.html.twig') %}
+
+{% set page_title = 'Aportación del franquiciado o arrendatario' | trans %}
+{% set wizard_selected = 1 %}
+
+{% block wizard_panels %}
+    <p class="text-muted">
+        {{ 'Ayúdanos a calcular la huella de carbono de nuestra organización con las emisiones de alcance 1 y 2 de la propiedad que explotas. Solo te llevará unos minutos.' | trans }}
+    </p>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">{{ 'Datos de la huella' | trans }}</h5></div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">{{ 'Empresa' | trans }}</dt>
+                <dd class="col-sm-9">{{ companyName }}</dd>
+
+                <dt class="col-sm-3">{{ 'Propiedad' | trans }}</dt>
+                <dd class="col-sm-9">{{ propertyName }}</dd>
+
+                <dt class="col-sm-3">{{ 'Año' | trans }}</dt>
+                <dd class="col-sm-9">{{ year }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5 class="mb-0">{{ 'Datos generales' | trans }}</h5></div>
+        <div class="card-body">
+            <form method="post" name="general">
+                <input type="hidden" name="_token" value="{{ csrf_token('operator_contribution_general_' ~ token) }}">
+
+                <div class="mb-3">
+                    <label class="form-label" for="general_contactName">{{ 'Nombre de contacto' | trans }}</label>
+                    <input type="text" class="form-control" id="general_contactName" name="general[contactName]" value="{{ contribution.contactName }}">
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="general_precalculated" name="general[precalculated]" value="1"{% if contribution.precalculated %} checked{% endif %}
+                        {% if hasActivities %}
+                            data-controller="confirm"
+                            data-confirm-text-param="{{ 'Al cambiar el modo se eliminarán los datos que ya has enviado. ¿Desea continuar?' | trans }}"
+                            data-action="click->confirm#submit"
+                        {% endif %}
+                    >
+                    <label class="form-check-label" for="general_precalculated">{{ 'Ya tengo calculadas mis emisiones de alcance 1 y 2' | trans }}</label>
+                    <div class="form-text">{{ 'Si la marcas, indicarás las emisiones de cada fuente directamente; si no, tus consumos y la plataforma las calculará.' | trans }}</div>
+                </div>
+
+                {% include '@shared/form/_consent_field.html.twig' with {consent_purpose: 'de la organización' | trans} %}
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">{{ 'Siguiente' | trans }} &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

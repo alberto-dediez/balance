@@ -359,7 +359,7 @@ class EmissionsBreakdownBuilderTest extends TestCase
     public function testIncludesTheNonConsolidatedPropertiesOfACompanyFootprint(): void
     {
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, new Emissions('5000', '5000'));
-        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, new Emissions('300'), '4500');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, null, new Emissions('300'), '4500');
 
         $combustible = CombustibleActivityMother::registered();
         $this->activityRepository->save($combustible);

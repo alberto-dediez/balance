@@ -94,3 +94,63 @@ Feature:
         Then the response status should be 200
         When I go to "/es/admin/properties/edit/333"
         Then I see a form field "operatingRegime" with value "leased_out"
+
+    Scenario: As an owner, I can set the contact of the franchisee or lessee of my property
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "333" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/edit/333"
+        Then I see a text "Contacto del franquiciado o arrendatario"
+        When I submit a form with "name:Hotel|[operatingRegime]:franchised|[operatorContact][email]:franquicia@hotel.es|[operatorContact][name]:Ana" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Propiedad actualizada"
+        Then property "333" should have operator contact "franquicia@hotel.es"
+        When I go to "/es/properties/edit/333"
+        Then I see a form field "operatorContact][email" with value "franquicia@hotel.es"
+        Then I see a form field "operatorContact][name" with value "Ana"
+
+    Scenario: As an owner, I can't set an invalid email as the contact of the franchisee or lessee
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "333" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/edit/333"
+        When I submit a form with "name:Hotel|[operatorContact][email]:not-an-email" and button "Guardar"
+        Then I see a text "El email no es válido."
+        Then property "333" should have operator contact ""
+
+    Scenario: As an owner, I can't set a contact name of the franchisee or lessee longer than 255 characters
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "333" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/edit/333"
+        When I submit a form with "name:Hotel|[operatorContact][email]:franquicia@hotel.es|[operatorContact][name]:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" and button "Guardar"
+        Then the response status should be 200
+        Then I see a text "Este valor no es válido."
+        Then property "333" should have operator contact ""
+
+    Scenario: As an owner, I can clear the contact of the franchisee or lessee of my property
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "333" of account "666" exists
+        Given property "333" has operator contact "franquicia@hotel.es"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/properties/edit/333"
+        Then I see a form field "operatorContact][email" with value "franquicia@hotel.es"
+        When I submit a form with "name:Hotel|[operatorContact][email]:" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then property "333" should have operator contact ""
+
+    Scenario: As an admin, I can set the contact of the franchisee or lessee of a property
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given property "Hotel" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/properties/edit/333"
+        When I submit a form with "name:Hotel|[operatorContact][email]:franquicia@hotel.es" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then property "333" should have operator contact "franquicia@hotel.es"

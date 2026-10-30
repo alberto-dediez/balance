@@ -129,7 +129,7 @@ class CompanyCarbonFootprintMother
         int $year = 2025,
     ): CompanyCarbonFootprint {
         $companyCarbonFootprint = self::withScope3Answered($companyId, $id, $accountId, $year);
-        $companyCarbonFootprint->recordNonConsolidatedProperty($propertyId, $source, null, $calculated, $manual);
+        $companyCarbonFootprint->recordNonConsolidatedProperty($propertyId, $source, null, null, $calculated, $manual);
 
         return $companyCarbonFootprint;
     }

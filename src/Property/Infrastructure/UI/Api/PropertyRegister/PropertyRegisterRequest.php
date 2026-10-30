@@ -47,5 +47,14 @@ class PropertyRegisterRequest
         #[OA\Property(type: 'string', example: 'franchised', nullable: true, enum: ['owned', 'leased', 'managed', 'franchised', 'leased_out'])]
         #[Assert\Choice(choices: ['owned', 'leased', 'managed', 'franchised', 'leased_out'])]
         public ?string $operatingRegime = null,
+        #[OA\Property(type: 'string', example: 'franquicia@hotel.es', nullable: true)]
+        #[Assert\Email]
+        public ?string $operatorEmail = null,
+        #[OA\Property(type: 'string', example: 'Ana', nullable: true)]
+        #[Assert\Length(max: 255)]
+        public ?string $operatorName = null,
+        #[OA\Property(type: 'string', example: 'es', nullable: true, enum: ['es', 'en', 'fr', 'it', 'tr', 'de'])]
+        #[Assert\Choice(choices: ['es', 'en', 'fr', 'it', 'tr', 'de'])]
+        public ?string $operatorLocale = null,
     ) {}
 }

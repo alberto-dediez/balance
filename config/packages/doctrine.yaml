@@ -95,6 +95,8 @@ doctrine:
             provider_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ProviderContributionIdType
             organizational_provider_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OrganizationalProviderContributionIdType
             organizational_provider_contribution_source_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OrganizationalProviderContributionSourceIdType
+            operator_contribution_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OperatorContributionIdType
+            operator_contribution_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\OperatorContributionActivityIdType
             attendee_survey_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyIdType
             attendee_survey_response_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyResponseIdType
             attendee_survey_response_leg_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\AttendeeSurveyResponseLegIdType

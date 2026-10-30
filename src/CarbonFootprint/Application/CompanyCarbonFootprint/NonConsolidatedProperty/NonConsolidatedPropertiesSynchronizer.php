@@ -41,6 +41,7 @@ class NonConsolidatedPropertiesSynchronizer
                 $emissions->property->id(),
                 $emissions->source,
                 $emissions->origin?->id(),
+                $emissions->fromOperatorContribution ? $emissions->contribution?->id() : null,
                 $emissions->calculatedEmissions,
                 $manualByProperty[(string) $emissions->property->id()] ?? null,
             );

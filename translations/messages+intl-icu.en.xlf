@@ -10625,6 +10625,166 @@
         <source>No se ha podido generar el certificado de huella: {error}</source>
         <target>The footprint certificate could not be generated: {error}</target>
       </trans-unit>
+      <trans-unit id="_c2edUV" resname="Aportación del franquiciado o arrendatario">
+        <source>Aportación del franquiciado o arrendatario</source>
+        <target>Franchisee or lessee contribution</target>
+      </trans-unit>
+      <trans-unit id="slLMX75" resname="No se han podido guardar los datos generales.">
+        <source>No se han podido guardar los datos generales.</source>
+        <target>The general data could not be saved.</target>
+      </trans-unit>
+      <trans-unit id="3zKdeNt" resname="Se ha reactivado la aportación de {email}">
+        <source>Se ha reactivado la aportación de {email}</source>
+        <target>The contribution of {email} has been reactivated</target>
+      </trans-unit>
+      <trans-unit id="9ZDlLqJ" resname="Se ha descartado la aportación de {email}">
+        <source>Se ha descartado la aportación de {email}</source>
+        <target>The contribution of {email} has been dismissed</target>
+      </trans-unit>
+      <trans-unit id="z3LfZSr" resname="Se ha reenviado la invitación a {email}">
+        <source>Se ha reenviado la invitación a {email}</source>
+        <target>The invitation has been resent to {email}</target>
+      </trans-unit>
+      <trans-unit id="RvILoE3" resname="No se ha podido reenviar la invitación a {email}">
+        <source>No se ha podido reenviar la invitación a {email}</source>
+        <target>The invitation to {email} could not be resent</target>
+      </trans-unit>
+      <trans-unit id="k431fec" resname="Se ha eliminado la invitación de {email}">
+        <source>Se ha eliminado la invitación de {email}</source>
+        <target>The invitation of {email} has been removed</target>
+      </trans-unit>
+      <trans-unit id="A7UR_4w" resname="Invitación enviada a {email}">
+        <source>Invitación enviada a {email}</source>
+        <target>Invitation sent to {email}</target>
+      </trans-unit>
+      <trans-unit id="0qI2UFs" resname="Esta propiedad ya tiene una invitación activa">
+        <source>Esta propiedad ya tiene una invitación activa</source>
+        <target>This property already has an active invitation</target>
+      </trans-unit>
+      <trans-unit id="bi5i53j" resname="Los cambios se guardan también en la ficha de la propiedad">
+        <source>Los cambios se guardan también en la ficha de la propiedad</source>
+        <target>Changes are also saved in the property record</target>
+      </trans-unit>
+      <trans-unit id="iOIR5rk" resname="Idioma del correo">
+        <source>Idioma del correo</source>
+        <target>Email language</target>
+      </trans-unit>
+      <trans-unit id="Tb28_8P" resname="Enviar invitación">
+        <source>Enviar invitación</source>
+        <target>Send invitation</target>
+      </trans-unit>
+      <trans-unit id="MVjWN1x" resname="Aporta los consumos de {year} de {property} para la huella de {company}">
+        <source>Aporta los consumos de {year} de {property} para la huella de {company}</source>
+        <target>Provide the {year} consumption of {property} for the {company} footprint</target>
+      </trans-unit>
+      <trans-unit id="SFWvOzr" resname="Contacto del franquiciado o arrendatario">
+        <source>Contacto del franquiciado o arrendatario</source>
+        <target>Franchisee or lessee contact</target>
+      </trans-unit>
+      <trans-unit id="xBvLyto" resname="Persona a la que se le pedirán los consumos de alcance 1 y 2 cuando la propiedad sea franquiciada o arrendada a terceros.">
+        <source>Persona a la que se le pedirán los consumos de alcance 1 y 2 cuando la propiedad sea franquiciada o arrendada a terceros.</source>
+        <target>Person who will be asked for the scope 1 and 2 consumption when the property is franchised or leased out to third parties.</target>
+      </trans-unit>
+      <trans-unit id="OUm1iMC" resname="El email no es válido.">
+        <source>El email no es válido.</source>
+        <target>The email is not valid.</target>
+      </trans-unit>
+      <trans-unit id="b_wfOBO" resname="Sin idioma">
+        <source>Sin idioma</source>
+        <target>No language</target>
+      </trans-unit>
+      <trans-unit id="jlAv7Hj" resname="Invitar al franquiciado o arrendatario">
+        <source>Invitar al franquiciado o arrendatario</source>
+        <target>Invite the franchisee or lessee</target>
+      </trans-unit>
+      <trans-unit id="TilPVDT" resname="Huella de empresa">
+        <source>Huella de empresa</source>
+        <target>Company footprint</target>
+      </trans-unit>
+      <trans-unit id="Ak911Y_" resname="Por consumos">
+        <source>Por consumos</source>
+        <target>By consumption</target>
+      </trans-unit>
+      <trans-unit id="2A.SwaA" resname="Modo de datos">
+        <source>Modo de datos</source>
+        <target>Data mode</target>
+      </trans-unit>
+      <trans-unit id="tbrzFxL" resname="Fecha de invitación">
+        <source>Fecha de invitación</source>
+        <target>Invitation date</target>
+      </trans-unit>
+      <trans-unit id="KVo1qb5" resname="Franquiciado / arrendatario">
+        <source>Franquiciado / arrendatario</source>
+        <target>Franchisee / lessee</target>
+      </trans-unit>
+      <trans-unit id="94bj2V_" resname="Invitación">
+        <source>Invitación</source>
+        <target>Invitation</target>
+      </trans-unit>
+      <trans-unit id="HJxY9xs" resname="Datos de alcance 1 y 2">
+        <source>Datos de alcance 1 y 2</source>
+        <target>Scope 1 and 2 data</target>
+      </trans-unit>
+      <trans-unit id="0joaW2r" resname="Datos generales">
+        <source>Datos generales</source>
+        <target>General data</target>
+      </trans-unit>
+      <trans-unit id="Nl_lk1T" resname="Has indicado que ya tienes calculadas tus emisiones: introduce las emisiones de cada fuente.">
+        <source>Has indicado que ya tienes calculadas tus emisiones: introduce las emisiones de cada fuente.</source>
+        <target>You have indicated that your emissions are already calculated: enter the emissions of each source.</target>
+      </trans-unit>
+      <trans-unit id="tiR6o6h" resname="Indica tus consumos del año de combustibles, vehículos, gases refrigerantes y electricidad. La plataforma calculará las emisiones.">
+        <source>Indica tus consumos del año de combustibles, vehículos, gases refrigerantes y electricidad. La plataforma calculará las emisiones.</source>
+        <target>Enter your yearly consumption of fuels, vehicles, refrigerant gases and electricity. The platform will calculate the emissions.</target>
+      </trans-unit>
+      <trans-unit id="vtRT.Z5" resname="Gracias por aportar tus datos">
+        <source>Gracias por aportar tus datos</source>
+        <target>Thank you for providing your data</target>
+      </trans-unit>
+      <trans-unit id="Xr10Pxg" resname="Se han guardado correctamente las emisiones de alcance 1 y 2 de la propiedad.">
+        <source>Se han guardado correctamente las emisiones de alcance 1 y 2 de la propiedad.</source>
+        <target>The scope 1 and 2 emissions of the property have been saved successfully.</target>
+      </trans-unit>
+      <trans-unit id="Vih1BTT" resname="Modificar mis datos">
+        <source>Modificar mis datos</source>
+        <target>Modify my data</target>
+      </trans-unit>
+      <trans-unit id="Bl2xu5z" resname="El enlace de aportación que has utilizado no es válido o ya no está disponible.">
+        <source>El enlace de aportación que has utilizado no es válido o ya no está disponible.</source>
+        <target>The contribution link you have used is not valid or is no longer available.</target>
+      </trans-unit>
+      <trans-unit id="jygCeiS" resname="Ayúdanos a calcular la huella de carbono de nuestra organización con las emisiones de alcance 1 y 2 de la propiedad que explotas. Solo te llevará unos minutos.">
+        <source>Ayúdanos a calcular la huella de carbono de nuestra organización con las emisiones de alcance 1 y 2 de la propiedad que explotas. Solo te llevará unos minutos.</source>
+        <target>Help us calculate our organisation's carbon footprint with the scope 1 and 2 emissions of the property you operate. It will only take a few minutes.</target>
+      </trans-unit>
+      <trans-unit id="iVfHWGr" resname="Al cambiar el modo se eliminarán los datos que ya has enviado. ¿Desea continuar?">
+        <source>Al cambiar el modo se eliminarán los datos que ya has enviado. ¿Desea continuar?</source>
+        <target>Changing the mode will remove the data you have already sent. Do you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="1FmZrKJ" resname="Ya tengo calculadas mis emisiones de alcance 1 y 2">
+        <source>Ya tengo calculadas mis emisiones de alcance 1 y 2</source>
+        <target>I already have my scope 1 and 2 emissions calculated</target>
+      </trans-unit>
+      <trans-unit id="3LCh2dm" resname="Si la marcas, indicarás las emisiones de cada fuente directamente; si no, tus consumos y la plataforma las calculará.">
+        <source>Si la marcas, indicarás las emisiones de cada fuente directamente; si no, tus consumos y la plataforma las calculará.</source>
+        <target>If you tick it, you will enter the emissions of each source directly; otherwise, your consumption and the platform will calculate them.</target>
+      </trans-unit>
+      <trans-unit id="oXedC1Y" resname="Hola {name}, {company} está calculando su huella de carbono de {year} y necesita conocer las emisiones de alcance 1 y 2 de {property}, que explotas como franquiciado o arrendatario.">
+        <source>Hola {name}, {company} está calculando su huella de carbono de {year} y necesita conocer las emisiones de alcance 1 y 2 de {property}, que explotas como franquiciado o arrendatario.</source>
+        <target>Hello {name}, {company} is calculating its {year} carbon footprint and needs to know the scope 1 and 2 emissions of {property}, which you operate as a franchisee or lessee.</target>
+      </trans-unit>
+      <trans-unit id="YqxV1GO" resname="Puedes indicar tus consumos de combustibles, vehículos, gases refrigerantes y electricidad, o directamente tus emisiones si ya las tienes calculadas.">
+        <source>Puedes indicar tus consumos de combustibles, vehículos, gases refrigerantes y electricidad, o directamente tus emisiones si ya las tienes calculadas.</source>
+        <target>You can enter your consumption of fuels, vehicles, refrigerant gases and electricity, or directly your emissions if you already have them calculated.</target>
+      </trans-unit>
+      <trans-unit id="2WZZM48" resname="Aportar mis datos">
+        <source>Aportar mis datos</source>
+        <target>Provide my data</target>
+      </trans-unit>
+      <trans-unit id="SJd7mLC" resname="Se eliminarán también los datos aportados por el franquiciado o arrendatario">
+        <source>Se eliminarán también los datos aportados por el franquiciado o arrendatario</source>
+        <target>The data provided by the franchisee or lessee will also be removed</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

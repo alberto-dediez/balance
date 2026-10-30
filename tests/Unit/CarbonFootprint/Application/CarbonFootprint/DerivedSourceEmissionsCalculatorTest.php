@@ -98,8 +98,8 @@ final class DerivedSourceEmissionsCalculatorTest extends TestCase
     public function testCalculateAddsUpTheNonConsolidatedPropertiesOfACompanyFootprint(): void
     {
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, new Emissions('5000'));
-        $footprint->recordNonConsolidatedProperty(new PropertyId('franchised-2'), Source::Franchises, null, new Emissions('100'), '200');
-        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, new Emissions(), '4500');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('franchised-2'), Source::Franchises, null, null, new Emissions('100'), '200');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, null, new Emissions(), '4500');
 
         $emissions = $this->createSUT()->calculate($footprint, Scope::Scope3);
 

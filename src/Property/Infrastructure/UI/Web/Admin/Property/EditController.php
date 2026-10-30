@@ -46,6 +46,7 @@ class EditController extends AbstractController
             numberOfEmployees: $property->numberOfEmployees(),
             dailyClients: $property->dailyClients(),
             operatingRegime: $property->operatingRegime(),
+            operatorContact: $property->operatorContact(),
         );
 
         $form = $this->createForm(AdminUpdatePropertyType::class, $propertyRequest);

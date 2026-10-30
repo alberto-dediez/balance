@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidated
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContribution;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\Property\Domain\Model\Property\Property;
 
@@ -16,5 +17,7 @@ final readonly class NonConsolidatedPropertyEmissions
         public Source $source,
         public ?PropertyCarbonFootprint $origin,
         public Emissions $calculatedEmissions,
+        public ?OperatorContribution $contribution = null,
+        public bool $fromOperatorContribution = false,
     ) {}
 }

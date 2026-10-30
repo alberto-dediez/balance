@@ -1,0 +1,21 @@
+{% extends theme_template('@shared/layout/public-message.html.twig') %}
+
+{% set page_title = 'Gracias' | trans %}
+{% set message_variant = 'success' %}
+{% set message_icon = 'solar:check-circle-bold' %}
+{% set message_title = 'Gracias por aportar tus datos' | trans %}
+{% set message_text = 'Se han guardado correctamente las emisiones de alcance 1 y 2 de la propiedad.' | trans %}
+
+{% block message_actions %}
+    <dl class="row text-start mt-4 mb-0">
+        <dt class="col-6">{{ 'Alcance 1' | trans }}</dt>
+        <dd class="col-6 text-end">{{ summary.scope1.co2eq | number_format(2, ',', '.') }} kg CO₂eq</dd>
+        <dt class="col-6">{{ 'Alcance 2' | trans }}</dt>
+        <dd class="col-6 text-end">{{ summary.scope2.co2eq | number_format(2, ',', '.') }} kg CO₂eq</dd>
+        <dt class="col-6">{{ 'Total' | trans }}</dt>
+        <dd class="col-6 text-end">{{ summary.total.co2eq | number_format(2, ',', '.') }} kg CO₂eq</dd>
+    </dl>
+    {% if editable %}
+        <a href="{{ path('public_operator_contribution_data', {token: token}) }}" class="btn btn-outline-primary mt-4">{{ 'Modificar mis datos' | trans }}</a>
+    {% endif %}
+{% endblock %}

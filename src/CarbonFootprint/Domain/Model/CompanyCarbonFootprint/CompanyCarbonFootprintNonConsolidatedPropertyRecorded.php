@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\DomainEvent;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventId;
@@ -23,6 +24,7 @@ final class CompanyCarbonFootprintNonConsolidatedPropertyRecorded extends Domain
         private ?PropertyCarbonFootprintId $propertyCarbonFootprintId,
         private Emissions $calculatedEmissions,
         private ?string $manualCo2eq = null,
+        private ?OperatorContributionId $operatorContributionId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -49,6 +51,11 @@ final class CompanyCarbonFootprintNonConsolidatedPropertyRecorded extends Domain
         return $this->propertyCarbonFootprintId;
     }
 
+    public function operatorContributionId(): ?OperatorContributionId
+    {
+        return $this->operatorContributionId;
+    }
+
     public function calculatedEmissions(): Emissions
     {
         return $this->calculatedEmissions;
@@ -71,6 +78,7 @@ final class CompanyCarbonFootprintNonConsolidatedPropertyRecorded extends Domain
             'propertyId' => (string) $this->propertyId,
             'source' => $this->source->value,
             'propertyCarbonFootprintId' => $this->propertyCarbonFootprintId instanceof PropertyCarbonFootprintId ? (string) $this->propertyCarbonFootprintId : null,
+            'operatorContributionId' => $this->operatorContributionId instanceof OperatorContributionId ? (string) $this->operatorContributionId : null,
             'calculatedCo2eq' => $this->calculatedEmissions->co2eq(),
             'calculatedCo2' => $this->calculatedEmissions->co2(),
             'calculatedCh4' => $this->calculatedEmissions->ch4(),
@@ -99,6 +107,7 @@ final class CompanyCarbonFootprintNonConsolidatedPropertyRecorded extends Domain
                 n2o: (string) $payload['calculatedN2o'],
             ),
             manualCo2eq: $payload['manualCo2eq'] ?? null,
+            operatorContributionId: isset($payload['operatorContributionId']) ? new OperatorContributionId($payload['operatorContributionId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

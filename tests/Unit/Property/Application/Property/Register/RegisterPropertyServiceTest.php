@@ -9,11 +9,13 @@ use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Application\Property\Register\RegisterPropertyRequest;
 use App\Property\Application\Property\Register\RegisterPropertyService;
 use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\PropertyRegistered;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -83,6 +85,28 @@ class RegisterPropertyServiceTest extends TestCase
         $this->assertNotNull($propertyPersisted);
         $this->assertSame(OperatingRegime::Franchised, $propertyPersisted->operatingRegime());
         $this->assertSame(OperatingRegime::Franchised, $result->operatingRegime);
+    }
+
+    public function testRegisterWithOperatorContact(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::Owner, AccountId::generate());
+
+        $result = $this->createSUT($repository)(new RegisterPropertyRequest(
+            name: 'Hotel Franquiciado',
+            accountId: $user->accountId(),
+            operatingRegime: OperatingRegime::Franchised,
+            operatorContact: OperatorContact::from('franquicia@hotel.es', 'Ana', Locale::English),
+        ), $user);
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertSame('franquicia@hotel.es', $propertyPersisted->operatorContact()->email());
+        $this->assertSame('Ana', $propertyPersisted->operatorContact()->name());
+        $this->assertSame(Locale::English, $propertyPersisted->operatorContact()->locale());
+        $this->assertSame('franquicia@hotel.es', $result->operatorContact?->email());
     }
 
     public function testIsHandle(): void

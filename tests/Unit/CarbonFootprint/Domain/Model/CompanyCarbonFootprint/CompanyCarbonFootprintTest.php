@@ -26,6 +26,7 @@ use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootpri
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintSourceExcluded;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintUnmarkedAsPrecalculated;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintAlreadyCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
@@ -531,7 +532,7 @@ final class CompanyCarbonFootprintTest extends TestCase
         $footprint->clearEvents();
         $origin = PropertyCarbonFootprintId::generate();
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, $origin, new Emissions('5000', '4900', '1', '1'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, $origin, null, new Emissions('5000', '4900', '1', '1'), null);
 
         $recorded = array_values(array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintNonConsolidatedPropertyRecorded));
         $this->assertCount(1, $recorded);
@@ -548,19 +549,60 @@ final class CompanyCarbonFootprintTest extends TestCase
     {
         $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
         $origin = PropertyCarbonFootprintId::generate();
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, $origin, new Emissions('5000'), '10');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, $origin, null, new Emissions('5000'), '10');
         $footprint->clearEvents();
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new PropertyCarbonFootprintId((string) $origin), new Emissions('5000'), '10');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new PropertyCarbonFootprintId((string) $origin), null, new Emissions('5000'), '10');
 
         $this->assertSame([], $footprint->recordedEvents());
+    }
+
+    public function testRecordNonConsolidatedPropertyWithBothOriginsThrows(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, PropertyCarbonFootprintId::generate(), OperatorContributionId::generate(), new Emissions('5000'), null);
+    }
+
+    public function testRecordNonConsolidatedPropertyFromAnOperatorContribution(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint->clearEvents();
+        $contributionId = OperatorContributionId::generate();
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, $contributionId, new Emissions('1000'), null);
+
+        $recorded = array_values(array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintNonConsolidatedPropertyRecorded));
+        $this->assertCount(1, $recorded);
+        $this->assertSame((string) $contributionId, (string) $recorded[0]->operatorContributionId());
+        $this->assertSame((string) $contributionId, $recorded[0]->payload()['operatorContributionId']);
+
+        $rebuilt = CompanyCarbonFootprintNonConsolidatedPropertyRecorded::rebuildFromPayload($recorded[0]->id(), $recorded[0]->occurredOn(), $recorded[0]->payload());
+        $this->assertSame((string) $contributionId, (string) $rebuilt->operatorContributionId());
+
+        $lines = $footprint->nonConsolidatedPropertyLines();
+        $this->assertCount(1, $lines);
+        $this->assertNull($lines[0]->propertyCarbonFootprintId);
+        $this->assertSame((string) $contributionId, (string) $lines[0]->operatorContributionId);
+
+        $footprint->clearEvents();
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new OperatorContributionId((string) $contributionId), new Emissions('1000'), null);
+
+        $this->assertSame([], $footprint->recordedEvents());
+
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, null, new Emissions('1000'), null);
+
+        $this->assertCount(1, $footprint->recordedEvents());
+        $this->assertNull($footprint->nonConsolidatedPropertyLines()[0]->operatorContributionId);
     }
 
     public function testRecordNonConsolidatedPropertyReplacesTheRowOfTheSameProperty(): void
     {
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, null, new Emissions('300'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, null, null, new Emissions('300'), null);
 
         $lines = $footprint->nonConsolidatedPropertyLines();
         $this->assertCount(1, $lines);
@@ -573,7 +615,7 @@ final class CompanyCarbonFootprintTest extends TestCase
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
         $before = $this->nonConsolidatedPropertyIds($footprint);
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions('5000'), '4500');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, null, new Emissions('5000'), '4500');
 
         $this->assertCount(1, $before);
         $this->assertSame($before, $this->nonConsolidatedPropertyIds($footprint));
@@ -586,7 +628,7 @@ final class CompanyCarbonFootprintTest extends TestCase
 
         $this->expectException(\InvalidArgumentException::class);
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Investments, null, new Emissions(), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Investments, null, null, new Emissions(), null);
     }
 
     public function testRecordNonConsolidatedPropertyRejectsNegativeManualEmissions(): void
@@ -596,7 +638,7 @@ final class CompanyCarbonFootprintTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Manual emissions must be a non-negative number');
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions(), '-1');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, null, new Emissions(), '-1');
     }
 
     public function testRecordNonConsolidatedPropertyRejectsNonNumericManualEmissions(): void
@@ -606,14 +648,14 @@ final class CompanyCarbonFootprintTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Manual emissions must be a non-negative number');
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions(), 'abc');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, null, new Emissions(), 'abc');
     }
 
     public function testRecordNonConsolidatedPropertyWithExcludedSourceRemovesTheRow(): void
     {
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
         $footprint->excludeSource(Scope::Scope3, Source::Franchises, ExclusionReason::NotApplicable);
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::Franchises, null, new Emissions('10'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::Franchises, null, null, new Emissions('10'), null);
 
         $this->assertSame([], $footprint->nonConsolidatedPropertyLines());
     }
@@ -623,7 +665,7 @@ final class CompanyCarbonFootprintTest extends TestCase
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, new Emissions('5000'));
         $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, null, new Emissions('5000'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::DownstreamLeasedAssets, null, null, new Emissions('5000'), null);
 
         $this->assertSame([], $footprint->nonConsolidatedPropertyLines());
     }
@@ -631,7 +673,7 @@ final class CompanyCarbonFootprintTest extends TestCase
     public function testRetainNonConsolidatedPropertiesRemovesTheOthers(): void
     {
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, new Emissions('100'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, null, new Emissions('100'), null);
         $footprint->clearEvents();
 
         $footprint->retainNonConsolidatedProperties([new PropertyId('property-2')]);
@@ -646,7 +688,7 @@ final class CompanyCarbonFootprintTest extends TestCase
     public function testExcludeFranchisesRemovesOnlyItsRows(): void
     {
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, new Emissions('100'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, null, new Emissions('100'), null);
 
         $footprint->excludeSource(Scope::Scope3, Source::Franchises, ExclusionReason::NotApplicable);
 
@@ -658,7 +700,7 @@ final class CompanyCarbonFootprintTest extends TestCase
     public function testExcludeScope3RemovesEveryRow(): void
     {
         $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, new Emissions('5000'));
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, new Emissions('100'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-2'), Source::DownstreamLeasedAssets, null, null, new Emissions('100'), null);
 
         $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
 
@@ -672,7 +714,7 @@ final class CompanyCarbonFootprintTest extends TestCase
 
         $this->expectException(OrganizationalCarbonFootprintAlreadyCompletedException::class);
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, new Emissions(), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('property-1'), Source::Franchises, null, null, new Emissions(), null);
     }
 
     public function testNonConsolidatedPropertyLinesApplyTheManualEmissions(): void

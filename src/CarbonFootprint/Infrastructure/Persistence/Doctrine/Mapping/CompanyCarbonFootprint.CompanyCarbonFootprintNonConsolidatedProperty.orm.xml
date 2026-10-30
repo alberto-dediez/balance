@@ -21,6 +21,7 @@
         <field name="propertyId" type="property_id" column="property_id" nullable="false" />
         <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\Source" nullable="false" />
         <field name="propertyCarbonFootprintId" type="property_carbon_footprint_id" column="property_carbon_footprint_id" nullable="true" />
+        <field name="operatorContributionId" type="operator_contribution_id" column="operator_contribution_id" nullable="true" />
 
         <embedded name="calculatedEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="calculated_emissions_" />
 

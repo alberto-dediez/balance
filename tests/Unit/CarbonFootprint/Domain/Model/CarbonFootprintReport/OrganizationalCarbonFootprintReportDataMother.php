@@ -20,6 +20,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonF
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationEmissionSource;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjector;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\Unit;
@@ -62,7 +63,7 @@ class OrganizationalCarbonFootprintReportDataMother
             : self::build($subjectType, 'Hotel Sol', 'Hotelera del Sur', 'España', null, scope3: true);
     }
 
-    public static function withNonConsolidatedProperties(): OrganizationalCarbonFootprintReportData
+    public static function withNonConsolidatedProperties(bool $franchiseFromOperatorContribution = false): OrganizationalCarbonFootprintReportData
     {
         $data = self::withScope3(CarbonFootprintReportSubjectType::Company);
 
@@ -103,8 +104,8 @@ class OrganizationalCarbonFootprintReportDataMother
             exclusionLines: $data->exclusionLines,
             derivedLines: $data->derivedLines,
             nonConsolidatedPropertyLines: [
-                new NonConsolidatedPropertyLine(Source::Franchises, new PropertyId('property-franquicia'), PropertyCarbonFootprintId::generate(), $franchise, null, $franchise),
-                new NonConsolidatedPropertyLine(Source::DownstreamLeasedAssets, new PropertyId('property-arrendada'), null, new Emissions(), '4500', $leasedOut),
+                new NonConsolidatedPropertyLine(Source::Franchises, new PropertyId('property-franquicia'), $franchiseFromOperatorContribution ? null : PropertyCarbonFootprintId::generate(), $franchiseFromOperatorContribution ? OperatorContributionId::generate() : null, $franchise, null, $franchise),
+                new NonConsolidatedPropertyLine(Source::DownstreamLeasedAssets, new PropertyId('property-arrendada'), null, null, new Emissions(), '4500', $leasedOut),
             ],
         );
     }

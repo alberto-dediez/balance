@@ -26,6 +26,9 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope\GetCompanyCarbonFootprintScopeRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope\GetCompanyCarbonFootprintScopeService;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
+use App\CarbonFootprint\Application\OperatorContribution\List\ListOperatorContributionsService;
+use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionAuthorizer;
+use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
@@ -60,6 +63,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorRep
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayRepositoryMother;
@@ -113,6 +117,9 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
         $companyProperties = new CompanyProperties($this->propertyRepository);
         $this->contributionRepository = OrganizationalProviderContributionRepositoryMother::inMemory();
 
+        $operatorContributionRepository = OperatorContributionRepositoryMother::inMemory();
+        $operatorContributionEmissionsCalculator = new OperatorContributionEmissionsCalculator(new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()));
+
         $this->sut = new GetCompanyCarbonFootprintScopeService(
             $this->repository,
             $companyProperties,
@@ -123,6 +130,8 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
                 $companyProperties,
                 $this->propertyCarbonFootprintRepository,
                 new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
+                $operatorContributionRepository,
+                $operatorContributionEmissionsCalculator,
             ),
             ListOrganizationalProviderContributionsServiceMother::create(
                 companyCarbonFootprintRepository: $this->repository,
@@ -134,6 +143,13 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
                 companyCarbonFootprintRepository: $this->repository,
                 propertyRepository: $this->propertyRepository,
                 activityRepository: $this->activityRepository,
+            ),
+            new ListOperatorContributionsService(
+                $this->repository,
+                new CompanyCarbonFootprintAuthorizer(),
+                new OperatorContributionAuthorizer(),
+                $operatorContributionRepository,
+                $operatorContributionEmissionsCalculator,
             ),
         );
     }
@@ -276,7 +292,7 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
 
         $footprint->answerScope(Scope::Scope1);
         $footprint->answerScope(Scope::Scope2);
-        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, new Emissions(), '4500');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, null, new Emissions(), '4500');
 
         $response = ($this->sut)(new GetCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3), $this->ownerUser());
 
@@ -305,7 +321,7 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
         $footprint->answerScope(Scope::Scope1);
         $footprint->answerScope(Scope::Scope2);
         $footprint->answerScope(Scope::Scope3);
-        $footprint->recordNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, null, new Emissions('5000'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, null, null, new Emissions('5000'), null);
         $footprint->answerProviders();
         $footprint->answerEmployees();
         $footprint->complete(new Emissions('5000'));

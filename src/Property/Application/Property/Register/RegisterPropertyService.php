@@ -59,6 +59,7 @@ class RegisterPropertyService implements CommandHandler
             numberOfEmployees: $request->numberOfEmployees,
             dailyClients: $request->dailyClients,
             operatingRegime: $request->operatingRegime,
+            operatorContact: $request->operatorContact,
         );
 
         $this->propertyRepository->add($property);
@@ -73,6 +74,7 @@ class RegisterPropertyService implements CommandHandler
             numberOfEmployees: $property->numberOfEmployees(),
             dailyClients: $property->dailyClients(),
             operatingRegime: $property->operatingRegime(),
+            operatorContact: $property->operatorContact(),
         );
     }
 

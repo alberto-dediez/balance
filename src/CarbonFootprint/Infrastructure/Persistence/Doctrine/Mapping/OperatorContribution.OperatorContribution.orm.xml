@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContribution" table="operator_contributions">
+        <indexes>
+            <index name="IDX_oc_footprint" columns="company_carbon_footprint_id"/>
+            <index name="IDX_oc_account_property" columns="account_id,property_id"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="token" name="UNIQ_oc_token"/>
+        </unique-constraints>
+
+        <id name="id" type="operator_contribution_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="companyCarbonFootprintId" type="company_carbon_footprint_id" column="company_carbon_footprint_id" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="propertyId" type="property_id" column="property_id" nullable="false"/>
+        <field name="source" type="string" length="50" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\Source" nullable="false"/>
+        <field name="year" type="integer" nullable="false"/>
+        <field name="emissionFactorGroupId" type="emission_factor_group_id" column="emission_factor_group_id" nullable="true"/>
+        <field name="contactEmail" type="string" length="255" column="contact_email" nullable="false"/>
+        <field name="contactName" type="string" length="255" column="contact_name" nullable="true"/>
+        <field name="contactLocale" type="string" length="5" enum-type="App\Shared\Domain\Model\Locale\Locale" column="contact_locale" nullable="false"/>
+        <field name="userId" type="user_id" column="user_id" nullable="true"/>
+        <field name="token" type="string" length="64" nullable="false"/>
+        <field name="status" type="string" length="20" enum-type="App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionStatus" nullable="false"/>
+        <field name="precalculated" type="boolean" nullable="false">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
+        <field name="answeredAt" type="datetime_immutable" column="answered_at" nullable="true"/>
+        <field name="ignoredAt" type="datetime_immutable" column="ignored_at" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <embedded name="consentProof" class="App\Shared\Domain\Model\Consent\ConsentProof" use-column-prefix="true" column-prefix="consent_" />
+
+        <one-to-many field="activities"
+                     target-entity="App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionActivity"
+                     mapped-by="contribution"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+</doctrine-mapping>

@@ -115,6 +115,18 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
     }
 
     /** @dataProvider themes */
+    public function testTheOriginOfAnOperatorContributionLineIsShown(string $theme): void
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} $table */
+        $table = (new \ReflectionMethod($generator, 'nonConsolidatedPropertyTable'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties(true), Source::Franchises, Locale::Spanish);
+
+        $this->assertSame('Hotel Franquicia', $table[1][0][0]);
+        $this->assertSame($this->translator()->trans('Aportación del franquiciado o arrendatario', [], null, Locale::Spanish->value), $table[1][0][1]);
+    }
+
+    /** @dataProvider themes */
     public function testAPropertyReportLeavesOutTheCompanyOnlySources(string $theme): void
     {
         $generator = $this->generatorFor($theme);

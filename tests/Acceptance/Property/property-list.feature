@@ -41,8 +41,8 @@ Feature:
                 And the response JSON should be equal to:
                 """
                 [
-                    {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"},
-                    {"property_id": "222", "name": "Rural", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"}
+                    {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned", "operator_email": null, "operator_name": null, "operator_locale": null},
+                    {"property_id": "222", "name": "Rural", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned", "operator_email": null, "operator_name": null, "operator_locale": null}
                 ]
                 """
 
@@ -58,7 +58,7 @@ Feature:
             And the response JSON should be equal to:
             """
             [
-                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"}
+                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned", "operator_email": null, "operator_name": null, "operator_locale": null}
             ]
             """
 
@@ -74,7 +74,7 @@ Feature:
             And the response JSON should be equal to:
             """
             [
-                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned"}
+                {"property_id": "111", "name": "Hotel", "account_id": "mycompany", "property_type": "Hotel", "address": null, "postal_code": null, "destination_id": null, "country_id": null, "operating_regime": "owned", "operator_email": null, "operator_name": null, "operator_locale": null}
             ]
             """
 

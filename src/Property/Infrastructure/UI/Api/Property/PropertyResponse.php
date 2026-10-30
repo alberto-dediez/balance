@@ -60,5 +60,23 @@ class PropertyResponse
             example: 'owned',
         )]
         public string $operatingRegime,
+        #[OA\Property(
+            type: 'string',
+            example: 'franquicia@hotel.es',
+            nullable: true,
+        )]
+        public ?string $operatorEmail = null,
+        #[OA\Property(
+            type: 'string',
+            example: 'Ana',
+            nullable: true,
+        )]
+        public ?string $operatorName = null,
+        #[OA\Property(
+            type: 'string',
+            example: 'es',
+            nullable: true,
+        )]
+        public ?string $operatorLocale = null,
     ) {}
 }

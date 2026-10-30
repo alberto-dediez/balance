@@ -12,6 +12,7 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\Complete\CompleteComp
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\Complete\CompleteCompanyCarbonFootprintService;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
+use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
@@ -50,6 +51,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCa
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationMother;
@@ -101,6 +103,8 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
                 new CompanyProperties($this->propertyRepository),
                 $this->propertyCarbonFootprintRepository,
                 $breakdownBuilder,
+                OperatorContributionRepositoryMother::inMemory(),
+                new OperatorContributionEmissionsCalculator($breakdownBuilder),
             )),
         );
     }
@@ -193,8 +197,8 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
         $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime('Arrendada', new CompanyId('company-1'), new PropertyId('leased-out-1'), OperatingRegime::LeasedOut));
         $this->completedPropertyFootprint('franchised-1');
 
-        $footprint->recordNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, null, new Emissions('999'), null);
-        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, new Emissions(), '4500');
+        $footprint->recordNonConsolidatedProperty(new PropertyId('franchised-1'), Source::Franchises, null, null, new Emissions('999'), null);
+        $footprint->recordNonConsolidatedProperty(new PropertyId('leased-out-1'), Source::DownstreamLeasedAssets, null, null, new Emissions(), '4500');
         $this->repository->add($footprint);
 
         ($this->sut)(new CompleteCompanyCarbonFootprintRequest($footprint->id()), $this->ownerUser());

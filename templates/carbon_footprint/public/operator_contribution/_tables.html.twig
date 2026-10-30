@@ -1,0 +1,67 @@
+{% set readOnly = readOnly | default(false) %}
+{% set calculateUrl = calculateUrl | default(null) %}
+
+{% if precalculated %}
+    <twig:CarbonFootprint:ReportedEmissionsActivityTable
+        title="{{ 'Instalaciones' | trans }}"
+        prefix="fixed_facilities_reported"
+        :rows="scope1.sections['fixed_facilities_reported'].rows ?? []"
+        :readOnly="readOnly"
+    />
+    <twig:CarbonFootprint:ReportedEmissionsActivityTable
+        title="{{ 'Desplazamientos en vehículos' | trans }}"
+        prefix="own_vehicles_reported"
+        :rows="scope1.sections['own_vehicles_reported'].rows ?? []"
+        :readOnly="readOnly"
+    />
+    <twig:CarbonFootprint:ReportedEmissionsActivityTable
+        title="{{ 'Fugas de equipos de refrigeración' | trans }}"
+        prefix="refrigerant_leaks_reported"
+        :rows="scope1.sections['refrigerant_leaks_reported'].rows ?? []"
+        :readOnly="readOnly"
+    />
+    <twig:CarbonFootprint:ReportedEmissionsActivityTable
+        title="{{ 'Consumo eléctrico' | trans }}"
+        prefix="building_electricity_reported"
+        :rows="scope2.sections['building_electricity_reported'].rows ?? []"
+        :readOnly="readOnly"
+    />
+{% else %}
+    <twig:CarbonFootprint:CombustibleActivityTable
+        title="{{ 'Instalaciones' | trans }}"
+        prefix="combustibles"
+        :rows="scope1.combustibleRows"
+        :items="scope1.combustibles"
+        :units="scope1.units"
+        :calculateUrl="calculateUrl"
+        :readOnly="readOnly"
+    />
+    <twig:CarbonFootprint:TransportActivityTable
+        title="{{ 'Desplazamientos en vehículos' | trans }}"
+        prefix="vehicles"
+        :rows="scope1.transportRows"
+        :items="scope1.transports"
+        :units="scope1.units"
+        :calculateUrl="calculateUrl"
+        :readOnly="readOnly"
+    />
+    <twig:CarbonFootprint:RefrigerantGasActivityTable
+        title="{{ 'Fugas de equipos de refrigeración' | trans }}"
+        prefix="refrigerantGases"
+        :rows="scope1.refrigerantGasRows"
+        :items="scope1.refrigerantGases"
+        :units="scope1.units"
+        :calculateUrl="calculateUrl"
+        :readOnly="readOnly"
+    />
+    <twig:CarbonFootprint:ElectricityActivityTable
+        title="{{ 'Consumo eléctrico' | trans }}"
+        prefix="electricity"
+        :rows="scope2.electricityRows"
+        :marketers="scope2.electricityMarketers"
+        :gdOFactors="scope2.gdOFactors"
+        :units="scope2.units"
+        :calculateUrl="calculateUrl"
+        :readOnly="readOnly"
+    />
+{% endif %}

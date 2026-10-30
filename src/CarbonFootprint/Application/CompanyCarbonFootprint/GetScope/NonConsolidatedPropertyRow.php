@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope;
 
+use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionSummary;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -21,5 +23,7 @@ final readonly class NonConsolidatedPropertyRow
         public Emissions $calculatedEmissions,
         public ?string $manualCo2eq,
         public Emissions $emissions,
+        public ?OperatorContributionId $operatorContributionId = null,
+        public ?OperatorContributionSummary $operatorContribution = null,
     ) {}
 }

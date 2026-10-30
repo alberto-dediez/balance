@@ -1,0 +1,52 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Huella de empresa' | trans)
+    ~ ' > '
+    ~ ('Franquiciado / arrendatario' | trans)
+    ~ ' > '
+    ~ (property ? property.name : '---') %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId}) }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Invitación' | trans }}">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ property ? property.name : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Email' | trans }}">{{ contribution.contactEmail }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Nombre de contacto' | trans }}">{{ contribution.contactName ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Idioma' | trans }}">{{ contribution.contactLocale.value | language_name }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Modo de datos' | trans }}">{{ contribution.precalculated ? 'Huella ya calculada' | trans : 'Por consumos' | trans }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Estado' | trans }}">
+                    <span class="badge {{ contribution.status.style }}">{{ contribution.status.value | trans({}, 'providerContributionStatus') }}</span>
+                </twig:View:Field>
+                <twig:View:Field label="{{ 'Fecha de invitación' | trans }}">{{ contribution.registeredAt | date('d/m/Y H:i') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Fecha de respuesta' | trans }}">{{ contribution.answeredAt ? contribution.answeredAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+            </div>
+        </div>
+    </twig:Card>
+
+    {% if contribution.answeredAt %}
+        <twig:Card title="{{ 'Datos de alcance 1 y 2' | trans }}">
+            {% include '@carbon_footprint/public/operator_contribution/_tables.html.twig' with {scope1: scope1, scope2: scope2, precalculated: contribution.precalculated, readOnly: true} only %}
+        </twig:Card>
+
+        <twig:Card title="{{ 'Resumen' | trans }}">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <twig:View:Field label="{{ 'Alcance 1' | trans }}">{{ summary.scope1.co2eq | number_format(2, ',', '.') }} kg CO₂eq</twig:View:Field>
+                </div>
+                <div class="col-md-4">
+                    <twig:View:Field label="{{ 'Alcance 2' | trans }}">{{ summary.scope2.co2eq | number_format(2, ',', '.') }} kg CO₂eq</twig:View:Field>
+                </div>
+                <div class="col-md-4">
+                    <twig:View:Field label="{{ 'Total' | trans }}">{{ summary.total.co2eq | number_format(2, ',', '.') }} kg CO₂eq</twig:View:Field>
+                </div>
+            </div>
+        </twig:Card>
+    {% endif %}
+{% endblock %}

@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissions;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
+use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
@@ -17,11 +18,13 @@ use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContribution;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
+use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOperatorContributionRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\OperatingRegime;
@@ -33,6 +36,8 @@ use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContributio
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
@@ -47,6 +52,7 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
     private InMemoryActivityRepository $activityRepository;
     private InMemoryPropertyRepository $propertyRepository;
     private InMemoryPropertyCarbonFootprintRepository $propertyCarbonFootprintRepository;
+    private InMemoryOperatorContributionRepository $operatorContributionRepository;
     private NonConsolidatedPropertyEmissionsResolver $sut;
 
     protected function setUp(): void
@@ -56,11 +62,14 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
         $this->activityRepository = ActivityRepositoryMother::inMemory();
         $this->propertyRepository = PropertyRepositoryMother::inMemory();
         $this->propertyCarbonFootprintRepository = PropertyCarbonFootprintRepositoryMother::inMemory();
+        $this->operatorContributionRepository = OperatorContributionRepositoryMother::inMemory();
 
         $this->sut = new NonConsolidatedPropertyEmissionsResolver(
             new CompanyProperties($this->propertyRepository),
             $this->propertyCarbonFootprintRepository,
             new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
+            $this->operatorContributionRepository,
+            new OperatorContributionEmissionsCalculator(new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create())),
         );
     }
 
@@ -144,6 +153,97 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
         $this->assertSame(['franchised-1'], array_map(static fn(NonConsolidatedPropertyEmissions $emissions): string => (string) $emissions->property->id(), $resolved));
     }
 
+    public function testAnAnsweredOperatorContributionAddsItsScope1And2(): void
+    {
+        $this->addProperty('franchised-1', OperatingRegime::Franchised);
+        $companyFootprint = $this->companyFootprint();
+        $contribution = $this->operatorContribution($companyFootprint, 'franchised-1');
+        $this->addActivity($contribution, Scope::Scope1, Source::FixedFacilities, '1000');
+        $this->addActivity($contribution, Scope::Scope2, Source::BuildingElectricity, '3000');
+        $contribution->answer();
+
+        $resolved = $this->sut->resolve($companyFootprint);
+
+        $this->assertCount(1, $resolved);
+        $this->assertNull($resolved[0]->origin);
+        $this->assertSame($contribution, $resolved[0]->contribution);
+        $this->assertTrue($resolved[0]->fromOperatorContribution);
+        $this->assertSame(4000.0, (float) $resolved[0]->calculatedEmissions->co2eq());
+    }
+
+    public function testACompletedPropertyFootprintPrevailsOverTheOperatorContribution(): void
+    {
+        $this->addProperty('franchised-1', OperatingRegime::Franchised);
+        $companyFootprint = $this->companyFootprint();
+        $propertyFootprint = $this->propertyFootprint('franchised-1');
+        $this->addActivity($propertyFootprint, Scope::Scope1, Source::FixedFacilities, '3000');
+        $propertyFootprint->complete(new Emissions('3000'));
+        $contribution = $this->operatorContribution($companyFootprint, 'franchised-1');
+        $this->addActivity($contribution, Scope::Scope1, Source::FixedFacilities, '1000');
+        $contribution->answer();
+
+        $resolved = $this->sut->resolve($companyFootprint);
+
+        $this->assertSame($propertyFootprint, $resolved[0]->origin);
+        $this->assertSame($contribution, $resolved[0]->contribution);
+        $this->assertFalse($resolved[0]->fromOperatorContribution);
+        $this->assertSame(3000.0, (float) $resolved[0]->calculatedEmissions->co2eq());
+    }
+
+    public function testAPendingOperatorContributionCountsAsZero(): void
+    {
+        $this->addProperty('franchised-1', OperatingRegime::Franchised);
+        $companyFootprint = $this->companyFootprint();
+        $contribution = $this->operatorContribution($companyFootprint, 'franchised-1');
+        $this->addActivity($contribution, Scope::Scope1, Source::FixedFacilities, '1000');
+
+        $resolved = $this->sut->resolve($companyFootprint);
+
+        $this->assertSame($contribution, $resolved[0]->contribution);
+        $this->assertFalse($resolved[0]->fromOperatorContribution);
+        $this->assertSame('0', $resolved[0]->calculatedEmissions->co2eq());
+    }
+
+    public function testAnIgnoredOperatorContributionCountsAsZero(): void
+    {
+        $this->addProperty('franchised-1', OperatingRegime::Franchised);
+        $companyFootprint = $this->companyFootprint();
+        $contribution = $this->operatorContribution($companyFootprint, 'franchised-1');
+        $this->addActivity($contribution, Scope::Scope1, Source::FixedFacilities, '1000');
+        $contribution->answer();
+        $contribution->ignore();
+
+        $resolved = $this->sut->resolve($companyFootprint);
+
+        $this->assertFalse($resolved[0]->fromOperatorContribution);
+        $this->assertSame('0', $resolved[0]->calculatedEmissions->co2eq());
+    }
+
+    public function testAnOperatorContributionOfAnotherCompanyFootprintIsIgnored(): void
+    {
+        $this->addProperty('franchised-1', OperatingRegime::Franchised);
+        $contribution = $this->operatorContribution($this->companyFootprint(), 'franchised-1');
+        $this->addActivity($contribution, Scope::Scope1, Source::FixedFacilities, '1000');
+        $contribution->answer();
+
+        $resolved = $this->sut->resolve($this->companyFootprint());
+
+        $this->assertNull($resolved[0]->contribution);
+        $this->assertSame('0', $resolved[0]->calculatedEmissions->co2eq());
+    }
+
+    private function operatorContribution(CompanyCarbonFootprint $companyFootprint, string $propertyId): OperatorContribution
+    {
+        $contribution = OperatorContributionMother::pending(
+            companyCarbonFootprintId: (string) $companyFootprint->id(),
+            propertyId: $propertyId,
+            accountId: self::ACCOUNT_ID,
+        );
+        $this->operatorContributionRepository->add($contribution);
+
+        return $contribution;
+    }
+
     private function addProperty(string $id, OperatingRegime $regime): void
     {
         $this->propertyRepository->add(PropertyMother::fromNameAndCompanyIdAndIdAndRegime($id, new CompanyId(self::COMPANY_ID), new PropertyId($id), $regime));
@@ -157,7 +257,7 @@ class NonConsolidatedPropertyEmissionsResolverTest extends TestCase
         return $propertyFootprint;
     }
 
-    private function addActivity(PropertyCarbonFootprint $propertyFootprint, Scope $scope, Source $source, string $co2eq): void
+    private function addActivity(PropertyCarbonFootprint|OperatorContribution $propertyFootprint, Scope $scope, Source $source, string $co2eq): void
     {
         $activity = CombustibleActivity::register(
             id: ActivityId::generate(),

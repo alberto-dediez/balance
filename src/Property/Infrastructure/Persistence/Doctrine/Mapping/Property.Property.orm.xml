@@ -12,6 +12,7 @@
 
         <embedded name="info" class="App\Property\Domain\Model\Property\PropertyInfo" use-column-prefix="false" />
         <embedded name="externalId" class="App\Property\Domain\Model\Property\ExternalId" use-column-prefix="false" />
+        <embedded name="operatorContact" class="App\Property\Domain\Model\Property\OperatorContact" use-column-prefix="true" column-prefix="operator_" />
 
         <field name="name" type="string" length="255" nullable="false" />
         <field name="accountId" type="account_id" nullable="true" />

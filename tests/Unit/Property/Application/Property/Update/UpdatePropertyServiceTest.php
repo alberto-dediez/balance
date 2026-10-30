@@ -9,11 +9,13 @@ use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
 use App\Property\Application\Property\Update\UpdatePropertyService;
 use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\PropertyUpdated;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
@@ -123,6 +125,71 @@ class UpdatePropertyServiceTest extends TestCase
         $this->assertNotNull($propertyPersisted);
         $this->assertSame(OperatingRegime::Franchised, $propertyPersisted->operatingRegime());
         $this->assertSame(OperatingRegime::Franchised, $result->operatingRegime);
+    }
+
+    public function testUpdateOperatorContact(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $property = PropertyMother::fromName('MyProperty');
+
+        $repository->add($property);
+
+        $result = $this->createSUT($repository)(new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: 'MyProperty',
+            accountId: null,
+            operatorContact: OperatorContact::from('franquicia@hotel.es', 'Ana', Locale::Spanish),
+        ), UserMother::fromUsernameAndRole('user', Role::Admin));
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertSame('franquicia@hotel.es', $propertyPersisted->operatorContact()->email());
+        $this->assertSame('franquicia@hotel.es', $result->operatorContact?->email());
+    }
+
+    public function testUpdateWithAnEmptyOperatorContactClearsIt(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $property = PropertyMother::fromName('MyProperty');
+        $property->updateOperatorContact(OperatorContact::from('franquicia@hotel.es', 'Ana', null));
+
+        $repository->add($property);
+
+        $result = $this->createSUT($repository)(new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: 'MyProperty',
+            accountId: null,
+            operatorContact: new OperatorContact(),
+        ), UserMother::fromUsernameAndRole('user', Role::Admin));
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertTrue($propertyPersisted->operatorContact()->isEmpty());
+    }
+
+    public function testUpdateWithoutOperatorContactKeepsTheCurrentOne(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $property = PropertyMother::fromName('MyProperty');
+        $property->updateOperatorContact(OperatorContact::from('franquicia@hotel.es', 'Ana', null));
+
+        $repository->add($property);
+
+        $result = $this->createSUT($repository)(new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: 'MyProperty',
+            accountId: null,
+        ), UserMother::fromUsernameAndRole('user', Role::Admin));
+
+        $propertyPersisted = $repository->find($result->propertyId);
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertSame('franquicia@hotel.es', $propertyPersisted->operatorContact()->email());
     }
 
     public function testIsHandle(): void

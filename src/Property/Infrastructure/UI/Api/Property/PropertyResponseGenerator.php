@@ -12,6 +12,7 @@ class PropertyResponseGenerator
     public function generate(ModelProperty $model): ApiProperty
     {
         $info = $model->info();
+        $operatorContact = $model->operatorContact();
 
         return new ApiProperty(
             propertyId: (string) $model->id(),
@@ -23,6 +24,9 @@ class PropertyResponseGenerator
             destinationId: null !== $info->destinationId() ? (string) $info->destinationId() : null,
             countryId: null !== $info->countryId() ? (string) $info->countryId() : null,
             operatingRegime: $model->operatingRegime()->value,
+            operatorEmail: $operatorContact->email(),
+            operatorName: $operatorContact->name(),
+            operatorLocale: $operatorContact->locale()?->value,
         );
     }
 }

@@ -10,6 +10,8 @@ use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
+use App\CarbonFootprint\Application\OperatorContribution\List\ListOperatorContributionsRequest;
+use App\CarbonFootprint\Application\OperatorContribution\List\ListOperatorContributionsService;
 use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\List\ListOrganizationalEmployeeContributionsRequest;
 use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\List\ListOrganizationalEmployeeContributionsService;
 use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\OrganizationalEmployeeContributionsOverview;
@@ -35,6 +37,7 @@ final class GetCompanyCarbonFootprintScopeService
         private NonConsolidatedPropertyEmissionsResolver $nonConsolidatedPropertyEmissionsResolver,
         private ListOrganizationalProviderContributionsService $listProviderContributions,
         private ListOrganizationalEmployeeContributionsService $listEmployeeContributions,
+        private ListOperatorContributionsService $listOperatorContributions,
     ) {}
 
     public function __invoke(GetCompanyCarbonFootprintScopeRequest $request, User $user): GetCompanyCarbonFootprintScopeResponse
@@ -68,15 +71,17 @@ final class GetCompanyCarbonFootprintScopeService
             stageExclusion: $this->stageExclusion($companyCarbonFootprint, $request->scope),
             derivedEmissions: $this->derivedSourceEmissionsCalculator->calculate($companyCarbonFootprint, $request->scope),
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($companyCarbonFootprint, $request->scope),
-            nonConsolidatedProperties: Scope::Scope3 === $request->scope ? $this->nonConsolidatedProperties($companyCarbonFootprint) : [],
+            nonConsolidatedProperties: Scope::Scope3 === $request->scope ? $this->nonConsolidatedProperties($companyCarbonFootprint, $user) : [],
             providerContributions: $this->providerContributions($request->scope, (string) $request->companyCarbonFootprintId, $user),
             employeeContributions: $this->employeeContributions($request->scope, (string) $request->companyCarbonFootprintId, $user),
         );
     }
 
     /** @return list<NonConsolidatedPropertyRow> */
-    private function nonConsolidatedProperties(CompanyCarbonFootprint $companyCarbonFootprint): array
+    private function nonConsolidatedProperties(CompanyCarbonFootprint $companyCarbonFootprint, User $user): array
     {
+        $operatorContributions = ($this->listOperatorContributions)(new ListOperatorContributionsRequest($companyCarbonFootprint->id()), $user)->summariesByProperty;
+
         if ($companyCarbonFootprint->isCompleted()) {
             $propertiesById = [];
             foreach ($this->companyProperties->all($companyCarbonFootprint->companyId()) as $property) {
@@ -94,6 +99,8 @@ final class GetCompanyCarbonFootprintScopeService
                     calculatedEmissions: $line->calculatedEmissions,
                     manualCo2eq: $line->manualCo2eq,
                     emissions: $line->emissions,
+                    operatorContributionId: $line->operatorContributionId,
+                    operatorContribution: $operatorContributions[(string) $line->propertyId] ?? null,
                 );
             }
 
@@ -118,6 +125,8 @@ final class GetCompanyCarbonFootprintScopeService
                 calculatedEmissions: $resolved->calculatedEmissions,
                 manualCo2eq: $manualCo2eq,
                 emissions: null !== $manualCo2eq ? new Emissions($manualCo2eq) : $resolved->calculatedEmissions,
+                operatorContributionId: $resolved->fromOperatorContribution ? $resolved->contribution?->id() : null,
+                operatorContribution: $operatorContributions[(string) $resolved->property->id()] ?? null,
             );
         }
 

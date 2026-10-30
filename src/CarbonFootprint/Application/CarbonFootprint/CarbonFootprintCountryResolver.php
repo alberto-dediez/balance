@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContribution;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Property\Domain\Model\Country\CountryId;
@@ -26,6 +27,7 @@ final class CarbonFootprintCountryResolver
             $carbonFootprint instanceof EventCarbonFootprint => $this->resolveForEvent($carbonFootprint),
             $carbonFootprint instanceof PropertyCarbonFootprint => $this->countryOf($carbonFootprint->propertyId()),
             $carbonFootprint instanceof CompanyCarbonFootprint => $this->countryOf($propertyId),
+            $carbonFootprint instanceof OperatorContribution => $this->countryOf($carbonFootprint->propertyId()),
             default => null,
         };
     }

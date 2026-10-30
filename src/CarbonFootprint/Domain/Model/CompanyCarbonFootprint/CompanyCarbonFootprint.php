@@ -13,6 +13,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
@@ -300,9 +301,13 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
-    public function recordNonConsolidatedProperty(PropertyId $propertyId, Source $source, ?PropertyCarbonFootprintId $propertyCarbonFootprintId, Emissions $calculatedEmissions, ?string $manualCo2eq): void
+    public function recordNonConsolidatedProperty(PropertyId $propertyId, Source $source, ?PropertyCarbonFootprintId $propertyCarbonFootprintId, ?OperatorContributionId $operatorContributionId, Emissions $calculatedEmissions, ?string $manualCo2eq): void
     {
         $this->ensureIsEditable();
+
+        if (null !== $propertyCarbonFootprintId && null !== $operatorContributionId) {
+            throw new \InvalidArgumentException('A non-consolidated property has at most one origin');
+        }
 
         if (!in_array($source, Scope::Scope3->companyOnlySources(), true)) {
             throw new \InvalidArgumentException(sprintf('Source "%s" is not a non-consolidated property source', $source->value));
@@ -326,6 +331,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
             $existing instanceof CompanyCarbonFootprintNonConsolidatedProperty
             && $existing->source() === $source
             && $this->sameOrigin($existing->propertyCarbonFootprintId(), $propertyCarbonFootprintId)
+            && $this->sameOrigin($existing->operatorContributionId(), $operatorContributionId)
             && $existing->calculatedEmissions()->equals($calculatedEmissions)
             && $existing->manualCo2eq() === $manualCo2eq
         ) {
@@ -340,6 +346,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
                 propertyCarbonFootprintId: $propertyCarbonFootprintId,
                 calculatedEmissions: $calculatedEmissions,
                 manualCo2eq: $manualCo2eq,
+                operatorContributionId: $operatorContributionId,
             ),
         );
     }
@@ -410,7 +417,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         return null;
     }
 
-    private function sameOrigin(?PropertyCarbonFootprintId $current, ?PropertyCarbonFootprintId $other): bool
+    private function sameOrigin(PropertyCarbonFootprintId|OperatorContributionId|null $current, PropertyCarbonFootprintId|OperatorContributionId|null $other): bool
     {
         if (null === $current || null === $other) {
             return null === $current && null === $other;
@@ -644,6 +651,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
             $existing->update(
                 source: $event->source(),
                 propertyCarbonFootprintId: $event->propertyCarbonFootprintId(),
+                operatorContributionId: $event->operatorContributionId(),
                 calculatedEmissions: $event->calculatedEmissions(),
                 manualCo2eq: $event->manualCo2eq(),
                 recordedAt: $event->occurredOn(),
@@ -655,6 +663,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
                 propertyId: $event->propertyId(),
                 source: $event->source(),
                 propertyCarbonFootprintId: $event->propertyCarbonFootprintId(),
+                operatorContributionId: $event->operatorContributionId(),
                 calculatedEmissions: $event->calculatedEmissions(),
                 manualCo2eq: $event->manualCo2eq(),
                 recordedAt: $event->occurredOn(),

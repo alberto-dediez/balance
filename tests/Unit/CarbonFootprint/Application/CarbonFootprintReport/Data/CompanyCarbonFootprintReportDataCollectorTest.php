@@ -237,7 +237,7 @@ class CompanyCarbonFootprintReportDataCollectorTest extends TestCase
         $emissionFactorGroups->add(EmissionFactorGroupMother::default());
 
         $footprint = CompanyCarbonFootprintMother::withEmployeesAnswered((string) $company->id(), (string) CompanyCarbonFootprintId::generate(), 'account-id', 2025);
-        $footprint->recordNonConsolidatedProperty($franchised->id(), Source::Franchises, null, new Emissions('5000'), null);
+        $footprint->recordNonConsolidatedProperty($franchised->id(), Source::Franchises, null, null, new Emissions('5000'), null);
 
         $footprints = CompanyCarbonFootprintRepositoryMother::inMemory();
         $footprints->add($footprint);

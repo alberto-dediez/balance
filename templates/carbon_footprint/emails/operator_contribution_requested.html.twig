@@ -1,0 +1,16 @@
+{% extends '@shared/layout/email.html.twig' %}
+
+{% block content %}
+    <h3>{% trans with {'{year}': year, '{property}': propertyName, '{company}': companyName} -%}Aporta los consumos de {year} de {property} para la huella de {company}{%- endtrans %}</h3>
+    <p>
+        {% trans with {'{name}': contactName ?? '', '{company}': companyName, '{property}': propertyName, '{year}': year} -%}
+            Hola {name}, {company} está calculando su huella de carbono de {year} y necesita conocer las emisiones de alcance 1 y 2 de {property}, que explotas como franquiciado o arrendatario.
+        {%- endtrans %}
+    </p>
+    <p>{% trans -%}Puedes indicar tus consumos de combustibles, vehículos, gases refrigerantes y electricidad, o directamente tus emisiones si ya las tienes calculadas.{%- endtrans %}</p>
+    <p>
+        <a href="{{ url('public_operator_contribution', {token: token}) }}" class="btn btn-primary">
+            {% trans -%}Aportar mis datos{%- endtrans %}
+        </a>
+    </p>
+{% endblock %}

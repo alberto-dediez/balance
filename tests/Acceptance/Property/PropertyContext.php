@@ -11,6 +11,7 @@ use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationRepository;
 use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -226,6 +227,40 @@ final readonly class PropertyContext implements Context
 
         Assert::assertInstanceOf(Property::class, $property);
         $this->assertPlaceLocation($property, $label, $latitude, $longitude);
+    }
+
+    #[Given('property :property has operator contact :email')]
+    public function propertyHasOperatorContact(string $property, string $email): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($property));
+
+        assert(null !== $property);
+
+        $property->updateOperatorContact(OperatorContact::from($email, null, null));
+
+        $this->getPropertyRepository()->add($property);
+    }
+
+    #[Then('property :property should have operator contact :email')]
+    public function propertyShouldHaveOperatorContact(string $property, string $email): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($property));
+
+        Assert::assertNotNull($property);
+        Assert::assertSame('' === $email ? null : $email, $property->operatorContact()->email());
+    }
+
+    #[Then('property named :name should have operator contact :email')]
+    public function propertyNamedShouldHaveOperatorContact(string $name, string $email): void
+    {
+        $properties = $this->getPropertyRepository()->findByFilter(new PropertyFilter(name: $name));
+
+        Assert::assertCount(1, $properties);
+
+        $property = reset($properties);
+
+        Assert::assertInstanceOf(Property::class, $property);
+        Assert::assertSame($email, $property->operatorContact()->email());
     }
 
     private function assertPlaceLocation(Property $property, string $label, string $latitude, string $longitude): void

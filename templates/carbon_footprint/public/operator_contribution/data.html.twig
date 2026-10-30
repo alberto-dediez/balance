@@ -1,0 +1,38 @@
+{% extends theme_template('@carbon_footprint/public/operator_contribution/layout.html.twig') %}
+
+{% set page_title = 'Datos de alcance 1 y 2' | trans %}
+{% set wizard_selected = 2 %}
+
+{% block wizard_panels %}
+    {% if contribution.precalculated %}
+        <twig:Alert:Alert type="info">
+            {{ 'Has indicado que ya tienes calculadas tus emisiones: introduce las emisiones de cada fuente.' | trans }}
+        </twig:Alert:Alert>
+    {% else %}
+        <p class="text-muted">
+            {{ 'Indica tus consumos del año de combustibles, vehículos, gases refrigerantes y electricidad. La plataforma calculará las emisiones.' | trans }}
+        </p>
+    {% endif %}
+
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('operator_contribution_data_' ~ token) }}">
+
+        <div class="card mb-3">
+            <div class="card-body">
+                {% include '@carbon_footprint/public/operator_contribution/_tables.html.twig' with {
+                    scope1: scope1,
+                    scope2: scope2,
+                    precalculated: contribution.precalculated,
+                    calculateUrl: path('public_operator_contribution_data_calculate', {token: token}),
+                } only %}
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ path('public_operator_contribution_general', {token: token}) }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            <button type="submit" class="btn btn-primary">{{ 'Enviar' | trans }}</button>
+        </div>
+    </form>
+{% endblock %}

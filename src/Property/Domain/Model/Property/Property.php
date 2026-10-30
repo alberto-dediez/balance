@@ -30,6 +30,7 @@ class Property implements \Stringable
         private ?int $numberOfEmployees = null,
         private ?int $dailyClients = null,
         private OperatingRegime $operatingRegime = OperatingRegime::Owned,
+        private ?OperatorContact $operatorContact = null,
     ) {
         $this->events = $events;
     }
@@ -87,6 +88,15 @@ class Property implements \Stringable
         return $this->operatingRegime;
     }
 
+    public function operatorContact(): OperatorContact
+    {
+        if (!$this->operatorContact instanceof OperatorContact) {
+            $this->operatorContact = new OperatorContact();
+        }
+
+        return $this->operatorContact;
+    }
+
     public function isRemoved(): bool
     {
         return $this->removed ?? false;
@@ -102,7 +112,7 @@ class Property implements \Stringable
         return $this->removedAt;
     }
 
-    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null, OperatingRegime $operatingRegime = OperatingRegime::Owned): void
+    public function register(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null, OperatingRegime $operatingRegime = OperatingRegime::Owned, ?OperatorContact $operatorContact = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyRegistered(
@@ -115,11 +125,12 @@ class Property implements \Stringable
                 numberOfEmployees: $numberOfEmployees,
                 dailyClients: $dailyClients,
                 operatingRegime: $operatingRegime,
+                operatorContact: $operatorContact,
             ),
         );
     }
 
-    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null, ?OperatingRegime $operatingRegime = null): void
+    public function update(string $name, ?AccountId $accountId, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null, ?OperatingRegime $operatingRegime = null, ?OperatorContact $operatorContact = null): void
     {
         $this->recordApplyAndPublish(
             new PropertyUpdated(
@@ -132,6 +143,7 @@ class Property implements \Stringable
                 numberOfEmployees: $numberOfEmployees,
                 dailyClients: $dailyClients,
                 operatingRegime: $operatingRegime ?? $this->operatingRegime,
+                operatorContact: $operatorContact ?? $this->operatorContact(),
             ),
         );
     }
@@ -144,6 +156,20 @@ class Property implements \Stringable
                 name: $name,
                 info: $info,
                 externalId: $externalId,
+            ),
+        );
+    }
+
+    public function updateOperatorContact(OperatorContact $operatorContact): void
+    {
+        if ($this->operatorContact()->equals($operatorContact)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyOperatorContactUpdated(
+                propertyId: $this->id(),
+                operatorContact: $operatorContact,
             ),
         );
     }
@@ -182,6 +208,7 @@ class Property implements \Stringable
         $this->numberOfEmployees = $event->numberOfEmployees();
         $this->dailyClients = $event->dailyClients();
         $this->operatingRegime = $event->operatingRegime();
+        $this->operatorContact = $event->operatorContact() ?? new OperatorContact();
 
         $this->registeredAt = $event->occurredOn();
     }
@@ -203,6 +230,7 @@ class Property implements \Stringable
                     numberOfEmployees: $this->numberOfEmployees(),
                     dailyClients: $this->dailyClients(),
                     operatingRegime: $this->operatingRegime(),
+                    operatorContact: $this->operatorContact(),
                 ),
             );
         }
@@ -220,6 +248,12 @@ class Property implements \Stringable
         $this->numberOfEmployees = $event->numberOfEmployees();
         $this->dailyClients = $event->dailyClients();
         $this->operatingRegime = $event->operatingRegime();
+        $this->operatorContact = $event->operatorContact() ?? $this->operatorContact();
+    }
+
+    public function applyPropertyOperatorContactUpdated(PropertyOperatorContactUpdated $event): void
+    {
+        $this->operatorContact = $event->operatorContact();
     }
 
     public function applyPropertyAccountReleased(PropertyAccountReleased $event): void

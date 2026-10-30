@@ -9,6 +9,7 @@ use App\Property\Domain\Model\Company\CompanyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Model\AggregateRootId;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class PropertyUpdated extends DomainEvent
 {
@@ -24,6 +25,7 @@ final class PropertyUpdated extends DomainEvent
         private readonly ?int $numberOfEmployees = null,
         private readonly ?int $dailyClients = null,
         private readonly OperatingRegime $operatingRegime = OperatingRegime::Owned,
+        private readonly ?OperatorContact $operatorContact = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -75,6 +77,11 @@ final class PropertyUpdated extends DomainEvent
         return $this->operatingRegime;
     }
 
+    public function operatorContact(): ?OperatorContact
+    {
+        return $this->operatorContact;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->propertyId;
@@ -92,6 +99,9 @@ final class PropertyUpdated extends DomainEvent
             'numberOfEmployees' => $this->numberOfEmployees,
             'dailyClients' => $this->dailyClients,
             'operatingRegime' => $this->operatingRegime->value,
+            'operatorEmail' => $this->operatorContact?->email(),
+            'operatorName' => $this->operatorContact?->name(),
+            'operatorLocale' => $this->operatorContact?->locale()?->value,
         ];
     }
 
@@ -110,6 +120,7 @@ final class PropertyUpdated extends DomainEvent
             numberOfEmployees: $payload['numberOfEmployees'] ?? null,
             dailyClients: $payload['dailyClients'] ?? null,
             operatingRegime: OperatingRegime::tryFrom($payload['operatingRegime'] ?? '') ?? OperatingRegime::Owned,
+            operatorContact: OperatorContact::from($payload['operatorEmail'] ?? null, $payload['operatorName'] ?? null, Locale::tryFrom($payload['operatorLocale'] ?? '')),
             id: $id,
             occurredOn: $occurredOn,
         );

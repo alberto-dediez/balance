@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Property\Domain\Model\Property;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
@@ -62,7 +63,7 @@ class PropertyMother
         );
     }
 
-    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null): Property
+    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?OperatorContact $operatorContact = null): Property
     {
         $property = new Property(
             id: $propertyId,
@@ -74,6 +75,7 @@ class PropertyMother
             info: $info,
             externalId: $externalId,
             companyId: $companyId,
+            operatorContact: $operatorContact,
         );
 
         return $property;
@@ -99,6 +101,14 @@ class PropertyMother
     {
         $property = new Property(id: $propertyId);
         $property->register(name: $name, accountId: null, companyId: $companyId, operatingRegime: $regime);
+
+        return $property;
+    }
+
+    public static function fromNameAndCompanyIdAndIdAndRegimeAndContact(string $name, CompanyId $companyId, PropertyId $propertyId, OperatingRegime $regime, OperatorContact $operatorContact): Property
+    {
+        $property = new Property(id: $propertyId);
+        $property->register(name: $name, accountId: null, companyId: $companyId, operatingRegime: $regime, operatorContact: $operatorContact);
 
         return $property;
     }

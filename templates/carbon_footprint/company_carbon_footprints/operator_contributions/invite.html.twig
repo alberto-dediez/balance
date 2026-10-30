@@ -1,0 +1,11 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Huella de empresa' | trans)
+    ~ ' > '
+    ~ ('Invitar al franquiciado o arrendatario' | trans)
+    ~ ' > '
+    ~ property.name %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId}) }}" />
+{% endblock %}

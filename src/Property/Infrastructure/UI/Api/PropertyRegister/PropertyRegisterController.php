@@ -24,7 +24,9 @@ use App\Property\Domain\Model\Country\CountryId;
 use App\Property\Domain\Model\Destination\DestinationId;
 use App\Property\Domain\Model\Property\ExternalId;
 use App\Property\Domain\Model\Property\ExternalSource;
+use App\Property\Domain\Model\Property\InvalidOperatorEmailException;
 use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -33,13 +35,18 @@ use App\Property\Infrastructure\UI\Api\Property\PropertyResponse;
 use App\Property\Infrastructure\UI\Api\Property\PropertyResponseGenerator;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
+use App\Shared\Domain\Model\Locale\Locale;
 use Nelmio\ApiDocBundle\Attribute\Areas;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 #[Route('/properties', name: 'api_properties_register', methods: ['POST'])]
 #[Areas(['admin'])]
@@ -98,6 +105,7 @@ class PropertyRegisterController extends AbstractController
                 info: $info,
                 externalId: $externalId,
                 operatingRegime: OperatingRegime::tryFrom((string) $request->operatingRegime) ?? OperatingRegime::Owned,
+                operatorContact: $this->operatorContact($request),
             ),
             $user,
         );
@@ -106,6 +114,15 @@ class PropertyRegisterController extends AbstractController
         assert($property instanceof Property);
 
         return $this->json($propertyGenerator->generate($property));
+    }
+
+    private function operatorContact(PropertyRegisterRequest $request): OperatorContact
+    {
+        try {
+            return OperatorContact::from($request->operatorEmail, $request->operatorName, Locale::tryFrom((string) $request->operatorLocale));
+        } catch (InvalidOperatorEmailException $exception) {
+            throw new BadRequestHttpException($exception->getMessage(), new ValidationFailedException($request, new ConstraintViolationList([new ConstraintViolation($exception->getMessage(), null, [], $request, 'operatorEmail', $request->operatorEmail)])));
+        }
     }
 
     private function resolveCountryId(

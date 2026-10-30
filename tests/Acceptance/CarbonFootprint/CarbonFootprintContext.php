@@ -82,6 +82,9 @@ use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContribution;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\CommuteAnswer;
@@ -106,6 +109,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\Property
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContribution;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionId;
 use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionRepository;
+use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionStatus;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLanding;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingId;
 use App\CarbonFootprint\Domain\Model\PublicLanding\PublicLandingOwnerType;
@@ -3038,6 +3042,141 @@ final readonly class CarbonFootprintContext implements Context
         );
 
         $this->getOrganizationalProviderContributionRepository()->add($contribution);
+    }
+
+    #[Given('operator contribution with id :id for company carbon footprint :footprintId and property :propertyId of account :account with email :email and token :token exists')]
+    public function operatorContributionExists(string $id, string $footprintId, string $propertyId, string $account, string $email, string $token): void
+    {
+        $companyCarbonFootprint = $this->companyCarbonFootprint($footprintId);
+
+        $contribution = new OperatorContribution(new OperatorContributionId($id));
+        $contribution->register(
+            companyCarbonFootprintId: $companyCarbonFootprint->id(),
+            accountId: new AccountId($account),
+            propertyId: new PropertyId($propertyId),
+            source: Source::Franchises,
+            year: $companyCarbonFootprint->year(),
+            emissionFactorGroupId: $companyCarbonFootprint->emissionFactorGroupId(),
+            contactEmail: $email,
+            contactName: null,
+            contactLocale: Locale::Spanish,
+            token: $token,
+        );
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('operator-' . $id . '@contribution.internal', Role::Provider, new AccountId($account));
+        $this->client->getContainer()->get(UserRepository::class)->add($user);
+
+        $contribution->linkUser($user->id());
+
+        $this->getOperatorContributionRepository()->add($contribution);
+    }
+
+    #[Given('operator contribution :id has consent')]
+    public function operatorContributionHasConsent(string $id): void
+    {
+        $contribution = $this->operatorContribution($id);
+        $contribution->grantConsent(ConsentProofMother::granted());
+
+        $this->getOperatorContributionRepository()->add($contribution);
+    }
+
+    #[Given('operator contribution :id is precalculated')]
+    public function operatorContributionIsPrecalculated(string $id): void
+    {
+        $contribution = $this->operatorContribution($id);
+        $contribution->markAsPrecalculated();
+
+        $this->getOperatorContributionRepository()->add($contribution);
+    }
+
+    #[Given('operator contribution :id is answered with a combustible :combustibleId activity of :co2eq kg')]
+    public function operatorContributionIsAnsweredWithACombustibleActivity(string $id, string $combustibleId, string $co2eq): void
+    {
+        $contribution = $this->operatorContribution($id);
+        $accountId = $contribution->accountId();
+        Assert::assertNotNull($accountId);
+
+        $activity = CombustibleActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId,
+            combustibleId: new CombustibleId($combustibleId),
+            emissionFactor: new EmissionFactor('1.5', '1.0', '0.2', '0.3', $contribution->calculationYear(), EmissionFactorGroupMother::default()->id(), Unit::Liter, 'IPCC'),
+            emissions: new Emissions($co2eq, $co2eq, '0', '0'),
+            quantity: new Quantity(100.0, Unit::Liter),
+        );
+        $this->getActivityRepository()->save($activity);
+
+        $contribution->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $contribution->answer();
+
+        $this->getOperatorContributionRepository()->add($contribution);
+    }
+
+    #[Given('operator contribution :id is ignored')]
+    public function operatorContributionIsIgnored(string $id): void
+    {
+        $contribution = $this->operatorContribution($id);
+        $contribution->ignore();
+
+        $this->getOperatorContributionRepository()->add($contribution);
+    }
+
+    #[When('I submit the operator data form with a combustible :combustibleId of :quantity :unit')]
+    public function iSubmitTheOperatorDataFormWithACombustible(string $combustibleId, string $quantity, string $unit): void
+    {
+        $this->submitScopeStepRow('combustibles', ['itemId' => $combustibleId, 'quantity' => $quantity, 'unit' => $unit]);
+    }
+
+    #[When('I submit the operator data form with reported emissions :description of :quantity :unit for source :source')]
+    public function iSubmitTheOperatorDataFormWithReportedEmissions(string $description, string $quantity, string $unit, string $source): void
+    {
+        $this->submitScopeStep([$source . '_reported' => [$this->reportedEmissionsRow($description, $quantity, $unit)]]);
+    }
+
+    #[When('I go to the :action action of operator contribution :id of company carbon footprint :footprintId')]
+    public function iGoToTheActionOfOperatorContribution(string $action, string $id, string $footprintId): void
+    {
+        $csrfToken = $this->csrfTokenInCurrentSession($action);
+
+        $this->client->request('GET', sprintf('/es/company-carbon-footprints/%s/operators/%s/%s?_token=%s', $footprintId, $id, $action, urlencode($csrfToken)));
+    }
+
+    #[Then('operator contribution :id should have status :status')]
+    public function operatorContributionShouldHaveStatus(string $id, string $status): void
+    {
+        Assert::assertSame(ProviderContributionStatus::from($status), $this->operatorContribution($id)->status());
+    }
+
+    #[Then('operator contribution :id should have :count activities of source :source in scope :scope')]
+    public function operatorContributionShouldHaveActivitiesOfSource(string $id, int $count, string $source, string $scope): void
+    {
+        Assert::assertCount($count, $this->operatorContribution($id)->activityIds(new ActivityPlacement(Scope::from($scope), Source::from($source))));
+    }
+
+    #[Then('there should be :count active operator contributions for company carbon footprint :footprintId')]
+    public function thereShouldBeActiveOperatorContributions(int $count, string $footprintId): void
+    {
+        Assert::assertCount($count, $this->getOperatorContributionRepository()->findActiveByCompanyCarbonFootprint(new CompanyCarbonFootprintId($footprintId)));
+    }
+
+    #[Then('operator contribution :id should be removed')]
+    public function operatorContributionShouldBeRemoved(string $id): void
+    {
+        Assert::assertNull($this->getOperatorContributionRepository()->find(new OperatorContributionId($id)));
+    }
+
+    private function operatorContribution(string $id): OperatorContribution
+    {
+        $contribution = $this->getOperatorContributionRepository()->find(new OperatorContributionId($id));
+
+        Assert::assertNotNull($contribution);
+
+        return $contribution;
+    }
+
+    private function getOperatorContributionRepository(): OperatorContributionRepository
+    {
+        return $this->client->getContainer()->get(OperatorContributionRepository::class);
     }
 
     private function getOrganizationalProviderContributionRepository(): OrganizationalProviderContributionRepository

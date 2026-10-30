@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\Property\Domain\Model\Property\PropertyId;
 
@@ -18,6 +19,7 @@ class CompanyCarbonFootprintNonConsolidatedProperty
         private PropertyId $propertyId,
         private Source $source,
         private ?PropertyCarbonFootprintId $propertyCarbonFootprintId = null,
+        private ?OperatorContributionId $operatorContributionId = null,
         private Emissions $calculatedEmissions = new Emissions(),
         private ?string $manualCo2eq = null,
         private \DateTimeImmutable $recordedAt = new \DateTimeImmutable('NOW'),
@@ -48,6 +50,11 @@ class CompanyCarbonFootprintNonConsolidatedProperty
         return $this->propertyCarbonFootprintId;
     }
 
+    public function operatorContributionId(): ?OperatorContributionId
+    {
+        return $this->operatorContributionId;
+    }
+
     public function calculatedEmissions(): Emissions
     {
         return $this->calculatedEmissions;
@@ -66,12 +73,14 @@ class CompanyCarbonFootprintNonConsolidatedProperty
     public function update(
         Source $source,
         ?PropertyCarbonFootprintId $propertyCarbonFootprintId,
+        ?OperatorContributionId $operatorContributionId,
         Emissions $calculatedEmissions,
         ?string $manualCo2eq,
         \DateTimeImmutable $recordedAt,
     ): void {
         $this->source = $source;
         $this->propertyCarbonFootprintId = $propertyCarbonFootprintId;
+        $this->operatorContributionId = $operatorContributionId;
         $this->calculatedEmissions = $calculatedEmissions;
         $this->manualCo2eq = $manualCo2eq;
         $this->recordedAt = $recordedAt;
@@ -88,6 +97,7 @@ class CompanyCarbonFootprintNonConsolidatedProperty
             source: $this->source,
             propertyId: $this->propertyId,
             propertyCarbonFootprintId: $this->propertyCarbonFootprintId,
+            operatorContributionId: $this->operatorContributionId,
             calculatedEmissions: $this->calculatedEmissions,
             manualCo2eq: $this->manualCo2eq,
             emissions: $this->emissions(),

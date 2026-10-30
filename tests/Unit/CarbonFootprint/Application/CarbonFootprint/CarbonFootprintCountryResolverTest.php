@@ -17,6 +17,7 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
@@ -106,6 +107,19 @@ class CarbonFootprintCountryResolverTest extends TestCase
         $footprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
 
         $this->assertSame('C-ES', (string) $sut->resolve($footprint));
+    }
+
+    public function testReturnsTheCountryOfThePropertyOfAnOperatorContribution(): void
+    {
+        $propertyRepository = PropertyRepositoryMother::inMemory();
+        $propertyRepository->add(PropertyMother::from(
+            propertyId: new PropertyId('P-1'),
+            info: new PropertyInfo(countryId: new CountryId('C-ES')),
+        ));
+
+        $sut = $this->createSUT(EventRepositoryMother::inMemory(), $propertyRepository);
+
+        $this->assertSame('C-ES', (string) $sut->resolve(OperatorContributionMother::pending(propertyId: 'P-1'), new PropertyId('other')));
     }
 
     public function testReturnsNullForAPropertyFootprintWhosePropertyHasNoCountry(): void

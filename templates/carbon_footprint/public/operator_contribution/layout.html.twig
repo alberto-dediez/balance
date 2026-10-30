@@ -1,0 +1,11 @@
+{% extends theme_template('@shared/layout/public-wizard.html.twig') %}
+
+{% set wizard_active = contribution.hasConsent ? 2 : 1 %}
+
+{% block content %}
+    {% set wizard_steps = [
+        {label: 'Datos generales' | trans, href: path('public_operator_contribution_general', {token: token})},
+        {label: 'Datos de alcance 1 y 2' | trans, href: path('public_operator_contribution_data', {token: token})},
+    ] %}
+    {{ parent() }}
+{% endblock %}

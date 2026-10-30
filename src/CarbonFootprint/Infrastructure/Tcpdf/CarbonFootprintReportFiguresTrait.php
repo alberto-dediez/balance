@@ -481,6 +481,7 @@ trait CarbonFootprintReportFiguresTrait
 
             $origin = match (true) {
                 null !== $line->manualCo2eq => $this->trans('Valor manual', $locale),
+                null !== $line->operatorContributionId => $this->trans('Aportación del franquiciado o arrendatario', $locale),
                 null !== $line->propertyCarbonFootprintId => $this->trans('Huella de la propiedad', $locale),
                 default => $this->trans('Sin datos', $locale),
             };
