@@ -38,6 +38,20 @@ Feature:
         Then I see a text "Medida actualizada con éxito"
         Then mitigation measure "333" should reduce source "franchises"
 
+    Scenario: As an admin, I can make a measure reduce the fuel and energy related activities
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given mitigation measure category "Energía" with id "C1" exists
+        Given mitigation measure "Combustibles más limpios" with id "333" of category "C1" reducing source "fixed_facilities" between "0.1" and "0.3" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/mitigation-measures/edit/333"
+        Then I see a text "Bienes de capital" before a text "Actividades relacionadas con combustibles y energía"
+        Then I see a text "Actividades relacionadas con combustibles y energía" before a text "Transporte y distribución aguas arriba"
+        When I submit a form with "[effects][0][source]:fuel_and_energy_related" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Medida actualizada con éxito"
+        Then mitigation measure "333" should reduce source "fuel_and_energy_related"
+
     Scenario: As owner I cannot edit measures
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists

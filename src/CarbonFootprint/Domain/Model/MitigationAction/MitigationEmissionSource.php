@@ -32,4 +32,13 @@ final class MitigationEmissionSource
     {
         return $this->originKey ?? $this->key();
     }
+
+    public static function compare(self $a, self $b): int
+    {
+        $scopes = array_flip(array_map(static fn(Scope $scope): string => $scope->value, Scope::cases()));
+        $sources = array_flip(array_map(static fn(Source $source): string => $source->value, Source::cases()));
+
+        return [$scopes[$a->scope->value], $sources[$a->source->value], $a->itemName]
+            <=> [$scopes[$b->scope->value], $sources[$b->source->value], $b->itemName];
+    }
 }

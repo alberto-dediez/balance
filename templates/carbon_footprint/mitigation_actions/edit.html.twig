@@ -69,7 +69,7 @@
                                 {% set row = effectRows[loop.index0] %}
                                 <tr>
                                     <td>
-                                        {{ row.source | trans({}, 'source') }} — {{ row.itemName }}
+                                        {{ row.scope | trans({}, 'scope') }} · {{ row.source | trans({}, 'source') }} — {{ row.itemName }}
                                         {% if row.emissions is null %}
                                             <span class="badge bg-warning text-dark">{{ 'Sin emisiones en esta huella' | trans }}</span>
                                         {% endif %}

@@ -99,6 +99,20 @@ class MitigationPlanReportBuilderTest extends TestCase
         $this->assertEqualsWithDelta(440.0, $plan->projection->totalByYear[2030], 0.001);
     }
 
+    public function testAnEffectOnAScope3SourceKeepsItsScope(): void
+    {
+        $action = $this->action();
+        $action->setEffect(Source::Investments, 'sector-1', 'Sector financiero', 0.1);
+
+        $plan = $this->mitigationPlanBuilder()->build(CarbonFootprintReportSubjectType::Property, $this->footprint, null);
+
+        $this->assertNotNull($plan);
+        $this->assertCount(2, $plan->actions[0]->effects);
+        $this->assertSame(Scope::Scope3, $plan->actions[0]->effects[1]['scope']);
+        $this->assertSame(Source::Investments, $plan->actions[0]->effects[1]['source']);
+        $this->assertSame('Sector financiero', $plan->actions[0]->effects[1]['itemName']);
+    }
+
     public function testReturnsNullWithoutActions(): void
     {
         $this->assertNull($this->mitigationPlanBuilder()->build(CarbonFootprintReportSubjectType::Property, $this->footprint, Locale::Spanish));

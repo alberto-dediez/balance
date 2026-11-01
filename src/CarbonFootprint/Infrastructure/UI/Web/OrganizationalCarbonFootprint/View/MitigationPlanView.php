@@ -15,7 +15,7 @@ final class MitigationPlanView
      * @param list<MitigationEmissionSource> $emissionSources
      *
      * @return array{
-     *     actions: list<array{action: MitigationAction, effects: list<array{source: string, itemName: string, reduction: float, withoutEmissions: bool}>, expectedReduction: float}>,
+     *     actions: list<array{action: MitigationAction, effects: list<array{scope: string, source: string, itemName: string, reduction: float, withoutEmissions: bool}>, expectedReduction: float}>,
      *     projection: array{baseYear: int, years: list<int>, rows: list<array{scope: string, source: string, itemName: string, values: list<float>}>, totals: list<float>, interannual: list<float|null>}|null,
      *     chart: array{categories: list<string>, values: list<float>}|null
      * }
@@ -43,7 +43,7 @@ final class MitigationPlanView
      * @param array<string, MitigationEmissionSource>       $sourcesByKey
      * @param array<string, list<MitigationEmissionSource>> $derivedSourcesByOriginKey
      *
-     * @return array{action: MitigationAction, effects: list<array{source: string, itemName: string, reduction: float, withoutEmissions: bool}>, expectedReduction: float}
+     * @return array{action: MitigationAction, effects: list<array{scope: string, source: string, itemName: string, reduction: float, withoutEmissions: bool}>, expectedReduction: float}
      */
     private function actionRow(MitigationAction $action, array $sourcesByKey, array $derivedSourcesByOriginKey): array
     {
@@ -55,6 +55,7 @@ final class MitigationPlanView
             $emissionSource = $sourcesByKey[$effectKey] ?? null;
 
             $effects[] = [
+                'scope' => $effect->scope()->value,
                 'source' => $effect->source()->value,
                 'itemName' => null !== $emissionSource ? $emissionSource->itemName : $effect->itemName(),
                 'reduction' => $effect->reduction(),

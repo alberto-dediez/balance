@@ -61,6 +61,21 @@ class MitigationPlanViewTest extends TestCase
         $this->assertSame('Gas natural', $view['actions'][0]['effects'][0]['itemName']);
     }
 
+    public function testTheEffectRowCarriesTheScopeOfItsSource(): void
+    {
+        $sources = [MitigationEmissionSourceMother::naturalGas(1000.0), MitigationEmissionSourceMother::from(Source::BusinessTravel, 'plane', 400.0, 'Avión')];
+        $action = MitigationActionMother::withEffect(Source::BusinessTravel, 'plane', 0.1);
+        $action->setEffect(Source::FixedFacilities, 'natural-gas', 'Gas natural', 0.2);
+        $actions = [$action];
+
+        $view = (new MitigationPlanView())->build($actions, $sources, (new MitigationProjector())->project(2025, $sources, $actions));
+
+        $this->assertSame('scope_3', $view['actions'][0]['effects'][0]['scope']);
+        $this->assertSame('business_travel', $view['actions'][0]['effects'][0]['source']);
+        $this->assertSame('Avión', $view['actions'][0]['effects'][0]['itemName']);
+        $this->assertSame('scope_1', $view['actions'][0]['effects'][1]['scope']);
+    }
+
     public function testWithoutProjectionHasNoTablesNorChart(): void
     {
         $view = (new MitigationPlanView())->build([], [MitigationEmissionSourceMother::naturalGas()], null);

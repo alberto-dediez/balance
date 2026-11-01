@@ -12,12 +12,12 @@ use App\Security\Domain\Model\Account\AccountId;
 
 class MobilityActivityMother
 {
-    public static function registered(?AccountId $accountId = null): MobilityActivity
+    public static function registered(?AccountId $accountId = null, ?MobilityId $mobilityId = null): MobilityActivity
     {
         return MobilityActivity::register(
             id: ActivityId::generate(),
             accountId: $accountId ?? new AccountId('account-id'),
-            mobilityId: MobilityId::generate(),
+            mobilityId: $mobilityId ?? MobilityId::generate(),
             emissionFactor: ActivityMother::emissionFactor(),
             emissions: ActivityMother::emissions(),
             quantity: ActivityMother::quantity(Unit::Kilometer, 300.0),

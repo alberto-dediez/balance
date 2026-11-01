@@ -24,6 +24,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\CombustibleActivity;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivity;
+use App\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivity;
 use App\CarbonFootprint\Domain\Model\Activity\TransportActivity;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurvey;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyId;
@@ -2425,6 +2426,35 @@ final readonly class CarbonFootprintContext implements Context
         };
     }
 
+    #[Given(':subjectType carbon footprint :id has reported emissions of :co2eq kg in source :source')]
+    public function carbonFootprintHasReportedEmissionsInSource(string $subjectType, string $id, string $co2eq, string $source): void
+    {
+        $carbonFootprint = $this->findCarbonFootprint($subjectType, $id);
+        $accountId = $carbonFootprint->accountId();
+        Assert::assertNotNull($accountId);
+
+        $sourceEnum = Source::from($source);
+        $scope = Scope::ofSource($sourceEnum);
+        Assert::assertNotNull($scope);
+
+        $activity = ReportedEmissionsActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId,
+            description: 'Emisiones comunicadas',
+            emissionFactor: new EmissionFactor('1', '1', '0', '0', $carbonFootprint->calculationYear(), EmissionFactorGroupMother::default()->id(), Unit::Kilogram, 'reported'),
+            emissions: new Emissions($co2eq, $co2eq, '0', '0'),
+            quantity: new Quantity((float) $co2eq, Unit::Kilogram),
+        );
+        $this->getActivityRepository()->save($activity);
+
+        $carbonFootprint->addActivity($activity->id(), new ActivityPlacement($scope, $sourceEnum));
+
+        match ($subjectType) {
+            'property' => $this->getPropertyCarbonFootprintRepository()->add($this->propertyCarbonFootprint($id)),
+            default => $this->getCompanyCarbonFootprintRepository()->add($this->companyCarbonFootprint($id)),
+        };
+    }
+
     #[Then('mitigation measure :id should reduce source :source')]
     public function mitigationMeasureShouldReduceSource(string $id, string $source): void
     {
@@ -3624,6 +3654,19 @@ final readonly class CarbonFootprintContext implements Context
         $effect = $actions[0]->effects()->forSourceAndItem(Source::from($source), $itemId);
         Assert::assertNotNull($effect);
         Assert::assertEqualsWithDelta((float) $reduction, $effect->reduction(), 0.0001);
+    }
+
+    #[Then('the only mitigation action of :subjectType carbon footprint :id should have no effects')]
+    public function theOnlyMitigationActionShouldHaveNoEffects(string $subjectType, string $id): void
+    {
+        $actions = $this->getMitigationActionRepository()->findByFilter(new MitigationActionFilter(
+            subjectType: CarbonFootprintReportSubjectType::from($subjectType),
+            carbonFootprintId: $id,
+            limit: 0,
+        ));
+
+        Assert::assertCount(1, $actions);
+        Assert::assertCount(0, $actions[0]->effects());
     }
 
     private function propertyCarbonFootprint(string $id): PropertyCarbonFootprint

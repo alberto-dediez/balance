@@ -89,7 +89,7 @@ class RegisterMitigationActionService implements CommandHandler
 
             foreach ($measure->effects() as $measureEffect) {
                 foreach ($emissionSources as $emissionSource) {
-                    if ($emissionSource->source !== $measureEffect->source()) {
+                    if ($emissionSource->isDerived() || $emissionSource->source !== $measureEffect->source()) {
                         continue;
                     }
 

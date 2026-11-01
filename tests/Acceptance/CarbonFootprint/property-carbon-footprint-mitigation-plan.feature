@@ -112,6 +112,61 @@ Feature:
         Then I am redirected to route "mitigation_actions_edit"
         Then the only mitigation action of property carbon footprint "999" should reduce source "purchased_goods_and_services" item "PS1" by "0.1"
 
+    Scenario: An owner registers a manual measure on a scope 3 source
+        Given combustible "Gas natural" with id "CB1" and emission factor for year "2025" exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
+        Given property carbon footprint "999" has a combustible "CB1" activity of "1000" kg
+        Given property carbon footprint "999" has a purchase service activity "PS1" in scope 3
+        Given mitigation action "Compra responsable" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
+        Given mitigation action "A1" reduces source "purchased_goods_and_services" item "PS1" by "0.1"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/mitigation-actions/A1/edit"
+        Then the response status should be 200
+        Then I see a text "Alcance 1" before a text "Alcance 3"
+        Then I see a text "Instalaciones fijas — Gas natural" before a text "Alcance 3"
+        Then I see a text "Alcance 3" before a text "Bienes y servicios adquiridos"
+        When I fill the unprefixed field "update_mitigation_action[effects][0][emissionSource]" with "purchased_goods_and_services|PS1"
+        When I submit a form with "[effects][0][reduction]:20" and button "Guardar"
+        Then I am redirected to route "property_carbon_footprints_mitigation_plan"
+        Then the only mitigation action of property carbon footprint "999" should reduce source "purchased_goods_and_services" item "PS1" by "0.2"
+
+    Scenario: The projection of the plan shows the scope 3 source
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
+        Given property carbon footprint "999" has a purchase service activity "PS1" in scope 3
+        Given mitigation action "Compra responsable" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists
+        Given mitigation action "A1" reduces source "purchased_goods_and_services" item "PS1" by "0.2"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/mitigation-plan"
+        Then the response status should be 200
+        Then I see a text "Alcance 3 · Bienes y servicios adquiridos"
+        Then I see a text "Alcance 3"
+        Then I see a text "Bienes y servicios adquiridos"
+        Then I see a text "400,00"
+
+    Scenario: A suggested measure on the fuel and energy category generates no effect on a calculated footprint
+        Given combustible "Gas natural" with id "CB1" and emission factor for year "2025" exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
+        Given property carbon footprint "999" has a combustible "CB1" activity of "1000" kg with "100" kg well-to-tank
+        Given mitigation measure category "Energía" with id "C1" exists
+        Given mitigation measure "Combustibles más limpios" with id "M1" of category "C1" reducing source "fuel_and_energy_related" between "0.1" and "0.3" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/mitigation-actions/property/999/register"
+        When I submit a form with "measure:M1|targetYear:2030" and button "Registrar"
+        Then I am redirected to route "mitigation_actions_edit"
+        Then property carbon footprint "999" should have 1 mitigation actions
+        Then the only mitigation action of property carbon footprint "999" should have no effects
+
+    Scenario: A suggested measure on the fuel and energy category reduces the reported emissions of a precalculated footprint
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" precalculated exists
+        Given property carbon footprint "999" has reported emissions of "900" kg in source "fuel_and_energy_related"
+        Given mitigation measure category "Energía" with id "C1" exists
+        Given mitigation measure "Combustibles más limpios" with id "M1" of category "C1" reducing source "fuel_and_energy_related" between "0.1" and "0.3" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/mitigation-actions/property/999/register"
+        When I submit a form with "measure:M1|targetYear:2030" and button "Registrar"
+        Then I am redirected to route "mitigation_actions_edit"
+        Then the only mitigation action of property carbon footprint "999" should reduce source "fuel_and_energy_related" item "" by "0.1"
+
     Scenario: Editing a measure in English stores the English translation
         Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with employees answered exists
         Given mitigation action "Paneles solares" with id "A1" for property carbon footprint "999" of account "666" with target year "2030" exists

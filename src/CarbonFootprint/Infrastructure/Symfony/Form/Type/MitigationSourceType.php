@@ -21,13 +21,13 @@ class MitigationSourceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [];
+        $positions = array_flip(array_map(static fn(Source $source): string => $source->value, Source::cases()));
 
         foreach (Scope::cases() as $scope) {
-            foreach ($scope->sections() as $section) {
-                $choices[$section->source->value] = $section->source;
-            }
+            $sources = $scope->allSources();
+            usort($sources, static fn(Source $a, Source $b): int => $positions[$a->value] <=> $positions[$b->value]);
 
-            foreach ($scope->companyOnlySources() as $source) {
+            foreach ($sources as $source) {
                 $choices[$source->value] = $source;
             }
         }

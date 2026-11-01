@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\MitigationAction;
 
-use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
-use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
-
 final class MitigationProjector
 {
     /**
@@ -120,14 +117,7 @@ final class MitigationProjector
      */
     private function sorted(array $emissionSources): array
     {
-        $scopes = array_flip(array_map(static fn(Scope $scope): string => $scope->value, Scope::cases()));
-        $sources = array_flip(array_map(static fn(Source $source): string => $source->value, Source::cases()));
-
-        usort(
-            $emissionSources,
-            static fn(MitigationEmissionSource $a, MitigationEmissionSource $b): int => [$scopes[$a->scope->value], $sources[$a->source->value], $a->itemName]
-                <=> [$scopes[$b->scope->value], $sources[$b->source->value], $b->itemName],
-        );
+        usort($emissionSources, MitigationEmissionSource::compare(...));
 
         return $emissionSources;
     }

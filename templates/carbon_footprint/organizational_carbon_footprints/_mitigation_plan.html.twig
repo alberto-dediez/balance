@@ -34,7 +34,7 @@
                             <td>
                                 {% for effect in row.effects %}
                                     <div>
-                                        {{ effect.source | trans({}, 'source') }} — {{ effect.itemName }}: {{ (effect.reduction * 100) | number_format(2, ',', '.') }} %
+                                        {{ effect.scope | trans({}, 'scope') }} · {{ effect.source | trans({}, 'source') }} — {{ effect.itemName }}: {{ (effect.reduction * 100) | number_format(2, ',', '.') }} %
                                         {% if effect.withoutEmissions %}
                                             <span class="badge bg-warning text-dark">{{ 'Sin emisiones en esta huella' | trans }}</span>
                                         {% endif %}

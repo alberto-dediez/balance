@@ -53,3 +53,59 @@ Feature:
         When I go to "/es/company-carbon-footprints/999/step/mitigation-plan"
         Then the response status should be 200
         Then the previous step link should point to "/es/company-carbon-footprints/999/step/employees"
+
+    Scenario: An owner registers a manual measure on a franchised property
+        Given property "2222" has operating regime "franchised"
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
+        Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
+        Given property carbon footprint "P2" is completed
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given mitigation action "Eficiencia en franquicias" with id "A1" for company carbon footprint "999" of account "666" with target year "2030" exists
+        Given mitigation action "A1" reduces source "franchises" item "2222" by "0.1"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/company-carbon-footprints/999/step/scope-3"
+        When I submit the company scope 3 step form with manual emissions "" for property "2222"
+        Then I am redirected to route "company_carbon_footprints_providers"
+        When I submit the providers step form
+        Then I am redirected to route "company_carbon_footprints_employees"
+        When I submit the employees step form with employees "" and total "1"
+        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        When I go to "/es/mitigation-actions/A1/edit"
+        Then the response status should be 200
+        Then I see a text "Hotel Luna"
+        When I fill the unprefixed field "update_mitigation_action[effects][0][emissionSource]" with "franchises|2222"
+        When I submit a form with "[effects][0][reduction]:20" and button "Guardar"
+        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then the only mitigation action of company carbon footprint "999" should reduce source "franchises" item "2222" by "0.2"
+
+    Scenario: Two franchised properties with the same name are both offered in the selector
+        Given property "Hotel Luna" with id "3333" of account "666" exists
+        Given property "3333" has company "C1" assigned
+        Given property "2222" has operating regime "franchised"
+        Given property "3333" has operating regime "franchised"
+        Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
+        Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
+        Given property carbon footprint "P2" is completed
+        Given property carbon footprint with id "P3" for property "3333" of account "666" and year "2025" with employees answered exists
+        Given property carbon footprint "P3" has a combustible "CB1" activity of "2000" kg with "100" kg well-to-tank
+        Given property carbon footprint "P3" is completed
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given mitigation action "Eficiencia en franquicias" with id "A1" for company carbon footprint "999" of account "666" with target year "2030" exists
+        Given mitigation action "A1" reduces source "franchises" item "2222" by "0.1"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/company-carbon-footprints/999/step/scope-3"
+        When I submit the company scope 3 step form with manual emissions "" for property "2222"
+        Then I am redirected to route "company_carbon_footprints_providers"
+        When I submit the providers step form
+        Then I am redirected to route "company_carbon_footprints_employees"
+        When I submit the employees step form with employees "" and total "1"
+        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        When I go to "/es/mitigation-actions/A1/edit"
+        Then the response status should be 200
+        Then I see a text 'value="franchises|2222"'
+        Then I see a text 'value="franchises|3333"'
+        Then I see a text "Hotel Luna (2)"
+        When I fill the unprefixed field "update_mitigation_action[effects][0][emissionSource]" with "franchises|3333"
+        When I submit a form with "[effects][0][reduction]:20" and button "Guardar"
+        Then I am redirected to route "company_carbon_footprints_mitigation_plan"
+        Then the only mitigation action of company carbon footprint "999" should reduce source "franchises" item "3333" by "0.2"

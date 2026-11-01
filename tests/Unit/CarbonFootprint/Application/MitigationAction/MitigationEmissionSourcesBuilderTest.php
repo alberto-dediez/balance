@@ -8,8 +8,10 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\OperatingRegime;
@@ -19,6 +21,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MobilityActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use PHPUnit\Framework\TestCase;
@@ -130,6 +133,59 @@ class MitigationEmissionSourcesBuilderTest extends TestCase
         $this->assertCount(1, $sources);
         $this->assertSame('Transportes Norte · reported_emissions', $sources[0]->itemName);
         $this->assertSame(500.0, $sources[0]->emissions);
+    }
+
+    public function testTheReportedFuelAndEnergyOfAPrecalculatedFootprintIsADirectSource(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::precalculated((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate());
+        $activity = ReportedEmissionsActivityMother::registered(description: 'Combustibles y energía', kilograms: 900.0);
+        $this->activities->save($activity);
+        $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope3, Source::FuelAndEnergyRelated));
+
+        $sources = $this->emissionSourcesBuilder()->build($footprint);
+
+        $this->assertCount(1, $sources);
+        $this->assertSame(Scope::Scope3, $sources[0]->scope);
+        $this->assertSame('fuel_and_energy_related|', $sources[0]->key());
+        $this->assertFalse($sources[0]->isDerived());
+        $this->assertSame('reported_emissions', $sources[0]->itemName);
+        $this->assertSame(900.0, $sources[0]->emissions);
+    }
+
+    public function testAProviderActivityIsAddedToTheItemOfTheOwner(): void
+    {
+        $footprint = $this->propertyFootprint(withActivities: false);
+        $mobilityId = MobilityId::generate();
+        $owned = MobilityActivityMother::registered(mobilityId: $mobilityId);
+        $provided = MobilityActivityMother::registered(mobilityId: $mobilityId);
+        $this->activities->save($owned);
+        $this->activities->save($provided);
+        $footprint->addActivity($owned->id(), new ActivityPlacement(Scope::Scope3, Source::BusinessTravel));
+        $footprint->addActivity($provided->id(), new ActivityPlacement(Scope::Scope3, Source::BusinessTravel, providerId: ProviderId::generate()));
+
+        $sources = $this->emissionSourcesBuilder()->build($footprint);
+
+        $this->assertCount(1, $sources);
+        $this->assertSame(Source::BusinessTravel->value . '|' . $mobilityId, $sources[0]->key());
+        $this->assertSame(30.0, $sources[0]->emissions);
+    }
+
+    public function testAnEmployeeActivityIsAddedToTheItemOfTheOwner(): void
+    {
+        $footprint = $this->propertyFootprint(withActivities: false);
+        $mobilityId = MobilityId::generate();
+        $owned = MobilityActivityMother::registered(mobilityId: $mobilityId);
+        $commuted = MobilityActivityMother::registered(mobilityId: $mobilityId);
+        $this->activities->save($owned);
+        $this->activities->save($commuted);
+        $footprint->addActivity($owned->id(), new ActivityPlacement(Scope::Scope3, Source::BusinessTravel));
+        $footprint->addActivity($commuted->id(), new ActivityPlacement(Scope::Scope3, Source::BusinessTravel, fromEmployees: true));
+
+        $sources = $this->emissionSourcesBuilder()->build($footprint);
+
+        $this->assertCount(1, $sources);
+        $this->assertSame(Source::BusinessTravel->value . '|' . $mobilityId, $sources[0]->key());
+        $this->assertSame(30.0, $sources[0]->emissions);
     }
 
     public function testSumsThePropertiesOfACompany(): void

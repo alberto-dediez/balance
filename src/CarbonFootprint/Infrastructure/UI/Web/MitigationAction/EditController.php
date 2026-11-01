@@ -144,14 +144,24 @@ class EditController extends AbstractController
     /**
      * @param array<string, MitigationEmissionSource> $emissionSources
      *
-     * @return array<string, string>
+     * @return array<string, array<string, string>>
      */
     private function emissionSourceChoices(array $emissionSources, TranslatorInterface $translator): array
     {
+        uasort($emissionSources, MitigationEmissionSource::compare(...));
+
         $choices = [];
 
         foreach ($emissionSources as $key => $emissionSource) {
-            $choices[sprintf('%s — %s', $translator->trans($emissionSource->source->value, [], 'source'), $emissionSource->itemName)] = $key;
+            $scopeLabel = $translator->trans($emissionSource->scope->value, [], 'scope');
+            $label = sprintf('%s — %s', $translator->trans($emissionSource->source->value, [], 'source'), $emissionSource->itemName);
+
+            $uniqueLabel = $label;
+            for ($occurrence = 2; isset($choices[$scopeLabel][$uniqueLabel]); ++$occurrence) {
+                $uniqueLabel = sprintf('%s (%d)', $label, $occurrence);
+            }
+
+            $choices[$scopeLabel][$uniqueLabel] = $key;
         }
 
         return $choices;
@@ -175,7 +185,7 @@ class EditController extends AbstractController
     /**
      * @param array<string, MitigationEmissionSource> $emissionSources
      *
-     * @return list<array{source: string, itemName: string, emissions: float|null, minimumReduction: float, maximumReduction: float}>
+     * @return list<array{scope: string, source: string, itemName: string, emissions: float|null, minimumReduction: float, maximumReduction: float}>
      */
     private function effectRows(MitigationAction $mitigationAction, array $emissionSources): array
     {
@@ -185,6 +195,7 @@ class EditController extends AbstractController
             $emissionSource = $emissionSources[$effect->source()->value . '|' . $effect->itemId()] ?? null;
 
             $rows[] = [
+                'scope' => $effect->scope()->value,
                 'source' => $effect->source()->value,
                 'itemName' => null !== $emissionSource ? $emissionSource->itemName : $effect->itemName(),
                 'emissions' => $emissionSource?->emissions,
