@@ -23,6 +23,10 @@
         {% endif %}
     {% endif %}
 
+    {% if companyCarbonFootprint.status.isCompleted and companyCarbonFootprint | is_authorized('export') %}
+        <twig:TopAction:Export path="{{ path('export', {code: 'company_carbon_footprint_detail', companyCarbonFootprintId: companyCarbonFootprintId}) }}" />
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('company_carbon_footprints') }}" />
 {% endblock %}
 

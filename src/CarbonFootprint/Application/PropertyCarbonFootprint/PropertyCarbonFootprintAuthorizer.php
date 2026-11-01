@@ -57,6 +57,11 @@ final class PropertyCarbonFootprintAuthorizer extends AbstractAuthorizer
         return $this->canEdit($subject, $user) || $this->userHasRole($user, Role::Admin);
     }
 
+    protected function canExport(mixed $subject, User $user): bool
+    {
+        return $this->canView($subject, $user);
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof PropertyCarbonFootprint;

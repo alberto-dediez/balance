@@ -10925,6 +10925,90 @@
         <source>Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)</source>
         <target>Reported in the company footprint (leased-out or franchised properties)</target>
       </trans-unit>
+      <trans-unit id="WzN9IlU" resname="Detalle de huella de empresa">
+        <source>Detalle de huella de empresa</source>
+        <target>Company carbon footprint detail</target>
+      </trans-unit>
+      <trans-unit id="pGNofv." resname="Tipo de fila">
+        <source>Tipo de fila</source>
+        <target>Row type</target>
+      </trans-unit>
+      <trans-unit id="zH4WRYk" resname="Tipo de actividad">
+        <source>Tipo de actividad</source>
+        <target>Activity type</target>
+      </trans-unit>
+      <trans-unit id="tlKg132" resname="Descripción / origen del dato">
+        <source>Descripción / origen del dato</source>
+        <target>Description / data source</target>
+      </trans-unit>
+      <trans-unit id="wekKMQU" resname="Peso (t)">
+        <source>Peso (t)</source>
+        <target>Weight (t)</target>
+      </trans-unit>
+      <trans-unit id=".p82I5M" resname="Capacidad del contenedor (l)">
+        <source>Capacidad del contenedor (l)</source>
+        <target>Container capacity (l)</target>
+      </trans-unit>
+      <trans-unit id="2gNHPC6" resname="% de llenado">
+        <source>% de llenado</source>
+        <target>Fill percentage</target>
+      </trans-unit>
+      <trans-unit id="IeW9TKt" resname="Factor de emisión (kg CO₂eq)">
+        <source>Factor de emisión (kg CO₂eq)</source>
+        <target>Emission factor (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="XN0C9Q." resname="Unidad del factor">
+        <source>Unidad del factor</source>
+        <target>Factor unit</target>
+      </trans-unit>
+      <trans-unit id="4KjG.If" resname="Año del factor">
+        <source>Año del factor</source>
+        <target>Factor year</target>
+      </trans-unit>
+      <trans-unit id="mP0_ScL" resname="Emisiones WTT (kg CO₂eq)">
+        <source>Emisiones WTT (kg CO₂eq)</source>
+        <target>WTT emissions (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="O_3.o.Y" resname="Emisiones por localización (kg CO₂eq)">
+        <source>Emisiones por localización (kg CO₂eq)</source>
+        <target>Location-based emissions (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="Q3qwE39" resname="Valor manual (kg CO₂eq)">
+        <source>Valor manual (kg CO₂eq)</source>
+        <target>Manual value (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="ee0pbht" resname="Motivo de exclusión">
+        <source>Motivo de exclusión</source>
+        <target>Exclusion reason</target>
+      </trans-unit>
+      <trans-unit id="LVDfOir" resname="Comentario de exclusión">
+        <source>Comentario de exclusión</source>
+        <target>Exclusion comment</target>
+      </trans-unit>
+      <trans-unit id="Tx.hEol" resname="Fecha de modificación">
+        <source>Fecha de modificación</source>
+        <target>Modification date</target>
+      </trans-unit>
+      <trans-unit id="Fneav0b" resname="Id de actividad">
+        <source>Id de actividad</source>
+        <target>Activity ID</target>
+      </trans-unit>
+      <trans-unit id="rt7fX0G" resname="Alcance 3 completo">
+        <source>Alcance 3 completo</source>
+        <target>Entire scope 3</target>
+      </trans-unit>
+      <trans-unit id="TV6RqA1" resname="Propia">
+        <source>Propia</source>
+        <target>Own</target>
+      </trans-unit>
+      <trans-unit id="hmd7RU1" resname="Detalle de huella de evento">
+        <source>Detalle de huella de evento</source>
+        <target>Event carbon footprint detail</target>
+      </trans-unit>
+      <trans-unit id="qD1gjZF" resname="Detalle de huella de propiedad">
+        <source>Detalle de huella de propiedad</source>
+        <target>Property carbon footprint detail</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

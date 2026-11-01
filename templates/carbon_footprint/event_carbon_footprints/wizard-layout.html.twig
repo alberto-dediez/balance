@@ -31,6 +31,10 @@
         {% endif %}
     {% endif %}
 
+    {% if eventCarbonFootprint.status.isCompleted and eventCarbonFootprint | is_authorized('export') %}
+        <twig:TopAction:Export path="{{ path('export', {code: 'event_carbon_footprint_detail', eventCarbonFootprintId: eventCarbonFootprint.id}) }}" />
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('events') }}" />
 {% endblock %}
 

@@ -10841,6 +10841,90 @@
         <source>Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)</source>
         <target>Şirketin karbon ayak izinde raporlanır (üçüncü taraflara kiralanan veya franchise verilen mülkler)</target>
       </trans-unit>
+      <trans-unit id="WzN9IlU" resname="Detalle de huella de empresa">
+        <source>Detalle de huella de empresa</source>
+        <target>NEW_Detalle de huella de empresa</target>
+      </trans-unit>
+      <trans-unit id="pGNofv." resname="Tipo de fila">
+        <source>Tipo de fila</source>
+        <target>NEW_Tipo de fila</target>
+      </trans-unit>
+      <trans-unit id="zH4WRYk" resname="Tipo de actividad">
+        <source>Tipo de actividad</source>
+        <target>NEW_Tipo de actividad</target>
+      </trans-unit>
+      <trans-unit id="tlKg132" resname="Descripción / origen del dato">
+        <source>Descripción / origen del dato</source>
+        <target>NEW_Descripción / origen del dato</target>
+      </trans-unit>
+      <trans-unit id="wekKMQU" resname="Peso (t)">
+        <source>Peso (t)</source>
+        <target>NEW_Peso (t)</target>
+      </trans-unit>
+      <trans-unit id=".p82I5M" resname="Capacidad del contenedor (l)">
+        <source>Capacidad del contenedor (l)</source>
+        <target>NEW_Capacidad del contenedor (l)</target>
+      </trans-unit>
+      <trans-unit id="2gNHPC6" resname="% de llenado">
+        <source>% de llenado</source>
+        <target>NEW_% de llenado</target>
+      </trans-unit>
+      <trans-unit id="IeW9TKt" resname="Factor de emisión (kg CO₂eq)">
+        <source>Factor de emisión (kg CO₂eq)</source>
+        <target>NEW_Factor de emisión (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="XN0C9Q." resname="Unidad del factor">
+        <source>Unidad del factor</source>
+        <target>NEW_Unidad del factor</target>
+      </trans-unit>
+      <trans-unit id="4KjG.If" resname="Año del factor">
+        <source>Año del factor</source>
+        <target>NEW_Año del factor</target>
+      </trans-unit>
+      <trans-unit id="mP0_ScL" resname="Emisiones WTT (kg CO₂eq)">
+        <source>Emisiones WTT (kg CO₂eq)</source>
+        <target>NEW_Emisiones WTT (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="O_3.o.Y" resname="Emisiones por localización (kg CO₂eq)">
+        <source>Emisiones por localización (kg CO₂eq)</source>
+        <target>NEW_Emisiones por localización (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="Q3qwE39" resname="Valor manual (kg CO₂eq)">
+        <source>Valor manual (kg CO₂eq)</source>
+        <target>NEW_Valor manual (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="ee0pbht" resname="Motivo de exclusión">
+        <source>Motivo de exclusión</source>
+        <target>NEW_Motivo de exclusión</target>
+      </trans-unit>
+      <trans-unit id="LVDfOir" resname="Comentario de exclusión">
+        <source>Comentario de exclusión</source>
+        <target>NEW_Comentario de exclusión</target>
+      </trans-unit>
+      <trans-unit id="Tx.hEol" resname="Fecha de modificación">
+        <source>Fecha de modificación</source>
+        <target>NEW_Fecha de modificación</target>
+      </trans-unit>
+      <trans-unit id="Fneav0b" resname="Id de actividad">
+        <source>Id de actividad</source>
+        <target>NEW_Id de actividad</target>
+      </trans-unit>
+      <trans-unit id="rt7fX0G" resname="Alcance 3 completo">
+        <source>Alcance 3 completo</source>
+        <target>NEW_Alcance 3 completo</target>
+      </trans-unit>
+      <trans-unit id="TV6RqA1" resname="Propia">
+        <source>Propia</source>
+        <target>NEW_Propia</target>
+      </trans-unit>
+      <trans-unit id="hmd7RU1" resname="Detalle de huella de evento">
+        <source>Detalle de huella de evento</source>
+        <target>NEW_Detalle de huella de evento</target>
+      </trans-unit>
+      <trans-unit id="qD1gjZF" resname="Detalle de huella de propiedad">
+        <source>Detalle de huella de propiedad</source>
+        <target>NEW_Detalle de huella de propiedad</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -33,6 +33,10 @@
         </twig:TopAction>
     {% endif %}
 
+    {% if propertyCarbonFootprint.status.isCompleted and propertyCarbonFootprint | is_authorized('export') %}
+        <twig:TopAction:Export path="{{ path('export', {code: 'property_carbon_footprint_detail', propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" />
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('property_carbon_footprints') }}" />
 {% endblock %}
 

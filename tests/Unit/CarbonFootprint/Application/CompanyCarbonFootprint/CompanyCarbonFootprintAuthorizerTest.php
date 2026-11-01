@@ -90,6 +90,30 @@ class CompanyCarbonFootprintAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
     }
 
+    public function testOwnerCanExportFromSameAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = CompanyCarbonFootprintMother::fromCompanyIdAndAccount((string) CompanyId::generate(), 'account-id-test');
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Export, $user));
+    }
+
+    public function testOwnerCannotExportFromOtherAccount(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = CompanyCarbonFootprintMother::fromCompanyIdAndAccount((string) CompanyId::generate(), 'other-account-id');
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Export, $user));
+    }
+
+    public function testUserCannotExport(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('user', Role::User, new AccountId('account-id-test'));
+        $subject = CompanyCarbonFootprintMother::fromCompanyIdAndAccount((string) CompanyId::generate(), 'account-id-test');
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Export, $user));
+    }
+
     private function createSUT(): CompanyCarbonFootprintAuthorizer
     {
         return new CompanyCarbonFootprintAuthorizer();
