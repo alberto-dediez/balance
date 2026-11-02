@@ -33,6 +33,16 @@ final class Emissions implements \Stringable
         return $this->n2o;
     }
 
+    public function ch4InKilograms(): string
+    {
+        return (string) ((float) $this->ch4 / 1000);
+    }
+
+    public function n2oInKilograms(): string
+    {
+        return (string) ((float) $this->n2o / 1000);
+    }
+
     public function add(self $other): self
     {
         return new self(

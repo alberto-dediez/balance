@@ -15,10 +15,10 @@
                         <dd class="col-sm-8">{{ results.totalEmissions.co2 | number_format(2, ',', '.') }}</dd>
 
                         <dt class="col-sm-4">{{ 'CH₄ (kg)' | trans }}</dt>
-                        <dd class="col-sm-8">{{ results.totalEmissions.ch4 | number_format(2, ',', '.') }}</dd>
+                        <dd class="col-sm-8">{{ results.totalEmissions.ch4InKilograms | number_format(2, ',', '.') }}</dd>
 
                         <dt class="col-sm-4">{{ 'N₂O (kg)' | trans }}</dt>
-                        <dd class="col-sm-8">{{ results.totalEmissions.n2o | number_format(2, ',', '.') }}</dd>
+                        <dd class="col-sm-8">{{ results.totalEmissions.n2oInKilograms | number_format(2, ',', '.') }}</dd>
                     </dl>
 
                     {% if results.electricityActivities > 0 %}

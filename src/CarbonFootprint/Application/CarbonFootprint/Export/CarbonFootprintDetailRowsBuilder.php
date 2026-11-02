@@ -92,8 +92,8 @@ final class CarbonFootprintDetailRowsBuilder
                     fromEmployees: $line->origin->fromEmployees,
                     emissionsCo2eq: $line->emissions->co2eq(),
                     emissionsCo2: $line->emissions->co2(),
-                    emissionsCh4: $line->emissions->ch4(),
-                    emissionsN2o: $line->emissions->n2o(),
+                    emissionsCh4: $line->emissions->ch4InKilograms(),
+                    emissionsN2o: $line->emissions->n2oInKilograms(),
                     activityId: (string) $line->activityId,
                 );
             }
@@ -111,8 +111,8 @@ final class CarbonFootprintDetailRowsBuilder
                     itemName: $propertyName,
                     emissionsCo2eq: $line->emissions->co2eq(),
                     emissionsCo2: $line->emissions->co2(),
-                    emissionsCh4: $line->emissions->ch4(),
-                    emissionsN2o: $line->emissions->n2o(),
+                    emissionsCh4: $line->emissions->ch4InKilograms(),
+                    emissionsN2o: $line->emissions->n2oInKilograms(),
                     manualCo2eq: $line->manualCo2eq,
                 );
             }
@@ -175,8 +175,8 @@ final class CarbonFootprintDetailRowsBuilder
             factorSource: $emissionFactor->source(),
             emissionsCo2eq: $emissions->co2eq(),
             emissionsCo2: $emissions->co2(),
-            emissionsCh4: $emissions->ch4(),
-            emissionsN2o: $emissions->n2o(),
+            emissionsCh4: $emissions->ch4InKilograms(),
+            emissionsN2o: $emissions->n2oInKilograms(),
             wellToTankCo2eq: $this->wellToTankEmissionsOf($activity)?->co2eq(),
             locationBasedCo2eq: $activity instanceof ElectricityActivity ? $activity->locationBasedEmissions()?->co2eq() : null,
             registeredAt: $activity->registeredAt(),

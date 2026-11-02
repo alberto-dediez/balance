@@ -8,9 +8,7 @@
             {{ form_start(certificateForm) }}
                 {{ form_row(certificateForm.stays) }}
 
-                <twig:ActionBar>
-                    <twig:ActionBar:Button type="primary" :button="certificateForm.issue" />
-                </twig:ActionBar>
+                {{ form_widget(certificateForm.issue, {'attr': {'class': 'btn btn-primary w-100'}}) }}
             {{ form_end(certificateForm) }}
         {% endif %}
     {% else %}

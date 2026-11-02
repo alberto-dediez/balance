@@ -35,6 +35,14 @@ class EmissionsTest extends TestCase
         $this->assertSame('0.1', $result->n2o());
     }
 
+    public function testCh4AndN2oInKilogramsConvertFromGrams(): void
+    {
+        $emissions = new Emissions('1', '1', '1500', '250');
+
+        $this->assertSame('1.5', $emissions->ch4InKilograms());
+        $this->assertSame('0.25', $emissions->n2oInKilograms());
+    }
+
     public function testDividedByDividesFieldByField(): void
     {
         $emissions = new Emissions('10', '20', '4', '2');
