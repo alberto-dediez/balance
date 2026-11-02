@@ -52,7 +52,8 @@ class EmployeesController extends AbstractController
             return $this->redirectToRoute(
                 match (true) {
                     $propertyCarbonFootprint->status()->isScope3Answered() => 'property_carbon_footprints_providers',
-                    $propertyCarbonFootprint->status()->isScope2Answered() => 'property_carbon_footprints_scope_3',
+                    $propertyCarbonFootprint->status()->isMaterialityAnswered() => 'property_carbon_footprints_scope_3',
+                    $propertyCarbonFootprint->status()->isScope2Answered() => 'property_carbon_footprints_materiality',
                     $propertyCarbonFootprint->status()->isScope1Answered() => 'property_carbon_footprints_scope_2',
                     default => 'property_carbon_footprints_scope_1',
                 },

@@ -163,6 +163,7 @@ use App\Shared\Domain\Model\Geo\GeoBounds;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Acceptance\Shared\CsrfTokenInSessionTrait;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
@@ -204,6 +205,8 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final readonly class CarbonFootprintContext implements Context
 {
+    use CsrfTokenInSessionTrait;
+
     private AcceptanceClient $client;
 
     public function __construct(
@@ -2258,6 +2261,26 @@ final readonly class CarbonFootprintContext implements Context
         );
     }
 
+    #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with materiality answered exists')]
+    public function propertyCarbonFootprintWithMaterialityAnsweredExists(string $id, string $propertyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getPropertyCarbonFootprintRepository()->add(
+            PropertyCarbonFootprintMother::withMaterialityAnswered($propertyId, $id, $account, (int) $year),
+        );
+    }
+
+    #[Given('company carbon footprint with id :id for company :companyId of account :account and year :year with materiality answered exists')]
+    public function companyCarbonFootprintWithMaterialityAnsweredExists(string $id, string $companyId, string $account, string $year): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $this->getCompanyCarbonFootprintRepository()->add(
+            CompanyCarbonFootprintMother::withMaterialityAnswered($companyId, $id, $account, (int) $year),
+        );
+    }
+
     #[Given('property carbon footprint with id :id for property :propertyId of account :account and year :year with scope 3 answered exists')]
     public function propertyCarbonFootprintWithScope3AnsweredExists(string $id, string $propertyId, string $account, string $year): void
     {
@@ -2541,6 +2564,14 @@ final readonly class CarbonFootprintContext implements Context
         Assert::assertSame(OrganizationalCarbonFootprintStatus::from($status), $carbonFootprint->status());
     }
 
+    #[Then(':subjectType carbon footprint :id should have materiality answered')]
+    public function carbonFootprintShouldHaveMaterialityAnswered(string $subjectType, string $id): void
+    {
+        $carbonFootprint = 'property' === $subjectType ? $this->propertyCarbonFootprint($id) : $this->companyCarbonFootprint($id);
+
+        Assert::assertTrue($carbonFootprint->status()->isMaterialityAnswered());
+    }
+
     #[Then(':subjectType carbon footprint :id should have scope 3 excluded with reason :reason')]
     public function carbonFootprintShouldHaveScope3ExcludedWithReason(string $subjectType, string $id, string $reason): void
     {
@@ -2668,25 +2699,6 @@ final readonly class CarbonFootprintContext implements Context
         $csrfToken = $this->csrfTokenInCurrentSession('bioscore_load_' . $id);
 
         $this->client->request('GET', sprintf('/es/%s-carbon-footprints/%s/step/%s/bioscore?_token=%s', $subjectType, $id, $scope, urlencode($csrfToken)));
-    }
-
-    private function csrfTokenInCurrentSession(string $tokenId): string
-    {
-        $session = $this->client->getContainer()->get('session.factory')->createSession();
-
-        $cookie = $this->client->getCookieJar()->get($session->getName());
-        if (null !== $cookie) {
-            $session->setId($cookie->getValue());
-        }
-
-        $csrfToken = 'acceptance-csrf-token';
-        $session->start();
-        $session->set('_csrf/' . $tokenId, $csrfToken);
-        $session->save();
-
-        $this->client->setCookie($session->getName(), $session->getId());
-
-        return $csrfToken;
     }
 
     #[When('I submit the company scope :scope step form with a combustible :itemId of :quantity :unit for property :propertyId')]

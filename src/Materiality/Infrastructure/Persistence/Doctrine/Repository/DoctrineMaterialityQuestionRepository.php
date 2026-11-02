@@ -8,6 +8,7 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionFilter;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionSectorLink;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionTranslation;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
@@ -86,6 +87,44 @@ class DoctrineMaterialityQuestionRepository implements MaterialityQuestionReposi
     public function findBySectorId(MaterialitySectorId $sectorId): array
     {
         return array_values($this->findByFilter(new MaterialityQuestionFilter(sectorId: $sectorId, limit: 0)));
+    }
+
+    /** @return list<MaterialityQuestion> */
+    public function findApplicableToSector(?MaterialitySectorId $sectorId): array
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        $withoutSectors = $this->manager->createQueryBuilder()
+            ->select('1')
+            ->from(MaterialityQuestionSectorLink::class, 'sl0')
+            ->where('sl0.materialityQuestion = q')
+        ;
+
+        $applicability = $qb->expr()->orX($qb->expr()->not($qb->expr()->exists($withoutSectors->getDQL())));
+
+        if (null !== $sectorId) {
+            $withSector = $this->manager->createQueryBuilder()
+                ->select('1')
+                ->from(MaterialityQuestionSectorLink::class, 'sl1')
+                ->where('sl1.materialityQuestion = q')
+                ->andWhere('sl1.sectorId = :sectorId')
+            ;
+
+            $applicability->add($qb->expr()->exists($withSector->getDQL()));
+            $qb->setParameter('sectorId', (string) $sectorId);
+        }
+
+        $qb->select('q')
+            ->from(MaterialityQuestion::class, 'q')
+            ->where($qb->expr()->eq('q.removed', $qb->expr()->literal(false)))
+            ->andWhere($qb->expr()->eq('q.active', $qb->expr()->literal(true)))
+            ->andWhere($applicability)
+            ->orderBy('q.position', 'ASC')
+            ->addOrderBy('q.registeredAt', 'ASC')
+            ->addOrderBy('q.id', 'ASC')
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 
     private function createQueryBuilderFromFilter(MaterialityQuestionFilter $filter): QueryBuilder

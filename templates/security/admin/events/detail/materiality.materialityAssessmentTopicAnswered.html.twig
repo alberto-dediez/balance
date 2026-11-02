@@ -1,0 +1,4 @@
+{% trans with {
+    '{topicId}': ((event.topicId | materiality_topic_name).name ?? event.topicId) ~ '',
+    '{user}': element.userId | user_name
+} %}Se han guardado respuestas de materialidad de la categoría {topicId} por el usuario {user}{% endtrans %}

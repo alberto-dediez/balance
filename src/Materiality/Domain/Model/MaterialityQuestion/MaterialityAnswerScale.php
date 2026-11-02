@@ -10,7 +10,7 @@ enum MaterialityAnswerScale: string
 
     case YesNo = 'yes_no';
 
-    /** @return list<int> */
+    /** @return non-empty-list<int> */
     public function values(): array
     {
         return match ($this) {
@@ -22,5 +22,14 @@ enum MaterialityAnswerScale: string
     public function max(): int
     {
         return 3;
+    }
+
+    public function labelKey(int $value): string
+    {
+        if (!in_array($value, $this->values(), true)) {
+            throw new \InvalidArgumentException(sprintf('Value "%d" is not part of the "%s" answer scale.', $value, $this->value));
+        }
+
+        return sprintf('%s_%d', $this->value, $value);
     }
 }

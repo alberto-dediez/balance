@@ -99,6 +99,8 @@ Feature:
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         Then the response status should be 200
         When I submit the scope "scope_2" step form with an electricity marketer "EM1" of 1000 "kWh"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
@@ -117,6 +119,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form with an electricity marketer "EM1" of 1000 "kWh"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
@@ -140,6 +144,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form with an electricity marketer "EM1" of 1000 "kWh"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"

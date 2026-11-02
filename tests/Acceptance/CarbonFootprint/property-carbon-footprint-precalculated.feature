@@ -50,6 +50,8 @@ Feature:
         When I submit the scope step form with reported emissions "Caldera" of "2" "t" for source "fixed_facilities"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope step form with reported emissions "Electricidad" of "500" "kg" for source "building_electricity"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I go to "/es/property-carbon-footprints/999/step/scope-3"
         Then the response status should be 200

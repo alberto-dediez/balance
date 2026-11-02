@@ -9,7 +9,7 @@ Feature:
         Given property "1111" has company "C1" assigned
 
     Scenario: Saving scope 3 leads to the providers step
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         Given purchase service "Limpieza" with id "PS1" and emission factor for year "2025" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
@@ -21,7 +21,7 @@ Feature:
         Then company carbon footprint "999" should have status "scope_3_answered"
 
     Scenario: Excluding the whole scope 3 skips the providers step
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
@@ -33,7 +33,7 @@ Feature:
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
 
     Scenario: The providers step redirects to scope 3 when scope 3 has not been answered
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/providers"
         Then I am redirected to route "company_carbon_footprints_scope_3"

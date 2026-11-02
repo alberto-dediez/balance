@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessment" table="materiality_assessments">
+        <indexes>
+            <index name="idx_materiality_assessments_subject" columns="subject_type,carbon_footprint_id"/>
+            <index name="idx_materiality_assessments_account" columns="account_id"/>
+        </indexes>
+
+        <id name="id" type="materiality_assessment_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="subjectType" type="string" length="20" enum-type="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentSubjectType" column="subject_type" nullable="false"/>
+        <field name="carbonFootprintId" type="string" length="36" column="carbon_footprint_id" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="year" type="integer" nullable="false"/>
+        <field name="sectorId" type="materiality_sector_id" column="sector_id" nullable="true"/>
+        <field name="sectorName" type="string" length="255" column="sector_name" nullable="true"/>
+        <field name="status" type="string" length="16" enum-type="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentStatus" nullable="false"/>
+        <field name="completedBy" type="user_id" column="completed_by" nullable="true"/>
+        <field name="completedAt" type="datetime_immutable" column="completed_at" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="true"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <one-to-many field="topics"
+                     target-entity="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentTopic"
+                     mapped-by="assessment"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="position" direction="ASC"/>
+            </order-by>
+        </one-to-many>
+
+        <one-to-many field="answers"
+                     target-entity="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentAnswer"
+                     mapped-by="assessment"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="position" direction="ASC"/>
+            </order-by>
+        </one-to-many>
+    </entity>
+</doctrine-mapping>

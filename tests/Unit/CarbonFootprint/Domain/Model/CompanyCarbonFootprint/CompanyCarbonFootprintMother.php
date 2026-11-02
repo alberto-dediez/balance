@@ -89,7 +89,7 @@ class CompanyCarbonFootprintMother
         return $companyCarbonFootprint;
     }
 
-    public static function withScope3Answered(
+    public static function withMaterialityAnswered(
         string $companyId,
         string $id,
         string $accountId = 'account-id',
@@ -97,6 +97,19 @@ class CompanyCarbonFootprintMother
         ?EmissionFactorGroupId $emissionFactorGroupId = null,
     ): CompanyCarbonFootprint {
         $companyCarbonFootprint = self::withScope2Answered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
+        $companyCarbonFootprint->answerMateriality();
+
+        return $companyCarbonFootprint;
+    }
+
+    public static function withScope3Answered(
+        string $companyId,
+        string $id,
+        string $accountId = 'account-id',
+        int $year = 2025,
+        ?EmissionFactorGroupId $emissionFactorGroupId = null,
+    ): CompanyCarbonFootprint {
+        $companyCarbonFootprint = self::withMaterialityAnswered($companyId, $id, $accountId, $year, $emissionFactorGroupId);
         $companyCarbonFootprint->answerScope(Scope::Scope3);
 
         return $companyCarbonFootprint;

@@ -48,9 +48,9 @@ class Scope3Controller extends AbstractController
 
         $this->denyAccessUnlessGranted(SecurityAction::Edit->value, $propertyCarbonFootprint);
 
-        if (!$propertyCarbonFootprint->status()->isScope2Answered()) {
+        if (!$propertyCarbonFootprint->status()->isMaterialityAnswered()) {
             return $this->redirectToRoute(
-                $propertyCarbonFootprint->status()->isScope1Answered() ? 'property_carbon_footprints_scope_2' : 'property_carbon_footprints_scope_1',
+                $propertyCarbonFootprint->status()->isScope2Answered() ? 'property_carbon_footprints_materiality' : ($propertyCarbonFootprint->status()->isScope1Answered() ? 'property_carbon_footprints_scope_2' : 'property_carbon_footprints_scope_1'),
                 ['propertyCarbonFootprintId' => $propertyCarbonFootprintId],
             );
         }

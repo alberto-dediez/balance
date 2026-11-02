@@ -10,7 +10,7 @@ Feature:
         Given purchase service "Limpieza" with id "PS1" and emission factor for year "2025" exists
 
     Scenario: The scope 3 step shows one block per property plus the unassigned one
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         Then the response status should be 200
@@ -19,7 +19,7 @@ Feature:
         Then I see a text "No calcular el alcance 3"
 
     Scenario: A purchase introduced in a property block is attributed to that property
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with a purchase service "PS1" of 1000 "EUR" for property "1111"
@@ -29,7 +29,7 @@ Feature:
         Then company carbon footprint "999" should have 0 activities of source "purchased_goods_and_services" in scope "scope_3" for property "none"
 
     Scenario: A purchase introduced in the unassigned block stays unassigned
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with a purchase service "PS1" of 1000 "EUR" for property "none"
@@ -37,7 +37,7 @@ Feature:
         Then company carbon footprint "999" should have 1 activities of source "purchased_goods_and_services" in scope "scope_3" for property "none"
 
     Scenario: Excluding the whole scope 3 removes the activities of every property
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         Given company carbon footprint "999" has a purchase service activity "PS1" in scope 3 for property "1111"
         Given company carbon footprint "999" has a purchase service activity "PS1" in scope 3
         When I am logged as "owner@dediez.software"

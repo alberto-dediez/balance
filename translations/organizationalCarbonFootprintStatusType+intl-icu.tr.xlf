@@ -33,6 +33,10 @@
         <source>employees_answered</source>
         <target>Çalışanlar yanıtlandı</target>
       </trans-unit>
+      <trans-unit id="AjiDGwA" resname="materiality_answered">
+        <source>materiality_answered</source>
+        <target>NEW_materiality_answered</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

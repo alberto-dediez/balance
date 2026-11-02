@@ -33,6 +33,10 @@
         <source>employees_answered</source>
         <target>Empleados respondido</target>
       </trans-unit>
+      <trans-unit id="AjiDGwA" resname="materiality_answered">
+        <source>materiality_answered</source>
+        <target>Materialidad respondida</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

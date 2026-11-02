@@ -9,6 +9,7 @@ enum OrganizationalCarbonFootprintStatus: string
     case Started        = 'started';
     case Scope1Answered = 'scope_1_answered';
     case Scope2Answered = 'scope_2_answered';
+    case MaterialityAnswered = 'materiality_answered';
     case Scope3Answered    = 'scope_3_answered';
     case ProvidersAnswered = 'providers_answered';
     case EmployeesAnswered = 'employees_answered';
@@ -17,7 +18,7 @@ enum OrganizationalCarbonFootprintStatus: string
     public function isScope1Answered(): bool
     {
         return match ($this) {
-            self::Scope1Answered, self::Scope2Answered, self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
+            self::Scope1Answered, self::Scope2Answered, self::MaterialityAnswered, self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -25,7 +26,15 @@ enum OrganizationalCarbonFootprintStatus: string
     public function isScope2Answered(): bool
     {
         return match ($this) {
-            self::Scope2Answered, self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
+            self::Scope2Answered, self::MaterialityAnswered, self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
+            default => false,
+        };
+    }
+
+    public function isMaterialityAnswered(): bool
+    {
+        return match ($this) {
+            self::MaterialityAnswered, self::Scope3Answered, self::ProvidersAnswered, self::EmployeesAnswered, self::Completed => true,
             default => false,
         };
     }
@@ -65,10 +74,11 @@ enum OrganizationalCarbonFootprintStatus: string
             self::Started        => 1,
             self::Scope1Answered => 2,
             self::Scope2Answered => 3,
-            self::Scope3Answered    => 4,
-            self::ProvidersAnswered => 5,
-            self::EmployeesAnswered => 6,
-            self::Completed         => 7,
+            self::MaterialityAnswered => 4,
+            self::Scope3Answered    => 5,
+            self::ProvidersAnswered => 6,
+            self::EmployeesAnswered => 7,
+            self::Completed         => 8,
         };
     }
 
@@ -77,7 +87,8 @@ enum OrganizationalCarbonFootprintStatus: string
         return match ($this) {
             self::Started        => 'scope-1',
             self::Scope1Answered => 'scope-2',
-            self::Scope2Answered => 'scope-3',
+            self::Scope2Answered => 'materiality',
+            self::MaterialityAnswered => 'scope-3',
             self::Scope3Answered    => 'providers',
             self::ProvidersAnswered => 'employees',
             self::EmployeesAnswered => 'mitigation-plan',

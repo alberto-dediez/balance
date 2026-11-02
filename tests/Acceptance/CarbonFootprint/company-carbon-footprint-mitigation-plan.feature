@@ -33,6 +33,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "company_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "company_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "company_carbon_footprints_mitigation_plan"
@@ -59,7 +61,7 @@ Feature:
         Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         Given mitigation action "Eficiencia en franquicias" with id "A1" for company carbon footprint "999" of account "666" with target year "2030" exists
         Given mitigation action "A1" reduces source "franchises" item "2222" by "0.1"
         When I am logged as "owner@dediez.software"
@@ -89,7 +91,7 @@ Feature:
         Given property carbon footprint with id "P3" for property "3333" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P3" has a combustible "CB1" activity of "2000" kg with "100" kg well-to-tank
         Given property carbon footprint "P3" is completed
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         Given mitigation action "Eficiencia en franquicias" with id "A1" for company carbon footprint "999" of account "666" with target year "2030" exists
         Given mitigation action "A1" reduces source "franchises" item "2222" by "0.1"
         When I am logged as "owner@dediez.software"

@@ -25,4 +25,7 @@ interface MaterialityQuestionRepository
 
     /** @return list<MaterialityQuestion> */
     public function findBySectorId(MaterialitySectorId $sectorId): array;
+
+    /** @return list<MaterialityQuestion> */
+    public function findApplicableToSector(?MaterialitySectorId $sectorId): array;
 }

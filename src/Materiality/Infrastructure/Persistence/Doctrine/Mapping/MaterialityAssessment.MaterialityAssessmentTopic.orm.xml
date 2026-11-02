@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentTopic" table="materiality_assessment_topics">
+        <unique-constraints>
+            <unique-constraint name="uq_materiality_assessment_topic" columns="materiality_assessment_id,topic_id"/>
+        </unique-constraints>
+
+        <id name="id" type="materiality_assessment_topic_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="topicId" type="materiality_topic_id" column="topic_id" nullable="false"/>
+        <field name="topicNumber" type="integer" column="topic_number" nullable="true"/>
+        <field name="scope" type="string" length="16" enum-type="App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope" nullable="false"/>
+        <field name="direction" type="string" length="16" enum-type="App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicDirection" nullable="true"/>
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="description" type="text" nullable="false"/>
+        <field name="position" type="integer" nullable="false"/>
+        <field name="points" type="integer" nullable="true"/>
+        <field name="minPoints" type="integer" column="min_points" nullable="true"/>
+        <field name="maxPoints" type="integer" column="max_points" nullable="true"/>
+        <field name="highestMagnitudeLevel" type="smallint" column="highest_magnitude_level" nullable="true"/>
+
+        <many-to-one field="assessment" target-entity="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessment" inversed-by="topics">
+            <join-column name="materiality_assessment_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

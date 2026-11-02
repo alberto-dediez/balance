@@ -1,0 +1,77 @@
+{% extends subjectType == 'property' ? '@carbon_footprint/property_carbon_footprints/wizard-layout.html.twig' : '@carbon_footprint/company_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 3 %}
+
+{% block top_actions %}
+    {{ parent() }}
+{% endblock %}
+
+{% block wizard_panels %}
+    {% set master = topic.topicId | materiality_topic_name %}
+    {% set previousPath = previousTopicId is not null ? path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: previousTopicId}) : stepPath %}
+    {% set nextPath = nextTopicId is not null ? path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: nextTopicId}) : stepPath %}
+
+    <form method="post" name="materiality_topic">
+        <input type="hidden" name="_token" value="{{ csrf_token('materiality_topic_' ~ topic.id) }}">
+
+        <twig:Card title="{{ index }}/{{ total }} · {{ topic.topicNumber is not null ? topic.topicNumber ~ '. ' : '' }}{{ master.name ?? topic.name }}">
+            <p class="mb-2">
+                <span class="badge bg-secondary">{{ topic.scope.value | trans({}, 'materialityScopeType') }}</span>
+                {% if topic.direction is not null %}
+                    <span class="badge bg-secondary">{{ topic.direction.value | trans({}, 'materialityTopicDirectionType') }}</span>
+                {% endif %}
+            </p>
+
+            {% set description = master.description ?? topic.description %}
+            {% if description is not empty %}
+                <div class="text-muted mb-4">{{ description | md_to_html }}</div>
+            {% endif %}
+
+            {% if answers is empty %}
+                <p class="mb-0">{{ 'Esta categoría no tiene preguntas aplicables.' | trans }}</p>
+            {% endif %}
+
+            {% for answer in answers %}
+                {% set question = answer.questionId | materiality_question_text %}
+                {% set help = question.help ?? answer.help %}
+                <div class="mb-4">
+                    <h6 class="fw-semibold mb-1">{{ question.text ?? answer.text }}</h6>
+                    <p class="mb-1">
+                        <span class="badge bg-light text-dark">{{ answer.criterion.value | trans({}, 'materialityCriterionType') }}</span>
+                        <span class="badge bg-light text-dark">{% trans with {'{weight}': answer.weight} %}Peso {weight}{% endtrans %}</span>
+                    </p>
+                    {% if help is not empty %}
+                        <div class="text-muted">{{ help | md_to_html }}</div>
+                    {% endif %}
+                    {% for value in answer.answerScale.values %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio"
+                                name="answers[{{ answer.id }}]"
+                                id="answer-{{ answer.id }}-{{ value }}"
+                                value="{{ value }}"
+                                {{ answer.value == value ? 'checked' : '' }}
+                                {{ readOnly ? 'disabled' : '' }}
+                            >
+                            <label class="form-check-label" for="answer-{{ answer.id }}-{{ value }}">{{ answer.answerScale.labelKey(value) | trans({}, 'materialityAnswerValueType') }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </twig:Card>
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ previousPath }}" class="btn btn-outline-primary">
+                &larr; {{ 'Anterior' | trans }}
+            </a>
+            {% if readOnly %}
+                <a href="{{ nextPath }}" class="btn btn-primary">
+                    {{ 'Siguiente' | trans }} &rarr;
+                </a>
+            {% else %}
+                <button type="submit" class="btn btn-primary">
+                    {{ 'Guardar y continuar' | trans }} &rarr;
+                </button>
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}

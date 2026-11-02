@@ -28,7 +28,7 @@ Feature:
         Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         Then the response status should be 200
@@ -41,7 +41,7 @@ Feature:
     Scenario: A franchise whose property footprint is not completed has no data
         Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         Then the response status should be 200
@@ -50,7 +50,7 @@ Feature:
         Then I do not see a text "3.000,00"
 
     Scenario: The manual emissions of a property leased out to third parties are applied
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "4500" for property "3333"
@@ -62,7 +62,7 @@ Feature:
         Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the scope "scope_3" step form excluding source "franchises" with reason "not_significant" and comment "Poco relevante"
@@ -100,7 +100,7 @@ Feature:
         Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         Given mitigation action "Eficiencia en franquicias" with id "A1" for company carbon footprint "999" of account "666" with target year "2030" exists
         Given mitigation action "A1" reduces source "franchises" item "2222" by "0.2"
         When I am logged as "owner@dediez.software"
@@ -121,7 +121,7 @@ Feature:
         Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
         Given property carbon footprint "P2" is completed
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "4500" for property "2222"
@@ -139,7 +139,7 @@ Feature:
     Scenario: Completing the company footprint after the property footprint is completed refreshes the franchise
         Given property carbon footprint with id "P2" for property "2222" of account "666" and year "2025" with employees answered exists
         Given property carbon footprint "P2" has a combustible "CB1" activity of "3000" kg with "100" kg well-to-tank
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the company scope 3 step form with manual emissions "" for property "2222"
@@ -157,7 +157,7 @@ Feature:
         Then company carbon footprint "999" should have "3000" kg in source "franchises"
 
     Scenario: Changing the reason of an excluded source keeps a single exclusion
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/company-carbon-footprints/999/step/scope-3"
         When I submit the scope "scope_3" step form excluding source "franchises" with reason "not_significant" and comment "Poco relevante"

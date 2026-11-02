@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentAnswer" table="materiality_assessment_answers">
+        <unique-constraints>
+            <unique-constraint name="uq_materiality_assessment_answer" columns="materiality_assessment_id,topic_id,question_id"/>
+        </unique-constraints>
+
+        <indexes>
+            <index name="idx_materiality_assessment_answers_topic" columns="materiality_assessment_id,topic_id"/>
+        </indexes>
+
+        <id name="id" type="materiality_assessment_answer_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="topicId" type="materiality_topic_id" column="topic_id" nullable="false"/>
+        <field name="questionId" type="materiality_question_id" column="question_id" nullable="false"/>
+        <field name="criterion" type="string" length="32" enum-type="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion" nullable="false"/>
+        <field name="text" type="text" nullable="false"/>
+        <field name="help" type="text" nullable="false"/>
+        <field name="answerScale" type="string" length="16" column="answer_scale" enum-type="App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale" nullable="false"/>
+        <field name="weight" type="integer" nullable="false"/>
+        <field name="position" type="integer" nullable="false"/>
+        <field name="questionUpdatedAt" type="datetime_immutable" column="question_updated_at" nullable="false"/>
+        <field name="value" type="smallint" nullable="true"/>
+        <field name="answeredAt" type="datetime_immutable" column="answered_at" nullable="true"/>
+
+        <many-to-one field="assessment" target-entity="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessment" inversed-by="answers">
+            <join-column name="materiality_assessment_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

@@ -15,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityDenominators;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintScope2NotAnsweredException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintTrait;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
@@ -108,6 +109,25 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
             $this->answerProviders();
             $this->answerEmployees();
         }
+    }
+
+    public function answerMateriality(): void
+    {
+        $this->ensureIsEditable();
+
+        if ($this->status->isMaterialityAnswered()) {
+            return;
+        }
+
+        if (!$this->status->isScope2Answered()) {
+            throw new OrganizationalCarbonFootprintScope2NotAnsweredException('Organizational carbon footprint materiality cannot be answered until scope 2 is answered');
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintMaterialityAnswered(
+                propertyCarbonFootprintId: $this->id,
+            ),
+        );
     }
 
     public function answerProviders(): void
@@ -396,6 +416,12 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
     public function applyPropertyCarbonFootprintScopeAnswered(PropertyCarbonFootprintScopeAnswered $event): void
     {
         $this->status = $this->status->advancedTo($event->scope()->answeredStatus());
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintMaterialityAnswered(PropertyCarbonFootprintMaterialityAnswered $event): void
+    {
+        $this->status = $this->status->advancedTo(OrganizationalCarbonFootprintStatus::MaterialityAnswered);
         $this->updatedAt = $event->occurredOn();
     }
 

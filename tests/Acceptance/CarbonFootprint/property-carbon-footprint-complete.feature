@@ -10,6 +10,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
@@ -24,6 +26,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
@@ -44,6 +48,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
@@ -63,6 +69,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
@@ -83,6 +91,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/scope-2"
         When I submit the scope "scope_2" step form excluding source "building_electricity" with reason "no_data_available" and comment "Sin datos"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        When I skip the materiality step
         Then I am redirected to route "property_carbon_footprints_scope_3"
         When I submit the scope 3 step form excluding the whole scope with reason "no_data_available"
         Then I am redirected to route "property_carbon_footprints_mitigation_plan"
@@ -109,7 +119,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
         Given property "Hotel" with id "1111" of account "666" exists
-        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 2 answered exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with materiality answered exists
         When I am logged as "owner@dediez.software"
         When I make a POST request to "/es/property-carbon-footprints/999/step/mitigation-plan"
         Then I am redirected to route "property_carbon_footprints_scope_3"

@@ -84,6 +84,21 @@ class InMemoryMaterialityQuestionRepository implements MaterialityQuestionReposi
         return array_values($this->findByFilter(new MaterialityQuestionFilter(sectorId: $sectorId, limit: 0)));
     }
 
+    /** @return list<MaterialityQuestion> */
+    public function findApplicableToSector(?MaterialitySectorId $sectorId): array
+    {
+        $applicable = array_values(array_filter(
+            $this->materialityQuestions,
+            static fn(MaterialityQuestion $q) => !$q->isRemoved()
+                && $q->isActive()
+                && ($q->appliesToAllSectors() || (null !== $sectorId && $q->sectors()->has($sectorId))),
+        ));
+
+        $this->sort($applicable, new MaterialityQuestionFilter());
+
+        return $applicable;
+    }
+
     private function matches(MaterialityQuestion $materialityQuestion, MaterialityQuestionFilter $filter): bool
     {
         if (!$filter->includeRemoved && false != $materialityQuestion->isRemoved()) {

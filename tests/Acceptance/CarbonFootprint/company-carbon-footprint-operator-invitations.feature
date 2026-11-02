@@ -15,7 +15,7 @@ Feature:
         Given property "3333" has company "C1" assigned
         Given property "3333" has operating regime "leased_out"
         Given combustible "Gas natural" with id "CB1" and emission factor for year "2025" exists
-        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with scope 2 answered exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" with materiality answered exists
 
     Scenario: A franchise without invitation offers to invite its franchisee and shows the contact of the property
         Given property "2222" has operator contact "ficha@hotel.es"

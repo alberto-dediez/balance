@@ -11261,6 +11261,146 @@
         <source>El desglose se ha recalculado con los datos actuales y difiere en {value} t CO₂eq del total fijado al completar la huella.</source>
         <target>NEW_El desglose se ha recalculado con los datos actuales y difiere en {value} t CO₂eq del total fijado al completar la huella.</target>
       </trans-unit>
+      <trans-unit id="WDSOn6j" resname="Cuestionario reiniciado.">
+        <source>Cuestionario reiniciado.</source>
+        <target>NEW_Cuestionario reiniciado.</target>
+      </trans-unit>
+      <trans-unit id="du0SmJb" resname="No se ha podido iniciar la evaluación de materialidad.">
+        <source>No se ha podido iniciar la evaluación de materialidad.</source>
+        <target>NEW_No se ha podido iniciar la evaluación de materialidad.</target>
+      </trans-unit>
+      <trans-unit id="3yvZfcy" resname="Evaluación de materialidad completada.">
+        <source>Evaluación de materialidad completada.</source>
+        <target>NEW_Evaluación de materialidad completada.</target>
+      </trans-unit>
+      <trans-unit id="wIx3xX0" resname="Faltan preguntas por responder.">
+        <source>Faltan preguntas por responder.</source>
+        <target>NEW_Faltan preguntas por responder.</target>
+      </trans-unit>
+      <trans-unit id="qSERI5z" resname="Evaluación de materialidad reabierta.">
+        <source>Evaluación de materialidad reabierta.</source>
+        <target>NEW_Evaluación de materialidad reabierta.</target>
+      </trans-unit>
+      <trans-unit id="0DIqU3I" resname="La evaluación está completada. Reábrela para modificarla.">
+        <source>La evaluación está completada. Reábrela para modificarla.</source>
+        <target>NEW_La evaluación está completada. Reábrela para modificarla.</target>
+      </trans-unit>
+      <trans-unit id="abpy1yt" resname="No se han podido guardar las respuestas.">
+        <source>No se han podido guardar las respuestas.</source>
+        <target>NEW_No se han podido guardar las respuestas.</target>
+      </trans-unit>
+      <trans-unit id="CeHTpEO" resname="Sin sector específico">
+        <source>Sin sector específico</source>
+        <target>NEW_Sin sector específico</target>
+      </trans-unit>
+      <trans-unit id="sNrxSbz" resname="Determina qué preguntas se aplican. Sin sector solo se formulan las preguntas comunes a todos los sectores.">
+        <source>Determina qué preguntas se aplican. Sin sector solo se formulan las preguntas comunes a todos los sectores.</source>
+        <target>NEW_Determina qué preguntas se aplican. Sin sector solo se formulan las preguntas comunes a todos los sectores.</target>
+      </trans-unit>
+      <trans-unit id="DQT3X7L" resname="Partir de la evaluación de {year}">
+        <source>Partir de la evaluación de {year}</source>
+        <target>NEW_Partir de la evaluación de {year}</target>
+      </trans-unit>
+      <trans-unit id="lrFjND3" resname="Comenzar cuestionario">
+        <source>Comenzar cuestionario</source>
+        <target>NEW_Comenzar cuestionario</target>
+      </trans-unit>
+      <trans-unit id="gkNwiH3" resname="Se han guardado respuestas de materialidad de la categoría {topicId} por el usuario {user}">
+        <source>Se han guardado respuestas de materialidad de la categoría {topicId} por el usuario {user}</source>
+        <target>NEW_Se han guardado respuestas de materialidad de la categoría {topicId} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="e20rxT." resname="Se ha reabierto la evaluación de materialidad por el usuario {user}">
+        <source>Se ha reabierto la evaluación de materialidad por el usuario {user}</source>
+        <target>NEW_Se ha reabierto la evaluación de materialidad por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="sZ5u7Df" resname="Se ha completado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}">
+        <source>Se ha completado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}</source>
+        <target>NEW_Se ha completado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="j6NEFA8" resname="Se ha iniciado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}">
+        <source>Se ha iniciado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}</source>
+        <target>NEW_Se ha iniciado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="m0v_Dgj" resname="Se ha respondido el paso de materialidad de la huella de la propiedad por el usuario {user}">
+        <source>Se ha respondido el paso de materialidad de la huella de la propiedad por el usuario {user}</source>
+        <target>NEW_Se ha respondido el paso de materialidad de la huella de la propiedad por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="Rov.2E7" resname="Se ha respondido el paso de materialidad de la huella de la empresa por el usuario {user}">
+        <source>Se ha respondido el paso de materialidad de la huella de la empresa por el usuario {user}</source>
+        <target>NEW_Se ha respondido el paso de materialidad de la huella de la empresa por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id=".jY3tTi" resname="Se ha eliminado la evaluación de materialidad por el usuario {user}">
+        <source>Se ha eliminado la evaluación de materialidad por el usuario {user}</source>
+        <target>NEW_Se ha eliminado la evaluación de materialidad por el usuario {user}</target>
+      </trans-unit>
+      <trans-unit id="TBTHzU9" resname="La huella se completó sin evaluación de materialidad.">
+        <source>La huella se completó sin evaluación de materialidad.</source>
+        <target>NEW_La huella se completó sin evaluación de materialidad.</target>
+      </trans-unit>
+      <trans-unit id="RMyTTQ." resname="La evaluación de materialidad mide la relevancia de cada categoría de emisiones para la organización a partir de un breve cuestionario.">
+        <source>La evaluación de materialidad mide la relevancia de cada categoría de emisiones para la organización a partir de un breve cuestionario.</source>
+        <target>NEW_La evaluación de materialidad mide la relevancia de cada categoría de emisiones para la organización a partir de un breve cuestionario.</target>
+      </trans-unit>
+      <trans-unit id="UZ4dQKK" resname="Al completarla se obtiene una puntuación de relevancia por categoría que ayuda a decidir qué categorías incluir en el cálculo.">
+        <source>Al completarla se obtiene una puntuación de relevancia por categoría que ayuda a decidir qué categorías incluir en el cálculo.</source>
+        <target>NEW_Al completarla se obtiene una puntuación de relevancia por categoría que ayuda a decidir qué categorías incluir en el cálculo.</target>
+      </trans-unit>
+      <trans-unit id="NI2KfzO" resname="No hay sectores definidos: se aplicarán las preguntas comunes.">
+        <source>No hay sectores definidos: se aplicarán las preguntas comunes.</source>
+        <target>NEW_No hay sectores definidos: se aplicarán las preguntas comunes.</target>
+      </trans-unit>
+      <trans-unit id="ERRNuoX" resname="Completada el {date} por {user}">
+        <source>Completada el {date} por {user}</source>
+        <target>NEW_Completada el {date} por {user}</target>
+      </trans-unit>
+      <trans-unit id="wjRKAxT" resname="{answered} de {total} respuestas">
+        <source>{answered} de {total} respuestas</source>
+        <target>NEW_{answered} de {total} respuestas</target>
+      </trans-unit>
+      <trans-unit id="StztE0L" resname="Respondidas">
+        <source>Respondidas</source>
+        <target>NEW_Respondidas</target>
+      </trans-unit>
+      <trans-unit id="Ois9ngO" resname="Relevancia">
+        <source>Relevancia</source>
+        <target>NEW_Relevancia</target>
+      </trans-unit>
+      <trans-unit id="RNogxZ7" resname="¿Seguro que quieres reiniciar el cuestionario? Se perderán las respuestas.">
+        <source>¿Seguro que quieres reiniciar el cuestionario? Se perderán las respuestas.</source>
+        <target>NEW_¿Seguro que quieres reiniciar el cuestionario? Se perderán las respuestas.</target>
+      </trans-unit>
+      <trans-unit id="hgDY31Q" resname="Reiniciar cuestionario">
+        <source>Reiniciar cuestionario</source>
+        <target>NEW_Reiniciar cuestionario</target>
+      </trans-unit>
+      <trans-unit id="pFoNBVv" resname="Reabrir evaluación">
+        <source>Reabrir evaluación</source>
+        <target>NEW_Reabrir evaluación</target>
+      </trans-unit>
+      <trans-unit id="8HJItrO" resname="Completar evaluación">
+        <source>Completar evaluación</source>
+        <target>NEW_Completar evaluación</target>
+      </trans-unit>
+      <trans-unit id="f_1iK9I" resname="Evaluación de materialidad">
+        <source>Evaluación de materialidad</source>
+        <target>NEW_Evaluación de materialidad</target>
+      </trans-unit>
+      <trans-unit id="LfKVast" resname="Continuar sin evaluar">
+        <source>Continuar sin evaluar</source>
+        <target>NEW_Continuar sin evaluar</target>
+      </trans-unit>
+      <trans-unit id="_immEj3" resname="Esta categoría no tiene preguntas aplicables.">
+        <source>Esta categoría no tiene preguntas aplicables.</source>
+        <target>NEW_Esta categoría no tiene preguntas aplicables.</target>
+      </trans-unit>
+      <trans-unit id="yNzGmsm" resname="Peso {weight}">
+        <source>Peso {weight}</source>
+        <target>NEW_Peso {weight}</target>
+      </trans-unit>
+      <trans-unit id="S8.oY4p" resname="Responde el alcance 2 antes de evaluar la materialidad.">
+        <source>Responde el alcance 2 antes de evaluar la materialidad.</source>
+        <target>NEW_Responde el alcance 2 antes de evaluar la materialidad.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

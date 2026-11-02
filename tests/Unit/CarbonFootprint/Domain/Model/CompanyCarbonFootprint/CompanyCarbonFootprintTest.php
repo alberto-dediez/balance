@@ -15,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootpri
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintIntensityDenominatorsDeclared;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMarkedAsPrecalculated;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMaterialityAnswered;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMitigationPlanStarted;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedProperty;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedPropertyRecorded;
@@ -32,6 +33,7 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityDeno
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintAlreadyCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintScope2NotAnsweredException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
@@ -350,6 +352,56 @@ final class CompanyCarbonFootprintTest extends TestCase
         $this->expectException(OrganizationalCarbonFootprintNotCompletedException::class);
 
         $footprint->reopen();
+    }
+
+    public function testAnswerMaterialityAdvancesTheStatus(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope2Answered('company-1', 'footprint-1');
+
+        $footprint->answerMateriality();
+
+        $answered = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintMaterialityAnswered);
+        $this->assertCount(1, $answered);
+        $this->assertSame(OrganizationalCarbonFootprintStatus::MaterialityAnswered, $footprint->status());
+    }
+
+    public function testAnswerMaterialityDoesNotMoveBackAnAdvancedFootprint(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withProvidersAnswered('company-1', 'footprint-1');
+
+        $footprint->answerMateriality();
+
+        $this->assertSame(OrganizationalCarbonFootprintStatus::ProvidersAnswered, $footprint->status());
+    }
+
+    public function testAnswerMaterialityOnAnAnsweredFootprintDoesNotPublishTheEventAgain(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withMaterialityAnswered('company-1', 'footprint-1');
+
+        $footprint->answerMateriality();
+
+        $answered = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintMaterialityAnswered);
+        $this->assertCount(1, $answered);
+        $this->assertSame(OrganizationalCarbonFootprintStatus::MaterialityAnswered, $footprint->status());
+    }
+
+    public function testAnswerMaterialityWithoutScope2AnsweredThrows(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope1Answered('company-1', 'footprint-1');
+
+        $this->expectException(OrganizationalCarbonFootprintScope2NotAnsweredException::class);
+
+        $footprint->answerMateriality();
+    }
+
+    public function testAnswerMaterialityOnACompletedFootprintThrows(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withEmployeesAnswered('company-1', 'footprint-1');
+        $footprint->complete(new Emissions());
+
+        $this->expectException(OrganizationalCarbonFootprintAlreadyCompletedException::class);
+
+        $footprint->answerMateriality();
     }
 
     public function testAnswerProvidersAdvancesTheStatus(): void

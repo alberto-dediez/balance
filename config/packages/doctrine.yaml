@@ -132,6 +132,9 @@ doctrine:
             materiality_question_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityQuestionIdType
             materiality_sector_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialitySectorIdType
             materiality_question_sector_link_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityQuestionSectorLinkIdType
+            materiality_assessment_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityAssessmentIdType
+            materiality_assessment_topic_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityAssessmentTopicIdType
+            materiality_assessment_answer_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityAssessmentAnswerIdType
 
     orm:
         auto_generate_proxy_classes: true

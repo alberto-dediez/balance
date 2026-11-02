@@ -1,0 +1,16 @@
+{% extends '@carbon_footprint/property_carbon_footprints/wizard-layout.html.twig' %}
+
+{% set wizard_selected = 3 %}
+
+{% block top_actions %}
+    {{ parent() }}
+{% endblock %}
+
+{% block wizard_panels %}
+    {% include '@materiality/assessment/_step.html.twig' with {
+        carbonFootprintId: propertyCarbonFootprintId,
+        previousPath: path('property_carbon_footprints_scope_2', {propertyCarbonFootprintId: propertyCarbonFootprintId}),
+        nextPath: path('property_carbon_footprints_scope_3', {propertyCarbonFootprintId: propertyCarbonFootprintId}),
+        skipToken: csrf_token('materiality_skip_' ~ propertyCarbonFootprint.id),
+    } %}
+{% endblock %}

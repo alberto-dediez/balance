@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerMateriality;
+
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
+use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\User\User;
+use App\Shared\Application\CommandBus\Command;
+use App\Shared\Application\CommandBus\CommandHandler;
+use App\Shared\Application\CommandBus\CommandResponse;
+use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+
+class AnswerCompanyCarbonFootprintMaterialityService implements CommandHandler
+{
+    use RegisterHandlerTrait;
+
+    public function __construct(
+        private CompanyCarbonFootprintRepository $companyCarbonFootprintRepository,
+        private CompanyCarbonFootprintAuthorizer $authorizer,
+    ) {}
+
+    public function __invoke(AnswerCompanyCarbonFootprintMaterialityRequest $request, User $user): void
+    {
+        $companyCarbonFootprint = $this->companyCarbonFootprintRepository->find($request->companyCarbonFootprintId);
+
+        if (null === $companyCarbonFootprint) {
+            throw new \InvalidArgumentException('CompanyCarbonFootprint not found');
+        }
+
+        $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::Edit, $user);
+
+        $companyCarbonFootprint->answerMateriality();
+
+        $this->companyCarbonFootprintRepository->add($companyCarbonFootprint);
+    }
+
+    public function handle(Command $command, User $user): ?CommandResponse
+    {
+        assert($command instanceof AnswerCompanyCarbonFootprintMaterialityRequest);
+        $this->__invoke($command, $user);
+
+        return null;
+    }
+
+    public function isHandled(Command $command): bool
+    {
+        return $command instanceof AnswerCompanyCarbonFootprintMaterialityRequest;
+    }
+}

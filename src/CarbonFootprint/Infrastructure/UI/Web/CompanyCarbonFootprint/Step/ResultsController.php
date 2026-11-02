@@ -47,7 +47,8 @@ class ResultsController extends AbstractController
                 match (true) {
                     $companyCarbonFootprint->status()->isProvidersAnswered() => 'company_carbon_footprints_employees',
                     $companyCarbonFootprint->status()->isScope3Answered() => 'company_carbon_footprints_providers',
-                    $companyCarbonFootprint->status()->isScope2Answered() => 'company_carbon_footprints_scope_3',
+                    $companyCarbonFootprint->status()->isMaterialityAnswered() => 'company_carbon_footprints_scope_3',
+                    $companyCarbonFootprint->status()->isScope2Answered() => 'company_carbon_footprints_materiality',
                     $companyCarbonFootprint->status()->isScope1Answered() => 'company_carbon_footprints_scope_2',
                     default => 'company_carbon_footprints_scope_1',
                 },

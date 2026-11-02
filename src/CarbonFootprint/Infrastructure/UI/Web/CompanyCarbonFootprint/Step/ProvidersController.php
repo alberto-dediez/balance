@@ -40,7 +40,8 @@ class ProvidersController extends AbstractController
         if (!$companyCarbonFootprint->status()->isScope3Answered()) {
             return $this->redirectToRoute(
                 match (true) {
-                    $companyCarbonFootprint->status()->isScope2Answered() => 'company_carbon_footprints_scope_3',
+                    $companyCarbonFootprint->status()->isMaterialityAnswered() => 'company_carbon_footprints_scope_3',
+                    $companyCarbonFootprint->status()->isScope2Answered() => 'company_carbon_footprints_materiality',
                     $companyCarbonFootprint->status()->isScope1Answered() => 'company_carbon_footprints_scope_2',
                     default => 'company_carbon_footprints_scope_1',
                 },

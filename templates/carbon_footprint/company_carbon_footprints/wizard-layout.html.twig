@@ -48,12 +48,13 @@
 
 {% set providersStepShown = not companyCarbonFootprint.scope3Excluded %}
 
-{% set wizard_active = companyCarbonFootprint.status.stepNumber - ((not providersStepShown and companyCarbonFootprint.status.stepNumber >= 4) ? 2 : 0) %}
+{% set wizard_active = companyCarbonFootprint.status.stepNumber - ((not providersStepShown and companyCarbonFootprint.status.stepNumber >= 5) ? 2 : 0) %}
 
 {% block content %}
     {% set wizard_steps = [
         {label: 'Alcance 1' | trans, href: path('company_carbon_footprints_scope_1', {companyCarbonFootprintId: companyCarbonFootprintId})},
         {label: 'Alcance 2' | trans, href: path('company_carbon_footprints_scope_2', {companyCarbonFootprintId: companyCarbonFootprintId})},
+        {label: 'Materialidad' | trans, href: path('company_carbon_footprints_materiality', {companyCarbonFootprintId: companyCarbonFootprintId})},
         {label: 'Alcance 3' | trans, href: path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId})},
     ] %}
     {% if providersStepShown %}

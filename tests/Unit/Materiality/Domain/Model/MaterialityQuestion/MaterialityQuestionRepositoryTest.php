@@ -221,5 +221,45 @@ abstract class MaterialityQuestionRepositoryTest extends KernelTestCase
         $this->assertSame(['A', 'C', 'B'], $texts);
     }
 
+    public function testFindApplicableToSectorWithoutSectorOnlyReturnsQuestionsWithoutSectors(): void
+    {
+        $repository = $this->createSUT();
+
+        $sectorId = MaterialitySectorId::generate();
+
+        $common = MaterialityQuestionMother::from(text: 'common', id: (string) MaterialityQuestionId::generate());
+        $repository->add($common);
+        $repository->add(MaterialityQuestionMother::forSectors([$sectorId], 'sector'));
+        $repository->add(new MaterialityQuestion(id: MaterialityQuestionId::generate(), text: 'inactive', active: false));
+        $removed = MaterialityQuestionMother::from(text: 'removed', id: (string) MaterialityQuestionId::generate());
+        $removed->remove();
+        $repository->add($removed);
+
+        $recovered = $repository->findApplicableToSector(null);
+
+        $this->assertCount(1, $recovered);
+        $this->assertEquals($common->id(), $recovered[0]->id());
+    }
+
+    public function testFindApplicableToSectorReturnsCommonAndLinkedQuestions(): void
+    {
+        $repository = $this->createSUT();
+
+        $sectorId = MaterialitySectorId::generate();
+        $otherSectorId = MaterialitySectorId::generate();
+
+        $repository->add(MaterialityQuestionMother::from(text: 'linked', id: (string) MaterialityQuestionId::generate(), position: 2, sectorIds: [$sectorId, $otherSectorId]));
+        $repository->add(MaterialityQuestionMother::from(text: 'common', id: (string) MaterialityQuestionId::generate(), position: 1));
+        $repository->add(MaterialityQuestionMother::from(text: 'other', id: (string) MaterialityQuestionId::generate(), position: 0, sectorIds: [$otherSectorId]));
+        $repository->add(MaterialityQuestionMother::from(text: 'topic', id: (string) MaterialityQuestionId::generate(), topicId: MaterialityTopicId::generate(), position: 3));
+
+        $texts = array_map(
+            static fn(MaterialityQuestion $materialityQuestion) => $materialityQuestion->text(),
+            $repository->findApplicableToSector($sectorId),
+        );
+
+        $this->assertSame(['common', 'linked', 'topic'], $texts);
+    }
+
     abstract protected function createSUT(Locale $locale = Locale::Spanish): MaterialityQuestionRepository;
 }
