@@ -21,6 +21,7 @@
         <field name="year" type="integer" column="year" nullable="false" />
 
         <embedded name="totalEmissions" class="App\CarbonFootprint\Domain\Model\Emissions" use-column-prefix="true" column-prefix="total_emissions_" />
+        <embedded name="intensityDenominators" class="App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityDenominators" use-column-prefix="true" column-prefix="denominator_" />
 
         <field name="status" type="string" enum-type="App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus" nullable="false" />
         <field name="mitigationPlanStarted" type="boolean" column="mitigation_plan_started" nullable="false">

@@ -1,0 +1,133 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set isCompany = subjectType.value == 'company' %}
+
+{% set page_title = (isCompany ? ('Empresas' | trans) : ('Propiedades' | trans)) ~ ' > ' ~ dashboard.subject.name ~ ' > ' ~ ('Indicadores' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(isCompany ? 'company_carbon_footprints' : 'property_carbon_footprints') }}" />
+
+    {% if dashboard.selectedFootprintId is not null %}
+        <twig:TopAction path="{{ isCompany
+            ? path('company_carbon_footprints_results', {companyCarbonFootprintId: dashboard.selectedFootprintId})
+            : path('property_carbon_footprints_results', {propertyCarbonFootprintId: dashboard.selectedFootprintId}) }}">
+            <twig:Icon name="solar:document-text-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Ver resultados {year}' | trans({'{year}': dashboard.selectedYear}) }}
+        </twig:TopAction>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if not dashboard.hasData %}
+        <twig:Card>
+            {% if isCompany %}
+                <p class="mb-0">{{ 'Todavía no hay huellas completadas de esta empresa. Completa una huella para ver sus indicadores.' | trans }}</p>
+            {% else %}
+                <p class="mb-0">{{ 'Todavía no hay huellas completadas de esta propiedad. Completa una huella para ver sus indicadores.' | trans }}</p>
+            {% endif %}
+        </twig:Card>
+    {% else %}
+        {% set inventory = dashboard.inventory %}
+
+        <twig:Card>
+            <form method="get" action="{{ path(route) }}" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label" for="kpi-subject">{{ isCompany ? ('Empresa' | trans) : ('Propiedad' | trans) }}</label>
+                    <select id="kpi-subject" name="{{ parameter }}" class="form-select">
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}" {{ subject.id == dashboard.subject.id ? 'selected' }}>{{ subject.name }} ({{ subject.completedYears | join(', ') }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="kpi-year">{{ 'Año' | trans }}</label>
+                    <select id="kpi-year" name="year" class="form-select">
+                        {% for year in dashboard.availableYears %}
+                            <option value="{{ year }}" {{ year == dashboard.selectedYear ? 'selected' }}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-outline-secondary">{{ 'Ver' | trans }}</button>
+                </div>
+                <div class="col-md-2 text-end">
+                    {% if dashboard.baseYearSelected %}
+                        <span class="badge bg-info">{{ 'Año base' | trans }}</span>
+                    {% endif %}
+                </div>
+            </form>
+        </twig:Card>
+
+        {% if inventory.hasTotalDrift %}
+            <twig:Alert:Alert type="info">
+                {{ 'El desglose se ha recalculado con los datos actuales y difiere en {value} t CO₂eq del total fijado al completar la huella.' | trans({'{value}': (inventory.totalDriftKg / 1000) | number_format(2, ',', '.')}) }}
+            </twig:Alert:Alert>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-sm-6 col-xl d-flex">
+                <twig:Kpi:Tile
+                    label="{{ 'Total' | trans }}"
+                    value="{{ (inventory.totalKg / 1000) | number_format(2, ',', '.') }}"
+                    unit="t CO₂eq"
+                    icon="carbon:sustainability"
+                    color="warning"
+                />
+            </div>
+            <div class="col-sm-6 col-xl d-flex">
+                <twig:Kpi:Tile
+                    label="{{ 'scope_1' | trans({}, 'scope') }}"
+                    value="{{ (inventory.byScope['scope_1'] / 1000) | number_format(2, ',', '.') }}"
+                    unit="t CO₂eq"
+                    color="info"
+                />
+            </div>
+            <div class="col-sm-6 col-xl d-flex">
+                <twig:Kpi:Tile
+                    label="{{ 'scope_2' | trans({}, 'scope') }}"
+                    value="{{ (inventory.byScope['scope_2'] / 1000) | number_format(2, ',', '.') }}"
+                    unit="t CO₂eq"
+                    color="warning"
+                    footer="{{ inventory.dualReportingActive ? ('Localización: {value} t' | trans({'{value}': (inventory.scope2LocationKg / 1000) | number_format(2, ',', '.')})) : null }}"
+                />
+            </div>
+            <div class="col-sm-6 col-xl d-flex">
+                <twig:Kpi:Tile
+                    label="{{ 'scope_3' | trans({}, 'scope') }}"
+                    value="{{ (inventory.byScope['scope_3'] / 1000) | number_format(2, ',', '.') }}"
+                    unit="t CO₂eq"
+                    color="success"
+                >
+                    {% if inventory.scope3Excluded %}
+                        <span class="badge bg-secondary">{{ 'Excluido' | trans }}</span>
+                    {% endif %}
+                </twig:Kpi:Tile>
+            </div>
+            {% if view.previousYear is not null %}
+                <div class="col-sm-6 col-xl d-flex">
+                    <twig:Kpi:Tile
+                        label="{{ 'Variación vs. {year}' | trans({'{year}': view.previousYear}) }}"
+                        value="{{ view.previousDeltaPercent is null ? '---' : ((view.previousDeltaPercent > 0 ? '+' : '') ~ view.previousDeltaPercent | number_format(2, ',', '.') ~ ' %') }}"
+                        valueClass="{{ view.previousDeltaPercent is not null and view.previousDeltaPercent > 0 ? 'text-danger' : 'text-success' }}"
+                    />
+                </div>
+            {% endif %}
+        </div>
+
+        {% include '@carbon_footprint/kpi/_inventory.html.twig' %}
+        {% include '@carbon_footprint/kpi/_lines.html.twig' %}
+        {% include '@carbon_footprint/kpi/_intensity.html.twig' %}
+        {% include '@carbon_footprint/kpi/_evolution.html.twig' %}
+
+        {% if dashboard.series | length >= 2 %}
+            {% include '@carbon_footprint/kpi/_variation.html.twig' %}
+        {% endif %}
+
+        {% if isCompany %}
+            {% include '@carbon_footprint/kpi/_comparison.html.twig' %}
+        {% endif %}
+
+        {% include '@carbon_footprint/kpi/_base_year.html.twig' %}
+    {% endif %}
+{% endblock %}

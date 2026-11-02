@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintFilter;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Property\Domain\Model\Company\CompanyId;
@@ -104,5 +105,31 @@ abstract class CompanyCarbonFootprintRepositoryTest extends KernelTestCase
         $this->assertCount(2, $repository->findByFilter(new CompanyCarbonFootprintFilter(year: 2024)));
         $this->assertCount(1, $repository->findByFilter(new CompanyCarbonFootprintFilter(status: OrganizationalCarbonFootprintStatus::Scope1Answered)));
         $this->assertSame(2, $repository->totalResultsByFilter(new CompanyCarbonFootprintFilter(accountId: new AccountId('account-one'))));
+    }
+
+    public function testFindCompletedByYear(): void
+    {
+        $repository = $this->createSUT();
+
+        $completed = CompanyCarbonFootprintMother::withEmployeesAnswered('subject-1', 'footprint-1', 'account-one', 2024);
+        $completed->complete(new Emissions('100', '100'));
+        $otherAccount = CompanyCarbonFootprintMother::withEmployeesAnswered('subject-2', 'footprint-2', 'account-two', 2024);
+        $otherAccount->complete(new Emissions('200', '200'));
+        $removed = CompanyCarbonFootprintMother::withEmployeesAnswered('subject-3', 'footprint-3', 'account-one', 2024);
+        $removed->complete(new Emissions('300', '300'));
+        $removed->remove();
+        $otherYear = CompanyCarbonFootprintMother::withEmployeesAnswered('subject-4', 'footprint-4', 'account-one', 2023);
+        $otherYear->complete(new Emissions('400', '400'));
+
+        $repository->add($completed);
+        $repository->add($otherAccount);
+        $repository->add($removed);
+        $repository->add($otherYear);
+        $repository->add(CompanyCarbonFootprintMother::withEmployeesAnswered('subject-5', 'footprint-5', 'account-one', 2024));
+
+        $ids = array_map(static fn($footprint): string => (string) $footprint->id(), $repository->findCompletedByYear(2024));
+        sort($ids);
+
+        $this->assertSame(['footprint-1', 'footprint-2'], $ids);
     }
 }

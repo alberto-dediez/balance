@@ -1,0 +1,62 @@
+{% set baseYear = dashboard.baseYear %}
+
+<twig:Card title="{{ 'Año base y política de recálculo' | trans }}">
+    {% if dashboard.baseYearAlert and baseYear is not null and dashboard.baseYearCurrentTotalKg is not null %}
+        <twig:Alert:Alert type="warning">
+            {{ 'El total del año base ({year}) ha cambiado un {change} % desde su declaración y supera el umbral del {threshold} %. Revisa la serie y actualiza la declaración si procede.' | trans({
+                '{year}': baseYear.year,
+                '{change}': (baseYear.changePercent(dashboard.baseYearCurrentTotalKg) ?? 0) | number_format(2, ',', '.'),
+                '{threshold}': baseYear.recalculationThresholdPercent | number_format(2, ',', '.'),
+            }) }}
+        </twig:Alert:Alert>
+    {% endif %}
+
+    {% if baseYear is not null %}
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Año base' | trans }}">{{ baseYear.year }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Umbral de significancia (%)' | trans }}">{{ baseYear.recalculationThresholdPercent | number_format(2, ',', '.') }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Indicador principal' | trans }}">{{ baseYear.primaryIndicator is not null ? (baseYear.primaryIndicator.value | trans({}, 'intensityIndicator')) : '---' }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Total del año base al declarar (kg CO₂eq)' | trans }}">{{ baseYear.baseYearTotalKgCo2eq | number_format(2, ',', '.') }}</twig:View:Field>
+            </div>
+            <div class="col-12">
+                <twig:View:Field label="{{ 'Justificación del año base' | trans }}">{{ baseYear.justification }}</twig:View:Field>
+            </div>
+        </div>
+
+        {% if baseYear | is_authorized('remove') %}
+            <twig:Link
+                path="{{ path('base_year_declarations_remove', {baseYearDeclarationId: baseYear.id, year: dashboard.selectedYear, _token: csrf_token('remove')}) }}"
+                color="outlineDanger"
+                class="mb-4"
+                data-controller="confirm"
+                data-confirm-text-param="{{ '¿Seguro que quieres eliminar la declaración de año base?' | trans }}"
+                data-action="confirm#link:prevent"
+            >
+                <twig:Icon name="solar:close-square-line-duotone" size="lg" class="me-2" />
+                {{ 'Eliminar declaración' | trans }}
+            </twig:Link>
+        {% endif %}
+    {% endif %}
+
+    {% if dashboard.subject | is_authorized('edit') %}
+        {{ form_start(baseYearForm) }}
+            <div class="row g-4">
+                <div class="col-md-6">{{ form_row(baseYearForm.year) }}</div>
+                <div class="col-md-6">{{ form_row(baseYearForm.recalculationThresholdPercent) }}</div>
+                <div class="col-md-6">{{ form_row(baseYearForm.primaryIndicator) }}</div>
+                <div class="col-12">{{ form_row(baseYearForm.justification) }}</div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="baseYearForm.declare" />
+            </twig:ActionBar>
+        {{ form_end(baseYearForm) }}
+    {% endif %}
+</twig:Card>

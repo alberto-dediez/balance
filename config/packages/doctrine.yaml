@@ -115,6 +115,8 @@ doctrine:
             public_landing_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingIdType
             public_landing_block_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingBlockIdType
             exchange_rate_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ExchangeRateIdType
+            base_year_declaration_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\BaseYearDeclarationIdType
+            sector_benchmark_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\SectorBenchmarkIdType
             project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectIdType
             account_project_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\AccountProjectIdType
             credit_purchase_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\CreditPurchaseIdType

@@ -34,6 +34,9 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\MarginOfError;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponse;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Domain\Model\BaseYearDeclaration\BaseYearDeclaration;
+use App\CarbonFootprint\Domain\Model\BaseYearDeclaration\BaseYearDeclarationId;
+use App\CarbonFootprint\Domain\Model\BaseYearDeclaration\BaseYearDeclarationRepository;
 use App\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityReference;
@@ -86,6 +89,8 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContribution;
 use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionRepository;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityDenominators;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityIndicator;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeContribution\CommuteAnswer;
@@ -119,6 +124,10 @@ use App\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceId;
 use App\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepository;
 use App\CarbonFootprint\Domain\Model\Quantity;
 use App\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepository;
+use App\CarbonFootprint\Domain\Model\SectorBenchmark\SectorBenchmark;
+use App\CarbonFootprint\Domain\Model\SectorBenchmark\SectorBenchmarkId;
+use App\CarbonFootprint\Domain\Model\SectorBenchmark\SectorBenchmarkRepository;
+use App\CarbonFootprint\Domain\Model\SectorBenchmark\SectorBenchmarkStatistics;
 use App\CarbonFootprint\Domain\Model\Transport\TransportRepository;
 use App\CarbonFootprint\Domain\Model\Transport\Vehicle;
 use App\CarbonFootprint\Domain\Model\Trip\LegKind;
@@ -3830,5 +3839,82 @@ final readonly class CarbonFootprintContext implements Context
     private function getPropertyCarbonFootprintCertificateStorage(): PropertyCarbonFootprintCertificateStorage
     {
         return $this->client->getContainer()->get(PropertyCarbonFootprintCertificateStorage::class);
+    }
+
+    #[Given('a completed property carbon footprint of property :name for year :year with total :kg kg and stays :stays')]
+    public function aCompletedPropertyCarbonFootprintOfPropertyForYearWithTotalAndStays(string $name, string $year, string $kg, string $stays): void
+    {
+        $this->ensureDefaultEmissionFactorGroupExists();
+
+        $property = $this->client->getContainer()->get(PropertyRepository::class)->findByName($name);
+        Assert::assertNotNull($property);
+        $accountId = $property->accountId();
+        Assert::assertNotNull($accountId);
+
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) $property->id(), sprintf('%s-%s', $property->id(), $year), (string) $accountId, (int) $year);
+
+        $activity = CombustibleActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId,
+            combustibleId: CombustibleId::generate(),
+            emissionFactor: new EmissionFactor('1.5', '1.5', '0', '0', (int) $year, EmissionFactorGroupMother::default()->id(), Unit::Liter, 'IPCC'),
+            emissions: new Emissions($kg, $kg, '0', '0'),
+            quantity: new Quantity((float) $kg / 1.5, Unit::Liter),
+        );
+        $this->getActivityRepository()->save($activity);
+
+        $footprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+
+        if ('' !== $stays && '0' !== $stays) {
+            $footprint->declareIntensityDenominators(new IntensityDenominators(stays: (int) $stays));
+        }
+
+        $footprint->complete(new Emissions($kg, $kg));
+
+        $this->getPropertyCarbonFootprintRepository()->add($footprint);
+    }
+
+    #[Given('a sector benchmark for :segment :year :indicator with median :median')]
+    public function aSectorBenchmarkWithMedian(string $segment, string $year, string $indicator, string $median): void
+    {
+        $this->client->getContainer()->get(SectorBenchmarkRepository::class)->add(SectorBenchmark::compute(
+            SectorBenchmarkId::generate(),
+            'company' === $segment ? CarbonFootprintReportSubjectType::Company : CarbonFootprintReportSubjectType::Property,
+            $segment,
+            (int) $year,
+            IntensityIndicator::from($indicator),
+            new SectorBenchmarkStatistics(
+                sampleSize: SectorBenchmarkStatistics::MIN_SAMPLE_SIZE,
+                accountCount: SectorBenchmarkStatistics::MIN_ACCOUNT_COUNT,
+                median: (float) $median,
+                percentile25: (float) $median * 0.5,
+                percentile75: (float) $median * 1.5,
+                mean: (float) $median,
+            ),
+        ));
+    }
+
+    #[Given('a base year declaration for property :name in :year')]
+    public function aBaseYearDeclarationForPropertyIn(string $name, string $year): void
+    {
+        $property = $this->client->getContainer()->get(PropertyRepository::class)->findByName($name);
+        Assert::assertNotNull($property);
+        $accountId = $property->accountId();
+        Assert::assertNotNull($accountId);
+
+        $footprint = $this->getPropertyCarbonFootprintRepository()->findByPropertyIdAndYear($property->id(), (int) $year);
+        Assert::assertNotNull($footprint);
+
+        $this->client->getContainer()->get(BaseYearDeclarationRepository::class)->add(BaseYearDeclaration::declare(
+            new BaseYearDeclarationId(sprintf('base-year-%s', $property->id())),
+            CarbonFootprintReportSubjectType::Property,
+            (string) $property->id(),
+            $accountId,
+            (int) $year,
+            'Primer año con inventario completo',
+            '5',
+            IntensityIndicator::PerStay,
+            $footprint->totalEmissions()->co2eq(),
+        ));
     }
 }

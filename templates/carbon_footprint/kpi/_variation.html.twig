@@ -1,0 +1,59 @@
+<twig:Card title="{{ 'Descomposición de la variación' | trans }}">
+    {% if view.variations is empty %}
+        <p class="mb-0">{{ 'No hay un año anterior completado con el que comparar el año seleccionado.' | trans }}</p>
+    {% else %}
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Comparación' | trans }}</th>
+                                <th class="text-end">{{ 'Δ total' | trans }} (t CO₂eq)</th>
+                                <th class="text-end">{{ 'Efecto actividad' | trans }}</th>
+                                <th class="text-end">{{ 'Efecto eficiencia' | trans }}</th>
+                                <th class="text-end">{{ 'Efecto factores' | trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in view.variations %}
+                                {% set variation = row.variation %}
+                                <tr>
+                                    <td>
+                                        {{ row.label }}
+                                        {% if variation.activityEffect is not null and variation.primaryIndicator is not null %}
+                                            <small class="text-muted d-block">{{ 'Dato de actividad: {indicator}' | trans({'{indicator}': variation.primaryIndicator.value | trans({}, 'intensityIndicator')}) }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">{{ (variation.delta / 1000) | number_format(2, ',', '.') }}</td>
+                                    {% if variation.activityEffect is not null %}
+                                        <td class="text-end">{{ (variation.activityEffect / 1000) | number_format(2, ',', '.') }}</td>
+                                        <td class="text-end">{{ (variation.efficiencyEffect / 1000) | number_format(2, ',', '.') }}</td>
+                                    {% else %}
+                                        <td class="text-end" colspan="2">{{ 'Actividad y eficiencia' | trans }}: {{ (variation.efficiencyEffect / 1000) | number_format(2, ',', '.') }}</td>
+                                    {% endif %}
+                                    <td class="text-end">{{ (variation.factorEffect / 1000) | number_format(2, ',', '.') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                {% for chart in view.variationCharts %}
+                    <twig:Chart:Bar
+                        title="{{ chart.title }}"
+                        :categories="chart.categories"
+                        :series="chart.series"
+                        unit="t"
+                        :legend="true"
+                    />
+                {% endfor %}
+            </div>
+        </div>
+
+        <p class="text-muted mb-0">
+            {{ 'Efecto actividad: variación del dato de actividad del indicador principal por la intensidad del año de referencia. Efecto factores: cambio de los factores de emisión en las líneas presentes en ambos años, por la cantidad del año seleccionado. Efecto eficiencia: el resto de la variación. Las líneas se emparejan por alcance, categoría, elemento y unidad; si un elemento cambia de nombre entre años cuenta como nuevo.' | trans }}
+        </p>
+    {% endif %}
+</twig:Card>

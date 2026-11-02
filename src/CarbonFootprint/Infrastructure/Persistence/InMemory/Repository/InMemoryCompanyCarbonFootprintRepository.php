@@ -85,6 +85,22 @@ class InMemoryCompanyCarbonFootprintRepository implements CompanyCarbonFootprint
         return $results;
     }
 
+    /** @return list<CompanyCarbonFootprint> */
+    public function findCompletedByYear(int $year): array
+    {
+        $results = [];
+
+        foreach ($this->companyCarbonFootprints as $companyCarbonFootprint) {
+            if ($companyCarbonFootprint->isRemoved() || !$companyCarbonFootprint->isCompleted() || $companyCarbonFootprint->year() !== $year) {
+                continue;
+            }
+
+            $results[] = $companyCarbonFootprint;
+        }
+
+        return $results;
+    }
+
     public function findByActivityId(ActivityId $activityId): ?CompanyCarbonFootprint
     {
         foreach ($this->companyCarbonFootprints as $companyCarbonFootprint) {

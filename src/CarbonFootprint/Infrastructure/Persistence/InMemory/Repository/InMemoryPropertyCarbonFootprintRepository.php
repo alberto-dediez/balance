@@ -85,6 +85,22 @@ class InMemoryPropertyCarbonFootprintRepository implements PropertyCarbonFootpri
         return $results;
     }
 
+    /** @return list<PropertyCarbonFootprint> */
+    public function findCompletedByYear(int $year): array
+    {
+        $results = [];
+
+        foreach ($this->propertyCarbonFootprints as $propertyCarbonFootprint) {
+            if ($propertyCarbonFootprint->isRemoved() || !$propertyCarbonFootprint->isCompleted() || $propertyCarbonFootprint->year() !== $year) {
+                continue;
+            }
+
+            $results[] = $propertyCarbonFootprint;
+        }
+
+        return $results;
+    }
+
     public function findByActivityId(ActivityId $activityId): ?PropertyCarbonFootprint
     {
         foreach ($this->propertyCarbonFootprints as $propertyCarbonFootprint) {

@@ -1,0 +1,40 @@
+<twig:Card title="{{ 'Datos de actividad del año' | trans }}">
+    <p class="text-muted">{{ 'Declara los datos de actividad del año para calcular los indicadores de intensidad; solo se calculan los que tengan dato.' | trans }}</p>
+
+    {% if denominatorsPrefilled %}
+        <p class="text-muted">{{ 'Valores por defecto: suma de las huellas de propiedad del año de las propiedades consolidadas. Revísalos y guarda.' | trans }}</p>
+    {% endif %}
+
+    {% if canEditDenominators %}
+        {{ form_start(denominatorsForm) }}
+            <div class="row g-4">
+                <div class="col-md-6">{{ form_row(denominatorsForm.occupiedRooms) }}</div>
+                <div class="col-md-6">{{ form_row(denominatorsForm.stays) }}</div>
+                <div class="col-md-6">{{ form_row(denominatorsForm.builtAreaM2) }}</div>
+                <div class="col-md-6">{{ form_row(denominatorsForm.coversServed) }}</div>
+                <div class="col-md-6">{{ form_row(denominatorsForm.averageHeadcount) }}</div>
+                <div class="col-md-6">{{ form_row(denominatorsForm.revenueEur) }}</div>
+                <div class="col-md-6">{{ form_row(denominatorsForm.customersServed) }}</div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="denominatorsForm.save" />
+            </twig:ActionBar>
+        {{ form_end(denominatorsForm) }}
+    {% endif %}
+
+    {% if intensityIndicators is not empty %}
+        <h6 class="fw-semibold mb-3 mt-4">{{ 'Indicadores de intensidad' | trans }}</h6>
+        <dl class="row">
+            {% for value in intensityIndicators %}
+                <dt class="col-sm-6">{{ value.indicator.value | trans({}, 'intensityIndicator') }}</dt>
+                <dd class="col-sm-6">{{ value.kgCo2eqPerUnit | number_format(value.kgCo2eqPerUnit < 1 ? 4 : 2, ',', '.') }} kg CO₂eq / {{ value.indicator.denominatorUnitKey | trans({}, 'intensityIndicator') }}</dd>
+            {% endfor %}
+        </dl>
+
+        <twig:Link path="{{ kpiPath }}" color="outlinePrimary">
+            <twig:Icon name="solar:chart-square-line-duotone" size="lg" class="me-2" />
+            {{ 'Ver panel de indicadores' | trans }}
+        </twig:Link>
+    {% endif %}
+</twig:Card>

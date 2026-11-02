@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\SectorBenchmark\SectorBenchmark" table="carbon_footprint_sector_benchmarks">
+        <unique-constraints>
+            <unique-constraint name="UNIQ_sb_segment" columns="subject_type,segment_key,year,indicator"/>
+        </unique-constraints>
+
+        <id name="id" type="sector_benchmark_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="subjectType" type="string" column="subject_type" length="16" nullable="false" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType"/>
+        <field name="segmentKey" type="string" column="segment_key" length="32" nullable="false"/>
+        <field name="year" type="integer" column="year" nullable="false"/>
+        <field name="indicator" type="string" column="indicator" length="32" nullable="false" enum-type="App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityIndicator"/>
+        <field name="sampleSize" type="integer" column="sample_size" nullable="false"/>
+        <field name="accountCount" type="integer" column="account_count" nullable="false"/>
+        <field name="median" type="decimal" column="median" precision="16" scale="4" nullable="false"/>
+        <field name="percentile25" type="decimal" column="percentile_25" precision="16" scale="4" nullable="false"/>
+        <field name="percentile75" type="decimal" column="percentile_75" precision="16" scale="4" nullable="false"/>
+        <field name="mean" type="decimal" column="mean" precision="16" scale="4" nullable="false"/>
+        <field name="computedAt" type="datetime_immutable" column="computed_at" nullable="false"/>
+    </entity>
+</doctrine-mapping>

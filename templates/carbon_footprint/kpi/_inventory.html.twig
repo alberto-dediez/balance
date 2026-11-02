@@ -1,0 +1,117 @@
+<twig:Card title="{{ 'Resultados del inventario' | trans }}">
+    <div class="row">
+        <div class="col-lg-7">
+            <h6 class="fw-semibold mb-3">{{ 'Evolución por alcance' | trans }} <span class="text-muted fw-normal">(t CO₂eq)</span></h6>
+            <twig:Chart:Bar
+                title="{{ 'Emisiones' | trans }}"
+                :categories="view.years"
+                :series="view.scopeSeries"
+                unit="t"
+                :stacked="true"
+                :legend="true"
+            />
+        </div>
+        <div class="col-lg-5">
+            <h6 class="fw-semibold mb-3">{{ 'Emisiones por alcance' | trans }} {{ dashboard.selectedYear }} <span class="text-muted fw-normal">(t CO₂eq)</span></h6>
+            <twig:Chart:Donut
+                title="{{ 'Emisiones por alcance' | trans }}"
+                :values="view.scopeValues"
+                :categories="view.scopeLabels"
+                unit="t"
+                :legend="true"
+            />
+        </div>
+    </div>
+
+    <h6 class="fw-semibold mb-3 mt-4">{{ 'Contribución relativa' | trans }}</h6>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Alcance · Categoría' | trans }}</th>
+                            <th class="text-end">t CO₂eq</th>
+                            <th class="text-end">%</th>
+                            <th class="text-end">{{ '% acum.' | trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in view.contributionRows %}
+                            <tr>
+                                <td>{{ row.label }}</td>
+                                <td class="text-end">{{ row.tonnes | number_format(2, ',', '.') }}</td>
+                                <td class="text-end">{{ row.percent | number_format(2, ',', '.') }}</td>
+                                <td class="text-end">{{ row.cumulativePercent | number_format(2, ',', '.') }}</td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="4">---</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            {% if view.contributionChart.values is not empty %}
+                <twig:Chart:Bar
+                    title="{{ 'Emisiones' | trans }}"
+                    :values="view.contributionChart.values"
+                    :categories="view.contributionChart.labels"
+                    unit="t"
+                />
+            {% endif %}
+        </div>
+    </div>
+
+    <h6 class="fw-semibold mb-3 mt-4">{{ 'Desglose por gas' | trans }}</h6>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Gas' | trans }}</th>
+                            <th class="text-end">kg CO₂eq</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in view.gasRows %}
+                            <tr>
+                                <td>{{ row.label }}</td>
+                                <td class="text-end">{{ row.kg | number_format(2, ',', '.') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <twig:Chart:Donut
+                title="{{ 'Desglose por gas' | trans }}"
+                :values="view.gasRows | map(row => row.kg)"
+                :categories="view.gasRows | map(row => row.label)"
+                unit="kg"
+                :decimals="0"
+                :legend="true"
+            />
+        </div>
+    </div>
+
+    {% if inventory.dualReportingActive %}
+        <h6 class="fw-semibold mb-3 mt-4">{{ 'Doble reporte del alcance 2' | trans }}</h6>
+        <dl class="row">
+            <dt class="col-sm-5">{{ 'Alcance 2 · método de mercado (kg CO₂eq)' | trans }}</dt>
+            <dd class="col-sm-7">{{ inventory.scope2MarketKg | number_format(2, ',', '.') }}</dd>
+
+            <dt class="col-sm-5">{{ 'Alcance 2 · método de localización (kg CO₂eq)' | trans }}</dt>
+            <dd class="col-sm-7">{{ inventory.scope2LocationKg | number_format(2, ',', '.') }}</dd>
+
+            <dt class="col-sm-5">{{ 'Total · método de localización (kg CO₂eq)' | trans }}</dt>
+            <dd class="col-sm-7">{{ inventory.locationBasedTotalKg | number_format(2, ',', '.') }}</dd>
+        </dl>
+
+        {% if inventory.electricityActivitiesWithoutLocationBased > 0 %}
+            <twig:Alert:Alert type="warning">{{ 'Actividades de electricidad sin factor de mix eléctrico para su país y año: {count}. No se incluyen en el método de localización y conservan su valor de mercado en el total por localización.' | trans({'{count}': inventory.electricityActivitiesWithoutLocationBased}) }}</twig:Alert:Alert>
+        {% endif %}
+    {% endif %}
+</twig:Card>

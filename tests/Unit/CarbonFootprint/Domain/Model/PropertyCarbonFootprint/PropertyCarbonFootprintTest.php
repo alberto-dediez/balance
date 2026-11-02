@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityDenominators;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintAlreadyCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
@@ -20,6 +21,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintCompleted;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintEmployeesAnswered;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintIntensityDenominatorsDeclared;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMarkedAsPrecalculated;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMitigationPlanStarted;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintProvidersAnswered;
@@ -771,5 +773,40 @@ final class PropertyCarbonFootprintTest extends TestCase
         $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
 
         $this->assertCount(0, $footprint->activityIds($fuelAndEnergy));
+    }
+
+    public function testDeclareIntensityDenominatorsPublishesAndAppliesTheEvent(): void
+    {
+        $footprint = new PropertyCarbonFootprint(id: PropertyCarbonFootprintId::generate());
+
+        $footprint->declareIntensityDenominators(new IntensityDenominators(stays: 41000, builtAreaM2: '2000.00'));
+
+        $events = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintIntensityDenominatorsDeclared);
+        $this->assertCount(1, $events);
+        $this->assertSame(41000, $footprint->intensityDenominators()->stays());
+        $this->assertSame('2000.00', $footprint->intensityDenominators()->builtAreaM2());
+    }
+
+    public function testDeclareIntensityDenominatorsIsAllowedOnACompletedFootprint(): void
+    {
+        $footprint = new PropertyCarbonFootprint(
+            id: PropertyCarbonFootprintId::generate(),
+            status: OrganizationalCarbonFootprintStatus::Completed,
+        );
+
+        $footprint->declareIntensityDenominators(new IntensityDenominators(averageHeadcount: '25.50'));
+
+        $this->assertSame('25.50', $footprint->intensityDenominators()->averageHeadcount());
+    }
+
+    public function testDeclaringTheSameIntensityDenominatorsDoesNotPublish(): void
+    {
+        $footprint = new PropertyCarbonFootprint(id: PropertyCarbonFootprintId::generate());
+        $footprint->declareIntensityDenominators(new IntensityDenominators(stays: 100));
+
+        $footprint->declareIntensityDenominators(new IntensityDenominators(stays: 100));
+
+        $events = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintIntensityDenominatorsDeclared);
+        $this->assertCount(1, $events);
     }
 }

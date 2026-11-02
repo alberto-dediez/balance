@@ -22,6 +22,9 @@ interface CompanyCarbonFootprintRepository
 
     public function findByActivityId(ActivityId $activityId): ?CompanyCarbonFootprint;
 
+    /** @return list<CompanyCarbonFootprint> */
+    public function findCompletedByYear(int $year): array;
+
     /** @return array<CompanyCarbonFootprint> */
     public function findByFilter(CompanyCarbonFootprintFilter $filter): array;
 

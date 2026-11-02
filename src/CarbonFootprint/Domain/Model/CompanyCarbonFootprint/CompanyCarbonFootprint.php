@@ -14,6 +14,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityDenominators;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
@@ -62,6 +63,7 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         private ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->events = $events;
+        $this->intensityDenominators = IntensityDenominators::empty();
     }
 
     public function id(): CompanyCarbonFootprintId
@@ -526,6 +528,20 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
+    public function declareIntensityDenominators(IntensityDenominators $denominators): void
+    {
+        if ($this->intensityDenominators->equals($denominators)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintIntensityDenominatorsDeclared(
+                companyCarbonFootprintId: $this->id,
+                denominators: $denominators,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -690,6 +706,12 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
     {
         $this->status = OrganizationalCarbonFootprintStatus::EmployeesAnswered;
         $this->totalEmissions = new Emissions();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintIntensityDenominatorsDeclared(CompanyCarbonFootprintIntensityDenominatorsDeclared $event): void
+    {
+        $this->intensityDenominators = $event->denominators();
         $this->updatedAt = $event->occurredOn();
     }
 

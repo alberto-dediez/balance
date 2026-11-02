@@ -1,0 +1,47 @@
+<twig:Card title="{{ 'Desglose por categoría y línea' | trans }}">
+    <div class="accordion" id="kpi-lines">
+        {% for scope, sources in inventory.linesByScopeAndSource %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kpi-lines-{{ scope }}" aria-expanded="false" aria-controls="kpi-lines-{{ scope }}">
+                        {{ scope | trans({}, 'scope') }} · {{ (inventory.byScope[scope] / 1000) | number_format(2, ',', '.') }} t CO₂eq
+                    </button>
+                </h2>
+                <div id="kpi-lines-{{ scope }}" class="accordion-collapse collapse" data-bs-parent="#kpi-lines">
+                    <div class="accordion-body">
+                        {% for source, lines in sources %}
+                            {% set categoryKg = inventory.byScopeAndSource[scope][source] ?? 0 %}
+                            <h6 class="fw-semibold mb-3">{{ source | trans({}, 'source') }} · {{ (categoryKg / 1000) | number_format(2, ',', '.') }} t CO₂eq</h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ 'Línea' | trans }}</th>
+                                            <th>{{ 'Método' | trans }}</th>
+                                            <th class="text-end">{{ 'Cantidad' | trans }}</th>
+                                            <th class="text-end">{{ 'Factor' | trans }}</th>
+                                            <th class="text-end">kg CO₂eq</th>
+                                            <th class="text-end">%</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for line in lines %}
+                                            <tr>
+                                                <td>{{ line.itemName }}</td>
+                                                <td>{{ line.method is not null ? (line.method.label | trans) : '---' }}</td>
+                                                <td class="text-end">{{ line.quantity is not null ? (line.quantity | number_format(2, ',', '.') ~ ' ' ~ (line.unit.value | trans({}, 'unitType'))) : '---' }}</td>
+                                                <td class="text-end">{{ line.factorCo2eq is not null ? line.factorCo2eq | number_format(4, ',', '.') : '---' }}</td>
+                                                <td class="text-end">{{ line.emissionsCo2eq | number_format(2, ',', '.') }}</td>
+                                                <td class="text-end">{{ categoryKg != 0 ? (line.emissionsCo2eq / categoryKg * 100) | number_format(2, ',', '.') : '---' }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</twig:Card>

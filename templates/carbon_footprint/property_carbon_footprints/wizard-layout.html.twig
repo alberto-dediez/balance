@@ -37,6 +37,14 @@
         <twig:TopAction:Export path="{{ path('export', {code: 'property_carbon_footprint_detail', propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" />
     {% endif %}
 
+    {% if propertyCarbonFootprint | is_authorized('view') %}
+        <twig:TopAction path="{{ path('property_carbon_footprint_kpis', {propertyId: propertyCarbonFootprint.propertyId, year: propertyCarbonFootprint.year}) }}">
+            <twig:Icon name="solar:chart-square-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Ver indicadores' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('property_carbon_footprints') }}" />
 {% endblock %}
 

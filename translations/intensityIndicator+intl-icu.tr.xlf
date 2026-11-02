@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="nzIoUX." resname="per_occupied_room">
+        <source>per_occupied_room</source>
+        <target>NEW_per_occupied_room</target>
+      </trans-unit>
+      <trans-unit id="y1JRqOH" resname="per_stay">
+        <source>per_stay</source>
+        <target>NEW_per_stay</target>
+      </trans-unit>
+      <trans-unit id="g_iKDg1" resname="per_square_meter">
+        <source>per_square_meter</source>
+        <target>NEW_per_square_meter</target>
+      </trans-unit>
+      <trans-unit id="xA4.YC0" resname="per_cover">
+        <source>per_cover</source>
+        <target>NEW_per_cover</target>
+      </trans-unit>
+      <trans-unit id="U9fcmHL" resname="per_employee">
+        <source>per_employee</source>
+        <target>NEW_per_employee</target>
+      </trans-unit>
+      <trans-unit id="7KxEi51" resname="per_million_euro_revenue">
+        <source>per_million_euro_revenue</source>
+        <target>NEW_per_million_euro_revenue</target>
+      </trans-unit>
+      <trans-unit id="qEl8qyg" resname="per_customer">
+        <source>per_customer</source>
+        <target>NEW_per_customer</target>
+      </trans-unit>
+      <trans-unit id="UgUGMuh" resname="per_occupied_room_unit">
+        <source>per_occupied_room_unit</source>
+        <target>NEW_per_occupied_room_unit</target>
+      </trans-unit>
+      <trans-unit id="WMVCTTc" resname="per_stay_unit">
+        <source>per_stay_unit</source>
+        <target>NEW_per_stay_unit</target>
+      </trans-unit>
+      <trans-unit id="JAedPdT" resname="per_square_meter_unit">
+        <source>per_square_meter_unit</source>
+        <target>NEW_per_square_meter_unit</target>
+      </trans-unit>
+      <trans-unit id="PCmssRd" resname="per_cover_unit">
+        <source>per_cover_unit</source>
+        <target>NEW_per_cover_unit</target>
+      </trans-unit>
+      <trans-unit id="ZRn9hgG" resname="per_employee_unit">
+        <source>per_employee_unit</source>
+        <target>NEW_per_employee_unit</target>
+      </trans-unit>
+      <trans-unit id="jGnPSzn" resname="per_million_euro_revenue_unit">
+        <source>per_million_euro_revenue_unit</source>
+        <target>NEW_per_million_euro_revenue_unit</target>
+      </trans-unit>
+      <trans-unit id="C.YWKyB" resname="per_customer_unit">
+        <source>per_customer_unit</source>
+        <target>NEW_per_customer_unit</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

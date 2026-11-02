@@ -1,0 +1,31 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set isCompany = subjectType.value == 'company' %}
+
+{% set page_title = (isCompany ? ('Empresas' | trans) : ('Propiedades' | trans)) ~ ' > ' ~ ('Indicadores' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path(isCompany ? 'company_carbon_footprints' : 'property_carbon_footprints') }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Panel de indicadores' | trans }}">
+        {% if subjects is empty %}
+            <p class="mb-0">{{ 'Todavía no hay huellas completadas. Completa una huella para ver sus indicadores.' | trans }}</p>
+        {% else %}
+            <form method="get" action="{{ path(route) }}" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label" for="kpi-subject">{{ isCompany ? ('Empresa' | trans) : ('Propiedad' | trans) }}</label>
+                    <select id="kpi-subject" name="{{ parameter }}" class="form-select">
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}">{{ subject.name }} ({{ subject.completedYears | join(', ') }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">{{ 'Ver indicadores' | trans }}</button>
+                </div>
+            </form>
+        {% endif %}
+    </twig:Card>
+{% endblock %}

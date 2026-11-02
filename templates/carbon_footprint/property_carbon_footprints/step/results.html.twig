@@ -34,6 +34,8 @@
                 {% endif %}
             </twig:Card>
 
+            {% include '@carbon_footprint/organizational_carbon_footprints/_intensity_denominators.html.twig' with {canEditDenominators: propertyCarbonFootprint | is_authorized('edit')} %}
+
             <div class="row">
                 <div class="col-lg-6 d-flex">
                     <div class="card flex-fill">

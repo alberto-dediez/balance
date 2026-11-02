@@ -576,6 +576,11 @@ class NodeLister
                         icon: 'carbon:sustainability',
                         target: $this->router->generate('property_carbon_footprints'),
                     ),
+                    new Node(
+                        label: new TranslatableMessage('Indicadores'),
+                        icon: 'solar:chart-square-line-duotone',
+                        target: $this->router->generate('property_carbon_footprint_kpis'),
+                    ),
                 ],
             );
 
@@ -592,6 +597,11 @@ class NodeLister
                         label: new TranslatableMessage('Huellas de Carbono'),
                         icon: 'carbon:sustainability',
                         target: $this->router->generate('company_carbon_footprints'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Indicadores'),
+                        icon: 'solar:chart-square-line-duotone',
+                        target: $this->router->generate('company_carbon_footprint_kpis'),
                     ),
                 ],
             );

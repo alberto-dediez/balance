@@ -1,0 +1,72 @@
+<twig:Card title="{{ 'Comparación entre propiedades' | trans }}">
+    <form method="get" action="{{ path(route, {(parameter): dashboard.subject.id}) }}" class="row g-3 align-items-end mb-3">
+        <input type="hidden" name="year" value="{{ dashboard.selectedYear }}">
+        <div class="col-md-5">
+            <label class="form-label" for="kpi-indicator">{{ 'Indicador' | trans }}</label>
+            <select id="kpi-indicator" name="indicator" class="form-select">
+                {% for indicator in view.allIndicators %}
+                    <option value="{{ indicator.value }}" {{ indicator == dashboard.comparisonIndicator ? 'selected' }}>{{ indicator.value | trans({}, 'intensityIndicator') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-secondary">{{ 'Ver' | trans }}</button>
+        </div>
+    </form>
+
+    {% if dashboard.propertyComparison is not empty %}
+        {% set unitLabel = 'kg CO₂eq / {unit}' | trans({'{unit}': dashboard.comparisonIndicator.denominatorUnitKey | trans({}, 'intensityIndicator')}) %}
+        <div class="row">
+            <div class="col-lg-6">
+                <twig:Chart:Bar
+                    title="{{ dashboard.comparisonIndicator.value | trans({}, 'intensityIndicator') }}"
+                    :values="view.comparisonChart.values"
+                    :categories="view.comparisonChart.labels"
+                    unit="kg"
+                />
+            </div>
+            <div class="col-lg-6">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Propiedad' | trans }}</th>
+                                <th>{{ 'Régimen de explotación' | trans }}</th>
+                                <th class="text-end">t CO₂eq</th>
+                                <th class="text-end">{{ 'Dato de actividad' | trans }}</th>
+                                <th class="text-end">{{ unitLabel }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in dashboard.propertyComparison %}
+                                <tr>
+                                    <td>{{ row.name }}</td>
+                                    <td>{{ row.operatingRegime.value | trans({}, 'operatingRegime') }}</td>
+                                    <td class="text-end">{{ (row.totalKg / 1000) | number_format(2, ',', '.') }}</td>
+                                    <td class="text-end">{{ row.denominator | number_format(2, ',', '.') }}</td>
+                                    <td class="text-end">{{ row.intensity | number_format(row.intensity < 1 ? 4 : 2, ',', '.') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if dashboard.propertiesWithoutData is not empty %}
+        <h6 class="fw-semibold mb-3 mt-3">{{ 'Sin dato' | trans }}</h6>
+        <ul class="mb-0">
+            {% for row in dashboard.propertiesWithoutData %}
+                <li>
+                    {{ row.property.name }} ·
+                    {% if row.reason == 'no_completed_footprint' %}
+                        {{ 'Sin huella completada' | trans }}
+                    {% else %}
+                        {{ 'Sin dato de actividad' | trans }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</twig:Card>

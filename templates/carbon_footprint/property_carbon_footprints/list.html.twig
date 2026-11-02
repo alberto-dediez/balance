@@ -39,6 +39,10 @@
                 <twig:List:Action:Certificate path="{{ path('property_carbon_footprint_certificates_download', {'certificateId': certificate.id}) }}" />
             {% endif %}
 
+            {% if element.status.isCompleted and element | is_authorized('view') %}
+                <twig:List:Action:Statistics path="{{ path('property_carbon_footprint_kpis', {propertyId: element.propertyId, year: element.year}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('property_carbon_footprints_edit', {'propertyCarbonFootprintId': element.id}) }}" />
             {% endif %}

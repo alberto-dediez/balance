@@ -80,6 +80,21 @@ class DoctrineCompanyCarbonFootprintRepository implements CompanyCarbonFootprint
         ;
     }
 
+    /** @return list<CompanyCarbonFootprint> */
+    public function findCompletedByYear(int $year): array
+    {
+        $qb = $this->createQueryBuilderFromFilter(new CompanyCarbonFootprintFilter());
+
+        return (array) $qb
+            ->andWhere($qb->expr()->eq('e.status', ':completed'))
+            ->andWhere($qb->expr()->eq('e.year', ':year'))
+            ->setParameter('completed', OrganizationalCarbonFootprintStatus::Completed->value)
+            ->setParameter('year', $year)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findByActivityId(ActivityId $activityId): ?CompanyCarbonFootprint
     {
         $qb = $this->manager->createQueryBuilder();

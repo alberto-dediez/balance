@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\CompanyCarbonFootprint\Step;
 
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyIntensityDenominatorsDefaults;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\DeclareIntensityDenominators\DeclareIntensityDenominatorsRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults\GetCompanyCarbonFootprintResultsRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetResults\GetCompanyCarbonFootprintResultsService;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityIndicatorsCalculator;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\IntensityDenominatorsType;
 use App\CarbonFootprint\Infrastructure\UI\Web\CompanyCarbonFootprint\GetCompanyCarbonFootprintFromIdTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\OrganizationalResultsView;
 use App\Security\Application\Account\ReportPermissionsPolicy;
@@ -29,6 +33,8 @@ class ResultsController extends AbstractController
         CarbonFootprintReportRepository $reportRepository,
         GetCompanyCarbonFootprintResultsService $getResults,
         OrganizationalResultsView $resultsView,
+        IntensityIndicatorsCalculator $intensityIndicatorsCalculator,
+        CompanyIntensityDenominatorsDefaults $denominatorsDefaults,
         ReportPermissionsPolicy $reportPermissionsPolicy,
         LoggedUser $loggedUser,
     ): Response {
@@ -53,6 +59,24 @@ class ResultsController extends AbstractController
         $results = $getResults(new GetCompanyCarbonFootprintResultsRequest($companyCarbonFootprint->id()), $user);
         $report = $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Company, (string) $companyCarbonFootprint->id());
 
+        $denominators = $companyCarbonFootprint->intensityDenominators();
+        $denominatorsPrefilled = false;
+
+        if ($denominators->isEmpty()) {
+            $defaults = $denominatorsDefaults->for($companyCarbonFootprint);
+            $denominatorsPrefilled = !$defaults->isEmpty();
+            $denominators = $defaults;
+        }
+
+        $denominatorsForm = $this->createForm(
+            IntensityDenominatorsType::class,
+            DeclareIntensityDenominatorsRequest::fromDenominators($companyCarbonFootprint->id(), $denominators),
+            [
+                'data_class' => DeclareIntensityDenominatorsRequest::class,
+                'action' => $this->generateUrl('company_carbon_footprints_declare_denominators', ['companyCarbonFootprintId' => $companyCarbonFootprintId]),
+            ],
+        );
+
         return $this->render(
             '@carbon_footprint/company_carbon_footprints/step/results.html.twig',
             $resultsView->build(
@@ -70,6 +94,10 @@ class ResultsController extends AbstractController
                 'results' => $results,
                 'report' => $report,
                 'canEditReportTexts' => $reportPermissionsPolicy->permissionsFor($report?->accountId(), $user)->canEditTexts(),
+                'denominatorsForm' => $denominatorsForm->createView(),
+                'denominatorsPrefilled' => $denominatorsPrefilled,
+                'intensityIndicators' => $intensityIndicatorsCalculator->calculate((float) $results->totalEmissions->co2eq(), $companyCarbonFootprint->intensityDenominators()),
+                'kpiPath' => $this->generateUrl('company_carbon_footprint_kpis', ['companyId' => (string) $companyCarbonFootprint->companyId(), 'year' => $companyCarbonFootprint->year()]),
             ],
         );
     }

@@ -10941,6 +10941,326 @@
         <source>Basado en datos medios</source>
         <target>Ortalama verilere dayalı</target>
       </trans-unit>
+      <trans-unit id="pmzD.a2" resname="No se han podido guardar los datos de actividad.">
+        <source>No se han podido guardar los datos de actividad.</source>
+        <target>NEW_No se han podido guardar los datos de actividad.</target>
+      </trans-unit>
+      <trans-unit id="zxEG0Se" resname="Datos de actividad guardados.">
+        <source>Datos de actividad guardados.</source>
+        <target>NEW_Datos de actividad guardados.</target>
+      </trans-unit>
+      <trans-unit id="2SOZC19" resname="No se ha podido declarar el año base.">
+        <source>No se ha podido declarar el año base.</source>
+        <target>NEW_No se ha podido declarar el año base.</target>
+      </trans-unit>
+      <trans-unit id="OIHkTjO" resname="Año base declarado.">
+        <source>Año base declarado.</source>
+        <target>NEW_Año base declarado.</target>
+      </trans-unit>
+      <trans-unit id="vyNMMm9" resname="El año base debe tener una huella completada.">
+        <source>El año base debe tener una huella completada.</source>
+        <target>NEW_El año base debe tener una huella completada.</target>
+      </trans-unit>
+      <trans-unit id="1EIFU20" resname="Declaración de año base eliminada.">
+        <source>Declaración de año base eliminada.</source>
+        <target>NEW_Declaración de año base eliminada.</target>
+      </trans-unit>
+      <trans-unit id="BcLHwov" resname="CO₂ (incl. factores sin desglose por gas)">
+        <source>CO₂ (incl. factores sin desglose por gas)</source>
+        <target>NEW_CO₂ (incl. factores sin desglose por gas)</target>
+      </trans-unit>
+      <trans-unit id="T7lEvzL" resname="Refrigerantes">
+        <source>Refrigerantes</source>
+        <target>NEW_Refrigerantes</target>
+      </trans-unit>
+      <trans-unit id="e8WEYY4" resname="Resto sin desglosar">
+        <source>Resto sin desglosar</source>
+        <target>NEW_Resto sin desglosar</target>
+      </trans-unit>
+      <trans-unit id="sVtlQy9" resname="vs. {year}">
+        <source>vs. {year}</source>
+        <target>NEW_vs. {year}</target>
+      </trans-unit>
+      <trans-unit id="Gr1I8ul" resname="vs. año base ({year})">
+        <source>vs. año base ({year})</source>
+        <target>NEW_vs. año base ({year})</target>
+      </trans-unit>
+      <trans-unit id="O_U2w3t" resname="Efecto actividad">
+        <source>Efecto actividad</source>
+        <target>NEW_Efecto actividad</target>
+      </trans-unit>
+      <trans-unit id="sBW.cHw" resname="Efecto eficiencia">
+        <source>Efecto eficiencia</source>
+        <target>NEW_Efecto eficiencia</target>
+      </trans-unit>
+      <trans-unit id="5u5xobc" resname="Efecto factores">
+        <source>Efecto factores</source>
+        <target>NEW_Efecto factores</target>
+      </trans-unit>
+      <trans-unit id="UMah6Y8" resname="Actividad y eficiencia">
+        <source>Actividad y eficiencia</source>
+        <target>NEW_Actividad y eficiencia</target>
+      </trans-unit>
+      <trans-unit id="JY5E5om" resname="Justificación del año base">
+        <source>Justificación del año base</source>
+        <target>NEW_Justificación del año base</target>
+      </trans-unit>
+      <trans-unit id="5vgvHt2" resname="Umbral de significancia (%)">
+        <source>Umbral de significancia (%)</source>
+        <target>NEW_Umbral de significancia (%)</target>
+      </trans-unit>
+      <trans-unit id="g8LhYub" resname="Indicador principal">
+        <source>Indicador principal</source>
+        <target>NEW_Indicador principal</target>
+      </trans-unit>
+      <trans-unit id="emOv7Ts" resname="Sin indicador principal">
+        <source>Sin indicador principal</source>
+        <target>NEW_Sin indicador principal</target>
+      </trans-unit>
+      <trans-unit id="UDHNPf8" resname="Actualizar declaración">
+        <source>Actualizar declaración</source>
+        <target>NEW_Actualizar declaración</target>
+      </trans-unit>
+      <trans-unit id="a5NEDrK" resname="Declarar año base">
+        <source>Declarar año base</source>
+        <target>NEW_Declarar año base</target>
+      </trans-unit>
+      <trans-unit id="0plrAvR" resname="Habitaciones ocupadas en el año">
+        <source>Habitaciones ocupadas en el año</source>
+        <target>NEW_Habitaciones ocupadas en el año</target>
+      </trans-unit>
+      <trans-unit id="xTPuIuD" resname="Superficie construida (m²)">
+        <source>Superficie construida (m²)</source>
+        <target>NEW_Superficie construida (m²)</target>
+      </trans-unit>
+      <trans-unit id="SfQRYLY" resname="Cubiertos servidos">
+        <source>Cubiertos servidos</source>
+        <target>NEW_Cubiertos servidos</target>
+      </trans-unit>
+      <trans-unit id="CtG3Rp6" resname="Plantilla media">
+        <source>Plantilla media</source>
+        <target>NEW_Plantilla media</target>
+      </trans-unit>
+      <trans-unit id="m8.hw6R" resname="Facturación (€)">
+        <source>Facturación (€)</source>
+        <target>NEW_Facturación (€)</target>
+      </trans-unit>
+      <trans-unit id="FJOe38C" resname="Clientes atendidos">
+        <source>Clientes atendidos</source>
+        <target>NEW_Clientes atendidos</target>
+      </trans-unit>
+      <trans-unit id=".W0coIb" resname="Guardar datos de actividad">
+        <source>Guardar datos de actividad</source>
+        <target>NEW_Guardar datos de actividad</target>
+      </trans-unit>
+      <trans-unit id="qvdJzB1" resname="Indicadores">
+        <source>Indicadores</source>
+        <target>NEW_Indicadores</target>
+      </trans-unit>
+      <trans-unit id="u8KYi6o" resname="Ver indicadores">
+        <source>Ver indicadores</source>
+        <target>NEW_Ver indicadores</target>
+      </trans-unit>
+      <trans-unit id="j6kRH.2" resname="El total del año base ({year}) ha cambiado un {change} % desde su declaración y supera el umbral del {threshold} %. Revisa la serie y actualiza la declaración si procede.">
+        <source>El total del año base ({year}) ha cambiado un {change} % desde su declaración y supera el umbral del {threshold} %. Revisa la serie y actualiza la declaración si procede.</source>
+        <target>NEW_El total del año base ({year}) ha cambiado un {change} % desde su declaración y supera el umbral del {threshold} %. Revisa la serie y actualiza la declaración si procede.</target>
+      </trans-unit>
+      <trans-unit id="nfEMpGs" resname="Eliminar declaración">
+        <source>Eliminar declaración</source>
+        <target>NEW_Eliminar declaración</target>
+      </trans-unit>
+      <trans-unit id="h.DzTTt" resname="Total del año base al declarar (kg CO₂eq)">
+        <source>Total del año base al declarar (kg CO₂eq)</source>
+        <target>NEW_Total del año base al declarar (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="544JSPS" resname="¿Seguro que quieres eliminar la declaración de año base?">
+        <source>¿Seguro que quieres eliminar la declaración de año base?</source>
+        <target>NEW_¿Seguro que quieres eliminar la declaración de año base?</target>
+      </trans-unit>
+      <trans-unit id="vQyT0dQ" resname="Año base y política de recálculo">
+        <source>Año base y política de recálculo</source>
+        <target>NEW_Año base y política de recálculo</target>
+      </trans-unit>
+      <trans-unit id="OMGHV18" resname="Todavía no hay huellas completadas. Completa una huella para ver sus indicadores.">
+        <source>Todavía no hay huellas completadas. Completa una huella para ver sus indicadores.</source>
+        <target>NEW_Todavía no hay huellas completadas. Completa una huella para ver sus indicadores.</target>
+      </trans-unit>
+      <trans-unit id="57u4eg5" resname="Panel de indicadores">
+        <source>Panel de indicadores</source>
+        <target>NEW_Panel de indicadores</target>
+      </trans-unit>
+      <trans-unit id="ngLkiEl" resname="kg CO₂eq / {unit}">
+        <source>kg CO₂eq / {unit}</source>
+        <target>NEW_kg CO₂eq / {unit}</target>
+      </trans-unit>
+      <trans-unit id="gSTsH0B" resname="Δ % vs. anterior">
+        <source>Δ % vs. anterior</source>
+        <target>NEW_Δ % vs. anterior</target>
+      </trans-unit>
+      <trans-unit id="lOTsp18" resname="Δ % vs. año base">
+        <source>Δ % vs. año base</source>
+        <target>NEW_Δ % vs. año base</target>
+      </trans-unit>
+      <trans-unit id="0SB8MSQ" resname="Evolución">
+        <source>Evolución</source>
+        <target>NEW_Evolución</target>
+      </trans-unit>
+      <trans-unit id="XqPgnaw" resname="La huella de este año no tiene datos de actividad declarados. Decláralos en el paso Resultados para calcular los indicadores de intensidad.">
+        <source>La huella de este año no tiene datos de actividad declarados. Decláralos en el paso Resultados para calcular los indicadores de intensidad.</source>
+        <target>NEW_La huella de este año no tiene datos de actividad declarados. Decláralos en el paso Resultados para calcular los indicadores de intensidad.</target>
+      </trans-unit>
+      <trans-unit id="rCgNxUm" resname="Ir a Resultados">
+        <source>Ir a Resultados</source>
+        <target>NEW_Ir a Resultados</target>
+      </trans-unit>
+      <trans-unit id="amTzWiK" resname="Referencia sectorial ({segment}, n = {sample}): mediana {median} · p25–p75 {p25}–{p75}">
+        <source>Referencia sectorial ({segment}, n = {sample}): mediana {median} · p25–p75 {p25}–{p75}</source>
+        <target>NEW_Referencia sectorial ({segment}, n = {sample}): mediana {median} · p25–p75 {p25}–{p75}</target>
+      </trans-unit>
+      <trans-unit id="umTxT0f" resname="Por debajo de la mediana">
+        <source>Por debajo de la mediana</source>
+        <target>NEW_Por debajo de la mediana</target>
+      </trans-unit>
+      <trans-unit id="RhGMnLW" resname="Por encima de la mediana">
+        <source>Por encima de la mediana</source>
+        <target>NEW_Por encima de la mediana</target>
+      </trans-unit>
+      <trans-unit id="579LiZj" resname="Dato de actividad: {value}">
+        <source>Dato de actividad: {value}</source>
+        <target>NEW_Dato de actividad: {value}</target>
+      </trans-unit>
+      <trans-unit id="YEAvsPA" resname="Indicadores de intensidad">
+        <source>Indicadores de intensidad</source>
+        <target>NEW_Indicadores de intensidad</target>
+      </trans-unit>
+      <trans-unit id="iPyXSZs" resname="Línea">
+        <source>Línea</source>
+        <target>NEW_Línea</target>
+      </trans-unit>
+      <trans-unit id="5FgyBhT" resname="Desglose por categoría y línea">
+        <source>Desglose por categoría y línea</source>
+        <target>NEW_Desglose por categoría y línea</target>
+      </trans-unit>
+      <trans-unit id="D37fyAI" resname="No hay un año anterior completado con el que comparar el año seleccionado.">
+        <source>No hay un año anterior completado con el que comparar el año seleccionado.</source>
+        <target>NEW_No hay un año anterior completado con el que comparar el año seleccionado.</target>
+      </trans-unit>
+      <trans-unit id="6NMoi7M" resname="Comparación">
+        <source>Comparación</source>
+        <target>NEW_Comparación</target>
+      </trans-unit>
+      <trans-unit id="H6MwkPa" resname="Δ total">
+        <source>Δ total</source>
+        <target>NEW_Δ total</target>
+      </trans-unit>
+      <trans-unit id="3SyBlGO" resname="Dato de actividad: {indicator}">
+        <source>Dato de actividad: {indicator}</source>
+        <target>NEW_Dato de actividad: {indicator}</target>
+      </trans-unit>
+      <trans-unit id="sQaHJsY" resname="Descomposición de la variación">
+        <source>Descomposición de la variación</source>
+        <target>NEW_Descomposición de la variación</target>
+      </trans-unit>
+      <trans-unit id="dIH1uBq" resname="Efecto actividad: variación del dato de actividad del indicador principal por la intensidad del año de referencia. Efecto factores: cambio de los factores de emisión en las líneas presentes en ambos años, por la cantidad del año seleccionado. Efecto eficiencia: el resto de la variación. Las líneas se emparejan por alcance, categoría, elemento y unidad; si un elemento cambia de nombre entre años cuenta como nuevo.">
+        <source>Efecto actividad: variación del dato de actividad del indicador principal por la intensidad del año de referencia. Efecto factores: cambio de los factores de emisión en las líneas presentes en ambos años, por la cantidad del año seleccionado. Efecto eficiencia: el resto de la variación. Las líneas se emparejan por alcance, categoría, elemento y unidad; si un elemento cambia de nombre entre años cuenta como nuevo.</source>
+        <target>NEW_Efecto actividad: variación del dato de actividad del indicador principal por la intensidad del año de referencia. Efecto factores: cambio de los factores de emisión en las líneas presentes en ambos años, por la cantidad del año seleccionado. Efecto eficiencia: el resto de la variación. Las líneas se emparejan por alcance, categoría, elemento y unidad; si un elemento cambia de nombre entre años cuenta como nuevo.</target>
+      </trans-unit>
+      <trans-unit id="ZzfSpVw" resname="Evolución por alcance">
+        <source>Evolución por alcance</source>
+        <target>NEW_Evolución por alcance</target>
+      </trans-unit>
+      <trans-unit id="GZzHsIF" resname="Contribución relativa">
+        <source>Contribución relativa</source>
+        <target>NEW_Contribución relativa</target>
+      </trans-unit>
+      <trans-unit id="AoqeLRR" resname="Alcance · Categoría">
+        <source>Alcance · Categoría</source>
+        <target>NEW_Alcance · Categoría</target>
+      </trans-unit>
+      <trans-unit id="OkuJ_DT" resname="% acum.">
+        <source>% acum.</source>
+        <target>NEW_% acum.</target>
+      </trans-unit>
+      <trans-unit id="PiBjwEB" resname="Desglose por gas">
+        <source>Desglose por gas</source>
+        <target>NEW_Desglose por gas</target>
+      </trans-unit>
+      <trans-unit id="hnxYLHN" resname="Gas">
+        <source>Gas</source>
+        <target>NEW_Gas</target>
+      </trans-unit>
+      <trans-unit id="Mb1e3Gi" resname="Doble reporte del alcance 2">
+        <source>Doble reporte del alcance 2</source>
+        <target>NEW_Doble reporte del alcance 2</target>
+      </trans-unit>
+      <trans-unit id="AMkWo05" resname="Resultados del inventario">
+        <source>Resultados del inventario</source>
+        <target>NEW_Resultados del inventario</target>
+      </trans-unit>
+      <trans-unit id="5WtYgu6" resname="Indicador">
+        <source>Indicador</source>
+        <target>NEW_Indicador</target>
+      </trans-unit>
+      <trans-unit id="3rc5xRG" resname="Dato de actividad">
+        <source>Dato de actividad</source>
+        <target>NEW_Dato de actividad</target>
+      </trans-unit>
+      <trans-unit id="ozjQhgr" resname="Sin dato">
+        <source>Sin dato</source>
+        <target>NEW_Sin dato</target>
+      </trans-unit>
+      <trans-unit id="aXNDCTV" resname="Sin huella completada">
+        <source>Sin huella completada</source>
+        <target>NEW_Sin huella completada</target>
+      </trans-unit>
+      <trans-unit id="6Hc2SiU" resname="Sin dato de actividad">
+        <source>Sin dato de actividad</source>
+        <target>NEW_Sin dato de actividad</target>
+      </trans-unit>
+      <trans-unit id="r31c8xX" resname="Comparación entre propiedades">
+        <source>Comparación entre propiedades</source>
+        <target>NEW_Comparación entre propiedades</target>
+      </trans-unit>
+      <trans-unit id="797BQCk" resname="Ver resultados {year}">
+        <source>Ver resultados {year}</source>
+        <target>NEW_Ver resultados {year}</target>
+      </trans-unit>
+      <trans-unit id="YgC6lUB" resname="Todavía no hay huellas completadas de esta empresa. Completa una huella para ver sus indicadores.">
+        <source>Todavía no hay huellas completadas de esta empresa. Completa una huella para ver sus indicadores.</source>
+        <target>NEW_Todavía no hay huellas completadas de esta empresa. Completa una huella para ver sus indicadores.</target>
+      </trans-unit>
+      <trans-unit id="u8H1toW" resname="Todavía no hay huellas completadas de esta propiedad. Completa una huella para ver sus indicadores.">
+        <source>Todavía no hay huellas completadas de esta propiedad. Completa una huella para ver sus indicadores.</source>
+        <target>NEW_Todavía no hay huellas completadas de esta propiedad. Completa una huella para ver sus indicadores.</target>
+      </trans-unit>
+      <trans-unit id="wojlL02" resname="Localización: {value} t">
+        <source>Localización: {value} t</source>
+        <target>NEW_Localización: {value} t</target>
+      </trans-unit>
+      <trans-unit id="XTdt0at" resname="Variación vs. {year}">
+        <source>Variación vs. {year}</source>
+        <target>NEW_Variación vs. {year}</target>
+      </trans-unit>
+      <trans-unit id="sepwyFH" resname="Ver panel de indicadores">
+        <source>Ver panel de indicadores</source>
+        <target>NEW_Ver panel de indicadores</target>
+      </trans-unit>
+      <trans-unit id="X1xZXby" resname="Declara los datos de actividad del año para calcular los indicadores de intensidad; solo se calculan los que tengan dato.">
+        <source>Declara los datos de actividad del año para calcular los indicadores de intensidad; solo se calculan los que tengan dato.</source>
+        <target>NEW_Declara los datos de actividad del año para calcular los indicadores de intensidad; solo se calculan los que tengan dato.</target>
+      </trans-unit>
+      <trans-unit id="8F87N.8" resname="Valores por defecto: suma de las huellas de propiedad del año de las propiedades consolidadas. Revísalos y guarda.">
+        <source>Valores por defecto: suma de las huellas de propiedad del año de las propiedades consolidadas. Revísalos y guarda.</source>
+        <target>NEW_Valores por defecto: suma de las huellas de propiedad del año de las propiedades consolidadas. Revísalos y guarda.</target>
+      </trans-unit>
+      <trans-unit id="IyJRY.o" resname="Datos de actividad del año">
+        <source>Datos de actividad del año</source>
+        <target>NEW_Datos de actividad del año</target>
+      </trans-unit>
+      <trans-unit id="67yu9vn" resname="El desglose se ha recalculado con los datos actuales y difiere en {value} t CO₂eq del total fijado al completar la huella.">
+        <source>El desglose se ha recalculado con los datos actuales y difiere en {value} t CO₂eq del total fijado al completar la huella.</source>
+        <target>NEW_El desglose se ha recalculado con los datos actuales y difiere en {value} t CO₂eq del total fijado al completar la huella.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,0 +1,26 @@
+{% props label, value, unit = null, icon = null, color = 'primary', footer = null, valueClass = null %}
+
+<div class="card flex-fill {{ attributes.render('class') }}" {{ attributes.without('class') }}>
+    <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h6 class="text-muted fw-normal mb-1">{{ label }}</h6>
+                <h3 class="fw-semibold mb-0 {{ valueClass }}">
+                    {{ value }}
+                    {% if unit %}
+                        <small class="fs-5 text-muted">{{ unit }}</small>
+                    {% endif %}
+                </h3>
+            </div>
+            {% if icon %}
+                <span class="p-2 bg-{{ color }}-subtle rounded d-flex">
+                    <twig:Icon name="{{ icon }}" size="lg" class="text-{{ color }}" />
+                </span>
+            {% endif %}
+        </div>
+        {% if footer %}
+            <small class="text-muted">{{ footer }}</small>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+</div>

@@ -27,6 +27,14 @@
         <twig:TopAction:Export path="{{ path('export', {code: 'company_carbon_footprint_detail', companyCarbonFootprintId: companyCarbonFootprintId}) }}" />
     {% endif %}
 
+    {% if companyCarbonFootprint | is_authorized('view') %}
+        <twig:TopAction path="{{ path('company_carbon_footprint_kpis', {companyId: companyCarbonFootprint.companyId, year: companyCarbonFootprint.year}) }}">
+            <twig:Icon name="solar:chart-square-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Ver indicadores' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     <twig:TopAction:Return path="{{ path('company_carbon_footprints') }}" />
 {% endblock %}
 

@@ -10,6 +10,7 @@ use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContribution
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderallocatedContributionsRequest;
 use App\Bioscore\Application\BioscoreCatalogItem\Sync\SyncBioscoreCatalogsRequest;
 use App\CarbonFootprint\Application\ExchangeRate\Sync\SyncExchangeRatesRequest;
+use App\CarbonFootprint\Application\SectorBenchmark\Refresh\RefreshSectorBenchmarksRequest;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
@@ -69,6 +70,11 @@ class CommandSchedule
                 id: 'carbon-footprint:sync-exchange-rates',
                 command: new SyncExchangeRatesRequest(now: new \DateTimeImmutable('NOW')),
                 time: '17:00',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'carbon-footprint:refresh-sector-benchmarks',
+                command: new RefreshSectorBenchmarksRequest(now: new \DateTimeImmutable('NOW')),
+                time: '03:00',
             ),
             ScheduledCommand::dailyAt(
                 id: 'security:purge-email-logs',

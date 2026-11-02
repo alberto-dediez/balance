@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityDenominators;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotCompletedException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintNotReadyToCompleteException;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
@@ -54,6 +55,7 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         private ?\DateTimeImmutable $removedAt = null,
     ) {
         $this->events = $events;
+        $this->intensityDenominators = IntensityDenominators::empty();
     }
 
     public function id(): PropertyCarbonFootprintId
@@ -359,6 +361,20 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
+    public function declareIntensityDenominators(IntensityDenominators $denominators): void
+    {
+        if ($this->intensityDenominators->equals($denominators)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintIntensityDenominatorsDeclared(
+                propertyCarbonFootprintId: $this->id,
+                denominators: $denominators,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -486,6 +502,12 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
     {
         $this->status = OrganizationalCarbonFootprintStatus::EmployeesAnswered;
         $this->totalEmissions = new Emissions();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintIntensityDenominatorsDeclared(PropertyCarbonFootprintIntensityDenominatorsDeclared $event): void
+    {
+        $this->intensityDenominators = $event->denominators();
         $this->updatedAt = $event->occurredOn();
     }
 

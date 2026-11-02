@@ -19,6 +19,8 @@ use Doctrine\Common\Collections\Collection;
 
 trait OrganizationalCarbonFootprintTrait
 {
+    private IntensityDenominators $intensityDenominators;
+
     public function accountId(): ?AccountId
     {
         return $this->accountId;
@@ -42,6 +44,11 @@ trait OrganizationalCarbonFootprintTrait
     public function totalEmissions(): Emissions
     {
         return $this->totalEmissions;
+    }
+
+    public function intensityDenominators(): IntensityDenominators
+    {
+        return $this->intensityDenominators;
     }
 
     public function status(): OrganizationalCarbonFootprintStatus

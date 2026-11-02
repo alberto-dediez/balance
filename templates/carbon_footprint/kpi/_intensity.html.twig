@@ -1,0 +1,46 @@
+<twig:Card title="{{ 'Indicadores de intensidad' | trans }}">
+    {% if dashboard.indicators is empty %}
+        <twig:Alert:Alert type="info">
+            {{ 'La huella de este año no tiene datos de actividad declarados. Decláralos en el paso Resultados para calcular los indicadores de intensidad.' | trans }}
+            {% if dashboard.selectedFootprintId is not null %}
+                <a href="{{ isCompany
+                    ? path('company_carbon_footprints_results', {companyCarbonFootprintId: dashboard.selectedFootprintId})
+                    : path('property_carbon_footprints_results', {propertyCarbonFootprintId: dashboard.selectedFootprintId}) }}">{{ 'Ir a Resultados' | trans }}</a>
+            {% endif %}
+        </twig:Alert:Alert>
+    {% else %}
+        <div class="row">
+            {% for indicatorValue in dashboard.indicators %}
+                {% set benchmark = dashboard.benchmarks[indicatorValue.indicator.value] ?? null %}
+                <div class="col-sm-6 col-xl-4 d-flex">
+                    <twig:Kpi:Tile
+                        label="{{ indicatorValue.indicator.value | trans({}, 'intensityIndicator') }}"
+                        value="{{ indicatorValue.kgCo2eqPerUnit | number_format(indicatorValue.kgCo2eqPerUnit < 1 ? 4 : 2, ',', '.') }}"
+                        unit="{{ 'kg CO₂eq / {unit}' | trans({'{unit}': indicatorValue.indicator.denominatorUnitKey | trans({}, 'intensityIndicator')}) }}"
+                        icon="solar:chart-square-line-duotone"
+                        footer="{{ 'Dato de actividad: {value}' | trans({'{value}': indicatorValue.denominator | number_format(indicatorValue.indicator.value == 'per_million_euro_revenue' ? 4 : 2, ',', '.')}) }}"
+                    >
+                        {% if benchmark is not null %}
+                            <div class="mt-2">
+                                <small class="text-muted d-block">
+                                    {{ 'Referencia sectorial ({segment}, n = {sample}): mediana {median} · p25–p75 {p25}–{p75}' | trans({
+                                        '{segment}': dashboard.subject.segmentKey | trans({}, isCompany or dashboard.subject.segmentKey == 'other' ? 'sectorSegment' : 'propertyType'),
+                                        '{sample}': benchmark.sampleSize,
+                                        '{median}': benchmark.median | number_format(2, ',', '.'),
+                                        '{p25}': benchmark.percentile25 | number_format(2, ',', '.'),
+                                        '{p75}': benchmark.percentile75 | number_format(2, ',', '.'),
+                                    }) }}
+                                </small>
+                                {% if indicatorValue.kgCo2eqPerUnit <= benchmark.median %}
+                                    <span class="badge bg-success">{{ 'Por debajo de la mediana' | trans }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">{{ 'Por encima de la mediana' | trans }}</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </twig:Kpi:Tile>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</twig:Card>

@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\PropertyCarbonFootprint\Step;
 
+use App\CarbonFootprint\Application\PropertyCarbonFootprint\DeclareIntensityDenominators\DeclareIntensityDenominatorsRequest;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\GetResults\GetPropertyCarbonFootprintResultsRequest;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\GetResults\GetPropertyCarbonFootprintResultsService;
 use App\CarbonFootprint\Application\PropertyCarbonFootprintCertificate\Issue\IssuePropertyCarbonFootprintCertificateRequest;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\IntensityIndicatorsCalculator;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateRepository;
+use App\CarbonFootprint\Infrastructure\Symfony\Form\IntensityDenominatorsType;
 use App\CarbonFootprint\Infrastructure\Symfony\Form\IssuePropertyCarbonFootprintCertificateType;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\OrganizationalResultsView;
 use App\CarbonFootprint\Infrastructure\UI\Web\PropertyCarbonFootprint\GetPropertyCarbonFootprintFromIdTrait;
@@ -33,6 +36,7 @@ class ResultsController extends AbstractController
         PropertyCarbonFootprintCertificateRepository $certificateRepository,
         GetPropertyCarbonFootprintResultsService $getResults,
         OrganizationalResultsView $resultsView,
+        IntensityIndicatorsCalculator $intensityIndicatorsCalculator,
         ReportPermissionsPolicy $reportPermissionsPolicy,
         LoggedUser $loggedUser,
     ): Response {
@@ -58,8 +62,17 @@ class ResultsController extends AbstractController
         $report = $reportRepository->findBySubject(CarbonFootprintReportSubjectType::Property, (string) $propertyCarbonFootprint->id());
         $certificateForm = $this->createForm(
             IssuePropertyCarbonFootprintCertificateType::class,
-            new IssuePropertyCarbonFootprintCertificateRequest($propertyCarbonFootprint->id()),
+            new IssuePropertyCarbonFootprintCertificateRequest($propertyCarbonFootprint->id(), $propertyCarbonFootprint->intensityDenominators()->stays()),
             ['action' => $this->generateUrl('property_carbon_footprints_certificate_issue', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId])],
+        );
+
+        $denominatorsForm = $this->createForm(
+            IntensityDenominatorsType::class,
+            DeclareIntensityDenominatorsRequest::fromDenominators($propertyCarbonFootprint->id(), $propertyCarbonFootprint->intensityDenominators()),
+            [
+                'data_class' => DeclareIntensityDenominatorsRequest::class,
+                'action' => $this->generateUrl('property_carbon_footprints_declare_denominators', ['propertyCarbonFootprintId' => $propertyCarbonFootprintId]),
+            ],
         );
 
         return $this->render(
@@ -80,6 +93,10 @@ class ResultsController extends AbstractController
                 'reportGenerated' => null !== $report && $report->status()->isGenerated(),
                 'certificate' => $certificateRepository->findCurrentByPropertyCarbonFootprintId($propertyCarbonFootprint->id()),
                 'certificateForm' => $certificateForm->createView(),
+                'denominatorsForm' => $denominatorsForm->createView(),
+                'denominatorsPrefilled' => false,
+                'intensityIndicators' => $intensityIndicatorsCalculator->calculate((float) $results->totalEmissions->co2eq(), $propertyCarbonFootprint->intensityDenominators()),
+                'kpiPath' => $this->generateUrl('property_carbon_footprint_kpis', ['propertyId' => (string) $propertyCarbonFootprint->propertyId(), 'year' => $propertyCarbonFootprint->year()]),
             ],
         );
     }

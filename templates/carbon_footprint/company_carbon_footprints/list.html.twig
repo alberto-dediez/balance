@@ -33,6 +33,10 @@
                 <twig:List:Action:Download path="{{ path('carbon_footprint_reports_download', {'reportId': carbonFootprintReport.id}) }}" />
             {% endif %}
 
+            {% if element.status.isCompleted and element | is_authorized('view') %}
+                <twig:List:Action:Statistics path="{{ path('company_carbon_footprint_kpis', {companyId: element.companyId, year: element.year}) }}" />
+            {% endif %}
+
             {% if element | is_authorized('edit') %}
                 <twig:List:Action:Edit path="{{ path('company_carbon_footprints_edit', {'companyCarbonFootprintId': element.id}) }}" />
             {% endif %}

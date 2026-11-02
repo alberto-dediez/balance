@@ -1,0 +1,59 @@
+<twig:Card title="{{ 'Evolución' | trans }}">
+    {% if view.indicatorCharts is not empty %}
+        <div class="row">
+            {% for chart in view.indicatorCharts %}
+                <div class="col-md-6">
+                    <h6 class="fw-semibold mb-3">{{ chart.indicator.value | trans({}, 'intensityIndicator') }} <span class="text-muted fw-normal">({{ 'kg CO₂eq / {unit}' | trans({'{unit}': chart.indicator.denominatorUnitKey | trans({}, 'intensityIndicator')}) }})</span></h6>
+                    <twig:Chart:Line
+                        title="{{ chart.indicator.value | trans({}, 'intensityIndicator') }}"
+                        :values="chart.values"
+                        :categories="chart.categories"
+                        unit="kg"
+                    />
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{ 'Año' | trans }}</th>
+                    <th class="text-end">{{ 'Total' | trans }} (t CO₂eq)</th>
+                    <th class="text-end">{{ 'scope_1' | trans({}, 'scope') }}</th>
+                    <th class="text-end">{{ 'scope_2' | trans({}, 'scope') }}</th>
+                    <th class="text-end">{{ 'scope_3' | trans({}, 'scope') }}</th>
+                    {% for indicator in view.evolutionIndicators %}
+                        <th class="text-end">{{ indicator.value | trans({}, 'intensityIndicator') }}</th>
+                    {% endfor %}
+                    <th class="text-end">{{ 'Δ % vs. anterior' | trans }}</th>
+                    <th class="text-end">{{ 'Δ % vs. año base' | trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in view.evolutionRows %}
+                    {% set point = row.point %}
+                    <tr class="{{ point.isBaseYear ? 'fw-semibold' }}">
+                        <td>
+                            {{ point.year }}
+                            {% if point.isBaseYear %}
+                                <span class="badge bg-info">{{ 'Año base' | trans }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">{{ (point.totalKg / 1000) | number_format(2, ',', '.') }}</td>
+                        <td class="text-end">{{ (point.byScopeKg['scope_1'] / 1000) | number_format(2, ',', '.') }}</td>
+                        <td class="text-end">{{ (point.byScopeKg['scope_2'] / 1000) | number_format(2, ',', '.') }}</td>
+                        <td class="text-end">{{ (point.byScopeKg['scope_3'] / 1000) | number_format(2, ',', '.') }}</td>
+                        {% for indicator in view.evolutionIndicators %}
+                            {% set value = point.indicators[indicator.value] ?? null %}
+                            <td class="text-end">{{ value is not null ? value.kgCo2eqPerUnit | number_format(value.kgCo2eqPerUnit < 1 ? 4 : 2, ',', '.') : '---' }}</td>
+                        {% endfor %}
+                        <td class="text-end">{{ row.deltaVsPrevious is not null ? row.deltaVsPrevious | number_format(2, ',', '.') ~ ' %' : '---' }}</td>
+                        <td class="text-end">{{ row.deltaVsBase is not null ? row.deltaVsBase | number_format(2, ',', '.') ~ ' %' : '---' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</twig:Card>
