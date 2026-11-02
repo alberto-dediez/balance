@@ -16,6 +16,9 @@ class InMemoryImportationRepository implements ImportationRepository
 {
     private readonly ImportationDataRepository $dataRepository;
 
+    /** @var array<string, true> */
+    private array $claimedExecutions = [];
+
     /** @param array<string, Importation> $importations */
     public function __construct(private array $importations = [], ?ImportationDataRepository $dataRepository = null)
     {
@@ -32,9 +35,7 @@ class InMemoryImportationRepository implements ImportationRepository
                 return;
             }
 
-            foreach ($importation->configurations() as $configuration) {
-                $this->dataRepository->saveConfiguration($importation->id(), $configuration);
-            }
+            $this->dataRepository->saveConfigurations($importation->id(), $importation->configurations());
 
             return;
         }
@@ -99,5 +100,20 @@ class InMemoryImportationRepository implements ImportationRepository
     public function pendingRows(ImportationId $importationId): int
     {
         return $this->dataRepository->pendingRows($importationId);
+    }
+
+    public function claimExecution(ImportationId $importationId): bool
+    {
+        if (isset($this->claimedExecutions[(string) $importationId])) {
+            return false;
+        }
+
+        if (true === ($this->importations[(string) $importationId] ?? null)?->isExecuted()) {
+            return false;
+        }
+
+        $this->claimedExecutions[(string) $importationId] = true;
+
+        return true;
     }
 }

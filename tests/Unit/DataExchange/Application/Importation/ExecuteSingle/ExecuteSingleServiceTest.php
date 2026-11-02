@@ -17,6 +17,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
+use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\DataExchange\Application\Importation\ImportationAuthorizerMother;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
@@ -137,6 +138,69 @@ class ExecuteSingleServiceTest extends TestCase
         $this->assertTrue($importationPersisted->id()->equals($lastEvent->importationId()));
     }
 
+    public function testTheImportationFinishesOnlyWithTheLastRow(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount(
+            username: 'owner',
+            role: Role::Owner,
+            accountId: $accountId,
+        );
+
+        $sut = $this->createSUT($repository);
+
+        $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $user);
+        $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 1, command: new FakeCommand()), $user);
+
+        $importationPersisted = $repository->find($importation->id());
+
+        $this->assertNotNull($importationPersisted);
+        $this->assertTrue($importationPersisted->isInProgress());
+        $this->assertSame(1, $repository->pendingRows($importation->id()));
+        $this->assertCount(0, $this->executedEvents());
+
+        $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 2, command: new FakeCommand()), $user);
+
+        $this->assertTrue($importationPersisted->isExecuted());
+        $this->assertCount(1, $this->executedEvents());
+
+        $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 2, command: new FakeCommand()), $user);
+
+        $this->assertCount(1, $this->executedEvents());
+    }
+
+    public function testAStaleImportationAlreadyClosedByAnotherProcessDoesNotPublishTheExecutionAgain(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroe.csv', new ImportationFile(path: __DIR__ . '/superheroe.csv'), ImportationStatus::InProgress);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimExecution($importation->id()));
+
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
+        $user = UserMother::fromUsernameAndRoleAndAccount(
+            username: 'owner',
+            role: Role::Owner,
+            accountId: $accountId,
+        );
+
+        $sut = $this->createSUT($repository);
+
+        $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $user);
+
+        $this->assertSame(0, $repository->pendingRows($importation->id()));
+        $this->assertTrue($importation->isInProgress());
+        $this->assertCount(0, $this->executedEvents());
+    }
+
     public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);
@@ -176,6 +240,12 @@ class ExecuteSingleServiceTest extends TestCase
         ));
 
         $this->assertTrue($result);
+    }
+
+    /** @return DomainEvent[] */
+    private function executedEvents(): array
+    {
+        return array_values(array_filter($this->spySubscriber->events(), fn(DomainEvent $event): bool => $event instanceof ImportationExecuted));
     }
 
     private function createSUT(InMemoryImportationRepository $repository): ExecuteSingleService

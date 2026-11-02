@@ -21,7 +21,8 @@ interface ImportationDataRepository
 
     public function getConfiguration(ImportationId $importationId, int $column): ImportationColumnConfiguration;
 
-    public function saveConfiguration(ImportationId $importationId, ImportationColumnConfiguration $configuration): void;
+    /** @param ImportationColumnConfiguration[] $configurations */
+    public function saveConfigurations(ImportationId $importationId, array $configurations): void;
 
     /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array;

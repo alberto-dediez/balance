@@ -63,7 +63,7 @@ class ExecuteSingleService implements CommandHandler
 
         $pending = $this->importationRepository->pendingRows($importation->id());
 
-        if (0 === $pending && !$importation->isExecuted()) {
+        if (0 === $pending && !$importation->isExecuted() && $this->importationRepository->claimExecution($importation->id())) {
             $importation->finishExecution();
 
             $this->importationRepository->add($importation);

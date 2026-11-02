@@ -8,6 +8,7 @@ use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\DataExchange\Domain\Model\Importation\ImportationStatus;
 use App\DataExchange\Domain\Model\Importation\NotImportedException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
@@ -23,9 +24,15 @@ class DoctrineImportationRepository implements ImportationRepository
     public function add(Importation $importation): void
     {
         try {
-            $recoverImportation = $this->find($importation->id());
+            $exists = (int) $this->manager->createQueryBuilder()
+                ->select('COUNT(i.id)')
+                ->from(Importation::class, 'i')
+                ->andWhere('i.id = :id')
+                ->setParameter('id', $importation->id())
+                ->getQuery()
+                ->getSingleScalarResult() > 0;
 
-            if (!$recoverImportation instanceof Importation) {
+            if (!$exists) {
                 $this->dataRepository->create($importation);
             }
 
@@ -36,9 +43,7 @@ class DoctrineImportationRepository implements ImportationRepository
                 return;
             }
 
-            foreach ($importation->configurations() as $configuration) {
-                $this->dataRepository->saveConfiguration($importation->id(), $configuration);
-            }
+            $this->dataRepository->saveConfigurations($importation->id(), $importation->configurations());
         } catch (\Throwable $exception) {
             throw new NotImportedException($exception->getMessage());
         }
@@ -102,5 +107,20 @@ class DoctrineImportationRepository implements ImportationRepository
     public function pendingRows(ImportationId $importationId): int
     {
         return $this->dataRepository->pendingRows($importationId);
+    }
+
+    public function claimExecution(ImportationId $importationId): bool
+    {
+        $affectedRows = $this->manager->createQueryBuilder()
+            ->update(Importation::class, 'i')
+            ->set('i.status', ':executed')
+            ->andWhere('i.id = :id')
+            ->andWhere('i.status != :executed')
+            ->setParameter('executed', ImportationStatus::Executed->value)
+            ->setParameter('id', $importationId)
+            ->getQuery()
+            ->execute();
+
+        return 1 === $affectedRows;
     }
 }

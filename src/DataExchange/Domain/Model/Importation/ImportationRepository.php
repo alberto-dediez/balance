@@ -21,4 +21,6 @@ interface ImportationRepository
     public function remove(Importation $importation): void;
 
     public function pendingRows(ImportationId $importationId): int;
+
+    public function claimExecution(ImportationId $importationId): bool;
 }
