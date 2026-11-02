@@ -140,6 +140,9 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringContainsString('- scope_3 | purchased_goods_and_services | 1 | supplier_specific | 1200.00 | high', $text);
         $this->assertStringContainsString('- scope_3 | employee_commuting | 7 | employee_survey_extrapolation | 900.00 | medium', $text);
         $this->assertStringContainsString('- scope_3 | fuel_and_energy_related | 3 | derived_well_to_tank | 590.00 | medium', $text);
+        $this->assertStringContainsString('- scope_3 | upstream_transport | 4 | distance_based | 2000.00 | medium', $text);
+        $this->assertStringContainsString('- scope_3 | operations_waste | 5 | waste_type_specific | 500.00 | medium', $text);
+        $this->assertStringContainsString('distance-based', $text);
         $this->assertStringContainsString('- MITECO | 2025 | 2 | 1430.00', $text);
         $this->assertStringContainsString('- DEFRA | 2024 | 1 | 900.00', $text);
         $this->assertStringContainsString('Employee survey: 40 employees, 25 answers, confidence level 95 %, margin of error 6.50 %', $text);

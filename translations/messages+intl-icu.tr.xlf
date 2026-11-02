@@ -10925,6 +10925,22 @@
         <source>Detalle de huella de propiedad</source>
         <target>NEW_Detalle de huella de propiedad</target>
       </trans-unit>
+      <trans-unit id="H4KEohK" resname="Basado en distancia">
+        <source>Basado en distancia</source>
+        <target>Mesafe bazlı</target>
+      </trans-unit>
+      <trans-unit id="Bpen3Xz" resname="Basado en combustible">
+        <source>Basado en combustible</source>
+        <target>Yakıt bazlı</target>
+      </trans-unit>
+      <trans-unit id="PVtQw3Q" resname="Específico por tipo de residuo">
+        <source>Específico por tipo de residuo</source>
+        <target>Atık türüne özgü</target>
+      </trans-unit>
+      <trans-unit id="42GYskb" resname="Basado en datos medios">
+        <source>Basado en datos medios</source>
+        <target>Ortalama verilere dayalı</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -18,6 +18,8 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\PurchaseServiceActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\TransportActivityMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\WasteActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
@@ -138,6 +140,17 @@ class OrganizationalCarbonFootprintReportLinesBuilderTest extends TestCase
         $lines = $this->sut()->activityLines($footprint, []);
 
         $this->assertSame([CalculationMethod::ActivityBased, CalculationMethod::ActivityBased], array_map(static fn($line) => $line->method, $lines));
+    }
+
+    public function testTheScopeThreeActivitiesReceiveTheGhgProtocolMethod(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) PropertyId::generate(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprint->addActivity($this->save(TransportActivityMother::registeredInTonneKilometre())->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport));
+        $footprint->addActivity($this->save(WasteActivityMother::registered())->id(), new ActivityPlacement(Scope::Scope3, Source::OperationsWaste));
+
+        $lines = $this->sut()->activityLines($footprint, []);
+
+        $this->assertSame([CalculationMethod::DistanceBased, CalculationMethod::WasteTypeSpecific], array_map(static fn($line) => $line->method, $lines));
     }
 
     public function testAnActivityInACurrencyIsSpendBased(): void

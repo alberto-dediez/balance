@@ -268,6 +268,8 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $this->assertSame(['Basado en gasto', '3.000,00', '71,43 %'], array_slice($purchased[0], 2));
         $this->assertSame(['Específico del proveedor', '1.200,00', '28,57 %'], array_slice($purchased[1], 2));
         $this->assertContains('Derivado: emisiones del pozo al tanque (WTT)', array_column($rows, 2));
+        $this->assertContains('Basado en distancia', array_column($rows, 2));
+        $this->assertContains('Específico por tipo de residuo', array_column($rows, 2));
     }
 
     /** @dataProvider themes */

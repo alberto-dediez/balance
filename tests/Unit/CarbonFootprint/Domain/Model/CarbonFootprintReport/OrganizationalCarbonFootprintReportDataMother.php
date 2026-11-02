@@ -169,13 +169,17 @@ class OrganizationalCarbonFootprintReportDataMother
         $spend = new Emissions('3000', '3000', '0', '0');
         $supplier = new Emissions('1200', '1200', '0', '0');
         $commuting = new Emissions('900', '900', '0', '0');
+        $upstreamTransport = new Emissions('2000', '2000', '0', '0');
+        $operationsWaste = new Emissions('500', '500', '0', '0');
         $purchased = $spend->add($supplier);
-        $scope3 = $purchased->add($commuting)->add(new Emissions('590', '590', '0', '0'));
+        $scope3 = $purchased->add($commuting)->add($upstreamTransport)->add($operationsWaste)->add(new Emissions('590', '590', '0', '0'));
 
         $emissionsBySource = $data->emissionsBySource;
         $emissionsBySource[Source::PurchasedGoodsAndServices->value] = $purchased;
         $emissionsBySource[Source::BusinessTravel->value] = new Emissions();
         $emissionsBySource[Source::EmployeeCommuting->value] = $commuting;
+        $emissionsBySource[Source::UpstreamTransport->value] = $upstreamTransport;
+        $emissionsBySource[Source::OperationsWaste->value] = $operationsWaste;
 
         $emissionsByScope = $data->emissionsByScope;
         $emissionsByScope[Scope::Scope3->value] = $scope3;
@@ -184,6 +188,8 @@ class OrganizationalCarbonFootprintReportDataMother
         $emissionsByScopeAndSource[Scope::Scope3->value][Source::PurchasedGoodsAndServices->value] = $purchased;
         $emissionsByScopeAndSource[Scope::Scope3->value][Source::BusinessTravel->value] = new Emissions();
         $emissionsByScopeAndSource[Scope::Scope3->value][Source::EmployeeCommuting->value] = $commuting;
+        $emissionsByScopeAndSource[Scope::Scope3->value][Source::UpstreamTransport->value] = $upstreamTransport;
+        $emissionsByScopeAndSource[Scope::Scope3->value][Source::OperationsWaste->value] = $operationsWaste;
 
         $activityLines = array_values(array_filter(
             $data->activityLines,
@@ -192,6 +198,8 @@ class OrganizationalCarbonFootprintReportDataMother
         $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, null, 'Servicios de limpieza', ActivityType::PurchaseService, CalculationMethod::SpendBased, 6000.0, Unit::Euro, '0.5', Unit::Euro, 2025, 'EXIOBASE', '3000');
         $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, null, 'Lavandería Norte · Lavandería 2025', ActivityType::ReportedEmissions, CalculationMethod::SupplierSpecific, 1200.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, null, '1200');
         $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::EmployeeCommuting, null, 'Empleados · Coche diésel', ActivityType::Mobility, CalculationMethod::EmployeeSurveyExtrapolation, 4500.0, Unit::Kilometer, '0.2', Unit::Kilometer, 2024, 'DEFRA', '900');
+        $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::UpstreamTransport, null, 'Camión rígido', ActivityType::Transport, CalculationMethod::DistanceBased, 4000.0, Unit::TonneKilometre, '0.5', Unit::TonneKilometre, 2025, 'GLEC', '2000');
+        $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::OperationsWaste, null, 'Residuos orgánicos', ActivityType::Waste, CalculationMethod::WasteTypeSpecific, 1000.0, Unit::Kilogram, '0.5', Unit::Kilogram, 2025, 'Ecoinvent', '500');
 
         return new OrganizationalCarbonFootprintReportData(
             subjectType: $data->subjectType,
@@ -200,9 +208,9 @@ class OrganizationalCarbonFootprintReportDataMother
             countryName: $data->countryName,
             emissionFactorGroupName: $data->emissionFactorGroupName,
             calculationYear: $data->calculationYear,
-            totalEmissions: new Emissions('9620', '9620', '0', '0'),
+            totalEmissions: new Emissions('12120', '12120', '0', '0'),
             locationBasedElectricityEmissions: $data->locationBasedElectricityEmissions,
-            locationBasedTotalEmissions: new Emissions('9120', '9120', '0', '0'),
+            locationBasedTotalEmissions: new Emissions('11620', '11620', '0', '0'),
             electricityActivitiesWithoutLocationBased: $data->electricityActivitiesWithoutLocationBased,
             emissionsBySource: $emissionsBySource,
             emissionsByScope: $emissionsByScope,
@@ -366,7 +374,7 @@ class OrganizationalCarbonFootprintReportDataMother
             $emissionsByScopeAndSource[Scope::Scope3->value][Source::BusinessTravel->value] = new Emissions('900', '900', '0', '0');
             $emissionsByScopeAndSource[Scope::Scope3->value][Source::FuelAndEnergyRelated->value] = new Emissions('590', '590', '0', '0');
             $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, $isCompany ? 'Hotel Sol' : null, 'Servicios de limpieza', ActivityType::PurchaseService, CalculationMethod::SpendBased, 8000.0, Unit::Euro, '0.5', Unit::Euro, 2025, 'EXIOBASE', '4000');
-            $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::BusinessTravel, $isCompany ? 'Hotel Sol' : null, 'Avión corto radio', ActivityType::Mobility, CalculationMethod::ActivityBased, 6000.0, Unit::Kilometer, '0.15', Unit::Kilometer, 2025, 'DEFRA', '900');
+            $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::BusinessTravel, $isCompany ? 'Hotel Sol' : null, 'Avión corto radio', ActivityType::Mobility, CalculationMethod::DistanceBased, 6000.0, Unit::Kilometer, '0.15', Unit::Kilometer, 2025, 'DEFRA', '900');
             $derivedLines = [
                 new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope1, Source::FixedFacilities), ActivityType::Combustible, new Emissions('210', '210', '0', '0'), ActivityId::generate()),
                 new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity), ActivityType::Electricity, new Emissions('380', '380', '0', '0'), ActivityId::generate()),

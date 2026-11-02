@@ -11009,6 +11009,22 @@
         <source>Detalle de huella de propiedad</source>
         <target>Property carbon footprint detail</target>
       </trans-unit>
+      <trans-unit id="H4KEohK" resname="Basado en distancia">
+        <source>Basado en distancia</source>
+        <target>Distance-based</target>
+      </trans-unit>
+      <trans-unit id="Bpen3Xz" resname="Basado en combustible">
+        <source>Basado en combustible</source>
+        <target>Fuel-based</target>
+      </trans-unit>
+      <trans-unit id="PVtQw3Q" resname="Específico por tipo de residuo">
+        <source>Específico por tipo de residuo</source>
+        <target>Waste-type-specific</target>
+      </trans-unit>
+      <trans-unit id="42GYskb" resname="Basado en datos medios">
+        <source>Basado en datos medios</source>
+        <target>Average-data</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

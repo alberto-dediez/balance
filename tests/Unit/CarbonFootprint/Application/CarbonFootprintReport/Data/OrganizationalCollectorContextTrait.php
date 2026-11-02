@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\Activity\Catalog\CombustibleCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\ElectricityCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\PurchaseServiceCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
+use App\CarbonFootprint\Application\Activity\Catalog\WasteCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
@@ -41,6 +42,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\GdOFactor\GdOFactorRepositoryMot
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
@@ -95,6 +97,7 @@ trait OrganizationalCollectorContextTrait
                 new TransportCatalogProvider(TransportRepositoryMother::inMemory()),
                 new ElectricityCatalogProvider(ElectricityMarketerRepositoryMother::inMemory(), GdOFactorRepositoryMother::inMemory()),
                 new PurchaseServiceCatalogProvider(PurchaseServiceRepositoryMother::inMemory()),
+                new WasteCatalogProvider(WasteRepositoryMother::inMemory()),
             ]),
             new FakeTranslator(),
         );

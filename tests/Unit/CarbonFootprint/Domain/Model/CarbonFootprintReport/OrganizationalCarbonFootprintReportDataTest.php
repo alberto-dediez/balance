@@ -19,6 +19,8 @@ final class OrganizationalCarbonFootprintReportDataTest extends TestCase
 
         $this->assertSame([CalculationMethod::SpendBased->value => 3000.0, CalculationMethod::SupplierSpecific->value => 1200.0], $methods);
         $this->assertSame([CalculationMethod::DerivedWellToTank->value => 590.0], $this->methodsOf(OrganizationalCarbonFootprintReportDataMother::withMixedMethods(), Scope::Scope3, Source::FuelAndEnergyRelated));
+        $this->assertSame([CalculationMethod::DistanceBased->value => 2000.0], $this->methodsOf(OrganizationalCarbonFootprintReportDataMother::withMixedMethods(), Scope::Scope3, Source::UpstreamTransport));
+        $this->assertSame([CalculationMethod::WasteTypeSpecific->value => 500.0], $this->methodsOf(OrganizationalCarbonFootprintReportDataMother::withMixedMethods(), Scope::Scope3, Source::OperationsWaste));
     }
 
     public function testTheCategoryMethodEmissionsOfTheNonConsolidatedPropertiesFollowTheirOrigin(): void

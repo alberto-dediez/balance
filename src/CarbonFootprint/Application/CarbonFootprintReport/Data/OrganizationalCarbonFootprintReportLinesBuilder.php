@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferences;
-use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
-use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
@@ -57,6 +55,7 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
             $locationBasedEmissions = $activity instanceof ElectricityActivity ? $activity->locationBasedEmissions() : null;
             $itemName = $this->itemNameResolver->resolve($activity, $year, $emissionFactorGroupId);
             $providerId = $reference->placement->providerId;
+            $activityType = ActivityType::fromActivity($activity);
 
             if (null !== $providerId) {
                 $itemName = sprintf('%s · %s', $this->providerName($providerId), $itemName);
@@ -71,8 +70,8 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
                 source: $reference->placement->source,
                 propertyName: null !== $propertyId ? ($propertyNamesById[(string) $propertyId] ?? (string) $propertyId) : null,
                 itemName: $itemName,
-                activityType: ActivityType::fromActivity($activity),
-                method: $this->methodFor($activity, $reference->placement),
+                activityType: $activityType,
+                method: CalculationMethod::forActivity($activityType, $activity->quantity()->unit(), $reference->placement),
                 quantity: $activity->quantity()->value(),
                 unit: $activity->quantity()->unit(),
                 factorCo2eq: $activity->emissionFactor()->co2eq(),
@@ -130,19 +129,6 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
         }
 
         return $lines;
-    }
-
-    private function methodFor(Activity $activity, ActivityPlacement $placement): CalculationMethod
-    {
-        if ($placement->fromEmployees) {
-            return CalculationMethod::EmployeeSurveyExtrapolation;
-        }
-
-        if (ActivityType::ReportedEmissions === ActivityType::fromActivity($activity)) {
-            return null !== $placement->providerId ? CalculationMethod::SupplierSpecific : CalculationMethod::ReportedByOrganization;
-        }
-
-        return $activity->quantity()->unit()->isCurrency() ? CalculationMethod::SpendBased : CalculationMethod::ActivityBased;
     }
 
     private function providerName(ProviderId $providerId): string
