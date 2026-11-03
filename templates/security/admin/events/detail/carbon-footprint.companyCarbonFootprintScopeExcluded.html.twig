@@ -1,0 +1,16 @@
+{% if event.comment is not empty %}
+    {% trans with {
+        '{user}': element.userId | user_name,
+        '{scope}': event.scope.value | trans({}, 'scope'),
+        '{footprint}': event.companyCarbonFootprintId ~ '',
+        '{reason}': event.reason.value | trans({}, 'exclusionReason'),
+        '{comment}': event.comment | e
+    } %}{user} ha excluido el {scope} completo de la huella {footprint}: {reason} ({comment}){% endtrans %}
+{% else %}
+    {% trans with {
+        '{user}': element.userId | user_name,
+        '{scope}': event.scope.value | trans({}, 'scope'),
+        '{footprint}': event.companyCarbonFootprintId ~ '',
+        '{reason}': event.reason.value | trans({}, 'exclusionReason')
+    } %}{user} ha excluido el {scope} completo de la huella {footprint}: {reason}{% endtrans %}
+{% endif %}

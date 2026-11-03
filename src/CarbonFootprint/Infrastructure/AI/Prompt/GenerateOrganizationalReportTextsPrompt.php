@@ -7,8 +7,11 @@ namespace App\CarbonFootprint\Infrastructure\AI\Prompt;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexTopicLine;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAssessmentSnapshotAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBoundaryLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMaterialityAnnex;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\AiModelTier;
@@ -128,6 +131,11 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             }
         }
 
+        $lines[] = '';
+        foreach ($this->materialityLines() as $materialityLine) {
+            $lines[] = $materialityLine;
+        }
+
         $mitigationPlan = $this->data->mitigationPlan;
 
         if (null !== $mitigationPlan) {
@@ -152,13 +160,26 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             }
         }
 
+        $hasMaterialityAnalysis = null !== $this->data->materialityAnnex && !$this->data->materialityAnnex->isAnalysisMissing();
+        $appliesMaterialityAnalysis = $hasMaterialityAnalysis && !$this->data->scope3Excluded;
+
         $lines[] = '';
         $lines[] = null !== $mitigationPlan ? 'Write eight sections:' : 'Write seven sections:';
         $lines[] = '1. purpose: the purpose of the report, presenting the carbon footprint as an environmental indicator of the activity and as the first step to reduce emissions, with a reference to the carbon footprint registry of the Spanish Ministry for the Ecological Transition (MITECO).';
-        $lines[] = sprintf('2. regulatoryContext: the regulatory context: the GHG Protocol and its five principles (completeness, consistency, transparency, relevance and accuracy), %s, ISO 14064-1 as a reference and the MITECO carbon footprint registry; describe the limits of the calculation including the excluded sources.', $this->boundaries());
-        $lines[] = '3. methodology: the calculation methodology: the GHG Protocol Corporate Standard and Scope 3 Standard, the operational control consolidation approach, the formula activity data multiplied by emission factor, the global warming potentials supplied above, the market-based and location-based methods for scope 2, the well-to-tank emissions of category 3, the minimum boundary of categories 13 and 14, the calculation methods of the GHG Protocol Scope 3 Standard applied in each category (supplier-specific, spend-based, distance-based, fuel-based, waste-type-specific, average-data) against the activity data of scopes 1 and 2, the emissions reported by suppliers or by the organization and the extrapolation of the employee survey; mention only the methods that appear in the calculation methods listed above and do not invent figures.';
+        $lines[] = sprintf(
+            '2. regulatoryContext: the regulatory context: the GHG Protocol and its five principles (completeness, consistency, transparency, relevance and accuracy), %s, ISO 14064-1 as a reference and the MITECO carbon footprint registry; describe the limits of the calculation including the excluded sources; %s; never add reasons that are not listed.',
+            $this->boundaries(),
+            match (true) {
+                $this->data->scope3Excluded => 'state that scope 3 was excluded in full with the declared reason and that the materiality recommendations are not applied',
+                $hasMaterialityAnalysis => 'state that scope 3 exclusions follow the materiality assessment and cite its threshold and the verdicts above verbatim',
+                default => 'state that no materiality assessment was performed and exclusions rely on the declared reasons',
+            },
+        );
+        $lines[] = '3. methodology: the calculation methodology: the GHG Protocol Corporate Standard and Scope 3 Standard, the operational control consolidation approach, the formula activity data multiplied by emission factor, the global warming potentials supplied above, the market-based and location-based methods for scope 2, the well-to-tank emissions of category 3, the minimum boundary of categories 13 and 14, the calculation methods of the GHG Protocol Scope 3 Standard applied in each category (supplier-specific, spend-based, distance-based, fuel-based, waste-type-specific, average-data) against the activity data of scopes 1 and 2, the emissions reported by suppliers or by the organization and the extrapolation of the employee survey; mention only the methods that appear in the calculation methods listed above and do not invent figures'
+            . ($appliesMaterialityAnalysis ? '; describe the materiality assessment only with the criteria, scale, threshold and rule listed above.' : '.');
         $lines[] = '4. emissionFactorSources: comment on the emission factor sources listed above, their years, the emission factor group and its global warming potentials, without inventing sources nor figures.';
-        $lines[] = '5. uncertainty: comment on the data quality by category listed above, the margin of error and confidence level of the employee survey when supplied, and the limitations of the spend-based and average-data methods against supplier-specific, distance-based and fuel-based data; recommend improvements in the data collection without new figures.';
+        $lines[] = '5. uncertainty: comment on the data quality by category listed above, the margin of error and confidence level of the employee survey when supplied, and the limitations of the spend-based and average-data methods against supplier-specific, distance-based and fuel-based data; recommend improvements in the data collection without new figures'
+            . ($appliesMaterialityAnalysis ? '; mention manual overrides and pending reviews of the materiality assessment exactly as listed.' : '.');
         $lines[] = '6. sustainableDevelopmentGoals: the relation of the footprint with the Sustainable Development Goals 13 (climate action), 7 (affordable and clean energy) and 12 (responsible consumption and production), applied to the activity of the subject.';
         $lines[] = '7. conclusion: the main results with the figures supplied above, the most relevant sources and concrete reduction lines, without relying on excluded sources.';
 
@@ -183,6 +204,80 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             : '{"purpose": "string", "regulatoryContext": "string", "methodology": "string", "emissionFactorSources": "string", "uncertainty": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string"}';
 
         return implode("\n", $lines);
+    }
+
+    /** @return list<string> */
+    private function materialityLines(): array
+    {
+        $annex = $this->data->materialityAnnex;
+
+        if ($this->data->scope3Excluded) {
+            $lines = [sprintf(
+                'Scope 3 was excluded in full: %s. %s. The recommendations of the materiality assessment are not applied.',
+                $this->data->scope3ExclusionReason->value ?? 'n/a',
+                $this->data->scope3ExclusionComment ?? 'n/a',
+            )];
+
+            return null !== $annex && $annex->hasDecisions ? [...$lines, ...$this->materialityVerdictLines($annex)] : $lines;
+        }
+
+        if (null === $annex || $annex->isAnalysisMissing()) {
+            return ['No materiality assessment was performed for this footprint; scope 3 exclusions rely only on the declared reason and comment. Do not describe or invent a materiality analysis.'];
+        }
+
+        $lines = $this->materialityVerdictLines($annex);
+
+        if ($annex->isReopened()) {
+            array_unshift($lines, 'The materiality assessment was reopened and has not been completed again; the verdicts below are the ones applied to the footprint and the current answers are not available.');
+        }
+
+        return $lines;
+    }
+
+    /** @return list<string> */
+    private function materialityVerdictLines(OrganizationalCarbonFootprintReportMaterialityAnnex $annex): array
+    {
+        $assessment = $annex->assessment;
+        $criteria = array_values(array_unique(array_map(static fn(MaterialityAssessmentSnapshotAnswer $answer): string => $answer->criterionKey, $assessment->answers ?? [])));
+        $lines = [
+            'Scope 3 materiality assessment (system verdicts; cite them, do not produce your own justification):',
+            sprintf(
+                'Threshold: %s | high-magnitude rule: %s | completed at: %s | completed by: %s | sector: %s | question set version: %s | criteria: %s | scale: %s',
+                null !== $assessment?->thresholdPercent ? $assessment->thresholdPercent . ' %' : 'n/a',
+                null === $assessment?->highMagnitudeRule ? 'n/a' : ($assessment->highMagnitudeRule ? 'on' : 'off'),
+                $assessment?->completedAt?->format('Y-m-d') ?? 'n/a',
+                $assessment->completedByName ?? 'n/a',
+                $assessment->sectorName ?? 'n/a',
+                $assessment?->questionSetVersion?->format('Y-m-d') ?? 'n/a',
+                [] === $criteria ? 'n/a' : implode(', ', $criteria),
+                'low/medium/high = 1/2/3; no/yes = 1/3; normalized relevance 0–100 %',
+            ),
+        ];
+
+        foreach ($annex->topics as $topic) {
+            $lines[] = sprintf(
+                '- Cat. %s %s | relevance %s | threshold %s | %s | forced: %s | %s | override: %s',
+                $topic->number ?? 'n/a',
+                $topic->name ?? $topic->source->value ?? 'n/a',
+                null !== $topic->scorePercent ? number_format($topic->scorePercent, 2, '.', '') . ' %' : 'n/a',
+                null !== $topic->thresholdPercent ? $topic->thresholdPercent . ' %' : 'n/a',
+                $topic->verdict->value ?? 'no verdict',
+                $topic->forcedByHighMagnitude ? 'yes' : 'no',
+                $topic->state->value,
+                $this->overrideOf($topic),
+            );
+        }
+
+        return $lines;
+    }
+
+    private function overrideOf(MaterialityAnnexTopicLine $topic): string
+    {
+        if (null === $topic->overriddenByName) {
+            return 'none';
+        }
+
+        return sprintf('%s, %s, "%s"', $topic->overriddenByName, $topic->overriddenAt?->format('Y-m-d') ?? 'n/a', $topic->overrideJustification ?? '');
     }
 
     /** @return list<string> */

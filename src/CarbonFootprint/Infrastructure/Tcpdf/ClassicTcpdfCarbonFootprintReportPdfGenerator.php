@@ -27,6 +27,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 {
     use GenericGenerator;
     use CarbonFootprintReportFiguresTrait;
+    use MaterialityAnnexFiguresTrait;
 
     private const float PAGE_WIDTH = 297;
     private const float PAGE_HEIGHT = 210;
@@ -141,7 +142,9 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         if ([] !== $data->exclusionLines) {
             $header = [$this->trans('Alcance', $locale), $this->trans('Fuente', $locale), $this->trans('Motivo', $locale), $this->trans('Comentario', $locale)];
             $rows = $this->organizationalExclusionRows($data, $locale);
-            $this->renderDataPage($pdf, $this->trans('Exclusiones de fuentes de emisión', $locale), null, $this->buildClassicTableHtml($header, $rows, ['15%', '25%', '20%', '40%']), $this->trans('Exclusiones de fuentes de emisión', $locale), count($rows), $locale);
+            $footnote = $this->materialityFootnote($data, $locale);
+            $caption = $this->trans('Exclusiones de fuentes de emisión', $locale) . (null === $footnote ? '' : ' · ' . $footnote);
+            $this->renderDataPage($pdf, $this->trans('Exclusiones de fuentes de emisión', $locale), null, $this->buildClassicTableHtml($header, $rows, ['15%', '25%', '20%', '40%']), $caption, count($rows), $locale);
         }
 
         $methodsTitle = $this->trans('Métodos de cálculo por categoría', $locale);
@@ -194,6 +197,54 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         $this->renderTextPage($pdf, $this->trans('Relación con los ODS', $locale), $texts->get(CarbonFootprintReportSectionKey::SustainableDevelopmentGoals), 'ods.jpg');
         $this->renderTextPage($pdf, $this->trans('Conclusión', $locale), $texts->get(CarbonFootprintReportSectionKey::Conclusion), 'purpose.jpg');
         $this->renderAnnexPage($pdf, $this->buildClassicTableHtml($this->organizationalAnnexHeader($locale, $isCompany), $this->organizationalAnnexRows($data, $locale, $isCompany)), $this->trans('Anexo: factores de emisión aplicados', $locale), $locale);
+        $this->renderMaterialityAnnexPages($pdf, $data, $locale);
+    }
+
+    private function renderMaterialityAnnexPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
+    {
+        $title = $this->trans('Anexo: análisis de materialidad del alcance 3', $locale);
+        $captionPrefix = $this->trans('Análisis de materialidad del alcance 3', $locale);
+        $annex = $data->materialityAnnex;
+        $statement = $this->materialityAnnexStatement($data, $locale);
+
+        if (null !== $statement) {
+            $this->renderTextPage($pdf, $title, $statement, 'context.jpg');
+        }
+
+        if (null === $annex || (null !== $statement && !$annex->hasDecisions)) {
+            return;
+        }
+
+        if (null === $statement) {
+            $methodologyRows = $this->materialityMethodologyRows($annex, $locale);
+            $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $methodologyRows, ['40%', '60%']), $captionPrefix . ' · ' . $this->trans('Metodología', $locale), count($methodologyRows), $locale, 9);
+
+            if ($annex->showsAnswers()) {
+                $questionRows = $this->materialityQuestionRows($annex, $locale);
+                $this->renderDataPage($pdf, $this->trans('Preguntas del análisis de materialidad', $locale), null, $this->buildClassicTableHtml($this->materialityQuestionHeader($locale), $questionRows, ['18%', '52%', '15%', '15%']), $captionPrefix . ' · ' . $this->trans('Preguntas', $locale), count($questionRows), $locale, 9);
+            }
+        }
+
+        $topicRows = $this->materialityTopicRows($annex, $locale);
+        $this->renderDataPage($pdf, $this->trans('Resultado por categoría', $locale), null, $this->buildClassicTableHtml($this->materialityTopicHeader($locale), $topicRows, ['7%', '27%', '12%', '10%', '14%', '16%', '14%']), $captionPrefix . ' · ' . $this->trans('Resultado por categoría', $locale), count($topicRows), $locale, 8);
+
+        if ($data->scope3Excluded) {
+            return;
+        }
+
+        foreach ($annex->justifications as $justification) {
+            $rows = [] !== $justification->answers ? $this->materialityAnswerRows($justification, $locale) : [];
+            $tableHtml = [] !== $rows
+                ? $this->buildClassicTableHtml($this->materialityAnswerHeader($locale), $rows, ['18%', '46%', '14%', '10%', '12%'])
+                : $this->buildClassicTableHtml($this->materialityTopicHeader($locale), [$this->materialityTopicRow($justification->topic, $locale)], ['7%', '27%', '12%', '10%', '14%', '16%', '14%']);
+
+            $this->renderDataPage($pdf, $this->materialityTopicLabel($justification->topic, $locale), null, $tableHtml, $this->materialityJustificationHeading($justification, $locale), max(4, count($rows)), $locale, 8.5);
+
+            $pdf->Ln(2);
+            $pdf->setX(self::TABLE_LEFT);
+            $this->setFont($pdf, 9.5, self::FONT_STYLE_REGULAR, self::COLOR_PRIMARY);
+            $pdf->writeHTML($this->markdownToStyledHtml($this->materialityJustificationText($annex, $justification, $locale)), true, false, true, false, '');
+        }
     }
 
     private function renderBoundariesPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void

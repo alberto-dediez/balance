@@ -19,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonF
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportEmployeeSurvey;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportExclusionLine;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMaterialityAnnex;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMitigationAction;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMitigationPlan;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -313,6 +314,36 @@ class OrganizationalCarbonFootprintReportDataMother
             : self::build($subjectType, 'Hotel Sol', 'Hotelera del Sur', 'España', null, $mitigationPlan);
     }
 
+    public static function withMaterialityAssessment(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete());
+    }
+
+    public static function withMaterialityOverride(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Company): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::withOverride());
+    }
+
+    public static function withScope3ExcludedAndMaterialityDecisions(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3Excluded($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::stageExcluded());
+    }
+
+    public static function withReopenedMaterialityAssessment(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::reopened());
+    }
+
+    public static function withMaterialityDecisionsWithoutAssessment(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::decisionsWithoutAssessment());
+    }
+
+    public static function withoutMaterialityAssessment(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutAssessment());
+    }
+
     /** @param list<array{propertyId: ?string, name: string, emissions: Emissions}>|null $emissionsByProperty */
     private static function build(
         CarbonFootprintReportSubjectType $subjectType,
@@ -431,6 +462,49 @@ class OrganizationalCarbonFootprintReportDataMother
             gwpCh4: 27.9,
             gwpN2O: 273.0,
             operatingRegime: $isCompany ? null : OperatingRegime::Owned,
+        );
+    }
+
+    private static function withMaterialityAnnex(OrganizationalCarbonFootprintReportData $data, OrganizationalCarbonFootprintReportMaterialityAnnex $annex): OrganizationalCarbonFootprintReportData
+    {
+        $exclusionLines = $data->exclusionLines;
+
+        foreach ($annex->topics as $topic) {
+            if ($topic->isExcluded() && null !== $topic->source && null !== $topic->exclusionReason) {
+                $exclusionLines[] = new OrganizationalCarbonFootprintReportExclusionLine(Scope::Scope3, $topic->source, $topic->exclusionReason, $topic->exclusionComment);
+            }
+        }
+
+        return new OrganizationalCarbonFootprintReportData(
+            subjectType: $data->subjectType,
+            subjectName: $data->subjectName,
+            companyName: $data->companyName,
+            countryName: $data->countryName,
+            emissionFactorGroupName: $data->emissionFactorGroupName,
+            calculationYear: $data->calculationYear,
+            totalEmissions: $data->totalEmissions,
+            locationBasedElectricityEmissions: $data->locationBasedElectricityEmissions,
+            locationBasedTotalEmissions: $data->locationBasedTotalEmissions,
+            electricityActivitiesWithoutLocationBased: $data->electricityActivitiesWithoutLocationBased,
+            emissionsBySource: $data->emissionsBySource,
+            emissionsByScope: $data->emissionsByScope,
+            emissionsByScopeAndSource: $data->emissionsByScopeAndSource,
+            emissionsByProperty: $data->emissionsByProperty,
+            activityLines: $data->activityLines,
+            exclusionLines: $exclusionLines,
+            mitigationPlan: $data->mitigationPlan,
+            scope3Excluded: $data->scope3Excluded,
+            scope3ExclusionReason: $data->scope3ExclusionReason,
+            scope3ExclusionComment: $data->scope3ExclusionComment,
+            derivedLines: $data->derivedLines,
+            nonConsolidatedPropertyLines: $data->nonConsolidatedPropertyLines,
+            precalculated: $data->precalculated,
+            gwpCh4: $data->gwpCh4,
+            gwpN2O: $data->gwpN2O,
+            operatingRegime: $data->operatingRegime,
+            boundaryLines: $data->boundaryLines,
+            employeeSurvey: $data->employeeSurvey,
+            materialityAnnex: $annex,
         );
     }
 }

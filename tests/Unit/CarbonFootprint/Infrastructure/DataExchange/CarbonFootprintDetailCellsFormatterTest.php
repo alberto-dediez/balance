@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\CarbonFootprint\Export\CarbonFootprintDetail
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
@@ -44,7 +45,7 @@ class CarbonFootprintDetailCellsFormatterTest extends TestCase
         $columns = $this->sut->commonColumns(new ExportColumnDefinition('phase', new TranslatableMessage('Fase')));
 
         self::assertSame(
-            ['rowType', 'phase', 'source', 'property', 'activityType', 'item', 'origin', 'provider', 'dataSource', 'quantity', 'unit', 'condition', 'nights', 'people', 'weightTonnes', 'distanceKm', 'containerCapacityLitres', 'fillPercentage', 'acquisitionYear', 'factorCo2eq', 'factorUnit', 'factorYear', 'factorSource', 'emissionsCo2eq', 'emissionsCo2', 'emissionsCh4', 'emissionsN2o', 'wellToTankCo2eq', 'locationBasedCo2eq', 'manualCo2eq', 'exclusionReason', 'exclusionComment', 'registeredAt', 'updatedAt', 'activityId'],
+            ['rowType', 'phase', 'source', 'property', 'activityType', 'item', 'origin', 'provider', 'dataSource', 'quantity', 'unit', 'condition', 'nights', 'people', 'weightTonnes', 'distanceKm', 'containerCapacityLitres', 'fillPercentage', 'acquisitionYear', 'factorCo2eq', 'factorUnit', 'factorYear', 'factorSource', 'emissionsCo2eq', 'emissionsCo2', 'emissionsCh4', 'emissionsN2o', 'wellToTankCo2eq', 'locationBasedCo2eq', 'manualCo2eq', 'exclusionReason', 'exclusionComment', 'materialityScorePercent', 'materialityThresholdPercent', 'materialityVerdict', 'materialityForcedByHighMagnitude', 'materialityOverride', 'registeredAt', 'updatedAt', 'activityId'],
             array_map(static fn(ExportColumnDefinition $column): string => $column->key, $columns),
         );
     }
@@ -141,5 +142,47 @@ class CarbonFootprintDetailCellsFormatterTest extends TestCase
         self::assertSame('', $cells['origin']);
         self::assertSame('exclusionReason:no_data_available', $cells['exclusionReason']);
         self::assertSame('Sin datos', $cells['exclusionComment']);
+    }
+
+    public function testTheMaterialityColumnsAreOptionalAndUncheckedByDefault(): void
+    {
+        $columns = $this->sut->commonColumns(new ExportColumnDefinition('stage', new TranslatableMessage('Alcance')));
+        $materiality = array_values(array_filter($columns, static fn(ExportColumnDefinition $column): bool => str_starts_with($column->key, 'materiality')));
+
+        self::assertCount(5, $materiality);
+
+        foreach ($materiality as $column) {
+            self::assertFalse($column->selectedByDefault);
+        }
+    }
+
+    public function testFormatsTheMaterialityOfAnExclusionRow(): void
+    {
+        $cells = $this->sut->cells(new CarbonFootprintDetailRow(
+            rowType: CarbonFootprintDetailRowType::Exclusion,
+            stage: Scope::Scope3,
+            source: Source::SoldProductsProcessing,
+            exclusionReason: ExclusionReason::NotSignificant,
+            materialityScorePercent: 16.67,
+            materialityThresholdPercent: 50,
+            materialityVerdict: MaterialityVerdict::Omit,
+            materialityForcedByHighMagnitude: false,
+            materialityOverride: 'agarcia · 14/03/2026 · Exigencia del cliente principal',
+        ), 'stage', 'scope');
+
+        self::assertSame(16.67, $cells['materialityScorePercent']);
+        self::assertSame(50, $cells['materialityThresholdPercent']);
+        self::assertSame('materialityVerdictType:omit', $cells['materialityVerdict']);
+        self::assertSame('No', $cells['materialityForcedByHighMagnitude']);
+        self::assertSame('agarcia · 14/03/2026 · Exigencia del cliente principal', $cells['materialityOverride']);
+    }
+
+    public function testTheMaterialityCellsOfAnActivityRowAreEmpty(): void
+    {
+        $cells = $this->sut->cells(new CarbonFootprintDetailRow(CarbonFootprintDetailRowType::Activity, Scope::Scope3, Source::BusinessTravel), 'stage', 'scope');
+
+        foreach (['materialityScorePercent', 'materialityThresholdPercent', 'materialityVerdict', 'materialityForcedByHighMagnitude', 'materialityOverride'] as $key) {
+            self::assertSame('', $cells[$key]);
+        }
     }
 }

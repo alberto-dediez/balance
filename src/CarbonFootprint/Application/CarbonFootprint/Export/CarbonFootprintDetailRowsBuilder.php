@@ -26,6 +26,7 @@ use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecision;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -38,6 +39,7 @@ use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\User\UserRepository;
 
 final class CarbonFootprintDetailRowsBuilder
 {
@@ -54,6 +56,7 @@ final class CarbonFootprintDetailRowsBuilder
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
         private ProviderRepository $providerRepository,
         private PropertyRepository $propertyRepository,
+        private UserRepository $userRepository,
     ) {}
 
     /** @return list<CarbonFootprintDetailRow> */
@@ -128,18 +131,37 @@ final class CarbonFootprintDetailRowsBuilder
         }
 
         foreach ($carbonFootprint->allExclusions() as $exclusion) {
+            $decision = Scope::Scope3 === $exclusion->stage() ? $carbonFootprint->materialityDecisionFor($exclusion->source()) : null;
+
             $rows[] = new CarbonFootprintDetailRow(
                 rowType: CarbonFootprintDetailRowType::Exclusion,
                 stage: $exclusion->stage(),
                 source: $exclusion->source(),
                 exclusionReason: $exclusion->reason(),
                 exclusionComment: $exclusion->comment(),
+                materialityScorePercent: $decision?->scorePercent(),
+                materialityThresholdPercent: $decision?->thresholdPercent(),
+                materialityVerdict: $decision?->verdict(),
+                materialityForcedByHighMagnitude: $decision?->isForcedByHighMagnitude(),
+                materialityOverride: null === $decision ? null : $this->materialityOverrideOf($decision),
             );
         }
 
         usort($rows, static fn(CarbonFootprintDetailRow $a, CarbonFootprintDetailRow $b): int => self::sortKey($a) <=> self::sortKey($b));
 
         return $rows;
+    }
+
+    private function materialityOverrideOf(MaterialityDecision $decision): ?string
+    {
+        if (!$decision->isOverridden()) {
+            return null;
+        }
+
+        $userId = $decision->overriddenByUserId();
+        $user = null === $userId ? null : $this->userRepository->find($userId);
+
+        return sprintf('%s · %s · %s', null === $user ? '---' : (string) $user, $decision->overriddenAt()?->format('d/m/Y') ?? '---', $decision->overrideJustification() ?? '');
     }
 
     private function activityRow(Activity $activity, ActivityPlacement $placement, int $year, ?EmissionFactorGroupId $emissionFactorGroupId): CarbonFootprintDetailRow

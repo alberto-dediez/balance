@@ -11,3 +11,6 @@ services:
     App\Materiality\Application\Seed\SeedStandardMaterialityMastersService:
         arguments:
             $localeList: '%app.locale_list%'
+
+    App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAssessmentSnapshotProvider:
+        alias: App\Materiality\Application\MaterialityAssessment\Snapshot\MaterialityAssessmentSnapshotAdapter

@@ -19,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\EventOperations\Domain\Model\Event\EventRepository;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class EventCarbonFootprintReportDataCollector implements CarbonFootprintReportDataCollector
 {
@@ -39,7 +40,12 @@ final class EventCarbonFootprintReportDataCollector implements CarbonFootprintRe
 
     public function collect(CarbonFootprintReport $report): CarbonFootprintReportData
     {
-        $eventCarbonFootprint = $this->eventCarbonFootprintRepository->find(new EventCarbonFootprintId($report->carbonFootprintId()));
+        return $this->collectByCarbonFootprintId($report->carbonFootprintId(), $report->baseLocale());
+    }
+
+    public function collectByCarbonFootprintId(string $carbonFootprintId, ?Locale $locale = null): CarbonFootprintReportData
+    {
+        $eventCarbonFootprint = $this->eventCarbonFootprintRepository->find(new EventCarbonFootprintId($carbonFootprintId));
 
         if (null === $eventCarbonFootprint) {
             throw new \RuntimeException('EventCarbonFootprint not found');

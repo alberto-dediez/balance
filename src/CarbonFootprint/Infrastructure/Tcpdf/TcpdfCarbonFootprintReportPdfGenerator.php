@@ -26,6 +26,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
 {
     use GenericGenerator;
     use CarbonFootprintReportFiguresTrait;
+    use MaterialityAnnexFiguresTrait;
 
     public function __construct(
         private readonly TranslatorInterface $translator,
@@ -124,6 +125,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $this->renderTextSection($pdf, $this->trans('Relación con los ODS', $locale), $texts->get(CarbonFootprintReportSectionKey::SustainableDevelopmentGoals));
         $this->renderTextSection($pdf, $this->trans('Conclusión', $locale), $texts->get(CarbonFootprintReportSectionKey::Conclusion));
         $this->renderOrganizationalAnnexSection($pdf, $data, $locale);
+        $this->renderMaterialityAnnexSection($pdf, $data, $locale);
     }
 
     private function renderEventDataSection(\TCPDF $pdf, EventCarbonFootprintReportData $data, Locale $locale): void
@@ -312,6 +314,13 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
 
         $pdf->writeHTML($this->buildTableHtml($header, $this->includedEmissionsRows($data, $locale), ['14%', '30%', '10%', '20%', '26%']), true, false, true, false, '');
 
+        $footnote = $this->materialityFootnote($data, $locale);
+
+        if (null !== $footnote) {
+            $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->MultiCell(0, 5, $footnote, 0, 'L');
+        }
+
         if ($data->precalculated) {
             $pdf->Ln(4);
             $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
@@ -476,5 +485,55 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
 
         $this->setFont($pdf, 7.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         $pdf->writeHTML($this->buildTableHtml($this->organizationalAnnexHeader($locale, $isCompany), $this->organizationalAnnexRows($data, $locale, $isCompany), $isCompany ? ['18%', '9%', '12%', '12%', '10%', '10%', '5%', '13%', '11%'] : ['22%', '9%', '13%', '11%', '11%', '6%', '17%', '11%']), true, false, true, false, '');
+    }
+
+    private function renderMaterialityAnnexSection(\TCPDF $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
+    {
+        $pdf->AddPage();
+        $this->renderSectionTitle($pdf, $this->trans('Anexo: análisis de materialidad del alcance 3', $locale));
+        $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+
+        $annex = $data->materialityAnnex;
+        $statement = $this->materialityAnnexStatement($data, $locale);
+
+        if (null !== $statement) {
+            $pdf->writeHTML($this->markdownToStyledHtml($statement), true, false, true, false, '');
+        }
+
+        if (null === $annex || (null !== $statement && !$annex->hasDecisions)) {
+            return;
+        }
+
+        if (null === $statement) {
+            $pdf->writeHTML($this->buildTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $this->materialityMethodologyRows($annex, $locale), ['40%', '60%']), true, false, true, false, '');
+
+            if ($annex->showsAnswers()) {
+                $pdf->Ln(4);
+                $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+                $pdf->writeHTML($this->buildTableHtml($this->materialityQuestionHeader($locale), $this->materialityQuestionRows($annex, $locale), ['18%', '52%', '15%', '15%']), true, false, true, false, '');
+            }
+        }
+
+        $pdf->Ln(4);
+        $this->setFont($pdf, 8, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+        $pdf->writeHTML($this->buildTableHtml($this->materialityTopicHeader($locale), $this->materialityTopicRows($annex, $locale), ['7%', '27%', '12%', '10%', '14%', '16%', '14%']), true, false, true, false, '');
+
+        if ($data->scope3Excluded) {
+            return;
+        }
+
+        foreach ($annex->justifications as $justification) {
+            $pdf->Ln(4);
+            $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML(sprintf('<h4>%s</h4>', htmlspecialchars($this->materialityTopicLabel($justification->topic, $locale) . ' · ' . $this->trans('Excluida', $locale))), true, false, true, false, '');
+
+            if ([] !== $justification->answers) {
+                $this->setFont($pdf, 8.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+                $pdf->writeHTML($this->buildTableHtml($this->materialityAnswerHeader($locale), $this->materialityAnswerRows($justification, $locale), ['18%', '46%', '14%', '10%', '12%']), true, false, true, false, '');
+            }
+
+            $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->markdownToStyledHtml($this->materialityJustificationText($annex, $justification, $locale)), true, false, true, false, '');
+        }
     }
 }

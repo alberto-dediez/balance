@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CarbonFootprint\Materiality;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityCategoryState;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecision;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;

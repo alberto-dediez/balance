@@ -399,14 +399,16 @@ trait GenericGenerator
             $line2 = '';
             $accumulatedWidth = 0.0;
             $totalWidth = $pdf->GetStringWidth($title);
+            $inSecondLine = false;
 
             foreach ($words as $word) {
                 $wordWidth = $pdf->GetStringWidth($word . ' ');
 
-                if ($accumulatedWidth + $wordWidth <= $totalWidth / 2 || '' === $line1) {
+                if (!$inSecondLine && ($accumulatedWidth + $wordWidth <= $totalWidth / 2 || '' === $line1)) {
                     $line1 .= $word . ' ';
                     $accumulatedWidth += $wordWidth;
                 } else {
+                    $inSecondLine = true;
                     $line2 .= $word . ' ';
                 }
             }
@@ -425,8 +427,12 @@ trait GenericGenerator
 
     private function markdownToStyledHtml(string $markdown): string
     {
-        $converter = new GithubFlavoredMarkdownConverter();
+        $converter = new GithubFlavoredMarkdownConverter([
+            'html_input' => 'escape',
+            'allow_unsafe_links' => false,
+        ]);
         $html = (string) $converter->convert($markdown);
+        $html = preg_replace('#&lt;br\s*/?&gt;#i', '<br />', $html) ?? $html;
 
         $html = preg_replace_callback(
             '/<h1>(.*?)<\/h1>/s',

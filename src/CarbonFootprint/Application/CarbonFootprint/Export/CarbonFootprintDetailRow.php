@@ -8,6 +8,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Unit;
 
@@ -49,5 +50,10 @@ final readonly class CarbonFootprintDetailRow
         public ?\DateTimeImmutable $registeredAt = null,
         public ?\DateTimeImmutable $updatedAt = null,
         public ?string $activityId = null,
+        public ?float $materialityScorePercent = null,
+        public ?int $materialityThresholdPercent = null,
+        public ?MaterialityVerdict $materialityVerdict = null,
+        public ?bool $materialityForcedByHighMagnitude = null,
+        public ?string $materialityOverride = null,
     ) {}
 }

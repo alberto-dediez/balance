@@ -1,0 +1,6 @@
+{% trans with {
+    '{user}': element.userId | user_name,
+    '{source}': event.source.value | trans({}, 'source'),
+    '{scope}': event.scope.value | trans({}, 'scope'),
+    '{footprint}': event.companyCarbonFootprintId ~ ''
+} %}{user} ha vuelto a incluir la fuente {source} del {scope} de la huella {footprint}{% endtrans %}

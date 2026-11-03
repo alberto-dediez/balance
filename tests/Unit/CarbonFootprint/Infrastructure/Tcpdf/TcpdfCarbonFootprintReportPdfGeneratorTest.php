@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\Tcpdf;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityCategoryState;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexJustification;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexTopicLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator;
@@ -21,6 +24,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFoot
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMaterialityAnnexMother;
 use App\Tests\Unit\Shared\Infrastructure\Theme\ThemeRegistryMother;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\Loader\XliffFileLoader;
@@ -51,6 +55,11 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             yield $theme . ' property mixed methods es' => [$theme, 'property-mixed-methods', Locale::Spanish];
             yield $theme . ' property mixed methods en' => [$theme, 'property-mixed-methods', Locale::English];
             yield $theme . ' company boundaries es' => [$theme, 'company-boundaries', Locale::Spanish];
+            yield $theme . ' property materiality es' => [$theme, 'property-materiality', Locale::Spanish];
+            yield $theme . ' property materiality en' => [$theme, 'property-materiality', Locale::English];
+            yield $theme . ' company materiality override es' => [$theme, 'company-materiality-override', Locale::Spanish];
+            yield $theme . ' property scope 3 excluded materiality es' => [$theme, 'property-scope-3-excluded-materiality', Locale::Spanish];
+            yield $theme . ' property materiality reopened es' => [$theme, 'property-materiality-reopened', Locale::Spanish];
         }
     }
 
@@ -410,6 +419,143 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $this->assertNotContains('Cat. 8 · Activos arrendados aguas arriba', array_column($rows, 0));
     }
 
+    /** @dataProvider themes */
+    public function testTheMaterialityTopicRowsShowRelevanceVerdictStateAndOverride(string $theme): void
+    {
+        $rows = $this->materialityInvoke($theme, 'materialityTopicRows', OrganizationalCarbonFootprintReportMaterialityAnnexMother::withOverride(), Locale::Spanish);
+
+        $this->assertContains(['10', 'Procesamiento de los productos vendidos', '0,00 %', '50 %', 'Omitir', 'Excluida (recomendación)', '---'], $rows);
+        $this->assertContains(['2', 'Bienes de capital', '33,33 %', '50 %', 'Calcular · Magnitud alta', 'Activa', '---'], $rows);
+        $this->assertContains(['11', 'Uso de los productos vendidos', '16,67 %', '50 %', 'Omitir', 'Activa (anulación)', 'A. García · 14/03/2026 · Exigencia del cliente principal'], $rows);
+    }
+
+    /** @dataProvider themes */
+    public function testAMaterialityCategoryWithoutAssessmentTopicIsNamedInTheLocaleOfTheReport(string $theme): void
+    {
+        $topic = new MaterialityAnnexTopicLine(
+            topicId: null,
+            number: 10,
+            name: null,
+            source: Source::SoldProductsProcessing,
+            scorePercent: null,
+            thresholdPercent: null,
+            forcedByHighMagnitude: false,
+            verdict: null,
+            state: MaterialityCategoryState::NotEvaluated,
+            exclusionReason: null,
+            exclusionComment: null,
+            overriddenByName: null,
+            overriddenAt: null,
+            overrideJustification: null,
+            recommendedAt: null,
+        );
+
+        $englishRow = $this->materialityInvoke($theme, 'materialityTopicRow', $topic, Locale::English);
+        $spanishRow = $this->materialityInvoke($theme, 'materialityTopicRow', $topic, Locale::Spanish);
+
+        $this->assertSame('Processing of sold products', $englishRow[1]);
+        $this->assertSame('Procesamiento de los productos vendidos', $spanishRow[1]);
+        $this->assertSame('Cat. 10 · Processing of sold products', $this->materialityInvoke($theme, 'materialityTopicLabel', $topic, Locale::English));
+    }
+
+    /** @dataProvider themes */
+    public function testTheMaterialityAnswerRowsListEachAnswerWithItsPointsAndTheTotal(string $theme): void
+    {
+        $annex = OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete();
+
+        $rows = $this->materialityInvoke($theme, 'materialityAnswerRows', $annex->justifications[0], Locale::Spanish);
+
+        $this->assertCount(6, $rows);
+        $this->assertSame(['Magnitud', '¿Qué magnitud tienen las emisiones de esta categoría?', 'Bajo', '2', '2'], $rows[0]);
+        $this->assertSame(['Externalización', '¿Está externalizada la actividad?', 'No', '1', '1'], $rows[4]);
+        $this->assertSame(['Total', 'rango 6–18', '', '', '6'], $rows[5]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheMaterialityJustificationTextCitesTheAnswersTheThresholdAndTheVerdict(string $theme): void
+    {
+        $annex = OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete();
+
+        $text = $this->materialityInvoke($theme, 'materialityJustificationText', $annex, $annex->justifications[0], Locale::Spanish);
+
+        $this->assertStringContainsString('**Cat. 10 · Procesamiento de los productos vendidos — Excluida (No significativa).**', $text);
+        $this->assertStringContainsString('completada el 12/03/2026 por jgarcia', $text);
+        $this->assertStringContainsString('Magnitud: «¿Qué magnitud tienen las emisiones de esta categoría?», respuesta Bajo (1 × 2 = 2 puntos)', $text);
+        $this->assertStringContainsString('Total 6 puntos sobre un rango de 6 a 18: relevancia 0,00 %, por debajo del umbral del 50 %.', $text);
+        $this->assertStringContainsString('Veredicto: Omitir.', $text);
+        $this->assertStringContainsString('con motivo «No significativa» y comentario «Análisis de materialidad: relevancia 0,00 % por debajo del umbral 50 %»', $text);
+    }
+
+    /** @dataProvider themes */
+    public function testTheMaterialityJustificationTextEscapesTheTextWrittenByUsers(string $theme): void
+    {
+        $annex = OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete();
+        $justification = $annex->justifications[0];
+        $topic = $justification->topic;
+        $userTopic = new MaterialityAnnexTopicLine(
+            topicId: $topic->topicId,
+            number: $topic->number,
+            name: $topic->name,
+            source: $topic->source,
+            scorePercent: $topic->scorePercent,
+            thresholdPercent: $topic->thresholdPercent,
+            forcedByHighMagnitude: $topic->forcedByHighMagnitude,
+            verdict: $topic->verdict,
+            state: MaterialityCategoryState::ExcludedOverridden,
+            exclusionReason: $topic->exclusionReason,
+            exclusionComment: '<img src="http://example.com/x.png"> # [z]' . "\r\n- item\n\n1.  fin",
+            overriddenByName: 'A_García',
+            overriddenAt: new \DateTimeImmutable('2026-03-14 11:00:00'),
+            overrideJustification: '<b>x</b> **y**',
+            recommendedAt: $topic->recommendedAt,
+        );
+        $userJustification = new MaterialityAnnexJustification($userTopic, $justification->answers, $justification->points, $justification->minPoints, $justification->maxPoints);
+
+        $text = $this->materialityInvoke($theme, 'materialityJustificationText', $annex, $userJustification, Locale::Spanish);
+
+        $this->assertStringContainsString('comentario «&lt;img src=&quot;http://example.com/x.png&quot;&gt; \\# \\[z\\] - item 1. fin»', $text);
+        $this->assertStringContainsString('Recomendación anulada por A\\_García el 14/03/2026: «&lt;b&gt;x&lt;/b&gt; \\*\\*y\\*\\*».', $text);
+        $this->assertStringNotContainsString('<b>', $text);
+        $this->assertStringNotContainsString('<img', $text);
+    }
+
+    /** @dataProvider themes */
+    public function testTheMaterialityAnnexStatementCoversTheDeclarativeCases(string $theme): void
+    {
+        $this->assertNull($this->materialityInvoke($theme, 'materialityAnnexStatement', OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::Spanish));
+        $this->assertStringStartsWith('No se ha realizado un análisis de materialidad', $this->materialityInvoke($theme, 'materialityAnnexStatement', OrganizationalCarbonFootprintReportDataMother::withoutMaterialityAssessment(), Locale::Spanish));
+        $this->assertStringStartsWith('No se ha realizado un análisis de materialidad', $this->materialityInvoke($theme, 'materialityAnnexStatement', OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::Spanish));
+        $this->assertStringStartsWith('El alcance 3 se ha excluido en su totalidad: Sin datos disponibles. Sin datos de proveedores.', $this->materialityInvoke($theme, 'materialityAnnexStatement', OrganizationalCarbonFootprintReportDataMother::withScope3ExcludedAndMaterialityDecisions(), Locale::Spanish));
+        $this->assertStringStartsWith('La evaluación fue reabierta', $this->materialityInvoke($theme, 'materialityAnnexStatement', OrganizationalCarbonFootprintReportDataMother::withReopenedMaterialityAssessment(), Locale::Spanish));
+    }
+
+    /** @dataProvider themes */
+    public function testTheQuestionsChangedOrRemovedInTheMasterAreMarked(string $theme): void
+    {
+        $annex = OrganizationalCarbonFootprintReportMaterialityAnnexMother::withChangedQuestions();
+
+        $questions = $this->materialityInvoke($theme, 'materialityQuestionRows', $annex, Locale::Spanish);
+        $methodology = $this->materialityInvoke($theme, 'materialityMethodologyRows', $annex, Locale::Spanish);
+
+        $this->assertContains(['Riesgo', '¿Qué riesgo supone la categoría? (modificada)', 'Bajo / Medio / Alto', '1'], $questions);
+        $this->assertContains(['Externalización', '¿Está externalizada la actividad? (retirada)', 'Sí / No', '1'], $questions);
+        $this->assertContains(['Versión de las preguntas', '15/01/2026 · el cuestionario ha cambiado desde entonces'], $methodology);
+    }
+
+    /** @dataProvider themes */
+    public function testTheMaterialityFootnoteAppearsOnlyWithDecisions(string $theme): void
+    {
+        $this->assertNotNull($this->materialityInvoke($theme, 'materialityFootnote', OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::Spanish));
+        $this->assertNull($this->materialityInvoke($theme, 'materialityFootnote', OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::Spanish));
+    }
+
+    private function materialityInvoke(string $theme, string $method, mixed ...$arguments): mixed
+    {
+        $generator = $this->generatorFor($theme);
+
+        return (new \ReflectionMethod($generator, $method))->invoke($generator, ...$arguments);
+    }
+
     /** @return list<list<string>> */
     private function rowsOf(string $theme, string $method, OrganizationalCarbonFootprintReportData $data): array
     {
@@ -496,6 +642,10 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             'property-long-mitigation' => [OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(targetYear: 2035), CarbonFootprintReportTextsMother::forOrganizationWithMitigationPlan()],
             'property-mixed-methods' => [OrganizationalCarbonFootprintReportDataMother::withMixedMethods(), CarbonFootprintReportTextsMother::forOrganization()],
             'company-boundaries' => [OrganizationalCarbonFootprintReportDataMother::forCompanyWithBoundaryLines(), CarbonFootprintReportTextsMother::forOrganization()],
+            'property-materiality' => [OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), CarbonFootprintReportTextsMother::forOrganization()],
+            'company-materiality-override' => [OrganizationalCarbonFootprintReportDataMother::withMaterialityOverride(), CarbonFootprintReportTextsMother::forOrganization()],
+            'property-scope-3-excluded-materiality' => [OrganizationalCarbonFootprintReportDataMother::withScope3ExcludedAndMaterialityDecisions(), CarbonFootprintReportTextsMother::forOrganization()],
+            'property-materiality-reopened' => [OrganizationalCarbonFootprintReportDataMother::withReopenedMaterialityAssessment(), CarbonFootprintReportTextsMother::forOrganization()],
             default => [OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), CarbonFootprintReportTextsMother::forOrganization()],
         };
     }
@@ -513,7 +663,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $translator->addLoader('xlf', new XliffFileLoader());
 
         foreach (Locale::cases() as $locale) {
-            foreach (['messages', 'scope', 'source', 'activityType', 'phase', 'exclusionReason', 'operatingRegime', 'eventSectorType', 'eventTypologyType', 'eventSizeType'] as $domain) {
+            foreach (['messages', 'scope', 'source', 'activityType', 'phase', 'exclusionReason', 'operatingRegime', 'eventSectorType', 'eventTypologyType', 'eventSizeType', 'materialityVerdictType', 'materialityCategoryStateType', 'materialityCriterionType', 'materialityAnswerValueType', 'materialityAnswerScaleType'] as $domain) {
                 $catalogue = sprintf('%s/translations/%s+intl-icu.%s.xlf', $this->rootDirectory(), $domain, $locale->value);
 
                 if (is_file($catalogue)) {

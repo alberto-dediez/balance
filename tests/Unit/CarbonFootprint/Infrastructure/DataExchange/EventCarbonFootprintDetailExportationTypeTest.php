@@ -22,6 +22,7 @@ use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryProviderRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data\OrganizationalCollectorContextTrait;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
@@ -148,6 +149,15 @@ class EventCarbonFootprintDetailExportationTypeTest extends TestCase
         self::assertArrayNotHasKey('manualCo2eq', $rows[0]);
     }
 
+    public function testTheMaterialityColumnsAreNotOffered(): void
+    {
+        $keys = array_map(static fn($column): string => $column->key, $this->sut->columnDefinitions());
+
+        foreach (['materialityScorePercent', 'materialityThresholdPercent', 'materialityVerdict', 'materialityForcedByHighMagnitude', 'materialityOverride'] as $key) {
+            self::assertNotContains($key, $keys);
+        }
+    }
+
     public function testOnlyOwnersAreAuthorized(): void
     {
         self::assertTrue($this->sut->isAuthorized(UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'))));
@@ -226,6 +236,7 @@ class EventCarbonFootprintDetailExportationTypeTest extends TestCase
                 new DerivedSourceEmissionsCalculator($this->activityRepository, $countedActivityReferences),
                 $this->providerRepository,
                 PropertyRepositoryMother::inMemory(),
+                new InMemoryUserRepository(),
             ),
             new CarbonFootprintDetailCellsFormatter(new FakeTranslator()),
             new StubCurrentRolesProvider($currentRoles),

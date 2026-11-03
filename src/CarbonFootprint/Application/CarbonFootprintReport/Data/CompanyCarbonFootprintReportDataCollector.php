@@ -20,6 +20,7 @@ use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationRepository;
 use App\Property\Domain\Model\Company\CompanyRepository;
+use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprintReportDataCollector
@@ -35,6 +36,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
         private MitigationPlanReportBuilder $mitigationPlanBuilder,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
         private OrganizationalEmployeeParticipationRepository $employeeParticipationRepository,
+        private MaterialityAnnexBuilder $materialityAnnexBuilder,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -44,7 +46,12 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
 
     public function collect(CarbonFootprintReport $report): CarbonFootprintReportData
     {
-        $companyCarbonFootprint = $this->companyCarbonFootprintRepository->find(new CompanyCarbonFootprintId($report->carbonFootprintId()));
+        return $this->collectByCarbonFootprintId($report->carbonFootprintId(), $report->baseLocale());
+    }
+
+    public function collectByCarbonFootprintId(string $carbonFootprintId, ?Locale $locale = null): CarbonFootprintReportData
+    {
+        $companyCarbonFootprint = $this->companyCarbonFootprintRepository->find(new CompanyCarbonFootprintId($carbonFootprintId));
 
         if (null === $companyCarbonFootprint) {
             throw new \RuntimeException('CompanyCarbonFootprint not found');
@@ -88,7 +95,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
         if ((float) $unassigned->co2eq() > 0.0) {
             $emissionsByProperty[] = [
                 'propertyId' => null,
-                'name' => $this->translator->trans('Sin asignar a propiedad', [], 'messages', $report->baseLocale()?->value),
+                'name' => $this->translator->trans('Sin asignar a propiedad', [], 'messages', $locale?->value),
                 'emissions' => $unassigned,
             ];
         }
@@ -112,7 +119,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
             emissionsByProperty: $emissionsByProperty,
             activityLines: $this->linesBuilder->activityLines($companyCarbonFootprint, $propertyNamesById),
             exclusionLines: $this->linesBuilder->exclusionLines($companyCarbonFootprint),
-            mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Company, $companyCarbonFootprint, $report->baseLocale()),
+            mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Company, $companyCarbonFootprint, $locale),
             scope3Excluded: $companyCarbonFootprint->isStageExcluded(Scope::Scope3),
             scope3ExclusionReason: $companyCarbonFootprint->stageExclusionReason(Scope::Scope3),
             scope3ExclusionComment: $companyCarbonFootprint->stageExclusionComment(Scope::Scope3),
@@ -123,6 +130,7 @@ final class CompanyCarbonFootprintReportDataCollector implements CarbonFootprint
             gwpN2O: $emissionFactorGroup->gwp()->gwpN2O(),
             boundaryLines: $boundaryLines,
             employeeSurvey: null === $employeeParticipation ? null : OrganizationalCarbonFootprintReportEmployeeSurvey::fromParticipation($employeeParticipation),
+            materialityAnnex: $this->materialityAnnexBuilder->build($companyCarbonFootprint, CarbonFootprintReportSubjectType::Company),
         );
     }
 }

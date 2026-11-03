@@ -12,7 +12,9 @@ use App\CarbonFootprint\Application\Activity\Catalog\TransportCatalogProvider;
 use App\CarbonFootprint\Application\Activity\Catalog\WasteCatalogProvider;
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
+use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialitySummaryBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Data\MaterialityAnnexBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\MitigationPlanReportBuilder;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\OrganizationalCarbonFootprintReportLinesBuilder;
 use App\CarbonFootprint\Application\MitigationAction\MitigationEmissionSourcesBuilder;
@@ -33,6 +35,7 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryA
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMitigationActionRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryOrganizationalEmployeeParticipationRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
@@ -43,6 +46,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipat
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PurchaseService\PurchaseServiceRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Transport\TransportRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Infrastructure\Materiality\InMemoryMaterialityAssessmentSnapshotProvider;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
@@ -52,12 +56,19 @@ trait OrganizationalCollectorContextTrait
     private InMemoryActivityRepository $activityRepository;
     private InMemoryMitigationActionRepository $mitigationActionRepository;
     private InMemoryOrganizationalEmployeeParticipationRepository $employeeParticipationRepository;
+    private InMemoryMaterialityAssessmentSnapshotProvider $materialitySnapshots;
 
     private function initActivities(): void
     {
         $this->activityRepository = ActivityRepositoryMother::inMemory();
         $this->mitigationActionRepository = new InMemoryMitigationActionRepository();
         $this->employeeParticipationRepository = OrganizationalEmployeeParticipationRepositoryMother::inMemory();
+        $this->materialitySnapshots = new InMemoryMaterialityAssessmentSnapshotProvider();
+    }
+
+    private function materialityAnnexBuilder(): MaterialityAnnexBuilder
+    {
+        return new MaterialityAnnexBuilder($this->materialitySnapshots, new MaterialitySummaryBuilder(), new InMemoryUserRepository());
     }
 
     private function mitigationPlanBuilder(): MitigationPlanReportBuilder

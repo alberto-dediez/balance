@@ -209,4 +209,79 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringNotContainsString('mitigationPlan', $text);
         $this->assertArrayNotHasKey('mitigationPlan', $prompt->responseSchema()['properties']);
     }
+
+    public function testWithAMaterialityAssessmentTheTextListsTheSystemVerdictsAndForbidsOwnJustifications(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::English);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('Scope 3 materiality assessment (system verdicts; cite them, do not produce your own justification):', $text);
+        $this->assertStringContainsString('Threshold: 50 % | high-magnitude rule: on | completed at: 2026-03-12 | completed by: jgarcia | sector: Hostelería | question set version: 2026-01-15', $text);
+        $this->assertStringContainsString('- Cat. 10 Procesamiento de los productos vendidos | relevance 0.00 % | threshold 50 % | omit | forced: no | excluded_recommended | override: none', $text);
+        $this->assertStringContainsString('- Cat. 2 Bienes de capital | relevance 33.33 % | threshold 50 % | calculate | forced: yes | active | override: none', $text);
+        $this->assertStringContainsString('cite its threshold and the verdicts above verbatim; never add reasons that are not listed', $text);
+        $this->assertStringContainsString('describe the materiality assessment only with the criteria, scale, threshold and rule listed above', $text);
+        $this->assertStringContainsString('mention manual overrides and pending reviews of the materiality assessment exactly as listed', $text);
+        $this->assertStringContainsString('| criteria: magnitude, influence, risk, stakeholder_interest, outsourcing | scale: low/medium/high = 1/2/3; no/yes = 1/3; normalized relevance 0–100 %', $text);
+        $this->assertStringNotContainsString('No materiality assessment was performed', $text);
+        $this->assertStringNotContainsString('state that no materiality assessment was performed', $text);
+    }
+
+    public function testAMaterialityOverrideIsListedWithItsAuthorDateAndJustification(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityOverride(), Locale::English);
+
+        $this->assertStringContainsString('| active_overridden | override: A. García, 2026-03-14, "Exigencia del cliente principal"', $prompt->text());
+    }
+
+    public function testWithoutMaterialityAssessmentTheTextDeclaresItAndForbidsInventingIt(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withoutMaterialityAssessment(), Locale::English);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('No materiality assessment was performed for this footprint; scope 3 exclusions rely only on the declared reason and comment. Do not describe or invent a materiality analysis.', $text);
+        $this->assertStringNotContainsString('system verdicts', $text);
+        $this->assertStringContainsString('state that no materiality assessment was performed and exclusions rely on the declared reasons; never add reasons that are not listed.', $text);
+        $this->assertStringNotContainsString('follow the materiality assessment', $text);
+        $this->assertStringNotContainsString('describe the materiality assessment only with', $text);
+        $this->assertStringNotContainsString('pending reviews of the materiality assessment', $text);
+    }
+
+    public function testAReopenedMaterialityAssessmentIsDeclaredWithTheAppliedVerdicts(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withReopenedMaterialityAssessment(), Locale::English)->text();
+
+        $this->assertStringContainsString('The materiality assessment was reopened and has not been completed again', $text);
+        $this->assertStringContainsString('- Cat. 10 Procesamiento de los productos vendidos | relevance 0.00 %', $text);
+    }
+
+    public function testWithScope3ExcludedAndMaterialityDecisionsTheRecommendationsAreNotApplied(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3ExcludedAndMaterialityDecisions(), Locale::English)->text();
+
+        $this->assertStringContainsString('Scope 3 was excluded in full: no_data_available. Sin datos de proveedores. The recommendations of the materiality assessment are not applied.', $text);
+        $this->assertStringContainsString('| stage_excluded |', $text);
+        $this->assertStringContainsString('state that scope 3 was excluded in full with the declared reason and that the materiality recommendations are not applied; never add reasons that are not listed.', $text);
+        $this->assertStringNotContainsString('follow the materiality assessment', $text);
+        $this->assertStringNotContainsString('state that no materiality assessment was performed', $text);
+        $this->assertStringNotContainsString('describe the materiality assessment only with', $text);
+        $this->assertStringNotContainsString('pending reviews of the materiality assessment', $text);
+    }
+
+    public function testACategoryWithoutAssessmentTopicIsListedWithItsSource(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityDecisionsWithoutAssessment(), Locale::English)->text();
+
+        $this->assertStringContainsString('- Cat. 10 sold_products_processing | relevance 0.00 % | threshold 50 % | no verdict | forced: no | excluded_recommended | override: none', $text);
+    }
+
+    public function testTheMaterialityAssessmentDoesNotChangeTheResponseSchema(): void
+    {
+        $withMateriality = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::English);
+        $without = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::English);
+
+        $this->assertSame($without->responseSchema(), $withMateriality->responseSchema());
+    }
 }

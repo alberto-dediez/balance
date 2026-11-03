@@ -27,6 +27,10 @@
         <twig:TopAction:Export path="{{ path('export', {code: 'company_carbon_footprint_detail', companyCarbonFootprintId: companyCarbonFootprintId}) }}" />
     {% endif %}
 
+    {% if companyCarbonFootprint.status.isCompleted and companyCarbonFootprint | is_authorized('view') %}
+        <twig:TopAction:JustifiedExclusions path="{{ path('carbon_footprint_justified_exclusions_download', {subjectType: 'company', carbonFootprintId: companyCarbonFootprintId}) }}" target="_blank" />
+    {% endif %}
+
     {% if companyCarbonFootprint | is_authorized('view') %}
         <twig:TopAction path="{{ path('company_carbon_footprint_kpis', {companyId: companyCarbonFootprint.companyId, year: companyCarbonFootprint.year}) }}">
             <twig:Icon name="solar:chart-square-line-duotone" size="lg" class="me-2" />

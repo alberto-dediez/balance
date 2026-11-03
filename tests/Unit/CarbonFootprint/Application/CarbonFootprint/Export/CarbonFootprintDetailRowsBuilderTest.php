@@ -23,6 +23,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
@@ -37,6 +38,9 @@ use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryProviderRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
+use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\UserId;
+use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data\OrganizationalCollectorContextTrait;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
@@ -49,6 +53,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivi
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\TransportActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\WasteActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CapitalGood\CapitalGoodRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInputMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepositoryMother;
@@ -65,6 +70,7 @@ use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
 
@@ -75,6 +81,7 @@ class CarbonFootprintDetailRowsBuilderTest extends TestCase
     private InMemoryOrganizationalProviderContributionRepository $contributionRepository;
     private InMemoryProviderRepository $providerRepository;
     private InMemoryPropertyRepository $propertyRepository;
+    private InMemoryUserRepository $users;
 
     protected function setUp(): void
     {
@@ -84,6 +91,7 @@ class CarbonFootprintDetailRowsBuilderTest extends TestCase
         $this->contributionRepository = OrganizationalProviderContributionRepositoryMother::inMemory();
         $this->providerRepository = ProviderRepositoryMother::inMemory();
         $this->propertyRepository = PropertyRepositoryMother::inMemory();
+        $this->users = new InMemoryUserRepository();
     }
 
     public function testBuildsOneActivityRowPerActivityOfThePropertyFootprint(): void
@@ -239,6 +247,83 @@ class CarbonFootprintDetailRowsBuilderTest extends TestCase
         $this->assertNull($rows[2]->source);
         $this->assertSame(ExclusionReason::NoDataAvailable, $rows[2]->exclusionReason);
         $this->assertSame('Sin datos', $rows[2]->exclusionComment);
+    }
+
+    public function testTheExclusionRowsOfTheScope3CarryTheirMaterialityDecision(): void
+    {
+        $user = UserMother::fromUsernameAndRole('agarcia', Role::Owner);
+        $this->users->add($user);
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([
+            MaterialityDecisionInputMother::omit(10, 0.0),
+            MaterialityDecisionInputMother::calculate(1, 62.5, forcedByHighMagnitude: true),
+        ]);
+        $footprint->excludeSource(Scope::Scope3, Source::PurchasedGoodsAndServices, ExclusionReason::OutOfScope);
+        $footprint->overrideMaterialityDecision(Source::PurchasedGoodsAndServices, $user->id(), 'Fuera del perímetro');
+        $footprint->excludeSource(Scope::Scope3, Source::BusinessTravel, ExclusionReason::NoDataAvailable);
+        $footprint->excludeSource(Scope::Scope1, Source::RefrigerantLeaks, ExclusionReason::NotApplicable);
+
+        $rows = $this->exclusionRowsBySource($this->createSUT()->build($footprint));
+
+        $recommended = $rows[Source::SoldProductsProcessing->value];
+        $this->assertSame(0.0, $recommended->materialityScorePercent);
+        $this->assertSame(50, $recommended->materialityThresholdPercent);
+        $this->assertSame(MaterialityVerdict::Omit, $recommended->materialityVerdict);
+        $this->assertFalse($recommended->materialityForcedByHighMagnitude);
+        $this->assertNull($recommended->materialityOverride);
+
+        $overridden = $rows[Source::PurchasedGoodsAndServices->value];
+        $this->assertSame(MaterialityVerdict::Calculate, $overridden->materialityVerdict);
+        $this->assertTrue($overridden->materialityForcedByHighMagnitude);
+        $this->assertStringStartsWith('agarcia · ', (string) $overridden->materialityOverride);
+        $this->assertStringEndsWith(' · Fuera del perímetro', (string) $overridden->materialityOverride);
+
+        foreach ([Source::BusinessTravel, Source::RefrigerantLeaks] as $withoutDecision) {
+            $this->assertNull($rows[$withoutDecision->value]->materialityVerdict);
+            $this->assertNull($rows[$withoutDecision->value]->materialityScorePercent);
+            $this->assertNull($rows[$withoutDecision->value]->materialityOverride);
+        }
+    }
+
+    public function testAnOverrideByADeletedUserShowsAPlaceholder(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([MaterialityDecisionInputMother::calculate(1)]);
+        $footprint->excludeSource(Scope::Scope3, Source::PurchasedGoodsAndServices, ExclusionReason::OutOfScope);
+        $footprint->overrideMaterialityDecision(Source::PurchasedGoodsAndServices, UserId::generate(), 'Fuera del perímetro');
+
+        $rows = $this->exclusionRowsBySource($this->createSUT()->build($footprint));
+
+        $this->assertStringStartsWith('--- · ', (string) $rows[Source::PurchasedGoodsAndServices->value]->materialityOverride);
+    }
+
+    public function testTheWholeScope3ExclusionRowCarriesNoMaterialityDecision(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([MaterialityDecisionInputMother::omit(10, 0.0)]);
+        $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable, 'Sin datos');
+
+        $rows = array_values(array_filter($this->createSUT()->build($footprint), static fn(CarbonFootprintDetailRow $row): bool => CarbonFootprintDetailRowType::Exclusion === $row->rowType && Scope::Scope3 === $row->stage));
+
+        $this->assertCount(1, $rows);
+        $this->assertNull($rows[0]->source);
+        $this->assertNull($rows[0]->materialityVerdict);
+        $this->assertNull($rows[0]->materialityScorePercent);
+    }
+
+    /**
+     * @param list<CarbonFootprintDetailRow> $rows
+     *
+     * @return array<string, CarbonFootprintDetailRow>
+     */
+    private function exclusionRowsBySource(array $rows): array
+    {
+        $indexed = [];
+
+        foreach ($rows as $row) {
+            if (CarbonFootprintDetailRowType::Exclusion === $row->rowType && null !== $row->source) {
+                $indexed[$row->source->value] = $row;
+            }
+        }
+
+        return $indexed;
     }
 
     public function testBuildsThePhaseRowsOfAnEventFootprintWithoutDerivedRows(): void
@@ -457,6 +542,7 @@ class CarbonFootprintDetailRowsBuilderTest extends TestCase
             new DerivedSourceEmissionsCalculator($this->activityRepository, $countedActivityReferences),
             $this->providerRepository,
             $this->propertyRepository,
+            $this->users,
         );
     }
 }

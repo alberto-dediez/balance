@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Materiality\Application\MaterialityAssessment\GetStep;
 
-use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialityCategoryState;
 use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialitySummaryBuilder;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityCategoryState;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\Materiality\Application\MaterialityAssessment\GetStep\GetMaterialityStepRequest;
 use App\Materiality\Application\MaterialityAssessment\GetStep\GetMaterialityStepService;

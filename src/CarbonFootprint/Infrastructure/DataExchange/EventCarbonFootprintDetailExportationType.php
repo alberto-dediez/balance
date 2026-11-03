@@ -22,7 +22,16 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class EventCarbonFootprintDetailExportationType implements FilterAuthorizedExportationType
 {
-    private const array EXCLUDED_COLUMNS = ['property', 'acquisitionYear', 'manualCo2eq'];
+    private const array EXCLUDED_COLUMNS = [
+        'property',
+        'acquisitionYear',
+        'manualCo2eq',
+        'materialityScorePercent',
+        'materialityThresholdPercent',
+        'materialityVerdict',
+        'materialityForcedByHighMagnitude',
+        'materialityOverride',
+    ];
 
     public function __construct(
         private readonly EventCarbonFootprintRepository $eventCarbonFootprintRepository,

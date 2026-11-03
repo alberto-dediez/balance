@@ -25,6 +25,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAssessmentSnapshotMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionMother;
@@ -87,6 +88,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
+            $this->materialityAnnexBuilder(),
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
@@ -186,6 +188,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
+            $this->materialityAnnexBuilder(),
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
@@ -274,6 +277,31 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertFalse($notPrecalculatedData->precalculated);
     }
 
+    public function testIncludesTheMaterialityAnnexAndCollectsTheSameDataByFootprintId(): void
+    {
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel Sol', new AccountId('account-id'), new PropertyInfo(), null, null);
+        $properties = PropertyRepositoryMother::inMemory();
+        $properties->add($property);
+
+        $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroups->add(EmissionFactorGroupMother::default());
+
+        $footprint = PropertyCarbonFootprintMother::withEmployeesAnswered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+        $footprints = PropertyCarbonFootprintRepositoryMother::inMemory();
+        $footprints->add($footprint);
+        $this->materialitySnapshots->add(CarbonFootprintReportSubjectType::Property, (string) $footprint->id(), MaterialityAssessmentSnapshotMother::completed());
+
+        $sut = $this->collectorFor($footprints, $properties, $emissionFactorGroups);
+        $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
+        $byId = $sut->collectByCarbonFootprintId((string) $footprint->id());
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $data);
+        $this->assertNotNull($data->materialityAnnex);
+        $this->assertTrue($data->materialityAnnex->hasAssessment());
+        $this->assertSame(MaterialityAssessmentSnapshotMother::ASSESSMENT_ID, $data->materialityAnnex->assessment?->assessmentId);
+        $this->assertEquals($data, $byId);
+    }
+
     public function testSupportsOnlyProperties(): void
     {
         $sut = new PropertyCarbonFootprintReportDataCollector(
@@ -287,6 +315,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
+            $this->materialityAnnexBuilder(),
         );
 
         $this->assertTrue($sut->supports(CarbonFootprintReportSubjectType::Property));
@@ -306,6 +335,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
+            $this->materialityAnnexBuilder(),
         );
 
         $this->expectException(\RuntimeException::class);
@@ -329,6 +359,7 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->mitigationPlanBuilder(),
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
+            $this->materialityAnnexBuilder(),
         );
     }
 }

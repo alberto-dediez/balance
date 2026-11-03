@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprint\Materiality;
 
-use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialityCategoryState;
 use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialitySummaryBuilder;
 use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialitySummaryRow;
 use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialitySummaryTopicInput;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityCategoryState;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInput;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;

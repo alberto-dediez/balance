@@ -19,6 +19,7 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Shared\Domain\Model\Locale\Locale;
 
 final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprintReportDataCollector
 {
@@ -33,6 +34,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
         private MitigationPlanReportBuilder $mitigationPlanBuilder,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
         private OrganizationalEmployeeParticipationRepository $employeeParticipationRepository,
+        private MaterialityAnnexBuilder $materialityAnnexBuilder,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -42,7 +44,12 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
 
     public function collect(CarbonFootprintReport $report): CarbonFootprintReportData
     {
-        $propertyCarbonFootprint = $this->propertyCarbonFootprintRepository->find(new PropertyCarbonFootprintId($report->carbonFootprintId()));
+        return $this->collectByCarbonFootprintId($report->carbonFootprintId(), $report->baseLocale());
+    }
+
+    public function collectByCarbonFootprintId(string $carbonFootprintId, ?Locale $locale = null): CarbonFootprintReportData
+    {
+        $propertyCarbonFootprint = $this->propertyCarbonFootprintRepository->find(new PropertyCarbonFootprintId($carbonFootprintId));
 
         if (null === $propertyCarbonFootprint) {
             throw new \RuntimeException('PropertyCarbonFootprint not found');
@@ -86,7 +93,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             emissionsByProperty: [],
             activityLines: $this->linesBuilder->activityLines($propertyCarbonFootprint, []),
             exclusionLines: $this->linesBuilder->exclusionLines($propertyCarbonFootprint),
-            mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Property, $propertyCarbonFootprint, $report->baseLocale()),
+            mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Property, $propertyCarbonFootprint, $locale),
             scope3Excluded: $propertyCarbonFootprint->isStageExcluded(Scope::Scope3),
             scope3ExclusionReason: $propertyCarbonFootprint->stageExclusionReason(Scope::Scope3),
             scope3ExclusionComment: $propertyCarbonFootprint->stageExclusionComment(Scope::Scope3),
@@ -96,6 +103,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             gwpN2O: $emissionFactorGroup->gwp()->gwpN2O(),
             operatingRegime: $property->operatingRegime(),
             employeeSurvey: null === $employeeParticipation ? null : OrganizationalCarbonFootprintReportEmployeeSurvey::fromParticipation($employeeParticipation),
+            materialityAnnex: $this->materialityAnnexBuilder->build($propertyCarbonFootprint, CarbonFootprintReportSubjectType::Property),
         );
     }
 }

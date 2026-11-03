@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CarbonFootprint\Application\CarbonFootprint\Materiality;
+namespace App\CarbonFootprint\Domain\Model\CarbonFootprint;
 
 enum MaterialityCategoryState: string
 {

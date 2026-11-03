@@ -54,6 +54,7 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         public readonly ?OperatingRegime $operatingRegime = null,
         public readonly array $boundaryLines = [],
         public readonly ?OrganizationalCarbonFootprintReportEmployeeSurvey $employeeSurvey = null,
+        public readonly ?OrganizationalCarbonFootprintReportMaterialityAnnex $materialityAnnex = null,
     ) {}
 
     public function subjectType(): CarbonFootprintReportSubjectType
@@ -161,6 +162,11 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         }
 
         return $rows;
+    }
+
+    public function hasMaterialityDecisions(): bool
+    {
+        return true === $this->materialityAnnex?->hasDecisions;
     }
 
     public function boundaryTreatment(OrganizationalCarbonFootprintReportBoundaryLine $line): ?Source

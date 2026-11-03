@@ -1,0 +1,5 @@
+{% trans with {
+    '{user}': element.userId | user_name,
+    '{scope}': event.scope.value | trans({}, 'scope'),
+    '{footprint}': event.propertyCarbonFootprintId ~ ''
+} %}{user} ha vuelto a incluir el {scope} de la huella {footprint}{% endtrans %}

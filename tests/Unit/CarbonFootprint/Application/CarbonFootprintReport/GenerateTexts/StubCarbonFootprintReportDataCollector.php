@@ -8,6 +8,7 @@ use App\CarbonFootprint\Application\CarbonFootprintReport\Data\CarbonFootprintRe
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
 
@@ -25,5 +26,10 @@ class StubCarbonFootprintReportDataCollector implements CarbonFootprintReportDat
             CarbonFootprintReportSubjectType::Property => OrganizationalCarbonFootprintReportDataMother::forProperty(),
             CarbonFootprintReportSubjectType::Company => OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(),
         };
+    }
+
+    public function collectByCarbonFootprintId(string $carbonFootprintId, ?Locale $locale = null): CarbonFootprintReportData
+    {
+        return OrganizationalCarbonFootprintReportDataMother::forProperty();
     }
 }

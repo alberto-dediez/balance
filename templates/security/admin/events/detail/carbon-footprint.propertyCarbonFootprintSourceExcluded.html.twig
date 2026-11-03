@@ -1,0 +1,18 @@
+{% if event.comment is not empty %}
+    {% trans with {
+        '{user}': element.userId | user_name,
+        '{source}': event.source.value | trans({}, 'source'),
+        '{scope}': event.scope.value | trans({}, 'scope'),
+        '{footprint}': event.propertyCarbonFootprintId ~ '',
+        '{reason}': event.reason.value | trans({}, 'exclusionReason'),
+        '{comment}': event.comment | e
+    } %}{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason} ({comment}){% endtrans %}
+{% else %}
+    {% trans with {
+        '{user}': element.userId | user_name,
+        '{source}': event.source.value | trans({}, 'source'),
+        '{scope}': event.scope.value | trans({}, 'scope'),
+        '{footprint}': event.propertyCarbonFootprintId ~ '',
+        '{reason}': event.reason.value | trans({}, 'exclusionReason')
+    } %}{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason}{% endtrans %}
+{% endif %}

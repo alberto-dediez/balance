@@ -11533,6 +11533,322 @@
         <source>Anulación</source>
         <target>NEW_Anulación</target>
       </trans-unit>
+      <trans-unit id="Nj85k.Q" resname="Anexo: análisis de materialidad del alcance 3">
+        <source>Anexo: análisis de materialidad del alcance 3</source>
+        <target>NEW_Anexo: análisis de materialidad del alcance 3</target>
+      </trans-unit>
+      <trans-unit id="euZj4yN" resname="Excluida">
+        <source>Excluida</source>
+        <target>NEW_Excluida</target>
+      </trans-unit>
+      <trans-unit id="MI8wcdO" resname="Exclusiones justificadas del alcance 3">
+        <source>Exclusiones justificadas del alcance 3</source>
+        <target>NEW_Exclusiones justificadas del alcance 3</target>
+      </trans-unit>
+      <trans-unit id="BUD2SXb" resname="Datos de la organización y de la evaluación">
+        <source>Datos de la organización y de la evaluación</source>
+        <target>NEW_Datos de la organización y de la evaluación</target>
+      </trans-unit>
+      <trans-unit id="vy61khn" resname="Alcance 3 en el inventario">
+        <source>Alcance 3 en el inventario</source>
+        <target>NEW_Alcance 3 en el inventario</target>
+      </trans-unit>
+      <trans-unit id="gK.7awS" resname="Metodología del análisis de materialidad">
+        <source>Metodología del análisis de materialidad</source>
+        <target>NEW_Metodología del análisis de materialidad</target>
+      </trans-unit>
+      <trans-unit id="mrpYgJT" resname="Resultado por categoría">
+        <source>Resultado por categoría</source>
+        <target>NEW_Resultado por categoría</target>
+      </trans-unit>
+      <trans-unit id="CHgEVEj" resname="Justificación de cada exclusión">
+        <source>Justificación de cada exclusión</source>
+        <target>NEW_Justificación de cada exclusión</target>
+      </trans-unit>
+      <trans-unit id="ps4Owy6" resname="Trazabilidad">
+        <source>Trazabilidad</source>
+        <target>NEW_Trazabilidad</target>
+      </trans-unit>
+      <trans-unit id="ZOlHOd_" resname="Identificador de la evaluación: {id}">
+        <source>Identificador de la evaluación: {id}</source>
+        <target>NEW_Identificador de la evaluación: {id}</target>
+      </trans-unit>
+      <trans-unit id="UN5KkY7" resname="Iniciada el {started}; completada el {completed} por {user}">
+        <source>Iniciada el {started}; completada el {completed} por {user}</source>
+        <target>NEW_Iniciada el {started}; completada el {completed} por {user}</target>
+      </trans-unit>
+      <trans-unit id="Wp4T9kp" resname="Anulación de {category}: {user}, {date}, «{justification}»">
+        <source>Anulación de {category}: {user}, {date}, «{justification}»</source>
+        <target>NEW_Anulación de {category}: {user}, {date}, «{justification}»</target>
+      </trans-unit>
+      <trans-unit id="wfBOcAI" resname="El cuestionario del maestro ha cambiado desde la evaluación: las preguntas afectadas se marcan como modificadas o retiradas">
+        <source>El cuestionario del maestro ha cambiado desde la evaluación: las preguntas afectadas se marcan como modificadas o retiradas</source>
+        <target>NEW_El cuestionario del maestro ha cambiado desde la evaluación: las preguntas afectadas se marcan como modificadas o retiradas</target>
+      </trans-unit>
+      <trans-unit id="1h7Zu22" resname="El historial completo de la evaluación {id} y de la huella está disponible para los Administradores en el Registro">
+        <source>El historial completo de la evaluación {id} y de la huella está disponible para los Administradores en el Registro</source>
+        <target>NEW_El historial completo de la evaluación {id} y de la huella está disponible para los Administradores en el Registro</target>
+      </trans-unit>
+      <trans-unit id="ldlMK2g" resname="El historial completo de la huella está disponible para los Administradores en el Registro">
+        <source>El historial completo de la huella está disponible para los Administradores en el Registro</source>
+        <target>NEW_El historial completo de la huella está disponible para los Administradores en el Registro</target>
+      </trans-unit>
+      <trans-unit id="OMLf.vT" resname="Análisis de materialidad del alcance 3">
+        <source>Análisis de materialidad del alcance 3</source>
+        <target>NEW_Análisis de materialidad del alcance 3</target>
+      </trans-unit>
+      <trans-unit id="0On6dm3" resname="Metodología">
+        <source>Metodología</source>
+        <target>NEW_Metodología</target>
+      </trans-unit>
+      <trans-unit id="mRvW5ZG" resname="Preguntas del análisis de materialidad">
+        <source>Preguntas del análisis de materialidad</source>
+        <target>NEW_Preguntas del análisis de materialidad</target>
+      </trans-unit>
+      <trans-unit id="akzB.0t" resname="el cuestionario ha cambiado desde entonces">
+        <source>el cuestionario ha cambiado desde entonces</source>
+        <target>NEW_el cuestionario ha cambiado desde entonces</target>
+      </trans-unit>
+      <trans-unit id="JoR2H9c" resname="Norma">
+        <source>Norma</source>
+        <target>NEW_Norma</target>
+      </trans-unit>
+      <trans-unit id="BSDOGrc" resname="GHG Protocol Scope 3 Standard, capítulo 6">
+        <source>GHG Protocol Scope 3 Standard, capítulo 6</source>
+        <target>NEW_GHG Protocol Scope 3 Standard, capítulo 6</target>
+      </trans-unit>
+      <trans-unit id="gQrg5XU" resname="Criterios evaluados">
+        <source>Criterios evaluados</source>
+        <target>NEW_Criterios evaluados</target>
+      </trans-unit>
+      <trans-unit id="Le1Ssf6" resname="Bajo / Medio / Alto = 1 / 2 / 3; No / Sí = 1 / 3; relevancia normalizada 0–100 %">
+        <source>Bajo / Medio / Alto = 1 / 2 / 3; No / Sí = 1 / 3; relevancia normalizada 0–100 %</source>
+        <target>NEW_Bajo / Medio / Alto = 1 / 2 / 3; No / Sí = 1 / 3; relevancia normalizada 0–100 %</target>
+      </trans-unit>
+      <trans-unit id="OSJ9atq" resname="Umbral de relevancia">
+        <source>Umbral de relevancia</source>
+        <target>NEW_Umbral de relevancia</target>
+      </trans-unit>
+      <trans-unit id="BsJjPDE" resname="Regla de magnitud alta">
+        <source>Regla de magnitud alta</source>
+        <target>NEW_Regla de magnitud alta</target>
+      </trans-unit>
+      <trans-unit id="zSsXGH2" resname="Activada">
+        <source>Activada</source>
+        <target>NEW_Activada</target>
+      </trans-unit>
+      <trans-unit id="c4FI5VT" resname="Desactivada">
+        <source>Desactivada</source>
+        <target>NEW_Desactivada</target>
+      </trans-unit>
+      <trans-unit id="35Ey52J" resname="Evaluación iniciada el">
+        <source>Evaluación iniciada el</source>
+        <target>NEW_Evaluación iniciada el</target>
+      </trans-unit>
+      <trans-unit id="2U5kMS4" resname="Completada el">
+        <source>Completada el</source>
+        <target>NEW_Completada el</target>
+      </trans-unit>
+      <trans-unit id="BI7gvtg" resname="Completada por">
+        <source>Completada por</source>
+        <target>NEW_Completada por</target>
+      </trans-unit>
+      <trans-unit id="RHF6Dku" resname="Identificador de la evaluación">
+        <source>Identificador de la evaluación</source>
+        <target>NEW_Identificador de la evaluación</target>
+      </trans-unit>
+      <trans-unit id="OjoEAu3" resname="Versión de las preguntas">
+        <source>Versión de las preguntas</source>
+        <target>NEW_Versión de las preguntas</target>
+      </trans-unit>
+      <trans-unit id="qkUgEfM" resname="Estado de la evaluación">
+        <source>Estado de la evaluación</source>
+        <target>NEW_Estado de la evaluación</target>
+      </trans-unit>
+      <trans-unit id="fRvxmES" resname="Completada">
+        <source>Completada</source>
+        <target>NEW_Completada</target>
+      </trans-unit>
+      <trans-unit id="JJeNlOb" resname="Borrador tras reapertura">
+        <source>Borrador tras reapertura</source>
+        <target>NEW_Borrador tras reapertura</target>
+      </trans-unit>
+      <trans-unit id="ecQ828w" resname="rango {min}–{max}">
+        <source>rango {min}–{max}</source>
+        <target>NEW_rango {min}–{max}</target>
+      </trans-unit>
+      <trans-unit id="Nlwjk2M" resname="Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en la evaluación de materialidad completada el {date} por {user}.">
+        <source>Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en la evaluación de materialidad completada el {date} por {user}.</source>
+        <target>NEW_Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en la evaluación de materialidad completada el {date} por {user}.</target>
+      </trans-unit>
+      <trans-unit id="lCYWpjy" resname="Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6); la evaluación de materialidad fue reabierta y no se ha vuelto a completar, por lo que las respuestas vigentes no se muestran.">
+        <source>Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6); la evaluación de materialidad fue reabierta y no se ha vuelto a completar, por lo que las respuestas vigentes no se muestran.</source>
+        <target>NEW_Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6); la evaluación de materialidad fue reabierta y no se ha vuelto a completar, por lo que las respuestas vigentes no se muestran.</target>
+      </trans-unit>
+      <trans-unit id="4RiKdpc" resname="Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en el análisis de materialidad aplicado el {date}.">
+        <source>Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en el análisis de materialidad aplicado el {date}.</source>
+        <target>NEW_Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en el análisis de materialidad aplicado el {date}.</target>
+      </trans-unit>
+      <trans-unit id="75cCwyV" resname="{criterion}: «{question}», respuesta {answer} ({value} × {weight} = {points} puntos)">
+        <source>{criterion}: «{question}», respuesta {answer} ({value} × {weight} = {points} puntos)</source>
+        <target>NEW_{criterion}: «{question}», respuesta {answer} ({value} × {weight} = {points} puntos)</target>
+      </trans-unit>
+      <trans-unit id="k9btWgA" resname="Total {points} puntos sobre un rango de {min} a {max}: relevancia {score} %, por debajo del umbral del {threshold} %.">
+        <source>Total {points} puntos sobre un rango de {min} a {max}: relevancia {score} %, por debajo del umbral del {threshold} %.</source>
+        <target>NEW_Total {points} puntos sobre un rango de {min} a {max}: relevancia {score} %, por debajo del umbral del {threshold} %.</target>
+      </trans-unit>
+      <trans-unit id="Wx3kuX." resname="Total {points} puntos sobre un rango de {min} a {max}: relevancia {score} %, igual o superior al umbral del {threshold} %.">
+        <source>Total {points} puntos sobre un rango de {min} a {max}: relevancia {score} %, igual o superior al umbral del {threshold} %.</source>
+        <target>NEW_Total {points} puntos sobre un rango de {min} a {max}: relevancia {score} %, igual o superior al umbral del {threshold} %.</target>
+      </trans-unit>
+      <trans-unit id="cTDR4ge" resname="Relevancia {score} %, por debajo del umbral del {threshold} %.">
+        <source>Relevancia {score} %, por debajo del umbral del {threshold} %.</source>
+        <target>NEW_Relevancia {score} %, por debajo del umbral del {threshold} %.</target>
+      </trans-unit>
+      <trans-unit id="3xVbQQ0" resname="Relevancia {score} %, igual o superior al umbral del {threshold} %.">
+        <source>Relevancia {score} %, igual o superior al umbral del {threshold} %.</source>
+        <target>NEW_Relevancia {score} %, igual o superior al umbral del {threshold} %.</target>
+      </trans-unit>
+      <trans-unit id="jnPvozx" resname="Veredicto: {verdict} (magnitud alta).">
+        <source>Veredicto: {verdict} (magnitud alta).</source>
+        <target>NEW_Veredicto: {verdict} (magnitud alta).</target>
+      </trans-unit>
+      <trans-unit id="XG1Odku" resname="Veredicto: {verdict}.">
+        <source>Veredicto: {verdict}.</source>
+        <target>NEW_Veredicto: {verdict}.</target>
+      </trans-unit>
+      <trans-unit id="_sk03Yw" resname="La categoría quedó excluida del inventario con motivo «{reason}».">
+        <source>La categoría quedó excluida del inventario con motivo «{reason}».</source>
+        <target>NEW_La categoría quedó excluida del inventario con motivo «{reason}».</target>
+      </trans-unit>
+      <trans-unit id="R3_.9JK" resname="La categoría quedó excluida del inventario con motivo «{reason}» y comentario «{comment}».">
+        <source>La categoría quedó excluida del inventario con motivo «{reason}» y comentario «{comment}».</source>
+        <target>NEW_La categoría quedó excluida del inventario con motivo «{reason}» y comentario «{comment}».</target>
+      </trans-unit>
+      <trans-unit id="YCyRb31" resname="Recomendación anulada por {user} el {date}: «{justification}».">
+        <source>Recomendación anulada por {user} el {date}: «{justification}».</source>
+        <target>NEW_Recomendación anulada por {user} el {date}: «{justification}».</target>
+      </trans-unit>
+      <trans-unit id="zsGPOp2" resname="{category} — Excluida ({reason}).">
+        <source>{category} — Excluida ({reason}).</source>
+        <target>NEW_{category} — Excluida ({reason}).</target>
+      </trans-unit>
+      <trans-unit id="Xx6GFpu" resname="El alcance 3 se ha excluido en su totalidad: {reason}. Las recomendaciones del análisis de materialidad no se aplican.">
+        <source>El alcance 3 se ha excluido en su totalidad: {reason}. Las recomendaciones del análisis de materialidad no se aplican.</source>
+        <target>NEW_El alcance 3 se ha excluido en su totalidad: {reason}. Las recomendaciones del análisis de materialidad no se aplican.</target>
+      </trans-unit>
+      <trans-unit id="FyOAvIX" resname="El alcance 3 se ha excluido en su totalidad: {reason}. {comment}. Las recomendaciones del análisis de materialidad no se aplican.">
+        <source>El alcance 3 se ha excluido en su totalidad: {reason}. {comment}. Las recomendaciones del análisis de materialidad no se aplican.</source>
+        <target>NEW_El alcance 3 se ha excluido en su totalidad: {reason}. {comment}. Las recomendaciones del análisis de materialidad no se aplican.</target>
+      </trans-unit>
+      <trans-unit id="j88boMm" resname="No se ha realizado un análisis de materialidad para esta huella. Las exclusiones del alcance 3 se sustentan únicamente en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.">
+        <source>No se ha realizado un análisis de materialidad para esta huella. Las exclusiones del alcance 3 se sustentan únicamente en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</source>
+        <target>NEW_No se ha realizado un análisis de materialidad para esta huella. Las exclusiones del alcance 3 se sustentan únicamente en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</target>
+      </trans-unit>
+      <trans-unit id="fdnMDKK" resname="La evaluación fue reabierta y no se ha vuelto a completar; las respuestas vigentes no se muestran.">
+        <source>La evaluación fue reabierta y no se ha vuelto a completar; las respuestas vigentes no se muestran.</source>
+        <target>NEW_La evaluación fue reabierta y no se ha vuelto a completar; las respuestas vigentes no se muestran.</target>
+      </trans-unit>
+      <trans-unit id="b9eBL_G" resname="Las exclusiones del alcance 3 se justifican en el anexo “Análisis de materialidad del alcance 3”.">
+        <source>Las exclusiones del alcance 3 se justifican en el anexo “Análisis de materialidad del alcance 3”.</source>
+        <target>NEW_Las exclusiones del alcance 3 se justifican en el anexo “Análisis de materialidad del alcance 3”.</target>
+      </trans-unit>
+      <trans-unit id="3UFzvcG" resname="Sin resultado de materialidad">
+        <source>Sin resultado de materialidad</source>
+        <target>NEW_Sin resultado de materialidad</target>
+      </trans-unit>
+      <trans-unit id="O89Yqu5" resname="retirada">
+        <source>retirada</source>
+        <target>NEW_retirada</target>
+      </trans-unit>
+      <trans-unit id="2IIgHRq" resname="modificada">
+        <source>modificada</source>
+        <target>NEW_modificada</target>
+      </trans-unit>
+      <trans-unit id="Ru1.Ox7" resname="Cat.">
+        <source>Cat.</source>
+        <target>NEW_Cat.</target>
+      </trans-unit>
+      <trans-unit id="uN_YfeT" resname="Respuesta">
+        <source>Respuesta</source>
+        <target>NEW_Respuesta</target>
+      </trans-unit>
+      <trans-unit id="rFtXjLq" resname="Puntos">
+        <source>Puntos</source>
+        <target>NEW_Puntos</target>
+      </trans-unit>
+      <trans-unit id="GstKWBK" resname="Relevancia de materialidad">
+        <source>Relevancia de materialidad</source>
+        <target>NEW_Relevancia de materialidad</target>
+      </trans-unit>
+      <trans-unit id="wBrDJEw" resname="Umbral de materialidad">
+        <source>Umbral de materialidad</source>
+        <target>NEW_Umbral de materialidad</target>
+      </trans-unit>
+      <trans-unit id="Rby3Anu" resname="Veredicto de materialidad">
+        <source>Veredicto de materialidad</source>
+        <target>NEW_Veredicto de materialidad</target>
+      </trans-unit>
+      <trans-unit id="ixAIljz" resname="Anulación de materialidad">
+        <source>Anulación de materialidad</source>
+        <target>NEW_Anulación de materialidad</target>
+      </trans-unit>
+      <trans-unit id=".kupvtK" resname="La selección ha cambiado; revisa los elementos y vuelve a intentarlo">
+        <source>La selección ha cambiado; revisa los elementos y vuelve a intentarlo</source>
+        <target>NEW_La selección ha cambiado; revisa los elementos y vuelve a intentarlo</target>
+      </trans-unit>
+      <trans-unit id="UNDybjO" resname="No se ha podido realizar la acción; revisa el formulario y vuelve a intentarlo">
+        <source>No se ha podido realizar la acción; revisa el formulario y vuelve a intentarlo</source>
+        <target>NEW_No se ha podido realizar la acción; revisa el formulario y vuelve a intentarlo</target>
+      </trans-unit>
+      <trans-unit id="o8S5aZs" resname="Marcar como leída">
+        <source>Marcar como leída</source>
+        <target>NEW_Marcar como leída</target>
+      </trans-unit>
+      <trans-unit id="Z4Gtfjc" resname="Se ha marcado como leída la notificación «{subject}»">
+        <source>Se ha marcado como leída la notificación «{subject}»</source>
+        <target>NEW_Se ha marcado como leída la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="SytIFYg" resname="No se ha podido marcar como leída la notificación «{subject}»">
+        <source>No se ha podido marcar como leída la notificación «{subject}»</source>
+        <target>NEW_No se ha podido marcar como leída la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="AHC1Q3W" resname="Se ha eliminado la notificación «{subject}»">
+        <source>Se ha eliminado la notificación «{subject}»</source>
+        <target>NEW_Se ha eliminado la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="JZF1hJq" resname="No se ha podido eliminar la notificación «{subject}»">
+        <source>No se ha podido eliminar la notificación «{subject}»</source>
+        <target>NEW_No se ha podido eliminar la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="x_Ff8aX" resname="Exclusiones justificadas">
+        <source>Exclusiones justificadas</source>
+        <target>NEW_Exclusiones justificadas</target>
+      </trans-unit>
+      <trans-unit id="OkNqi8o" resname="{user} ha vuelto a incluir el {scope} de la huella {footprint}">
+        <source>{user} ha vuelto a incluir el {scope} de la huella {footprint}</source>
+        <target>NEW_{user} ha vuelto a incluir el {scope} de la huella {footprint}</target>
+      </trans-unit>
+      <trans-unit id="dUpPM01" resname="{user} ha excluido el {scope} completo de la huella {footprint}: {reason} ({comment})">
+        <source>{user} ha excluido el {scope} completo de la huella {footprint}: {reason} ({comment})</source>
+        <target>NEW_{user} ha excluido el {scope} completo de la huella {footprint}: {reason} ({comment})</target>
+      </trans-unit>
+      <trans-unit id="XTdBEtu" resname="{user} ha excluido el {scope} completo de la huella {footprint}: {reason}">
+        <source>{user} ha excluido el {scope} completo de la huella {footprint}: {reason}</source>
+        <target>NEW_{user} ha excluido el {scope} completo de la huella {footprint}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="ad4QwQD" resname="{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason} ({comment})">
+        <source>{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason} ({comment})</source>
+        <target>NEW_{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason} ({comment})</target>
+      </trans-unit>
+      <trans-unit id="g6BQyV4" resname="{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason}">
+        <source>{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason}</source>
+        <target>NEW_{user} ha excluido la fuente {source} del {scope} de la huella {footprint}: {reason}</target>
+      </trans-unit>
+      <trans-unit id="rs1rG9M" resname="{user} ha vuelto a incluir la fuente {source} del {scope} de la huella {footprint}">
+        <source>{user} ha vuelto a incluir la fuente {source} del {scope} de la huella {footprint}</source>
+        <target>NEW_{user} ha vuelto a incluir la fuente {source} del {scope} de la huella {footprint}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -60,6 +60,8 @@ services:
 
     App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator: '@App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator'
 
+    App\CarbonFootprint\Domain\Model\CarbonFootprintReport\JustifiedExclusionsDocumentPdfGenerator: '@App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfJustifiedExclusionsDocumentPdfGenerator'
+
     App\CarbonFootprint\Application\PropertyCarbonFootprintCertificate\Generate\GeneratePropertyCarbonFootprintCertificateService:
         arguments:
             $localeList: '%app.locale_list%'

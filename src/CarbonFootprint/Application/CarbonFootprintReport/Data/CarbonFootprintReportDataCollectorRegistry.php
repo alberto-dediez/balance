@@ -6,6 +6,8 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final class CarbonFootprintReportDataCollectorRegistry
@@ -32,5 +34,16 @@ final class CarbonFootprintReportDataCollectorRegistry
         }
 
         throw new \InvalidArgumentException(sprintf('No report data collector registered for subject type "%s".', $report->subjectType()->value));
+    }
+
+    public function collectFor(CarbonFootprintReportSubjectType $subjectType, string $carbonFootprintId, ?Locale $locale = null): CarbonFootprintReportData
+    {
+        foreach ($this->collectors as $collector) {
+            if ($collector->supports($subjectType)) {
+                return $collector->collectByCarbonFootprintId($carbonFootprintId, $locale);
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('No report data collector registered for subject type "%s".', $subjectType->value));
     }
 }
