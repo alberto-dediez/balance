@@ -7,6 +7,7 @@ namespace App\Tests\Unit\DataExchange\Domain\Model\Importation;
 use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationRepository;
+use App\DataExchange\Domain\Model\Importation\ImportationStatus;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class ImportationRepositoryTest extends KernelTestCase
@@ -48,6 +49,63 @@ abstract class ImportationRepositoryTest extends KernelTestCase
         $this->assertTrue(in_array('Clase Beta', $values));
         $this->assertTrue(in_array('Clase Gamma', $values));
         $this->assertTrue(in_array('Clase Omega', $values));
+    }
+
+    public function testTheExecutionOfAnImportationCanOnlyBeClaimedOnce(): void
+    {
+        $importation = ImportationMother::fromNameAndFile('file-to-import.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv'));
+
+        $repository = $this->createSUT();
+
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimExecution($importation->id()));
+        $this->assertFalse($repository->claimExecution($importation->id()));
+    }
+
+    public function testTheExecutionOfAnAlreadyExecutedImportationCannotBeClaimed(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('file-to-import.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv'), ImportationStatus::Executed);
+
+        $repository = $this->createSUT();
+
+        $repository->add($importation);
+
+        $this->assertFalse($repository->claimExecution($importation->id()));
+    }
+
+    public function testTheStartOfAnImportationCanOnlyBeClaimedOnce(): void
+    {
+        $importation = ImportationMother::fromNameAndFile('file-to-import.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv'));
+
+        $repository = $this->createSUT();
+
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimStart($importation->id()));
+        $this->assertFalse($repository->claimStart($importation->id()));
+    }
+
+    public function testTheStartOfAnImportationInProgressCannotBeClaimed(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('file-to-import.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv'), ImportationStatus::InProgress);
+
+        $repository = $this->createSUT();
+
+        $repository->add($importation);
+
+        $this->assertFalse($repository->claimStart($importation->id()));
+    }
+
+    public function testTheStartOfAnExecutedImportationCannotBeClaimed(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('file-to-import.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv'), ImportationStatus::Executed);
+
+        $repository = $this->createSUT();
+
+        $repository->add($importation);
+
+        $this->assertFalse($repository->claimStart($importation->id()));
     }
 
     abstract public function createSUT(): ImportationRepository;

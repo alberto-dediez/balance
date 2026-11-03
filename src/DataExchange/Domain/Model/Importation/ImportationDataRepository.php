@@ -21,12 +21,15 @@ interface ImportationDataRepository
 
     public function getConfiguration(ImportationId $importationId, int $column): ImportationColumnConfiguration;
 
-    public function saveConfiguration(ImportationId $importationId, ImportationColumnConfiguration $configuration): void;
+    /** @param ImportationColumnConfiguration[] $configurations */
+    public function saveConfigurations(ImportationId $importationId, array $configurations): void;
 
     /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array;
 
     public function saveResult(ImportationId $importationId, int $rowNumber, ?string $error): void;
+
+    public function claimRow(ImportationId $importationId, int $rowNumber): bool;
 
     /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array;
