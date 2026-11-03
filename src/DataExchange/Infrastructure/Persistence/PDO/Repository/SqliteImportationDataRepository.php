@@ -12,10 +12,19 @@ use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Infrastructure\Persistence\PDO\Tools\FileExtractor;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Contracts\Service\ResetInterface;
 
-class SqliteImportationDataRepository implements ImportationDataRepository
+class SqliteImportationDataRepository implements ImportationDataRepository, ResetInterface
 {
     public const BATCH_SIZE = 100;
+
+    private const int MAX_SQL_VARIABLES = 999;
+
+    /** @var array<string, \PDO> */
+    private array $connections = [];
+
+    /** @var array<string, list<string>> */
+    private array $columns = [];
 
     public function __construct(private readonly string $storagePath)
     {
@@ -32,6 +41,8 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
         $extractor = new FileExtractor($importation->file());
 
+        $this->forget($importation->id());
+
         try {
             $this->createData($importation, $extractor);
             $this->createFields($importation, $extractor);
@@ -44,7 +55,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     private function createData(Importation $importation, FileExtractor $extractor): void
     {
         $createTableSql = sprintf(
-            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `executed` BOOLEAN DEFAULT 0, `error` TEXT DEFAULT NULL)',
+            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `claimed` BOOLEAN DEFAULT 0, `executed` BOOLEAN DEFAULT 0, `error` TEXT DEFAULT NULL)',
             implode(', ', array_map(fn(string $col): string => "\"{$col}\" TEXT", $extractor->getColumns())),
         );
 
@@ -56,6 +67,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $connection = $this->connect($importation->id());
         $connection->exec($createTableSql);
 
+        $batchSize = max(1, min(self::BATCH_SIZE, intdiv(self::MAX_SQL_VARIABLES, max(1, count($extractor->getColumns())))));
         $query = $insertSql;
 
         $toInsert = 0;
@@ -79,7 +91,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
             ++$toInsert;
 
-            if ($toInsert >= self::BATCH_SIZE) {
+            if ($toInsert >= $batchSize) {
                 $query = substr($query, 0, -1);
                 $statement = $connection->prepare($query);
 
@@ -145,33 +157,34 @@ class SqliteImportationDataRepository implements ImportationDataRepository
     /** @return array<int, string> */
     public function getColumns(ImportationId $importationId): array
     {
+        $key = (string) $importationId;
+
+        if (isset($this->columns[$key])) {
+            return $this->columns[$key];
+        }
+
         $connection = $this->connect($importationId);
 
-        $stmt = $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error' and name != 'executed';");
+        $stmt = $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error' AND name != 'executed' AND name != 'claimed';");
 
         if (false === $stmt) {
             throw new \RuntimeException('Failed to execute query.');
         }
 
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        /** @var list<string> $columns */
+        $columns = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+
+        $this->columns[$key] = $columns;
+
+        return $columns;
     }
 
     /** @return array<int, string> */
     public function getValues(ImportationId $importationId, int $column): array
     {
-        $connection = $this->connect($importationId);
-
         $columns = $this->getColumns($importationId);
-        $columnName = $columns[$column] ?? '';
 
-        $sql = sprintf('SELECT DISTINCT(`%s`) FROM importation_data', $columnName);
-        $stmt = $connection->query($sql);
-
-        if (false === $stmt) {
-            throw new \RuntimeException('Failed to execute query.');
-        }
-
-        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        return $this->distinctValues($this->connect($importationId), $columns[$column] ?? '');
     }
 
     /** @return ImportationColumnConfiguration[] */
@@ -183,10 +196,39 @@ class SqliteImportationDataRepository implements ImportationDataRepository
             return [];
         }
 
+        $connection = $this->connect($importationId);
+
+        $stmt = $connection->query('SELECT * FROM importation_fields LIMIT 1');
+
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        $fields = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $fields = is_array($fields) ? $fields : [];
+
+        $stmt = $connection->query('SELECT column_name, column_value, column_translation FROM importation_translations');
+
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        $translationsByColumn = [];
+
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $translationsByColumn[$row['column_name']][$row['column_value']] = $row['column_translation'];
+        }
+
         $result = [];
 
-        foreach (array_keys($columns) as $column) {
-            $result[] = $this->getConfiguration($importationId, $column);
+        foreach ($columns as $column => $columnName) {
+            $result[] = $this->buildConfiguration(
+                column: $column,
+                name: $columnName,
+                field: $fields[$columnName] ?? null,
+                values: $this->distinctValues($connection, $columnName),
+                translationsByValue: $translationsByColumn[$columnName] ?? [],
+            );
         }
 
         return $result;
@@ -197,10 +239,9 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $columns = $this->getColumns($importationId);
         $columnName = $columns[$column] ?? '';
 
-        $values = $this->getValues($importationId, $column);
-
         $connection = $this->connect($importationId);
-        $stmt = $connection->query(sprintf('SELECT `%s` FROM importation_fields LIMIT 1', $columnName));
+
+        $stmt = $connection->query(sprintf('SELECT "%s" FROM importation_fields LIMIT 1', $columnName));
 
         if (false === $stmt) {
             throw new \RuntimeException('Failed to execute query.');
@@ -208,74 +249,103 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
         $field = $stmt->fetch(\PDO::FETCH_COLUMN);
 
-        $translations = $this->getTranslations($importationId, $columnName, $values);
+        $statement = $connection->prepare('SELECT column_value, column_translation FROM importation_translations WHERE column_name = ?');
+        $statement->bindValue(1, $columnName);
+        $statement->execute();
+
+        $translationsByValue = [];
+
+        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+            $translationsByValue[$row['column_value']] = $row['column_translation'];
+        }
+
+        return $this->buildConfiguration(
+            column: $column,
+            name: $columnName,
+            field: is_string($field) ? $field : null,
+            values: $this->distinctValues($connection, $columnName),
+            translationsByValue: $translationsByValue,
+        );
+    }
+
+    /**
+     * @param array<int, string|null>    $values
+     * @param array<string, string|null> $translationsByValue
+     */
+    private function buildConfiguration(int $column, string $name, ?string $field, array $values, array $translationsByValue): ImportationColumnConfiguration
+    {
+        $translations = [];
+
+        foreach ($values as $key => $value) {
+            if (null === $value) {
+                continue;
+            }
+
+            $translations[$key] = new ColumnValueTranslation(value: $value, translation: $translationsByValue[$value] ?? null);
+        }
 
         return new ImportationColumnConfiguration(
             column: $column,
-            name: $columnName,
+            name: $name,
             field: $field,
             values: $values,
             translations: $translations,
         );
     }
 
-    /**
-     * @param array<int|string, mixed> $values
-     *
-     * @return ColumnValueTranslation[]
-     */
-    private function getTranslations(ImportationId $importationId, string $columnName, array $values): array
+    /** @return array<int, string> */
+    private function distinctValues(\PDO $connection, string $columnName): array
     {
-        $translations = array_map(fn($value): ColumnValueTranslation => new ColumnValueTranslation(value: $value, translation: null), array_filter($values, fn($value): bool => null !== $value));
+        $stmt = $connection->query(sprintf('SELECT DISTINCT("%s") FROM importation_data', $columnName));
 
-        $connection = $this->connect($importationId);
-
-        $statement = $connection->prepare('SELECT column_value, column_translation FROM importation_translations WHERE column_name = ?');
-        $statement->bindValue(1, $columnName);
-        $statement->execute();
-
-        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            $found = array_filter($translations, fn(ColumnValueTranslation $translation): bool => $translation->value == $row['column_value']);
-
-            $translation = count($found) > 0 ? array_pop($found) : new ColumnValueTranslation(value: $row['column_value'], translation: null);
-            $translation->translation = $row['column_translation'];
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
         }
 
-        return $translations;
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
 
-    public function saveConfiguration(ImportationId $importationId, ImportationColumnConfiguration $configuration): void
+    /** @param ImportationColumnConfiguration[] $configurations */
+    public function saveConfigurations(ImportationId $importationId, array $configurations): void
     {
-        $connection = $this->connect($importationId);
-        $statement = $connection->prepare(sprintf('UPDATE importation_fields SET %s = ?', $configuration->name));
-        $statement->bindValue(1, $configuration->field);
-        $statement->execute();
-
-        if (0 === count($configuration->translations)) {
+        if ([] === $configurations) {
             return;
         }
 
-        $sql = 'INSERT OR REPLACE INTO importation_translations
-        (column_name, column_value, column_translation)
-        VALUES (:name, :val, :trans)';
+        $connection = $this->connect($importationId);
+        $connection->beginTransaction();
 
-        $statement = $connection->prepare($sql);
+        try {
+            $assignments = implode(', ', array_map(fn(ImportationColumnConfiguration $configuration): string => sprintf('"%s" = ?', $configuration->name), $configurations));
+            $statement = $connection->prepare(sprintf('UPDATE importation_fields SET %s', $assignments));
+            $statement->execute(array_values(array_map(fn(ImportationColumnConfiguration $configuration): ?string => $configuration->field, $configurations)));
 
-        foreach ($configuration->translations as $translation) {
-            $statement->execute([
-                ':name'  => $configuration->name,
-                ':val'   => $translation->value,
-                ':trans' => $translation->translation,
-            ]);
+            $translationStatement = $connection->prepare('INSERT OR REPLACE INTO importation_translations (column_name, column_value, column_translation) VALUES (:name, :val, :trans)');
+
+            foreach ($configurations as $configuration) {
+                foreach ($configuration->translations as $translation) {
+                    $translationStatement->execute([
+                        ':name'  => $configuration->name,
+                        ':val'   => $translation->value,
+                        ':trans' => $translation->translation,
+                    ]);
+                }
+            }
+
+            $connection->commit();
+        } catch (\Throwable $exception) {
+            $connection->rollBack();
+
+            throw $exception;
         }
     }
 
     /** @return array<string, mixed>|null */
     public function getData(ImportationId $importationId, int $rowNumber): ?array
     {
+        $columns = $this->getColumns($importationId);
         $connection = $this->connect($importationId);
 
-        $columns = $this->getColumns($importationId);
         $sql = sprintf(
             'SELECT %s FROM importation_data WHERE row_id = ?',
             implode(', ', array_map(fn(string $col): string => "\"{$col}\"", $columns)),
@@ -306,12 +376,55 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         $statement->execute();
     }
 
+    public function claimRow(ImportationId $importationId, int $rowNumber): bool
+    {
+        $connection = $this->connect($importationId);
+        $this->ensureClaimedColumn($connection);
+
+        $statement = $connection->prepare('UPDATE importation_data SET `claimed` = 1 WHERE row_id = ? AND `claimed` = 0 AND `executed` = 0');
+        $statement->bindValue(1, $rowNumber + 1);
+        $statement->execute();
+
+        return 1 === $statement->rowCount();
+    }
+
+    private function ensureClaimedColumn(\PDO $connection): void
+    {
+        if ($this->hasClaimedColumn($connection)) {
+            return;
+        }
+
+        try {
+            $connection->exec('ALTER TABLE importation_data ADD COLUMN "claimed" BOOLEAN DEFAULT 0');
+        } catch (\PDOException $exception) {
+            if (!$this->hasClaimedColumn($connection)) {
+                throw $exception;
+            }
+        }
+    }
+
+    /** @phpstan-impure */
+    private function hasClaimedColumn(\PDO $connection): bool
+    {
+        $stmt = $connection->query("SELECT COUNT(*) FROM pragma_table_info('importation_data') WHERE name = 'claimed'");
+
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        return 0 < (int) $stmt->fetchColumn();
+    }
+
     /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
+        $columns = $this->getColumns($importationId);
         $connection = $this->connect($importationId);
 
-        $sql = 'SELECT * FROM importation_data WHERE row_id = ?';
+        $sql = sprintf(
+            'SELECT row_id, %s, "executed", "error" FROM importation_data WHERE row_id = ?',
+            implode(', ', array_map(fn($col): string => "\"{$col}\"", $columns)),
+        );
 
         $statement = $connection->prepare($sql);
         $statement->bindValue(1, $rowNumber + 1);
@@ -341,6 +454,8 @@ class SqliteImportationDataRepository implements ImportationDataRepository
 
     public function remove(ImportationId $importationId): void
     {
+        $this->forget($importationId);
+
         $dbPath = $this->getDbPath($importationId);
 
         if (file_exists($dbPath)) {
@@ -348,28 +463,43 @@ class SqliteImportationDataRepository implements ImportationDataRepository
         }
     }
 
+    public function reset(): void
+    {
+        $this->connections = [];
+        $this->columns = [];
+    }
+
     private function getDbPath(ImportationId $importationId): string
     {
         return sprintf('%s%s.sqlite', $this->storagePath, (string) $importationId);
     }
 
+    private function forget(ImportationId $importationId): void
+    {
+        $key = (string) $importationId;
+
+        unset($this->connections[$key], $this->columns[$key]);
+    }
+
     private function connect(ImportationId $importationId): \PDO
     {
+        $key = (string) $importationId;
+
+        if (isset($this->connections[$key])) {
+            return $this->connections[$key];
+        }
+
         $dbPath = $this->getDbPath($importationId);
 
         try {
             $pdo = new \PDO('sqlite:' . $dbPath);
 
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $pdo->exec('PRAGMA journal_mode = TRUNCATE');
+            $pdo->exec('PRAGMA synchronous = OFF');
+            $pdo->exec('PRAGMA temp_store = MEMORY');
 
-            // Solo optimizar en la escritura, no en la lectura
-            if (defined('PDO::SQLITE_ATTR_OPEN_FLAGS')) {
-                // Flags para asegurar WAL mode si es posible
-            } else {
-                // Configuración óptima para inserciones masivas
-                $pdo->exec('PRAGMA synchronous = OFF');
-                $pdo->exec('PRAGMA journal_mode = MEMORY');
-            }
+            $this->connections[$key] = $pdo;
 
             return $pdo;
         } catch (\PDOException $e) {

@@ -46,6 +46,18 @@ trait BulkTrait
             return true;
         }
 
+        if ($bulkForm->isSubmitted()) {
+            if (!$bulkForm->get('elements')->isValid()) {
+                $this->addFlash('danger', new TranslatableMessage('La selección ha cambiado; revisa los elementos y vuelve a intentarlo'));
+
+                return true;
+            }
+
+            $this->addFlash('danger', new TranslatableMessage('No se ha podido realizar la acción; revisa el formulario y vuelve a intentarlo'));
+
+            return true;
+        }
+
         return false;
     }
 }

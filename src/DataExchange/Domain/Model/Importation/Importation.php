@@ -186,6 +186,10 @@ class Importation implements \Stringable
 
     public function finishExecution(): void
     {
+        if ($this->isExecuted()) {
+            return;
+        }
+
         $this->recordApplyAndPublish(
             new ImportationExecuted(
                 importationId: $this->id(),

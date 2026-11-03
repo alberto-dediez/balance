@@ -16,6 +16,12 @@ class InMemoryImportationRepository implements ImportationRepository
 {
     private readonly ImportationDataRepository $dataRepository;
 
+    /** @var array<string, true> */
+    private array $claimedStarts = [];
+
+    /** @var array<string, true> */
+    private array $claimedExecutions = [];
+
     /** @param array<string, Importation> $importations */
     public function __construct(private array $importations = [], ?ImportationDataRepository $dataRepository = null)
     {
@@ -32,9 +38,7 @@ class InMemoryImportationRepository implements ImportationRepository
                 return;
             }
 
-            foreach ($importation->configurations() as $configuration) {
-                $this->dataRepository->saveConfiguration($importation->id(), $configuration);
-            }
+            $this->dataRepository->saveConfigurations($importation->id(), $importation->configurations());
 
             return;
         }
@@ -90,6 +94,11 @@ class InMemoryImportationRepository implements ImportationRepository
         $this->dataRepository->saveResult($importationId, $rowNumber, $error);
     }
 
+    public function claimRow(ImportationId $importationId, int $rowNumber): bool
+    {
+        return $this->dataRepository->claimRow($importationId, $rowNumber);
+    }
+
     /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
@@ -99,5 +108,37 @@ class InMemoryImportationRepository implements ImportationRepository
     public function pendingRows(ImportationId $importationId): int
     {
         return $this->dataRepository->pendingRows($importationId);
+    }
+
+    public function claimStart(ImportationId $importationId): bool
+    {
+        $importation = $this->importations[(string) $importationId] ?? null;
+
+        if (null === $importation || isset($this->claimedStarts[(string) $importationId])) {
+            return false;
+        }
+
+        if ($importation->isInProgress() || $importation->isExecuted()) {
+            return false;
+        }
+
+        $this->claimedStarts[(string) $importationId] = true;
+
+        return true;
+    }
+
+    public function claimExecution(ImportationId $importationId): bool
+    {
+        if (isset($this->claimedExecutions[(string) $importationId])) {
+            return false;
+        }
+
+        if (true === ($this->importations[(string) $importationId] ?? null)?->isExecuted()) {
+            return false;
+        }
+
+        $this->claimedExecutions[(string) $importationId] = true;
+
+        return true;
     }
 }

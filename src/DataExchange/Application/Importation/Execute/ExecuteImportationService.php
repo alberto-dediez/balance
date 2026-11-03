@@ -46,6 +46,10 @@ class ExecuteImportationService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($importation, Action::Edit, $user);
 
+        if (!$this->importationRepository->claimStart($importation->id())) {
+            throw new \RuntimeException('Importation already started');
+        }
+
         $importation->startExecution();
         $this->importationRepository->add($importation);
 
@@ -56,10 +60,8 @@ class ExecuteImportationService implements CommandHandler
 
             $command = $importationType->commandBuilder($data);
 
-            $errorMessage = null;
-
             try {
-                $response = CommandBusDispatcher::instance()->dispatch(
+                CommandBusDispatcher::instance()->dispatch(
                     new DeferredCommand(
                         new ExecuteSingleRequest(
                             importationId: $importation->id(),
@@ -70,12 +72,15 @@ class ExecuteImportationService implements CommandHandler
                     $user,
                 );
             } catch (\Throwable $exception) {
-                $errorMessage = $exception->getMessage();
+                $this->importationRepository->saveResult($importation->id(), $rowNumber, $exception->getMessage());
             }
 
-            $this->importationRepository->saveResult($importation->id(), $rowNumber, $errorMessage);
-
             ++$rowNumber;
+        }
+
+        if (0 === $this->importationRepository->pendingRows($importation->id()) && $this->importationRepository->claimExecution($importation->id())) {
+            $importation->finishExecution();
+            $this->importationRepository->add($importation);
         }
 
         return new ExecuteImportationResponse(
