@@ -38,6 +38,18 @@ Feature:
         Then I see a text "Histórico"
         Then I see a text "Email entregado el"
 
+    Scenario: As super admin I see in the history an event received without email log id
+        Given user "super@dediez.software" with role "ROLE_SUPER_ADMIN" exists
+        Given email log with id "0199f3b2-0000-7000-8000-000000000001" to "first@dediez.software" exists
+        When I send a "POST" request to "/webhook/sendgrid" with body:
+            """
+            [{"email":"first@dediez.software","timestamp":1700000000,"event":"delivered","sg_event_id":"e1","sg_message_id":"provider-message-id.recvd-76479b6d66-8lqw6-1-6AEA68A8-10.0"}]
+            """
+        When I am logged as "super@dediez.software"
+        When I go to "/es/admin/emails/0199f3b2-0000-7000-8000-000000000001/history"
+        Then the response status should be 200
+        Then I see a text "Email entregado el"
+
     Scenario: As admin I can't see the history of a sent email
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         Given email log with id "0199f3b2-0000-7000-8000-000000000001" to "first@dediez.software" exists

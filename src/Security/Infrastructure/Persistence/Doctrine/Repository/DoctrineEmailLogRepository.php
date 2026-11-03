@@ -47,6 +47,21 @@ class DoctrineEmailLogRepository implements EmailLogRepository
         ;
     }
 
+    public function findByProviderMessageId(string $providerMessageId): ?EmailLog
+    {
+        $qb = $this->createQueryBuilderFromFilter(new EmailLogFilter());
+
+        return $qb
+            ->andWhere(
+                $qb->expr()->eq('e.providerMessageId', ':providerMessageId'),
+            )
+            ->setParameter('providerMessageId', $providerMessageId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     private function createQueryBuilderFromFilter(EmailLogFilter $filter): QueryBuilder
     {
         $qb = $this->manager->createQueryBuilder();

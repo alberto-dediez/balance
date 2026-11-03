@@ -70,12 +70,14 @@ final class SendgridWebhookController extends AbstractController
     private function track(array $event): void
     {
         $type = EmailTrackingEventType::tryFrom(is_string($event['event'] ?? null) ? $event['event'] : '');
-        $emailLogId = $event['email_log_id'] ?? null;
+        $emailLogId = is_string($event['email_log_id'] ?? null) && '' !== $event['email_log_id'] ? $event['email_log_id'] : null;
+        $providerMessageId = $this->providerMessageIdOf($event);
 
-        if (!$type instanceof EmailTrackingEventType || !is_string($emailLogId) || '' === $emailLogId) {
+        if (!$type instanceof EmailTrackingEventType || (null === $emailLogId && null === $providerMessageId)) {
             $this->logger->warning('Evento de SendGrid ignorado', [
                 'event' => $event['event'] ?? null,
                 'email_log_id' => $emailLogId,
+                'sg_message_id' => $event['sg_message_id'] ?? null,
                 'sg_event_id' => $event['sg_event_id'] ?? null,
             ]);
 
@@ -93,12 +95,14 @@ final class SendgridWebhookController extends AbstractController
                     type: $type,
                     occurredOn: new \DateTimeImmutable('@' . (is_scalar($event['timestamp'] ?? null) ? (string) $event['timestamp'] : '')),
                     reason: is_scalar($reason) ? (string) $reason : null,
+                    providerMessageId: $providerMessageId,
                 ),
             );
         } catch (\Throwable $exception) {
             $this->logger->error('Error al procesar un evento de SendGrid', [
                 'event' => $type->value,
                 'email_log_id' => $emailLogId,
+                'sg_message_id' => $event['sg_message_id'] ?? null,
                 'sg_event_id' => $event['sg_event_id'] ?? null,
                 'exception' => $exception,
             ]);
@@ -110,7 +114,24 @@ final class SendgridWebhookController extends AbstractController
             $this->logger->warning('Evento de SendGrid sin email registrado', [
                 'event' => $type->value,
                 'email_log_id' => $emailLogId,
+                'sg_message_id' => $event['sg_message_id'] ?? null,
             ]);
         }
+    }
+
+    /**
+     * @param array<mixed> $event
+     */
+    private function providerMessageIdOf(array $event): ?string
+    {
+        $sgMessageId = $event['sg_message_id'] ?? null;
+
+        if (!is_string($sgMessageId) || '' === $sgMessageId) {
+            return null;
+        }
+
+        $providerMessageId = explode('.', $sgMessageId, 2)[0];
+
+        return '' === $providerMessageId ? null : $providerMessageId;
     }
 }

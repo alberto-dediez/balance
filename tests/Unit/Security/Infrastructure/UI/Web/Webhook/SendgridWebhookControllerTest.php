@@ -104,6 +104,28 @@ class SendgridWebhookControllerTest extends TestCase
         $this->assertEquals(EmailLogStatus::Delivered, $this->stored()->status());
     }
 
+    public function testEventWithoutEmailLogIdIsTrackedBySgMessageId(): void
+    {
+        $event = $this->event('click', ['sg_message_id' => 'provider-message-id.recvd-76479b6d66-8lqw6-1-6AEA68A8-10.0']);
+        unset($event['email_log_id']);
+
+        $response = $this->post([$event]);
+
+        $this->assertEquals(Response::HTTP_ACCEPTED, $response->getStatusCode());
+        $this->assertEquals(1, $this->stored()->clickCount());
+    }
+
+    public function testEventWithoutEmailLogIdNorKnownSgMessageIdChangesNothing(): void
+    {
+        $event = $this->event('delivered', ['sg_message_id' => 'unknown.recvd-1']);
+        unset($event['email_log_id']);
+
+        $response = $this->post([$event]);
+
+        $this->assertEquals(Response::HTTP_ACCEPTED, $response->getStatusCode());
+        $this->assertEquals(EmailLogStatus::Sent, $this->stored()->status());
+    }
+
     public function testFailingEventDoesNotStopTheBatch(): void
     {
         $response = $this->post([

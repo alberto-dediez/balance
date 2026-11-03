@@ -7,9 +7,10 @@ namespace App\Security\Application\EmailLog\Track;
 class TrackEmailEventRequest
 {
     public function __construct(
-        public string $emailLogId,
+        public ?string $emailLogId,
         public EmailTrackingEventType $type,
         public \DateTimeImmutable $occurredOn,
         public ?string $reason = null,
+        public ?string $providerMessageId = null,
     ) {}
 }
