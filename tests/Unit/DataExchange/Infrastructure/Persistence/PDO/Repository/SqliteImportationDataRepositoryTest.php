@@ -289,6 +289,68 @@ class SqliteImportationDataRepositoryTest extends TestCase
         $this->assertEmpty($otherResult['error'] ?? '');
     }
 
+    public function testARowCanOnlyBeClaimedOnce(): void
+    {
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv', offset: 0));
+
+        $sut = $this->createSUT();
+
+        $sut->create($importation);
+
+        $this->assertTrue($sut->claimRow($importation->id(), 0));
+        $this->assertFalse($sut->claimRow($importation->id(), 0));
+        $this->assertTrue($sut->claimRow($importation->id(), 1));
+        $this->assertSame(22, $sut->pendingRows($importation->id()));
+    }
+
+    public function testAnExecutedRowCannotBeClaimed(): void
+    {
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv', offset: 0));
+
+        $sut = $this->createSUT();
+
+        $sut->create($importation);
+
+        $sut->saveResult($importation->id(), 0, null);
+
+        $this->assertFalse($sut->claimRow($importation->id(), 0));
+    }
+
+    public function testTheResultOfARowDoesNotExposeTheClaim(): void
+    {
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv', offset: 0));
+
+        $sut = $this->createSUT();
+
+        $sut->create($importation);
+
+        $this->assertTrue($sut->claimRow($importation->id(), 0));
+
+        $result = $sut->getResult($importation->id(), 0);
+
+        $this->assertIsArray($result);
+        $this->assertSame(['row_id', 'nombre', 'edad', 'clase', 'superpoder', 'executed', 'error'], array_keys($result));
+        $this->assertNotContains('claimed', $sut->getColumns($importation->id()));
+    }
+
+    public function testAnImportationCreatedWithoutTheClaimedColumnCanStillBeClaimed(): void
+    {
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv', offset: 0));
+
+        $sut = $this->createSUT();
+
+        $sut->create($importation);
+
+        $connect = new \ReflectionMethod($sut, 'connect');
+        $connection = $connect->invoke($sut, $importation->id());
+        $this->assertInstanceOf(\PDO::class, $connection);
+
+        $connection->exec('ALTER TABLE importation_data DROP COLUMN claimed');
+
+        $this->assertTrue($sut->claimRow($importation->id(), 0));
+        $this->assertFalse($sut->claimRow($importation->id(), 0));
+    }
+
     private function createSUT(): ImportationDataRepository
     {
         return new SqliteImportationDataRepository(

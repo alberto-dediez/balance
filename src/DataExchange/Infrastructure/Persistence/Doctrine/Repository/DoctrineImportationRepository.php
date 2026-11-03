@@ -90,6 +90,11 @@ class DoctrineImportationRepository implements ImportationRepository
         $this->dataRepository->saveResult($importationId, $rowNumber, $error);
     }
 
+    public function claimRow(ImportationId $importationId, int $rowNumber): bool
+    {
+        return $this->dataRepository->claimRow($importationId, $rowNumber);
+    }
+
     /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
@@ -107,6 +112,22 @@ class DoctrineImportationRepository implements ImportationRepository
     public function pendingRows(ImportationId $importationId): int
     {
         return $this->dataRepository->pendingRows($importationId);
+    }
+
+    public function claimStart(ImportationId $importationId): bool
+    {
+        $affectedRows = $this->manager->createQueryBuilder()
+            ->update(Importation::class, 'i')
+            ->set('i.status', ':inProgress')
+            ->andWhere('i.id = :id')
+            ->andWhere('i.status = :started')
+            ->setParameter('inProgress', ImportationStatus::InProgress->value)
+            ->setParameter('started', ImportationStatus::Started->value)
+            ->setParameter('id', $importationId)
+            ->getQuery()
+            ->execute();
+
+        return 1 === $affectedRows;
     }
 
     public function claimExecution(ImportationId $importationId): bool

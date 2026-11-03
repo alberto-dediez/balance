@@ -55,7 +55,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository, Rese
     private function createData(Importation $importation, FileExtractor $extractor): void
     {
         $createTableSql = sprintf(
-            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `executed` BOOLEAN DEFAULT 0, `error` TEXT DEFAULT NULL)',
+            'CREATE TABLE importation_data (row_id INTEGER PRIMARY KEY AUTOINCREMENT, %s, `claimed` BOOLEAN DEFAULT 0, `executed` BOOLEAN DEFAULT 0, `error` TEXT DEFAULT NULL)',
             implode(', ', array_map(fn($col): string => "\"{$col}\" TEXT", $extractor->getColumns())),
         );
 
@@ -165,7 +165,7 @@ class SqliteImportationDataRepository implements ImportationDataRepository, Rese
 
         $connection = $this->connect($importationId);
 
-        $stmt = $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error' and name != 'executed';");
+        $stmt = $connection->query("SELECT name FROM pragma_table_info('importation_data') WHERE name != 'row_id' AND name != 'error' AND name != 'executed' AND name != 'claimed';");
 
         if (false === $stmt) {
             throw new \RuntimeException('Failed to execute query.');
@@ -376,12 +376,55 @@ class SqliteImportationDataRepository implements ImportationDataRepository, Rese
         $statement->execute();
     }
 
+    public function claimRow(ImportationId $importationId, int $rowNumber): bool
+    {
+        $connection = $this->connect($importationId);
+        $this->ensureClaimedColumn($connection);
+
+        $statement = $connection->prepare('UPDATE importation_data SET `claimed` = 1 WHERE row_id = ? AND `claimed` = 0 AND `executed` = 0');
+        $statement->bindValue(1, $rowNumber + 1);
+        $statement->execute();
+
+        return 1 === $statement->rowCount();
+    }
+
+    private function ensureClaimedColumn(\PDO $connection): void
+    {
+        if ($this->hasClaimedColumn($connection)) {
+            return;
+        }
+
+        try {
+            $connection->exec('ALTER TABLE importation_data ADD COLUMN "claimed" BOOLEAN DEFAULT 0');
+        } catch (\PDOException $exception) {
+            if (!$this->hasClaimedColumn($connection)) {
+                throw $exception;
+            }
+        }
+    }
+
+    /** @phpstan-impure */
+    private function hasClaimedColumn(\PDO $connection): bool
+    {
+        $stmt = $connection->query("SELECT COUNT(*) FROM pragma_table_info('importation_data') WHERE name = 'claimed'");
+
+        if (false === $stmt) {
+            throw new \RuntimeException('Failed to execute query.');
+        }
+
+        return 0 < (int) $stmt->fetchColumn();
+    }
+
     /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
+        $columns = $this->getColumns($importationId);
         $connection = $this->connect($importationId);
 
-        $sql = 'SELECT * FROM importation_data WHERE row_id = ?';
+        $sql = sprintf(
+            'SELECT row_id, %s, "executed", "error" FROM importation_data WHERE row_id = ?',
+            implode(', ', array_map(fn($col): string => "\"{$col}\"", $columns)),
+        );
 
         $statement = $connection->prepare($sql);
         $statement->bindValue(1, $rowNumber + 1);

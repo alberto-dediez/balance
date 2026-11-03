@@ -12,6 +12,7 @@ use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationExecutionStarted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
+use App\DataExchange\Domain\Model\Importation\ImportationStatus;
 use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Domain\Model\Importation\ImportationTypeFactory;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
@@ -155,6 +156,68 @@ class ExecuteImportationServiceTest extends TestCase
 
         $this->assertNotNull($importationPersisted);
         $this->assertTrue($importationPersisted->isExecuted());
+    }
+
+    public function testAnExecutedImportationCannotBeExecutedAgain(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/../Register/superheroes.csv'), ImportationStatus::Executed);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $sut = $this->createSUT($repository);
+
+        try {
+            $sut(new ExecuteImportationRequest(importationId: $importation->id()), $this->ownerOf($importation));
+            $this->fail('An executed importation must not be executed again');
+        } catch (UnauthorizedActionException) {
+        }
+
+        $this->assertCount(0, $this->spyCommandBus->commands());
+    }
+
+    public function testAnImportationInProgressCannotBeExecutedAgain(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/../Register/superheroes.csv'), ImportationStatus::InProgress);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $sut = $this->createSUT($repository);
+
+        try {
+            $sut(new ExecuteImportationRequest(importationId: $importation->id()), $this->ownerOf($importation));
+            $this->fail('An importation in progress must not be executed again');
+        } catch (UnauthorizedActionException) {
+        }
+
+        $this->assertCount(0, $this->spyCommandBus->commands());
+        $this->assertCount(0, array_filter($this->spySubscriber->events(), fn(DomainEvent $event): bool => $event instanceof ImportationExecutionStarted));
+        $this->assertSame(3, $repository->pendingRows($importation->id()));
+    }
+
+    public function testAStaleImportationAlreadyStartedByAnotherProcessIsNotExecutedAgain(): void
+    {
+        $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: __DIR__ . '/../Register/superheroes.csv'));
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimStart($importation->id()));
+
+        $sut = $this->createSUT($repository);
+
+        try {
+            $sut(new ExecuteImportationRequest(importationId: $importation->id()), $this->ownerOf($importation));
+            $this->fail('An importation already started by another process must not be executed again');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('Importation already started', $exception->getMessage());
+        }
+
+        $this->assertFalse($importation->isInProgress());
+        $this->assertCount(0, $this->spyCommandBus->commands());
+        $this->assertCount(0, array_filter($this->spySubscriber->events(), fn(DomainEvent $event): bool => $event instanceof ImportationExecutionStarted));
+        $this->assertSame(3, $repository->pendingRows($importation->id()));
     }
 
     public function testUnauthorizedAccess(): void

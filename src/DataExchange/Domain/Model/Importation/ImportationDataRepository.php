@@ -29,6 +29,8 @@ interface ImportationDataRepository
 
     public function saveResult(ImportationId $importationId, int $rowNumber, ?string $error): void;
 
+    public function claimRow(ImportationId $importationId, int $rowNumber): bool;
+
     /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array;
 

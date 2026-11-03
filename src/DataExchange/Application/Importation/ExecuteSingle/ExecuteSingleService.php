@@ -22,6 +22,8 @@ class ExecuteSingleService implements CommandHandler
     use RegisterHandlerTrait;
     use CommandInvokeHandlerTrait;
 
+    public const string INTERRUPTED_ERROR = 'Ejecución interrumpida en un intento anterior: comprueba si la fila se ha importado antes de repetirla';
+
     public function __construct(
         private ImportationRepository $importationRepository,
         private ImportationTypeFactory $importationTypeFactory,
@@ -48,18 +50,9 @@ class ExecuteSingleService implements CommandHandler
             throw new \RuntimeException('Import type not allowed');
         }
 
-        $errorMessage = null;
-
-        try {
-            CommandBusDispatcher::instance()->dispatch(
-                $request->command,
-                $user,
-            );
-        } catch (\Throwable $exception) {
-            $errorMessage = $exception->getMessage();
-        }
-
-        $this->importationRepository->saveResult($importation->id(), $request->rowNumber, $errorMessage);
+        $errorMessage = $this->importationRepository->claimRow($importation->id(), $request->rowNumber)
+            ? $this->executeRow($importation, $request, $user)
+            : $this->resultOfRetriedRow($importation, $request);
 
         $pending = $this->importationRepository->pendingRows($importation->id());
 
@@ -74,6 +67,43 @@ class ExecuteSingleService implements CommandHandler
             rowNumber: $request->rowNumber,
             success: null === $errorMessage,
         );
+    }
+
+    private function executeRow(Importation $importation, ExecuteSingleRequest $request, User $user): ?string
+    {
+        $errorMessage = null;
+
+        try {
+            CommandBusDispatcher::instance()->dispatch(
+                $request->command,
+                $user,
+            );
+        } catch (\Throwable $exception) {
+            $errorMessage = $exception->getMessage();
+        }
+
+        $this->importationRepository->saveResult($importation->id(), $request->rowNumber, $errorMessage);
+
+        return $errorMessage;
+    }
+
+    private function resultOfRetriedRow(Importation $importation, ExecuteSingleRequest $request): ?string
+    {
+        $result = $this->importationRepository->getResult($importation->id(), $request->rowNumber);
+
+        if (null === $result) {
+            throw new \RuntimeException('Importation row not found');
+        }
+
+        if (!(bool) ($result['executed'] ?? false)) {
+            $this->importationRepository->saveResult($importation->id(), $request->rowNumber, self::INTERRUPTED_ERROR);
+
+            return self::INTERRUPTED_ERROR;
+        }
+
+        $error = $result['error'] ?? null;
+
+        return is_string($error) ? $error : null;
     }
 
     public function isHandled(Command $command): bool

@@ -46,6 +46,10 @@ class ExecuteImportationService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($importation, Action::Edit, $user);
 
+        if (!$this->importationRepository->claimStart($importation->id())) {
+            throw new \RuntimeException('Importation already started');
+        }
+
         $importation->startExecution();
         $this->importationRepository->add($importation);
 

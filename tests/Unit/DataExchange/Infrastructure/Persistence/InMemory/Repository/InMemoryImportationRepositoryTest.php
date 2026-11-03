@@ -61,6 +61,62 @@ class InMemoryImportationRepositoryTest extends TestCase
         $this->assertFalse($repository->claimExecution($importation->id()));
     }
 
+    public function testTheStartOfAnImportationCanOnlyBeClaimedOnce(): void
+    {
+        $importation = ImportationMother::fromNameAndFile(
+            'superheroes.csv',
+            new ImportationFile(path: __DIR__ . '/../../PDO/Repository/file-to-import.csv', offset: 0),
+        );
+
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository(self::STORAGE_PATH));
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimStart($importation->id()));
+        $this->assertFalse($repository->claimStart($importation->id()));
+    }
+
+    public function testTheStartOfAnImportationInProgressCannotBeClaimed(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus(
+            'superheroes.csv',
+            new ImportationFile(path: __DIR__ . '/../../PDO/Repository/file-to-import.csv', offset: 0),
+            ImportationStatus::InProgress,
+        );
+
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository(self::STORAGE_PATH));
+        $repository->add($importation);
+
+        $this->assertFalse($repository->claimStart($importation->id()));
+    }
+
+    public function testTheStartOfAnExecutedImportationCannotBeClaimed(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus(
+            'superheroes.csv',
+            new ImportationFile(path: __DIR__ . '/../../PDO/Repository/file-to-import.csv', offset: 0),
+            ImportationStatus::Executed,
+        );
+
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository(self::STORAGE_PATH));
+        $repository->add($importation);
+
+        $this->assertFalse($repository->claimStart($importation->id()));
+    }
+
+    public function testARowCanOnlyBeClaimedOnceThroughTheDataRepository(): void
+    {
+        $importation = ImportationMother::fromNameAndFile(
+            'superheroes.csv',
+            new ImportationFile(path: __DIR__ . '/../../PDO/Repository/file-to-import.csv', offset: 0),
+        );
+
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository(self::STORAGE_PATH));
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimRow($importation->id(), 0));
+        $this->assertFalse($repository->claimRow($importation->id(), 0));
+    }
+
     public function tearDown(): void
     {
         parent::tearDown();

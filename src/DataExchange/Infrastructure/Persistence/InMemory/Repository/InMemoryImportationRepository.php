@@ -17,6 +17,9 @@ class InMemoryImportationRepository implements ImportationRepository
     private readonly ImportationDataRepository $dataRepository;
 
     /** @var array<string, true> */
+    private array $claimedStarts = [];
+
+    /** @var array<string, true> */
     private array $claimedExecutions = [];
 
     /** @param array<string, Importation> $importations */
@@ -91,6 +94,11 @@ class InMemoryImportationRepository implements ImportationRepository
         $this->dataRepository->saveResult($importationId, $rowNumber, $error);
     }
 
+    public function claimRow(ImportationId $importationId, int $rowNumber): bool
+    {
+        return $this->dataRepository->claimRow($importationId, $rowNumber);
+    }
+
     /** @return array<string, mixed>|null */
     public function getResult(ImportationId $importationId, int $rowNumber): ?array
     {
@@ -100,6 +108,23 @@ class InMemoryImportationRepository implements ImportationRepository
     public function pendingRows(ImportationId $importationId): int
     {
         return $this->dataRepository->pendingRows($importationId);
+    }
+
+    public function claimStart(ImportationId $importationId): bool
+    {
+        $importation = $this->importations[(string) $importationId] ?? null;
+
+        if (null === $importation || isset($this->claimedStarts[(string) $importationId])) {
+            return false;
+        }
+
+        if ($importation->isInProgress() || $importation->isExecuted()) {
+            return false;
+        }
+
+        $this->claimedStarts[(string) $importationId] = true;
+
+        return true;
     }
 
     public function claimExecution(ImportationId $importationId): bool

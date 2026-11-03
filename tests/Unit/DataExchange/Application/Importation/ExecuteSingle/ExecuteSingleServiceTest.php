@@ -6,6 +6,7 @@ namespace App\Tests\Unit\DataExchange\Application\Importation\ExecuteSingle;
 
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleRequest;
 use App\DataExchange\Application\Importation\ExecuteSingle\ExecuteSingleService;
+use App\DataExchange\Domain\Model\Importation\Importation;
 use App\DataExchange\Domain\Model\Importation\ImportationExecuted;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
@@ -16,6 +17,7 @@ use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImpo
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -24,6 +26,7 @@ use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CommandBus\FakeCommand;
 use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
+use App\Tests\Unit\Shared\Application\CommandBus\ThrowingCommandHandler;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
 
@@ -173,6 +176,98 @@ class ExecuteSingleServiceTest extends TestCase
         $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 2, command: new FakeCommand()), $user);
 
         $this->assertCount(1, $this->executedEvents());
+        $this->assertCount(3, $this->spyCommandBus->commands());
+    }
+
+    public function testARetriedRowAlreadyExecutedDoesNotDispatchTheCommandAgain(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $user = $this->ownerOf($importation);
+
+        $sut = $this->createSUT($repository);
+
+        $first = $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $user);
+        $second = $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $user);
+
+        $this->assertCount(1, $this->spyCommandBus->commands());
+        $this->assertTrue($first->success);
+        $this->assertTrue($second->success);
+        $this->assertSame(2, $repository->pendingRows($importation->id()));
+    }
+
+    public function testARetriedRowWhoseFirstAttemptFailedKeepsItsError(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $user = $this->ownerOf($importation);
+
+        $sut = $this->createSUT($repository);
+
+        CommandBusDispatcher::instance()->reset();
+        new ThrowingCommandHandler('boom');
+
+        $first = $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $user);
+
+        $this->assertFalse($first->success);
+        $this->assertSame('boom', $repository->getResult($importation->id(), 0)['error'] ?? null);
+
+        CommandBusDispatcher::instance()->reset();
+        $spyCommandBus = new SluttyCommandHandler();
+
+        $second = $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $user);
+
+        $this->assertCount(0, $spyCommandBus->commands());
+        $this->assertFalse($second->success);
+
+        $retriedResult = $repository->getResult($importation->id(), 0);
+
+        $this->assertSame('boom', $retriedResult['error']);
+    }
+
+    public function testARetriedRowClaimedButNotFinishedIsRecordedAsInterruptedWithoutDispatching(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimRow($importation->id(), 0));
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $this->ownerOf($importation));
+
+        $this->assertCount(0, $this->spyCommandBus->commands());
+        $this->assertFalse($result->success);
+        $this->assertSame(ExecuteSingleService::INTERRUPTED_ERROR, $repository->getResult($importation->id(), 0)['error'] ?? null);
+        $this->assertSame(2, $repository->pendingRows($importation->id()));
+    }
+
+    public function testARetriedLastRowClosesTheImportationLeftOpenByTheInterruptedAttempt(): void
+    {
+        $importation = ImportationMother::fromNameAndFileAndStatus('superheroe.csv', new ImportationFile(path: __DIR__ . '/superheroe.csv'), ImportationStatus::InProgress);
+
+        $repository = new InMemoryImportationRepository();
+        $repository->add($importation);
+
+        $this->assertTrue($repository->claimRow($importation->id(), 0));
+        $repository->saveResult($importation->id(), 0, null);
+
+        $sut = $this->createSUT($repository);
+
+        $result = $sut(new ExecuteSingleRequest(importationId: $importation->id(), rowNumber: 0, command: new FakeCommand()), $this->ownerOf($importation));
+
+        $this->assertTrue($result->success);
+        $this->assertCount(0, $this->spyCommandBus->commands());
+        $this->assertTrue($importation->isExecuted());
+        $this->assertCount(1, $this->executedEvents());
     }
 
     public function testAStaleImportationAlreadyClosedByAnotherProcessDoesNotPublishTheExecutionAgain(): void
@@ -240,6 +335,18 @@ class ExecuteSingleServiceTest extends TestCase
         ));
 
         $this->assertTrue($result);
+    }
+
+    private function ownerOf(Importation $importation): User
+    {
+        $accountId = $importation->accountId();
+        self::assertNotNull($accountId);
+
+        return UserMother::fromUsernameAndRoleAndAccount(
+            username: 'owner',
+            role: Role::Owner,
+            accountId: $accountId,
+        );
     }
 
     /** @return DomainEvent[] */
