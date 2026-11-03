@@ -81,11 +81,13 @@ doctrine:
             property_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintIdType
             property_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintActivityIdType
             property_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintExclusionIdType
+            property_carbon_footprint_materiality_decision_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintMaterialityDecisionIdType
             property_carbon_footprint_certificate_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintCertificateIdType
             property_carbon_footprint_certificate_file_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PropertyCarbonFootprintCertificateFileIdType
             company_carbon_footprint_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintIdType
             company_carbon_footprint_activity_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintActivityIdType
             company_carbon_footprint_exclusion_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintExclusionIdType
+            company_carbon_footprint_materiality_decision_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintMaterialityDecisionIdType
             company_carbon_footprint_non_consolidated_property_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CompanyCarbonFootprintNonConsolidatedPropertyIdType
             mitigation_measure_category_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MitigationMeasureCategoryIdType
             mitigation_measure_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MitigationMeasureIdType
@@ -135,6 +137,7 @@ doctrine:
             materiality_assessment_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityAssessmentIdType
             materiality_assessment_topic_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityAssessmentTopicIdType
             materiality_assessment_answer_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialityAssessmentAnswerIdType
+            materiality_settings_id: App\Materiality\Infrastructure\Persistence\Doctrine\Type\MaterialitySettingsIdType
 
     orm:
         auto_generate_proxy_classes: true

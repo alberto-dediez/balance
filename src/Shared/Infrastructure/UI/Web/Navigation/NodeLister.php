@@ -438,6 +438,11 @@ class NodeLister
                     icon: 'solar:buildings-2-line-duotone',
                     target: $this->router->generate('admin_materiality_sectors'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Configuración'),
+                    icon: 'solar:settings-line-duotone',
+                    target: $this->router->generate('admin_materiality_settings'),
+                ),
             ],
         );
 

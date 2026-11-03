@@ -1,0 +1,18 @@
+{% trans with {
+    '{count}': event.decisions | length,
+    '{user}': element.userId | user_name
+} %}Se han aplicado {count} veredictos de materialidad a la huella de la propiedad por el usuario {user}{% endtrans %}
+{% if event.decisions is not empty %}
+    <ul class="mb-0">
+        {% for decision in event.decisions %}
+            <li>
+                {% trans with {
+                    '{topic}': (((decision.topicId | materiality_topic_name).name ?? decision.topicId) ~ '') | e,
+                    '{verdict}': decision.verdict | trans({}, 'materialityVerdictType'),
+                    '{score}': decision.scorePercent | number_format(2, ',', '.'),
+                    '{threshold}': decision.thresholdPercent
+                } %}{topic}: {verdict} (relevancia {score} %, umbral {threshold} %){% endtrans %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

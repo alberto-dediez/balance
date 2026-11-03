@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Materiality\Application\MaterialityAssessment\Complete;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\Materiality\Application\MaterialityAssessment\Complete\CompleteMaterialityAssessmentRequest;
 use App\Materiality\Application\MaterialityAssessment\Complete\CompleteMaterialityAssessmentService;
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentNotEditableException;
@@ -11,6 +12,7 @@ use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentComp
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentIncompleteException;
 use App\Tests\Unit\Materiality\Application\MaterialityAssessment\MaterialityAssessmentContextTrait;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialitySettings\MaterialitySettingsMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
 
@@ -38,6 +40,31 @@ final class CompleteMaterialityAssessmentServiceTest extends TestCase
         $this->assertInstanceOf(MaterialityAssessmentCompleted::class, $spy->lastEvent());
     }
 
+    public function testWithoutSettingsAppliesTheDefaultRule(): void
+    {
+        $assessment = $this->assessmentOf($this->propertyFootprint());
+        MaterialityAssessmentMother::answerAll($assessment, 1);
+
+        $this->sut()(new CompleteMaterialityAssessmentRequest($assessment->id()), $this->ownerOf());
+
+        $topic = $assessment->topics()[0];
+        $this->assertSame(50, $topic->thresholdPercent());
+        $this->assertSame(MaterialityVerdict::Omit, $topic->verdict());
+    }
+
+    public function testAppliesTheStoredSettingsRule(): void
+    {
+        $this->materialitySettings->add(MaterialitySettingsMother::withThreshold(1, false));
+        $assessment = $this->assessmentOf($this->propertyFootprint());
+        MaterialityAssessmentMother::answerAll($assessment, 2);
+
+        $this->sut()(new CompleteMaterialityAssessmentRequest($assessment->id()), $this->ownerOf());
+
+        $topic = $assessment->topics()[0];
+        $this->assertSame(1, $topic->thresholdPercent());
+        $this->assertSame(MaterialityVerdict::Calculate, $topic->verdict());
+    }
+
     public function testIncompleteAssessmentThrows(): void
     {
         $assessment = $this->assessmentOf($this->propertyFootprint());
@@ -59,6 +86,6 @@ final class CompleteMaterialityAssessmentServiceTest extends TestCase
 
     private function sut(): CompleteMaterialityAssessmentService
     {
-        return new CompleteMaterialityAssessmentService($this->materialityAssessments, $this->footprints(), $this->authorizer());
+        return new CompleteMaterialityAssessmentService($this->materialityAssessments, $this->footprints(), $this->authorizer(), $this->ruleProvider());
     }
 }

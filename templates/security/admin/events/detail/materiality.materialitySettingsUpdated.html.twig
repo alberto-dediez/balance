@@ -1,0 +1,5 @@
+{% trans with {
+    '{threshold}': event.relevanceThresholdPercent,
+    '{rule}': event.highMagnitudeForcesInclusion | show_field_value | trans,
+    '{user}': element.userId | user_name
+} %}Se ha actualizado la configuración de materialidad (umbral {threshold} %, magnitud alta obliga a calcular: {rule}) por el usuario {user}{% endtrans %}

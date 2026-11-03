@@ -1,0 +1,4 @@
+{% trans with {
+    '{source}': event.source.value | trans({}, 'source'),
+    '{user}': element.userId | user_name
+} %}Se ha retirado la anulación de la recomendación de materialidad de {source} en la huella de la empresa por el usuario {user}{% endtrans %}

@@ -10,6 +10,8 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityReference;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecision;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInput;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -19,6 +21,7 @@ use App\EventOperations\Domain\Model\Event\DateRange;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 use Doctrine\Common\Collections\Collection;
 
@@ -484,6 +487,39 @@ class EventCarbonFootprint implements CarbonFootprint, \Stringable
             static fn(EventCarbonFootprintActivity $activity) => new ActivityReference($activity->activityId(), $activity->placement()),
             array_values($this->activities()->toArray()),
         );
+    }
+
+    /** @return list<MaterialityDecision> */
+    public function materialityDecisions(): array
+    {
+        return [];
+    }
+
+    public function materialityDecisionFor(Source $source): ?MaterialityDecision
+    {
+        return null;
+    }
+
+    /**
+     * @param list<MaterialityDecisionInput> $decisions
+     * @param array<string, string>          $omitCommentsBySource
+     */
+    public function applyMaterialityDecisions(array $decisions, array $omitCommentsBySource): void {}
+
+    public function clearMaterialityDecisions(): void {}
+
+    public function overrideMaterialityDecision(Source $source, UserId $userId, string $justification): void {}
+
+    public function revertMaterialityOverride(Source $source): void {}
+
+    public function hasPendingMaterialityReview(): bool
+    {
+        return false;
+    }
+
+    public function materialitySourceIsPropagable(Source $source): bool
+    {
+        return false;
     }
 
     public function excludeSource(CalculationStage $stage, Source $source, ExclusionReason $reason, ?string $comment = null): void

@@ -30,6 +30,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdateReportedEmissionsActiv
 use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
+use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialityOverrideReconciler;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
@@ -50,6 +51,7 @@ use App\CarbonFootprint\Domain\Model\Activity\Answer\ReportedEmissionsAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\ElectricityActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityOverrideJustificationRequiredException;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -78,6 +80,7 @@ use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInputMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
@@ -98,6 +101,7 @@ use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
 
 class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
@@ -216,6 +220,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
                 OperatorContributionRepositoryMother::inMemory(),
                 new OperatorContributionEmissionsCalculator(new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create())),
             )),
+            new MaterialityOverrideReconciler(new FakeTranslator()),
         );
     }
 
@@ -526,6 +531,44 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             Scope::Scope1->sections()[0],
             [new CombustibleAnswer($this->combustible->id(), new Quantity(1000.0, Unit::KWh))],
         );
+    }
+
+    public function testRevertingAMaterialityRecommendationWithoutJustificationThrows(): void
+    {
+        $footprint = $this->footprintWithMaterialityDecisions();
+
+        $this->expectException(MaterialityOverrideJustificationRequiredException::class);
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3), $this->ownerUser());
+    }
+
+    public function testRevertingAMaterialityRecommendationWithJustificationRecordsTheOverride(): void
+    {
+        $footprint = $this->footprintWithMaterialityDecisions();
+        $owner = $this->ownerUser();
+
+        ($this->sut)(new AnswerCompanyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            materialityOverrideJustifications: [Source::Franchises->value => 'Tenemos franquicias relevantes'],
+        ), $owner);
+
+        $decision = $footprint->materialityDecisionFor(Source::Franchises);
+        $this->assertNotNull($decision);
+        $this->assertFalse($footprint->isSourceExcluded(Scope::Scope3, Source::Franchises));
+        $this->assertTrue($decision->isOverridden());
+        $this->assertEquals($owner->id(), $decision->overriddenByUserId());
+    }
+
+    private function footprintWithMaterialityDecisions(): CompanyCarbonFootprint
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+        $footprint->answerMateriality();
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::omit(14)], []);
+
+        return $footprint;
     }
 
     private function registeredFootprint(bool $precalculated = false): CompanyCarbonFootprint

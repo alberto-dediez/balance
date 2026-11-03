@@ -14,6 +14,7 @@ use App\CarbonFootprint\Application\OrganizationalProviderContribution\List\List
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\List\ListOrganizationalProviderContributionsService;
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\OrganizationalProviderContributionSummary;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\PropertyCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecision;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
@@ -52,6 +53,8 @@ final class GetPropertyCarbonFootprintScopeService
             derivedLines: $this->derivedSourceEmissionsCalculator->lines($propertyCarbonFootprint, $request->scope),
             providerContributions: $this->providerContributions($request->scope, (string) $request->propertyCarbonFootprintId, $user),
             employeeContributions: $this->employeeContributions($request->scope, (string) $request->propertyCarbonFootprintId, $user),
+            materialityDecisions: Scope::Scope3 === $request->scope ? $this->materialityDecisions($propertyCarbonFootprint) : [],
+            pendingMaterialityReview: Scope::Scope3 === $request->scope && $propertyCarbonFootprint->hasPendingMaterialityReview(),
         );
     }
 
@@ -89,5 +92,21 @@ final class GetPropertyCarbonFootprintScopeService
             new ListOrganizationalEmployeeContributionsRequest(CarbonFootprintReportSubjectType::Property, $carbonFootprintId),
             $user,
         );
+    }
+
+    /** @return array<string, MaterialityDecision> */
+    private function materialityDecisions(PropertyCarbonFootprint $propertyCarbonFootprint): array
+    {
+        $decisions = [];
+
+        foreach ($propertyCarbonFootprint->materialityDecisions() as $decision) {
+            $source = $decision->source();
+
+            if (null !== $source) {
+                $decisions[$source->value] = $decision;
+            }
+        }
+
+        return $decisions;
     }
 }

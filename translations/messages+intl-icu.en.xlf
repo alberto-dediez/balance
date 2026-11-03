@@ -11485,6 +11485,138 @@
         <source>Responde el alcance 2 antes de evaluar la materialidad.</source>
         <target>Answer scope 2 before assessing materiality.</target>
       </trans-unit>
+      <trans-unit id="YozzZMf" resname="Indica el motivo por el que anulas la recomendación de materialidad de {source}">
+        <source>Indica el motivo por el que anulas la recomendación de materialidad de {source}</source>
+        <target>State why you are overriding the materiality recommendation for {source}</target>
+      </trans-unit>
+      <trans-unit id="3iAvqWu" resname="Análisis de materialidad: relevancia {score} % por debajo del umbral {threshold} %">
+        <source>Análisis de materialidad: relevancia {score} % por debajo del umbral {threshold} %</source>
+        <target>Materiality analysis: relevance {score} % below the {threshold} % threshold</target>
+      </trans-unit>
+      <trans-unit id="6lm2WRF" resname="Anulación de la recomendación">
+        <source>Anulación de la recomendación</source>
+        <target>Recommendation override</target>
+      </trans-unit>
+      <trans-unit id="y3CYjuW" resname="Recomendación de materialidad">
+        <source>Recomendación de materialidad</source>
+        <target>Materiality recommendation</target>
+      </trans-unit>
+      <trans-unit id="NWWO1Ge" resname="Configuración de materialidad guardada">
+        <source>Configuración de materialidad guardada</source>
+        <target>Materiality settings saved</target>
+      </trans-unit>
+      <trans-unit id="vE3fSx5" resname="Umbral de relevancia (%)">
+        <source>Umbral de relevancia (%)</source>
+        <target>Relevance threshold (%)</target>
+      </trans-unit>
+      <trans-unit id="wOKoAZL" resname="Relevancia mínima, en porcentaje, para calcular una categoría del alcance 3">
+        <source>Relevancia mínima, en porcentaje, para calcular una categoría del alcance 3</source>
+        <target>Minimum relevance, as a percentage, required to calculate a scope 3 category</target>
+      </trans-unit>
+      <trans-unit id="aYTbdwT" resname="Una magnitud alta obliga a calcular la categoría aunque no llegue al umbral">
+        <source>Una magnitud alta obliga a calcular la categoría aunque no llegue al umbral</source>
+        <target>A high magnitude forces the category to be calculated even below the threshold</target>
+      </trans-unit>
+      <trans-unit id="rf10KEs" resname="Anulada por {user} el {date}">
+        <source>Anulada por {user} el {date}</source>
+        <target>Overridden by {user} on {date}</target>
+      </trans-unit>
+      <trans-unit id="p07OAV4" resname="Estás anulando la recomendación de materialidad">
+        <source>Estás anulando la recomendación de materialidad</source>
+        <target>You are overriding the materiality recommendation</target>
+      </trans-unit>
+      <trans-unit id="qbnxqeF" resname="No material · {score} % &lt; {threshold} %">
+        <source>No material · {score} % &lt; {threshold} %</source>
+        <target><![CDATA[Not material · {score} % < {threshold} %]]></target>
+      </trans-unit>
+      <trans-unit id="2Wx7d2s" resname="Material · {score} %">
+        <source>Material · {score} %</source>
+        <target>Material · {score} %</target>
+      </trans-unit>
+      <trans-unit id="Qkqw1fj" resname="Magnitud alta">
+        <source>Magnitud alta</source>
+        <target>High magnitude</target>
+      </trans-unit>
+      <trans-unit id="KOugUDM" resname="Motivo de la anulación">
+        <source>Motivo de la anulación</source>
+        <target>Reason for the override</target>
+      </trans-unit>
+      <trans-unit id="Ut4d2qT" resname="Se ha anulado la recomendación de materialidad ({verdict}) de {source} en la huella de la propiedad por el usuario {user}: {justification}">
+        <source>Se ha anulado la recomendación de materialidad ({verdict}) de {source} en la huella de la propiedad por el usuario {user}: {justification}</source>
+        <target>The materiality recommendation ({verdict}) for {source} in the property footprint has been overridden by user {user}: {justification}</target>
+      </trans-unit>
+      <trans-unit id="zltPbRA" resname="Se ha anulado la recomendación de materialidad ({verdict}) de {source} en la huella de la empresa por el usuario {user}: {justification}">
+        <source>Se ha anulado la recomendación de materialidad ({verdict}) de {source} en la huella de la empresa por el usuario {user}: {justification}</source>
+        <target>The materiality recommendation ({verdict}) for {source} in the company footprint has been overridden by user {user}: {justification}</target>
+      </trans-unit>
+      <trans-unit id="7pw24hq" resname="Se han aplicado {count} veredictos de materialidad a la huella de la empresa por el usuario {user}">
+        <source>Se han aplicado {count} veredictos de materialidad a la huella de la empresa por el usuario {user}</source>
+        <target>{count} materiality verdicts have been applied to the company footprint by user {user}</target>
+      </trans-unit>
+      <trans-unit id="55_IT8G" resname="{topic}: {verdict} (relevancia {score} %, umbral {threshold} %)">
+        <source>{topic}: {verdict} (relevancia {score} %, umbral {threshold} %)</source>
+        <target>{topic}: {verdict} (relevance {score} %, threshold {threshold} %)</target>
+      </trans-unit>
+      <trans-unit id="jBtdifr" resname="Se han eliminado los veredictos de materialidad de la huella de la empresa por el usuario {user}">
+        <source>Se han eliminado los veredictos de materialidad de la huella de la empresa por el usuario {user}</source>
+        <target>The materiality verdicts of the company footprint have been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="cUXJbe7" resname="Se ha actualizado la configuración de materialidad (umbral {threshold} %, magnitud alta obliga a calcular: {rule}) por el usuario {user}">
+        <source>Se ha actualizado la configuración de materialidad (umbral {threshold} %, magnitud alta obliga a calcular: {rule}) por el usuario {user}</source>
+        <target>The materiality settings have been updated (threshold {threshold} %, high magnitude forces calculation: {rule}) by user {user}</target>
+      </trans-unit>
+      <trans-unit id="y0VieQc" resname="Se ha retirado la anulación de la recomendación de materialidad de {source} en la huella de la empresa por el usuario {user}">
+        <source>Se ha retirado la anulación de la recomendación de materialidad de {source} en la huella de la empresa por el usuario {user}</source>
+        <target>The materiality recommendation override for {source} in the company footprint has been withdrawn by user {user}</target>
+      </trans-unit>
+      <trans-unit id="wNT_y3L" resname="Se ha registrado la configuración de materialidad (umbral {threshold} %, magnitud alta obliga a calcular: {rule}) por el usuario {user}">
+        <source>Se ha registrado la configuración de materialidad (umbral {threshold} %, magnitud alta obliga a calcular: {rule}) por el usuario {user}</source>
+        <target>The materiality settings have been registered (threshold {threshold} %, high magnitude forces calculation: {rule}) by user {user}</target>
+      </trans-unit>
+      <trans-unit id="60fAId8" resname="Se ha retirado la anulación de la recomendación de materialidad de {source} en la huella de la propiedad por el usuario {user}">
+        <source>Se ha retirado la anulación de la recomendación de materialidad de {source} en la huella de la propiedad por el usuario {user}</source>
+        <target>The materiality recommendation override for {source} in the property footprint has been withdrawn by user {user}</target>
+      </trans-unit>
+      <trans-unit id="WrR1hGP" resname="Se han eliminado los veredictos de materialidad de la huella de la propiedad por el usuario {user}">
+        <source>Se han eliminado los veredictos de materialidad de la huella de la propiedad por el usuario {user}</source>
+        <target>The materiality verdicts of the property footprint have been removed by user {user}</target>
+      </trans-unit>
+      <trans-unit id="LBCd3Fx" resname="Se han aplicado {count} veredictos de materialidad a la huella de la propiedad por el usuario {user}">
+        <source>Se han aplicado {count} veredictos de materialidad a la huella de la propiedad por el usuario {user}</source>
+        <target>{count} materiality verdicts have been applied to the property footprint by user {user}</target>
+      </trans-unit>
+      <trans-unit id="86CplFJ" resname="Hay categorías del alcance 3 pendientes de revisión tras el último análisis de materialidad.">
+        <source>Hay categorías del alcance 3 pendientes de revisión tras el último análisis de materialidad.</source>
+        <target>Some scope 3 categories are pending review after the latest materiality analysis.</target>
+      </trans-unit>
+      <trans-unit id="MslQorF" resname="Revisar el alcance 3">
+        <source>Revisar el alcance 3</source>
+        <target>Review scope 3</target>
+      </trans-unit>
+      <trans-unit id="BBr4BLz" resname="El análisis de materialidad ha cambiado: hay categorías cuyo veredicto no coincide con lo aplicado. Revisa las exclusiones y guarda el paso.">
+        <source>El análisis de materialidad ha cambiado: hay categorías cuyo veredicto no coincide con lo aplicado. Revisa las exclusiones y guarda el paso.</source>
+        <target>The materiality analysis has changed: some categories have a verdict that does not match what was applied. Review the exclusions and save the step.</target>
+      </trans-unit>
+      <trans-unit id="Fg0cHnj" resname="Alcance 3 excluido: las recomendaciones no se aplican">
+        <source>Alcance 3 excluido: las recomendaciones no se aplican</source>
+        <target>Scope 3 excluded: the recommendations are not applied</target>
+      </trans-unit>
+      <trans-unit id="cu6xJS4" resname="Umbral">
+        <source>Umbral</source>
+        <target>Threshold</target>
+      </trans-unit>
+      <trans-unit id="GrPFSfk" resname="Veredicto">
+        <source>Veredicto</source>
+        <target>Verdict</target>
+      </trans-unit>
+      <trans-unit id="4hu_5.2" resname="Estado en la huella">
+        <source>Estado en la huella</source>
+        <target>Status in the footprint</target>
+      </trans-unit>
+      <trans-unit id="yuCg36H" resname="Anulación">
+        <source>Anulación</source>
+        <target>Override</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

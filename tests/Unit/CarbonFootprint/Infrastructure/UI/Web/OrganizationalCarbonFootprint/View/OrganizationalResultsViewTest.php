@@ -13,6 +13,8 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintExclusionId;
 use App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View\OrganizationalResultsView;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\User\UserId;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInputMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
@@ -98,6 +100,42 @@ class OrganizationalResultsViewTest extends TestCase
         $this->assertSame('Alcance completo', $view['exclusions'][0]['source']);
         $this->assertSame(ExclusionReason::NoDataAvailable->value, $view['exclusions'][0]['reason']);
         $this->assertSame('Sin datos', $view['exclusions'][0]['comment']);
+    }
+
+    public function testExclusionsShowTheirMaterialityOrigin(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([
+            MaterialityDecisionInputMother::omit(5),
+            MaterialityDecisionInputMother::calculate(1),
+        ]);
+        $userId = UserId::generate();
+        $footprint->excludeSource(Scope::Scope3, Source::PurchasedGoodsAndServices, ExclusionReason::OutOfScope);
+        $footprint->overrideMaterialityDecision(Source::PurchasedGoodsAndServices, $userId, 'Fuera del perímetro');
+        $footprint->excludeSource(Scope::Scope3, Source::BusinessTravel, ExclusionReason::NotApplicable);
+
+        $view = $this->sut->build(
+            $this->bySource(),
+            $this->byScope(),
+            $this->byScopeAndSource(),
+            $footprint->allExclusions(),
+            scope3Exclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
+            materialityDecisions: $footprint->materialityDecisions(),
+            pendingMaterialityReview: true,
+        );
+
+        $origins = [];
+        foreach ($view['exclusions'] as $row) {
+            $origins[$row['source']] = $row;
+        }
+
+        $this->assertSame('Manual', $origins['Alcance completo']['origin']);
+        $this->assertSame('Recomendación de materialidad', $origins[Source::OperationsWaste->value]['origin']);
+        $this->assertSame('Anulación de la recomendación', $origins[Source::PurchasedGoodsAndServices->value]['origin']);
+        $this->assertEquals($userId, $origins[Source::PurchasedGoodsAndServices->value]['overriddenBy']);
+        $this->assertNotNull($origins[Source::PurchasedGoodsAndServices->value]['overriddenAt']);
+        $this->assertSame('Manual', $origins[Source::BusinessTravel->value]['origin']);
+        $this->assertNull($origins[Source::BusinessTravel->value]['overriddenBy']);
+        $this->assertTrue($view['pendingMaterialityReview']);
     }
 
     public function testPropertyChartLabelsTheUnassignedBlock(): void

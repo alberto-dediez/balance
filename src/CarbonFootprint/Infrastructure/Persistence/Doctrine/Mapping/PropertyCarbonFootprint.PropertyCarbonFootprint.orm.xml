@@ -58,6 +58,12 @@
                 <cascade-persist />
             </cascade>
         </one-to-many>
+
+        <one-to-many field="materialityDecisions" target-entity="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMaterialityDecision" mapped-by="propertyCarbonFootprint" orphan-removal="true">
+            <cascade>
+                <cascade-persist />
+            </cascade>
+        </one-to-many>
     </entity>
 
 </doctrine-mapping>

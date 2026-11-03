@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInput;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -22,6 +23,7 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExcludableException;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 
 class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
@@ -34,6 +36,9 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
 
     /** @var iterable<PropertyCarbonFootprintExclusion> */
     private iterable $exclusions = [];
+
+    /** @var iterable<PropertyCarbonFootprintMaterialityDecision> */
+    private iterable $materialityDecisions = [];
 
     /** @param array<\App\Shared\Domain\Event\DomainEvent> $events */
     public function __construct(
@@ -306,6 +311,90 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
+    /**
+     * @param list<MaterialityDecisionInput> $decisions
+     * @param array<string, string>          $omitCommentsBySource
+     */
+    public function applyMaterialityDecisions(array $decisions, array $omitCommentsBySource): void
+    {
+        if ($this->isCompleted()) {
+            return;
+        }
+
+        $previousRecommendedExclusions = $this->recommendedExclusionsBySource();
+        $revertedSources = $this->overriddenSourcesChangingVerdict($decisions);
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintMaterialityDecisionsApplied(
+                propertyCarbonFootprintId: $this->id,
+                decisions: $this->materialityDecisionEntries($decisions),
+            ),
+        );
+
+        foreach ($revertedSources as $source) {
+            $this->recordApplyAndPublish(
+                new PropertyCarbonFootprintMaterialityOverrideReverted(
+                    propertyCarbonFootprintId: $this->id,
+                    source: $source,
+                ),
+            );
+        }
+
+        $this->propagateMaterialityDecisions($previousRecommendedExclusions, $omitCommentsBySource);
+    }
+
+    public function clearMaterialityDecisions(): void
+    {
+        if ($this->isCompleted() || [] === $this->materialityDecisions()) {
+            return;
+        }
+
+        $this->includeRecommendedExclusions();
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintMaterialityDecisionsCleared(
+                propertyCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function overrideMaterialityDecision(Source $source, UserId $userId, string $justification): void
+    {
+        $this->ensureIsEditable();
+
+        $decision = $this->materialityDecisionFor($source);
+
+        if (null === $decision || ($decision->isOverridden() && $decision->overrideJustification() === $justification)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintMaterialityOverridden(
+                propertyCarbonFootprintId: $this->id,
+                source: $source,
+                verdict: $decision->verdict(),
+                userId: $userId,
+                justification: $justification,
+            ),
+        );
+    }
+
+    public function revertMaterialityOverride(Source $source): void
+    {
+        $this->ensureIsEditable();
+
+        if (true !== $this->materialityDecisionFor($source)?->isOverridden()) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new PropertyCarbonFootprintMaterialityOverrideReverted(
+                propertyCarbonFootprintId: $this->id,
+                source: $source,
+            ),
+        );
+    }
+
     public function markAsPrecalculated(): void
     {
         $this->ensureIsEditable();
@@ -541,6 +630,74 @@ class PropertyCarbonFootprint implements CarbonFootprint, \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintMaterialityDecisionsApplied(PropertyCarbonFootprintMaterialityDecisionsApplied $event): void
+    {
+        $topicIds = [];
+
+        foreach ($event->decisions() as $entry) {
+            $input = MaterialityDecisionInput::fromPrimitives($entry);
+            $source = null !== $entry['source'] ? Source::from($entry['source']) : null;
+            $topicIds[] = $input->topicId;
+
+            $existing = $this->materialityDecisionOfTopic($input->topicId);
+
+            if ($existing instanceof PropertyCarbonFootprintMaterialityDecision) {
+                $existing->recommend($input->topicNumber, $source, $input->scorePercent, $input->thresholdPercent, $input->forcedByHighMagnitude, $input->verdict, $event->occurredOn());
+
+                continue;
+            }
+
+            $this->attachMaterialityDecision(new PropertyCarbonFootprintMaterialityDecision(
+                id: PropertyCarbonFootprintMaterialityDecisionId::generate(),
+                propertyCarbonFootprint: $this,
+                topicId: $input->topicId,
+                topicNumber: $input->topicNumber,
+                source: $source,
+                scorePercent: $input->scorePercent,
+                thresholdPercent: $input->thresholdPercent,
+                forcedByHighMagnitude: $input->forcedByHighMagnitude,
+                verdict: $input->verdict,
+                recommendedAt: $event->occurredOn(),
+            ));
+        }
+
+        foreach ($this->materialityDecisions() as $decision) {
+            if (!in_array($decision->topicId(), $topicIds, true)) {
+                $this->detachMaterialityDecision($decision->topicId());
+            }
+        }
+
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintMaterialityDecisionsCleared(PropertyCarbonFootprintMaterialityDecisionsCleared $event): void
+    {
+        $this->detachAllMaterialityDecisions();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintMaterialityOverridden(PropertyCarbonFootprintMaterialityOverridden $event): void
+    {
+        $decision = $this->materialityDecisionFor($event->source());
+
+        if ($decision instanceof PropertyCarbonFootprintMaterialityDecision) {
+            $decision->override($event->userId(), $event->justification(), $event->occurredOn());
+        }
+
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyPropertyCarbonFootprintMaterialityOverrideReverted(PropertyCarbonFootprintMaterialityOverrideReverted $event): void
+    {
+        $decision = $this->materialityDecisionFor($event->source());
+
+        if ($decision instanceof PropertyCarbonFootprintMaterialityDecision) {
+            $decision->revertOverride();
+        }
+
+        $this->updatedAt = $event->occurredOn();
     }
 
     public function __toString(): string

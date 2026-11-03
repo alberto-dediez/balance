@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMaterialityDecision" table="property_carbon_footprint_materiality_decisions">
+        <indexes>
+            <index name="IDX_pcf_materiality_footprint" columns="property_carbon_footprint_id" />
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint name="UNIQ_pcf_materiality_topic" columns="property_carbon_footprint_id,topic_id" />
+            <unique-constraint name="UNIQ_pcf_materiality_source" columns="property_carbon_footprint_id,source" />
+        </unique-constraints>
+
+        <id name="id" type="property_carbon_footprint_materiality_decision_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="propertyCarbonFootprint" target-entity="App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint" inversed-by="materialityDecisions">
+            <join-column name="property_carbon_footprint_id" referenced-column-name="id" nullable="false" on-delete="CASCADE" />
+        </many-to-one>
+
+        <field name="topicId" type="string" length="36" column="topic_id" nullable="false" />
+        <field name="topicNumber" type="smallint" column="topic_number" nullable="true" />
+        <field name="source" type="string" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\Source" nullable="true" />
+        <field name="scorePercent" type="decimal" precision="5" scale="2" column="score_percent" nullable="false" />
+        <field name="thresholdPercent" type="smallint" column="threshold_percent" nullable="false" />
+        <field name="forcedByHighMagnitude" type="boolean" column="forced_by_high_magnitude" nullable="false" />
+        <field name="verdict" type="string" length="16" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict" nullable="false" />
+        <field name="recommendedAt" type="datetime_immutable" column="recommended_at" nullable="false" />
+        <field name="overriddenByUserId" type="user_id" column="overridden_by_user_id" nullable="true" />
+        <field name="overriddenAt" type="datetime_immutable" column="overridden_at" nullable="true" />
+        <field name="overrideJustification" type="text" column="override_justification" nullable="true" />
+    </entity>
+
+</doctrine-mapping>

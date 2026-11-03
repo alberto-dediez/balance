@@ -53,4 +53,15 @@ enum Source: string
             default => null,
         };
     }
+
+    public static function ofGhgProtocolCategory(int $category): ?self
+    {
+        foreach (self::cases() as $source) {
+            if ($source->ghgProtocolCategory() === $category) {
+                return $source;
+            }
+        }
+
+        return null;
+    }
 }

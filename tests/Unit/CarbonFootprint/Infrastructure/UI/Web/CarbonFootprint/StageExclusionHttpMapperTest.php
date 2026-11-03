@@ -111,4 +111,16 @@ class StageExclusionHttpMapperTest extends TestCase
 
         $this->sut->mapStage($request, Scope::Scope3);
     }
+
+    public function testMapsTheMaterialityOverrideJustifications(): void
+    {
+        $request = new Request(request: ['materialityOverrides' => [
+            'operations_waste' => ['justification' => '  Tenemos datos  '],
+            'business_travel' => ['justification' => '   '],
+            'capital_goods' => 'invalid',
+        ]]);
+
+        $this->assertSame(['operations_waste' => 'Tenemos datos'], $this->sut->mapOverrideJustifications($request));
+        $this->assertSame([], $this->sut->mapOverrideJustifications(new Request()));
+    }
 }

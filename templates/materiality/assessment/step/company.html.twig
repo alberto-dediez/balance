@@ -11,6 +11,7 @@
         carbonFootprintId: companyCarbonFootprintId,
         previousPath: path('company_carbon_footprints_scope_2', {companyCarbonFootprintId: companyCarbonFootprintId}),
         nextPath: path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId}),
+        scope3Path: path('company_carbon_footprints_scope_3', {companyCarbonFootprintId: companyCarbonFootprintId}),
         skipToken: csrf_token('materiality_skip_' ~ companyCarbonFootprint.id),
     } %}
 {% endblock %}

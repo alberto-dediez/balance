@@ -51,6 +51,26 @@ final class StageExclusionHttpMapper
         return $exclusions;
     }
 
+    /** @return array<string, string> */
+    public function mapOverrideJustifications(Request $request): array
+    {
+        $justifications = [];
+
+        foreach ($request->request->all('materialityOverrides') as $sourceValue => $row) {
+            if (!is_array($row) || !is_string($row['justification'] ?? null)) {
+                continue;
+            }
+
+            $justification = trim($row['justification']);
+
+            if ('' !== $justification) {
+                $justifications[(string) $sourceValue] = $justification;
+            }
+        }
+
+        return $justifications;
+    }
+
     public function mapStage(Request $request, CalculationStage $stage): ?StageExclusionAnswer
     {
         $row = $request->request->all('stageExclusion');

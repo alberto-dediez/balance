@@ -1,8 +1,28 @@
-{% props source, exclusion = null, reasons = [], readOnly = false %}
+{% props source, exclusion = null, reasons = [], readOnly = false, materiality = null %}
 
-<section class="mb-4" data-controller="source-exclusion">
+<section
+    class="mb-4"
+    data-controller="source-exclusion"
+    data-source-exclusion-has-materiality-value="{{ materiality ? 'true' : 'false' }}"
+    data-source-exclusion-recommended-excluded-value="{{ materiality and materiality.recommendsExclusion ? 'true' : 'false' }}"
+>
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom pb-2 mb-3">
-        <h5 class="mb-0">{{ source | trans({}, 'source') }}</h5>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <h5 class="mb-0">{{ source | trans({}, 'source') }}</h5>
+
+            {% if materiality %}
+                <span class="badge {{ materiality.verdict.style }}">
+                    {% if materiality.recommendsExclusion %}
+                        {{ 'No material · {score} % < {threshold} %' | trans({'{score}': materiality.scorePercent | number_format(2, ',', '.'), '{threshold}': materiality.thresholdPercent}) }}
+                    {% else %}
+                        {{ 'Material · {score} %' | trans({'{score}': materiality.scorePercent | number_format(2, ',', '.')}) }}
+                    {% endif %}
+                </span>
+                {% if materiality.isForcedByHighMagnitude %}
+                    <span class="badge bg-warning text-dark">{{ 'Magnitud alta' | trans }}</span>
+                {% endif %}
+            {% endif %}
+        </div>
 
         {% if readOnly %}
             {% if exclusion %}
@@ -36,6 +56,12 @@
                 {% endif %}
             </div>
         {% endif %}
+        {% if materiality and materiality.isOverridden %}
+            <twig:Alert:Alert type="warning">
+                {{ 'Anulada por {user} el {date}' | trans({'{user}': materiality.overriddenByUserId | user_name, '{date}': materiality.overriddenAt | date('d/m/Y H:i')}) }}:
+                {{ materiality.overrideJustification }}
+            </twig:Alert:Alert>
+        {% endif %}
     {% else %}
         <div class="row g-2 mb-3 {% if not exclusion %}d-none{% endif %}" data-source-exclusion-target="details">
             <div class="col-md-4">
@@ -52,6 +78,17 @@
                 <label class="form-label" for="exclusion_{{ source }}_comment">{{ 'Comentario (opcional)' | trans }}</label>
                 <textarea class="form-control" name="exclusions[{{ source }}][comment]" id="exclusion_{{ source }}_comment" rows="1">{{ exclusion ? exclusion.comment : '' }}</textarea>
             </div>
+        </div>
+    {% endif %}
+
+    {% if materiality and not readOnly %}
+        <div class="mb-3 {% if not materiality.isOverridden %}d-none{% endif %}" data-source-exclusion-target="override">
+            <twig:Alert:Alert type="warning">{{ 'Estás anulando la recomendación de materialidad' | trans }}</twig:Alert:Alert>
+            <label class="form-label" for="materiality_override_{{ source }}_justification">{{ 'Motivo de la anulación' | trans }}</label>
+            <textarea class="form-control" name="materialityOverrides[{{ source }}][justification]" id="materiality_override_{{ source }}_justification" rows="2">{{ materiality.overrideJustification }}</textarea>
+            {% if materiality.isOverridden %}
+                <div class="form-text">{{ 'Anulada por {user} el {date}' | trans({'{user}': materiality.overriddenByUserId | user_name, '{date}': materiality.overriddenAt | date('d/m/Y H:i')}) }}</div>
+            {% endif %}
         </div>
     {% endif %}
 

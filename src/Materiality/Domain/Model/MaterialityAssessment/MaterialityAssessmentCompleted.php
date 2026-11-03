@@ -14,7 +14,7 @@ final class MaterialityAssessmentCompleted extends DomainEvent
 {
     protected static string $eventName = 'materialityAssessmentCompleted';
 
-    /** @param list<array{assessmentTopicId: string, topicId: string, topicNumber: int|null, points: int, minPoints: int, maxPoints: int, highestMagnitudeLevel: int|null}> $scores */
+    /** @param list<array{assessmentTopicId: string, topicId: string, topicNumber: int|null, scope: string|null, points: int, minPoints: int, maxPoints: int, highestMagnitudeLevel: int|null, scorePercent: float|null, thresholdPercent: int, forcedByHighMagnitude: bool, verdict: string|null}> $scores */
     public function __construct(
         private MaterialityAssessmentId $materialityAssessmentId,
         private MaterialityAssessmentSubjectType $subjectType,
@@ -65,7 +65,7 @@ final class MaterialityAssessmentCompleted extends DomainEvent
         return $this->completedAt;
     }
 
-    /** @return list<array{assessmentTopicId: string, topicId: string, topicNumber: int|null, points: int, minPoints: int, maxPoints: int, highestMagnitudeLevel: int|null}> */
+    /** @return list<array{assessmentTopicId: string, topicId: string, topicNumber: int|null, scope: string|null, points: int, minPoints: int, maxPoints: int, highestMagnitudeLevel: int|null, scorePercent: float|null, thresholdPercent: int, forcedByHighMagnitude: bool, verdict: string|null}> */
     public function scores(): array
     {
         return $this->scores;
@@ -95,6 +95,18 @@ final class MaterialityAssessmentCompleted extends DomainEvent
         \DateTimeImmutable $occurredOn,
         array $payload = [],
     ): static {
+        /** @var list<array{assessmentTopicId: string, topicId: string, topicNumber: int|null, scope: string|null, points: int, minPoints: int, maxPoints: int, highestMagnitudeLevel: int|null, scorePercent: float|null, thresholdPercent: int, forcedByHighMagnitude: bool, verdict: string|null}> $scores */
+        $scores = array_values(array_map(
+            static fn(array $score) => $score + [
+                'scope' => null,
+                'scorePercent' => MaterialityAssessmentTopic::scorePercentOf((int) $score['points'], (int) $score['minPoints'], (int) $score['maxPoints']),
+                'thresholdPercent' => 0,
+                'forcedByHighMagnitude' => false,
+                'verdict' => null,
+            ],
+            $payload['scores'],
+        ));
+
         return new self(
             materialityAssessmentId: new MaterialityAssessmentId($payload['materialityAssessmentId']),
             subjectType: MaterialityAssessmentSubjectType::from($payload['subjectType']),
@@ -103,7 +115,7 @@ final class MaterialityAssessmentCompleted extends DomainEvent
             year: $payload['year'],
             completedBy: new UserId($payload['completedBy']),
             completedAt: new \DateTimeImmutable($payload['completedAt']),
-            scores: $payload['scores'],
+            scores: $scores,
             id: $id,
             occurredOn: $occurredOn,
         );

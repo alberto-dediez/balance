@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInput;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInputMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 
 class PropertyCarbonFootprintMother
@@ -95,6 +97,20 @@ class PropertyCarbonFootprintMother
     ): PropertyCarbonFootprint {
         $propertyCarbonFootprint = self::withScope2Answered($propertyId, $id, $accountId, $year, $emissionFactorGroupId);
         $propertyCarbonFootprint->answerMateriality();
+
+        return $propertyCarbonFootprint;
+    }
+
+    /** @param list<MaterialityDecisionInput> $decisions */
+    public static function withMaterialityDecisions(
+        array $decisions,
+        string $propertyId = 'property-id',
+        string $id = 'property-carbon-footprint-id',
+        string $accountId = 'account-id',
+        int $year = 2025,
+    ): PropertyCarbonFootprint {
+        $propertyCarbonFootprint = self::withMaterialityAnswered($propertyId, $id, $accountId, $year);
+        $propertyCarbonFootprint->applyMaterialityDecisions($decisions, MaterialityDecisionInputMother::commentsFor($decisions));
 
         return $propertyCarbonFootprint;
     }

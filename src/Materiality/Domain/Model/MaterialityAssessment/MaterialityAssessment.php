@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Materiality\Domain\Model\MaterialityAssessment;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
+use App\Materiality\Domain\Model\MaterialitySettings\MaterialityDecisionRule;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -126,6 +128,12 @@ class MaterialityAssessment implements \Stringable
         usort($topics, static fn(MaterialityAssessmentTopic $a, MaterialityAssessmentTopic $b) => [$a->scope()->value, $a->position(), $a->name()] <=> [$b->scope()->value, $b->position(), $b->name()]);
 
         return $topics;
+    }
+
+    /** @return list<MaterialityAssessmentTopic> */
+    public function verdicts(): array
+    {
+        return array_values(array_filter($this->topics(), static fn(MaterialityAssessmentTopic $topic) => $topic->hasVerdict()));
     }
 
     public function topic(MaterialityAssessmentTopicId $assessmentTopicId): MaterialityAssessmentTopic
@@ -272,7 +280,7 @@ class MaterialityAssessment implements \Stringable
         );
     }
 
-    public function complete(UserId $userId): void
+    public function complete(UserId $userId, MaterialityDecisionRule $rule): void
     {
         $this->ensureNotRemoved();
         $this->ensureIsDraft();
@@ -292,14 +300,26 @@ class MaterialityAssessment implements \Stringable
                 array_filter($answers, static fn(MaterialityAssessmentAnswer $answer) => MaterialityCriterion::Magnitude === $answer->criterion()),
             );
 
+            $points = array_sum(array_map(static fn(MaterialityAssessmentAnswer $answer) => $answer->points(), $answers));
+            $minPoints = array_sum(array_map(static fn(MaterialityAssessmentAnswer $answer) => $answer->minPoints(), $answers));
+            $maxPoints = array_sum(array_map(static fn(MaterialityAssessmentAnswer $answer) => $answer->maxPoints(), $answers));
+            $highestMagnitudeLevel = [] !== $magnitudeLevels ? max($magnitudeLevels) : null;
+            $scorePercent = MaterialityAssessmentTopic::scorePercentOf($points, $minPoints, $maxPoints);
+            $verdict = $rule->decide($scorePercent, $highestMagnitudeLevel);
+
             $scores[] = [
                 'assessmentTopicId' => (string) $topic->id(),
                 'topicId' => (string) $topic->topicId(),
                 'topicNumber' => $topic->topicNumber(),
-                'points' => array_sum(array_map(static fn(MaterialityAssessmentAnswer $answer) => $answer->points(), $answers)),
-                'minPoints' => array_sum(array_map(static fn(MaterialityAssessmentAnswer $answer) => $answer->minPoints(), $answers)),
-                'maxPoints' => array_sum(array_map(static fn(MaterialityAssessmentAnswer $answer) => $answer->maxPoints(), $answers)),
-                'highestMagnitudeLevel' => [] !== $magnitudeLevels ? max($magnitudeLevels) : null,
+                'scope' => $topic->scope()->value,
+                'points' => $points,
+                'minPoints' => $minPoints,
+                'maxPoints' => $maxPoints,
+                'highestMagnitudeLevel' => $highestMagnitudeLevel,
+                'scorePercent' => $scorePercent,
+                'thresholdPercent' => $rule->thresholdPercent,
+                'forcedByHighMagnitude' => null !== $verdict && $rule->isForcedByHighMagnitude($highestMagnitudeLevel),
+                'verdict' => $verdict?->value,
             ];
         }
 
@@ -341,6 +361,8 @@ class MaterialityAssessment implements \Stringable
         $this->recordApplyAndPublish(
             new MaterialityAssessmentRemoved(
                 materialityAssessmentId: $this->id,
+                subjectType: $this->subjectType,
+                carbonFootprintId: $this->carbonFootprintId,
             ),
         );
     }
@@ -462,6 +484,9 @@ class MaterialityAssessment implements \Stringable
                 minPoints: $score['minPoints'],
                 maxPoints: $score['maxPoints'],
                 highestMagnitudeLevel: $score['highestMagnitudeLevel'],
+                thresholdPercent: null !== $score['verdict'] ? $score['thresholdPercent'] : null,
+                forcedByHighMagnitude: null !== $score['verdict'] ? $score['forcedByHighMagnitude'] : null,
+                verdict: null !== $score['verdict'] ? MaterialityVerdict::from($score['verdict']) : null,
             );
         }
 

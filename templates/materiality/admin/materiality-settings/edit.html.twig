@@ -1,0 +1,26 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_materiality_topics') }}" />
+{% endblock %}
+
+{% set page_title = ('Materialidad' | trans)
+    ~ ' > '
+    ~ ('Configuración' | trans) %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.relevanceThresholdPercent) }}
+                    {{ form_row(form.highMagnitudeForcesInclusion) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

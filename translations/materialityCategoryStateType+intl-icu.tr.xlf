@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="mBGOj6s" resname="without_score">
+        <source>without_score</source>
+        <target>NEW_without_score</target>
+      </trans-unit>
+      <trans-unit id="e0OR3CU" resname="without_source">
+        <source>without_source</source>
+        <target>NEW_without_source</target>
+      </trans-unit>
+      <trans-unit id="qU.AcWZ" resname="not_applicable_to_subject">
+        <source>not_applicable_to_subject</source>
+        <target>NEW_not_applicable_to_subject</target>
+      </trans-unit>
+      <trans-unit id="2GxuqJW" resname="stage_excluded">
+        <source>stage_excluded</source>
+        <target>NEW_stage_excluded</target>
+      </trans-unit>
+      <trans-unit id="iwnmvNb" resname="excluded_recommended">
+        <source>excluded_recommended</source>
+        <target>NEW_excluded_recommended</target>
+      </trans-unit>
+      <trans-unit id="dtOd8PK" resname="active">
+        <source>active</source>
+        <target>NEW_active</target>
+      </trans-unit>
+      <trans-unit id="8qZ7EwE" resname="active_overridden">
+        <source>active_overridden</source>
+        <target>NEW_active_overridden</target>
+      </trans-unit>
+      <trans-unit id="d5TIPdi" resname="excluded_overridden">
+        <source>excluded_overridden</source>
+        <target>NEW_excluded_overridden</target>
+      </trans-unit>
+      <trans-unit id="TVWcGVC" resname="pending_review">
+        <source>pending_review</source>
+        <target>NEW_pending_review</target>
+      </trans-unit>
+      <trans-unit id="qsekUKt" resname="not_evaluated">
+        <source>not_evaluated</source>
+        <target>NEW_not_evaluated</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

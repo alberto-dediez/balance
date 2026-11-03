@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInput;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -26,19 +27,25 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
 use Doctrine\Common\Collections\Collection;
 
 class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
 {
     use AggregateRoot;
-    use OrganizationalCarbonFootprintTrait;
+    use OrganizationalCarbonFootprintTrait {
+        hasDataOfSource as private hasActivitiesOfSource;
+    }
 
     /** @var iterable<CompanyCarbonFootprintActivity> */
     private iterable $activities = [];
 
     /** @var iterable<CompanyCarbonFootprintExclusion> */
     private iterable $exclusions = [];
+
+    /** @var iterable<CompanyCarbonFootprintMaterialityDecision> */
+    private iterable $materialityDecisions = [];
 
     /** @var iterable<CompanyCarbonFootprintNonConsolidatedProperty> */
     private iterable $nonConsolidatedProperties = [];
@@ -416,6 +423,26 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         );
     }
 
+    public function materialitySourceIsPropagable(Source $source): bool
+    {
+        return true;
+    }
+
+    public function hasDataOfSource(Source $source): bool
+    {
+        if ($this->hasActivitiesOfSource($source)) {
+            return true;
+        }
+
+        foreach ($this->nonConsolidatedPropertiesOf() as $nonConsolidatedProperty) {
+            if ($nonConsolidatedProperty->source() === $source) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /** @return list<CompanyCarbonFootprintNonConsolidatedProperty> */
     private function nonConsolidatedPropertiesOf(): array
     {
@@ -471,6 +498,90 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
         } elseif ($this->nonConsolidatedProperties instanceof Collection) {
             $this->nonConsolidatedProperties->add($nonConsolidatedProperty);
         }
+    }
+
+    /**
+     * @param list<MaterialityDecisionInput> $decisions
+     * @param array<string, string>          $omitCommentsBySource
+     */
+    public function applyMaterialityDecisions(array $decisions, array $omitCommentsBySource): void
+    {
+        if ($this->isCompleted()) {
+            return;
+        }
+
+        $previousRecommendedExclusions = $this->recommendedExclusionsBySource();
+        $revertedSources = $this->overriddenSourcesChangingVerdict($decisions);
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintMaterialityDecisionsApplied(
+                companyCarbonFootprintId: $this->id,
+                decisions: $this->materialityDecisionEntries($decisions),
+            ),
+        );
+
+        foreach ($revertedSources as $source) {
+            $this->recordApplyAndPublish(
+                new CompanyCarbonFootprintMaterialityOverrideReverted(
+                    companyCarbonFootprintId: $this->id,
+                    source: $source,
+                ),
+            );
+        }
+
+        $this->propagateMaterialityDecisions($previousRecommendedExclusions, $omitCommentsBySource);
+    }
+
+    public function clearMaterialityDecisions(): void
+    {
+        if ($this->isCompleted() || [] === $this->materialityDecisions()) {
+            return;
+        }
+
+        $this->includeRecommendedExclusions();
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintMaterialityDecisionsCleared(
+                companyCarbonFootprintId: $this->id,
+            ),
+        );
+    }
+
+    public function overrideMaterialityDecision(Source $source, UserId $userId, string $justification): void
+    {
+        $this->ensureIsEditable();
+
+        $decision = $this->materialityDecisionFor($source);
+
+        if (null === $decision || ($decision->isOverridden() && $decision->overrideJustification() === $justification)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintMaterialityOverridden(
+                companyCarbonFootprintId: $this->id,
+                source: $source,
+                verdict: $decision->verdict(),
+                userId: $userId,
+                justification: $justification,
+            ),
+        );
+    }
+
+    public function revertMaterialityOverride(Source $source): void
+    {
+        $this->ensureIsEditable();
+
+        if (true !== $this->materialityDecisionFor($source)?->isOverridden()) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new CompanyCarbonFootprintMaterialityOverrideReverted(
+                companyCarbonFootprintId: $this->id,
+                source: $source,
+            ),
+        );
     }
 
     public function markAsPrecalculated(): void
@@ -745,6 +856,74 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
     {
         $this->removed = true;
         $this->removedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintMaterialityDecisionsApplied(CompanyCarbonFootprintMaterialityDecisionsApplied $event): void
+    {
+        $topicIds = [];
+
+        foreach ($event->decisions() as $entry) {
+            $input = MaterialityDecisionInput::fromPrimitives($entry);
+            $source = null !== $entry['source'] ? Source::from($entry['source']) : null;
+            $topicIds[] = $input->topicId;
+
+            $existing = $this->materialityDecisionOfTopic($input->topicId);
+
+            if ($existing instanceof CompanyCarbonFootprintMaterialityDecision) {
+                $existing->recommend($input->topicNumber, $source, $input->scorePercent, $input->thresholdPercent, $input->forcedByHighMagnitude, $input->verdict, $event->occurredOn());
+
+                continue;
+            }
+
+            $this->attachMaterialityDecision(new CompanyCarbonFootprintMaterialityDecision(
+                id: CompanyCarbonFootprintMaterialityDecisionId::generate(),
+                companyCarbonFootprint: $this,
+                topicId: $input->topicId,
+                topicNumber: $input->topicNumber,
+                source: $source,
+                scorePercent: $input->scorePercent,
+                thresholdPercent: $input->thresholdPercent,
+                forcedByHighMagnitude: $input->forcedByHighMagnitude,
+                verdict: $input->verdict,
+                recommendedAt: $event->occurredOn(),
+            ));
+        }
+
+        foreach ($this->materialityDecisions() as $decision) {
+            if (!in_array($decision->topicId(), $topicIds, true)) {
+                $this->detachMaterialityDecision($decision->topicId());
+            }
+        }
+
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintMaterialityDecisionsCleared(CompanyCarbonFootprintMaterialityDecisionsCleared $event): void
+    {
+        $this->detachAllMaterialityDecisions();
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintMaterialityOverridden(CompanyCarbonFootprintMaterialityOverridden $event): void
+    {
+        $decision = $this->materialityDecisionFor($event->source());
+
+        if ($decision instanceof CompanyCarbonFootprintMaterialityDecision) {
+            $decision->override($event->userId(), $event->justification(), $event->occurredOn());
+        }
+
+        $this->updatedAt = $event->occurredOn();
+    }
+
+    public function applyCompanyCarbonFootprintMaterialityOverrideReverted(CompanyCarbonFootprintMaterialityOverrideReverted $event): void
+    {
+        $decision = $this->materialityDecisionFor($event->source());
+
+        if ($decision instanceof CompanyCarbonFootprintMaterialityDecision) {
+            $decision->revertOverride();
+        }
+
+        $this->updatedAt = $event->occurredOn();
     }
 
     public function __toString(): string

@@ -1,6 +1,11 @@
 {% set readOnly = readOnly | default(false) %}
 {% set unassignedLabel = unassignedLabel | default(null) %}
 {% set precalculated = precalculated | default(false) %}
+{% set materialityDecisions = materialityDecisions | default({}) %}
+
+{% if pendingMaterialityReview | default(false) %}
+    <twig:Alert:Alert type="warning">{{ 'El análisis de materialidad ha cambiado: hay categorías cuyo veredicto no coincide con lo aplicado. Revisa las exclusiones y guarda el paso.' | trans }}</twig:Alert:Alert>
+{% endif %}
 
 <twig:CarbonFootprint:StageExclusion
     stage="scope_3"
@@ -17,6 +22,7 @@
                 :exclusion="exclusions[source] ?? null"
                 :reasons="exclusionReasons"
                 :readOnly="readOnly"
+                :materiality="materialityDecisions[source] ?? null"
             >
                 {% if source == 'fuel_and_energy_related' %}
                     {% if precalculated %}

@@ -18,6 +18,7 @@ use App\CarbonFootprint\Application\Activity\Register\RegisterMobilityActivitySe
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityRequest;
 use App\CarbonFootprint\Application\Activity\Register\RegisterWasteActivityService;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
+use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialityOmitCommentGenerator;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
@@ -42,6 +43,8 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityReference;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInput;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportId;
@@ -195,6 +198,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\Waste\WasteMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Model\Consent\ConsentProofMother;
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -202,6 +206,7 @@ use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class CarbonFootprintContext implements Context
 {
@@ -3688,6 +3693,142 @@ final readonly class CarbonFootprintContext implements Context
 
         Assert::assertCount(1, $actions);
         Assert::assertCount(0, $actions[0]->effects());
+    }
+
+    #[Given('materiality decisions for :subjectType carbon footprint :id:')]
+    public function materialityDecisionsForCarbonFootprint(string $subjectType, string $id, TableNode $table): void
+    {
+        $decisions = [];
+
+        foreach ($table->getColumnsHash() as $row) {
+            $topicNumber = '' === $row['topicNumber'] || '---' === $row['topicNumber'] ? null : (int) $row['topicNumber'];
+
+            $decisions[] = new MaterialityDecisionInput(
+                topicId: $row['topicId'] ?? sprintf('topic-%s', $topicNumber ?? 'custom'),
+                topicNumber: $topicNumber,
+                scorePercent: (float) str_replace(',', '.', $row['score']),
+                thresholdPercent: (int) $row['threshold'],
+                forcedByHighMagnitude: 'yes' === $row['forced'],
+                verdict: MaterialityVerdict::from($row['verdict']),
+            );
+        }
+
+        $carbonFootprint = $this->organizationalCarbonFootprint($subjectType, $id);
+        $translator = $this->client->getContainer()->get('translator');
+        Assert::assertInstanceOf(TranslatorInterface::class, $translator);
+        $comments = (new MaterialityOmitCommentGenerator($translator))->forDecisions($carbonFootprint, $decisions);
+        $carbonFootprint->applyMaterialityDecisions($decisions, $comments);
+
+        match ($subjectType) {
+            'property' => $this->getPropertyCarbonFootprintRepository()->add($this->propertyCarbonFootprint($id)),
+            default => $this->getCompanyCarbonFootprintRepository()->add($this->companyCarbonFootprint($id)),
+        };
+    }
+
+    #[Given(':subjectType carbon footprint :id has a purchase service activity :itemId in scope 3 for source :source')]
+    public function carbonFootprintHasAPurchaseServiceActivityInScope3ForSource(string $subjectType, string $id, string $itemId, string $source): void
+    {
+        $carbonFootprint = $this->findCarbonFootprint($subjectType, $id);
+        $accountId = $carbonFootprint->accountId();
+        Assert::assertNotNull($accountId);
+
+        $activity = PurchaseServiceActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId,
+            purchaseServiceId: new PurchaseServiceId($itemId),
+            emissionFactor: new EmissionFactor('0.5', '0.5', '0', '0', $carbonFootprint->calculationYear(), EmissionFactorGroupMother::default()->id(), Unit::Euro, 'EXIOBASE'),
+            emissions: new Emissions('500', '500', '0', '0'),
+            quantity: new Quantity(1000.0, Unit::Euro),
+        );
+        $this->getActivityRepository()->save($activity);
+
+        $carbonFootprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope3, Source::from($source)));
+
+        match ($subjectType) {
+            'property' => $this->getPropertyCarbonFootprintRepository()->add($this->propertyCarbonFootprint($id)),
+            default => $this->getCompanyCarbonFootprintRepository()->add($this->companyCarbonFootprint($id)),
+        };
+    }
+
+    #[Given('company carbon footprint :id has a non consolidated property :propertyId of source :source')]
+    public function companyCarbonFootprintHasANonConsolidatedPropertyOfSource(string $id, string $propertyId, string $source): void
+    {
+        $companyCarbonFootprint = $this->companyCarbonFootprint($id);
+        $companyCarbonFootprint->recordNonConsolidatedProperty(new PropertyId($propertyId), Source::from($source), null, null, new Emissions('100', '100', '0', '0'), null);
+
+        $this->getCompanyCarbonFootprintRepository()->add($companyCarbonFootprint);
+    }
+
+    #[Then('company carbon footprint :id should have :count non consolidated properties')]
+    public function companyCarbonFootprintShouldHaveNonConsolidatedProperties(string $id, int $count): void
+    {
+        Assert::assertCount($count, $this->companyCarbonFootprint($id)->nonConsolidatedPropertyLines());
+    }
+
+    #[When('I submit the scope 3 step form as it is')]
+    public function iSubmitTheScope3StepFormAsItIs(): void
+    {
+        $this->client->submit($this->client->getCrawler()->filter('form')->form());
+    }
+
+    #[When('I submit the scope 3 step form including source :source with materiality justification :text')]
+    public function iSubmitTheScope3StepFormIncludingSourceWithMaterialityJustification(string $source, string $text): void
+    {
+        $form = $this->client->getCrawler()->filter('form')->form();
+
+        $excludedField = $form['exclusions[' . $source . '][excluded]'];
+        Assert::assertInstanceOf(ChoiceFormField::class, $excludedField);
+        $excludedField->untick();
+
+        $form['materialityOverrides[' . $source . '][justification]'] = $text;
+
+        $this->client->submit($form);
+    }
+
+    #[When('I submit the scope 3 step form excluding source :source with reason :reason and materiality justification :text')]
+    public function iSubmitTheScope3StepFormExcludingSourceWithMaterialityJustification(string $source, string $reason, string $text): void
+    {
+        $form = $this->client->getCrawler()->filter('form')->form();
+
+        $excludedField = $form['exclusions[' . $source . '][excluded]'];
+        Assert::assertInstanceOf(ChoiceFormField::class, $excludedField);
+        $excludedField->tick();
+
+        $form['exclusions[' . $source . '][reason]'] = $reason;
+        $form['materialityOverrides[' . $source . '][justification]'] = $text;
+
+        $this->client->submit($form);
+    }
+
+    #[Then(':subjectType carbon footprint :id should have source :source excluded in scope :scope with reason :reason')]
+    public function carbonFootprintShouldHaveSourceExcludedInScopeWithReason(string $subjectType, string $id, string $source, string $scope, string $reason): void
+    {
+        $exclusion = $this->organizationalCarbonFootprint($subjectType, $id)->exclusionFor(Scope::from($scope), Source::from($source));
+
+        Assert::assertNotNull($exclusion);
+        Assert::assertSame(ExclusionReason::from($reason), $exclusion->reason());
+    }
+
+    #[Then(':subjectType carbon footprint :id should not have source :source excluded in scope :scope')]
+    public function carbonFootprintShouldNotHaveSourceExcludedInScope(string $subjectType, string $id, string $source, string $scope): void
+    {
+        Assert::assertFalse($this->organizationalCarbonFootprint($subjectType, $id)->isSourceExcluded(Scope::from($scope), Source::from($source)));
+    }
+
+    #[Then(':subjectType carbon footprint :id should have a materiality override on source :source')]
+    public function carbonFootprintShouldHaveAMaterialityOverrideOnSource(string $subjectType, string $id, string $source): void
+    {
+        $decision = $this->organizationalCarbonFootprint($subjectType, $id)->materialityDecisionFor(Source::from($source));
+
+        Assert::assertNotNull($decision);
+        Assert::assertTrue($decision->isOverridden());
+        Assert::assertNotNull($decision->overriddenByUserId());
+    }
+
+    #[Then(':subjectType carbon footprint :id should have :count materiality decisions')]
+    public function carbonFootprintShouldHaveMaterialityDecisions(string $subjectType, string $id, int $count): void
+    {
+        Assert::assertCount($count, $this->organizationalCarbonFootprint($subjectType, $id)->materialityDecisions());
     }
 
     private function propertyCarbonFootprint(string $id): PropertyCarbonFootprint

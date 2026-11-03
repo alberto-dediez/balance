@@ -33,4 +33,23 @@ final class SourceTest extends TestCase
             $this->assertNull($source->ghgProtocolCategory(), $source->value);
         }
     }
+
+    public function testOfGhgProtocolCategoryIsTheInverseOfGhgProtocolCategory(): void
+    {
+        foreach (Source::cases() as $source) {
+            $category = $source->ghgProtocolCategory();
+
+            if (null === $category) {
+                continue;
+            }
+
+            $this->assertSame($source, Source::ofGhgProtocolCategory($category));
+        }
+    }
+
+    public function testOfGhgProtocolCategoryReturnsNullWithoutSource(): void
+    {
+        $this->assertNull(Source::ofGhgProtocolCategory(8));
+        $this->assertNull(Source::ofGhgProtocolCategory(16));
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Materiality\Domain\Model\MaterialityAssessment;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentTopic;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentTopicId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
@@ -46,6 +47,41 @@ final class MaterialityAssessmentTopicTest extends TestCase
 
         $this->assertNull($topic->points());
         $this->assertNull($topic->scorePercent());
+    }
+
+    public function testScoreWithVerdict(): void
+    {
+        $topic = $this->topic();
+
+        $topic->score(15, 6, 18, 3, 50, true, MaterialityVerdict::Calculate);
+
+        $this->assertTrue($topic->hasVerdict());
+        $this->assertSame(MaterialityVerdict::Calculate, $topic->verdict());
+        $this->assertSame(50, $topic->thresholdPercent());
+        $this->assertTrue($topic->isForcedByHighMagnitude());
+    }
+
+    public function testScoreWithoutVerdict(): void
+    {
+        $this->assertFalse($this->scored(15, 6, 18)->hasVerdict());
+    }
+
+    public function testClearScoreClearsTheVerdict(): void
+    {
+        $topic = $this->topic();
+        $topic->score(15, 6, 18, 3, 50, true, MaterialityVerdict::Calculate);
+
+        $topic->clearScore();
+
+        $this->assertFalse($topic->hasVerdict());
+        $this->assertNull($topic->thresholdPercent());
+        $this->assertFalse($topic->isForcedByHighMagnitude());
+    }
+
+    public function testScorePercentOf(): void
+    {
+        $this->assertSame(75.0, MaterialityAssessmentTopic::scorePercentOf(15, 6, 18));
+        $this->assertNull(MaterialityAssessmentTopic::scorePercentOf(0, 0, 0));
     }
 
     private function scored(int $points, int $minPoints, int $maxPoints): MaterialityAssessmentTopic

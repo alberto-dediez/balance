@@ -14,6 +14,8 @@ final class MaterialityAssessmentRemoved extends DomainEvent
 
     public function __construct(
         private MaterialityAssessmentId $materialityAssessmentId,
+        private ?MaterialityAssessmentSubjectType $subjectType = null,
+        private ?string $carbonFootprintId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -25,6 +27,16 @@ final class MaterialityAssessmentRemoved extends DomainEvent
         return $this->materialityAssessmentId;
     }
 
+    public function subjectType(): ?MaterialityAssessmentSubjectType
+    {
+        return $this->subjectType;
+    }
+
+    public function carbonFootprintId(): ?string
+    {
+        return $this->carbonFootprintId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->materialityAssessmentId;
@@ -34,6 +46,8 @@ final class MaterialityAssessmentRemoved extends DomainEvent
     {
         return [
             'materialityAssessmentId' => (string) $this->materialityAssessmentId,
+            'subjectType' => $this->subjectType?->value,
+            'carbonFootprintId' => $this->carbonFootprintId,
         ];
     }
 
@@ -44,6 +58,8 @@ final class MaterialityAssessmentRemoved extends DomainEvent
     ): static {
         return new self(
             materialityAssessmentId: new MaterialityAssessmentId($payload['materialityAssessmentId']),
+            subjectType: MaterialityAssessmentSubjectType::tryFrom($payload['subjectType'] ?? ''),
+            carbonFootprintId: $payload['carbonFootprintId'] ?? null,
             id: $id,
             occurredOn: $occurredOn,
         );

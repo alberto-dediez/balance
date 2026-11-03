@@ -74,6 +74,7 @@ class Scope3Controller extends AbstractController
                         $answerMapper->map($request->request->all(), Scope::Scope3->sectionsFor($propertyCarbonFootprint->isPrecalculated())),
                         $exclusionMapper->map($request, Scope::Scope3),
                         $exclusionMapper->mapStage($request, Scope::Scope3),
+                        $exclusionMapper->mapOverrideJustifications($request),
                     ),
                     $loggedUser(),
                 );
@@ -112,6 +113,8 @@ class Scope3Controller extends AbstractController
                 'derivedLines' => $response->derivedLines,
                 'providerContributions' => $response->providerContributions,
                 'employeeContributions' => $response->employeeContributions,
+                'materialityDecisions' => $response->materialityDecisions,
+                'pendingMaterialityReview' => $response->pendingMaterialityReview,
                 'currencies' => Unit::currencies(),
                 'upstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->upstreamSources()),
                 'downstreamSources' => array_map(

@@ -81,6 +81,7 @@ class Scope3Controller extends AbstractController
                         $exclusionMapper->map($request, Scope::Scope3),
                         $exclusionMapper->mapStage($request, Scope::Scope3),
                         $nonConsolidatedMapper->map($request),
+                        $exclusionMapper->mapOverrideJustifications($request),
                     ),
                     $loggedUser(),
                 );
@@ -127,6 +128,8 @@ class Scope3Controller extends AbstractController
                 'derivedLines' => $response->derivedLines,
                 'providerContributions' => $response->providerContributions,
                 'employeeContributions' => $response->employeeContributions,
+                'materialityDecisions' => $response->materialityDecisions,
+                'pendingMaterialityReview' => $response->pendingMaterialityReview,
                 'nonConsolidated' => NonConsolidatedPropertiesView::build($response->nonConsolidatedProperties),
                 'currencies' => Unit::currencies(),
                 'upstreamSources' => array_map(static fn(Source $source) => $source->value, Scope::Scope3->upstreamSources()),

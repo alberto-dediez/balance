@@ -18,6 +18,7 @@ use App\CarbonFootprint\Application\OrganizationalEmployeeContribution\Organizat
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\List\ListOrganizationalProviderContributionsRequest;
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\List\ListOrganizationalProviderContributionsService;
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\OrganizationalProviderContributionSummary;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecision;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
@@ -74,6 +75,8 @@ final class GetCompanyCarbonFootprintScopeService
             nonConsolidatedProperties: Scope::Scope3 === $request->scope ? $this->nonConsolidatedProperties($companyCarbonFootprint, $user) : [],
             providerContributions: $this->providerContributions($request->scope, (string) $request->companyCarbonFootprintId, $user),
             employeeContributions: $this->employeeContributions($request->scope, (string) $request->companyCarbonFootprintId, $user),
+            materialityDecisions: Scope::Scope3 === $request->scope ? $this->materialityDecisions($companyCarbonFootprint) : [],
+            pendingMaterialityReview: Scope::Scope3 === $request->scope && $companyCarbonFootprint->hasPendingMaterialityReview(),
         );
     }
 
@@ -167,5 +170,21 @@ final class GetCompanyCarbonFootprintScopeService
             new ListOrganizationalEmployeeContributionsRequest(CarbonFootprintReportSubjectType::Company, $carbonFootprintId),
             $user,
         );
+    }
+
+    /** @return array<string, MaterialityDecision> */
+    private function materialityDecisions(CompanyCarbonFootprint $companyCarbonFootprint): array
+    {
+        $decisions = [];
+
+        foreach ($companyCarbonFootprint->materialityDecisions() as $decision) {
+            $source = $decision->source();
+
+            if (null !== $source) {
+                $decisions[$source->value] = $decision;
+            }
+        }
+
+        return $decisions;
     }
 }

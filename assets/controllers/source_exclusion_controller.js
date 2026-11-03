@@ -1,7 +1,9 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['checkbox', 'details', 'sections'];
+    static targets = ['checkbox', 'details', 'sections', 'override'];
+
+    static values = { recommendedExcluded: Boolean, hasMateriality: Boolean };
 
     connect() {
         this.toggle();
@@ -16,6 +18,10 @@ export default class extends Controller {
 
         if (this.hasDetailsTarget) {
             this.detailsTarget.classList.toggle('d-none', !excluded);
+        }
+
+        if (this.hasOverrideTarget) {
+            this.overrideTarget.classList.toggle('d-none', !this.hasMaterialityValue || excluded === this.recommendedExcludedValue);
         }
 
         if (this.hasSectionsTarget) {

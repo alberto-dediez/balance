@@ -25,6 +25,9 @@
         <field name="minPoints" type="integer" column="min_points" nullable="true"/>
         <field name="maxPoints" type="integer" column="max_points" nullable="true"/>
         <field name="highestMagnitudeLevel" type="smallint" column="highest_magnitude_level" nullable="true"/>
+        <field name="thresholdPercent" type="smallint" column="threshold_percent" nullable="true"/>
+        <field name="forcedByHighMagnitude" type="boolean" column="forced_by_high_magnitude" nullable="true"/>
+        <field name="verdict" type="string" length="16" column="verdict" enum-type="App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict" nullable="true"/>
 
         <many-to-one field="assessment" target-entity="App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessment" inversed-by="topics">
             <join-column name="materiality_assessment_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>

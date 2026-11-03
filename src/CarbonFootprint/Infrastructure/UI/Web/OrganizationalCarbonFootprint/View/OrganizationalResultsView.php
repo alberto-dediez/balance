@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\UI\Web\OrganizationalCarbonFootprint\View;
 
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecision;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SourceExclusion;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\Property\Domain\Model\Property\Property;
+use App\Security\Domain\Model\User\UserId;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrganizationalResultsView
@@ -23,6 +25,7 @@ final class OrganizationalResultsView
      * @param list<SourceExclusion>                   $exclusions
      * @param array<string, Emissions>                $emissionsByPropertyId
      * @param list<Property>                          $properties
+     * @param list<MaterialityDecision>               $materialityDecisions
      *
      * @return array<string, mixed>
      */
@@ -34,6 +37,8 @@ final class OrganizationalResultsView
         array $emissionsByPropertyId = [],
         array $properties = [],
         ?StageExclusionAnswer $scope3Exclusion = null,
+        array $materialityDecisions = [],
+        bool $pendingMaterialityReview = false,
     ): array {
         return [
             'sourceChart' => $this->sourceChart($emissionsBySource),
@@ -43,7 +48,8 @@ final class OrganizationalResultsView
                 Scope::cases(),
             ),
             'scopeSourceSeries' => $this->scopeSourceSeries($emissionsBySource, $emissionsByScopeAndSource),
-            'exclusions' => $this->exclusions($exclusions, $scope3Exclusion),
+            'exclusions' => $this->exclusions($exclusions, $scope3Exclusion, $materialityDecisions),
+            'pendingMaterialityReview' => $pendingMaterialityReview,
             'propertyChart' => $this->propertyChart($emissionsByPropertyId, $properties),
         ];
     }
@@ -122,11 +128,12 @@ final class OrganizationalResultsView
     }
 
     /**
-     * @param list<SourceExclusion> $exclusions
+     * @param list<SourceExclusion>     $exclusions
+     * @param list<MaterialityDecision> $materialityDecisions
      *
-     * @return list<array{scope: string, source: string, reason: string, comment: ?string}>
+     * @return list<array{scope: string, source: string, reason: string, comment: ?string, origin: string, overriddenBy: ?UserId, overriddenAt: ?\DateTimeImmutable}>
      */
-    private function exclusions(array $exclusions, ?StageExclusionAnswer $scope3Exclusion): array
+    private function exclusions(array $exclusions, ?StageExclusionAnswer $scope3Exclusion, array $materialityDecisions): array
     {
         $rows = [];
 
@@ -136,19 +143,51 @@ final class OrganizationalResultsView
                 'source' => $this->translator->trans('Alcance completo'),
                 'reason' => $this->translator->trans($scope3Exclusion->reason->value, [], 'exclusionReason'),
                 'comment' => $scope3Exclusion->comment,
+                'origin' => $this->translator->trans('Manual'),
+                'overriddenBy' => null,
+                'overriddenAt' => null,
             ];
         }
 
+        $decisionsBySource = [];
+        foreach ($materialityDecisions as $decision) {
+            $source = $decision->source();
+
+            if (null !== $source) {
+                $decisionsBySource[$source->value] = $decision;
+            }
+        }
+
         foreach ($exclusions as $exclusion) {
+            $decision = $exclusion->stage()->key() === Scope::Scope3->key() ? ($decisionsBySource[$exclusion->source()->value] ?? null) : null;
+
             $rows[] = [
                 'scope' => $this->translator->trans($exclusion->stage()->key(), [], 'scope'),
                 'source' => $this->translator->trans($exclusion->source()->value, [], 'source'),
                 'reason' => $this->translator->trans($exclusion->reason()->value, [], 'exclusionReason'),
                 'comment' => $exclusion->comment(),
+                'origin' => $this->originOf($decision),
+                'overriddenBy' => true === $decision?->isOverridden() ? $decision->overriddenByUserId() : null,
+                'overriddenAt' => true === $decision?->isOverridden() ? $decision->overriddenAt() : null,
             ];
         }
 
         return $rows;
+    }
+
+    private function originOf(?MaterialityDecision $decision): string
+    {
+        if (null === $decision) {
+            return $this->translator->trans('Manual');
+        }
+
+        if ($decision->isOverridden()) {
+            return $this->translator->trans('Anulación de la recomendación');
+        }
+
+        return $decision->recommendsExclusion()
+            ? $this->translator->trans('Recomendación de materialidad')
+            : $this->translator->trans('Manual');
     }
 
     /**

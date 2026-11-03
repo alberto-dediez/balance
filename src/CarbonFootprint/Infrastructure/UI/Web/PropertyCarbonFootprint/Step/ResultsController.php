@@ -84,6 +84,8 @@ class ResultsController extends AbstractController
                 $results->emissionsByScopeAndSource,
                 $results->exclusions,
                 scope3Exclusion: $results->scope3Exclusion,
+                materialityDecisions: $propertyCarbonFootprint->materialityDecisions(),
+                pendingMaterialityReview: $propertyCarbonFootprint->hasPendingMaterialityReview(),
             ) + [
                 'propertyCarbonFootprint' => $propertyCarbonFootprint,
                 'propertyCarbonFootprintId' => $propertyCarbonFootprintId,

@@ -29,6 +29,7 @@ use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorFilter;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorRepository;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorTranslation;
+use App\Materiality\Domain\Model\MaterialitySettings\MaterialitySettingsRepository;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopic;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicDirection;
@@ -45,6 +46,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Acceptance\Shared\CsrfTokenInSessionTrait;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialitySector\MaterialitySectorMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialitySettings\MaterialitySettingsMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
@@ -84,6 +86,33 @@ final class MaterialityContext implements Context
     private function getAssessmentRepository(): MaterialityAssessmentRepository
     {
         return $this->client->getContainer()->get(MaterialityAssessmentRepository::class);
+    }
+
+    private function getSettingsRepository(): MaterialitySettingsRepository
+    {
+        return $this->client->getContainer()->get(MaterialitySettingsRepository::class);
+    }
+
+    #[Given('materiality settings with threshold :percent exist')]
+    public function materialitySettingsWithThresholdExist(int $percent): void
+    {
+        $this->getSettingsRepository()->add(MaterialitySettingsMother::withThreshold($percent));
+    }
+
+    #[Then('materiality settings should have threshold :percent and high magnitude rule :enabled')]
+    public function materialitySettingsShouldHaveThresholdAndHighMagnitudeRule(int $percent, string $enabled): void
+    {
+        $materialitySettings = $this->getSettingsRepository()->findCurrent();
+
+        Assert::assertNotNull($materialitySettings);
+        Assert::assertSame($percent, $materialitySettings->relevanceThresholdPercent());
+        Assert::assertSame('yes' === $enabled, $materialitySettings->highMagnitudeForcesInclusion());
+    }
+
+    #[Then('materiality settings should not exist')]
+    public function materialitySettingsShouldNotExist(): void
+    {
+        Assert::assertNull($this->getSettingsRepository()->findCurrent());
     }
 
     #[Given('materiality topic :name with id :id exists')]

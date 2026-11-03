@@ -16,6 +16,7 @@ class AnswerPropertyCarbonFootprintScopeRequest implements Command
     /**
      * @param list<SectionAnswer>   $sectionAnswers
      * @param list<ExclusionAnswer> $exclusions
+     * @param array<string, string> $materialityOverrideJustifications
      */
     public function __construct(
         public PropertyCarbonFootprintId $propertyCarbonFootprintId,
@@ -23,5 +24,6 @@ class AnswerPropertyCarbonFootprintScopeRequest implements Command
         public array $sectionAnswers = [],
         public array $exclusions = [],
         public ?StageExclusionAnswer $stageExclusion = null,
+        public array $materialityOverrideJustifications = [],
     ) {}
 }

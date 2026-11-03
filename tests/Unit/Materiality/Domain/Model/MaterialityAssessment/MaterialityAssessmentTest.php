@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Materiality\Domain\Model\MaterialityAssessment;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\Materiality\Domain\Model\MaterialityAssessment\InvalidMaterialityAnswerValueException;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessment;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentAlreadyCompletedException;
@@ -19,6 +20,7 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionId;
+use App\Materiality\Domain\Model\MaterialitySettings\MaterialityDecisionRule;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Security\Domain\Model\User\UserId;
@@ -143,7 +145,7 @@ final class MaterialityAssessmentTest extends TestCase
 
         $this->expectException(MaterialityAssessmentIncompleteException::class);
 
-        $assessment->complete(UserId::generate());
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
     }
 
     public function testCompleteScoresEachTopic(): void
@@ -152,7 +154,7 @@ final class MaterialityAssessmentTest extends TestCase
         $this->answerFirstTopic($assessment, [3, 2, 1, 3, 3]);
         $userId = UserId::generate();
 
-        $assessment->complete($userId);
+        $assessment->complete($userId, MaterialityDecisionRule::default());
 
         $topic = $assessment->topics()[0];
         $this->assertTrue($assessment->isCompleted());
@@ -171,7 +173,7 @@ final class MaterialityAssessmentTest extends TestCase
         $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
         $this->answerFirstTopic($assessment, [1, 1, 1, 1, 1]);
 
-        $assessment->complete(UserId::generate());
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
 
         $this->assertSame(0.0, $assessment->topics()[0]->scorePercent());
     }
@@ -181,7 +183,7 @@ final class MaterialityAssessmentTest extends TestCase
         $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
         $this->answerFirstTopic($assessment, [3, 3, 3, 3, 3]);
 
-        $assessment->complete(UserId::generate());
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
 
         $this->assertSame(100.0, $assessment->topics()[0]->scorePercent());
     }
@@ -193,7 +195,7 @@ final class MaterialityAssessmentTest extends TestCase
             MaterialityQuestionMother::forTopic(MaterialityTopicId::generate()),
         ]);
 
-        $assessment->complete(UserId::generate());
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
 
         $this->assertSame(0, $assessment->topics()[0]->points());
         $this->assertNull($assessment->topics()[0]->scorePercent());
@@ -206,10 +208,113 @@ final class MaterialityAssessmentTest extends TestCase
             MaterialityQuestionMother::from(text: 'Risk', id: (string) MaterialityQuestionId::generate(), criterion: MaterialityCriterion::Risk),
         ]);
 
-        $assessment->complete(UserId::generate());
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
 
         $this->assertNull($assessment->topics()[0]->highestMagnitudeLevel());
         $this->assertSame(100.0, $assessment->topics()[0]->scorePercent());
+    }
+
+    public function testCompleteOmitsATopicBelowTheThreshold(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
+        $this->answerFirstTopic($assessment, [1, 1, 1, 1, 1]);
+
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
+
+        $topic = $assessment->topics()[0];
+        $this->assertSame(MaterialityVerdict::Omit, $topic->verdict());
+        $this->assertSame(50, $topic->thresholdPercent());
+        $this->assertFalse($topic->isForcedByHighMagnitude());
+        $this->assertCount(1, $assessment->verdicts());
+    }
+
+    public function testCompleteCalculatesATopicOverTheThreshold(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
+        $this->answerFirstTopic($assessment, [2, 3, 3, 3, 3]);
+
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
+
+        $topic = $assessment->topics()[0];
+        $this->assertSame(MaterialityVerdict::Calculate, $topic->verdict());
+        $this->assertFalse($topic->isForcedByHighMagnitude());
+    }
+
+    public function testCompleteForcesTheCalculationWithAHighMagnitude(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
+        $this->answerFirstTopic($assessment, [3, 1, 1, 1, 1]);
+
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
+
+        $topic = $assessment->topics()[0];
+        $this->assertSame(33.33, $topic->scorePercent());
+        $this->assertSame(MaterialityVerdict::Calculate, $topic->verdict());
+        $this->assertTrue($topic->isForcedByHighMagnitude());
+    }
+
+    public function testCompleteDoesNotForceWhenTheHighMagnitudeRuleIsDisabled(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
+        $this->answerFirstTopic($assessment, [3, 1, 1, 1, 1]);
+
+        $assessment->complete(UserId::generate(), new MaterialityDecisionRule(50, false));
+
+        $topic = $assessment->topics()[0];
+        $this->assertSame(MaterialityVerdict::Omit, $topic->verdict());
+        $this->assertFalse($topic->isForcedByHighMagnitude());
+    }
+
+    public function testATopicWithoutQuestionsHasNoVerdict(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(topics: [MaterialityTopicMother::random()], questions: [
+            MaterialityQuestionMother::forTopic(MaterialityTopicId::generate()),
+        ]);
+
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
+
+        $this->assertNull($assessment->topics()[0]->verdict());
+        $this->assertNull($assessment->topics()[0]->thresholdPercent());
+        $this->assertSame([], $assessment->verdicts());
+    }
+
+    public function testCompletedEventCarriesTheVerdicts(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
+        $this->answerFirstTopic($assessment, [1, 1, 1, 1, 1]);
+
+        $assessment->complete(UserId::generate(), new MaterialityDecisionRule(40, true));
+
+        $event = $this->spySubscriber->lastEvent();
+        $this->assertInstanceOf(MaterialityAssessmentCompleted::class, $event);
+        $score = $event->scores()[0];
+        $this->assertSame(0.0, $score['scorePercent']);
+        $this->assertSame(40, $score['thresholdPercent']);
+        $this->assertFalse($score['forcedByHighMagnitude']);
+        $this->assertSame('omit', $score['verdict']);
+
+        $rebuilt = MaterialityAssessmentCompleted::rebuildFromPayload($event->id(), $event->occurredOn(), $event->payload());
+        $this->assertSame($event->scores(), $rebuilt->scores());
+    }
+
+    public function testCompletedEventToleratesPayloadsWithoutVerdicts(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());
+        $this->answerFirstTopic($assessment, [1, 1, 1, 1, 1]);
+        $assessment->complete(UserId::generate(), MaterialityDecisionRule::default());
+
+        $event = $this->spySubscriber->lastEvent();
+        $this->assertInstanceOf(MaterialityAssessmentCompleted::class, $event);
+        $payload = $event->payload();
+        $payload['scores'] = array_map(
+            static fn(array $score) => array_diff_key($score, array_flip(['scorePercent', 'thresholdPercent', 'forcedByHighMagnitude', 'verdict'])),
+            $payload['scores'],
+        );
+
+        $rebuilt = MaterialityAssessmentCompleted::rebuildFromPayload($event->id(), $event->occurredOn(), $payload);
+
+        $this->assertNull($rebuilt->scores()[0]['verdict']);
+        $this->assertSame(0.0, $rebuilt->scores()[0]['scorePercent']);
     }
 
     public function testReopenClearsTheScoresAndReturnsToDraft(): void
@@ -227,6 +332,9 @@ final class MaterialityAssessmentTest extends TestCase
         $this->assertNull($topic->maxPoints());
         $this->assertNull($topic->highestMagnitudeLevel());
         $this->assertNull($topic->scorePercent());
+        $this->assertNull($topic->verdict());
+        $this->assertNull($topic->thresholdPercent());
+        $this->assertFalse($topic->isForcedByHighMagnitude());
         $this->assertTrue($assessment->isFullyAnswered());
         $this->assertInstanceOf(MaterialityAssessmentReopened::class, $this->spySubscriber->lastEvent());
     }

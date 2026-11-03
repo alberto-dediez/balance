@@ -12,6 +12,7 @@ use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityQuestionSnapsh
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityTopicSnapshot;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
+use App\Materiality\Domain\Model\MaterialitySettings\MaterialityDecisionRule;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopic;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -105,9 +106,10 @@ class MaterialityAssessmentMother
         ?array $topics = null,
         ?array $questions = null,
         int $value = 3,
+        ?MaterialityDecisionRule $rule = null,
     ): MaterialityAssessment {
         $materialityAssessment = self::answered($id, $subjectType, $carbonFootprintId, $accountId, $year, $sectorId, $topics, $questions, $value);
-        $materialityAssessment->complete(UserId::generate());
+        $materialityAssessment->complete(UserId::generate(), $rule ?? MaterialityDecisionRule::default());
 
         return $materialityAssessment;
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\PropertyCarbonFootprint\AnswerScope;
 
+use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialityOverrideReconciler;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\PropertyCarbonFootprint\PropertyCarbonFootprintAuthorizer;
@@ -24,6 +25,7 @@ class AnswerPropertyCarbonFootprintScopeService implements CommandHandler
         private PropertyCarbonFootprintAuthorizer $authorizer,
         private StageAnswersProcessor $answersProcessor,
         private StageAnswersSynchronizer $answersSynchronizer,
+        private MaterialityOverrideReconciler $overrideReconciler,
     ) {}
 
     public function __invoke(AnswerPropertyCarbonFootprintScopeRequest $request, User $user): void
@@ -40,10 +42,14 @@ class AnswerPropertyCarbonFootprintScopeService implements CommandHandler
 
         $validated = $this->answersProcessor->validate($request->scope, $request->sectionAnswers, $request->exclusions, $request->stageExclusion, $sections);
 
+        $this->overrideReconciler->validate($propertyCarbonFootprint, $request->scope, $validated->exclusionsBySource, $validated->stageExclusion, $request->materialityOverrideJustifications);
+
         $this->answersProcessor->applyStageExclusion($propertyCarbonFootprint, $request->scope, $validated->stageExclusion);
 
         if (null === $validated->stageExclusion) {
             $this->answersProcessor->applyExclusions($propertyCarbonFootprint, $request->scope, $validated->exclusionsBySource);
+
+            $this->overrideReconciler->reconcile($propertyCarbonFootprint, $request->scope, $user->id(), $request->materialityOverrideJustifications);
 
             $this->answersSynchronizer->sync($propertyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, $sections);
         }

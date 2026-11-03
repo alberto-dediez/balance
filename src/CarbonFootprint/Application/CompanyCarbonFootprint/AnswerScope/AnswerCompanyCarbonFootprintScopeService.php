@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope;
 
+use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialityOverrideReconciler;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
@@ -30,6 +31,7 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
         private StageAnswersProcessor $answersProcessor,
         private StageAnswersSynchronizer $answersSynchronizer,
         private NonConsolidatedPropertiesSynchronizer $nonConsolidatedPropertiesSynchronizer,
+        private MaterialityOverrideReconciler $overrideReconciler,
     ) {}
 
     public function __invoke(AnswerCompanyCarbonFootprintScopeRequest $request, User $user): void
@@ -70,10 +72,14 @@ class AnswerCompanyCarbonFootprintScopeService implements CommandHandler
             }
         }
 
+        $this->overrideReconciler->validate($companyCarbonFootprint, $request->scope, $validatedExclusions->exclusionsBySource, $validatedExclusions->stageExclusion, $request->materialityOverrideJustifications);
+
         $this->answersProcessor->applyStageExclusion($companyCarbonFootprint, $request->scope, $validatedExclusions->stageExclusion);
 
         if (null === $validatedExclusions->stageExclusion) {
             $this->answersProcessor->applyExclusions($companyCarbonFootprint, $request->scope, $validatedExclusions->exclusionsBySource);
+
+            $this->overrideReconciler->reconcile($companyCarbonFootprint, $request->scope, $user->id(), $request->materialityOverrideJustifications);
 
             $blocks = ['' => null];
             foreach ($companyPropertyIds as $key => $propertyId) {

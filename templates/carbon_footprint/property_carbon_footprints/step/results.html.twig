@@ -76,6 +76,13 @@
                 {% block extra_charts %}{% endblock %}
             </div>
 
+            {% if pendingMaterialityReview %}
+                <twig:Alert:Alert type="warning">
+                    {{ 'Hay categorías del alcance 3 pendientes de revisión tras el último análisis de materialidad.' | trans }}
+                    <a href="{{ path('property_carbon_footprints_scope_3', {propertyCarbonFootprintId: propertyCarbonFootprintId}) }}" class="alert-link">{{ 'Revisar el alcance 3' | trans }}</a>
+                </twig:Alert:Alert>
+            {% endif %}
+
             {% if exclusions is not empty %}
                 <twig:Card title="{{ 'Fuentes de emisión excluidas' | trans }}">
                     <div class="table-responsive">
@@ -86,6 +93,7 @@
                                 <th>{{ 'Fuente' | trans }}</th>
                                 <th>{{ 'Motivo' | trans }}</th>
                                 <th>{{ 'Comentario' | trans }}</th>
+                                <th>{{ 'Origen' | trans }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -95,6 +103,12 @@
                                     <td>{{ exclusion.source }}</td>
                                     <td>{{ exclusion.reason }}</td>
                                     <td>{{ exclusion.comment ?? '-' }}</td>
+                                    <td>
+                                        {{ exclusion.origin }}
+                                        {% if exclusion.overriddenBy %}
+                                            ({{ exclusion.overriddenBy | user_name }}, {{ exclusion.overriddenAt | date('d/m/Y H:i') }})
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>

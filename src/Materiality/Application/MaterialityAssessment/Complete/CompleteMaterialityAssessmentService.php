@@ -6,6 +6,7 @@ namespace App\Materiality\Application\MaterialityAssessment\Complete;
 
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentAuthorizer;
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentFootprints;
+use App\Materiality\Application\MaterialitySettings\DecisionRule\MaterialityDecisionRuleProvider;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentNotFoundException;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -24,6 +25,7 @@ class CompleteMaterialityAssessmentService implements CommandHandler
         private MaterialityAssessmentRepository $materialityAssessmentRepository,
         private MaterialityAssessmentFootprints $footprints,
         private MaterialityAssessmentAuthorizer $authorizer,
+        private MaterialityDecisionRuleProvider $ruleProvider,
     ) {}
 
     public function __invoke(CompleteMaterialityAssessmentRequest $request, User $user): CompleteMaterialityAssessmentResponse
@@ -40,7 +42,7 @@ class CompleteMaterialityAssessmentService implements CommandHandler
 
         $this->footprints->ensureIsEditable($carbonFootprint);
 
-        $materialityAssessment->complete($user->id());
+        $materialityAssessment->complete($user->id(), $this->ruleProvider->rule());
 
         $this->materialityAssessmentRepository->add($materialityAssessment);
 

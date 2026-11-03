@@ -46,6 +46,36 @@ Feature:
         Then the response status should be 200
         Then the current route should be "property_carbon_footprints_scope_3"
 
+    Scenario: Completing the assessment omits the categories below the threshold and pre-excludes their source
+        Given materiality assessment with id "A1" for "property" carbon footprint "999" of account "666" exists
+        Given materiality assessment "A1" has all questions answered with value 1
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/materiality"
+        When I post to the materiality assessment "A1" action "complete"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        Then I see a text "Umbral"
+        Then I see a text "50 %"
+        Then I see a text "Omitir"
+        Then I see a text "Sin puntuación"
+        Then property carbon footprint "999" should have source "upstream_transport" excluded in scope "scope_3" with reason "not_significant"
+
+    Scenario: The relevance threshold of the settings decides the verdict
+        Given materiality settings with threshold 10 exist
+        Given materiality assessment with id "A1" for "property" carbon footprint "999" of account "666" exists
+        Given materiality assessment "A1" has value 1 for question "Q1" in topic "T4"
+        Given materiality assessment "A1" has value 3 for question "Q2" in topic "T4"
+        Given materiality assessment "A1" has value 1 for question "Q3" in topic "T4"
+        Given materiality assessment "A1" has value 1 for question "Q4" in topic "T4"
+        Given materiality assessment "A1" has value 1 for question "Q5" in topic "T4"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/materiality"
+        When I post to the materiality assessment "A1" action "complete"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        Then I see a text "16,67 %"
+        Then I see a text "10 %"
+        Then I see a text "Calcular"
+        Then "property" carbon footprint "999" should not have source "upstream_transport" excluded in scope "scope_3"
+
     Scenario: Reopening the assessment returns it to draft and removes the scores
         Given materiality assessment with id "A1" for "property" carbon footprint "999" of account "666" exists
         Given materiality assessment "A1" is completed

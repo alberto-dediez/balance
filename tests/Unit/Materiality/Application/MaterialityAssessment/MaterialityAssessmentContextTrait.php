@@ -22,11 +22,13 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryP
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentAuthorizer;
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentFootprints;
 use App\Materiality\Application\MaterialityAssessment\MaterialityQuestionnaireBuilder;
+use App\Materiality\Application\MaterialitySettings\DecisionRule\MaterialityDecisionRuleProvider;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessment;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentSubjectType;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialityAssessmentRepository;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialityQuestionRepository;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialitySectorRepository;
+use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialitySettingsRepository;
 use App\Materiality\Infrastructure\Persistence\InMemory\Repository\InMemoryMaterialityTopicRepository;
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -51,6 +53,7 @@ trait MaterialityAssessmentContextTrait
     private InMemoryMaterialityTopicRepository $materialityTopics;
     private InMemoryMaterialityQuestionRepository $materialityQuestions;
     private InMemoryMaterialitySectorRepository $materialitySectors;
+    private InMemoryMaterialitySettingsRepository $materialitySettings;
 
     private function initMaterialityAssessment(): void
     {
@@ -62,6 +65,12 @@ trait MaterialityAssessmentContextTrait
         $this->materialityTopics = MaterialityTopicRepositoryMother::inMemory();
         $this->materialityQuestions = MaterialityQuestionRepositoryMother::inMemory();
         $this->materialitySectors = MaterialitySectorRepositoryMother::inMemory();
+        $this->materialitySettings = new InMemoryMaterialitySettingsRepository();
+    }
+
+    private function ruleProvider(): MaterialityDecisionRuleProvider
+    {
+        return new MaterialityDecisionRuleProvider($this->materialitySettings);
     }
 
     private function ownerOf(string $accountId = 'account-id'): User

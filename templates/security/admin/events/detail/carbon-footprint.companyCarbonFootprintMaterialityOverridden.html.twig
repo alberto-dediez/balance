@@ -1,0 +1,6 @@
+{% trans with {
+    '{source}': event.source.value | trans({}, 'source'),
+    '{verdict}': event.verdict.value | trans({}, 'materialityVerdictType'),
+    '{justification}': event.justification | e,
+    '{user}': element.userId | user_name
+} %}Se ha anulado la recomendación de materialidad ({verdict}) de {source} en la huella de la empresa por el usuario {user}: {justification}{% endtrans %}

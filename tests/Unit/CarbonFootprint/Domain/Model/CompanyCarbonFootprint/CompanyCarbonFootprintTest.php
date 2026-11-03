@@ -16,6 +16,10 @@ use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootpri
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintIntensityDenominatorsDeclared;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMarkedAsPrecalculated;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMaterialityAnswered;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMaterialityDecisionsApplied;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMaterialityDecisionsCleared;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMaterialityOverridden;
+use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMaterialityOverrideReverted;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMitigationPlanStarted;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedProperty;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintNonConsolidatedPropertyRecorded;
@@ -40,6 +44,8 @@ use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\StageNotExclu
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\User\UserId;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInputMother;
 use PHPUnit\Framework\TestCase;
 
 final class CompanyCarbonFootprintTest extends TestCase
@@ -1102,5 +1108,74 @@ final class CompanyCarbonFootprintTest extends TestCase
 
         $events = array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintIntensityDenominatorsDeclared);
         $this->assertCount(1, $events);
+    }
+
+    public function testApplyMaterialityDecisionsExcludesACompanyOnlySourceAndItsNonConsolidatedProperties(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withMaterialityAnswered('company-1', 'footprint-1');
+        $footprint->recordNonConsolidatedProperty(PropertyId::generate(), Source::Franchises, null, null, new Emissions('10', '10', '0', '0'), null);
+        $decisions = [MaterialityDecisionInputMother::omit(14), MaterialityDecisionInputMother::omit(5), MaterialityDecisionInputMother::calculate(1)];
+
+        $footprint->applyMaterialityDecisions($decisions, MaterialityDecisionInputMother::commentsFor($decisions));
+
+        $this->assertSame(ExclusionReason::NotSignificant, $footprint->exclusionFor(Scope::Scope3, Source::Franchises)?->reason());
+        $this->assertTrue($footprint->isSourceExcluded(Scope::Scope3, Source::OperationsWaste));
+        $this->assertFalse($footprint->isSourceExcluded(Scope::Scope3, Source::PurchasedGoodsAndServices));
+        $this->assertSame([], $footprint->nonConsolidatedPropertyLines());
+        $this->assertCount(3, $footprint->materialityDecisions());
+        $this->assertCount(1, array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintMaterialityDecisionsApplied));
+    }
+
+    public function testWithScope3AnsweredANonConsolidatedPropertyCountsAsData(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withNonConsolidatedProperty(PropertyId::generate(), Source::Franchises, new Emissions('10', '10', '0', '0'));
+
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::omit(14), MaterialityDecisionInputMother::omit(13)], []);
+
+        $this->assertFalse($footprint->isSourceExcluded(Scope::Scope3, Source::Franchises));
+        $this->assertTrue($footprint->isSourceExcluded(Scope::Scope3, Source::DownstreamLeasedAssets));
+        $this->assertSame([Source::Franchises], $footprint->pendingMaterialityReviewSources());
+    }
+
+    public function testWithScope3AnsweredAManualExclusionOfAMaterialSourceIsPendingOfReview(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withScope3Answered('company-1', 'footprint-1');
+        $footprint->excludeSource(Scope::Scope3, Source::PurchasedGoodsAndServices, ExclusionReason::NoDataAvailable);
+
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::calculate(1)], []);
+
+        $this->assertTrue($footprint->isSourceExcluded(Scope::Scope3, Source::PurchasedGoodsAndServices));
+        $this->assertSame([Source::PurchasedGoodsAndServices], $footprint->pendingMaterialityReviewSources());
+    }
+
+    public function testOverrideRevertAndClearMaterialityDecisions(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withMaterialityAnswered('company-1', 'footprint-1');
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::omit(5), MaterialityDecisionInputMother::omit(4)], []);
+        $footprint->includeSource(Scope::Scope3, Source::UpstreamTransport);
+        $footprint->overrideMaterialityDecision(Source::UpstreamTransport, UserId::generate(), 'Tenemos datos');
+
+        $this->assertTrue($footprint->materialityDecisionFor(Source::UpstreamTransport)?->isOverridden());
+        $this->assertCount(1, array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintMaterialityOverridden));
+
+        $footprint->revertMaterialityOverride(Source::UpstreamTransport);
+        $this->assertFalse($footprint->materialityDecisionFor(Source::UpstreamTransport)?->isOverridden());
+        $this->assertCount(1, array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintMaterialityOverrideReverted));
+
+        $footprint->clearMaterialityDecisions();
+
+        $this->assertFalse($footprint->isSourceExcluded(Scope::Scope3, Source::OperationsWaste));
+        $this->assertSame([], $footprint->materialityDecisions());
+        $this->assertCount(1, array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintMaterialityDecisionsCleared));
+    }
+
+    public function testACompletedCompanyFootprintIgnoresTheDecisions(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withEmployeesAnswered('company-1', 'footprint-1');
+        $footprint->complete(new Emissions());
+
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::omit(5)], []);
+
+        $this->assertSame([], $footprint->materialityDecisions());
     }
 }

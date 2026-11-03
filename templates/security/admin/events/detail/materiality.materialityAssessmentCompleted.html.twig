@@ -3,3 +3,18 @@
     '{carbonFootprintId}': event.carbonFootprintId,
     '{user}': element.userId | user_name
 } %}Se ha completado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}{% endtrans %}
+{% set verdicts = event.scores | filter(score => score.verdict is not null) %}
+{% if verdicts is not empty %}
+    <ul class="mb-0">
+        {% for score in verdicts %}
+            <li>
+                {% trans with {
+                    '{topic}': (((score.topicId | materiality_topic_name).name ?? score.topicId) ~ '') | e,
+                    '{verdict}': score.verdict | trans({}, 'materialityVerdictType'),
+                    '{score}': score.scorePercent | number_format(2, ',', '.'),
+                    '{threshold}': score.thresholdPercent
+                } %}{topic}: {verdict} (relevancia {score} %, umbral {threshold} %){% endtrans %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

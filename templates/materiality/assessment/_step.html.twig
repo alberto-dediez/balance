@@ -41,53 +41,134 @@
             <p class="mb-3">{{ 'Progreso' | trans }}: {% trans with {'{answered}': assessment.answeredCount, '{total}': assessment.totalAnswers} %}{answered} de {total} respuestas{% endtrans %}</p>
         {% endif %}
 
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>{{ 'Alcance' | trans }}</th>
-                        <th>{{ 'Dirección' | trans }}</th>
-                        <th>{{ 'Categoría' | trans }}</th>
-                        <th>{{ 'Respondidas' | trans }}</th>
-                        {% if assessment.isCompleted %}
-                            <th>{{ 'Relevancia' | trans }}</th>
-                        {% endif %}
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for topic in assessment.topics %}
-                        {% set topicAnswers = assessment.answersOf(topic.topicId) %}
-                        {% set topicPath = path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: topic.id}) %}
+        {% if step.stageExcluded and step.summaryRows is not empty %}
+            <twig:Alert:Alert type="info">{{ 'Alcance 3 excluido: las recomendaciones no se aplican' | trans }}</twig:Alert:Alert>
+        {% endif %}
+
+        {% if step.pendingReview %}
+            <twig:Alert:Alert type="warning">
+                {{ 'Hay categorías del alcance 3 pendientes de revisión tras el último análisis de materialidad.' | trans }}
+                <a href="{{ scope3Path }}" class="alert-link">{{ 'Revisar el alcance 3' | trans }}</a>
+            </twig:Alert:Alert>
+        {% endif %}
+
+        {% if step.summaryRows is not empty %}
+            {% set topicsById = {} %}
+            {% for topic in assessment.topics %}
+                {% set topicsById = topicsById | merge({(topic.topicId ~ ''): topic}) %}
+            {% endfor %}
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
                         <tr>
-                            <td>{{ topic.scope.value | trans({}, 'materialityScopeType') }}</td>
-                            <td>{{ topic.direction is not null ? topic.direction.value | trans({}, 'materialityTopicDirectionType') : '---' }}</td>
-                            <td>{{ topic.topicNumber is not null ? topic.topicNumber ~ '. ' : '' }}{{ (topic.topicId | materiality_topic_name).name ?? topic.name }}</td>
-                            <td>{{ topicAnswers | filter(answer => answer.isAnswered) | length }} / {{ topicAnswers | length }}</td>
-                            {% if assessment.isCompleted %}
+                            <th>{{ 'Alcance' | trans }}</th>
+                            <th>{{ 'Dirección' | trans }}</th>
+                            <th>{{ 'Categoría' | trans }}</th>
+                            <th>{{ 'Respondidas' | trans }}</th>
+                            <th>{{ 'Relevancia' | trans }}</th>
+                            <th>{{ 'Umbral' | trans }}</th>
+                            <th>{{ 'Veredicto' | trans }}</th>
+                            <th>{{ 'Estado en la huella' | trans }}</th>
+                            <th>{{ 'Anulación' | trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in step.summaryRows %}
+                            {% set topic = row.topicId is not null ? (topicsById[row.topicId] ?? null) : null %}
+                            <tr>
+                                {% if topic is not null %}
+                                    {% set topicAnswers = assessment.answersOf(topic.topicId) %}
+                                    <td>{{ topic.scope.value | trans({}, 'materialityScopeType') }}</td>
+                                    <td>{{ topic.direction is not null ? topic.direction.value | trans({}, 'materialityTopicDirectionType') : '---' }}</td>
+                                    <td>{{ topic.topicNumber is not null ? topic.topicNumber ~ '. ' : '' }}{{ (topic.topicId | materiality_topic_name).name ?? topic.name }}</td>
+                                    <td>{{ topicAnswers | filter(answer => answer.isAnswered) | length }} / {{ topicAnswers | length }}</td>
+                                {% else %}
+                                    <td>{{ 'Alcance 3' | trans }}</td>
+                                    <td>---</td>
+                                    <td>{{ row.topicNumber is not null ? row.topicNumber ~ '. ' : '' }}{{ row.source.value | trans({}, 'source') }}</td>
+                                    <td>---</td>
+                                {% endif %}
                                 <td>
-                                    {% if topic.scorePercent is null %}
+                                    {% if row.scorePercent is null %}
                                         ---
                                     {% else %}
-                                        {{ topic.scorePercent | number_format(2, ',', '.') }} %
+                                        {{ row.scorePercent | number_format(2, ',', '.') }} %
                                         <div class="progress">
-                                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ topic.scorePercent | round }}%" aria-valuenow="{{ topic.scorePercent | round }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ row.scorePercent | round }}%" aria-valuenow="{{ row.scorePercent | round }}" aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     {% endif %}
                                 </td>
-                            {% endif %}
-                            <td>
-                                {% if readOnly or assessment.isCompleted %}
-                                    <twig:List:Action:View path="{{ topicPath }}" />
-                                {% else %}
-                                    <twig:List:Action:Edit path="{{ topicPath }}" />
-                                {% endif %}
-                            </td>
+                                <td>{{ row.thresholdPercent is not null ? row.thresholdPercent ~ ' %' : '---' }}</td>
+                                <td>
+                                    {% if row.verdict is null %}
+                                        ---
+                                    {% else %}
+                                        <span class="badge {{ row.verdict.style }}">{{ row.verdict.value | trans({}, 'materialityVerdictType') }}</span>
+                                        {% if row.forcedByHighMagnitude %}
+                                            <span class="badge bg-warning text-dark">{{ 'Magnitud alta' | trans }}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td><span class="badge {{ row.state.style }}">{{ row.state.value | trans({}, 'materialityCategoryStateType') }}</span></td>
+                                <td>
+                                    {% if row.decision is not null and row.decision.isOverridden %}
+                                        {{ row.decision.overriddenByUserId | user_name }}, {{ row.decision.overriddenAt | date('d/m/Y H:i') }}
+                                        <div class="text-muted">{{ row.decision.overrideJustification }}</div>
+                                    {% else %}
+                                        ---
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if topic is not null %}
+                                        {% set topicPath = path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: topic.id}) %}
+                                        {% if readOnly or assessment.isCompleted %}
+                                            <twig:List:Action:View path="{{ topicPath }}" />
+                                        {% else %}
+                                            <twig:List:Action:Edit path="{{ topicPath }}" />
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Alcance' | trans }}</th>
+                            <th>{{ 'Dirección' | trans }}</th>
+                            <th>{{ 'Categoría' | trans }}</th>
+                            <th>{{ 'Respondidas' | trans }}</th>
+                            <th></th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        {% for topic in assessment.topics %}
+                            {% set topicAnswers = assessment.answersOf(topic.topicId) %}
+                            {% set topicPath = path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: topic.id}) %}
+                            <tr>
+                                <td>{{ topic.scope.value | trans({}, 'materialityScopeType') }}</td>
+                                <td>{{ topic.direction is not null ? topic.direction.value | trans({}, 'materialityTopicDirectionType') : '---' }}</td>
+                                <td>{{ topic.topicNumber is not null ? topic.topicNumber ~ '. ' : '' }}{{ (topic.topicId | materiality_topic_name).name ?? topic.name }}</td>
+                                <td>{{ topicAnswers | filter(answer => answer.isAnswered) | length }} / {{ topicAnswers | length }}</td>
+                                <td>
+                                    {% if readOnly or assessment.isCompleted %}
+                                        <twig:List:Action:View path="{{ topicPath }}" />
+                                    {% else %}
+                                        <twig:List:Action:Edit path="{{ topicPath }}" />
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
 
         {% if not readOnly %}
             <div class="d-flex justify-content-between">

@@ -32,6 +32,7 @@ use App\CarbonFootprint\Application\Activity\Update\UpdatePurchaseServiceActivit
 use App\CarbonFootprint\Application\Activity\Update\UpdateRefrigerantGasActivityService;
 use App\CarbonFootprint\Application\Activity\Update\UpdateReportedEmissionsActivityService;
 use App\CarbonFootprint\Application\CarbonFootprint\CarbonFootprintCountryResolver;
+use App\CarbonFootprint\Application\CarbonFootprint\Materiality\MaterialityOverrideReconciler;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersProcessor;
 use App\CarbonFootprint\Application\CarbonFootprint\StageAnswersSynchronizer;
 use App\CarbonFootprint\Application\CarbonFootprint\StageExclusionAnswer;
@@ -49,6 +50,7 @@ use App\CarbonFootprint\Domain\Model\Activity\ReportedEmissionsActivity;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityOverrideJustificationRequiredException;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -76,6 +78,7 @@ use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInputMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorMother;
@@ -96,6 +99,7 @@ use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Infrastructure\Symfony\Translation\FakeTranslator;
 use PHPUnit\Framework\TestCase;
 
 class AnswerPropertyCarbonFootprintScopeServiceTest extends TestCase
@@ -193,6 +197,7 @@ class AnswerPropertyCarbonFootprintScopeServiceTest extends TestCase
             new PropertyCarbonFootprintAuthorizer(),
             new StageAnswersProcessor(),
             new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), $this->propertyRepository)),
+            new MaterialityOverrideReconciler(new FakeTranslator()),
         );
     }
 
@@ -337,6 +342,97 @@ class AnswerPropertyCarbonFootprintScopeServiceTest extends TestCase
             [new SectionAnswer($this->scope3Section('purchasedGoodsAndServices'), [new PurchaseServiceAnswer($this->purchaseService->id(), new Quantity(1000.0, Unit::Euro))])],
             stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable),
         ), $this->ownerUser());
+    }
+
+    public function testRevertingAMaterialityRecommendationWithoutJustificationThrowsWithoutChanges(): void
+    {
+        $footprint = $this->footprintWithMaterialityDecisions();
+
+        try {
+            ($this->sut)(new AnswerPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3), $this->ownerUser());
+            $this->fail('A justification was expected');
+        } catch (MaterialityOverrideJustificationRequiredException $e) {
+            $this->assertSame(Source::OperationsWaste, $e->source);
+            $this->assertStringContainsString('operations_waste', $e->getMessage());
+        }
+
+        $this->assertTrue($footprint->isSourceExcluded(Scope::Scope3, Source::OperationsWaste));
+        $this->assertFalse($footprint->status()->isScope3Answered());
+    }
+
+    public function testRevertingAMaterialityRecommendationWithJustificationRecordsTheOverride(): void
+    {
+        $footprint = $this->footprintWithMaterialityDecisions();
+        $owner = $this->ownerUser();
+
+        ($this->sut)(new AnswerPropertyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            exclusions: [new ExclusionAnswer(Source::PurchasedGoodsAndServices, ExclusionReason::OutOfScope)],
+            materialityOverrideJustifications: [
+                Source::OperationsWaste->value => 'Tenemos datos de residuos',
+                Source::PurchasedGoodsAndServices->value => 'Fuera del perímetro',
+            ],
+        ), $owner);
+
+        $waste = $footprint->materialityDecisionFor(Source::OperationsWaste);
+        $this->assertNotNull($waste);
+        $this->assertFalse($footprint->isSourceExcluded(Scope::Scope3, Source::OperationsWaste));
+        $this->assertTrue($waste->isOverridden());
+        $this->assertEquals($owner->id(), $waste->overriddenByUserId());
+        $this->assertSame('Tenemos datos de residuos', $waste->overrideJustification());
+        $this->assertSame('Fuera del perímetro', $footprint->materialityDecisionFor(Source::PurchasedGoodsAndServices)?->overrideJustification());
+    }
+
+    public function testKeepingTheMaterialityRecommendationNeedsNoJustification(): void
+    {
+        $footprint = $this->footprintWithMaterialityDecisions();
+
+        ($this->sut)(new AnswerPropertyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            exclusions: [new ExclusionAnswer(Source::OperationsWaste, ExclusionReason::NotSignificant)],
+        ), $this->ownerUser());
+
+        $this->assertTrue($footprint->isSourceExcluded(Scope::Scope3, Source::OperationsWaste));
+        $this->assertFalse($footprint->materialityDecisionFor(Source::OperationsWaste)?->isOverridden());
+        $this->assertTrue($footprint->status()->isScope3Answered());
+    }
+
+    public function testReturningToTheRecommendationRevertsTheOverride(): void
+    {
+        $footprint = $this->footprintWithMaterialityDecisions();
+        ($this->sut)(new AnswerPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3, materialityOverrideJustifications: [Source::OperationsWaste->value => 'Tenemos datos']), $this->ownerUser());
+
+        ($this->sut)(new AnswerPropertyCarbonFootprintScopeRequest(
+            $footprint->id(),
+            Scope::Scope3,
+            exclusions: [new ExclusionAnswer(Source::OperationsWaste, ExclusionReason::NotSignificant)],
+        ), $this->ownerUser());
+
+        $this->assertFalse($footprint->materialityDecisionFor(Source::OperationsWaste)?->isOverridden());
+    }
+
+    public function testExcludingTheWholeScope3DoesNotRecordOverrides(): void
+    {
+        $footprint = $this->footprintWithMaterialityDecisions();
+
+        ($this->sut)(new AnswerPropertyCarbonFootprintScopeRequest($footprint->id(), Scope::Scope3, stageExclusion: new StageExclusionAnswer(ExclusionReason::NoDataAvailable)), $this->ownerUser());
+
+        $this->assertTrue($footprint->isStageExcluded(Scope::Scope3));
+        $this->assertCount(2, $footprint->materialityDecisions());
+        $this->assertFalse($footprint->materialityDecisionFor(Source::OperationsWaste)?->isOverridden());
+    }
+
+    private function footprintWithMaterialityDecisions(): PropertyCarbonFootprint
+    {
+        $footprint = $this->registeredFootprint();
+        $footprint->answerScope(Scope::Scope1);
+        $footprint->answerScope(Scope::Scope2);
+        $footprint->answerMateriality();
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::omit(5), MaterialityDecisionInputMother::calculate(1)], []);
+
+        return $footprint;
     }
 
     public function testOtherAccountIsDenied(): void
