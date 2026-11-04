@@ -71,6 +71,37 @@ class MaterialityAssessmentMother
     }
 
     /**
+     * @param list<MaterialityTopicSnapshot>           $topics
+     * @param array<string, list<MaterialityQuestion>> $questionsByTopicId
+     */
+    public static function draftWithQuestionsByTopic(array $topics, array $questionsByTopicId = []): MaterialityAssessment
+    {
+        $questionSnapshots = [];
+
+        foreach ($topics as $topic) {
+            foreach ($questionsByTopicId[(string) $topic->topicId] ?? [] as $question) {
+                $questionSnapshots[] = MaterialityQuestionSnapshot::fromQuestion($question, $topic->topicId);
+            }
+        }
+
+        $materialityAssessment = new MaterialityAssessment(
+            id: MaterialityAssessmentId::generate(),
+        );
+        $materialityAssessment->start(
+            subjectType: MaterialityAssessmentSubjectType::Property,
+            carbonFootprintId: 'footprint-id',
+            accountId: new AccountId('account-id'),
+            year: 2025,
+            sectorId: null,
+            sectorName: null,
+            topics: $topics,
+            questions: $questionSnapshots,
+        );
+
+        return $materialityAssessment;
+    }
+
+    /**
      * @param list<MaterialityTopic>|null    $topics
      * @param list<MaterialityQuestion>|null $questions
      */

@@ -87,6 +87,64 @@ final class MaterialityAssessmentTest extends TestCase
         $this->assertNull($answers[1]->value());
     }
 
+    public function testAnAnswerCopiedAtTheStartIsInheritedUntilItIsAnsweredAgain(): void
+    {
+        $topic = MaterialityTopicMother::random();
+        $copied = MaterialityQuestionMother::from(text: 'Copied', id: (string) MaterialityQuestionId::generate(), position: 1);
+        $empty = MaterialityQuestionMother::from(text: 'Empty', id: (string) MaterialityQuestionId::generate(), position: 2);
+
+        $assessment = MaterialityAssessmentMother::draft(
+            topics: [$topic],
+            questions: [$copied, $empty],
+            initialValues: [$topic->id() . '|' . $copied->id() => 2],
+        );
+
+        [$copiedAnswer, $emptyAnswer] = $assessment->answersOf($topic->id());
+
+        $this->assertTrue($copiedAnswer->isInherited());
+        $this->assertFalse($emptyAnswer->isInherited());
+
+        $assessment->answerTopic($assessment->topics()[0]->id(), [(string) $copiedAnswer->id() => 3], $assessment->registeredAt()->modify('+1 minute'));
+
+        $this->assertFalse($copiedAnswer->isInherited());
+    }
+
+    public function testAnsweringATopicKeepsTheInheritedMarkOfTheAnswersWhoseValueDoesNotChange(): void
+    {
+        $topic = MaterialityTopicMother::random();
+        $changed = MaterialityQuestionMother::from(text: 'Changed', id: (string) MaterialityQuestionId::generate(), position: 1);
+        $untouched = MaterialityQuestionMother::from(text: 'Untouched', id: (string) MaterialityQuestionId::generate(), position: 2);
+
+        $assessment = MaterialityAssessmentMother::draft(
+            topics: [$topic],
+            questions: [$changed, $untouched],
+            initialValues: [
+                $topic->id() . '|' . $changed->id() => 2,
+                $topic->id() . '|' . $untouched->id() => 2,
+            ],
+        );
+
+        [$changedAnswer, $untouchedAnswer] = $assessment->answersOf($topic->id());
+        $topicId = $assessment->topics()[0]->id();
+
+        $assessment->answerTopic($topicId, [
+            (string) $changedAnswer->id() => 3,
+            (string) $untouchedAnswer->id() => 2,
+        ], $assessment->registeredAt()->modify('+1 minute'));
+
+        $this->assertFalse($changedAnswer->isInherited());
+        $this->assertTrue($untouchedAnswer->isInherited());
+        $this->assertEquals($assessment->registeredAt(), $untouchedAnswer->answeredAt());
+
+        $assessment->answerTopic($topicId, [
+            (string) $changedAnswer->id() => 3,
+            (string) $untouchedAnswer->id() => 2,
+        ], $assessment->registeredAt()->modify('+2 minutes'));
+
+        $this->assertTrue($untouchedAnswer->isInherited());
+        $this->assertEquals($assessment->registeredAt()->modify('+1 minute'), $changedAnswer->answeredAt());
+    }
+
     public function testAnswerTopicStoresValuesAndAcceptsNull(): void
     {
         $assessment = MaterialityAssessmentMother::draft(questions: $this->fiveQuestions());

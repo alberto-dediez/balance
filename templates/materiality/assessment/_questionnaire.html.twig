@@ -1,0 +1,178 @@
+{% set board = step.board %}
+{% set questionnaireReadOnly = readOnly or assessment.isCompleted %}
+
+{% macro groupLabel(group) %}
+    {{- group.scope.value | trans({}, 'materialityScopeType') -}}
+    {%- if group.direction is not null %} · {{ group.direction.value | trans({}, 'materialityTopicDirectionType') }}
+    {%- elseif group.scope.value == 'scope_3' %} · {{ 'Sin dirección' | trans }}
+    {%- endif -%}
+{% endmacro %}
+
+{% macro countBadge(answered, total, attributes) %}
+    <span class="badge {{ answered == total ? 'bg-success' : 'bg-warning text-dark' }}" {{ attributes | raw }}>{{ answered }}/{{ total }}</span>
+{% endmacro %}
+
+<twig:Card title="{{ 'Cuestionario' | trans }}" class="mt-3">
+    {% import '@materiality/assessment/_answer.html.twig' as materiality %}
+    {% import '@materiality/assessment/_questionnaire.html.twig' as questionnaire %}
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="btn-group" role="group" aria-label="{{ 'Vista' | trans }}">
+            <button type="button" class="btn btn-outline-primary active" aria-pressed="true"
+                data-materiality-questionnaire-target="viewButton"
+                data-view="accordion"
+                data-action="materiality-questionnaire#showAccordion"
+            >
+                <twig:Icon name="solar:list-line-duotone" size="md" class="me-2" />{{ 'Acordeón' | trans }}
+            </button>
+            <button type="button" class="btn btn-outline-primary" aria-pressed="false"
+                data-materiality-questionnaire-target="viewButton"
+                data-view="matrix"
+                data-action="materiality-questionnaire#showMatrix"
+            >
+                <twig:Icon name="solar:widget-line-duotone" size="md" class="me-2" />{{ 'Matriz' | trans }}
+            </button>
+        </div>
+        {{ questionnaire.countBadge(board.answered, board.total, 'data-materiality-questionnaire-target="globalBadge"') }}
+    </div>
+
+    <div data-materiality-questionnaire-target="accordion">
+        {% for group in board.groups %}
+            {% set groupKey = group.scope.value ~ '-' ~ (group.direction.value ?? 'none') %}
+            <h6 class="fw-semibold mb-3 {{ loop.first ? '' : 'mt-4' }}">
+                {{ questionnaire.groupLabel(group) }}
+                {{ questionnaire.countBadge(group.answered, group.total, 'data-materiality-questionnaire-target="groupBadge" data-group-key="' ~ groupKey ~ '"') }}
+            </h6>
+            <div class="accordion">
+                {% for row in group.rows %}
+                    {% set topic = row.topic %}
+                    {% set master = topic.topicId | materiality_topic_name %}
+                    {% set formId = 'materiality-topic-form-' ~ topic.id %}
+                    <div class="accordion-item">
+                        <div class="accordion-header d-flex align-items-center">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#topic-{{ topic.id }}" aria-expanded="true" aria-controls="topic-{{ topic.id }}">
+                                <span class="me-2">{{ topic.topicNumber is not null ? topic.topicNumber ~ '. ' : '' }}{{ master.name ?? topic.name }}</span>
+                                <span class="badge bg-secondary me-1">{{ topic.scope.value | trans({}, 'materialityScopeType') }}</span>
+                                {% if topic.direction is not null %}
+                                    <span class="badge bg-secondary me-1">{{ topic.direction.value | trans({}, 'materialityTopicDirectionType') }}</span>
+                                {% endif %}
+                                {{ questionnaire.countBadge(row.answered, row.total, 'data-materiality-questionnaire-target="topicBadge" data-topic-id="' ~ topic.id ~ '" data-group-key="' ~ groupKey ~ '" data-answered="' ~ row.answered ~ '" data-total="' ~ row.total ~ '"') }}
+                            </button>
+                            {% if not questionnaireReadOnly and row.total > 0 %}
+                                <div class="px-3 text-nowrap">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                                        data-action="materiality-questionnaire#markMinimum:stop"
+                                        data-materiality-questionnaire-topic-id-param="{{ topic.id }}"
+                                    >{{ 'Marcar toda la categoría como Bajo/No' | trans }}</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div id="topic-{{ topic.id }}" class="accordion-collapse collapse show">
+                            <div class="accordion-body">
+                                <form method="post" name="materiality_topic" id="{{ formId }}"
+                                    action="{{ path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: topic.id}) }}"
+                                    data-assessment-topic-id="{{ topic.id }}"
+                                    data-materiality-questionnaire-target="form"
+                                >
+                                    <input type="hidden" name="_token" value="{{ csrf_token('materiality_topic_' ~ topic.id) }}">
+
+                                    {% set description = master.description ?? topic.description %}
+                                    {% if description is not empty %}
+                                        <div class="text-muted mb-3">{{ description | md_to_html }}</div>
+                                    {% endif %}
+
+                                    {% if row.total == 0 %}
+                                        <p class="mb-0">{{ 'Esta categoría no tiene preguntas aplicables.' | trans }}</p>
+                                    {% endif %}
+
+                                    {% for answer in row.genericAnswers | merge(row.specificAnswers) | sort((a, b) => a.position <=> b.position) %}
+                                        <div data-origin-answer-id="{{ answer.id }}">
+                                            {{ materiality.answer(answer, formId, board.inheritedFromYear, questionnaireReadOnly) }}
+                                        </div>
+                                    {% endfor %}
+
+                                    {% if not questionnaireReadOnly and row.total > 0 %}
+                                        <button type="submit" class="btn btn-outline-primary btn-sm no-js-only" data-materiality-questionnaire-target="noJs">{{ 'Guardar' | trans }}</button>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="d-none" data-materiality-questionnaire-target="matrix">
+        <div class="table-responsive">
+            <table class="table align-middle materiality-matrix">
+                <thead>
+                    <tr>
+                        <th>{{ 'Categoría' | trans }}</th>
+                        {% for column in board.columns %}
+                            {% set question = column.questionId | materiality_question_text %}
+                            {% set columnText = question.text ?? column.text %}
+                            {% set columnHelp = question.help ?? column.help %}
+                            <th>
+                                <span class="d-inline-block text-truncate materiality-matrix__question" data-bs-toggle="tooltip" title="{{ columnText }}">{{ columnText }}</span>
+                                {% if columnHelp is not empty %}
+                                    <span class="text-muted align-top" data-bs-toggle="tooltip" title="{{ columnHelp }}">
+                                        <twig:Icon name="solar:info-circle-line-duotone" size="md" />
+                                    </span>
+                                {% endif %}
+                                <small class="d-block text-muted fw-normal">{{ column.criterion.value | trans({}, 'materialityCriterionType') }} · {% trans with {'{weight}': column.weight} %}Peso {weight}{% endtrans %}</small>
+                            </th>
+                        {% endfor %}
+                        <th>{{ 'Específicas' | trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in board.groups %}
+                        <tr class="table-light">
+                            <th colspan="{{ board.columns | length + 3 }}">{{ questionnaire.groupLabel(group) }}</th>
+                        </tr>
+                        {% for row in group.rows %}
+                            {% set topic = row.topic %}
+                            {% set master = topic.topicId | materiality_topic_name %}
+                            <tr id="matrix-topic-{{ topic.id }}">
+                                <td>
+                                    {{ topic.topicNumber is not null ? topic.topicNumber ~ '. ' : '' }}{{ master.name ?? topic.name }}
+                                    {{ questionnaire.countBadge(row.answered, row.total, 'data-materiality-questionnaire-target="topicBadge" data-topic-id="' ~ topic.id ~ '"') }}
+                                </td>
+                                {% for column in board.columns %}
+                                    {% set answer = row.genericAnswers[column.questionId ~ ''] ?? null %}
+                                    <td {% if answer is not null %}data-slot-answer-id="{{ answer.id }}" data-slot-compact{% endif %}></td>
+                                {% endfor %}
+                                <td>
+                                    {% if row.specificAnswers is not empty %}
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#matrix-specific-{{ topic.id }}" aria-expanded="false" aria-controls="matrix-specific-{{ topic.id }}">
+                                            {% trans with {'{count}': row.specificAnswers | length} %}{count} preguntas específicas{% endtrans %}
+                                        </button>
+                                    {% endif %}
+                                </td>
+                                <td class="text-nowrap">
+                                    {% if not questionnaireReadOnly and row.total > 0 %}
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            data-action="materiality-questionnaire#markMinimum"
+                                            data-materiality-questionnaire-topic-id-param="{{ topic.id }}"
+                                        >{{ 'Marcar toda la categoría como Bajo/No' | trans }}</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% if row.specificAnswers is not empty %}
+                                <tr class="collapse" id="matrix-specific-{{ topic.id }}">
+                                    <td colspan="{{ board.columns | length + 3 }}">
+                                        {% for answer in row.specificAnswers %}
+                                            <div data-slot-answer-id="{{ answer.id }}"></div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</twig:Card>

@@ -28,6 +28,7 @@ class GetMaterialityStepService
         private MaterialitySectorRepository $materialitySectorRepository,
         private MaterialityAssessmentFootprints $footprints,
         private MaterialitySummaryBuilder $summaryBuilder,
+        private MaterialityQuestionnaireBoardBuilder $boardBuilder,
     ) {}
 
     public function __invoke(GetMaterialityStepRequest $request, User $user): GetMaterialityStepResponse
@@ -61,13 +62,14 @@ class GetMaterialityStepService
             summaryRows: $this->summaryRows($carbonFootprint, $request->subjectType, $assessment),
             stageExcluded: $carbonFootprint->isStageExcluded(Scope::Scope3),
             pendingReview: $carbonFootprint->hasPendingMaterialityReview(),
+            board: null !== $assessment ? $this->boardBuilder->build($assessment, $this->inheritedFromYear($assessment, $previousYear)) : null,
         );
     }
 
     /** @return list<MaterialitySummaryRow> */
     private function summaryRows(CarbonFootprint $carbonFootprint, MaterialityAssessmentSubjectType $subjectType, ?MaterialityAssessment $assessment): array
     {
-        if (null === $assessment || (!$assessment->isCompleted() && [] === $carbonFootprint->materialityDecisions())) {
+        if (null === $assessment || !$assessment->isCompleted()) {
             return [];
         }
 
@@ -86,6 +88,17 @@ class GetMaterialityStepService
                 $assessment->topics(),
             ),
         );
+    }
+
+    private function inheritedFromYear(MaterialityAssessment $assessment, ?int $previousYear): ?int
+    {
+        foreach ($assessment->answers() as $answer) {
+            if ($answer->isInherited()) {
+                return $previousYear;
+            }
+        }
+
+        return null;
     }
 
     private function isMaterialityAnswered(CarbonFootprint $carbonFootprint): bool

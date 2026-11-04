@@ -156,7 +156,7 @@ Feature:
         Then I see a text "Pendiente de revisión"
         Then "property" carbon footprint "888" should not have source "operations_waste" excluded in scope "scope_3"
 
-    Scenario: Reopening the assessment keeps showing the last decision applied to the footprint
+    Scenario: Reopening the assessment hides the results but keeps the decisions applied to the footprint
         Given standard materiality topic "5" with id "T5" exists
         Given materiality question "¿Qué volumen de residuos genera?" with id "Q5" for criterion "influence" and topic "T5" exists
         Given property carbon footprint with id "777" for property "1111" of account "666" and year "2024" with scope 2 answered exists
@@ -169,6 +169,6 @@ Feature:
         When I post to the materiality assessment "A1" action "reopen"
         Then I am redirected to route "property_carbon_footprints_materiality"
         Then I see a text "Completar evaluación"
-        Then I see a text "Estado en la huella"
-        Then I see a text "Excluida (recomendación)"
+        Then I do not see a text "Estado en la huella"
+        Then I do not see a text "Excluida (recomendación)"
         Then "property" carbon footprint "777" should have source "operations_waste" excluded in scope "scope_3" with reason "not_significant"

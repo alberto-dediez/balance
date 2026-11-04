@@ -11921,6 +11921,42 @@
         <source>Solo se imprime si la huella tiene evaluación de materialidad con categorías excluidas y el alcance 3 incluido.</source>
         <target>Solo se imprime si la huella tiene evaluación de materialidad con categorías excluidas y el alcance 3 incluido.</target>
       </trans-unit>
+      <trans-unit id="xVXilpO" resname="Sin guardar">
+        <source>Sin guardar</source>
+        <target>Sin guardar</target>
+      </trans-unit>
+      <trans-unit id="G3RGCJ4" resname="Heredada de la evaluación de {year}">
+        <source>Heredada de la evaluación de {year}</source>
+        <target>Heredada de la evaluación de {year}</target>
+      </trans-unit>
+      <trans-unit id="acJe_fM" resname="Vista">
+        <source>Vista</source>
+        <target>Vista</target>
+      </trans-unit>
+      <trans-unit id="irziEFW" resname="Acordeón">
+        <source>Acordeón</source>
+        <target>Acordeón</target>
+      </trans-unit>
+      <trans-unit id="kLxV_9e" resname="Matriz">
+        <source>Matriz</source>
+        <target>Matriz</target>
+      </trans-unit>
+      <trans-unit id="FY80fHq" resname="Marcar toda la categoría como Bajo/No">
+        <source>Marcar toda la categoría como Bajo/No</source>
+        <target>Marcar toda la categoría como Bajo/No</target>
+      </trans-unit>
+      <trans-unit id="1OALonK" resname="Específicas">
+        <source>Específicas</source>
+        <target>Específicas</target>
+      </trans-unit>
+      <trans-unit id="..lAhi9" resname="{count} preguntas específicas">
+        <source>{count} preguntas específicas</source>
+        <target>{count} preguntas específicas</target>
+      </trans-unit>
+      <trans-unit id="8ChkkuK" resname="Cuestionario">
+        <source>Cuestionario</source>
+        <target>Cuestionario</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

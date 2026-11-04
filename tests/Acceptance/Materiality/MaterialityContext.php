@@ -55,6 +55,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 final class MaterialityContext implements Context
@@ -458,29 +459,49 @@ final class MaterialityContext implements Context
         );
     }
 
-    #[When('I submit the materiality topic form with value :value for all questions')]
-    public function iSubmitTheMaterialityTopicFormWithValueForAllQuestions(string $value): void
+    #[When('I submit the materiality topic form of topic :topicId with value :value for all questions')]
+    public function iSubmitTheMaterialityTopicFormOfTopicWithValueForAllQuestions(string $topicId, string $value): void
     {
-        $crawler = $this->client->getCrawler();
-        $form = $crawler->filter('form[name="materiality_topic"]');
-        Assert::assertCount(1, $form);
+        $this->submitTopicForm($topicId, $value, []);
+    }
 
-        $token = $form->filter('input[name="_token"]')->attr('value');
-        Assert::assertNotNull($token);
+    #[When('I submit the materiality topic form of topic :topicId with value :value for all questions as an ajax request')]
+    public function iSubmitTheMaterialityTopicFormOfTopicWithValueForAllQuestionsAsAnAjaxRequest(string $topicId, string $value): void
+    {
+        $this->submitTopicForm($topicId, $value, ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest', 'HTTP_ACCEPT' => 'application/json']);
+    }
 
-        $answers = [];
+    #[Then('the materiality answer response should report :topicAnswered of :topicTotal answered in the topic and :answered of :total in total')]
+    public function theMaterialityAnswerResponseShouldReport(int $topicAnswered, int $topicTotal, int $answered, int $total): void
+    {
+        $content = $this->client->getResponse()->getContent();
+        Assert::assertIsString($content);
 
-        foreach ($form->filter('input[type="radio"]') as $radio) {
-            assert($radio instanceof \DOMElement);
+        $data = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+        Assert::assertIsArray($data);
 
-            if (1 === preg_match('/^answers\[(.+)\]$/', $radio->getAttribute('name'), $matches)) {
-                $answers[$matches[1]] = $value;
-            }
-        }
+        Assert::assertSame(
+            ['topicAnswered' => $topicAnswered, 'topicTotal' => $topicTotal, 'answered' => $answered, 'total' => $total, 'fullyAnswered' => $answered === $total],
+            $data,
+        );
+    }
 
-        $uri = $this->client->getRequest()->getUri();
+    #[Then('the materiality answer response should report the message :message')]
+    public function theMaterialityAnswerResponseShouldReportTheMessage(string $message): void
+    {
+        $content = $this->client->getResponse()->getContent();
+        Assert::assertIsString($content);
 
-        $this->client->requestWithFiles('POST', $uri, ['_token' => $token, 'answers' => $answers], [], ['HTTP_REFERER' => $uri]);
+        Assert::assertSame(['message' => $message], json_decode($content, true, flags: JSON_THROW_ON_ERROR));
+    }
+
+    #[Then('I see a text :text in the matrix header')]
+    public function iSeeATextInTheMatrixHeader(string $text): void
+    {
+        $header = $this->client->getCrawler()->filter('table.materiality-matrix thead');
+        Assert::assertCount(1, $header, 'Materiality matrix header not found');
+
+        Assert::assertStringContainsString($text, $header->text());
     }
 
     #[When('I skip the materiality step')]
@@ -611,6 +632,20 @@ final class MaterialityContext implements Context
         throw new \RuntimeException(sprintf('Topic "%s" not found in materiality assessment "%s"', $topicId, $id));
     }
 
+    #[When('I post to the materiality assessment :id topic :topicId')]
+    public function iPostToTheMaterialityAssessmentTopic(string $id, string $topicId): void
+    {
+        foreach ($this->assessment($id)->topics() as $topic) {
+            if ((string) $topic->topicId() === $topicId) {
+                $this->client->requestWithFiles('POST', sprintf('/es/materiality-assessments/%s/topics/%s', $id, $topic->id()), ['answers' => []]);
+
+                return;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Topic "%s" not found in materiality assessment "%s"', $topicId, $id));
+    }
+
     #[When('I post to the materiality assessment :id action :action')]
     public function iPostToTheMaterialityAssessmentAction(string $id, string $action): void
     {
@@ -681,6 +716,53 @@ final class MaterialityContext implements Context
         }
 
         $this->client->submit($form);
+    }
+
+    /** @param array<string, string> $serverParameters */
+    private function submitTopicForm(string $topicId, string $value, array $serverParameters): void
+    {
+        $form = $this->topicForm($topicId);
+
+        $token = $form->filter('input[name="_token"]')->attr('value');
+        Assert::assertNotNull($token);
+
+        $action = $form->attr('action');
+        Assert::assertNotNull($action);
+
+        $answers = [];
+
+        foreach ($form->filter('input[type="radio"]') as $radio) {
+            assert($radio instanceof \DOMElement);
+
+            if (1 === preg_match('/^answers\[(.+)\]$/', $radio->getAttribute('name'), $matches)) {
+                $answers[$matches[1]] = $value;
+            }
+        }
+
+        $uri = $this->client->getRequest()->getUri();
+
+        $this->client->requestWithFiles('POST', $action, ['_token' => $token, 'answers' => $answers], [], ['HTTP_REFERER' => $uri] + $serverParameters);
+    }
+
+    private function topicForm(string $topicId): Crawler
+    {
+        $crawler = $this->client->getCrawler();
+
+        foreach ($this->getAssessmentRepository()->findByFilter(new MaterialityAssessmentFilter(limit: 0)) as $assessment) {
+            foreach ($assessment->topics() as $topic) {
+                if ((string) $topic->topicId() !== $topicId) {
+                    continue;
+                }
+
+                $form = $crawler->filter(sprintf('form[name="materiality_topic"][data-assessment-topic-id="%s"]', $topic->id()));
+
+                if (1 === $form->count()) {
+                    return $form;
+                }
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Materiality topic form of topic "%s" not found', $topicId));
     }
 
     private function assessment(string $id, bool $includeRemoved = false): MaterialityAssessment

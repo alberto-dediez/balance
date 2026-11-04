@@ -25,5 +25,6 @@ class GetMaterialityStepResponse
         public array $summaryRows = [],
         public bool $stageExcluded = false,
         public bool $pendingReview = false,
+        public ?MaterialityQuestionnaireBoard $board = null,
     ) {}
 }

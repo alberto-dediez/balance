@@ -1,0 +1,38 @@
+{% macro answer(answer, formId, inheritedFromYear, readOnly, compact = false) %}
+    {% set question = answer.questionId | materiality_question_text %}
+    {% set help = question.help ?? answer.help %}
+    <fieldset class="materiality-answer mb-3{{ compact ? ' materiality-answer--compact' : '' }}"
+        data-answer-id="{{ answer.id }}"
+        data-question-id="{{ answer.questionId }}"
+        data-scale-min="{{ answer.answerScale.values | first }}"
+    >
+        <legend class="h6 fw-semibold mb-1">{{ question.text ?? answer.text }}</legend>
+        <p class="materiality-answer__meta mb-1">
+            <span class="badge bg-light text-dark">{{ answer.criterion.value | trans({}, 'materialityCriterionType') }}</span>
+            <span class="badge bg-light text-dark">{% trans with {'{weight}': answer.weight} %}Peso {weight}{% endtrans %}</span>
+        </p>
+        {% if help is not empty %}
+            <div class="materiality-answer__help text-muted">{{ help | md_to_html }}</div>
+        {% endif %}
+        <div class="materiality-answer__options d-inline-flex align-items-center{{ compact ? ' btn-group btn-group-sm' : '' }}" data-options>
+            {% for value in answer.answerScale.values %}
+                <div class="{{ compact ? 'materiality-answer__option' : 'form-check form-check-inline' }}" data-option>
+                    <input class="{{ compact ? 'btn-check' : 'form-check-input' }}" type="radio"
+                        name="answers[{{ answer.id }}]"
+                        id="answer-{{ answer.id }}-{{ value }}"
+                        value="{{ value }}"
+                        form="{{ formId }}"
+                        {{ answer.value == value ? 'checked' : '' }}
+                        {{ readOnly ? 'disabled' : '' }}
+                    >
+                    <label class="{{ compact ? 'btn btn-outline-secondary btn-sm' : 'form-check-label' }}" for="answer-{{ answer.id }}-{{ value }}">{{ answer.answerScale.labelKey(value) | trans({}, 'materialityAnswerValueType') }}</label>
+                </div>
+            {% endfor %}
+            {% if answer.isInherited and inheritedFromYear is not null %}
+                <span class="text-muted ms-1" data-inherited data-bs-toggle="tooltip" title="{% trans with {'{year}': inheritedFromYear ~ ''} %}Heredada de la evaluación de {year}{% endtrans %}">
+                    <twig:Icon name="solar:history-line-duotone" size="md" />
+                </span>
+            {% endif %}
+        </div>
+    </fieldset>
+{% endmacro %}

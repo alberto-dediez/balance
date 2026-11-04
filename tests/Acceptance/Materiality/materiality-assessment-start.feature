@@ -20,8 +20,8 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/materiality"
         When I start the materiality assessment without sector
-        Then I am redirected to route "materiality_assessments_topic"
-        Then I see a text "1/2"
+        Then I am redirected to route "property_carbon_footprints_materiality"
+        Then I see a text "Cuestionario"
         Then I see a text "¿Qué volumen de emisiones representa?"
         Then I do not see a text "¿Subcontratas la logística?"
         Then materiality assessment for "property" carbon footprint "999" should have 5 answers for topic "T4"
@@ -34,7 +34,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/property-carbon-footprints/999/step/materiality"
         When I start the materiality assessment with sector "<sector>"
-        Then I am redirected to route "materiality_assessments_topic"
+        Then I am redirected to route "property_carbon_footprints_materiality"
         Then materiality assessment for "property" carbon footprint "999" should have <transport> answers for topic "T4"
         Then materiality assessment for "property" carbon footprint "999" should have 5 answers for topic "T6"
 
@@ -50,7 +50,7 @@ Feature:
         Then I do not see a form field "start_materiality_assessment[sectorId]"
         Then I see a text "No hay sectores definidos: se aplicarán las preguntas comunes."
         When I start the materiality assessment without sector
-        Then I am redirected to route "materiality_assessments_topic"
+        Then I am redirected to route "property_carbon_footprints_materiality"
 
     Scenario: The completed assessment of the previous year preselects the sector and copies the matching answers
         Given materiality sector "Logística" with id "S-LOG" exists
@@ -63,7 +63,7 @@ Feature:
         Then I see an option "S-LOG" in form field "start_materiality_assessment[sectorId]" with attribute "selected" "selected"
         Then I see a text "Partir de la evaluación de 2024"
         When I start the materiality assessment copying the previous answers
-        Then I am redirected to route "materiality_assessments_topic"
+        Then I am redirected to route "property_carbon_footprints_materiality"
         Then materiality assessment for "property" carbon footprint "999" should have 6 answers for topic "T4"
         Then materiality assessment for "property" carbon footprint "999" should have 10 answered questions
 

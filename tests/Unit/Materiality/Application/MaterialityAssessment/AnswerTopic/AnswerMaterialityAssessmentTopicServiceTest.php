@@ -13,6 +13,7 @@ use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentSubj
 use App\Security\Application\UnauthorizedActionException;
 use App\Tests\Unit\Materiality\Application\MaterialityAssessment\MaterialityAssessmentContextTrait;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicMother;
 use PHPUnit\Framework\TestCase;
 
@@ -43,6 +44,38 @@ final class AnswerMaterialityAssessmentTopicServiceTest extends TestCase
         $response = $this->sut()($this->request($assessment, 1, 1), $this->ownerOf());
 
         $this->assertNull($response->nextTopicId);
+    }
+
+    public function testReturnsTheCountersAfterAnsweringACompleteTopic(): void
+    {
+        $assessment = $this->twoTopicsAssessment();
+
+        $response = $this->sut()($this->request($assessment, 0, 3), $this->ownerOf());
+
+        $this->assertSame([1, 1, 1, 2, false], [$response->topicAnswered, $response->topicTotal, $response->answered, $response->total, $response->fullyAnswered]);
+
+        $response = $this->sut()($this->request($assessment, 1, 1), $this->ownerOf());
+
+        $this->assertSame([1, 1, 2, 2, true], [$response->topicAnswered, $response->topicTotal, $response->answered, $response->total, $response->fullyAnswered]);
+    }
+
+    public function testReturnsTheCountersAfterAPartialAnswer(): void
+    {
+        $footprint = $this->propertyFootprint();
+        $assessment = MaterialityAssessmentMother::draft(
+            carbonFootprintId: (string) $footprint->id(),
+            questions: [MaterialityQuestionMother::random(), MaterialityQuestionMother::random()],
+        );
+        $this->materialityAssessments->add($assessment);
+        $topic = $assessment->topics()[0];
+        $answers = $assessment->answersOf($topic->topicId());
+
+        $response = $this->sut()(
+            new AnswerMaterialityAssessmentTopicRequest($assessment->id(), $topic->id(), [(string) $answers[0]->id() => 3, (string) $answers[1]->id() => null]),
+            $this->ownerOf(),
+        );
+
+        $this->assertSame([1, 2, 1, 2, false], [$response->topicAnswered, $response->topicTotal, $response->answered, $response->total, $response->fullyAnswered]);
     }
 
     public function testOwnerOfAnotherAccountIsDenied(): void

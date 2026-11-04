@@ -9,6 +9,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityCategoryState;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\Materiality\Application\MaterialityAssessment\GetStep\GetMaterialityStepRequest;
 use App\Materiality\Application\MaterialityAssessment\GetStep\GetMaterialityStepService;
+use App\Materiality\Application\MaterialityAssessment\GetStep\MaterialityQuestionnaireBoardBuilder;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentSubjectType;
 use App\Materiality\Domain\Model\MaterialitySector\MaterialitySectorId;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
@@ -18,6 +19,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInputMother;
 use App\Tests\Unit\Materiality\Application\MaterialityAssessment\MaterialityAssessmentContextTrait;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentMother;
+use App\Tests\Unit\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialitySector\MaterialitySectorMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicMother;
 use PHPUnit\Framework\TestCase;
@@ -48,6 +50,7 @@ final class GetMaterialityStepServiceTest extends TestCase
         $this->assertEquals($sectorId, $response->previousSectorId);
         $this->assertFalse($response->footprintCompleted);
         $this->assertTrue($response->materialityAnswered);
+        $this->assertNull($response->board);
     }
 
     public function testAPreviousDraftAssessmentIsNotOffered(): void
@@ -72,6 +75,44 @@ final class GetMaterialityStepServiceTest extends TestCase
 
         $this->assertSame($assessment, $response->assessment);
         $this->assertFalse($response->materialityAnswered);
+        $this->assertNotNull($response->board);
+        $this->assertCount(1, $response->board->groups);
+        $this->assertSame($assessment->totalAnswers(), $response->board->total);
+        $this->assertNull($response->board->inheritedFromYear);
+    }
+
+    public function testTheBoardCarriesThePreviousYearWhenThereAreInheritedAnswers(): void
+    {
+        $propertyId = PropertyId::generate();
+        $previousFootprint = $this->propertyFootprint(year: 2024, propertyId: $propertyId);
+        $footprint = $this->propertyFootprint(year: 2025, propertyId: $propertyId);
+        $topic = MaterialityTopicMother::random();
+        $question = MaterialityQuestionMother::random();
+        $this->materialityAssessments->add(MaterialityAssessmentMother::completed(carbonFootprintId: (string) $previousFootprint->id(), year: 2024, topics: [$topic], questions: [$question]));
+        $this->materialityAssessments->add(MaterialityAssessmentMother::draft(
+            carbonFootprintId: (string) $footprint->id(),
+            topics: [$topic],
+            questions: [$question],
+            initialValues: [$topic->id() . '|' . $question->id() => 1],
+        ));
+
+        $response = $this->sut()(new GetMaterialityStepRequest(MaterialityAssessmentSubjectType::Property, (string) $footprint->id()), $this->ownerOf());
+
+        $this->assertSame(2024, $response->board?->inheritedFromYear);
+    }
+
+    public function testTheBoardHasNoInheritedYearWithoutInheritedAnswers(): void
+    {
+        $propertyId = PropertyId::generate();
+        $previousFootprint = $this->propertyFootprint(year: 2024, propertyId: $propertyId);
+        $footprint = $this->propertyFootprint(year: 2025, propertyId: $propertyId);
+        $this->materialityAssessments->add(MaterialityAssessmentMother::completed(carbonFootprintId: (string) $previousFootprint->id(), year: 2024));
+        $this->materialityAssessments->add(MaterialityAssessmentMother::draft(carbonFootprintId: (string) $footprint->id()));
+
+        $response = $this->sut()(new GetMaterialityStepRequest(MaterialityAssessmentSubjectType::Property, (string) $footprint->id()), $this->ownerOf());
+
+        $this->assertSame(2024, $response->previousYear);
+        $this->assertNull($response->board?->inheritedFromYear);
     }
 
     public function testACompletedAssessmentReturnsTheSummaryRows(): void
@@ -123,6 +164,24 @@ final class GetMaterialityStepServiceTest extends TestCase
         $this->assertSame([], $response->summaryRows);
     }
 
+    public function testAReopenedAssessmentHasNoSummaryEvenWithDecisions(): void
+    {
+        $footprint = $this->scope2AnsweredPropertyFootprint();
+        $footprint->answerMateriality();
+        $assessment = MaterialityAssessmentMother::completed(
+            carbonFootprintId: (string) $footprint->id(),
+            topics: [MaterialityTopicMother::standard(StandardScope3Category::from(5))],
+            value: 1,
+        );
+        $this->materialityAssessments->add($assessment);
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::omit(5, 0.0, topicId: (string) $assessment->topics()[0]->topicId())], []);
+        $assessment->reopen();
+
+        $response = $this->sut()(new GetMaterialityStepRequest(MaterialityAssessmentSubjectType::Property, (string) $footprint->id()), $this->ownerOf());
+
+        $this->assertSame([], $response->summaryRows);
+    }
+
     public function testOwnerOfAnotherAccountIsDenied(): void
     {
         $footprint = $this->propertyFootprint();
@@ -134,6 +193,6 @@ final class GetMaterialityStepServiceTest extends TestCase
 
     private function sut(): GetMaterialityStepService
     {
-        return new GetMaterialityStepService($this->materialityAssessments, $this->materialitySectors, $this->footprints(), new MaterialitySummaryBuilder());
+        return new GetMaterialityStepService($this->materialityAssessments, $this->materialitySectors, $this->footprints(), new MaterialitySummaryBuilder(), new MaterialityQuestionnaireBoardBuilder());
     }
 }

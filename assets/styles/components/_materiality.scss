@@ -1,0 +1,23 @@
+.materiality-answer--compact {
+    margin-bottom: 0;
+
+    legend,
+    .materiality-answer__help,
+    .materiality-answer__meta {
+        display: none;
+    }
+}
+
+.materiality-matrix {
+    th {
+        min-width: 9rem;
+    }
+
+    .form-check-inline {
+        margin-right: .5rem;
+    }
+}
+
+.materiality-matrix__question {
+    max-width: 12rem;
+}

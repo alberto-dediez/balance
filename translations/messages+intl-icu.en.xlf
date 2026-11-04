@@ -11921,6 +11921,42 @@
         <source>Solo se imprime si la huella tiene evaluación de materialidad con categorías excluidas y el alcance 3 incluido.</source>
         <target>Only printed when the footprint has a materiality assessment with excluded categories and scope 3 included.</target>
       </trans-unit>
+      <trans-unit id="xVXilpO" resname="Sin guardar">
+        <source>Sin guardar</source>
+        <target>Not saved</target>
+      </trans-unit>
+      <trans-unit id="G3RGCJ4" resname="Heredada de la evaluación de {year}">
+        <source>Heredada de la evaluación de {year}</source>
+        <target>Inherited from the {year} assessment</target>
+      </trans-unit>
+      <trans-unit id="acJe_fM" resname="Vista">
+        <source>Vista</source>
+        <target>View</target>
+      </trans-unit>
+      <trans-unit id="irziEFW" resname="Acordeón">
+        <source>Acordeón</source>
+        <target>Accordion</target>
+      </trans-unit>
+      <trans-unit id="kLxV_9e" resname="Matriz">
+        <source>Matriz</source>
+        <target>Matrix</target>
+      </trans-unit>
+      <trans-unit id="FY80fHq" resname="Marcar toda la categoría como Bajo/No">
+        <source>Marcar toda la categoría como Bajo/No</source>
+        <target>Mark the whole category as Low/No</target>
+      </trans-unit>
+      <trans-unit id="1OALonK" resname="Específicas">
+        <source>Específicas</source>
+        <target>Specific</target>
+      </trans-unit>
+      <trans-unit id="..lAhi9" resname="{count} preguntas específicas">
+        <source>{count} preguntas específicas</source>
+        <target>{count} specific questions</target>
+      </trans-unit>
+      <trans-unit id="8ChkkuK" resname="Cuestionario">
+        <source>Cuestionario</source>
+        <target>Questionnaire</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

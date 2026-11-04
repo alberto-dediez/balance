@@ -34,6 +34,15 @@ Feature:
         Then I see a button with name "start_materiality_assessment[start]"
         Then I see a text "Continuar sin evaluar"
 
+    Scenario: The step shows the questionnaire grouped by direction
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 2 answered exists
+        Given materiality assessment with id "A1" for "property" carbon footprint "999" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/materiality"
+        Then the response status should be 200
+        Then I see a text "Cuestionario"
+        Then I see a text "Aguas arriba" before a text "Aguas abajo"
+
     Scenario: Skipping the materiality step answers it and moves to scope 3
         Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" with scope 2 answered exists
         When I am logged as "owner@dediez.software"

@@ -6,6 +6,7 @@ namespace App\Materiality\Application\MaterialityAssessment\AnswerTopic;
 
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentAuthorizer;
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentFootprints;
+use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentAnswer;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentNotFoundException;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentRepository;
 use App\Security\Application\Action as SecurityAction;
@@ -44,8 +45,15 @@ class AnswerMaterialityAssessmentTopicService implements CommandHandler
 
         $this->materialityAssessmentRepository->add($materialityAssessment);
 
+        $topicAnswers = $materialityAssessment->answersOf($materialityAssessment->topic($request->assessmentTopicId)->topicId());
+
         return new AnswerMaterialityAssessmentTopicResponse(
             nextTopicId: $materialityAssessment->nextTopicAfter($request->assessmentTopicId)?->id(),
+            topicAnswered: count(array_filter($topicAnswers, static fn(MaterialityAssessmentAnswer $answer) => $answer->isAnswered())),
+            topicTotal: count($topicAnswers),
+            answered: $materialityAssessment->answeredCount(),
+            total: $materialityAssessment->totalAnswers(),
+            fullyAnswered: $materialityAssessment->isFullyAnswered(),
         );
     }
 

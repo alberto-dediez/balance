@@ -97,6 +97,11 @@ class MaterialityAssessmentAnswer
         return null !== $this->value;
     }
 
+    public function isInherited(): bool
+    {
+        return null !== $this->answeredAt && $this->answeredAt == $this->assessment->registeredAt();
+    }
+
     public function accepts(?int $value): bool
     {
         return null === $value || in_array($value, $this->answerScale->values(), true);
@@ -106,6 +111,10 @@ class MaterialityAssessmentAnswer
     {
         if (!$this->accepts($value)) {
             throw InvalidMaterialityAnswerValueException::outOfScale((int) $value, (string) $this->id);
+        }
+
+        if ($value === $this->value) {
+            return;
         }
 
         $this->value = $value;

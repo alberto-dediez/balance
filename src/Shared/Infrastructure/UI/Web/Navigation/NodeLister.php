@@ -615,7 +615,13 @@ class NodeLister
         $nodes[] = new Node(
             label: new TranslatableMessage('Proveedores'),
             icon: 'solar:users-group-rounded-line-duotone',
-            target: $this->router->generate('providers'),
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Proveedores'),
+                    icon: 'solar:users-group-rounded-line-duotone',
+                    target: $this->router->generate('providers'),
+                ),
+            ],
         );
 
         $nodes[] = new Node(

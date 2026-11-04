@@ -94,9 +94,6 @@ class StartController extends AbstractController
             return $this->redirectToRoute($step['route'], $step['params']);
         }
 
-        return $this->redirectToRoute('materiality_assessments_topic', [
-            'materialityAssessmentId' => (string) $response->materialityAssessmentId,
-            'assessmentTopicId' => (string) $response->firstTopicId,
-        ]);
+        return $this->redirectToRoute($step['route'], $step['params'] + ['_fragment' => 'topic-' . $response->firstTopicId]);
     }
 }

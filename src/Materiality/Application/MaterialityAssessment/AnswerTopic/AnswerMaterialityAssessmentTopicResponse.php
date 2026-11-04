@@ -11,5 +11,10 @@ class AnswerMaterialityAssessmentTopicResponse implements CommandResponse
 {
     public function __construct(
         public ?MaterialityAssessmentTopicId $nextTopicId,
+        public int $topicAnswered,
+        public int $topicTotal,
+        public int $answered,
+        public int $total,
+        public bool $fullyAnswered,
     ) {}
 }

@@ -1,5 +1,14 @@
 {% set assessment = step.assessment %}
+{% set showQuestionnaire = step.board is not null and not assessment.isCompleted %}
 
+<div{% if showQuestionnaire %}
+    data-controller="materiality-questionnaire"
+    data-materiality-questionnaire-storage-key-value="materiality.questionnaireView"
+    data-materiality-questionnaire-read-only-value="{{ readOnly or assessment.isCompleted ? 'true' : 'false' }}"
+    data-materiality-questionnaire-unsaved-label-value="{{ 'Sin guardar' | trans }}"
+    data-materiality-questionnaire-error-message-value="{{ 'No se han podido guardar las respuestas.' | trans }}"
+    data-action="hashchange@window->materiality-questionnaire#openFromHash"
+{% endif %}>
 <twig:Card title="{{ 'Evaluación de materialidad' | trans }}">
     {% if assessment is null %}
         <p class="text-muted">{{ 'La evaluación de materialidad mide la relevancia de cada categoría de emisiones para la organización a partir de un breve cuestionario.' | trans }} {{ 'Al completarla se obtiene una puntuación de relevancia por categoría que ayuda a decidir qué categorías incluir en el cálculo.' | trans }}</p>
@@ -38,7 +47,7 @@
         {% if assessment.isCompleted %}
             <p class="mb-3">{% trans with {'{date}': assessment.completedAt | date('d/m/Y H:i'), '{user}': assessment.completedBy | user_name} %}Completada el {date} por {user}{% endtrans %}</p>
         {% else %}
-            <p class="mb-3">{{ 'Progreso' | trans }}: {% trans with {'{answered}': assessment.answeredCount, '{total}': assessment.totalAnswers} %}{answered} de {total} respuestas{% endtrans %}</p>
+            <p class="mb-3">{{ 'Progreso' | trans }}: {% trans with {'{answered}': '<span data-materiality-questionnaire-target="answered">' ~ assessment.answeredCount ~ '</span>', '{total}': '<span data-materiality-questionnaire-target="total">' ~ assessment.totalAnswers ~ '</span>'} %}{answered} de {total} respuestas{% endtrans %}</p>
         {% endif %}
 
         {% if step.stageExcluded and step.summaryRows is not empty %}
@@ -71,7 +80,6 @@
                             <th>{{ 'Veredicto' | trans }}</th>
                             <th>{{ 'Estado en la huella' | trans }}</th>
                             <th>{{ 'Anulación' | trans }}</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -120,54 +128,15 @@
                                         ---
                                     {% endif %}
                                 </td>
-                                <td>
-                                    {% if topic is not null %}
-                                        {% set topicPath = path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: topic.id}) %}
-                                        {% if readOnly or assessment.isCompleted %}
-                                            <twig:List:Action:View path="{{ topicPath }}" />
-                                        {% else %}
-                                            <twig:List:Action:Edit path="{{ topicPath }}" />
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        {% else %}
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th>{{ 'Alcance' | trans }}</th>
-                            <th>{{ 'Dirección' | trans }}</th>
-                            <th>{{ 'Categoría' | trans }}</th>
-                            <th>{{ 'Respondidas' | trans }}</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for topic in assessment.topics %}
-                            {% set topicAnswers = assessment.answersOf(topic.topicId) %}
-                            {% set topicPath = path('materiality_assessments_topic', {materialityAssessmentId: assessment.id, assessmentTopicId: topic.id}) %}
-                            <tr>
-                                <td>{{ topic.scope.value | trans({}, 'materialityScopeType') }}</td>
-                                <td>{{ topic.direction is not null ? topic.direction.value | trans({}, 'materialityTopicDirectionType') : '---' }}</td>
-                                <td>{{ topic.topicNumber is not null ? topic.topicNumber ~ '. ' : '' }}{{ (topic.topicId | materiality_topic_name).name ?? topic.name }}</td>
-                                <td>{{ topicAnswers | filter(answer => answer.isAnswered) | length }} / {{ topicAnswers | length }}</td>
-                                <td>
-                                    {% if readOnly or assessment.isCompleted %}
-                                        <twig:List:Action:View path="{{ topicPath }}" />
-                                    {% else %}
-                                        <twig:List:Action:Edit path="{{ topicPath }}" />
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        {% endif %}
+
+        {% if showQuestionnaire %}
+            {% include '@materiality/assessment/_questionnaire.html.twig' %}
         {% endif %}
 
         {% if not readOnly %}
@@ -187,15 +156,16 @@
                         <button type="submit" class="btn btn-outline-primary">{{ 'Reabrir evaluación' | trans }}</button>
                     </form>
                 {% else %}
-                    <form method="post" action="{{ path('materiality_assessments_complete', {materialityAssessmentId: assessment.id}) }}">
+                    <form method="post" id="materiality-assessment-complete-form" action="{{ path('materiality_assessments_complete', {materialityAssessmentId: assessment.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('materiality_assessment_complete_' ~ assessment.id) }}">
-                        <button type="submit" class="btn btn-primary">{{ 'Completar evaluación' | trans }}</button>
+                        <button type="submit" class="btn btn-primary" data-materiality-questionnaire-target="complete" {{ step.board is not null and not step.board.fullyAnswered ? 'disabled' : '' }}>{{ 'Completar evaluación' | trans }}</button>
                     </form>
                 {% endif %}
             </div>
         {% endif %}
     {% endif %}
 </twig:Card>
+</div>
 
 <div class="d-flex justify-content-between mt-3">
     <a href="{{ previousPath }}" class="btn btn-outline-primary">
