@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <embeddable name="App\Security\Domain\Model\Account\AccountFeatures">
+        <field name="accountTripCalculator" type="boolean" column="account_trip_calculator" nullable="false"/>
+        <field name="propertyTripCalculators" type="boolean" column="property_trip_calculators" nullable="false"/>
+        <field name="events" type="boolean" column="events" nullable="false"/>
+        <field name="compensation" type="boolean" column="compensation" nullable="false"/>
+        <field name="organizationalCarbonFootprint" type="boolean" column="organizational_carbon_footprint" nullable="false"/>
+    </embeddable>
+
+</doctrine-mapping>

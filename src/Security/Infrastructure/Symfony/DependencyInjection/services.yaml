@@ -48,6 +48,10 @@ services:
     App\Shared\Application\CurrentImpersonation\CurrentImpersonationProvider:
         alias: App\Security\Infrastructure\Symfony\Security\CurrentImpersonation
 
+    App\Security\Application\Account\AccountFeaturesPolicy:
+        tags:
+            - { name: kernel.reset, method: reset }
+
     App\Security\Application\User\Register\RegisterUserService:
         arguments:
             $passwordHasher: '@App\Security\Infrastructure\Symfony\Security\UserPasswordHasher'

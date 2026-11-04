@@ -65,3 +65,16 @@ Feature:
         When I go to "/es/my-payee"
         Then the response status should be 200
         Then I do not see a text "Notas"
+
+    Scenario: An owner of an account without compensation can't see their payment details
+        Given account "666" has feature "compensation" disabled
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/my-payee"
+        Then the response status should be 403
+
+    Scenario: An owner of an account without compensation can't edit their existing payment details
+        Given payee "Hotel X SL" with id "P1" for "account" "666" exists
+        Given account "666" has feature "compensation" disabled
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/my-payee"
+        Then the response status should be 403

@@ -19,3 +19,13 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/events"
         Then the response status should be 403
+
+    Scenario: As owner of an account without events I can't access the list of events
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "events" disabled
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/events"
+        Then the response status should be 403
+        When I go to "/es/events/register"
+        Then the response status should be 403

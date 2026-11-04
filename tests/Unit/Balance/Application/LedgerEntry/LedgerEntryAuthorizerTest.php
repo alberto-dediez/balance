@@ -10,9 +10,12 @@ use App\Balance\Domain\Model\LedgerEntry\LedgerEntry;
 use App\Balance\Domain\Model\LedgerEntry\LedgerEntryId;
 use App\Balance\Domain\Model\LedgerEntry\LedgerEntryType;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class LedgerEntryAuthorizerTest extends TestCase
@@ -94,6 +97,24 @@ class LedgerEntryAuthorizerTest extends TestCase
         ));
     }
 
+    public function testOwnerCannotSeeEntriesWithoutCompensationFeature(): void
+    {
+        $accountId = AccountId::generate();
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(compensation: false));
+
+        $this->assertFalse($sut->canDoThat($this->entry(LedgerBeneficiary::Account, (string) $accountId), Action::List, $user));
+        $this->assertFalse($sut->canDoThat($this->entry(LedgerBeneficiary::Account, (string) $accountId), Action::View, $user));
+    }
+
+    public function testAdminSeesEntriesWithCompensationFeatureDisabled(): void
+    {
+        $accountId = AccountId::generate();
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(compensation: false));
+
+        $this->assertTrue($sut->canDoThat($this->entry(LedgerBeneficiary::Account, (string) $accountId), Action::List, UserMother::adminUser()));
+    }
+
     private function entry(
         LedgerBeneficiary $beneficiary,
         ?string $beneficiaryId,
@@ -110,5 +131,13 @@ class LedgerEntryAuthorizerTest extends TestCase
     private function createSUT(): LedgerEntryAuthorizer
     {
         return new LedgerEntryAuthorizer();
+    }
+
+    private function createSUTWithFeatures(AccountId $accountId, AccountFeatures $features): LedgerEntryAuthorizer
+    {
+        return new LedgerEntryAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider($accountId),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount($accountId, $features),
+        );
     }
 }

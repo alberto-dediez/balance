@@ -50,6 +50,11 @@ class EditController extends AbstractController
             consultantAccountId: $account->consultantAccountId(),
             reportCanEditTexts: $account->reportPermissions()->canEditTexts(),
             reportAutoReview: $account->reportPermissions()->autoReview(),
+            featureAccountTripCalculator: $account->features()->accountTripCalculator(),
+            featurePropertyTripCalculators: $account->features()->propertyTripCalculators(),
+            featureEvents: $account->features()->events(),
+            featureCompensation: $account->features()->compensation(),
+            featureOrganizationalCarbonFootprint: $account->features()->organizationalCarbonFootprint(),
         );
 
         $form = $this->createForm(UpdateAccountType::class, $updateRequest);

@@ -7,6 +7,7 @@ namespace App\Payments\Application\Payee;
 use App\Payments\Domain\Model\Payee\Payee;
 use App\Payments\Domain\Model\Payee\PayeeType;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -67,6 +68,7 @@ final class PayeeAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $accountId instanceof AccountId
             && PayeeType::Account === $payee->type()
-            && $payee->subjectId() === (string) $accountId;
+            && $payee->subjectId() === (string) $accountId
+            && $this->currentAccountHasFeature($user, AccountFeature::Compensation);
     }
 }

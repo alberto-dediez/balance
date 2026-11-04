@@ -157,3 +157,20 @@ Feature:
         Then the response status should be 200
         Then I see a text 'href="/es/users"'
         Then I do not see a text 'href="/es/admin/users"'
+
+    Scenario: An owner finds the events entry when the account has events
+        Given account "Acme" with id "a1" exists
+        Given user "acme-owner@dediez.software" with role "ROLE_OWNER" of account "a1" exists
+        When I am logged as "acme-owner@dediez.software"
+        When I go to "/es/search?term=eventos" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'href="/es/events"'
+
+    Scenario: An owner does not find the events entry when the account has not events
+        Given account "Acme" with id "a1" exists
+        Given account "a1" has feature "events" disabled
+        Given user "acme-owner@dediez.software" with role "ROLE_OWNER" of account "a1" exists
+        When I am logged as "acme-owner@dediez.software"
+        When I go to "/es/search?term=eventos" as an ajax request
+        Then the response status should be 200
+        Then I do not see a text 'href="/es/events"'

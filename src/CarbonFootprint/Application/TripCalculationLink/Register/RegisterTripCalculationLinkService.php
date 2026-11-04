@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Application\TripCalculationLink\Register;
 
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -25,6 +27,7 @@ class RegisterTripCalculationLinkService implements CommandHandler
         private TripCalculationLinkRepository $tripCalculationLinkRepository,
         private PropertyRepository $propertyRepository,
         private PropertyAuthorizer $propertyAuthorizer,
+        private TripCalculationLinkAuthorizer $tripCalculationLinkAuthorizer,
     ) {}
 
     public function __invoke(RegisterTripCalculationLinkRequest $request, User $user): RegisterTripCalculationLinkResponse
@@ -36,6 +39,10 @@ class RegisterTripCalculationLinkService implements CommandHandler
         }
 
         $this->propertyAuthorizer->denyUnlessCanDoThat($property, Action::Edit, $user);
+
+        if (!$this->tripCalculationLinkAuthorizer->canRegisterForProperty($property, $user)) {
+            throw new UnauthorizedActionException($property, Action::Register);
+        }
 
         $existing = $this->tripCalculationLinkRepository->findByPropertyId($request->propertyId);
 

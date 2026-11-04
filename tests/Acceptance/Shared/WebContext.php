@@ -479,6 +479,12 @@ final class WebContext implements Context
         Assert::assertGreaterThan(0, $this->client->getCrawler()->filterXPath(sprintf('//a[@href="%s"]', $href))->count());
     }
 
+    #[Then('I do not see a link to :href')]
+    public function iDoNotSeeALinkTo(string $href): void
+    {
+        Assert::assertSame(0, $this->client->getCrawler()->filterXPath(sprintf('//a[@href="%s"]', $href))->count());
+    }
+
     #[Then('I do not see a link with name :name')]
     public function iDoNotSeeALinkWithName(string $name): void
     {

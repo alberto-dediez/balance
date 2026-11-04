@@ -6,6 +6,8 @@ namespace App\Tests\Unit\Security\Domain\Model\Account;
 
 use App\Security\Domain\Model\Account\AccountConsultantChanged;
 use App\Security\Domain\Model\Account\AccountConsultantStatusChanged;
+use App\Security\Domain\Model\Account\AccountFeatures;
+use App\Security\Domain\Model\Account\AccountFeaturesChanged;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Security\Domain\Model\Account\AccountReportPermissionsChanged;
@@ -107,6 +109,58 @@ class AccountTest extends TestCase
         $eventsBefore = count($this->spySubscriber->events());
 
         $account->changeReportPermissions(new AccountReportPermissions(false, true));
+
+        $this->assertCount($eventsBefore, $this->spySubscriber->events());
+    }
+
+    public function testFeaturesDefaultToAllEnabled(): void
+    {
+        $account = AccountMother::fromName('MyAccount');
+
+        $this->assertTrue($account->features()->accountTripCalculator());
+        $this->assertTrue($account->features()->propertyTripCalculators());
+        $this->assertTrue($account->features()->events());
+        $this->assertTrue($account->features()->compensation());
+        $this->assertTrue($account->features()->organizationalCarbonFootprint());
+    }
+
+    public function testChangeFeaturesPublishesEventAndUpdatesThem(): void
+    {
+        $account = AccountMother::fromName('MyAccount');
+
+        $account->changeFeatures(new AccountFeatures(
+            accountTripCalculator: false,
+            propertyTripCalculators: true,
+            events: false,
+            compensation: true,
+            organizationalCarbonFootprint: false,
+        ));
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountFeaturesChanged::class, $lastEvent);
+        $this->assertSame('accountFeaturesChanged', $lastEvent::eventName());
+        $this->assertSame([
+            'accountId' => (string) $account->id(),
+            'accountTripCalculator' => false,
+            'propertyTripCalculators' => true,
+            'events' => false,
+            'compensation' => true,
+            'organizationalCarbonFootprint' => false,
+        ], $lastEvent->payload());
+        $this->assertFalse($account->features()->accountTripCalculator());
+        $this->assertTrue($account->features()->propertyTripCalculators());
+        $this->assertFalse($account->features()->events());
+        $this->assertTrue($account->features()->compensation());
+        $this->assertFalse($account->features()->organizationalCarbonFootprint());
+    }
+
+    public function testChangeFeaturesWithoutChangesDoesNotPublish(): void
+    {
+        $account = AccountMother::fromName('MyAccount');
+        $eventsBefore = count($this->spySubscriber->events());
+
+        $account->changeFeatures(new AccountFeatures());
 
         $this->assertCount($eventsBefore, $this->spySubscriber->events());
     }

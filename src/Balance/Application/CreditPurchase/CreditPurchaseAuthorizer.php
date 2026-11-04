@@ -6,6 +6,7 @@ namespace App\Balance\Application\CreditPurchase;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -22,7 +23,8 @@ final class CreditPurchaseAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::Compensation);
     }
 
     protected function canView(mixed $subject, User $user): bool

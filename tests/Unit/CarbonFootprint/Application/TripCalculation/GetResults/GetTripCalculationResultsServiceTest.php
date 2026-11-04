@@ -8,6 +8,7 @@ use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectCo
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsRequest;
 use App\CarbonFootprint\Application\TripCalculation\GetResults\GetTripCalculationResultsService;
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculation;
@@ -21,6 +22,7 @@ use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -29,7 +31,9 @@ use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionM
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class GetTripCalculationResultsServiceTest extends TestCase
@@ -62,6 +66,7 @@ class GetTripCalculationResultsServiceTest extends TestCase
             $this->tripCalculationLinkRepository,
             TripCalculationResultsBuilderMother::create($this->tripCalculationRepository, $this->projectContributionRepository, $this->mobilityRepository),
             new PropertyLocator(),
+            new TripCalculationLinkAuthorizer($this->propertyRepository, new PropertyAuthorizer()),
         );
     }
 
@@ -208,6 +213,30 @@ class GetTripCalculationResultsServiceTest extends TestCase
             mobilityEmissions: $mobilityEmissions,
             id: $id,
         );
+    }
+
+    public function testDeniesAnOwnerWhoseAccountHasNotPropertyTripCalculators(): void
+    {
+        $property = $this->property();
+
+        $sut = new GetTripCalculationResultsService(
+            $this->propertyRepository,
+            new PropertyAuthorizer(),
+            $this->tripCalculationLinkRepository,
+            TripCalculationResultsBuilderMother::create($this->tripCalculationRepository, $this->projectContributionRepository, $this->mobilityRepository),
+            new PropertyLocator(),
+            new TripCalculationLinkAuthorizer(
+                $this->propertyRepository,
+                new PropertyAuthorizer(),
+                new StubCurrentAccountIdProvider(new AccountId('account-id')),
+                null,
+                AccountFeaturesPolicyMother::forAccount(new AccountId('account-id'), new AccountFeatures(propertyTripCalculators: false)),
+            ),
+        );
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $sut(new GetTripCalculationResultsRequest($property->id()), $this->ownerUser());
     }
 
     private function property(): Property

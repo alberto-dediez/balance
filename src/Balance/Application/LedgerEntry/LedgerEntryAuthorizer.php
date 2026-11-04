@@ -7,6 +7,7 @@ namespace App\Balance\Application\LedgerEntry;
 use App\Balance\Domain\Model\LedgerEntry\LedgerBeneficiary;
 use App\Balance\Domain\Model\LedgerEntry\LedgerEntry;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -55,6 +56,7 @@ final class LedgerEntryAuthorizer extends AbstractAuthorizer
 
         return $this->userHasRole($user, Role::Owner)
             && $accountId instanceof AccountId
-            && $ledgerEntry->belongsTo(LedgerBeneficiary::Account, (string) $accountId);
+            && $ledgerEntry->belongsTo(LedgerBeneficiary::Account, (string) $accountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::Compensation);
     }
 }

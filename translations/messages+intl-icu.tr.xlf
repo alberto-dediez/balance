@@ -11873,6 +11873,38 @@
         <source>Cuestionario</source>
         <target>NEW_Cuestionario</target>
       </trans-unit>
+      <trans-unit id="qHgHCa7" resname="Calculadora de viajes de la cuenta">
+        <source>Calculadora de viajes de la cuenta</source>
+        <target>NEW_Calculadora de viajes de la cuenta</target>
+      </trans-unit>
+      <trans-unit id="Fg8KGdy" resname="Calculadoras de viajes de las propiedades">
+        <source>Calculadoras de viajes de las propiedades</source>
+        <target>NEW_Calculadoras de viajes de las propiedades</target>
+      </trans-unit>
+      <trans-unit id="MzLDmhU" resname="Compensación (proyectos, créditos, aportaciones y saldo)">
+        <source>Compensación (proyectos, créditos, aportaciones y saldo)</source>
+        <target>NEW_Compensación (proyectos, créditos, aportaciones y saldo)</target>
+      </trans-unit>
+      <trans-unit id="SnA6MuE" resname="Huella de carbono de propiedades y empresas (alcances 1, 2, 3 y materialidad)">
+        <source>Huella de carbono de propiedades y empresas (alcances 1, 2, 3 y materialidad)</source>
+        <target>NEW_Huella de carbono de propiedades y empresas (alcances 1, 2, 3 y materialidad)</target>
+      </trans-unit>
+      <trans-unit id="ACHtLra" resname="Funcionalidades">
+        <source>Funcionalidades</source>
+        <target>NEW_Funcionalidades</target>
+      </trans-unit>
+      <trans-unit id="RerLzZp" resname="Cambiadas las funcionalidades de la cuenta {account} por el usuario {user}: {features}">
+        <source>Cambiadas las funcionalidades de la cuenta {account} por el usuario {user}: {features}</source>
+        <target>NEW_Cambiadas las funcionalidades de la cuenta {account} por el usuario {user}: {features}</target>
+      </trans-unit>
+      <trans-unit id="Po5K9fS" resname="No hay estadísticas disponibles para las funcionalidades de esta cuenta.">
+        <source>No hay estadísticas disponibles para las funcionalidades de esta cuenta.</source>
+        <target>NEW_No hay estadísticas disponibles para las funcionalidades de esta cuenta.</target>
+      </trans-unit>
+      <trans-unit id="OSlDXcQ" resname="Desactivadas todas las funcionalidades de la cuenta {account} por el usuario {user}">
+        <source>Desactivadas todas las funcionalidades de la cuenta {account} por el usuario {user}</source>
+        <target>NEW_Desactivadas todas las funcionalidades de la cuenta {account} por el usuario {user}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

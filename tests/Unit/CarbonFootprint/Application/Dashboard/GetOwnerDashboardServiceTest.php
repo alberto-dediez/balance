@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Dashboard;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
+use App\CarbonFootprint\Application\Dashboard\DashboardCompensations;
 use App\CarbonFootprint\Application\Dashboard\DashboardCompensationsCalculator;
 use App\CarbonFootprint\Application\Dashboard\EmissionsBreakdownCalculator;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardRequest;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardService;
-use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Dashboard\OwnerDashboardAuthorizer;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
@@ -24,6 +25,7 @@ use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
@@ -42,6 +44,7 @@ use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
 
@@ -137,12 +140,42 @@ class GetOwnerDashboardServiceTest extends TestCase
         );
     }
 
+    public function testWithoutEventsTheDashboardDoesNotIncludeEventsButKeepsCompensations(): void
+    {
+        $eventRepository = EventRepositoryMother::inMemory();
+        $footprintRepository = EventCarbonFootprintRepositoryMother::inMemory();
+
+        $event = EventMother::fromNameAndAccountAndId('Event A', self::ACCOUNT_ID, (string) EventId::generate());
+        $eventRepository->add($event);
+        $footprintRepository->add(EventCarbonFootprintMother::fromEventIdAndAccount((string) $event->id(), self::ACCOUNT_ID));
+
+        $sut = $this->createSUT(
+            $eventRepository,
+            $footprintRepository,
+            ActivityRepositoryMother::inMemory(),
+            PropertyRepositoryMother::inMemory(),
+            CompanyRepositoryMother::inMemory(),
+            new AccountFeatures(events: false),
+        );
+
+        $response = $sut(
+            new GetOwnerDashboardRequest(accountId: new AccountId(self::ACCOUNT_ID)),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId(self::ACCOUNT_ID)),
+        );
+
+        $this->assertSame(0, $response->totalEvents);
+        $this->assertSame(0, $response->totalFootprints);
+        $this->assertSame([], $response->latestFootprints);
+        $this->assertInstanceOf(DashboardCompensations::class, $response->compensations);
+    }
+
     private function createSUT(
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         ActivityRepository $activityRepository,
         PropertyRepository $propertyRepository,
         CompanyRepository $companyRepository,
+        AccountFeatures $features = new AccountFeatures(),
     ): GetOwnerDashboardService {
         return new GetOwnerDashboardService(
             eventRepository: $eventRepository,
@@ -151,7 +184,8 @@ class GetOwnerDashboardServiceTest extends TestCase
             companyRepository: $companyRepository,
             emissionsBreakdownCalculator: new EmissionsBreakdownCalculator($activityRepository),
             dashboardCompensationsCalculator: $this->createCompensationsCalculator(),
-            authorizer: new EventCarbonFootprintAuthorizer(),
+            authorizer: new OwnerDashboardAuthorizer(),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId(self::ACCOUNT_ID), $features),
         );
     }
 

@@ -1,0 +1,24 @@
+{% set features = [] %}
+{% for key, feature in {
+    'accountTripCalculator': 'account_trip_calculator',
+    'propertyTripCalculators': 'property_trip_calculators',
+    'events': 'events',
+    'compensation': 'compensation',
+    'organizationalCarbonFootprint': 'organizational_carbon_footprint'
+} %}
+    {% if attribute(event, key) %}
+        {% set features = features | merge([feature | trans({}, 'accountFeature')]) %}
+    {% endif %}
+{% endfor %}
+{% if features is empty %}
+    {% trans with {
+        '{account}': event.accountId | account_name,
+        '{user}': element.userId | user_name
+    } %}Desactivadas todas las funcionalidades de la cuenta {account} por el usuario {user}{% endtrans %}
+{% else %}
+    {% trans with {
+        '{account}': event.accountId | account_name,
+        '{user}': element.userId | user_name,
+        '{features}': features | join(', ')
+    } %}Cambiadas las funcionalidades de la cuenta {account} por el usuario {user}: {features}{% endtrans %}
+{% endif %}

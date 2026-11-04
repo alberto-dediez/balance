@@ -6,17 +6,18 @@ namespace App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard;
 
 use App\CarbonFootprint\Application\Dashboard\DashboardCompensationsCalculator;
 use App\CarbonFootprint\Application\Dashboard\EmissionsBreakdownCalculator;
-use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
+use App\CarbonFootprint\Application\Dashboard\OwnerDashboardAuthorizer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintFilter;
-use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepository;
 use App\EventOperations\Domain\Model\Event\Event;
 use App\EventOperations\Domain\Model\Event\EventFilter;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Application\Account\AccountFeaturesPolicy;
 use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\User;
 
 class GetOwnerDashboardService
@@ -28,18 +29,21 @@ class GetOwnerDashboardService
         private CompanyRepository $companyRepository,
         private EmissionsBreakdownCalculator $emissionsBreakdownCalculator,
         private DashboardCompensationsCalculator $dashboardCompensationsCalculator,
-        private EventCarbonFootprintAuthorizer $authorizer,
+        private OwnerDashboardAuthorizer $authorizer,
+        private AccountFeaturesPolicy $accountFeaturesPolicy,
     ) {}
 
     public function __invoke(GetOwnerDashboardRequest $request, User $user): GetOwnerDashboardResponse
     {
-        $this->authorizer->denyUnlessCanDoThat(new EventCarbonFootprint(
-            id: EventCarbonFootprintId::generate(),
-            accountId: $request->accountId,
-        ), SecurityAction::List, $user);
+        $this->authorizer->denyUnlessCanDoThat($request, SecurityAction::List, $user);
 
-        $events = $this->eventRepository->findByFilter(new EventFilter(accountId: $request->accountId, limit: 0));
-        $footprints = $this->eventCarbonFootprintRepository->findByFilter(new EventCarbonFootprintFilter(accountId: $request->accountId, limit: 0));
+        $events = [];
+        $footprints = [];
+
+        if ($this->accountFeaturesPolicy->isEnabled(AccountFeature::Events, $request->accountId)) {
+            $events = $this->eventRepository->findByFilter(new EventFilter(accountId: $request->accountId, limit: 0));
+            $footprints = $this->eventCarbonFootprintRepository->findByFilter(new EventCarbonFootprintFilter(accountId: $request->accountId, limit: 0));
+        }
 
         $eventsById = [];
         $eventsThisYear = 0;

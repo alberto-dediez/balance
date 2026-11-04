@@ -6,6 +6,7 @@ namespace App\Property\Application\Property;
 
 use App\Property\Domain\Model\Property\Property;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
@@ -18,7 +19,8 @@ final class PropertyAuthorizer extends AbstractAuthorizer
         if ($this->userHasRole($user, Role::Owner)
         && null != $currentAccountId
         && null != $subject->accountId()
-        && $currentAccountId->equals($subject->accountId())) {
+        && $currentAccountId->equals($subject->accountId())
+        && $this->hasPropertyFeature($user)) {
             return true;
         }
 
@@ -53,5 +55,12 @@ final class PropertyAuthorizer extends AbstractAuthorizer
     public function supports(mixed $subject): bool
     {
         return $subject instanceof Property;
+    }
+
+    private function hasPropertyFeature(User $user): bool
+    {
+        return $this->currentAccountHasFeature($user, AccountFeature::Events)
+            || $this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint)
+            || $this->currentAccountHasFeature($user, AccountFeature::PropertyTripCalculators);
     }
 }

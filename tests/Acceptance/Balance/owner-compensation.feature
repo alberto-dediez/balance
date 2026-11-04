@@ -85,3 +85,11 @@ Feature:
         When I am logged as "other@dediez.software"
         When I go to "/es/compensate/event_carbon_footprint/888"
         Then the response status should be 403
+
+    Scenario: The owner of an account without compensation can't compensate
+        Given account "666" has feature "compensation" disabled
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/compensate/account/666"
+        Then the response status should be 403
+        When I go to "/es/compensate/event_carbon_footprint/888"
+        Then the response status should be 403

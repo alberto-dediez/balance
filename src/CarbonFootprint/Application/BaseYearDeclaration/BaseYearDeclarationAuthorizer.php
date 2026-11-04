@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\BaseYearDeclaration;
 
 use App\CarbonFootprint\Domain\Model\BaseYearDeclaration\BaseYearDeclaration;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -37,7 +38,8 @@ final class BaseYearDeclarationAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint);
     }
 
     protected function canRemove(mixed $subject, User $user): bool

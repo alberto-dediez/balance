@@ -22,7 +22,7 @@
             </twig:TopAction>
         {% endif %}
 
-        {% if is_granted('ROLE_OWNER') %}
+        {% if is_granted('ROLE_OWNER') and account_feature_enabled('compensation') %}
             <twig:TopAction path="{{ path('owner_contribution_choose', {origin: 'event_carbon_footprint', originId: eventId}) }}" target="_blank">
                 <twig:Icon name="solar:hand-heart-bold" size="lg" class="me-2" />
 

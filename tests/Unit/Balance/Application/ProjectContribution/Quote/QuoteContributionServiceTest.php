@@ -17,6 +17,7 @@ use App\Payments\Domain\Model\Vat\VatCountry;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Payments\Domain\Model\Vat\VatNumberFormatValidator;
 use App\Payments\Infrastructure\Vat\InMemory\InMemoryVatCountryProvider;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
@@ -26,6 +27,7 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use PHPUnit\Framework\TestCase;
 
 class QuoteContributionServiceTest extends TestCase
@@ -124,6 +126,13 @@ class QuoteContributionServiceTest extends TestCase
         $this->createSUT(adhered: false)($this->request());
     }
 
+    public function testRejectsAnAccountWithoutCompensation(): void
+    {
+        $this->expectException(ProjectNotContributableException::class);
+
+        $this->createSUT(compensation: false)($this->request());
+    }
+
     public function testRejectsAProjectWithoutAPrice(): void
     {
         $this->expectException(ProjectNotContributableException::class);
@@ -185,6 +194,7 @@ class QuoteContributionServiceTest extends TestCase
         ?float $costPerTonne = 15.0,
         float $purchasedTonnes = 10.0,
         bool $adhered = true,
+        bool $compensation = true,
     ): QuoteContributionService {
         $projects = ProjectRepositoryMother::inMemory();
         $projects->add(ProjectMother::contributable(
@@ -220,6 +230,7 @@ class QuoteContributionServiceTest extends TestCase
                 ]),
                 homeCountry: 'ESP',
             )),
+            AccountFeaturesPolicyMother::forAccount($this->accountId, new AccountFeatures(compensation: $compensation)),
         );
     }
 }

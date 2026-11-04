@@ -6,6 +6,7 @@ namespace App\Balance\Application\ProjectContribution;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -22,7 +23,8 @@ final class ProjectContributionAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::Compensation);
     }
 
     protected function canView(mixed $subject, User $user): bool
@@ -43,7 +45,8 @@ final class ProjectContributionAuthorizer extends AbstractAuthorizer
 
         return $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::Compensation);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

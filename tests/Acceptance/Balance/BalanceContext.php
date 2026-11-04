@@ -232,6 +232,21 @@ final class BalanceContext implements Context
         $this->getAccountProjectRepository()->add($accountProject);
     }
 
+    #[Given('project :id is no longer adhered to account :accountId')]
+    public function projectIsNoLongerAdheredToAccount(string $id, string $accountId): void
+    {
+        $accountProjects = $this->getAccountProjectRepository()->findByFilter(new AccountProjectFilter(
+            accountId: new AccountId($accountId),
+            projectId: new ProjectId($id),
+            limit: 0,
+        ));
+
+        foreach ($accountProjects as $accountProject) {
+            $accountProject->deselect();
+            $this->getAccountProjectRepository()->remove($accountProject);
+        }
+    }
+
     #[Given('credit purchase :id for account :accountId and project :projectId requesting :tonnes tonnes exists')]
     public function creditPurchaseExists(string $id, string $accountId, string $projectId, string $tonnes): void
     {

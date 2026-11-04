@@ -9,10 +9,13 @@ use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootp
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class PropertyCarbonFootprintAuthorizerTest extends TestCase
@@ -114,8 +117,35 @@ class PropertyCarbonFootprintAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Export, $user));
     }
 
+    public function testOwnerCannotListNorEditWithoutOrganizationalCarbonFootprintFeature(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = PropertyCarbonFootprintMother::fromPropertyIdAndAccount((string) PropertyId::generate(), 'account-id-test');
+        $sut = $this->createSUTWithFeatures('account-id-test', new AccountFeatures(organizationalCarbonFootprint: false));
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Export] as $action) {
+            $this->assertFalse($sut->canDoThat($subject, $action, $user));
+        }
+    }
+
+    public function testAdminCanRemoveWithOrganizationalCarbonFootprintFeatureDisabled(): void
+    {
+        $subject = PropertyCarbonFootprintMother::fromPropertyIdAndAccount((string) PropertyId::generate(), 'account-id-test');
+        $sut = $this->createSUTWithFeatures('account-id-test', new AccountFeatures(organizationalCarbonFootprint: false));
+
+        $this->assertTrue($sut->canDoThat($subject, Action::Remove, UserMother::adminUser()));
+    }
+
     private function createSUT(): PropertyCarbonFootprintAuthorizer
     {
         return new PropertyCarbonFootprintAuthorizer();
+    }
+
+    private function createSUTWithFeatures(string $accountId, AccountFeatures $features): PropertyCarbonFootprintAuthorizer
+    {
+        return new PropertyCarbonFootprintAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider(new AccountId($accountId)),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId($accountId), $features),
+        );
     }
 }

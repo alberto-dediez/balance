@@ -11,12 +11,14 @@ use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
@@ -155,6 +157,98 @@ class TripCalculationLinkAuthorizerTest extends TestCase
         $this->assertFalse($sut->supports(PropertyMother::registeredProperty()));
     }
 
+    public function testOwnerCannotActOnTheAccountLinkWithoutAccountTripCalculator(): void
+    {
+        $link = TripCalculationLinkMother::forAccount('account-id');
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(accountTripCalculator: false));
+
+        foreach ([Action::List, Action::View, Action::Edit] as $action) {
+            $this->assertFalse($sut->canDoThat($link, $action, $this->ownerOf('account-id')));
+        }
+    }
+
+    public function testAdminActsOnTheAccountLinkWithoutAccountTripCalculator(): void
+    {
+        $link = TripCalculationLinkMother::forAccount('account-id');
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(accountTripCalculator: false));
+
+        $this->assertTrue($sut->canDoThat($link, Action::Edit, UserMother::adminUser()));
+    }
+
+    public function testOwnerCannotActOnAPropertyLinkWithoutPropertyTripCalculators(): void
+    {
+        $link = $this->linkToPropertyOfAccount('account-id');
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(propertyTripCalculators: false));
+
+        foreach ([Action::List, Action::View, Action::Edit] as $action) {
+            $this->assertFalse($sut->canDoThat($link, $action, $this->ownerOf('account-id')));
+        }
+    }
+
+    public function testAdminActsOnAPropertyLinkWithoutPropertyTripCalculators(): void
+    {
+        $link = $this->linkToPropertyOfAccount('account-id');
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(propertyTripCalculators: false));
+
+        $this->assertTrue($sut->canDoThat($link, Action::Edit, UserMother::adminUser()));
+    }
+
+    public function testOwnerCanViewForAPropertyWithPropertyTripCalculators(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures());
+
+        $this->assertTrue($sut->canViewForProperty($property, $this->ownerOf('account-id')));
+    }
+
+    public function testOwnerCannotViewForAPropertyWithoutPropertyTripCalculators(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(propertyTripCalculators: false));
+
+        $this->assertFalse($sut->canViewForProperty($property, $this->ownerOf('account-id')));
+    }
+
+    public function testOwnerCannotViewForAPropertyOfAnotherAccount(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $sut = $this->createSUTWithFeatures('another-account-id', new AccountFeatures());
+
+        $this->assertFalse($sut->canViewForProperty($property, $this->ownerOf('another-account-id')));
+    }
+
+    public function testAdminCanViewForAPropertyWithoutPropertyTripCalculators(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(propertyTripCalculators: false));
+
+        $this->assertTrue($sut->canViewForProperty($property, UserMother::adminUser()));
+    }
+
+    public function testOwnerCanRegisterForAPropertyWithPropertyTripCalculators(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures());
+
+        $this->assertTrue($sut->canRegisterForProperty($property, $this->ownerOf('account-id')));
+    }
+
+    public function testOwnerCannotRegisterForAPropertyWithoutPropertyTripCalculators(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(propertyTripCalculators: false));
+
+        $this->assertFalse($sut->canRegisterForProperty($property, $this->ownerOf('account-id')));
+    }
+
+    public function testAdminCanRegisterForAPropertyWithoutPropertyTripCalculators(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(propertyTripCalculators: false));
+
+        $this->assertTrue($sut->canRegisterForProperty($property, UserMother::adminUser()));
+    }
+
     private function linkToPropertyOfAccount(string $accountId): TripCalculationLink
     {
         $property = PropertyMother::fromNameAndAccountAndId('Hotel', $accountId, (string) PropertyId::generate());
@@ -166,6 +260,17 @@ class TripCalculationLinkAuthorizerTest extends TestCase
     private function ownerOf(string $accountId): User
     {
         return UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId($accountId));
+    }
+
+    private function createSUTWithFeatures(string $accountId, AccountFeatures $features): TripCalculationLinkAuthorizer
+    {
+        return new TripCalculationLinkAuthorizer(
+            $this->propertyRepository,
+            new PropertyAuthorizer(),
+            new StubCurrentAccountIdProvider(new AccountId($accountId)),
+            null,
+            AccountFeaturesPolicyMother::forAccount(new AccountId($accountId), $features),
+        );
     }
 
     private function createSUT(): TripCalculationLinkAuthorizer

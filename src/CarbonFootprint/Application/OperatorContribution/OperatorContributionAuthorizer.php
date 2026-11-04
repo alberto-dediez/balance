@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Application\OperatorContribution;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContribution;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -55,7 +56,7 @@ final class OperatorContributionAuthorizer extends AbstractAuthorizer
     {
         $currentAccountId = $this->currentAccountId($user);
 
-        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId) {
+        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId || !$this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint)) {
             return false;
         }
 

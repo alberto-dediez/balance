@@ -6,10 +6,12 @@ namespace App\Tests\Unit\CarbonFootprint\Application\OperatorContribution;
 
 use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionAuthorizer;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
@@ -63,5 +65,28 @@ class OperatorContributionAuthorizerTest extends TestCase
 
         $this->assertTrue($sut->canDoThat(CompanyCarbonFootprintMother::fromCompanyIdAndAccount('company-id', 'account-id'), Action::Register, $consultant));
         $this->assertTrue($sut->canDoThat(OperatorContributionMother::pending(accountId: 'account-id'), Action::Edit, $consultant));
+    }
+
+    public function testOwnerCannotDoAnythingWithoutOrganizationalCarbonFootprintFeature(): void
+    {
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(organizationalCarbonFootprint: false));
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+        $contribution = OperatorContributionMother::pending(accountId: 'account-id');
+        $footprint = CompanyCarbonFootprintMother::fromCompanyIdAndAccount('company-id', 'account-id');
+
+        $this->assertFalse($sut->canDoThat($footprint, Action::List, $owner));
+        $this->assertFalse($sut->canDoThat($footprint, Action::Register, $owner));
+
+        foreach ([Action::View, Action::Edit, Action::Remove] as $action) {
+            $this->assertFalse($sut->canDoThat($contribution, $action, $owner), $action->value);
+        }
+    }
+
+    private function createSUTWithFeatures(string $accountId, AccountFeatures $features): OperatorContributionAuthorizer
+    {
+        return new OperatorContributionAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider(new AccountId($accountId)),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId($accountId), $features),
+        );
     }
 }

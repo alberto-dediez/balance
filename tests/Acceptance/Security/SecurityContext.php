@@ -6,6 +6,8 @@ namespace App\Tests\Acceptance\Security;
 
 use App\Security\Application\EmailLog\Purge\PurgeEmailLogsRequest;
 use App\Security\Application\EmailLog\Purge\PurgeEmailLogsService;
+use App\Security\Domain\Model\Account\AccountFeature;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -479,6 +481,26 @@ final class SecurityContext implements Context
         Assert::assertNotNull($account, sprintf('Account "%s" not found', $id));
 
         $account->changeReportPermissions(new AccountReportPermissions('1' === $canEdit, '1' === $autoReview));
+
+        $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('account :id has feature :feature disabled')]
+    public function accountHasFeatureDisabled(string $id, string $feature): void
+    {
+        $account = $this->getAccountRepository()->find(new AccountId($id));
+        Assert::assertNotNull($account, sprintf('Account "%s" not found', $id));
+
+        $disabled = AccountFeature::from($feature);
+        $current = $account->features();
+
+        $account->changeFeatures(new AccountFeatures(
+            accountTripCalculator: AccountFeature::AccountTripCalculator !== $disabled && $current->accountTripCalculator(),
+            propertyTripCalculators: AccountFeature::PropertyTripCalculators !== $disabled && $current->propertyTripCalculators(),
+            events: AccountFeature::Events !== $disabled && $current->events(),
+            compensation: AccountFeature::Compensation !== $disabled && $current->compensation(),
+            organizationalCarbonFootprint: AccountFeature::OrganizationalCarbonFootprint !== $disabled && $current->organizationalCarbonFootprint(),
+        ));
 
         $this->getAccountRepository()->add($account);
     }

@@ -6,18 +6,22 @@ namespace App\Tests\Unit\CarbonFootprint\Application\TripCalculationLink\Registe
 
 use App\CarbonFootprint\Application\TripCalculationLink\Register\RegisterTripCalculationLinkRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\Register\RegisterTripCalculationLinkService;
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRegistered;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class RegisterTripCalculationLinkServiceTest extends TestCase
@@ -39,6 +43,7 @@ class RegisterTripCalculationLinkServiceTest extends TestCase
             $this->tripCalculationLinkRepository,
             $this->propertyRepository,
             new PropertyAuthorizer(),
+            new TripCalculationLinkAuthorizer($this->propertyRepository, new PropertyAuthorizer()),
         );
     }
 
@@ -118,6 +123,29 @@ class RegisterTripCalculationLinkServiceTest extends TestCase
             new RegisterTripCalculationLinkRequest($property->id()),
             UserMother::fromUsernameAndRoleAndAccount('intruder', Role::Owner, new AccountId('another-account-id')),
         );
+    }
+
+    public function testDeniesAnOwnerWhoseAccountHasNotPropertyTripCalculators(): void
+    {
+        $property = PropertyMother::fromNameAndAccountAndId('Hotel', 'account-id', (string) PropertyId::generate());
+        $this->propertyRepository->add($property);
+
+        $sut = new RegisterTripCalculationLinkService(
+            $this->tripCalculationLinkRepository,
+            $this->propertyRepository,
+            new PropertyAuthorizer(),
+            new TripCalculationLinkAuthorizer(
+                $this->propertyRepository,
+                new PropertyAuthorizer(),
+                new StubCurrentAccountIdProvider(new AccountId('account-id')),
+                null,
+                AccountFeaturesPolicyMother::forAccount(new AccountId('account-id'), new AccountFeatures(propertyTripCalculators: false)),
+            ),
+        );
+
+        $this->expectException(UnauthorizedActionException::class);
+
+        $sut(new RegisterTripCalculationLinkRequest($property->id()), $this->ownerUser());
     }
 
     private function ownerUser(): User

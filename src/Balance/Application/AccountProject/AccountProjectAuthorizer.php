@@ -6,6 +6,7 @@ namespace App\Balance\Application\AccountProject;
 
 use App\Balance\Domain\Model\AccountProject\AccountProject;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -47,7 +48,8 @@ final class AccountProjectAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::Compensation);
     }
 
     public function supports(mixed $subject): bool

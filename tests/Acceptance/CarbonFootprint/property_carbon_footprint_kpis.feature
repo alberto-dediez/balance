@@ -116,3 +116,9 @@ Feature:
         When I go to "/es/property-carbon-footprints/kpis/1111"
         Then the response status should be 200
         Then I see a text "Todavía no hay huellas completadas de esta propiedad. Completa una huella para ver sus indicadores."
+
+    Scenario: The owner of an account without organizational carbon footprint can't see the indicators
+        Given account "666" has feature "organizational_carbon_footprint" disabled
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/kpis/1111"
+        Then the response status should be 403

@@ -6,6 +6,7 @@ namespace App\Materiality\Application\MaterialityAssessment;
 
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessment;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -31,7 +32,7 @@ final class MaterialityAssessmentAuthorizer extends AbstractAuthorizer
     {
         $currentAccountId = $this->currentAccountId($user);
 
-        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId) {
+        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId || !$this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint)) {
             return false;
         }
 

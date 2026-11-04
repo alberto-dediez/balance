@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Security\Domain\Model\Account;
 
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
@@ -65,6 +66,14 @@ class AccountMother
     {
         $account = self::fromNameAndId($name, $id);
         $account->changeReportPermissions(new AccountReportPermissions($canEditTexts, $autoReview));
+
+        return $account;
+    }
+
+    public static function withFeatures(string $name, string $id, AccountFeatures $features): Account
+    {
+        $account = self::fromNameAndId($name, $id);
+        $account->changeFeatures($features);
 
         return $account;
     }

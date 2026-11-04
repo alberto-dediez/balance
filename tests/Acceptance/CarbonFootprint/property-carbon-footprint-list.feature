@@ -37,3 +37,15 @@ Feature:
         When I go to "/es/properties"
         Then the response status should be 200
         Then I see a text "Cálculo de Huella de Carbono"
+
+    Scenario: The owner of an account without organizational carbon footprint can't list the property footprints
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "organizational_carbon_footprint" disabled
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel" with id "1111" of account "666" exists
+        Given property carbon footprint with id "999" for property "1111" of account "666" and year "2025" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints"
+        Then the response status should be 403
+        When I go to "/es/property-carbon-footprints/999/step/results"
+        Then the response status should be 403

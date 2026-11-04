@@ -6,6 +6,7 @@ namespace App\Balance\Application\ContributionCertificate;
 
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificate;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -35,7 +36,8 @@ final class ContributionCertificateAuthorizer extends AbstractAuthorizer
 
         return $currentAccountId instanceof AccountId
             && $subjectAccountId instanceof AccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::Compensation);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

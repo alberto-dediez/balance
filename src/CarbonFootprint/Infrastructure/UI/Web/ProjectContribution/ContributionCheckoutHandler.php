@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution;
 
+use App\Balance\Application\ProjectContribution\Options\ContributionOption;
+use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsRequest;
+use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsService;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionRequest;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionResponse;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionService;
 use App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionService;
 use App\Balance\Domain\Model\Project\ProjectId;
-use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\ProjectContribution\ContributionAmountTooLowException;
 use App\Balance\Domain\Model\ProjectContribution\ContributionCalculator;
 use App\Balance\Domain\Model\ProjectContribution\InsufficientProjectCreditException;
@@ -30,7 +32,7 @@ final class ContributionCheckoutHandler
     public function __construct(
         private QuoteContributionService $quoteContribution,
         private RegisterProjectContributionService $registerProjectContribution,
-        private ProjectRepository $projectRepository,
+        private ListContributionOptionsService $listContributionOptions,
         private CountryRepository $countryRepository,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
@@ -71,7 +73,7 @@ final class ContributionCheckoutHandler
             return ContributionCheckoutResult::invalid();
         }
 
-        $project = null !== $quote ? $quote->project : $this->projectRepository->find(new ProjectId($projectId));
+        $project = null !== $quote ? $quote->project : $this->contributionOption($context, $projectId)?->project;
 
         if (null === $project) {
             return ContributionCheckoutResult::invalid();
@@ -109,6 +111,13 @@ final class ContributionCheckoutHandler
             'minAmount' => ContributionCalculator::MIN_TOTAL_AMOUNT,
             'maxFreeAmount' => $this->maxFreeAmount($quote),
         ]);
+    }
+
+    private function contributionOption(ContributionContext $context, string $projectId): ?ContributionOption
+    {
+        return ($this->listContributionOptions)(new ListContributionOptionsRequest(
+            accountId: $context->accountId,
+        ))->find($projectId);
     }
 
     /**

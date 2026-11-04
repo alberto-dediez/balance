@@ -8,9 +8,12 @@ use App\CarbonFootprint\Application\PropertyCarbonFootprintCertificate\PropertyC
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificate;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificateId;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class PropertyCarbonFootprintCertificateAuthorizerTest extends TestCase
@@ -54,6 +57,24 @@ class PropertyCarbonFootprintCertificateAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->supports(PropertyCarbonFootprintCertificateId::generate()));
     }
 
+    public function testOwnerCannotViewCertificatesWithoutOrganizationalCarbonFootprintFeature(): void
+    {
+        $accountId = AccountId::generate();
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(organizationalCarbonFootprint: false));
+
+        $this->assertFalse($sut->canDoThat($this->subject($accountId), Action::View, $user));
+        $this->assertFalse($sut->canDoThat($this->subject($accountId), Action::List, $user));
+    }
+
+    public function testAdminViewsCertificatesWithOrganizationalCarbonFootprintFeatureDisabled(): void
+    {
+        $accountId = AccountId::generate();
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(organizationalCarbonFootprint: false));
+
+        $this->assertTrue($sut->canDoThat($this->subject($accountId), Action::View, UserMother::adminUser()));
+    }
+
     private function subject(?AccountId $accountId): PropertyCarbonFootprintCertificate
     {
         return new PropertyCarbonFootprintCertificate(id: PropertyCarbonFootprintCertificateId::generate(), accountId: $accountId);
@@ -62,5 +83,13 @@ class PropertyCarbonFootprintCertificateAuthorizerTest extends TestCase
     private function createSUT(): PropertyCarbonFootprintCertificateAuthorizer
     {
         return new PropertyCarbonFootprintCertificateAuthorizer();
+    }
+
+    private function createSUTWithFeatures(AccountId $accountId, AccountFeatures $features): PropertyCarbonFootprintCertificateAuthorizer
+    {
+        return new PropertyCarbonFootprintCertificateAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider($accountId),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount($accountId, $features),
+        );
     }
 }

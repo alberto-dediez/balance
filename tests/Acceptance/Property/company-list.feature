@@ -29,3 +29,24 @@ Feature:
                 When I go to "/es/companies"
                 Then the response status should be 200
                 Then I see a table with 4 rows
+
+        Scenario: As owner of an account without events, organizational carbon footprint nor property trip calculators I can't access the list of companies
+                Given account "MyCompany" with id "666" exists
+                Given account "666" has feature "events" disabled
+                Given account "666" has feature "organizational_carbon_footprint" disabled
+                Given account "666" has feature "property_trip_calculators" disabled
+                Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+                When I am logged as "owner@dediez.software"
+                When I go to "/es/companies"
+                Then the response status should be 403
+
+        Scenario: As owner of an account without organizational carbon footprint I do not see the carbon footprint action of my companies
+                Given account "MyCompany" with id "666" exists
+                Given account "666" has feature "organizational_carbon_footprint" disabled
+                Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+                Given company "Empresa A" with id "1111" of account "666" exists
+                When I am logged as "owner@dediez.software"
+                When I go to "/es/companies"
+                Then the response status should be 200
+                Then I see a link to "/es/companies/edit/1111"
+                Then I do not see a link to "/es/company-carbon-footprints/register?companyId=1111"

@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\PropertyCarbonFootprintCertificate;
 
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprintCertificate\PropertyCarbonFootprintCertificate;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -35,7 +36,8 @@ final class PropertyCarbonFootprintCertificateAuthorizer extends AbstractAuthori
 
         return $currentAccountId instanceof AccountId
             && $subjectAccountId instanceof AccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

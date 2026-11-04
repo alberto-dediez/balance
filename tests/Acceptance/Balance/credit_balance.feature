@@ -24,3 +24,16 @@ Feature:
         Then the response status should be 200
         Then I see a text "Item 1"
         Then I see a text "Item 2"
+
+    Scenario: As owner of an account without compensation I can't access my credits nor request credits
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "compensation" disabled
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given project "Item 1" with id "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/credits"
+        Then the response status should be 403
+        When I go to "/es/credits/contributions"
+        Then the response status should be 403
+        When I go to "/es/projects/1111/credits/request"
+        Then the response status should be 403

@@ -110,3 +110,45 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Cuenta actualizada"
+
+    Scenario: As an admin, I see the features of an account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        Then I see a text "Funcionalidades"
+        Then I see a form field "featureAccountTripCalculator" with value "1"
+        Then I see a form field "featurePropertyTripCalculators" with value "1"
+        Then I see a form field "featureEvents" with value "1"
+        Then I see a form field "featureCompensation" with value "1"
+        Then I see a form field "featureOrganizationalCarbonFootprint" with value "1"
+
+    Scenario: As an admin, I can disable a feature of an account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        When I submit a form with "name:MyCompany|active:1|featureEvents:0" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Cuenta actualizada"
+        When I go to "/es/admin/accounts/edit/333"
+        Then I see a form field "featureEvents" with value "0"
+        Then I see a form field "featureCompensation" with value "1"
+
+    Scenario: As an owner, I can not change the features of my account
+        Given account "MyCompany" with id "333" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "333" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        Then the response status should be 403
+
+    Scenario: As an admin, I see the change of the features of an account in the events log
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        When I submit a form with "name:MyCompany|active:1|featureEvents:0" and button "Guardar"
+        When I go to "/es/admin/events"
+        Then the response status should be 200
+        Then I see a text "Cambiadas las funcionalidades de la cuenta"

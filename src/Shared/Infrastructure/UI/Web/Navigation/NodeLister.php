@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\UI\Web\Navigation;
 
+use App\Security\Application\Account\AccountFeaturesPolicy;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\Role;
+use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
 use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -27,6 +30,8 @@ class NodeLister
         private readonly bool $propertiesEnabled = true,
         #[Autowire(param: 'app.human_resources_enabled')]
         private readonly bool $humanResourcesEnabled = true,
+        private readonly ?AccountFeaturesPolicy $accountFeaturesPolicy = null,
+        private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
     ) {}
 
     /**
@@ -43,6 +48,15 @@ class NodeLister
         }
 
         return $this->markSelected($this->toUsers());
+    }
+
+    private function featureEnabled(AccountFeature $feature): bool
+    {
+        if (!$this->accountFeaturesPolicy instanceof AccountFeaturesPolicy || !$this->currentAccountIdProvider instanceof CurrentAccountIdProvider) {
+            return true;
+        }
+
+        return $this->accountFeaturesPolicy->isEnabled($feature, $this->currentAccountIdProvider->currentAccountId());
     }
 
     private function hasRole(Role $role): bool
@@ -566,124 +580,144 @@ class NodeLister
     {
         $nodes = $this->accountNodeProvider?->nodes() ?? [];
 
-        if ($this->propertiesEnabled) {
+        $events = $this->featureEnabled(AccountFeature::Events);
+        $organizationalCarbonFootprint = $this->featureEnabled(AccountFeature::OrganizationalCarbonFootprint);
+        $propertyTripCalculators = $this->featureEnabled(AccountFeature::PropertyTripCalculators);
+
+        if ($this->propertiesEnabled && ($events || $organizationalCarbonFootprint || $propertyTripCalculators)) {
+            $propertyItems = [
+                new Node(
+                    label: new TranslatableMessage('Propiedades'),
+                    icon: 'solar:buildings-2-line-duotone',
+                    target: $this->router->generate('properties'),
+                ),
+            ];
+
+            $companyItems = [
+                new Node(
+                    label: new TranslatableMessage('Empresas'),
+                    icon: 'solar:case-line-duotone',
+                    target: $this->router->generate('companies'),
+                ),
+            ];
+
+            if ($organizationalCarbonFootprint) {
+                $propertyItems[] = new Node(
+                    label: new TranslatableMessage('Huellas de Carbono'),
+                    icon: 'carbon:sustainability',
+                    target: $this->router->generate('property_carbon_footprints'),
+                );
+                $propertyItems[] = new Node(
+                    label: new TranslatableMessage('Indicadores'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('property_carbon_footprint_kpis'),
+                );
+
+                $companyItems[] = new Node(
+                    label: new TranslatableMessage('Huellas de Carbono'),
+                    icon: 'carbon:sustainability',
+                    target: $this->router->generate('company_carbon_footprints'),
+                );
+                $companyItems[] = new Node(
+                    label: new TranslatableMessage('Indicadores'),
+                    icon: 'solar:chart-square-line-duotone',
+                    target: $this->router->generate('company_carbon_footprint_kpis'),
+                );
+            }
+
             $nodes[] = new Node(
                 label: new TranslatableMessage('Propiedades'),
                 icon: 'solar:buildings-2-line-duotone',
-                items: [
-                    new Node(
-                        label: new TranslatableMessage('Propiedades'),
-                        icon: 'solar:buildings-2-line-duotone',
-                        target: $this->router->generate('properties'),
-                    ),
-                    new Node(
-                        label: new TranslatableMessage('Huellas de Carbono'),
-                        icon: 'carbon:sustainability',
-                        target: $this->router->generate('property_carbon_footprints'),
-                    ),
-                    new Node(
-                        label: new TranslatableMessage('Indicadores'),
-                        icon: 'solar:chart-square-line-duotone',
-                        target: $this->router->generate('property_carbon_footprint_kpis'),
-                    ),
-                ],
+                items: $propertyItems,
             );
 
             $nodes[] = new Node(
                 label: new TranslatableMessage('Empresas'),
                 icon: 'solar:case-line-duotone',
+                items: $companyItems,
+            );
+        }
+
+        if ($events || $organizationalCarbonFootprint) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Proveedores'),
+                icon: 'solar:users-group-rounded-line-duotone',
                 items: [
                     new Node(
-                        label: new TranslatableMessage('Empresas'),
-                        icon: 'solar:case-line-duotone',
-                        target: $this->router->generate('companies'),
-                    ),
-                    new Node(
-                        label: new TranslatableMessage('Huellas de Carbono'),
-                        icon: 'carbon:sustainability',
-                        target: $this->router->generate('company_carbon_footprints'),
-                    ),
-                    new Node(
-                        label: new TranslatableMessage('Indicadores'),
-                        icon: 'solar:chart-square-line-duotone',
-                        target: $this->router->generate('company_carbon_footprint_kpis'),
+                        label: new TranslatableMessage('Proveedores'),
+                        icon: 'solar:users-group-rounded-line-duotone',
+                        target: $this->router->generate('providers'),
                     ),
                 ],
             );
         }
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Proveedores'),
-            icon: 'solar:users-group-rounded-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Proveedores'),
-                    icon: 'solar:users-group-rounded-line-duotone',
-                    target: $this->router->generate('providers'),
-                ),
-            ],
-        );
+        if ($events) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Eventos'),
+                icon: 'ic:twotone-event-available',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Eventos'),
+                        icon: 'ic:twotone-event-available',
+                        target: $this->router->generate('events'),
+                    ),
+                ],
+            );
+        }
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Eventos'),
-            icon: 'ic:twotone-event-available',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Eventos'),
-                    icon: 'ic:twotone-event-available',
-                    target: $this->router->generate('events'),
-                ),
-            ],
-        );
+        if ($this->featureEnabled(AccountFeature::AccountTripCalculator)) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Calculadora de viajes'),
+                icon: 'solar:routing-2-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Configuración'),
+                        icon: 'solar:settings-line-duotone',
+                        target: $this->router->generate('carbon_footprint_trip_calculator'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Respuestas'),
+                        icon: 'solar:chart-2-line-duotone',
+                        target: $this->router->generate('carbon_footprint_trip_calculator_responses'),
+                    ),
+                ],
+            );
+        }
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Calculadora de viajes'),
-            icon: 'solar:routing-2-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Configuración'),
-                    icon: 'solar:settings-line-duotone',
-                    target: $this->router->generate('carbon_footprint_trip_calculator'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Respuestas'),
-                    icon: 'solar:chart-2-line-duotone',
-                    target: $this->router->generate('carbon_footprint_trip_calculator_responses'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Proyectos'),
-            icon: 'solar:hand-heart-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Proyectos'),
-                    icon: 'solar:hand-heart-line-duotone',
-                    target: $this->router->generate('projects'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Mis créditos'),
-                    icon: 'solar:leaf-line-duotone',
-                    target: $this->router->generate('credits'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Aportaciones'),
-                    icon: 'solar:hand-money-line-duotone',
-                    target: $this->router->generate('project_contributions'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Mi saldo'),
-                    icon: 'solar:wallet-money-line-duotone',
-                    target: $this->router->generate('my_balance'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Mis datos de cobro'),
-                    icon: 'solar:card-line-duotone',
-                    target: $this->router->generate('my_payee'),
-                ),
-            ],
-        );
+        if ($this->featureEnabled(AccountFeature::Compensation)) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Proyectos'),
+                icon: 'solar:hand-heart-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Proyectos'),
+                        icon: 'solar:hand-heart-line-duotone',
+                        target: $this->router->generate('projects'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Mis créditos'),
+                        icon: 'solar:leaf-line-duotone',
+                        target: $this->router->generate('credits'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Aportaciones'),
+                        icon: 'solar:hand-money-line-duotone',
+                        target: $this->router->generate('project_contributions'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Mi saldo'),
+                        icon: 'solar:wallet-money-line-duotone',
+                        target: $this->router->generate('my_balance'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Mis datos de cobro'),
+                        icon: 'solar:card-line-duotone',
+                        target: $this->router->generate('my_payee'),
+                    ),
+                ],
+            );
+        }
 
         $administrationItems = [];
 

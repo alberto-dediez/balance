@@ -209,3 +209,9 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_trip_result"
         Then I see a text "Destino: Valencia, España"
         Then trip calculation of link "TL1" should have destination "Valencia, España"
+
+    Scenario: The link of an account without the account trip calculator shows the invalid page
+        Given account "666" has feature "account_trip_calculator" disabled
+        When I go to "/es/carbon-footprint/trip/token-abc/trip"
+        Then the response status should be 404
+        Then I see a text "Este enlace no es válido"

@@ -92,3 +92,11 @@ Feature:
         Then I see a text "Responde el alcance 2 antes de evaluar la materialidad."
         Then materiality assessment for "property" carbon footprint "997" should not exist
         Then property carbon footprint "997" should have status "scope_1_answered"
+
+    Scenario: The owner of an account without organizational carbon footprint can't open the materiality assessment
+        Given account "666" has feature "organizational_carbon_footprint" disabled
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/999/step/materiality"
+        Then the response status should be 403
+        When I make a POST request to "/es/materiality-assessments/property/999/start"
+        Then the response status should be 403

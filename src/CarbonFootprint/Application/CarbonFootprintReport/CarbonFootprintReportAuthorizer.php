@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\CarbonFootprintReport;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -32,7 +34,8 @@ final class CarbonFootprintReportAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->hasSubjectFeature($subject, $user);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
@@ -49,7 +52,9 @@ final class CarbonFootprintReportAuthorizer extends AbstractAuthorizer
 
         $subjectAccountId = $subject->accountId();
 
-        return null !== $subjectAccountId && $currentAccountId->equals($subjectAccountId);
+        return null !== $subjectAccountId
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->hasSubjectFeature($subject, $user);
     }
 
     protected function canRemove(mixed $subject, User $user): bool
@@ -60,5 +65,14 @@ final class CarbonFootprintReportAuthorizer extends AbstractAuthorizer
     public function supports(mixed $subject): bool
     {
         return $subject instanceof CarbonFootprintReport;
+    }
+
+    private function hasSubjectFeature(CarbonFootprintReport $report, User $user): bool
+    {
+        $feature = CarbonFootprintReportSubjectType::Event === $report->subjectType()
+            ? AccountFeature::Events
+            : AccountFeature::OrganizationalCarbonFootprint;
+
+        return $this->currentAccountHasFeature($user, $feature);
     }
 }

@@ -16,6 +16,7 @@ use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountPr
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryCreditPurchaseRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectRepository;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
@@ -25,6 +26,7 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use PHPUnit\Framework\TestCase;
 
 class ListContributionOptionsServiceTest extends TestCase
@@ -210,6 +212,15 @@ class ListContributionOptionsServiceTest extends TestCase
         $this->assertSame(1.0, $option->ownAvailableTonnes);
     }
 
+    public function testWithoutCompensationThereAreNoOptions(): void
+    {
+        $this->adheredProject(purchasedTonnes: 10.0);
+
+        $response = $this->createSUT(new AccountFeatures(compensation: false))(new ListContributionOptionsRequest($this->accountId));
+
+        $this->assertTrue($response->isEmpty());
+    }
+
     private function adheredProject(
         float $purchasedTonnes,
         ProjectType $projectType = ProjectType::EmissionCompensation,
@@ -241,12 +252,13 @@ class ListContributionOptionsServiceTest extends TestCase
         return $project;
     }
 
-    private function createSUT(): ListContributionOptionsService
+    private function createSUT(AccountFeatures $features = new AccountFeatures()): ListContributionOptionsService
     {
         return new ListContributionOptionsService(
             $this->accountProjects,
             $this->projects,
             new CreditAvailability($this->creditPurchases, $this->contributions),
+            AccountFeaturesPolicyMother::forAccount($this->accountId, $features),
         );
     }
 }

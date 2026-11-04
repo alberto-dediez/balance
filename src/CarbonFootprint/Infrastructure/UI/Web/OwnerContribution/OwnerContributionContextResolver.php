@@ -11,6 +11,8 @@ use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Domain\Model\Event\EventRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Application\Account\AccountFeaturesPolicy;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
@@ -24,6 +26,7 @@ final class OwnerContributionContextResolver
         private EventCarbonFootprintRepository $eventCarbonFootprintRepository,
         private PropertyRepository $propertyRepository,
         private AccountRepository $accountRepository,
+        private AccountFeaturesPolicy $accountFeaturesPolicy,
         private CurrentUserContext $currentUserContext = new CurrentUserContext(),
     ) {}
 
@@ -32,6 +35,10 @@ final class OwnerContributionContextResolver
         $accountId = $this->currentUserContext->accountId($user);
 
         if (!$this->currentUserContext->hasRole($user, Role::Owner) || !$accountId instanceof AccountId) {
+            return null;
+        }
+
+        if (!$this->accountFeaturesPolicy->isEnabled(AccountFeature::Compensation, $accountId)) {
             return null;
         }
 

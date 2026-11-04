@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\UI\Web\Navigation;
 
+use App\Security\Domain\Model\Account\AccountFeatures;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Infrastructure\UI\Web\Navigation\AccountNodeProvider;
 use App\Shared\Infrastructure\UI\Web\Navigation\Node;
 use App\Shared\Infrastructure\UI\Web\Navigation\NodeLister;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeSecurity;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -18,6 +22,27 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class NodeListerTest extends TestCase
 {
+    private const string ACCOUNT_ID = 'account-id';
+
+    private const array FEATURE_ROUTES = [
+        'properties' => '/es/properties',
+        'property_carbon_footprints' => '/es/property-carbon-footprints',
+        'property_carbon_footprint_kpis' => '/es/property-carbon-footprints/kpis',
+        'companies' => '/es/companies',
+        'company_carbon_footprints' => '/es/company-carbon-footprints',
+        'company_carbon_footprint_kpis' => '/es/company-carbon-footprints/kpis',
+        'providers' => '/es/providers',
+        'events' => '/es/events',
+        'carbon_footprint_trip_calculator' => '/es/carbon-footprint/trip-calculator',
+        'carbon_footprint_trip_calculator_responses' => '/es/carbon-footprint/trip-calculator/responses',
+        'projects' => '/es/projects',
+        'credits' => '/es/credits',
+        'project_contributions' => '/es/credits/contributions',
+        'my_balance' => '/es/my-balance',
+        'my_payee' => '/es/my-payee',
+        'admin_events' => '/es/admin/events',
+    ];
+
     public function testNodesReturnsAtLeastUsersWhenLoggedAsAdmin(): void
     {
         $security = FakeSecurity::fromRole(Role::Admin);
@@ -277,6 +302,129 @@ class NodeListerTest extends TestCase
         };
     }
 
+    public function testOwnersWithAllFeaturesSeeEveryFeatureNode(): void
+    {
+        $targets = $this->ownerTargets(new AccountFeatures());
+
+        foreach (self::FEATURE_ROUTES as $name => $target) {
+            if ('admin_events' === $name) {
+                continue;
+            }
+
+            $this->assertContains($target, $targets, $name);
+        }
+    }
+
+    public function testOwnersWithoutEventsDoNotSeeEvents(): void
+    {
+        $targets = $this->ownerTargets(new AccountFeatures(events: false));
+
+        $this->assertNotContains('/es/events', $targets);
+        $this->assertContains('/es/providers', $targets);
+        $this->assertContains('/es/properties', $targets);
+    }
+
+    public function testOwnersWithoutAccountTripCalculatorDoNotSeeTheTripCalculator(): void
+    {
+        $nodes = $this->createSUT(FakeSecurity::fromRole(Role::Owner), routes: self::FEATURE_ROUTES, features: new AccountFeatures(accountTripCalculator: false))->nodes();
+
+        $this->assertNull($this->findNodeByLabel($nodes, 'Calculadora de viajes'));
+        $this->assertNotContains('/es/carbon-footprint/trip-calculator', $this->targets($nodes));
+        $this->assertNotContains('/es/carbon-footprint/trip-calculator/responses', $this->targets($nodes));
+    }
+
+    public function testOwnersWithoutCompensationDoNotSeeProjects(): void
+    {
+        $nodes = $this->createSUT(FakeSecurity::fromRole(Role::Owner), routes: self::FEATURE_ROUTES, features: new AccountFeatures(compensation: false))->nodes();
+        $targets = $this->targets($nodes);
+
+        $this->assertNull($this->findNodeByLabel($nodes, 'Proyectos'));
+
+        foreach (['/es/projects', '/es/credits', '/es/credits/contributions', '/es/my-balance', '/es/my-payee'] as $target) {
+            $this->assertNotContains($target, $targets, $target);
+        }
+    }
+
+    public function testOwnersWithoutOrganizationalCarbonFootprintDoNotSeeFootprintsNorIndicators(): void
+    {
+        $targets = $this->ownerTargets(new AccountFeatures(organizationalCarbonFootprint: false));
+
+        $this->assertContains('/es/properties', $targets);
+        $this->assertContains('/es/companies', $targets);
+
+        foreach (['/es/property-carbon-footprints', '/es/property-carbon-footprints/kpis', '/es/company-carbon-footprints', '/es/company-carbon-footprints/kpis'] as $target) {
+            $this->assertNotContains($target, $targets, $target);
+        }
+    }
+
+    public function testOwnersSeePropertiesAndCompaniesWithAnyOfTheirFeatures(): void
+    {
+        $cases = [
+            'events' => new AccountFeatures(propertyTripCalculators: false, organizationalCarbonFootprint: false),
+            'organizational carbon footprint' => new AccountFeatures(propertyTripCalculators: false, events: false),
+            'property trip calculators' => new AccountFeatures(events: false, organizationalCarbonFootprint: false),
+        ];
+
+        foreach ($cases as $case => $features) {
+            $targets = $this->ownerTargets($features);
+
+            $this->assertContains('/es/properties', $targets, $case);
+            $this->assertContains('/es/companies', $targets, $case);
+        }
+    }
+
+    public function testOwnersDoNotSeePropertiesNorCompaniesWithoutAnyOfTheirFeatures(): void
+    {
+        $nodes = $this->createSUT(
+            FakeSecurity::fromRole(Role::Owner),
+            routes: self::FEATURE_ROUTES,
+            features: new AccountFeatures(propertyTripCalculators: false, events: false, organizationalCarbonFootprint: false),
+        )->nodes();
+
+        $this->assertNull($this->findNodeByLabel($nodes, 'Propiedades'));
+        $this->assertNull($this->findNodeByLabel($nodes, 'Empresas'));
+    }
+
+    public function testOwnersSeeProvidersWithEventsOrOrganizationalCarbonFootprint(): void
+    {
+        $this->assertContains('/es/providers', $this->ownerTargets(new AccountFeatures(organizationalCarbonFootprint: false)));
+        $this->assertContains('/es/providers', $this->ownerTargets(new AccountFeatures(events: false)));
+        $this->assertNotContains('/es/providers', $this->ownerTargets(new AccountFeatures(events: false, organizationalCarbonFootprint: false)));
+    }
+
+    public function testOwnersWithoutAnyFeatureOnlySeeTheCommonNodes(): void
+    {
+        $nodes = $this->createSUT(
+            FakeSecurity::fromRole(Role::Owner),
+            routes: self::FEATURE_ROUTES,
+            features: new AccountFeatures(false, false, false, false, false),
+        )->nodes();
+
+        $labels = array_map(static fn(Node $node): string => $node->label instanceof TranslatableMessage ? $node->label->getMessage() : (string) $node->label, $nodes);
+
+        $this->assertSame(['Administración', 'Biblioteca', 'Notificaciones', 'Novedades'], $labels);
+    }
+
+    public function testAdminsAreNotAffectedByTheFeaturesOfTheAccount(): void
+    {
+        $withFeatures = $this->createSUT(FakeSecurity::fromRole(Role::Admin), routes: self::FEATURE_ROUTES)->nodes();
+        $withoutFeatures = $this->createSUT(
+            FakeSecurity::fromRole(Role::Admin),
+            routes: self::FEATURE_ROUTES,
+            features: new AccountFeatures(false, false, false, false, false),
+        )->nodes();
+
+        $this->assertEquals($this->targets($withFeatures), $this->targets($withoutFeatures));
+    }
+
+    /**
+     * @return list<?string>
+     */
+    private function ownerTargets(AccountFeatures $features): array
+    {
+        return $this->targets($this->createSUT(FakeSecurity::fromRole(Role::Owner), routes: self::FEATURE_ROUTES, features: $features)->nodes());
+    }
+
     /**
      * @param array<string, string> $routes
      */
@@ -288,6 +436,7 @@ class NodeListerTest extends TestCase
         ?AccountNodeProvider $accountNodeProvider = null,
         bool $propertiesEnabled = true,
         bool $humanResourcesEnabled = true,
+        ?AccountFeatures $features = null,
     ): NodeLister {
         $router = $this->createMock(RouterInterface::class);
 
@@ -306,6 +455,8 @@ class NodeListerTest extends TestCase
             accountNodeProvider: $accountNodeProvider,
             propertiesEnabled: $propertiesEnabled,
             humanResourcesEnabled: $humanResourcesEnabled,
+            accountFeaturesPolicy: $features instanceof AccountFeatures ? AccountFeaturesPolicyMother::forAccount(new AccountId(self::ACCOUNT_ID), $features) : null,
+            currentAccountIdProvider: $features instanceof AccountFeatures ? new StubCurrentAccountIdProvider(new AccountId(self::ACCOUNT_ID)) : null,
         );
     }
 }

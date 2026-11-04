@@ -27,6 +27,7 @@ class Account implements \Stringable
         protected bool $consultant = false,
         protected ?AccountId $consultantAccountId = null,
         protected AccountReportPermissions $reportPermissions = new AccountReportPermissions(),
+        protected AccountFeatures $features = new AccountFeatures(),
     ) {
         $this->events = $events;
     }
@@ -79,6 +80,11 @@ class Account implements \Stringable
     public function reportPermissions(): AccountReportPermissions
     {
         return $this->reportPermissions;
+    }
+
+    public function features(): AccountFeatures
+    {
+        return $this->features;
     }
 
     public function register(string $name, bool $active, ?EmissionFactorGroupId $emissionFactorGroupId = null, bool $consultant = false): void
@@ -167,6 +173,24 @@ class Account implements \Stringable
         );
     }
 
+    public function changeFeatures(AccountFeatures $features): void
+    {
+        if ($features->equals($this->features)) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new AccountFeaturesChanged(
+                accountId: $this->id(),
+                accountTripCalculator: $features->accountTripCalculator(),
+                propertyTripCalculators: $features->propertyTripCalculators(),
+                events: $features->events(),
+                compensation: $features->compensation(),
+                organizationalCarbonFootprint: $features->organizationalCarbonFootprint(),
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -214,6 +238,17 @@ class Account implements \Stringable
     public function applyAccountReportPermissionsChanged(AccountReportPermissionsChanged $event): void
     {
         $this->reportPermissions = new AccountReportPermissions($event->canEditTexts(), $event->autoReview());
+    }
+
+    public function applyAccountFeaturesChanged(AccountFeaturesChanged $event): void
+    {
+        $this->features = new AccountFeatures(
+            $event->accountTripCalculator(),
+            $event->propertyTripCalculators(),
+            $event->events(),
+            $event->compensation(),
+            $event->organizationalCarbonFootprint(),
+        );
     }
 
     public function applyAccountRemoved(AccountRemoved $event): void

@@ -18,3 +18,14 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/admin/projects"
         Then the response status should be 403
+
+    Scenario: As owner of an account without compensation I can't access the projects
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "compensation" disabled
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given project "Item 1" with id "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/projects"
+        Then the response status should be 403
+        When I go to "/es/projects/1111/select"
+        Then the response status should be 403

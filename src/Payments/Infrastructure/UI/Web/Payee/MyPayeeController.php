@@ -13,7 +13,9 @@ use App\Payments\Domain\Model\Payee\PayeeRepository;
 use App\Payments\Domain\Model\Payee\PayeeType;
 use App\Payments\Infrastructure\Symfony\Form\RegisterMyPayeeType;
 use App\Payments\Infrastructure\Symfony\Form\UpdateMyPayeeType;
+use App\Security\Application\Account\AccountFeaturesPolicy;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -38,6 +40,7 @@ class MyPayeeController extends AbstractController
         UpdatePayeeService $updatePayee,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
+        AccountFeaturesPolicy $accountFeaturesPolicy,
         TranslatorInterface $translator,
         Request $request,
     ): Response {
@@ -45,6 +48,10 @@ class MyPayeeController extends AbstractController
 
         if (null === $account) {
             throw $this->createAccessDeniedException($translator->trans('Debes pertenecer a una cuenta para poder acceder'));
+        }
+
+        if (!$accountFeaturesPolicy->isEnabled(AccountFeature::Compensation, $account->id())) {
+            throw $this->createAccessDeniedException();
         }
 
         $accountId = $account->id();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\CarbonFootprintKpi;
 
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -25,13 +26,15 @@ final class CarbonFootprintKpiAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subject->accountId
-            && $currentAccountId->equals($subject->accountId);
+            && $currentAccountId->equals($subject->accountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint);
     }
 
     protected function canList(mixed $subject, User $user): bool
     {
         return $this->userHasRole($user, Role::Owner)
-            && $this->currentAccountId($user) instanceof AccountId;
+            && $this->currentAccountId($user) instanceof AccountId
+            && $this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint);
     }
 
     protected function canEdit(mixed $subject, User $user): bool

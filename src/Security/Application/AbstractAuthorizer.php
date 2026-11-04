@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Security\Application;
 
+use App\Security\Application\Account\AccountFeaturesPolicy;
 use App\Security\Application\Account\ConsultantSupervisionPolicy;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -19,11 +21,21 @@ abstract class AbstractAuthorizer implements Authorizer
         private readonly ?CurrentRolesProvider $currentRolesProvider = null,
         private readonly ?CurrentImpersonationProvider $currentImpersonationProvider = null,
         private readonly ?ConsultantSupervisionPolicy $consultantSupervisionPolicy = null,
+        private readonly ?AccountFeaturesPolicy $accountFeaturesPolicy = null,
     ) {}
 
     protected function currentAccountId(User $user): ?AccountId
     {
         return $this->currentAccountIdProvider?->currentAccountId() ?? $user->accountId();
+    }
+
+    protected function currentAccountHasFeature(User $user, AccountFeature $feature): bool
+    {
+        if (!$this->accountFeaturesPolicy instanceof AccountFeaturesPolicy) {
+            return true;
+        }
+
+        return $this->accountFeaturesPolicy->isEnabled($feature, $this->currentAccountId($user));
     }
 
     protected function isImpersonating(User $user): bool

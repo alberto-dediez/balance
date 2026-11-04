@@ -6,6 +6,7 @@ namespace App\Balance\Application\Project;
 
 use App\Balance\Domain\Model\Project\Project;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
@@ -23,7 +24,7 @@ final class ProjectAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin) || $this->userHasRole($user, Role::Owner);
+        return $this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin) || ($this->userHasRole($user, Role::Owner) && $this->currentAccountHasFeature($user, AccountFeature::Compensation));
     }
 
     protected function canEdit(mixed $subject, User $user): bool

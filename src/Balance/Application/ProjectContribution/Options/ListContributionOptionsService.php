@@ -12,6 +12,8 @@ use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFunding;
+use App\Security\Application\Account\AccountFeaturesPolicy;
+use App\Security\Domain\Model\Account\AccountFeature;
 
 final class ListContributionOptionsService
 {
@@ -19,10 +21,15 @@ final class ListContributionOptionsService
         private AccountProjectRepository $accountProjectRepository,
         private ProjectRepository $projectRepository,
         private CreditAvailability $creditAvailability,
+        private AccountFeaturesPolicy $accountFeaturesPolicy,
     ) {}
 
     public function __invoke(ListContributionOptionsRequest $request): ListContributionOptionsResponse
     {
+        if (!$this->accountFeaturesPolicy->isEnabled(AccountFeature::Compensation, $request->accountId)) {
+            return new ListContributionOptionsResponse([]);
+        }
+
         $now = $request->now ?? new \DateTimeImmutable('NOW');
         $options = [];
 

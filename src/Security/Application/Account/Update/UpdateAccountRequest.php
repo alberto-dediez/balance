@@ -19,5 +19,10 @@ class UpdateAccountRequest implements Command
         public ?AccountId $consultantAccountId = null,
         public bool $reportCanEditTexts = false,
         public bool $reportAutoReview = true,
+        public bool $featureAccountTripCalculator = true,
+        public bool $featurePropertyTripCalculators = true,
+        public bool $featureEvents = true,
+        public bool $featureCompensation = true,
+        public bool $featureOrganizationalCarbonFootprint = true,
     ) {}
 }

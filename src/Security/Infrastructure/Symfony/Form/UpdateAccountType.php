@@ -55,6 +55,26 @@ class UpdateAccountType extends AbstractType
                 'label' => new TranslatableMessage('Autorrevisión del informe de huella'),
                 'required' => true,
             ])
+            ->add('featureAccountTripCalculator', BooleanType::class, [
+                'label' => new TranslatableMessage('Calculadora de viajes de la cuenta'),
+                'required' => true,
+            ])
+            ->add('featurePropertyTripCalculators', BooleanType::class, [
+                'label' => new TranslatableMessage('Calculadoras de viajes de las propiedades'),
+                'required' => true,
+            ])
+            ->add('featureEvents', BooleanType::class, [
+                'label' => new TranslatableMessage('Eventos'),
+                'required' => true,
+            ])
+            ->add('featureCompensation', BooleanType::class, [
+                'label' => new TranslatableMessage('Compensación (proyectos, créditos, aportaciones y saldo)'),
+                'required' => true,
+            ])
+            ->add('featureOrganizationalCarbonFootprint', BooleanType::class, [
+                'label' => new TranslatableMessage('Huella de carbono de propiedades y empresas (alcances 1, 2, 3 y materialidad)'),
+                'required' => true,
+            ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),
             ])

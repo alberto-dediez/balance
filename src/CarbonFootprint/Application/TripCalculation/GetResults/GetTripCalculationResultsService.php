@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\TripCalculation\GetResults;
 
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
+use App\CarbonFootprint\Application\TripCalculationLink\TripCalculationLinkAuthorizer;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\Action;
+use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\User;
 
 final class GetTripCalculationResultsService
@@ -19,6 +21,7 @@ final class GetTripCalculationResultsService
         private TripCalculationLinkRepository $tripCalculationLinkRepository,
         private TripCalculationResultsBuilder $tripCalculationResultsBuilder,
         private PropertyLocator $propertyLocator,
+        private TripCalculationLinkAuthorizer $tripCalculationLinkAuthorizer,
     ) {}
 
     public function __invoke(GetTripCalculationResultsRequest $request, User $user): GetTripCalculationResultsResponse
@@ -30,6 +33,10 @@ final class GetTripCalculationResultsService
         }
 
         $this->propertyAuthorizer->denyUnlessCanDoThat($property, Action::View, $user);
+
+        if (!$this->tripCalculationLinkAuthorizer->canViewForProperty($property, $user)) {
+            throw new UnauthorizedActionException($property, Action::View);
+        }
 
         $tripCalculationLink = $this->tripCalculationLinkRepository->findByPropertyId($request->propertyId);
         $destination = $this->propertyLocator->locate($property);

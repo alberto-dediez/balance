@@ -8,9 +8,12 @@ use App\Balance\Application\ContributionCertificate\ContributionCertificateAutho
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificate;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateId;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class ContributionCertificateAuthorizerTest extends TestCase
@@ -50,6 +53,24 @@ class ContributionCertificateAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->supports(ContributionCertificateId::generate()));
     }
 
+    public function testOwnerCannotReadCertificatesWithoutCompensationFeature(): void
+    {
+        $accountId = AccountId::generate();
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(compensation: false));
+
+        $this->assertFalse($sut->canDoThat($this->subject($accountId), Action::List, $user));
+        $this->assertFalse($sut->canDoThat($this->subject($accountId), Action::View, $user));
+    }
+
+    public function testAdminReadsCertificatesWithCompensationFeatureDisabled(): void
+    {
+        $accountId = AccountId::generate();
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(compensation: false));
+
+        $this->assertTrue($sut->canDoThat($this->subject($accountId), Action::List, UserMother::adminUser()));
+    }
+
     private function subject(?AccountId $accountId): ContributionCertificate
     {
         return new ContributionCertificate(id: ContributionCertificateId::generate(), accountId: $accountId);
@@ -58,5 +79,13 @@ class ContributionCertificateAuthorizerTest extends TestCase
     private function createSUT(): ContributionCertificateAuthorizer
     {
         return new ContributionCertificateAuthorizer();
+    }
+
+    private function createSUTWithFeatures(AccountId $accountId, AccountFeatures $features): ContributionCertificateAuthorizer
+    {
+        return new ContributionCertificateAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider($accountId),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount($accountId, $features),
+        );
     }
 }

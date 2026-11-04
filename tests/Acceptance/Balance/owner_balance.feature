@@ -57,3 +57,9 @@ Feature:
         When I am logged as "other@dediez.software"
         When I go to the only payout statement as a regular user
         Then the response status should be 403
+
+    Scenario: An owner of an account without compensation can't see their balance
+        Given account "666" has feature "compensation" disabled
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/my-balance"
+        Then the response status should be 403

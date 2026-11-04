@@ -6,9 +6,12 @@ namespace App\CarbonFootprint\Application\TripCalculationLink;
 
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\Property\Application\Property\PropertyAuthorizer;
+use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Application\Account\AccountFeaturesPolicy;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
@@ -21,8 +24,9 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
         private readonly PropertyAuthorizer $propertyAuthorizer,
         ?CurrentAccountIdProvider $currentAccountIdProvider = null,
         ?CurrentRolesProvider $currentRolesProvider = null,
+        ?AccountFeaturesPolicy $accountFeaturesPolicy = null,
     ) {
-        parent::__construct($currentAccountIdProvider, $currentRolesProvider);
+        parent::__construct($currentAccountIdProvider, $currentRolesProvider, null, null, $accountFeaturesPolicy);
     }
 
     protected function canRegister(mixed $subject, User $user): bool
@@ -60,6 +64,26 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
         return $subject instanceof TripCalculationLink;
     }
 
+    public function canViewForProperty(Property $property, User $user): bool
+    {
+        if (!$this->propertyAuthorizer->canDoThat($property, Action::View, $user)) {
+            return false;
+        }
+
+        return $this->isAdministrator($user)
+            || $this->currentAccountHasFeature($user, AccountFeature::PropertyTripCalculators);
+    }
+
+    public function canRegisterForProperty(Property $property, User $user): bool
+    {
+        if ($this->isAdministrator($user)) {
+            return true;
+        }
+
+        return $this->propertyAuthorizer->canDoThat($property, Action::Edit, $user)
+            && $this->currentAccountHasFeature($user, AccountFeature::PropertyTripCalculators);
+    }
+
     private function canDoThatOnProperty(TripCalculationLink $tripCalculationLink, Action $action, User $user): bool
     {
         if (!$tripCalculationLink->isForProperty()) {
@@ -73,7 +97,12 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
             return false;
         }
 
-        return $this->propertyAuthorizer->canDoThat($property, $action, $user);
+        if (!$this->propertyAuthorizer->canDoThat($property, $action, $user)) {
+            return false;
+        }
+
+        return $this->isAdministrator($user)
+            || $this->currentAccountHasFeature($user, AccountFeature::PropertyTripCalculators);
     }
 
     private function canManageAccountLink(TripCalculationLink $tripCalculationLink, User $user): bool
@@ -84,10 +113,16 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
         if ($this->userHasRole($user, Role::Owner)
         && null !== $currentAccountId
         && null !== $accountId
-        && $currentAccountId->equals($accountId)) {
+        && $currentAccountId->equals($accountId)
+        && $this->currentAccountHasFeature($user, AccountFeature::AccountTripCalculator)) {
             return true;
         }
 
         return $this->userHasRole($user, Role::Admin);
+    }
+
+    private function isAdministrator(User $user): bool
+    {
+        return $this->userHasRole($user, Role::Admin) || $this->userHasRole($user, Role::SuperAdmin);
     }
 }

@@ -6,10 +6,13 @@ namespace App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContr
 
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\OrganizationalProviderContributionAuthorizer;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class OrganizationalProviderContributionAuthorizerTest extends TestCase
@@ -50,5 +53,24 @@ class OrganizationalProviderContributionAuthorizerTest extends TestCase
             $this->assertFalse($this->sut->canDoThat($contribution, Action::View, $user));
             $this->assertFalse($this->sut->canDoThat($contribution, Action::Remove, $user));
         }
+    }
+
+    public function testOwnerCannotDoAnythingWithoutOrganizationalCarbonFootprintFeature(): void
+    {
+        $contribution = OrganizationalProviderContributionMother::manual(accountId: 'account-id');
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(organizationalCarbonFootprint: false));
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Remove] as $action) {
+            $this->assertFalse($sut->canDoThat($contribution, $action, $owner), $action->value);
+        }
+    }
+
+    private function createSUTWithFeatures(string $accountId, AccountFeatures $features): OrganizationalProviderContributionAuthorizer
+    {
+        return new OrganizationalProviderContributionAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider(new AccountId($accountId)),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId($accountId), $features),
+        );
     }
 }

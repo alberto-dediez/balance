@@ -10,6 +10,8 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventRepository;
+use App\Security\Application\Account\AccountFeaturesPolicy;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 
 final class GetAttendeeSurveyByTokenService
@@ -20,6 +22,7 @@ final class GetAttendeeSurveyByTokenService
         private MobilityRepository $mobilityRepository,
         private EventVenueLocator $eventVenueLocator,
         private PlaceFinder $placeFinder,
+        private AccountFeaturesPolicy $accountFeaturesPolicy,
         private int $maxLegs = 16,
     ) {}
 
@@ -35,6 +38,10 @@ final class GetAttendeeSurveyByTokenService
         $event = null !== $eventId ? $this->eventRepository->find($eventId) : null;
 
         if (null === $event) {
+            throw new AttendeeSurveyTokenInvalidException();
+        }
+
+        if (!$this->accountFeaturesPolicy->isEnabled(AccountFeature::Events, $event->accountId())) {
             throw new AttendeeSurveyTokenInvalidException();
         }
 

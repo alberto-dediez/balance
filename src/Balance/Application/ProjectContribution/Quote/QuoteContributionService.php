@@ -13,6 +13,8 @@ use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\ProjectContribution\ContributionAmounts;
 use App\Balance\Domain\Model\ProjectContribution\ContributionCalculator;
 use App\Balance\Domain\Model\ProjectContribution\ProjectNotContributableException;
+use App\Security\Application\Account\AccountFeaturesPolicy;
+use App\Security\Domain\Model\Account\AccountFeature;
 
 final class QuoteContributionService
 {
@@ -21,10 +23,15 @@ final class QuoteContributionService
         private AccountProjectRepository $accountProjectRepository,
         private CreditAvailability $creditAvailability,
         private ContributionCalculator $contributionCalculator,
+        private AccountFeaturesPolicy $accountFeaturesPolicy,
     ) {}
 
     public function __invoke(QuoteContributionRequest $request): QuoteContributionResponse
     {
+        if (!$this->accountFeaturesPolicy->isEnabled(AccountFeature::Compensation, $request->accountId)) {
+            throw new ProjectNotContributableException($request->projectId);
+        }
+
         $now = $request->now ?? new \DateTimeImmutable('NOW');
         $project = $this->projectRepository->find($request->projectId);
 

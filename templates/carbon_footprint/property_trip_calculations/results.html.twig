@@ -1,7 +1,7 @@
 {% extends '@shared/layout/edit.html.twig' %}
 
 {% block top_actions %}
-    {% if is_granted('ROLE_OWNER') %}
+    {% if is_granted('ROLE_OWNER') and account_feature_enabled('compensation') %}
         <twig:TopAction path="{{ path('owner_contribution_choose', {origin: 'property', originId: property.id}) }}" target="_blank">
             <twig:Icon name="solar:hand-heart-bold" size="lg" class="me-2" />
 

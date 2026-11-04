@@ -19,3 +19,12 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/providers"
         Then the response status should be 403
+
+    Scenario: As owner of an account without events nor organizational carbon footprint I can't access the list of providers
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "events" disabled
+        Given account "666" has feature "organizational_carbon_footprint" disabled
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/providers"
+        Then the response status should be 403

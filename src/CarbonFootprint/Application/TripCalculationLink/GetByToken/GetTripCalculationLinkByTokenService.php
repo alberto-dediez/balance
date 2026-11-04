@@ -10,6 +10,8 @@ use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Application\Account\AccountFeaturesPolicy;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 
@@ -22,6 +24,7 @@ final class GetTripCalculationLinkByTokenService
         private PropertyLocator $propertyLocator,
         private PlaceFinder $placeFinder,
         private AccountRepository $accountRepository,
+        private AccountFeaturesPolicy $accountFeaturesPolicy,
         private int $maxLegs = 16,
     ) {}
 
@@ -43,6 +46,10 @@ final class GetTripCalculationLinkByTokenService
                 throw new TripCalculationLinkTokenInvalidException();
             }
 
+            if (!$this->accountFeaturesPolicy->isEnabled(AccountFeature::AccountTripCalculator, $accountId)) {
+                throw new TripCalculationLinkTokenInvalidException();
+            }
+
             return new GetTripCalculationLinkByTokenResponse(
                 tripCalculationLink: $tripCalculationLink,
                 property: null,
@@ -58,6 +65,10 @@ final class GetTripCalculationLinkByTokenService
         $property = null !== $propertyId ? $this->propertyRepository->find($propertyId) : null;
 
         if (null === $property) {
+            throw new TripCalculationLinkTokenInvalidException();
+        }
+
+        if (!$this->accountFeaturesPolicy->isEnabled(AccountFeature::PropertyTripCalculators, $property->accountId())) {
             throw new TripCalculationLinkTokenInvalidException();
         }
 

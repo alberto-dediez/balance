@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Security\Infrastructure\Symfony\Twig;
 
+use App\Security\Application\Account\AccountFeaturesPolicy;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -18,7 +21,11 @@ class AccountExtension extends AbstractExtension
      */
     private array $accounts = [];
 
-    public function __construct(private readonly AccountRepository $accountRepository) {}
+    public function __construct(
+        private readonly AccountRepository $accountRepository,
+        private readonly AccountFeaturesPolicy $accountFeaturesPolicy,
+        private readonly CurrentAccountIdProvider $currentAccountIdProvider,
+    ) {}
 
     /**
      * @return TwigFilter[]
@@ -37,8 +44,13 @@ class AccountExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-
+            new TwigFunction('account_feature_enabled', $this->isFeatureEnabled(...)),
         ];
+    }
+
+    public function isFeatureEnabled(string $feature): bool
+    {
+        return $this->accountFeaturesPolicy->isEnabled(AccountFeature::from($feature), $this->currentAccountIdProvider->currentAccountId());
     }
 
     public function accountId(mixed $accountId): AccountId

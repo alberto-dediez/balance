@@ -11,6 +11,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountConsultantChanged;
 use App\Security\Domain\Model\Account\AccountConsultantStatusChanged;
 use App\Security\Domain\Model\Account\AccountEmissionFactorGroupChanged;
+use App\Security\Domain\Model\Account\AccountFeaturesChanged;
 use App\Security\Domain\Model\Account\AccountNameChanged;
 use App\Security\Domain\Model\Account\AccountReportPermissionsChanged;
 use App\Security\Domain\Model\Account\AccountStatusChanged;
@@ -442,6 +443,104 @@ class UpdateAccountServiceTest extends TestCase
         $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id()));
 
         $this->assertSame('Renamed', $account->name());
+    }
+
+    public function testAdminChangesTheFeatures(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            featureEvents: false,
+            featureCompensation: false,
+        );
+
+        $sut($request, UserMother::adminUser());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountFeaturesChanged::class, $lastEvent);
+        $this->assertFalse($account->features()->events());
+        $this->assertFalse($account->features()->compensation());
+        $this->assertTrue($account->features()->accountTripCalculator());
+        $this->assertTrue($account->features()->propertyTripCalculators());
+        $this->assertTrue($account->features()->organizationalCarbonFootprint());
+    }
+
+    public function testOwnerCannotChangeTheFeaturesOfItsOwnAccount(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            featureEvents: false,
+        );
+
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id()));
+    }
+
+    public function testOwnerCanRenameItsOwnAccountWithoutChangingTheFeatures(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'Renamed',
+            active: $account->isActive(),
+        );
+
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id()));
+
+        $this->assertSame('Renamed', $account->name());
+        $this->assertTrue($account->features()->events());
+    }
+
+    public function testSavingTheSameFeaturesDoesNotPublish(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $eventsBefore = count($this->spySubscriber->events());
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            emissionFactorGroupId: $account->emissionFactorGroupId(),
+        );
+
+        $sut($request, UserMother::adminUser());
+
+        $this->assertCount($eventsBefore, $this->spySubscriber->events());
     }
 
     public function testIsHandle(): void

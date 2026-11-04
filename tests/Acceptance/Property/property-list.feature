@@ -113,3 +113,36 @@ Feature:
                 Then I see a table with 3 rows
                 Then I see a text "Hotel Arrendado"
                 Then I do not see a text "Hotel Propio"
+
+        Scenario: As owner of an account without events, organizational carbon footprint nor property trip calculators I can't access the list of properties
+                Given account "MyCompany" with id "666" exists
+                Given account "666" has feature "events" disabled
+                Given account "666" has feature "organizational_carbon_footprint" disabled
+                Given account "666" has feature "property_trip_calculators" disabled
+                Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+                When I am logged as "owner@dediez.software"
+                When I go to "/es/properties"
+                Then the response status should be 403
+
+        Scenario: As owner of an account without property trip calculators I do not see the calculator actions of my properties
+                Given account "MyCompany" with id "666" exists
+                Given account "666" has feature "property_trip_calculators" disabled
+                Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+                Given property "Hotel" with id "1111" of account "666" exists
+                When I am logged as "owner@dediez.software"
+                When I go to "/es/properties"
+                Then the response status should be 200
+                Then I do not see a link to "/es/carbon-footprint/property-trip-calculations/1111"
+                Then I do not see a link to "/es/carbon-footprint/property-trip-calculations/1111/responses"
+                Then I see a link to "/es/property-carbon-footprints/register?propertyId=1111"
+
+        Scenario: As owner of an account without organizational carbon footprint I do not see the carbon footprint action of my properties
+                Given account "MyCompany" with id "666" exists
+                Given account "666" has feature "organizational_carbon_footprint" disabled
+                Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+                Given property "Hotel" with id "1111" of account "666" exists
+                When I am logged as "owner@dediez.software"
+                When I go to "/es/properties"
+                Then the response status should be 200
+                Then I see a link to "/es/carbon-footprint/property-trip-calculations/1111"
+                Then I do not see a link to "/es/property-carbon-footprints/register?propertyId=1111"

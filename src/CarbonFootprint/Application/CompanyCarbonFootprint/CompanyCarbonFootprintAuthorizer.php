@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint;
 
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -32,14 +33,15 @@ final class CompanyCarbonFootprintAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
         $currentAccountId = $this->currentAccountId($user);
 
-        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId) {
+        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId || !$this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint)) {
             return false;
         }
 

@@ -20,6 +20,7 @@
         <field name="consultantAccountId" type="account_id" column="consultant_account_id" nullable="true"/>
 
         <embedded name="reportPermissions" class="App\Security\Domain\Model\Account\AccountReportPermissions" use-column-prefix="true" column-prefix="report_" />
+        <embedded name="features" class="App\Security\Domain\Model\Account\AccountFeatures" use-column-prefix="true" column-prefix="feature_" />
     </entity>
 
 </doctrine-mapping>

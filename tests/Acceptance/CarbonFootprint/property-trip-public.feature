@@ -114,3 +114,102 @@ Feature:
         Then I see a text "Desplazamientos"
         Then I do not see a text "Pernoctaciones"
         Then trip calculation link "TL1" should have 1 trip calculations
+
+    Scenario: The link of an account without property trip calculators shows the invalid page
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "property_trip_calculators" disabled
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        Then the response status should be 404
+        Then I see a text "Este enlace no es válido"
+
+    Scenario: A guest of an account without compensation does not see the compensation call to action
+        Given user "payment" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "compensation" disabled
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given mobility "Coche" with id "M1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        Given project "Reforestación" with id "1111" and price per tonne "20" exists
+        Given project "1111" is adhered to account "666"
+        Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
+        Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_result"
+        Then the response status should be 200
+        Then I see a text "Tu huella de carbono"
+        Then I do not see a text "Compensa tu huella"
+        Then I do not see a link with name "Compensar mi huella"
+
+    Scenario: The checkout of an account that loses compensation shows the invalid page
+        Given user "payment" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given mobility "Coche" with id "M1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
+        Given project "Reforestación" with id "1111" and price per tonne "20" exists
+        Given project "1111" is adhered to account "666"
+        Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
+        Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_result"
+        When I click on link "Compensar mi huella"
+        When I click on link "Aportar"
+        Then I see a text "Elige tu país para ver el desglose"
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Recalcular"
+        Then I see a text "Desglose"
+        Given account "666" has feature "compensation" disabled
+        When I submit a form with "mode:emissions|name:Ana|email:ana@example.com|country:ESP" and button "Pagar"
+        Then the response status should be 404
+        Then I see a text "Este enlace no es válido"
+        Then there should be 0 contributions
+
+    Scenario: The first load of the checkout of an account without compensation shows the invalid page
+        Given user "payment" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given mobility "Coche" with id "M1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
+        Given project "Reforestación" with id "1111" and price per tonne "20" exists
+        Given project "1111" is adhered to account "666"
+        Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
+        Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_result"
+        When I click on link "Compensar mi huella"
+        Given account "666" has feature "compensation" disabled
+        When I click on link "Aportar"
+        Then the response status should be 404
+        Then I see a text "Este enlace no es válido"
+        Then I do not see a text "Elige tu país para ver el desglose"
+
+    Scenario: The first load of the checkout of a project no longer adhered to the account shows the invalid page
+        Given user "payment" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given mobility "Coche" with id "M1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
+        Given project "Reforestación" with id "1111" and price per tonne "20" exists
+        Given project "1111" is adhered to account "666"
+        Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
+        Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1"
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_result"
+        When I click on link "Compensar mi huella"
+        Given project "1111" is no longer adhered to account "666"
+        When I click on link "Aportar"
+        Then the response status should be 404
+        Then I see a text "Este enlace no es válido"
+        Then I do not see a text "Elige tu país para ver el desglose"

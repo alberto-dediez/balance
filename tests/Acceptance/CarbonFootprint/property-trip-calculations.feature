@@ -100,3 +100,14 @@ Feature:
         When I go to "/es/carbon-footprint/property-trip-calculations/777/responses"
         Then the response status should be 200
         Then I see a text "Pernoctaciones"
+
+    Scenario: The owner of an account without property trip calculators can't open the calculator of a property
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "property_trip_calculators" disabled
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/carbon-footprint/property-trip-calculations/777"
+        Then the response status should be 403
+        When I go to "/es/carbon-footprint/property-trip-calculations/777/responses"
+        Then the response status should be 403

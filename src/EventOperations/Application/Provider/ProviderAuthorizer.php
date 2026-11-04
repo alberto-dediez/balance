@@ -6,6 +6,7 @@ namespace App\EventOperations\Application\Provider;
 
 use App\EventOperations\Domain\Model\Provider\Provider;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -32,14 +33,15 @@ final class ProviderAuthorizer extends AbstractAuthorizer
         return $this->userHasRole($user, Role::Owner)
             && $currentAccountId instanceof AccountId
             && null !== $subjectAccountId
-            && $currentAccountId->equals($subjectAccountId);
+            && $currentAccountId->equals($subjectAccountId)
+            && $this->hasProviderFeature($user);
     }
 
     protected function canEdit(mixed $subject, User $user): bool
     {
         $currentAccountId = $this->currentAccountId($user);
 
-        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId) {
+        if (!$this->userHasRole($user, Role::Owner) || !$currentAccountId instanceof AccountId || !$this->hasProviderFeature($user)) {
             return false;
         }
 
@@ -60,5 +62,11 @@ final class ProviderAuthorizer extends AbstractAuthorizer
     public function supports(mixed $subject): bool
     {
         return $subject instanceof Provider;
+    }
+
+    private function hasProviderFeature(User $user): bool
+    {
+        return $this->currentAccountHasFeature($user, AccountFeature::Events)
+            || $this->currentAccountHasFeature($user, AccountFeature::OrganizationalCarbonFootprint);
     }
 }

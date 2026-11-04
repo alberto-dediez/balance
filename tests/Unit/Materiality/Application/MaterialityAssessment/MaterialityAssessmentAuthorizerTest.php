@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Materiality\Application\MaterialityAssessment;
 
 use App\Materiality\Application\MaterialityAssessment\MaterialityAssessmentAuthorizer;
 use App\Security\Application\Action as SecurityAction;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
@@ -69,5 +71,32 @@ final class MaterialityAssessmentAuthorizerTest extends TestCase
         $this->assertFalse($sut->canDoThat($assessment, SecurityAction::View, $admin));
         $this->assertFalse($sut->canDoThat($assessment, SecurityAction::Edit, $admin));
         $this->assertTrue($sut->canDoThat($assessment, SecurityAction::Remove, $admin));
+    }
+
+    public function testOwnerCannotManageWithoutOrganizationalCarbonFootprintFeature(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(accountId: 'account-id');
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id'));
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(organizationalCarbonFootprint: false));
+
+        foreach ([SecurityAction::Register, SecurityAction::View, SecurityAction::List, SecurityAction::Edit, SecurityAction::Remove] as $action) {
+            $this->assertFalse($sut->canDoThat($assessment, $action, $owner), $action->name);
+        }
+    }
+
+    public function testAdminCanRemoveWithOrganizationalCarbonFootprintFeatureDisabled(): void
+    {
+        $assessment = MaterialityAssessmentMother::draft(accountId: 'account-id');
+        $sut = $this->createSUTWithFeatures('account-id', new AccountFeatures(organizationalCarbonFootprint: false));
+
+        $this->assertTrue($sut->canDoThat($assessment, SecurityAction::Remove, UserMother::adminUser()));
+    }
+
+    private function createSUTWithFeatures(string $accountId, AccountFeatures $features): MaterialityAssessmentAuthorizer
+    {
+        return new MaterialityAssessmentAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider(new AccountId($accountId)),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId($accountId), $features),
+        );
     }
 }

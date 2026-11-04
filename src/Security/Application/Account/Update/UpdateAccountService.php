@@ -8,6 +8,7 @@ use App\Security\Application\Account\AccountAuthorizer;
 use App\Security\Application\Account\ConsultantPolicy;
 use App\Security\Application\Action;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -61,6 +62,7 @@ class UpdateAccountService implements CommandHandler
         }
 
         $this->updateReportPermissions($account, $request, $user);
+        $this->updateFeatures($account, $request, $user);
 
         $this->repository->add($account);
 
@@ -109,6 +111,25 @@ class UpdateAccountService implements CommandHandler
         $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
 
         $account->changeReportPermissions($permissions);
+    }
+
+    private function updateFeatures(Account $account, UpdateAccountRequest $request, User $user): void
+    {
+        $features = new AccountFeatures(
+            accountTripCalculator: $request->featureAccountTripCalculator,
+            propertyTripCalculators: $request->featurePropertyTripCalculators,
+            events: $request->featureEvents,
+            compensation: $request->featureCompensation,
+            organizationalCarbonFootprint: $request->featureOrganizationalCarbonFootprint,
+        );
+
+        if ($features->equals($account->features())) {
+            return;
+        }
+
+        $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
+
+        $account->changeFeatures($features);
     }
 
     private function sameConsultant(?AccountId $requested, ?AccountId $current): bool

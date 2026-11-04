@@ -8,9 +8,12 @@ use App\Balance\Application\ProjectContribution\ProjectContributionAuthorizer;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class ProjectContributionAuthorizerTest extends TestCase
@@ -86,6 +89,26 @@ class ProjectContributionAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->supports(ProjectContributionId::generate()));
     }
 
+    public function testOwnerCannotRegisterNorReadContributionsWithoutCompensationFeature(): void
+    {
+        $accountId = AccountId::generate();
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(compensation: false));
+
+        $this->assertFalse($sut->canDoThat($this->subject($accountId), Action::Register, $user));
+        $this->assertFalse($sut->canDoThat($this->subject($accountId), Action::List, $user));
+        $this->assertFalse($sut->canDoThat($this->subject($accountId), Action::View, $user));
+    }
+
+    public function testAdminCanListAndEditContributionsWithCompensationFeatureDisabled(): void
+    {
+        $accountId = AccountId::generate();
+        $sut = $this->createSUTWithFeatures($accountId, new AccountFeatures(compensation: false));
+
+        $this->assertTrue($sut->canDoThat($this->subject($accountId), Action::List, UserMother::adminUser()));
+        $this->assertTrue($sut->canDoThat($this->subject($accountId), Action::Edit, UserMother::adminUser()));
+    }
+
     private function subject(?AccountId $accountId): ProjectContribution
     {
         return new ProjectContribution(id: ProjectContributionId::generate(), accountId: $accountId);
@@ -94,5 +117,13 @@ class ProjectContributionAuthorizerTest extends TestCase
     private function createSUT(): ProjectContributionAuthorizer
     {
         return new ProjectContributionAuthorizer();
+    }
+
+    private function createSUTWithFeatures(AccountId $accountId, AccountFeatures $features): ProjectContributionAuthorizer
+    {
+        return new ProjectContributionAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider($accountId),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount($accountId, $features),
+        );
     }
 }

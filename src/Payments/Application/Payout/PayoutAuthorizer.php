@@ -6,6 +6,7 @@ namespace App\Payments\Application\Payout;
 
 use App\Payments\Domain\Model\Payout\Payout;
 use App\Security\Application\AbstractAuthorizer;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 
@@ -23,7 +24,7 @@ final class PayoutAuthorizer extends AbstractAuthorizer
 
     protected function canList(mixed $subject, User $user): bool
     {
-        return $this->canRegister($subject, $user) || $this->userHasRole($user, Role::Owner);
+        return $this->canRegister($subject, $user) || ($this->userHasRole($user, Role::Owner) && $this->currentAccountHasFeature($user, AccountFeature::Compensation));
     }
 
     protected function canEdit(mixed $subject, User $user): bool

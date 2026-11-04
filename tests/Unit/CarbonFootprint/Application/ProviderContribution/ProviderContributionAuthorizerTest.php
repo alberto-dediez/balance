@@ -6,10 +6,13 @@ namespace App\Tests\Unit\CarbonFootprint\Application\ProviderContribution;
 
 use App\CarbonFootprint\Application\ProviderContribution\ProviderContributionAuthorizer;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class ProviderContributionAuthorizerTest extends TestCase
@@ -54,8 +57,37 @@ class ProviderContributionAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
     }
 
+    public function testOwnerCannotListNorEditProviderContributionsWithoutEventsFeature(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = ProviderContributionMother::fromEventCarbonFootprintIdAndAccount('event-carbon-footprint-id', 'account-id-test');
+        $sut = $this->createSUTWithFeatures(new AccountFeatures(events: false));
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Remove] as $action) {
+            $this->assertFalse($sut->canDoThat($subject, $action, $user));
+        }
+    }
+
+    public function testOwnerCanListAndEditProviderContributionsWithEventsFeature(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = ProviderContributionMother::fromEventCarbonFootprintIdAndAccount('event-carbon-footprint-id', 'account-id-test');
+        $sut = $this->createSUTWithFeatures(new AccountFeatures());
+
+        $this->assertTrue($sut->canDoThat($subject, Action::List, $user));
+        $this->assertTrue($sut->canDoThat($subject, Action::Edit, $user));
+    }
+
     private function createSUT(): ProviderContributionAuthorizer
     {
         return new ProviderContributionAuthorizer();
+    }
+
+    private function createSUTWithFeatures(AccountFeatures $features): ProviderContributionAuthorizer
+    {
+        return new ProviderContributionAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider(new AccountId('account-id-test')),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId('account-id-test'), $features),
+        );
     }
 }

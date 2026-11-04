@@ -13,11 +13,14 @@ use App\EventOperations\Application\Event\EventVenueLocator;
 use App\EventOperations\Domain\Model\Event\EventId;
 use App\EventOperations\Infrastructure\Persistence\InMemory\Repository\InMemoryEventRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
+use App\Security\Domain\Model\Account\AccountFeatures;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Infrastructure\Geo\NullPlaceFinder;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use PHPUnit\Framework\TestCase;
 
 class GetAttendeeSurveyByTokenServiceTest extends TestCase
@@ -35,13 +38,7 @@ class GetAttendeeSurveyByTokenServiceTest extends TestCase
         $this->eventRepository = new InMemoryEventRepository();
         $this->mobilityRepository = new InMemoryMobilityRepository();
 
-        $this->sut = new GetAttendeeSurveyByTokenService(
-            $this->attendeeSurveyRepository,
-            $this->eventRepository,
-            $this->mobilityRepository,
-            new EventVenueLocator(new InMemoryPropertyRepository()),
-            new NullPlaceFinder(),
-        );
+        $this->sut = $this->createSUT(new AccountFeatures());
     }
 
     public function testReturnsTheSurveyEventAndMobilityCatalog(): void
@@ -67,5 +64,30 @@ class GetAttendeeSurveyByTokenServiceTest extends TestCase
         $this->expectException(AttendeeSurveyTokenInvalidException::class);
 
         ($this->sut)(new GetAttendeeSurveyByTokenRequest('invalid-token'));
+    }
+
+    public function testThrowsWhenTheAccountOfTheEventHasNotEvents(): void
+    {
+        $event = EventMother::fromNameAndAccountAndId('Event', 'account-id', (string) EventId::generate());
+        $this->eventRepository->add($event);
+
+        $attendeeSurvey = AttendeeSurveyMother::fromEventId((string) $event->id());
+        $this->attendeeSurveyRepository->add($attendeeSurvey);
+
+        $this->expectException(AttendeeSurveyTokenInvalidException::class);
+
+        $this->createSUT(new AccountFeatures(events: false))(new GetAttendeeSurveyByTokenRequest($attendeeSurvey->token()));
+    }
+
+    private function createSUT(AccountFeatures $features): GetAttendeeSurveyByTokenService
+    {
+        return new GetAttendeeSurveyByTokenService(
+            $this->attendeeSurveyRepository,
+            $this->eventRepository,
+            $this->mobilityRepository,
+            new EventVenueLocator(new InMemoryPropertyRepository()),
+            new NullPlaceFinder(),
+            AccountFeaturesPolicyMother::forAccount(new AccountId('account-id'), $features),
+        );
     }
 }

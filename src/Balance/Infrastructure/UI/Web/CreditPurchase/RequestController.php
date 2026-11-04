@@ -9,7 +9,9 @@ use App\Balance\Application\CreditPurchase\Request\RequestCreditPurchaseService;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Infrastructure\Symfony\Form\RequestCreditPurchaseType;
 use App\Balance\Infrastructure\UI\Web\Project\GetProjectFromIdTrait;
+use App\Security\Application\Account\AccountFeaturesPolicy;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\RegisterTrait;
@@ -32,6 +34,7 @@ class RequestController extends AbstractController
         RequestCreditPurchaseService $requestCreditPurchase,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
+        AccountFeaturesPolicy $accountFeaturesPolicy,
         TranslatorInterface $translator,
         Request $request,
     ): Response {
@@ -41,6 +44,10 @@ class RequestController extends AbstractController
 
         if (null == $account) {
             throw $this->createAccessDeniedException($translator->trans('Debes pertenecer a una cuenta para poder acceder'));
+        }
+
+        if (!$accountFeaturesPolicy->isEnabled(AccountFeature::Compensation, $account->id())) {
+            throw $this->createAccessDeniedException();
         }
 
         $creditPurchaseRequest = new RequestCreditPurchaseRequest(

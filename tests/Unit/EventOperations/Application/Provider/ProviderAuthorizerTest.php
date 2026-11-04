@@ -8,10 +8,13 @@ use App\EventOperations\Application\Provider\ProviderAuthorizer;
 use App\EventOperations\Domain\Model\Provider\Provider;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class ProviderAuthorizerTest extends TestCase
@@ -80,8 +83,47 @@ class ProviderAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::List, $user));
     }
 
+    public function testOwnerCanListAndEditProvidersWithOnlyEventsFeature(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = ProviderMother::from(name: 'Test', id: (string) ProviderId::generate(), accountId: 'account-id-test');
+        $sut = $this->createSUTWithFeatures(new AccountFeatures(organizationalCarbonFootprint: false));
+
+        $this->assertTrue($sut->canDoThat($subject, Action::List, $user));
+        $this->assertTrue($sut->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testOwnerCanListAndEditProvidersWithOnlyOrganizationalCarbonFootprintFeature(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = ProviderMother::from(name: 'Test', id: (string) ProviderId::generate(), accountId: 'account-id-test');
+        $sut = $this->createSUTWithFeatures(new AccountFeatures(events: false));
+
+        $this->assertTrue($sut->canDoThat($subject, Action::List, $user));
+        $this->assertTrue($sut->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testOwnerCannotListNorEditProvidersWithoutEventsNorOrganizationalCarbonFootprint(): void
+    {
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId('account-id-test'));
+        $subject = ProviderMother::from(name: 'Test', id: (string) ProviderId::generate(), accountId: 'account-id-test');
+        $sut = $this->createSUTWithFeatures(new AccountFeatures(events: false, organizationalCarbonFootprint: false));
+
+        foreach ([Action::List, Action::Register, Action::View, Action::Edit, Action::Remove] as $action) {
+            $this->assertFalse($sut->canDoThat($subject, $action, $user));
+        }
+    }
+
     private function createSUT(): ProviderAuthorizer
     {
         return new ProviderAuthorizer();
+    }
+
+    private function createSUTWithFeatures(AccountFeatures $features): ProviderAuthorizer
+    {
+        return new ProviderAuthorizer(
+            currentAccountIdProvider: new StubCurrentAccountIdProvider(new AccountId('account-id-test')),
+            accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId('account-id-test'), $features),
+        );
     }
 }

@@ -124,3 +124,11 @@ Feature:
         When I am logged as "user@dediez.software"
         When I go to "/es/account_trip_calculations/export"
         Then the response status should be 403
+
+    Scenario: The owner of an account without the account trip calculator can't open it
+        Given account "666" has feature "account_trip_calculator" disabled
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/carbon-footprint/trip-calculator"
+        Then the response status should be 403
+        When I go to "/es/carbon-footprint/trip-calculator/responses"
+        Then the response status should be 403

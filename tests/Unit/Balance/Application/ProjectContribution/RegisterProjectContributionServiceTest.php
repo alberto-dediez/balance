@@ -30,6 +30,7 @@ use App\Payments\Domain\Model\Vat\VatNumberFormatValidator;
 use App\Payments\Infrastructure\Payment\Fake\FakePaymentGateway;
 use App\Payments\Infrastructure\Vat\InMemory\InMemoryVatCountryProvider;
 use App\Security\Application\User\SystemActor\SystemActorResolver;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -43,6 +44,7 @@ use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionM
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\Notifications\Application\Notification\Send\SpyDeferredCommandHandler;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentRepositoryMother;
+use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Application\User\SystemActor\SystemActorResolverMother;
 use PHPUnit\Framework\TestCase;
 
@@ -333,6 +335,7 @@ class RegisterProjectContributionServiceTest extends TestCase
                     ]),
                     homeCountry: 'ESP',
                 )),
+                AccountFeaturesPolicyMother::forAccount($this->accountId, new AccountFeatures()),
             ),
             $this->contributions,
             new StartPaymentService(PaymentRepositoryMother::inMemory(), $gateway ?? $this->gateway),

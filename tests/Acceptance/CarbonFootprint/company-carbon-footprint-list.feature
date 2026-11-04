@@ -37,3 +37,13 @@ Feature:
         When I go to "/es/companies"
         Then the response status should be 200
         Then I see a text "Cálculo de Huella de Carbono"
+
+    Scenario: The owner of an account without organizational carbon footprint can't list the company footprints
+        Given account "MyCompany" with id "666" exists
+        Given account "666" has feature "organizational_carbon_footprint" disabled
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given company "Hotelera" with id "C1" of account "666" exists
+        Given company carbon footprint with id "999" for company "C1" of account "666" and year "2025" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/company-carbon-footprints"
+        Then the response status should be 403
