@@ -1,0 +1,247 @@
+#!/usr/bin/env bash
+
+set -u
+export LC_ALL=C
+
+if [ "${BASH_VERSINFO[0]}" -lt 5 ] || { [ "${BASH_VERSINFO[0]}" -eq 5 ] && [ "${BASH_VERSINFO[1]}" -lt 1 ]; }; then
+    echo "bin/phpunit-parallel requires bash >= 5.1 (found $BASH_VERSION)" >&2
+    exit 1
+fi
+
+cd "$(dirname "$0")/.."
+
+work_dir=var/test-parallel-unit
+template_db=var/data.db
+default_processes=8
+processes=
+paths=()
+flags=()
+
+if [ -f phpunit.xml ]; then
+    config_source=phpunit.xml
+elif [ -f phpunit.xml.dist ]; then
+    config_source=phpunit.xml.dist
+else
+    echo "PHPUnit configuration phpunit.xml or phpunit.xml.dist not found" >&2
+    exit 1
+fi
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -j)
+            processes="${2:-}"
+            shift 2 || shift
+            ;;
+        -j*)
+            processes="${1#-j}"
+            shift
+            ;;
+        *)
+            if [ -e "$1" ]; then
+                paths+=("$1")
+            else
+                flags+=("$1")
+            fi
+            shift
+            ;;
+    esac
+done
+
+if [ -n "$processes" ] && ! [[ "$processes" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Invalid number of processes: $processes" >&2
+    exit 1
+fi
+
+if [ ! -f "$template_db" ]; then
+    echo "Template database $template_db not found" >&2
+    exit 1
+fi
+
+if [ ${#paths[@]} -eq 0 ]; then
+    paths=(tests)
+fi
+
+mapfile -t test_files < <(
+    for path in "${paths[@]}"; do
+        if [ -f "$path" ]; then
+            case "$path" in
+                *Test.php) echo "${path#./}" ;;
+            esac
+        else
+            find "$path" -type f -name '*Test.php' | sed 's#^\./##'
+        fi
+    done | sort -u | while IFS= read -r file; do
+        if ! grep -qE '^abstract class' "$file"; then
+            echo "$file"
+        fi
+    done
+)
+
+if [ ${#test_files[@]} -eq 0 ]; then
+    echo "No test files found in: ${paths[*]}" >&2
+    exit 1
+fi
+
+if [ -z "$processes" ]; then
+    processes=$default_processes
+    cpus=$(nproc 2>/dev/null || echo 1)
+    if [ "$cpus" -lt "$processes" ]; then
+        processes=$cpus
+    fi
+fi
+
+if [ "${#test_files[@]}" -lt "$processes" ]; then
+    processes=${#test_files[@]}
+fi
+
+rm -rf "$work_dir"
+mkdir -p "$work_dir"
+
+mapfile -t weighted < <(
+    for file in "${test_files[@]}"; do
+        weight=$(grep -c -E 'function test[A-Za-z0-9_]*\s*\(' "$file")
+        if [ "${weight:-0}" -lt 1 ]; then
+            weight=1
+        fi
+        printf '%s\t%s\n' "$weight" "$file"
+    done | sort -t $'\t' -k1,1nr -k2,2
+)
+
+declare -a loads files_count
+for ((i = 1; i <= processes; i++)); do
+    loads[i]=0
+    files_count[i]=0
+    : > "$work_dir/worker_$i.unsorted"
+done
+
+for line in "${weighted[@]}"; do
+    weight="${line%%$'\t'*}"
+    file="${line#*$'\t'}"
+    target=1
+    for ((i = 2; i <= processes; i++)); do
+        if [ "${loads[i]}" -lt "${loads[target]}" ]; then
+            target=$i
+        fi
+    done
+    loads[target]=$((loads[target] + weight))
+    files_count[target]=$((files_count[target] + 1))
+    echo "$file" >> "$work_dir/worker_$target.unsorted"
+done
+
+total_tests=0
+for ((i = 1; i <= processes; i++)); do
+    sort "$work_dir/worker_$i.unsorted" > "$work_dir/worker_$i.tests"
+    rm "$work_dir/worker_$i.unsorted"
+    total_tests=$((total_tests + loads[i]))
+done
+
+echo "Running ${#test_files[@]} test files (${total_tests} tests) in ${processes} workers"
+for ((i = 1; i <= processes; i++)); do
+    echo "  worker $i: ${files_count[i]} files, ${loads[i]} tests"
+done
+echo
+
+for ((i = 1; i <= processes; i++)); do
+    php -- "$config_source" "$work_dir/worker_$i.xml" "worker $i" "$work_dir/worker_$i.tests" <<'PHP' || exit 1
+<?php
+
+[, $source, $target, $suiteName, $listFile] = $argv;
+
+$document = new DOMDocument();
+$document->preserveWhiteSpace = false;
+$document->formatOutput = true;
+
+if (!@$document->load($source)) {
+    fwrite(STDERR, sprintf("Unable to load PHPUnit configuration %s\n", $source));
+    exit(1);
+}
+
+$baseDir = dirname(realpath($source));
+
+$absolute = static function (string $path) use ($baseDir): string {
+    if ('' === $path || str_starts_with($path, '/')) {
+        return $path;
+    }
+
+    return realpath($baseDir . '/' . $path) ?: $baseDir . '/' . $path;
+};
+
+$root = $document->documentElement;
+
+if ($root->hasAttribute('bootstrap')) {
+    $root->setAttribute('bootstrap', $absolute($root->getAttribute('bootstrap')));
+}
+
+$xpath = new DOMXPath($document);
+foreach ($xpath->query('/phpunit/coverage//directory | /phpunit/coverage//file | /phpunit/source//directory | /phpunit/source//file') as $node) {
+    $node->textContent = $absolute(trim($node->textContent));
+}
+
+foreach (iterator_to_array($document->getElementsByTagName('testsuites')) as $node) {
+    $node->parentNode->removeChild($node);
+}
+
+$testsuites = $document->createElement('testsuites');
+$testsuite = $document->createElement('testsuite');
+$testsuite->setAttribute('name', $suiteName);
+$testsuites->appendChild($testsuite);
+
+foreach (file($listFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+    $file = $document->createElement('file');
+    $file->appendChild($document->createTextNode(str_starts_with($line, '/') ? $line : getcwd() . '/' . $line));
+    $testsuite->appendChild($file);
+}
+
+$root->appendChild($testsuites);
+
+if (false === $document->save($target)) {
+    fwrite(STDERR, sprintf("Unable to write PHPUnit configuration %s\n", $target));
+    exit(1);
+}
+PHP
+done
+
+start=$SECONDS
+declare -A worker_of
+declare -a codes
+
+for ((i = 1; i <= processes; i++)); do
+    cp "$template_db" "$work_dir/data_$i.db"
+    TEST_TOKEN=$i DATABASE_URL="sqlite:///./$work_dir/data_$i.db" \
+        php ${PHPUNIT_PHP_OPTIONS:-} bin/phpunit --configuration "$work_dir/worker_$i.xml" --do-not-cache-result --colors=always "${flags[@]}" \
+        > "$work_dir/worker_$i.log" 2>&1 &
+    worker_of[$!]=$i
+done
+
+for ((n = 1; n <= processes; n++)); do
+    wait -n -p finished_pid
+    code=$?
+    i=${worker_of[$finished_pid]}
+    codes[i]=$code
+    if [ "$code" -eq 0 ]; then
+        echo "worker $i: OK"
+    else
+        echo "worker $i: FAILED ($code)"
+    fi
+done
+
+failed=0
+for ((i = 1; i <= processes; i++)); do
+    if [ "${codes[i]}" -ne 0 ]; then
+        failed=1
+        echo
+        echo "===== worker $i log ($work_dir/worker_$i.log) ====="
+        cat "$work_dir/worker_$i.log"
+    fi
+done
+
+echo
+echo "===== Summary ====="
+for ((i = 1; i <= processes; i++)); do
+    echo "worker $i:"
+    sed 's/\x1b\[[0-9;]*m//g' "$work_dir/worker_$i.log" | grep -E '^(OK \(|OK, but|Tests: |Time: |No tests executed|ERRORS!|FAILURES!|WARNINGS!)' | sed 's/^/  /'
+done
+echo
+echo "Total wall time: $((SECONDS - start))s"
+
+exit $failed

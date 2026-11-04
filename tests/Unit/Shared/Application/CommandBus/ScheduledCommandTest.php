@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Application\CommandBus;
 
-use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\ScheduledCommand;
 use PHPUnit\Framework\TestCase;
@@ -189,5 +188,3 @@ class ScheduledCommandTest extends TestCase
         $this->assertFalse($sut->isDue($now, $lastRunAt));
     }
 }
-
-class FakeScheduledInnerCommand implements Command {}

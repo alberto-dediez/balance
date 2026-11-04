@@ -12,16 +12,34 @@ use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\ImportationProfile\ImportationProfileId;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationProfileRepository;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
+use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\DataExchange\Application\ImportationProfile\ImportationProfileAuthorizerMother;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
 use App\Tests\Unit\DataExchange\Domain\Model\ImportationProfile\ImportationProfileMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\TemporaryDirectory;
 use PHPUnit\Framework\TestCase;
 
 class RecallImportationChoicesServiceTest extends TestCase
 {
+    use TemporaryDirectory;
+
+    private string $storagePath;
+
+    protected function setUp(): void
+    {
+        $this->storagePath = $this->temporaryDirectoryPath('importation-data-test');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeTemporaryDirectory($this->storagePath);
+
+        parent::tearDown();
+    }
+
     /** @return ImportationColumnConfiguration[] */
     private function configurations(): array
     {
@@ -48,7 +66,7 @@ class RecallImportationChoicesServiceTest extends TestCase
         );
         $importation->loadConfigurations($this->configurations());
 
-        $importationRepository = new InMemoryImportationRepository();
+        $importationRepository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $importationRepository->add($importation);
 
         $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
@@ -81,7 +99,7 @@ class RecallImportationChoicesServiceTest extends TestCase
         );
         $importation->loadConfigurations($this->configurations());
 
-        $importationRepository = new InMemoryImportationRepository();
+        $importationRepository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $importationRepository->add($importation);
 
         $profileRepository = new InMemoryImportationProfileRepository();

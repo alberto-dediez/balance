@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Application\CommandBus;
 
-use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
@@ -50,5 +49,3 @@ class CommandBusDispatcherTest extends TestCase
         $this->assertCount(0, $anotherSpy->commands());
     }
 }
-
-class FakeCommand implements Command {}

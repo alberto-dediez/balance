@@ -9,18 +9,32 @@ use App\DataExchange\Domain\Model\Importation\ImportationDataRepository;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
+use App\Tests\Unit\Shared\TemporaryDirectory;
 use PHPUnit\Framework\TestCase;
 
 class SqliteImportationDataRepositoryTest extends TestCase
 {
-    public const STORAGE_PATH = __DIR__ . '/../../../../../../../var/sqlite-test/';
+    use TemporaryDirectory;
+
+    private string $storagePath;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->storagePath = $this->temporaryDirectoryPath('importation-data-test');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeTemporaryDirectory($this->storagePath);
+
+        parent::tearDown();
+    }
 
     public function testGivenANonExistentStoragePathWhenICreateTheRepositoryThenTheDirectoryIsCreated(): void
     {
-        $path = __DIR__ . '/../../../../../../../var/sqlite-test-new-dir/';
-        if (is_dir($path)) {
-            rmdir($path);
-        }
+        $path = sys_get_temp_dir() . '/importation-data-new-dir-' . uniqid() . '/';
 
         new SqliteImportationDataRepository(storagePath: $path);
 
@@ -39,7 +53,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $sut->create($importation);
 
-        $file = self::STORAGE_PATH . $importation->id() . '.sqlite';
+        $file = $this->storagePath . $importation->id() . '.sqlite';
 
         $this->assertFileExists($file);
 
@@ -71,7 +85,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $sut->create($importation);
 
-        $file = self::STORAGE_PATH . $importation->id() . '.sqlite';
+        $file = $this->storagePath . $importation->id() . '.sqlite';
 
         $this->assertFileExists($file);
 
@@ -192,7 +206,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
 
         $this->assertArrayNotHasKey((string) $importation->id(), $connections->getValue($sut));
 
-        $file = self::STORAGE_PATH . $importation->id() . '.sqlite';
+        $file = $this->storagePath . $importation->id() . '.sqlite';
 
         $this->assertFileDoesNotExist($file);
 
@@ -207,7 +221,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
     {
         $importation = ImportationMother::fromNameAndFile('superheroes.csv', new ImportationFile(path: __DIR__ . '/file-to-import.csv', offset: 0));
 
-        $sut = new SqliteImportationDataRepository(storagePath: self::STORAGE_PATH);
+        $sut = new SqliteImportationDataRepository(storagePath: $this->storagePath);
 
         $sut->create($importation);
         $this->assertCount(4, $sut->getColumns($importation->id()));
@@ -354,38 +368,7 @@ class SqliteImportationDataRepositoryTest extends TestCase
     private function createSUT(): ImportationDataRepository
     {
         return new SqliteImportationDataRepository(
-            storagePath: self::STORAGE_PATH,
+            storagePath: $this->storagePath,
         );
-    }
-
-    private function cleanStorage(): void
-    {
-        if (!file_exists(self::STORAGE_PATH)) {
-            mkdir(self::STORAGE_PATH);
-        }
-
-        foreach (scandir(self::STORAGE_PATH) as $file) {
-            if ('.' === $file) {
-                continue;
-            }
-            if ('..' === $file) {
-                continue;
-            }
-            unlink(self::STORAGE_PATH . $file);
-        }
-    }
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->cleanStorage();
-    }
-
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        $this->cleanStorage();
     }
 }

@@ -14,6 +14,7 @@ use App\DataExchange\Domain\Model\Importation\ImportationStatus;
 use App\DataExchange\Domain\Model\Importation\ImportationType;
 use App\DataExchange\Domain\Model\Importation\ImportationTypeFactory;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
+use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -28,21 +29,35 @@ use App\Tests\Unit\Shared\Application\CommandBus\FakeCommand;
 use App\Tests\Unit\Shared\Application\CommandBus\SluttyCommandHandler;
 use App\Tests\Unit\Shared\Application\CommandBus\ThrowingCommandHandler;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\TemporaryDirectory;
 use PHPUnit\Framework\TestCase;
 
 class ExecuteSingleServiceTest extends TestCase
 {
+    use TemporaryDirectory;
+
+    private string $storagePath;
+
     private SpyDomainEventSubscriber $spySubscriber;
 
     private SluttyCommandHandler $spyCommandBus;
 
     protected function setUp(): void
     {
+        $this->storagePath = $this->temporaryDirectoryPath('importation-data-test');
+
         DomainEventPublisher::instance()->reset();
         CommandBusDispatcher::instance()->reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
         $this->spyCommandBus = new SluttyCommandHandler();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeTemporaryDirectory($this->storagePath);
+
+        parent::tearDown();
     }
 
     public function testUseCase(): void
@@ -53,7 +68,7 @@ class ExecuteSingleServiceTest extends TestCase
 
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', $importationFile, ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $accountId = $importation->accountId();
@@ -100,7 +115,7 @@ class ExecuteSingleServiceTest extends TestCase
 
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroe.csv', $importationFile, ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $accountId = $importation->accountId();
@@ -145,7 +160,7 @@ class ExecuteSingleServiceTest extends TestCase
     {
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $accountId = $importation->accountId();
@@ -183,7 +198,7 @@ class ExecuteSingleServiceTest extends TestCase
     {
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $user = $this->ownerOf($importation);
@@ -203,7 +218,7 @@ class ExecuteSingleServiceTest extends TestCase
     {
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $user = $this->ownerOf($importation);
@@ -235,7 +250,7 @@ class ExecuteSingleServiceTest extends TestCase
     {
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroes.csv', new ImportationFile(path: __DIR__ . '/superheroes.csv'), ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $this->assertTrue($repository->claimRow($importation->id(), 0));
@@ -254,7 +269,7 @@ class ExecuteSingleServiceTest extends TestCase
     {
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroe.csv', new ImportationFile(path: __DIR__ . '/superheroe.csv'), ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $this->assertTrue($repository->claimRow($importation->id(), 0));
@@ -274,7 +289,7 @@ class ExecuteSingleServiceTest extends TestCase
     {
         $importation = ImportationMother::fromNameAndFileAndStatus('superheroe.csv', new ImportationFile(path: __DIR__ . '/superheroe.csv'), ImportationStatus::InProgress);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $this->assertTrue($repository->claimExecution($importation->id()));
@@ -302,7 +317,7 @@ class ExecuteSingleServiceTest extends TestCase
 
         $importation = ImportationMother::random();
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $user = UserMother::fromUsernameAndRoleAndAccount(
@@ -324,7 +339,7 @@ class ExecuteSingleServiceTest extends TestCase
 
     public function testIsHandle(): void
     {
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
 
         $sut = $this->createSUT($repository);
 
