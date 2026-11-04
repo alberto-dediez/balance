@@ -197,10 +197,10 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         $this->renderTextPage($pdf, $this->trans('Relación con los ODS', $locale), $texts->get(CarbonFootprintReportSectionKey::SustainableDevelopmentGoals), 'ods.jpg');
         $this->renderTextPage($pdf, $this->trans('Conclusión', $locale), $texts->get(CarbonFootprintReportSectionKey::Conclusion), 'purpose.jpg');
         $this->renderAnnexPage($pdf, $this->buildClassicTableHtml($this->organizationalAnnexHeader($locale, $isCompany), $this->organizationalAnnexRows($data, $locale, $isCompany)), $this->trans('Anexo: factores de emisión aplicados', $locale), $locale);
-        $this->renderMaterialityAnnexPages($pdf, $data, $locale);
+        $this->renderMaterialityAnnexPages($pdf, $data, $texts, $locale);
     }
 
-    private function renderMaterialityAnnexPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
+    private function renderMaterialityAnnexPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, Locale $locale): void
     {
         $title = $this->trans('Anexo: análisis de materialidad del alcance 3', $locale);
         $captionPrefix = $this->trans('Análisis de materialidad del alcance 3', $locale);
@@ -216,8 +216,9 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         }
 
         if (null === $statement) {
-            $methodologyRows = $this->materialityMethodologyRows($annex, $locale);
-            $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $methodologyRows, ['40%', '60%']), $captionPrefix . ' · ' . $this->trans('Metodología', $locale), count($methodologyRows), $locale, 9);
+            $this->renderTextPage($pdf, $title, $this->materialityMethodologyParagraph($annex, $locale), 'context.jpg');
+            $traceabilityRows = $this->materialityTraceabilityRows($annex, $locale);
+            $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $traceabilityRows, ['40%', '60%']), $captionPrefix . ' · ' . $this->trans('Trazabilidad', $locale), count($traceabilityRows), $locale, 9);
 
             if ($annex->showsAnswers()) {
                 $questionRows = $this->materialityQuestionRows($annex, $locale);
@@ -225,11 +226,14 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
             }
         }
 
-        $topicRows = $this->materialityTopicRows($annex, $locale);
-        $this->renderDataPage($pdf, $this->trans('Resultado por categoría', $locale), null, $this->buildClassicTableHtml($this->materialityTopicHeader($locale), $topicRows, ['7%', '27%', '12%', '10%', '14%', '16%', '14%']), $captionPrefix . ' · ' . $this->trans('Resultado por categoría', $locale), count($topicRows), $locale, 8);
+        $this->renderDataPage($pdf, $this->trans('Resultado por categoría', $locale), null, $this->buildMaterialityMatrixHtml($annex, $locale, ['7%', '27%', '12%', '10%', '14%', '16%', '14%']), $captionPrefix . ' · ' . $this->trans('Resultado por categoría', $locale), count($annex->topics), $locale, 8);
 
         if ($data->scope3Excluded) {
             return;
+        }
+
+        if ($texts->has(CarbonFootprintReportSectionKey::MaterialityAnalysis)) {
+            $this->renderTextPage($pdf, $captionPrefix, $texts->get(CarbonFootprintReportSectionKey::MaterialityAnalysis), 'context.jpg');
         }
 
         foreach ($annex->justifications as $justification) {
@@ -238,12 +242,12 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
                 ? $this->buildClassicTableHtml($this->materialityAnswerHeader($locale), $rows, ['18%', '46%', '14%', '10%', '12%'])
                 : $this->buildClassicTableHtml($this->materialityTopicHeader($locale), [$this->materialityTopicRow($justification->topic, $locale)], ['7%', '27%', '12%', '10%', '14%', '16%', '14%']);
 
-            $this->renderDataPage($pdf, $this->materialityTopicLabel($justification->topic, $locale), null, $tableHtml, $this->materialityJustificationHeading($justification, $locale), max(4, count($rows)), $locale, 8.5);
+            $this->renderDataPage($pdf, $this->materialityTopicLabel($justification->topic, $locale), null, $tableHtml, $this->materialityEvidenceTitle($locale) . ' · ' . $this->materialityJustificationHeading($justification, $locale), max(4, count($rows)), $locale, 8.5);
 
             $pdf->Ln(2);
             $pdf->setX(self::TABLE_LEFT);
             $this->setFont($pdf, 9.5, self::FONT_STYLE_REGULAR, self::COLOR_PRIMARY);
-            $pdf->writeHTML($this->markdownToStyledHtml($this->materialityJustificationText($annex, $justification, $locale)), true, false, true, false, '');
+            $pdf->writeHTML($this->markdownToStyledHtml($this->materialityJustificationText($justification, $locale)), true, false, true, false, '');
         }
     }
 
@@ -902,5 +906,10 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         if (is_file($path)) {
             $this->withoutPageBreak($pdf, static fn() => $pdf->Image($path, $x, $y, $width, 0, '', '', '', false, 300));
         }
+    }
+
+    private function materialityMatrixHeaderCell(string $headerCell, string $width): string
+    {
+        return sprintf('<th style="border: 1px solid %s; color: %s; text-align: left;%s"><b>%s</b></th>', $this->pdfBranding()->primaryHex(), $this->pdfBranding()->primaryHex(), $width, htmlspecialchars($headerCell));
     }
 }

@@ -84,4 +84,14 @@ final class OrganizationalCarbonFootprintReportMaterialityAnnexTest extends Test
         $this->assertCount(5, $annex->justifications[0]->answers);
         $this->assertSame(6, $annex->justifications[0]->points);
     }
+
+    public function testTheNarrativeIsRequestedOnlyWhenTheAnalysisAppliesAndThereAreExcludedCategories(): void
+    {
+        $this->assertTrue(OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete()->requestsNarrative(false));
+        $this->assertTrue(OrganizationalCarbonFootprintReportMaterialityAnnexMother::reopened()->requestsNarrative(false));
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete()->requestsNarrative(true));
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::stageExcluded()->requestsNarrative(false));
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutAssessment()->requestsNarrative(false));
+        $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::completed(), false, [], [])->requestsNarrative(false));
+    }
 }

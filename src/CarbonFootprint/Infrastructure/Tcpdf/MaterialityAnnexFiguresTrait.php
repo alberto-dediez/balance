@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Tcpdf;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityCategoryState;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexJustification;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexTopicLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAssessmentSnapshotAnswer;
@@ -13,8 +15,11 @@ use App\Shared\Domain\Model\Locale\Locale;
 
 trait MaterialityAnnexFiguresTrait
 {
-    /** @return list<list<string>> */
-    private function materialityMethodologyRows(OrganizationalCarbonFootprintReportMaterialityAnnex $annex, Locale $locale): array
+    private const string MATRIX_INCLUDE = '#DFF2E4';
+    private const string MATRIX_OMIT = '#FBE9C6';
+    private const string MATRIX_NEUTRAL = '#ECEFF1';
+
+    private function materialityMethodologyParagraph(OrganizationalCarbonFootprintReportMaterialityAnnex $annex, Locale $locale): string
     {
         $assessment = $annex->assessment;
         $threshold = $assessment->thresholdPercent ?? $this->materialityThresholdOfTopics($annex);
@@ -24,6 +29,31 @@ trait MaterialityAnnexFiguresTrait
             $criteria[$answer->criterionKey] = $this->translator->trans($answer->criterionKey, [], 'materialityCriterionType', $locale->value);
         }
 
+        $sentences = [$this->trans('El análisis sigue el GHG Protocol Scope 3 Standard (capítulo 6).', $locale)];
+
+        if ([] !== $criteria) {
+            $sentences[] = $this->trans('Criterios evaluados: {criteria}.', $locale, ['{criteria}' => $this->materialityPlain(implode(', ', $criteria))]);
+        }
+
+        $sentences[] = $this->trans('Escala: Bajo / Medio / Alto = 1 / 2 / 3; No / Sí = 1 / 3; relevancia normalizada de 0 a 100 %.', $locale);
+
+        if (null !== $threshold) {
+            $sentences[] = $this->trans('Umbral de relevancia: {threshold} %.', $locale, ['{threshold}' => (string) $threshold]);
+        }
+
+        if (null !== $assessment?->highMagnitudeRule) {
+            $sentences[] = $assessment->highMagnitudeRule
+                ? $this->trans('Regla de magnitud alta: activada.', $locale)
+                : $this->trans('Regla de magnitud alta: desactivada.', $locale);
+        }
+
+        return implode(' ', $sentences);
+    }
+
+    /** @return list<list<string>> */
+    private function materialityTraceabilityRows(OrganizationalCarbonFootprintReportMaterialityAnnex $annex, Locale $locale): array
+    {
+        $assessment = $annex->assessment;
         $version = '---';
 
         if (null !== $assessment?->questionSetVersion) {
@@ -35,11 +65,6 @@ trait MaterialityAnnexFiguresTrait
         }
 
         return [
-            [$this->trans('Norma', $locale), $this->trans('GHG Protocol Scope 3 Standard, capítulo 6', $locale)],
-            [$this->trans('Criterios evaluados', $locale), [] === $criteria ? '---' : implode(', ', $criteria)],
-            [$this->trans('Escala', $locale), $this->trans('Bajo / Medio / Alto = 1 / 2 / 3; No / Sí = 1 / 3; relevancia normalizada 0–100 %', $locale)],
-            [$this->trans('Umbral de relevancia', $locale), null === $threshold ? '---' : $threshold . ' %'],
-            [$this->trans('Regla de magnitud alta', $locale), null === $assessment?->highMagnitudeRule ? '---' : ($assessment->highMagnitudeRule ? $this->trans('Activada', $locale) : $this->trans('Desactivada', $locale))],
             [$this->trans('Sector', $locale), $assessment->sectorName ?? '---'],
             [$this->trans('Evaluación iniciada el', $locale), $assessment?->startedAt->format('d/m/Y') ?? '---'],
             [$this->trans('Completada el', $locale), $assessment?->completedAt?->format('d/m/Y') ?? '---'],
@@ -69,12 +94,6 @@ trait MaterialityAnnexFiguresTrait
         ], $questions);
     }
 
-    /** @return list<list<string>> */
-    private function materialityTopicRows(OrganizationalCarbonFootprintReportMaterialityAnnex $annex, Locale $locale): array
-    {
-        return array_map(fn(MaterialityAnnexTopicLine $topic): array => $this->materialityTopicRow($topic, $locale), $annex->topics);
-    }
-
     /** @return list<string> */
     private function materialityTopicRow(MaterialityAnnexTopicLine $topic, Locale $locale): array
     {
@@ -89,6 +108,52 @@ trait MaterialityAnnexFiguresTrait
         ];
     }
 
+    /** @param list<string>|null $columnWidths */
+    private function buildMaterialityMatrixHtml(OrganizationalCarbonFootprintReportMaterialityAnnex $annex, Locale $locale, ?array $columnWidths = null): string
+    {
+        $branding = $this->pdfBranding();
+        $html = '<table cellpadding="4" style="width: 100%; border-collapse: collapse;"><thead><tr>';
+
+        foreach ($this->materialityTopicHeader($locale) as $index => $headerCell) {
+            $width = null !== $columnWidths ? sprintf(' width: %s;', $columnWidths[$index]) : '';
+            $html .= $this->materialityMatrixHeaderCell($headerCell, $width);
+        }
+
+        $html .= '</tr></thead><tbody>';
+
+        foreach ($annex->topics as $rowIndex => $topic) {
+            $rowColor = 0 === $rowIndex % 2 ? '#FFFFFF' : $branding->subtleHex();
+            $cellColors = [4 => $this->materialityVerdictColor($topic), 5 => $this->materialityStateColor($topic) ?? $rowColor];
+            $html .= '<tr nobr="true">';
+
+            foreach ($this->materialityTopicRow($topic, $locale) as $cellIndex => $cell) {
+                $width = null !== $columnWidths ? sprintf(' width: %s;', $columnWidths[$cellIndex]) : '';
+                $html .= sprintf('<td style="background-color: %s; color: %s;%s">%s</td>', $cellColors[$cellIndex] ?? $rowColor, $branding->bodyTextHex(), $width, htmlspecialchars($cell));
+            }
+
+            $html .= '</tr>';
+        }
+
+        return $html . '</tbody></table>';
+    }
+
+    private function materialityVerdictColor(MaterialityAnnexTopicLine $topic): string
+    {
+        return match ($topic->verdict) {
+            MaterialityVerdict::Calculate => self::MATRIX_INCLUDE,
+            MaterialityVerdict::Omit => self::MATRIX_OMIT,
+            null => self::MATRIX_NEUTRAL,
+        };
+    }
+
+    private function materialityStateColor(MaterialityAnnexTopicLine $topic): ?string
+    {
+        return match ($topic->state) {
+            MaterialityCategoryState::ActiveOverridden, MaterialityCategoryState::ExcludedOverridden, MaterialityCategoryState::PendingReview => self::MATRIX_OMIT,
+            default => null,
+        };
+    }
+
     /** @return list<list<string>> */
     private function materialityAnswerRows(MaterialityAnnexJustification $justification, Locale $locale): array
     {
@@ -96,7 +161,7 @@ trait MaterialityAnnexFiguresTrait
             $this->translator->trans($answer->criterionKey, [], 'materialityCriterionType', $locale->value),
             $this->materialityQuestionText($answer, $locale),
             '' === $answer->answerLabelKey ? '---' : $this->translator->trans($answer->answerLabelKey, [], 'materialityAnswerValueType', $locale->value),
-            (string) $answer->weight,
+            null === $answer->value ? '---' : sprintf('%d × %d', $answer->value, $answer->weight),
             (string) $answer->points,
         ], $justification->answers);
 
@@ -113,37 +178,11 @@ trait MaterialityAnnexFiguresTrait
         return $rows;
     }
 
-    private function materialityJustificationText(OrganizationalCarbonFootprintReportMaterialityAnnex $annex, MaterialityAnnexJustification $justification, Locale $locale): string
+    private function materialityJustificationText(MaterialityAnnexJustification $justification, Locale $locale): string
     {
         $topic = $justification->topic;
-        $assessment = $annex->assessment;
         $reason = null === $topic->exclusionReason ? '---' : $this->translator->trans($topic->exclusionReason->value, [], 'exclusionReason', $locale->value);
         $sentences = ['**' . $this->materialityPlain($this->materialityJustificationHeading($justification, $locale)) . '**'];
-
-        if (true === $assessment?->completed) {
-            $sentences[] = $this->trans('Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en la evaluación de materialidad completada el {date} por {user}.', $locale, [
-                '{date}' => $assessment->completedAt?->format('d/m/Y') ?? '---',
-                '{user}' => $this->materialityPlain($assessment->completedByName ?? '---'),
-            ]);
-        } elseif (null !== $assessment) {
-            $sentences[] = $this->trans('Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6); la evaluación de materialidad fue reabierta y no se ha vuelto a completar, por lo que las respuestas vigentes no se muestran.', $locale);
-        } else {
-            $sentences[] = $this->trans('Evaluada con los criterios del GHG Protocol Scope 3 Standard (capítulo 6) en el análisis de materialidad aplicado el {date}.', $locale, [
-                '{date}' => $topic->recommendedAt?->format('d/m/Y') ?? '---',
-            ]);
-        }
-
-        if ([] !== $justification->answers) {
-            $answers = array_map(fn(MaterialityAssessmentSnapshotAnswer $answer): string => $this->trans('{criterion}: «{question}», respuesta {answer} ({value} × {weight} = {points} puntos)', $locale, [
-                '{criterion}' => $this->translator->trans($answer->criterionKey, [], 'materialityCriterionType', $locale->value),
-                '{question}' => $this->materialityPlain($answer->text),
-                '{answer}' => '' === $answer->answerLabelKey ? '---' : $this->translator->trans($answer->answerLabelKey, [], 'materialityAnswerValueType', $locale->value),
-                '{value}' => (string) ($answer->value ?? 0),
-                '{weight}' => (string) $answer->weight,
-                '{points}' => (string) $answer->points,
-            ]), $justification->answers);
-            $sentences[] = implode('; ', $answers) . '.';
-        }
 
         if (null !== $topic->scorePercent && null !== $topic->thresholdPercent) {
             $below = $topic->scorePercent < $topic->thresholdPercent;
@@ -335,6 +374,16 @@ trait MaterialityAnnexFiguresTrait
     /** @return list<string> */
     private function materialityAnswerHeader(Locale $locale): array
     {
-        return [$this->trans('Criterio', $locale), $this->trans('Pregunta', $locale), $this->trans('Respuesta', $locale), $this->trans('Peso', $locale), $this->trans('Puntos', $locale)];
+        return [$this->trans('Criterio', $locale), $this->trans('Pregunta', $locale), $this->trans('Respuesta', $locale), $this->trans('Valor × peso', $locale), $this->trans('Puntos', $locale)];
+    }
+
+    private function materialityNarrativeTitle(Locale $locale): string
+    {
+        return $this->trans('Análisis', $locale);
+    }
+
+    private function materialityEvidenceTitle(Locale $locale): string
+    {
+        return $this->trans('Evidencias por categoría', $locale);
     }
 }

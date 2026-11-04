@@ -53,6 +53,11 @@ final readonly class OrganizationalCarbonFootprintReportMaterialityAnnex
         return true;
     }
 
+    public function requestsNarrative(bool $scope3Excluded): bool
+    {
+        return !$this->isAnalysisMissing() && !$scope3Excluded && [] !== $this->justifications;
+    }
+
     public function topicFor(Source $source): ?MaterialityAnnexTopicLine
     {
         foreach ($this->topics as $topic) {

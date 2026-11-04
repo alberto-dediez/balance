@@ -38,12 +38,27 @@ final class AiCarbonFootprintReportTextsGenerator implements CarbonFootprintRepo
     public function translate(CarbonFootprintReportTexts $texts, Locale $from, Locale $to): CarbonFootprintReportTexts
     {
         $keys = [];
+        $filled = [];
+        $empty = [];
 
-        foreach (array_keys($texts->sections) as $keyValue) {
+        foreach ($texts->sections as $keyValue => $content) {
+            if ('' === trim($content)) {
+                $empty[$keyValue] = $content;
+
+                continue;
+            }
+
             $keys[] = CarbonFootprintReportSectionKey::from($keyValue);
+            $filled[$keyValue] = $content;
         }
 
-        return $this->requestTexts(new TranslateReportTextsPrompt($texts, $from, $to), $keys, []);
+        if ([] === $filled) {
+            return $texts;
+        }
+
+        $translated = $this->requestTexts(new TranslateReportTextsPrompt(new CarbonFootprintReportTexts($filled), $from, $to), $keys, []);
+
+        return new CarbonFootprintReportTexts([...$translated->sections, ...$empty]);
     }
 
     /**

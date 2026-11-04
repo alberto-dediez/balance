@@ -13,6 +13,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\Organizati
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\Loader\XliffFileLoader;
 use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class TcpdfJustifiedExclusionsDocumentPdfGeneratorTest extends TestCase
 {
@@ -32,7 +33,8 @@ final class TcpdfJustifiedExclusionsDocumentPdfGeneratorTest extends TestCase
     /** @dataProvider documents */
     public function testItDrawsTheDocument(string $type, Locale $locale, int $minimumPages): void
     {
-        $path = new TcpdfJustifiedExclusionsDocumentPdfGenerator($this->translator())->generate($this->fixtureFor($type), $locale, PdfBranding::bioscore('Hotel Sol'));
+        $translator = $this->recordingTranslator();
+        $path = new TcpdfJustifiedExclusionsDocumentPdfGenerator($translator)->generate($this->fixtureFor($type), $locale, PdfBranding::bioscore('Hotel Sol'));
 
         try {
             $this->assertFileExists($path);
@@ -48,6 +50,15 @@ final class TcpdfJustifiedExclusionsDocumentPdfGeneratorTest extends TestCase
 
             if (2 === $minimumPages) {
                 $this->assertSame(2, $pages);
+            }
+
+            $this->assertNotContains('Análisis', $translator->ids);
+            $this->assertNotContains('Evidencias por categoría', $translator->ids);
+
+            if ('property-without-materiality' !== $type) {
+                $this->assertContains('El análisis sigue el GHG Protocol Scope 3 Standard (capítulo 6).', $translator->ids);
+                $this->assertContains('Identificador de la evaluación', $translator->ids);
+                $this->assertNotContains('Norma', $translator->ids);
             }
         } finally {
             @unlink($path);
@@ -97,6 +108,30 @@ final class TcpdfJustifiedExclusionsDocumentPdfGeneratorTest extends TestCase
             'property-materiality-reopened' => OrganizationalCarbonFootprintReportDataMother::withReopenedMaterialityAssessment(),
             'property-scope-3-excluded-materiality' => OrganizationalCarbonFootprintReportDataMother::withScope3ExcludedAndMaterialityDecisions(),
             default => OrganizationalCarbonFootprintReportDataMother::withoutMaterialityAssessment(),
+        };
+    }
+
+    /** @return TranslatorInterface&object{ids: list<string>} */
+    private function recordingTranslator(): TranslatorInterface
+    {
+        return new class ($this->translator()) implements TranslatorInterface {
+            /** @var list<string> */
+            public array $ids = [];
+
+            public function __construct(private readonly Translator $translator) {}
+
+            /** @param array<string, mixed> $parameters */
+            public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
+            {
+                $this->ids[] = $id;
+
+                return $this->translator->trans($id, $parameters, $domain, $locale);
+            }
+
+            public function getLocale(): string
+            {
+                return $this->translator->getLocale();
+            }
         };
     }
 

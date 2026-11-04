@@ -34,7 +34,7 @@ class CarbonFootprintReportSectionKeyTest extends TestCase
                 ],
                 CarbonFootprintReportSectionKey::requiredFor($type),
             );
-            $this->assertSame([CarbonFootprintReportSectionKey::MitigationPlan], CarbonFootprintReportSectionKey::optionalFor($type));
+            $this->assertSame([CarbonFootprintReportSectionKey::MitigationPlan, CarbonFootprintReportSectionKey::MaterialityAnalysis], CarbonFootprintReportSectionKey::optionalFor($type));
         }
     }
 
@@ -43,6 +43,8 @@ class CarbonFootprintReportSectionKeyTest extends TestCase
         foreach (CarbonFootprintReportSectionKey::cases() as $key) {
             $this->assertNotSame('', $key->label());
         }
+
+        $this->assertSame('Análisis de materialidad del alcance 3', CarbonFootprintReportSectionKey::MaterialityAnalysis->label());
     }
 
     public function testUncertaintyHasALabelAndIsRequired(): void
@@ -51,11 +53,11 @@ class CarbonFootprintReportSectionKeyTest extends TestCase
         $this->assertFalse(CarbonFootprintReportSectionKey::Uncertainty->isOptional());
     }
 
-    public function testOnlyCompensationAndMitigationPlanAreOptional(): void
+    public function testOnlyCompensationMitigationPlanAndMaterialityAnalysisAreOptional(): void
     {
         foreach (CarbonFootprintReportSectionKey::cases() as $key) {
             $this->assertSame(
-                in_array($key, [CarbonFootprintReportSectionKey::Compensation, CarbonFootprintReportSectionKey::MitigationPlan], true),
+                in_array($key, [CarbonFootprintReportSectionKey::Compensation, CarbonFootprintReportSectionKey::MitigationPlan, CarbonFootprintReportSectionKey::MaterialityAnalysis], true),
                 $key->isOptional(),
                 $key->value,
             );

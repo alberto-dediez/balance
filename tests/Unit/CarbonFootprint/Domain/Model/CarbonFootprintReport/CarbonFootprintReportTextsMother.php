@@ -46,6 +46,14 @@ class CarbonFootprintReportTextsMother
         ]);
     }
 
+    public static function withMaterialityAnalysis(string $materialityAnalysis): CarbonFootprintReportTexts
+    {
+        return new CarbonFootprintReportTexts([
+            ...self::forOrganization()->sections,
+            CarbonFootprintReportSectionKey::MaterialityAnalysis->value => $materialityAnalysis,
+        ]);
+    }
+
     private static function paragraphs(string ...$paragraphs): string
     {
         return implode("\n\n", $paragraphs);

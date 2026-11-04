@@ -319,6 +319,16 @@ class OrganizationalCarbonFootprintReportDataMother
         return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete());
     }
 
+    public static function withMitigationPlanAndMaterialityAssessment(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withMitigationPlan($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete());
+    }
+
+    public static function withMaterialityAssessmentWithoutExclusions(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::completed(), false, [], []));
+    }
+
     public static function withMaterialityOverride(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Company): OrganizationalCarbonFootprintReportData
     {
         return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::withOverride());

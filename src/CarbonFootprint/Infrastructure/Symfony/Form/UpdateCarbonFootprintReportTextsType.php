@@ -24,13 +24,19 @@ class UpdateCarbonFootprintReportTextsType extends AbstractType
         foreach ($keys as $key) {
             $required = !$key->isOptional();
 
-            $builder->add($key->value, MarkdownEditorType::class, [
+            $fieldOptions = [
                 'label' => new TranslatableMessage($key->label()),
                 'height' => '320px',
                 'required' => $required,
                 'empty_data' => '',
                 'constraints' => $required ? [new NotBlank()] : [],
-            ]);
+            ];
+
+            if (CarbonFootprintReportSectionKey::MaterialityAnalysis === $key) {
+                $fieldOptions['help'] = new TranslatableMessage('Solo se imprime si la huella tiene evaluación de materialidad con categorías excluidas y el alcance 3 incluido.');
+            }
+
+            $builder->add($key->value, MarkdownEditorType::class, $fieldOptions);
         }
 
         $builder->add('save', SubmitType::class, [

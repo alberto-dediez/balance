@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
 use App\CarbonFootprint\Infrastructure\AI\AiCarbonFootprintReportTextsGenerator;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateEventReportTextsPrompt;
@@ -79,6 +80,44 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $texts = (new AiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMitigationPlan(), Locale::Spanish);
 
         $this->assertSame('Plan text', $texts->sections['mitigationPlan']);
+    }
+
+    public function testKeepsTheMaterialityAnalysisSectionWhenItArrives(): void
+    {
+        $client = new InMemoryAiClient();
+        $client->setResponse([
+            'purpose' => 'Purpose text',
+            'regulatoryContext' => 'Context text',
+            'methodology' => 'Methodology text',
+            'emissionFactorSources' => 'Sources text',
+            'uncertainty' => 'Uncertainty text',
+            'sustainableDevelopmentGoals' => 'SDG text',
+            'conclusion' => 'Conclusion text',
+            'materialityAnalysis' => 'Materiality text',
+        ]);
+
+        $texts = (new AiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::Spanish);
+
+        $this->assertSame('Materiality text', $texts->sections['materialityAnalysis']);
+    }
+
+    public function testAMissingMaterialityAnalysisSectionDoesNotFail(): void
+    {
+        $client = new InMemoryAiClient();
+        $client->setResponse([
+            'purpose' => 'Purpose text',
+            'regulatoryContext' => 'Context text',
+            'methodology' => 'Methodology text',
+            'emissionFactorSources' => 'Sources text',
+            'uncertainty' => 'Uncertainty text',
+            'sustainableDevelopmentGoals' => 'SDG text',
+            'conclusion' => 'Conclusion text',
+        ]);
+
+        $texts = (new AiCarbonFootprintReportTextsGenerator($client))->generate(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::Spanish);
+
+        $this->assertArrayNotHasKey('materialityAnalysis', $texts->sections);
+        $this->assertTrue($texts->isCompleteFor(CarbonFootprintReportSubjectType::Property));
     }
 
     public function testOmitsAnEmptyMitigationPlanSection(): void
@@ -203,5 +242,36 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
         $this->expectExceptionMessage('incomplete report texts');
 
         $sut->translate(new CarbonFootprintReportTexts(['purpose' => 'Propósito', 'conclusion' => 'Conclusión']), Locale::Spanish, Locale::English);
+    }
+
+    public function testTranslateSkipsEmptySectionsAndKeepsThemEmpty(): void
+    {
+        $client = new InMemoryAiClient();
+        $client->setResponse(['purpose' => 'Translated purpose', 'conclusion' => 'Translated conclusion']);
+
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
+
+        $texts = $sut->translate(new CarbonFootprintReportTexts(['purpose' => 'Propósito', 'materialityAnalysis' => '', 'conclusion' => 'Conclusión', 'mitigationPlan' => '  ']), Locale::Spanish, Locale::English);
+
+        $prompt = $client->lastPrompt();
+        $this->assertInstanceOf(TranslateReportTextsPrompt::class, $prompt);
+        $this->assertStringNotContainsString('materialityAnalysis', $prompt->text());
+        $this->assertStringNotContainsString('mitigationPlan', $prompt->text());
+        $this->assertSame(['purpose', 'conclusion'], $prompt->responseSchema()['required']);
+        $this->assertSame('Translated purpose', $texts->sections['purpose']);
+        $this->assertSame('Translated conclusion', $texts->sections['conclusion']);
+        $this->assertSame('', $texts->sections['materialityAnalysis']);
+    }
+
+    public function testTranslateDoesNotCallTheAiWhenEverySectionIsEmpty(): void
+    {
+        $client = new InMemoryAiClient();
+
+        $sut = new AiCarbonFootprintReportTextsGenerator($client);
+
+        $texts = $sut->translate(new CarbonFootprintReportTexts(['materialityAnalysis' => '']), Locale::Spanish, Locale::English);
+
+        $this->assertNull($client->lastPrompt());
+        $this->assertSame(['materialityAnalysis' => ''], $texts->sections);
     }
 }

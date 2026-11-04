@@ -80,7 +80,10 @@ final class TcpdfJustifiedExclusionsDocumentPdfGenerator implements JustifiedExc
         $annex = $data->materialityAnnex;
 
         if (null !== $annex && !$annex->isAnalysisMissing()) {
-            array_push($rows, ...$this->materialityMethodologyRows($annex, $locale));
+            array_push($rows, ...$this->materialityTraceabilityRows($annex, $locale));
+            $this->setFont($pdf, 9.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->markdownToStyledHtml($this->materialityMethodologyParagraph($annex, $locale)), true, false, true, false, '');
+            $this->setFont($pdf, 8.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         }
 
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $rows, ['40%', '60%']), true, false, true, false, '');
@@ -136,7 +139,7 @@ final class TcpdfJustifiedExclusionsDocumentPdfGenerator implements JustifiedExc
         }
 
         $this->setFont($pdf, 8, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
-        $pdf->writeHTML($this->buildTableHtml($this->materialityTopicHeader($locale), $this->materialityTopicRows($annex, $locale), ['7%', '27%', '12%', '10%', '14%', '16%', '14%']), true, false, true, false, '');
+        $pdf->writeHTML($this->buildMaterialityMatrixHtml($annex, $locale, ['7%', '27%', '12%', '10%', '14%', '16%', '14%']), true, false, true, false, '');
 
         if (!$data->scope3Excluded && [] !== $annex->justifications) {
             $pdf->AddPage();
@@ -152,7 +155,7 @@ final class TcpdfJustifiedExclusionsDocumentPdfGenerator implements JustifiedExc
                 }
 
                 $this->setFont($pdf, 9.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
-                $pdf->writeHTML($this->markdownToStyledHtml($this->materialityJustificationText($annex, $justification, $locale)), true, false, true, false, '');
+                $pdf->writeHTML($this->markdownToStyledHtml($this->materialityJustificationText($justification, $locale)), true, false, true, false, '');
                 $pdf->Ln(2);
             }
         }
@@ -199,5 +202,10 @@ final class TcpdfJustifiedExclusionsDocumentPdfGenerator implements JustifiedExc
             : $this->trans('El historial completo de la huella está disponible para los Administradores en el Registro', $locale);
 
         return implode("\n", array_map(static fn(string $item): string => '- ' . $item, $items));
+    }
+
+    private function materialityMatrixHeaderCell(string $headerCell, string $width): string
+    {
+        return sprintf('<th style="background-color: %s; color: %s; text-align: left;%s">%s</th>', $this->pdfBranding()->darkHex(), $this->pdfBranding()->subtleHex(), $width, htmlspecialchars($headerCell));
     }
 }

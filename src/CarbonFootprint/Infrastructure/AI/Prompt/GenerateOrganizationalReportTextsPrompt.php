@@ -7,6 +7,7 @@ namespace App\CarbonFootprint\Infrastructure\AI\Prompt;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexJustification;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexTopicLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAssessmentSnapshotAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBoundaryLine;
@@ -162,9 +163,15 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
 
         $hasMaterialityAnalysis = null !== $this->data->materialityAnnex && !$this->data->materialityAnnex->isAnalysisMissing();
         $appliesMaterialityAnalysis = $hasMaterialityAnalysis && !$this->data->scope3Excluded;
+        $requestsMaterialityAnalysis = $this->requestsMaterialityAnalysis();
+        $sectionCount = 7 + (null !== $mitigationPlan ? 1 : 0) + ($requestsMaterialityAnalysis ? 1 : 0);
 
         $lines[] = '';
-        $lines[] = null !== $mitigationPlan ? 'Write eight sections:' : 'Write seven sections:';
+        $lines[] = sprintf('Write %s sections:', match ($sectionCount) {
+            7 => 'seven',
+            8 => 'eight',
+            default => 'nine',
+        });
         $lines[] = '1. purpose: the purpose of the report, presenting the carbon footprint as an environmental indicator of the activity and as the first step to reduce emissions, with a reference to the carbon footprint registry of the Spanish Ministry for the Ecological Transition (MITECO).';
         $lines[] = sprintf(
             '2. regulatoryContext: the regulatory context: the GHG Protocol and its five principles (completeness, consistency, transparency, relevance and accuracy), %s, ISO 14064-1 as a reference and the MITECO carbon footprint registry; describe the limits of the calculation including the excluded sources; %s; never add reasons that are not listed.',
@@ -187,6 +194,17 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             $lines[] = '8. mitigationPlan: present the improvement plan and its goal; list ALL the measures of the mitigation plan in a bullet list, each one with its exact name as supplied, its target year and the sources it reduces; explain that the projection assumes the activity level remains every year at the level of the calculated year and that the reductions come from an improvement in efficiency; do not invent figures nor measures.';
         }
 
+        if ($requestsMaterialityAnalysis) {
+            $lines[] = sprintf(
+                '%d. materialityAnalysis: explain the scope 3 materiality assessment for a verifier: one opening paragraph with the organization context and the method (criteria, scale, threshold, high-magnitude rule, as listed); then one ### heading per excluded category, exactly as "Cat. N · Name", %s; quote relevance, threshold, points and verdict verbatim; mention manual overrides exactly as listed; close with a paragraph on the consequences for the inventory and when the category should be reassessed. Do not add facts, answers or figures that are not listed; do not change or question any verdict.%s',
+                null !== $mitigationPlan ? 9 : 8,
+                true === $this->data->materialityAnnex?->isReopened()
+                    ? 'with one or two paragraphs that explain the category only with its relevance, threshold, verdict and manual override as listed'
+                    : 'with one or two paragraphs that connect the answers listed for that category with the activity of the organization and explain why its relevance is below the threshold',
+                true === $this->data->materialityAnnex?->isReopened() ? ' The answers are not available: do not describe, assume or infer any answer.' : '',
+            );
+        }
+
         if ([] !== $this->data->exclusionLines) {
             $lines[] = '';
             $lines[] = 'The excluded emission sources listed above were deliberately left out of the calculation for the given scopes.';
@@ -199,9 +217,11 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         $lines[] = 'Format each section in Markdown using paragraphs, bold text and bullet lists (and ### subheadings where helpful); do not use tables, code blocks or links.';
         $lines[] = '';
         $lines[] = 'Respond strictly as a JSON object with this exact shape:';
-        $lines[] = null !== $mitigationPlan
-            ? '{"purpose": "string", "regulatoryContext": "string", "methodology": "string", "emissionFactorSources": "string", "uncertainty": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string", "mitigationPlan": "string"}'
-            : '{"purpose": "string", "regulatoryContext": "string", "methodology": "string", "emissionFactorSources": "string", "uncertainty": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string"}';
+        $lines[] = sprintf(
+            '{"purpose": "string", "regulatoryContext": "string", "methodology": "string", "emissionFactorSources": "string", "uncertainty": "string", "sustainableDevelopmentGoals": "string", "conclusion": "string"%s%s}',
+            null !== $mitigationPlan ? ', "mitigationPlan": "string"' : '',
+            $requestsMaterialityAnalysis ? ', "materialityAnalysis": "string"' : '',
+        );
 
         return implode("\n", $lines);
     }
@@ -240,7 +260,9 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         $assessment = $annex->assessment;
         $criteria = array_values(array_unique(array_map(static fn(MaterialityAssessmentSnapshotAnswer $answer): string => $answer->criterionKey, $assessment->answers ?? [])));
         $lines = [
-            'Scope 3 materiality assessment (system verdicts; cite them, do not produce your own justification):',
+            $this->requestsMaterialityAnalysis()
+                ? 'Scope 3 materiality assessment (system verdicts; cite them and never produce your own verdicts; only the materialityAnalysis section may explain them, using exclusively the answers listed):'
+                : 'Scope 3 materiality assessment (system verdicts; cite them, do not produce your own justification):',
             sprintf(
                 'Threshold: %s | high-magnitude rule: %s | completed at: %s | completed by: %s | sector: %s | question set version: %s | criteria: %s | scale: %s',
                 null !== $assessment?->thresholdPercent ? $assessment->thresholdPercent . ' %' : 'n/a',
@@ -266,9 +288,47 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
                 $topic->state->value,
                 $this->overrideOf($topic),
             );
+
+            $justification = $this->justificationOf($annex, $topic);
+
+            if (null === $justification || [] === $justification->answers) {
+                continue;
+            }
+
+            foreach ($justification->answers as $answer) {
+                $lines[] = sprintf(
+                    '  Answer: %s | "%s" | %s | %s × %d = %d',
+                    $answer->criterionKey,
+                    $answer->text,
+                    '' === $answer->answerLabelKey ? 'n/a' : $answer->answerLabelKey,
+                    $answer->value ?? 'n/a',
+                    $answer->weight,
+                    $answer->points,
+                );
+            }
+
+            if (null !== $justification->points) {
+                $lines[] = sprintf('  Total: %d points in range %s–%s', $justification->points, $justification->minPoints ?? 'n/a', $justification->maxPoints ?? 'n/a');
+            }
         }
 
         return $lines;
+    }
+
+    private function justificationOf(OrganizationalCarbonFootprintReportMaterialityAnnex $annex, MaterialityAnnexTopicLine $topic): ?MaterialityAnnexJustification
+    {
+        foreach ($annex->justifications as $justification) {
+            if ($justification->topic === $topic) {
+                return $justification;
+            }
+        }
+
+        return null;
+    }
+
+    private function requestsMaterialityAnalysis(): bool
+    {
+        return null !== $this->data->materialityAnnex && $this->data->materialityAnnex->requestsNarrative($this->data->scope3Excluded);
     }
 
     private function overrideOf(MaterialityAnnexTopicLine $topic): string
@@ -357,6 +417,10 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
 
         if (null !== $this->data->mitigationPlan) {
             $properties['mitigationPlan'] = ['type' => 'STRING'];
+        }
+
+        if ($this->requestsMaterialityAnalysis()) {
+            $properties['materialityAnalysis'] = ['type' => 'STRING'];
         }
 
         return [

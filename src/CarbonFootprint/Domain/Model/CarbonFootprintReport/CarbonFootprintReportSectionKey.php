@@ -17,6 +17,7 @@ enum CarbonFootprintReportSectionKey: string
     case Conclusion                 = 'conclusion';
     case MitigationPlan             = 'mitigationPlan';
     case Uncertainty                = 'uncertainty';
+    case MaterialityAnalysis        = 'materialityAnalysis';
 
     /** @return list<self> */
     public static function requiredFor(CarbonFootprintReportSubjectType $type): array
@@ -32,7 +33,7 @@ enum CarbonFootprintReportSectionKey: string
     {
         return match ($type) {
             CarbonFootprintReportSubjectType::Event => [self::Compensation],
-            CarbonFootprintReportSubjectType::Property, CarbonFootprintReportSubjectType::Company => [self::MitigationPlan],
+            CarbonFootprintReportSubjectType::Property, CarbonFootprintReportSubjectType::Company => [self::MitigationPlan, self::MaterialityAnalysis],
         };
     }
 
@@ -50,13 +51,14 @@ enum CarbonFootprintReportSectionKey: string
             self::Conclusion => 'Conclusión',
             self::MitigationPlan => 'Medidas de reducción y mitigación',
             self::Uncertainty => 'Incertidumbre y calidad de los datos',
+            self::MaterialityAnalysis => 'Análisis de materialidad del alcance 3',
         };
     }
 
     public function isOptional(): bool
     {
         return match ($this) {
-            self::Compensation, self::MitigationPlan => true,
+            self::Compensation, self::MitigationPlan, self::MaterialityAnalysis => true,
             default => false,
         };
     }

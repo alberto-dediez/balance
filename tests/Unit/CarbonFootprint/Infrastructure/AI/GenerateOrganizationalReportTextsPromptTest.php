@@ -216,7 +216,7 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
 
         $text = $prompt->text();
 
-        $this->assertStringContainsString('Scope 3 materiality assessment (system verdicts; cite them, do not produce your own justification):', $text);
+        $this->assertStringContainsString('Scope 3 materiality assessment (system verdicts; cite them and never produce your own verdicts; only the materialityAnalysis section may explain them, using exclusively the answers listed):', $text);
         $this->assertStringContainsString('Threshold: 50 % | high-magnitude rule: on | completed at: 2026-03-12 | completed by: jgarcia | sector: Hostelería | question set version: 2026-01-15', $text);
         $this->assertStringContainsString('- Cat. 10 Procesamiento de los productos vendidos | relevance 0.00 % | threshold 50 % | omit | forced: no | excluded_recommended | override: none', $text);
         $this->assertStringContainsString('- Cat. 2 Bienes de capital | relevance 33.33 % | threshold 50 % | calculate | forced: yes | active | override: none', $text);
@@ -242,6 +242,8 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $text = $prompt->text();
 
         $this->assertStringContainsString('No materiality assessment was performed for this footprint; scope 3 exclusions rely only on the declared reason and comment. Do not describe or invent a materiality analysis.', $text);
+        $this->assertStringNotContainsString('materialityAnalysis', $text);
+        $this->assertArrayNotHasKey('materialityAnalysis', $prompt->responseSchema()['properties']);
         $this->assertStringNotContainsString('system verdicts', $text);
         $this->assertStringContainsString('state that no materiality assessment was performed and exclusions rely on the declared reasons; never add reasons that are not listed.', $text);
         $this->assertStringNotContainsString('follow the materiality assessment', $text);
@@ -259,9 +261,12 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
 
     public function testWithScope3ExcludedAndMaterialityDecisionsTheRecommendationsAreNotApplied(): void
     {
-        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3ExcludedAndMaterialityDecisions(), Locale::English)->text();
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3ExcludedAndMaterialityDecisions(), Locale::English);
+        $text = $prompt->text();
 
         $this->assertStringContainsString('Scope 3 was excluded in full: no_data_available. Sin datos de proveedores. The recommendations of the materiality assessment are not applied.', $text);
+        $this->assertStringNotContainsString('materialityAnalysis', $text);
+        $this->assertArrayNotHasKey('materialityAnalysis', $prompt->responseSchema()['properties']);
         $this->assertStringContainsString('| stage_excluded |', $text);
         $this->assertStringContainsString('state that scope 3 was excluded in full with the declared reason and that the materiality recommendations are not applied; never add reasons that are not listed.', $text);
         $this->assertStringNotContainsString('follow the materiality assessment', $text);
@@ -277,11 +282,79 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringContainsString('- Cat. 10 sold_products_processing | relevance 0.00 % | threshold 50 % | no verdict | forced: no | excluded_recommended | override: none', $text);
     }
 
-    public function testTheMaterialityAssessmentDoesNotChangeTheResponseSchema(): void
+    public function testTheMaterialityAssessmentOnlyAddsTheOptionalSection(): void
     {
-        $withMateriality = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::English);
-        $without = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::English);
+        $withMateriality = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::English)->responseSchema();
+        $without = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::English)->responseSchema();
 
-        $this->assertSame($without->responseSchema(), $withMateriality->responseSchema());
+        $this->assertSame($without['required'], $withMateriality['required']);
+        $this->assertSame([...$without['properties'], 'materialityAnalysis' => ['type' => 'STRING']], $withMateriality['properties']);
+    }
+
+    public function testWithExcludedCategoriesTheTextListsTheirAnswersAndAsksForTheMaterialityAnalysis(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), Locale::English);
+
+        $text = $prompt->text();
+        $schema = $prompt->responseSchema();
+
+        $this->assertStringContainsString("- Cat. 10 Procesamiento de los productos vendidos | relevance 0.00 % | threshold 50 % | omit | forced: no | excluded_recommended | override: none\n  Answer: magnitude | \"¿Qué magnitud tienen las emisiones de esta categoría?\" | level_1 | 1 × 2 = 2", $text);
+        $this->assertStringContainsString('  Answer: outsourcing | "¿Está externalizada la actividad?" | yes_no_1 | 1 × 1 = 1', $text);
+        $this->assertStringContainsString('  Total: 6 points in range 6–18', $text);
+        $this->assertStringNotContainsString("| calculate | forced: yes | active | override: none\n  Answer:", $text);
+        $this->assertStringContainsString('Write eight sections:', $text);
+        $this->assertStringContainsString('8. materialityAnalysis: explain the scope 3 materiality assessment for a verifier', $text);
+        $this->assertStringContainsString('Do not add facts, answers or figures that are not listed; do not change or question any verdict.', $text);
+        $this->assertStringContainsString('connect the answers listed for that category', $text);
+        $this->assertStringNotContainsString('do not describe, assume or infer any answer', $text);
+        $this->assertStringContainsString('"conclusion": "string", "materialityAnalysis": "string"}', $text);
+        $this->assertSame('STRING', $schema['properties']['materialityAnalysis']['type']);
+        $this->assertNotContains('materialityAnalysis', $schema['required']);
+    }
+
+    public function testWithAMitigationPlanAndExcludedCategoriesBothOptionalSectionsAreRequested(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMitigationPlanAndMaterialityAssessment(), Locale::English);
+
+        $text = $prompt->text();
+        $schema = $prompt->responseSchema();
+
+        $this->assertStringContainsString('Write nine sections:', $text);
+        $this->assertStringContainsString('8. mitigationPlan:', $text);
+        $this->assertStringContainsString('9. materialityAnalysis:', $text);
+        $this->assertStringContainsString('"mitigationPlan": "string", "materialityAnalysis": "string"}', $text);
+        $this->assertSame('STRING', $schema['properties']['mitigationPlan']['type']);
+        $this->assertSame('STRING', $schema['properties']['materialityAnalysis']['type']);
+        $this->assertNotContains('mitigationPlan', $schema['required']);
+        $this->assertNotContains('materialityAnalysis', $schema['required']);
+    }
+
+    public function testWithoutExcludedCategoriesTheMaterialityAnalysisIsNotRequested(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentWithoutExclusions(), Locale::English);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('Scope 3 materiality assessment (system verdicts; cite them, do not produce your own justification):', $text);
+        $this->assertStringContainsString('Write seven sections:', $text);
+        $this->assertStringNotContainsString('materialityAnalysis', $text);
+        $this->assertStringNotContainsString('Answer:', $text);
+        $this->assertArrayNotHasKey('materialityAnalysis', $prompt->responseSchema()['properties']);
+    }
+
+    public function testAReopenedAssessmentWithExcludedCategoriesAsksForTheAnalysisWithoutAnswers(): void
+    {
+        $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withReopenedMaterialityAssessment(), Locale::English);
+
+        $text = $prompt->text();
+
+        $this->assertStringContainsString('the current answers are not available', $text);
+        $this->assertStringContainsString('8. materialityAnalysis:', $text);
+        $this->assertStringContainsString('The answers are not available: do not describe, assume or infer any answer.', $text);
+        $this->assertStringContainsString('explain the category only with its relevance, threshold, verdict and manual override as listed', $text);
+        $this->assertStringNotContainsString('connect the answers listed', $text);
+        $this->assertStringNotContainsString('Answer:', $text);
+        $this->assertStringNotContainsString('Total:', $text);
+        $this->assertArrayHasKey('materialityAnalysis', $prompt->responseSchema()['properties']);
     }
 }
