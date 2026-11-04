@@ -31,6 +31,17 @@ class InMemoryEmailLogRepository implements EmailLogRepository
         return $this->emailLogs[(string) $emailLogId] ?? null;
     }
 
+    public function findByProviderMessageId(string $providerMessageId): ?EmailLog
+    {
+        foreach ($this->emailLogs as $emailLog) {
+            if ($emailLog->providerMessageId() === $providerMessageId) {
+                return $emailLog;
+            }
+        }
+
+        return null;
+    }
+
     /** @return list<EmailLog> */
     public function findByFilter(EmailLogFilter $filter): array
     {
