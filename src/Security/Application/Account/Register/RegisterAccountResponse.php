@@ -14,5 +14,6 @@ class RegisterAccountResponse implements CommandResponse
         public string $name,
         public bool $active,
         public bool $consultant = false,
+        public bool $distributor = false,
     ) {}
 }

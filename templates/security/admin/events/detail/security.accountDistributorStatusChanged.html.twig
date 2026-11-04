@@ -1,0 +1,9 @@
+{% if event.distributor %}
+    {% trans with {
+        '{account}': event.accountId | account_name
+    } %}La cuenta {account} ha pasado a ser distribuidora{% endtrans %}
+{% else %}
+    {% trans with {
+        '{account}': event.accountId | account_name
+    } %}La cuenta {account} ha dejado de ser distribuidora{% endtrans %}
+{% endif %}

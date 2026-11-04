@@ -30,3 +30,16 @@ Feature:
                 When I submit a form with "consultantAccountId:444" and button "list_accounts[filter]"
                 Then the response status should be 200
                 Then I see a table with 3 rows
+
+        Scenario: As admin I can filter accounts by distributor flag
+                Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+                Given account "Greenhost" with id "555" exists
+                Given account "Minotour" with id "1111" exists
+                Given account "Bioscore" with id "2222" exists
+                Given account "555" is a distributor
+                When I am logged as "admin@dediez.software"
+                When I go to "/es/admin/accounts"
+                Then I see a text "Es distribuidora"
+                When I submit a form with "distributor:1" and button "list_accounts[filter]"
+                Then the response status should be 200
+                Then I see a table with 3 rows

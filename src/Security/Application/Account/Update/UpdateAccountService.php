@@ -63,6 +63,7 @@ class UpdateAccountService implements CommandHandler
 
         $this->updateReportPermissions($account, $request, $user);
         $this->updateFeatures($account, $request, $user);
+        $this->updateDistributorStatus($account, $request, $user);
 
         $this->repository->add($account);
 
@@ -130,6 +131,17 @@ class UpdateAccountService implements CommandHandler
         $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
 
         $account->changeFeatures($features);
+    }
+
+    private function updateDistributorStatus(Account $account, UpdateAccountRequest $request, User $user): void
+    {
+        if ($request->distributor === $account->isDistributor()) {
+            return;
+        }
+
+        $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
+
+        $account->changeDistributorStatus($request->distributor);
     }
 
     private function sameConsultant(?AccountId $requested, ?AccountId $current): bool

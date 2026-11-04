@@ -6,8 +6,12 @@ namespace App\Property\Infrastructure\UI\Web\Property;
 
 use App\Property\Application\Property\List\ListPropertiesRequest;
 use App\Property\Application\Property\List\ListPropertiesService;
+use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Symfony\Form\ListPropertiesType;
 use App\Property\Infrastructure\UI\Web\Admin\Property\Bulk\RemoveProperty;
+use App\Security\Application\Account\DistributorPolicy;
+use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -31,6 +35,7 @@ class ListController extends AbstractController
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         ListPropertiesService $listProperties,
+        DistributorPolicy $distributorPolicy,
         TranslatorInterface $translator,
         Request $request,
     ): Response {
@@ -68,6 +73,8 @@ class ListController extends AbstractController
             'properties' => $response->properties,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
+            'isDistributor' => $distributorPolicy->isActiveDistributor($account->id()),
+            'canRegister' => $this->isGranted(Action::Register->value, new Property(id: PropertyId::generate(), accountId: $account->id())),
         ]);
     }
 }

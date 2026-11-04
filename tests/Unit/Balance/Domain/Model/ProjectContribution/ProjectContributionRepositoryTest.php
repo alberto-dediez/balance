@@ -9,7 +9,9 @@ use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\AllocatedCreditLine;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionScope;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -64,6 +66,31 @@ abstract class ProjectContributionRepositoryTest extends KernelTestCase
         $result = $repository->findByFilter(new ProjectContributionFilter(accountId: $accountId, limit: 0));
 
         $this->assertCount(2, $result);
+    }
+
+    public function testFindByFilterByScope(): void
+    {
+        $repository = $this->createSUT();
+
+        $ownAccountId = AccountId::generate();
+        $hotelAccountId = AccountId::generate();
+        $otherAccountId = AccountId::generate();
+
+        $repository->add(ProjectContributionMother::pending($ownAccountId, origin: ProjectContributionOrigin::EventCarbonFootprint));
+        $repository->add(ProjectContributionMother::pending($hotelAccountId));
+        $repository->add(ProjectContributionMother::pending($hotelAccountId, origin: ProjectContributionOrigin::EventCarbonFootprint));
+        $repository->add(ProjectContributionMother::pending($otherAccountId, originId: 'property', origin: ProjectContributionOrigin::Property));
+        $repository->add(ProjectContributionMother::pending($otherAccountId, originId: 'calculation'));
+        $repository->add(ProjectContributionMother::pending($otherAccountId));
+
+        $scope = ProjectContributionScope::forAccount($ownAccountId)->merge(new ProjectContributionScope(
+            propertyAccountIds: [$hotelAccountId],
+            propertyIds: ['property'],
+            propertyTripCalculationIds: ['calculation'],
+        ));
+
+        $this->assertCount(4, $repository->findByFilter(new ProjectContributionFilter(scope: $scope, limit: 0)));
+        $this->assertCount(0, $repository->findByFilter(new ProjectContributionFilter(scope: new ProjectContributionScope(), limit: 0)));
     }
 
     public function testFindByFilterByProjectIdAndStatus(): void

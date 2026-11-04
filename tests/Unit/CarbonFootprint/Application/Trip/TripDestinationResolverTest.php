@@ -22,6 +22,7 @@ use App\Shared\Domain\Model\Geo\GeoBounds;
 use App\Shared\Domain\Model\Geo\GeoPoint;
 use App\Shared\Infrastructure\Geo\IntlCountryRegionCode;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
+use App\Tests\Unit\Property\Application\DistributorAssignment\DistributedPropertiesPolicyMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Application\Account\ConsultantSupervisionPolicyMother;
@@ -273,7 +274,7 @@ class TripDestinationResolverTest extends TestCase
     {
         return new TripDestinationResolver(
             $this->placeFinder,
-            new TripDestinationCandidates($this->propertyRepository, ConsultantSupervisionPolicyMother::create([$this->account]), new PropertyLocator()),
+            new TripDestinationCandidates($this->propertyRepository, ConsultantSupervisionPolicyMother::create([$this->account]), new PropertyLocator(), DistributedPropertiesPolicyMother::create()),
             $this->countryRepository,
             new PropertyLocator(),
             new IntlCountryRegionCode(),

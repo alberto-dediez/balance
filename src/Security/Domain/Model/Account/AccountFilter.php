@@ -15,6 +15,7 @@ class AccountFilter
         public ?bool $active = null,
         public ?bool $consultant = null,
         public ?AccountId $consultantAccountId = null,
+        public ?bool $distributor = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

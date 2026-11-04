@@ -27,6 +27,7 @@ use App\Shared\Domain\Model\Geo\PlaceSearchArea;
 use App\Shared\Domain\Model\Geo\PlaceSuggestion;
 use App\Shared\Infrastructure\Geo\IntlCountryRegionCode;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
+use App\Tests\Unit\Property\Application\DistributorAssignment\DistributedPropertiesPolicyMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Application\Account\ConsultantSupervisionPolicyMother;
@@ -278,7 +279,7 @@ class SuggestTripDestinationsServiceTest extends TestCase
         return new SuggestTripDestinationsService(
             $this->tripCalculationLinkRepository,
             $this->placeFinder,
-            new TripDestinationCandidates($this->propertyRepository, ConsultantSupervisionPolicyMother::create([$this->account]), new PropertyLocator()),
+            new TripDestinationCandidates($this->propertyRepository, ConsultantSupervisionPolicyMother::create([$this->account]), new PropertyLocator(), DistributedPropertiesPolicyMother::create()),
             new TripDestinationSearchArea($this->countryRepository, new IntlCountryRegionCode()),
         );
     }

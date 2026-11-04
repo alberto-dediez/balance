@@ -20,6 +20,7 @@ class PropertyFilter
         public ?CountryId $countryId = null,
         public ?AccountId $accountId = null,
         public ?array $accountIds = null,
+        public ?PropertyScope $scope = null,
         public ?OperatingRegime $operatingRegime = null,
         int $limit = 10,
     ) {

@@ -48,6 +48,7 @@ class EditController extends AbstractController
             emissionFactorGroupId: $account->emissionFactorGroupId(),
             consultant: $account->isConsultant(),
             consultantAccountId: $account->consultantAccountId(),
+            distributor: $account->isDistributor(),
             reportCanEditTexts: $account->reportPermissions()->canEditTexts(),
             reportAutoReview: $account->reportPermissions()->autoReview(),
             featureAccountTripCalculator: $account->features()->accountTripCalculator(),

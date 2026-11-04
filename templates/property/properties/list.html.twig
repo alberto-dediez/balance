@@ -8,7 +8,17 @@
             'label': 'Nombre' | trans,
             'sortable': true,
             'sortableBy': 'name'
-        }, {
+        }
+    ] %}
+
+    {% if isDistributor %}
+        {% set columns = columns | merge([{
+            'label': 'Cuenta' | trans
+        }]) %}
+    {% endif %}
+
+    {% set columns = columns | merge([
+        {
             'label': 'Destino' | trans
         }, {
             'label': 'País' | trans
@@ -23,38 +33,45 @@
         }, {
             'label': ''
         }
-    ] %}
+    ]) %}
 
     <twig:List:Table :columns="columns" :elements="properties" :bulkForm="bulkForm">
         <td>{{ element.name }}</td>
+        {% if isDistributor %}
+            <td>{{ element.accountId ? element.accountId | account_name : '---' }}</td>
+        {% endif %}
         <td>{{ element.info.destinationId | destination_name }}</td>
         <td>{{ element.info.countryId | country_name }}</td>
         <td>{{ element.companyId | company_name }}</td>
         <td>{{ element.operatingRegime.value | trans({}, 'operatingRegime') }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
-            {% if element.accountId and element | is_authorized('view') %}
-                {% if account_feature_enabled('property_trip_calculators') %}
-                    <twig:List:Action:Calculator path="{{ path('carbon_footprint_property_trip_calculations', {'propertyId': element.id}) }}" />
-                    <twig:List:Action:Responses path="{{ path('carbon_footprint_property_trip_calculations_responses', {'propertyId': element.id}) }}" />
-                {% endif %}
-
-                {% if account_feature_enabled('organizational_carbon_footprint') %}
-                    <twig:List:Action:CarbonFootprint path="{{ path('property_carbon_footprints_register', {propertyId: element.id}) }}" />
-                {% endif %}
-            {% endif %}
-
             {% if element | is_authorized('edit') %}
-                <twig:List:Action:Edit path="{{ path('properties_edit', {'propertyId': element.id}) }}" />
-            {% endif %}
+                {% if element.accountId and element | is_authorized('view') %}
+                    {% if account_feature_enabled('property_trip_calculators') %}
+                        <twig:List:Action:Calculator path="{{ path('carbon_footprint_property_trip_calculations', {'propertyId': element.id}) }}" />
+                        <twig:List:Action:Responses path="{{ path('carbon_footprint_property_trip_calculations_responses', {'propertyId': element.id}) }}" />
+                    {% endif %}
 
-            {% if element | is_authorized('remove') %}
-                <twig:List:Action:Delete path="{{ path('properties_remove', {'propertyId': element.id}) }}" />
+                    {% if account_feature_enabled('organizational_carbon_footprint') %}
+                        <twig:List:Action:CarbonFootprint path="{{ path('property_carbon_footprints_register', {propertyId: element.id}) }}" />
+                    {% endif %}
+                {% endif %}
+
+                <twig:List:Action:Edit path="{{ path('properties_edit', {'propertyId': element.id}) }}" />
+
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('properties_remove', {'propertyId': element.id}) }}" />
+                {% endif %}
+            {% elseif account_feature_enabled('property_trip_calculators') and element | is_authorized('view') %}
+                <twig:List:Action:Responses path="{{ path('carbon_footprint_property_trip_calculations_responses', {'propertyId': element.id}) }}" />
             {% endif %}
         </td>
     </twig:List:Table>
 {% endblock %}
 
 {% block list_actions %}
-    <twig:Link:Register path="{{ path('properties_register') }}" />
+    {% if canRegister %}
+        <twig:Link:Register path="{{ path('properties_register') }}" />
+    {% endif %}
 {% endblock list_actions %}

@@ -22,6 +22,7 @@ doctrine:
             country_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CountryIdType
             destination_id: App\Property\Infrastructure\Persistence\Doctrine\Type\DestinationIdType
             property_id: App\Property\Infrastructure\Persistence\Doctrine\Type\PropertyIdType
+            distributor_assignment_id: App\Property\Infrastructure\Persistence\Doctrine\Type\DistributorAssignmentIdType
             category_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CategoryIdType
             brand_id: App\Property\Infrastructure\Persistence\Doctrine\Type\BrandIdType
             company_id: App\Property\Infrastructure\Persistence\Doctrine\Type\CompanyIdType

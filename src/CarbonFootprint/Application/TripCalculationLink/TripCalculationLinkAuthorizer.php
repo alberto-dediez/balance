@@ -56,7 +56,7 @@ final class TripCalculationLinkAuthorizer extends AbstractAuthorizer
 
     protected function canExport(mixed $subject, User $user): bool
     {
-        return $this->canView($subject, $user);
+        return $this->canDoThatOnProperty($subject, Action::Export, $user);
     }
 
     public function supports(mixed $subject): bool

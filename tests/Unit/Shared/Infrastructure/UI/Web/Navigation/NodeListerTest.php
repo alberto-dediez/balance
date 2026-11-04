@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Shared\Infrastructure\UI\Web\Navigation;
 
+use App\Security\Application\Account\DistributorPolicy;
 use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -11,6 +12,8 @@ use App\Shared\Infrastructure\UI\Web\Navigation\AccountNodeProvider;
 use App\Shared\Infrastructure\UI\Web\Navigation\Node;
 use App\Shared\Infrastructure\UI\Web\Navigation\NodeLister;
 use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
+use App\Tests\Unit\Security\Application\Account\DistributorPolicyMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeSecurity;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
@@ -41,6 +44,7 @@ class NodeListerTest extends TestCase
         'my_balance' => '/es/my-balance',
         'my_payee' => '/es/my-payee',
         'admin_events' => '/es/admin/events',
+        'distributors' => '/es/distributors',
     ];
 
     public function testNodesReturnsAtLeastUsersWhenLoggedAsAdmin(): void
@@ -385,6 +389,84 @@ class NodeListerTest extends TestCase
         $this->assertNull($this->findNodeByLabel($nodes, 'Empresas'));
     }
 
+    public function testActiveDistributorWithoutFeaturesSeesPropertiesButNotCompanies(): void
+    {
+        $distributor = AccountMother::distributorAccountFromNameAndId('Greenhost', self::ACCOUNT_ID);
+        $distributor->changeFeatures(new AccountFeatures(propertyTripCalculators: false, events: false, organizationalCarbonFootprint: false));
+
+        $nodes = $this->createSUT(
+            FakeSecurity::fromRole(Role::Owner),
+            routes: self::FEATURE_ROUTES,
+            features: new AccountFeatures(propertyTripCalculators: false, events: false, organizationalCarbonFootprint: false),
+            distributorPolicy: DistributorPolicyMother::create([$distributor]),
+        )->nodes();
+
+        $this->assertNotNull($this->findNodeByLabel($nodes, 'Propiedades'));
+        $this->assertContains('/es/properties', $this->targets($nodes));
+        $this->assertNull($this->findNodeByLabel($nodes, 'Empresas'));
+        $this->assertNotContains('/es/property-carbon-footprints', $this->targets($nodes));
+    }
+
+    public function testActiveDistributorWithoutCompensationSeesContributionsInProperties(): void
+    {
+        $features = new AccountFeatures(compensation: false);
+        $distributor = AccountMother::distributorAccountFromNameAndId('Greenhost', self::ACCOUNT_ID);
+        $distributor->changeFeatures($features);
+
+        $nodes = $this->createSUT(
+            FakeSecurity::fromRole(Role::Owner),
+            routes: self::FEATURE_ROUTES,
+            features: $features,
+            distributorPolicy: DistributorPolicyMother::create([$distributor]),
+        )->nodes();
+
+        $properties = $this->findNodeByLabel($nodes, 'Propiedades');
+
+        $this->assertNotNull($properties);
+        $this->assertContains('/es/credits/contributions', array_map(static fn(Node $item): ?string => $item->target, $properties->items));
+        $this->assertNull($this->findNodeByLabel($nodes, 'Proyectos'));
+    }
+
+    public function testActiveDistributorWithCompensationSeesContributionsOnlyInProjects(): void
+    {
+        $distributor = AccountMother::distributorAccountFromNameAndId('Greenhost', self::ACCOUNT_ID);
+
+        $nodes = $this->createSUT(
+            FakeSecurity::fromRole(Role::Owner),
+            routes: self::FEATURE_ROUTES,
+            features: new AccountFeatures(),
+            distributorPolicy: DistributorPolicyMother::create([$distributor]),
+        )->nodes();
+
+        $properties = $this->findNodeByLabel($nodes, 'Propiedades');
+
+        $this->assertNotNull($properties);
+        $this->assertNotContains('/es/credits/contributions', array_map(static fn(Node $item): ?string => $item->target, $properties->items));
+        $this->assertContains('/es/credits/contributions', $this->targets($nodes));
+    }
+
+    public function testOwnersSeeDistributorsInAdministrationAndAdminsInProperties(): void
+    {
+        $ownerNodes = $this->createSUT(FakeSecurity::fromRole(Role::Owner), routes: self::FEATURE_ROUTES)->nodes();
+        $administration = $this->findNodeByLabel($ownerNodes, 'Administración');
+
+        $this->assertNotNull($administration);
+        $this->assertContains('/es/distributors', array_map(static fn(Node $item): ?string => $item->target, $administration->items));
+
+        $adminNodes = $this->createSUT(FakeSecurity::fromRole(Role::Admin), routes: ['admin_distributor_assignments' => '/es/admin/distributor-assignments'])->nodes();
+        $properties = $this->findNodeByLabel($adminNodes, 'Propiedades');
+
+        $this->assertNotNull($properties);
+        $this->assertContains('/es/admin/distributor-assignments', array_map(static fn(Node $item): ?string => $item->target, $properties->items));
+    }
+
+    public function testOwnersDoNotSeeDistributorsWhenPropertiesAreDisabled(): void
+    {
+        $nodes = $this->createSUT(FakeSecurity::fromRole(Role::Owner), routes: self::FEATURE_ROUTES, propertiesEnabled: false)->nodes();
+
+        $this->assertNotContains('/es/distributors', $this->targets($nodes));
+    }
+
     public function testOwnersSeeProvidersWithEventsOrOrganizationalCarbonFootprint(): void
     {
         $this->assertContains('/es/providers', $this->ownerTargets(new AccountFeatures(organizationalCarbonFootprint: false)));
@@ -437,6 +519,7 @@ class NodeListerTest extends TestCase
         bool $propertiesEnabled = true,
         bool $humanResourcesEnabled = true,
         ?AccountFeatures $features = null,
+        ?DistributorPolicy $distributorPolicy = null,
     ): NodeLister {
         $router = $this->createMock(RouterInterface::class);
 
@@ -457,6 +540,7 @@ class NodeListerTest extends TestCase
             humanResourcesEnabled: $humanResourcesEnabled,
             accountFeaturesPolicy: $features instanceof AccountFeatures ? AccountFeaturesPolicyMother::forAccount(new AccountId(self::ACCOUNT_ID), $features) : null,
             currentAccountIdProvider: $features instanceof AccountFeatures ? new StubCurrentAccountIdProvider(new AccountId(self::ACCOUNT_ID)) : null,
+            distributorPolicy: $distributorPolicy,
         );
     }
 }

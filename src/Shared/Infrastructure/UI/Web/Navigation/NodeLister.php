@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\UI\Web\Navigation;
 
 use App\Security\Application\Account\AccountFeaturesPolicy;
+use App\Security\Application\Account\DistributorPolicy;
 use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
@@ -32,6 +33,7 @@ class NodeLister
         private readonly bool $humanResourcesEnabled = true,
         private readonly ?AccountFeaturesPolicy $accountFeaturesPolicy = null,
         private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
+        private readonly ?DistributorPolicy $distributorPolicy = null,
     ) {}
 
     /**
@@ -57,6 +59,17 @@ class NodeLister
         }
 
         return $this->accountFeaturesPolicy->isEnabled($feature, $this->currentAccountIdProvider->currentAccountId());
+    }
+
+    private function isActiveDistributor(): bool
+    {
+        if (!$this->distributorPolicy instanceof DistributorPolicy || !$this->currentAccountIdProvider instanceof CurrentAccountIdProvider) {
+            return false;
+        }
+
+        $currentAccountId = $this->currentAccountIdProvider->currentAccountId();
+
+        return null !== $currentAccountId && $this->distributorPolicy->isActiveDistributor($currentAccountId);
     }
 
     private function hasRole(Role $role): bool
@@ -203,6 +216,11 @@ class NodeLister
                         label: new TranslatableMessage('Destinos'),
                         icon: 'solar:map-point-line-duotone',
                         target: $this->router->generate('admin_destinations'),
+                    ),
+                    new Node(
+                        label: new TranslatableMessage('Distribuidores'),
+                        icon: 'solar:share-circle-line-duotone',
+                        target: $this->router->generate('admin_distributor_assignments'),
                     ),
                 ],
             );
@@ -584,7 +602,9 @@ class NodeLister
         $organizationalCarbonFootprint = $this->featureEnabled(AccountFeature::OrganizationalCarbonFootprint);
         $propertyTripCalculators = $this->featureEnabled(AccountFeature::PropertyTripCalculators);
 
-        if ($this->propertiesEnabled && ($events || $organizationalCarbonFootprint || $propertyTripCalculators)) {
+        $propertyFeatures = $events || $organizationalCarbonFootprint || $propertyTripCalculators;
+
+        if ($this->propertiesEnabled && ($propertyFeatures || $this->isActiveDistributor())) {
             $propertyItems = [
                 new Node(
                     label: new TranslatableMessage('Propiedades'),
@@ -625,17 +645,27 @@ class NodeLister
                 );
             }
 
+            if ($this->isActiveDistributor() && !$this->featureEnabled(AccountFeature::Compensation)) {
+                $propertyItems[] = new Node(
+                    label: new TranslatableMessage('Aportaciones'),
+                    icon: 'solar:hand-money-line-duotone',
+                    target: $this->router->generate('project_contributions'),
+                );
+            }
+
             $nodes[] = new Node(
                 label: new TranslatableMessage('Propiedades'),
                 icon: 'solar:buildings-2-line-duotone',
                 items: $propertyItems,
             );
 
-            $nodes[] = new Node(
-                label: new TranslatableMessage('Empresas'),
-                icon: 'solar:case-line-duotone',
-                items: $companyItems,
-            );
+            if ($propertyFeatures) {
+                $nodes[] = new Node(
+                    label: new TranslatableMessage('Empresas'),
+                    icon: 'solar:case-line-duotone',
+                    items: $companyItems,
+                );
+            }
         }
 
         if ($events || $organizationalCarbonFootprint) {
@@ -734,6 +764,15 @@ class NodeLister
             icon: 'solar:users-group-rounded-line-duotone',
             target: $this->router->generate('users'),
         );
+
+        if ($this->propertiesEnabled) {
+            $administrationItems[] = new Node(
+                label: new TranslatableMessage('Distribuidores'),
+                icon: 'solar:share-circle-line-duotone',
+                target: $this->router->generate('distributors'),
+            );
+        }
+
         $administrationItems[] = new Node(
             label: new TranslatableMessage('Marca y colores'),
             icon: 'solar:palette-round-line-duotone',

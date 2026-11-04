@@ -110,6 +110,7 @@ services:
             $cache: '@cache.app'
 
     App\CarbonFootprint\Domain\Model\Geo\RouteDistanceCalculator: '@App\CarbonFootprint\Infrastructure\Geo\CachedRouteDistanceCalculator'
+    App\Balance\Domain\Model\ProjectContribution\DistributedContributionsResolver: '@App\CarbonFootprint\Infrastructure\Contribution\PropertyTripDistributedContributionsResolver'
 
 when@test:
     services:

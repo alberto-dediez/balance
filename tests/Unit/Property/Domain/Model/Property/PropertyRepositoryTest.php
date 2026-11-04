@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Property\Domain\Model\Property;
 
 use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyScope;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -133,6 +135,64 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertSame(0, $repository->totalResultsByFilter(new PropertyFilter(accountIds: [])));
     }
 
+    public function testFindByFilterByScopeAccounts(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $repository->add(PropertyMother::from(PropertyId::generate(), 'First', $accountId));
+        $repository->add(PropertyMother::from(PropertyId::generate(), 'Second', $accountId));
+        $repository->add(PropertyMother::from(PropertyId::generate(), 'Other', AccountId::generate()));
+
+        $filter = new PropertyFilter(scope: PropertyScope::forAccount($accountId), limit: 0);
+
+        $this->assertSame(['First', 'Second'], $this->sortedNames($repository->findByFilter($filter)));
+        $this->assertSame(2, $repository->totalResultsByFilter($filter));
+    }
+
+    public function testFindByFilterByScopeProperties(): void
+    {
+        $repository = $this->createSUT();
+
+        $propertyId = PropertyId::generate();
+
+        $repository->add(PropertyMother::from($propertyId, 'Chosen', AccountId::generate()));
+        $repository->add(PropertyMother::from(PropertyId::generate(), 'Other', AccountId::generate()));
+
+        $filter = new PropertyFilter(scope: new PropertyScope(propertyIds: [$propertyId]), limit: 0);
+
+        $this->assertSame(['Chosen'], $this->sortedNames($repository->findByFilter($filter)));
+    }
+
+    public function testFindByFilterByScopeBoth(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $ownPropertyId = PropertyId::generate();
+        $foreignPropertyId = PropertyId::generate();
+
+        $repository->add(PropertyMother::from($ownPropertyId, 'Own', $accountId));
+        $repository->add(PropertyMother::from($foreignPropertyId, 'Foreign', AccountId::generate()));
+        $repository->add(PropertyMother::from(PropertyId::generate(), 'Other', AccountId::generate()));
+
+        $filter = new PropertyFilter(scope: new PropertyScope(accountIds: [$accountId], propertyIds: [$ownPropertyId, $foreignPropertyId]), limit: 0);
+
+        $this->assertSame(['Foreign', 'Own'], $this->sortedNames($repository->findByFilter($filter)));
+        $this->assertSame(2, $repository->totalResultsByFilter($filter));
+    }
+
+    public function testFindByFilterWithEmptyScopeReturnsNothing(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(PropertyMother::from(PropertyId::generate(), 'First', AccountId::generate()));
+
+        $this->assertSame([], $repository->findByFilter(new PropertyFilter(scope: new PropertyScope(), limit: 0)));
+        $this->assertSame(0, $repository->totalResultsByFilter(new PropertyFilter(scope: new PropertyScope())));
+    }
+
     public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();
@@ -196,6 +256,19 @@ abstract class PropertyRepositoryTest extends KernelTestCase
         $this->assertCount(2, $repository->findByFilter($filter));
 
         $this->assertEquals(6, $repository->totalResultsByFilter($filter));
+    }
+
+    /**
+     * @param array<Property> $properties
+     *
+     * @return list<string>
+     */
+    private function sortedNames(array $properties): array
+    {
+        $names = array_map(static fn(Property $property): string => $property->name(), $properties);
+        sort($names);
+
+        return $names;
     }
 
     abstract protected function createSUT(): PropertyRepository;

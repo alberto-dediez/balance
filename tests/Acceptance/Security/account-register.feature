@@ -69,3 +69,16 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Cuenta creada correctamente"
+
+    Scenario: As an admin, I can register a distributor account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/register"
+        When I submit a form with "name:Greenhost|active:1|distributor:1" and button "Registrar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Cuenta creada correctamente"
+        When I go to "/es/admin/accounts"
+        When I submit a form with "distributor:1" and button "list_accounts[filter]"
+        Then the response status should be 200
+        Then I see a text "Greenhost"

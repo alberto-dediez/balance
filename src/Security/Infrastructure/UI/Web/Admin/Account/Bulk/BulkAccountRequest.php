@@ -10,4 +10,6 @@ use App\Shared\Infrastructure\UI\Web\Bulk\BulkRequest;
 final class BulkAccountRequest extends BulkRequest
 {
     public ?AccountId $consultantAccountId = null;
+
+    public ?AccountId $distributorAccountId = null;
 }

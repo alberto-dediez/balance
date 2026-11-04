@@ -102,6 +102,48 @@ Feature:
         [{"value": "property:P2", "label": "Hotel Asociado"}, {"value": "property:P1", "label": "Hotel Greenhost"}]
         """
 
+    Scenario: A distributor offers its own properties and the distributed ones by account and by property
+        Given account "Greenhost" with id "888" exists
+        Given account "888" is a distributor
+        Given account "Hotel adherido" with id "999" exists
+        Given account "Otra cadena" with id "555" exists
+        Given distributor "888" is assigned to account "999"
+        Given account trip calculator with id "TL2" and token "token-distributor" of account "888" exists
+        Given account trip calculator "TL2" allows destinations in all properties
+        Given property "Hotel Greenhost" with id "P1" of account "888" exists
+        Given property "P1" is located at "39.4699", "-0.3763"
+        Given property "Hotel Adherido" with id "P2" of account "999" exists
+        Given property "P2" is located at "39.4800", "-0.3800"
+        Given property "Hotel Elegido" with id "P3" of account "555" exists
+        Given property "P3" is located at "39.4900", "-0.3900"
+        Given property "Hotel Ajeno" with id "P4" of account "555" exists
+        Given property "P4" is located at "39.4950", "-0.3950"
+        Given distributor "888" is assigned to property "P3"
+        When I go to "/es/carbon-footprint/trip/token-distributor/destinations?query=Hotel"
+        Then the response status should be 200
+        Then I see a JSON that should be equal to:
+        """
+        [{"value": "property:P2", "label": "Hotel Adherido"}, {"value": "property:P3", "label": "Hotel Elegido"}, {"value": "property:P1", "label": "Hotel Greenhost"}]
+        """
+
+    Scenario: A distributor calculator limited to some properties suggests a selected distributed one
+        Given account "Greenhost" with id "888" exists
+        Given account "888" is a distributor
+        Given account "Hotel adherido" with id "999" exists
+        Given distributor "888" is assigned to account "999"
+        Given account trip calculator with id "TL2" and token "token-distributor" of account "888" exists
+        Given property "Hotel Greenhost" with id "P1" of account "888" exists
+        Given property "P1" is located at "39.4699", "-0.3763"
+        Given property "Hotel Adherido" with id "P2" of account "999" exists
+        Given property "P2" is located at "39.4800", "-0.3800"
+        Given account trip calculator "TL2" allows destinations in properties "P2"
+        When I go to "/es/carbon-footprint/trip/token-distributor/destinations?query=Hotel"
+        Then the response status should be 200
+        Then I see a JSON that should be equal to:
+        """
+        [{"value": "property:P2", "label": "Hotel Adherido"}]
+        """
+
     Scenario: A calculator limited to some properties only suggests the selected ones
         Given property "Hotel Mar" with id "P1" of account "666" exists
         Given property "P1" is located at "39.4699", "-0.3763"

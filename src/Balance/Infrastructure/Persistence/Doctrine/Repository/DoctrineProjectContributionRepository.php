@@ -11,7 +11,9 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAlloca
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFunding;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionScope;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -126,6 +128,10 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ;
         }
 
+        if ($filter->scope instanceof ProjectContributionScope) {
+            $this->applyScope($qb, $filter->scope);
+        }
+
         if ($filter->from instanceof \DateTimeImmutable) {
             $qb
                 ->andWhere($qb->expr()->gte('pc.registeredAt', ':from'))
@@ -159,6 +165,57 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         $qb->addOrderBy('pc.id', 'ASC');
 
         return $qb;
+    }
+
+    private function applyScope(QueryBuilder $qb, ProjectContributionScope $scope): void
+    {
+        if ($scope->isEmpty()) {
+            $qb->andWhere('1 = 0');
+
+            return;
+        }
+
+        $expr = $qb->expr()->orX();
+
+        if ([] !== $scope->accountIds) {
+            $expr->add($qb->expr()->in('pc.accountId', ':scopeAccountIds'));
+            $qb->setParameter('scopeAccountIds', array_map(static fn(AccountId $accountId): string => (string) $accountId, $scope->accountIds));
+        }
+
+        if ([] !== $scope->propertyAccountIds) {
+            $expr->add($qb->expr()->andX(
+                $qb->expr()->in('pc.accountId', ':scopePropertyAccountIds'),
+                $qb->expr()->in('pc.origin', ':scopePropertyOrigins'),
+            ));
+            $qb
+                ->setParameter('scopePropertyAccountIds', array_map(static fn(AccountId $accountId): string => (string) $accountId, $scope->propertyAccountIds))
+                ->setParameter('scopePropertyOrigins', array_map(static fn(ProjectContributionOrigin $origin): string => $origin->value, ProjectContributionScope::PROPERTY_ORIGINS))
+            ;
+        }
+
+        if ([] !== $scope->propertyIds) {
+            $expr->add($qb->expr()->andX(
+                $qb->expr()->eq('pc.origin', ':scopePropertyOrigin'),
+                $qb->expr()->in('pc.originId', ':scopePropertyIds'),
+            ));
+            $qb
+                ->setParameter('scopePropertyOrigin', ProjectContributionOrigin::Property->value)
+                ->setParameter('scopePropertyIds', $scope->propertyIds)
+            ;
+        }
+
+        if ([] !== $scope->propertyTripCalculationIds) {
+            $expr->add($qb->expr()->andX(
+                $qb->expr()->eq('pc.origin', ':scopePropertyTripCalculationOrigin'),
+                $qb->expr()->in('pc.originId', ':scopePropertyTripCalculationIds'),
+            ));
+            $qb
+                ->setParameter('scopePropertyTripCalculationOrigin', ProjectContributionOrigin::PropertyTripCalculation->value)
+                ->setParameter('scopePropertyTripCalculationIds', $scope->propertyTripCalculationIds)
+            ;
+        }
+
+        $qb->andWhere($expr);
     }
 
     /** @return array<ProjectContribution> */

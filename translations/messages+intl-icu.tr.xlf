@@ -11905,6 +11905,106 @@
         <source>Desactivadas todas las funcionalidades de la cuenta {account} por el usuario {user}</source>
         <target>NEW_Desactivadas todas las funcionalidades de la cuenta {account} por el usuario {user}</target>
       </trans-unit>
+      <trans-unit id="hEkYYx_" resname="Es distribuidora">
+        <source>Es distribuidora</source>
+        <target>NEW_Es distribuidora</target>
+      </trans-unit>
+      <trans-unit id="0DD0A.6" resname="Distribuidoras y no distribuidoras">
+        <source>Distribuidoras y no distribuidoras</source>
+        <target>NEW_Distribuidoras y no distribuidoras</target>
+      </trans-unit>
+      <trans-unit id="ZcSC9ci" resname="Distribuidores">
+        <source>Distribuidores</source>
+        <target>NEW_Distribuidores</target>
+      </trans-unit>
+      <trans-unit id="wy3Ayqh" resname="Se ha retirado el distribuidor {distributor}">
+        <source>Se ha retirado el distribuidor {distributor}</source>
+        <target>NEW_Se ha retirado el distribuidor {distributor}</target>
+      </trans-unit>
+      <trans-unit id="TuxeiDM" resname="No se ha podido retirar el distribuidor {distributor}">
+        <source>No se ha podido retirar el distribuidor {distributor}</source>
+        <target>NEW_No se ha podido retirar el distribuidor {distributor}</target>
+      </trans-unit>
+      <trans-unit id="ud2BMeh" resname="Asignar distribuidor">
+        <source>Asignar distribuidor</source>
+        <target>NEW_Asignar distribuidor</target>
+      </trans-unit>
+      <trans-unit id="H_FiOzh" resname="Se ha asignado el distribuidor seleccionado a la cuenta {id}">
+        <source>Se ha asignado el distribuidor seleccionado a la cuenta {id}</source>
+        <target>NEW_Se ha asignado el distribuidor seleccionado a la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="9yZwh4U" resname="No se ha podido asignar el distribuidor seleccionado a la cuenta {id}">
+        <source>No se ha podido asignar el distribuidor seleccionado a la cuenta {id}</source>
+        <target>NEW_No se ha podido asignar el distribuidor seleccionado a la cuenta {id}</target>
+      </trans-unit>
+      <trans-unit id="qJpCCLf" resname="Se ha eliminado la asignación de distribuidor {id}">
+        <source>Se ha eliminado la asignación de distribuidor {id}</source>
+        <target>NEW_Se ha eliminado la asignación de distribuidor {id}</target>
+      </trans-unit>
+      <trans-unit id="HxwP2Ot" resname="No se ha podido eliminar la asignación de distribuidor {id}">
+        <source>No se ha podido eliminar la asignación de distribuidor {id}</source>
+        <target>NEW_No se ha podido eliminar la asignación de distribuidor {id}</target>
+      </trans-unit>
+      <trans-unit id="wNPTRXz" resname="Se ha asignado el distribuidor seleccionado a la propiedad {id}">
+        <source>Se ha asignado el distribuidor seleccionado a la propiedad {id}</source>
+        <target>NEW_Se ha asignado el distribuidor seleccionado a la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="JpQNqHq" resname="No se ha podido asignar el distribuidor seleccionado a la propiedad {id}">
+        <source>No se ha podido asignar el distribuidor seleccionado a la propiedad {id}</source>
+        <target>NEW_No se ha podido asignar el distribuidor seleccionado a la propiedad {id}</target>
+      </trans-unit>
+      <trans-unit id="2SmTA2s" resname="Distribuidor">
+        <source>Distribuidor</source>
+        <target>NEW_Distribuidor</target>
+      </trans-unit>
+      <trans-unit id="2YybtF1" resname="Cuenta adherida">
+        <source>Cuenta adherida</source>
+        <target>NEW_Cuenta adherida</target>
+      </trans-unit>
+      <trans-unit id="aSxKhRx" resname="Se ha retirado tu acceso como distribuidor">
+        <source>Se ha retirado tu acceso como distribuidor</source>
+        <target>NEW_Se ha retirado tu acceso como distribuidor</target>
+      </trans-unit>
+      <trans-unit id="CZoh0N2" resname="La cuenta {account} ha pasado a ser distribuidora">
+        <source>La cuenta {account} ha pasado a ser distribuidora</source>
+        <target>NEW_La cuenta {account} ha pasado a ser distribuidora</target>
+      </trans-unit>
+      <trans-unit id=".SI_2Jz" resname="La cuenta {account} ha dejado de ser distribuidora">
+        <source>La cuenta {account} ha dejado de ser distribuidora</source>
+        <target>NEW_La cuenta {account} ha dejado de ser distribuidora</target>
+      </trans-unit>
+      <trans-unit id="2crq6o9" resname="Toda la cuenta">
+        <source>Toda la cuenta</source>
+        <target>NEW_Toda la cuenta</target>
+      </trans-unit>
+      <trans-unit id="ziP7ZQw" resname="Al retirar el distribuidor dejará de ver esta cuenta o propiedad. ¿Seguro?">
+        <source>Al retirar el distribuidor dejará de ver esta cuenta o propiedad. ¿Seguro?</source>
+        <target>NEW_Al retirar el distribuidor dejará de ver esta cuenta o propiedad. ¿Seguro?</target>
+      </trans-unit>
+      <trans-unit id="jQN0BSs" resname="Fecha de asignación">
+        <source>Fecha de asignación</source>
+        <target>NEW_Fecha de asignación</target>
+      </trans-unit>
+      <trans-unit id="DRH8KU." resname="Ningún distribuidor tiene acceso a tu cuenta ni a tus propiedades.">
+        <source>Ningún distribuidor tiene acceso a tu cuenta ni a tus propiedades.</source>
+        <target>NEW_Ningún distribuidor tiene acceso a tu cuenta ni a tus propiedades.</target>
+      </trans-unit>
+      <trans-unit id="b_r4lA8" resname="la propiedad {property}">
+        <source>la propiedad {property}</source>
+        <target>NEW_la propiedad {property}</target>
+      </trans-unit>
+      <trans-unit id="ipz50Wa" resname="toda la cuenta">
+        <source>toda la cuenta</source>
+        <target>NEW_toda la cuenta</target>
+      </trans-unit>
+      <trans-unit id="eOOeuDB" resname="La cuenta {account} ha retirado a {distributor} como distribuidor de {scope}.">
+        <source>La cuenta {account} ha retirado a {distributor} como distribuidor de {scope}.</source>
+        <target>NEW_La cuenta {account} ha retirado a {distributor} como distribuidor de {scope}.</target>
+      </trans-unit>
+      <trans-unit id="NHdKrqB" resname="No hay asignaciones de distribuidor.">
+        <source>No hay asignaciones de distribuidor.</source>
+        <target>NEW_No hay asignaciones de distribuidor.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,0 +1,14 @@
+{% if propertyName %}
+    {% set scope %}{% trans with {'{property}': propertyName} %}la propiedad {property}{% endtrans %}{% endset %}
+{% else %}
+    {% set scope %}{% trans %}toda la cuenta{% endtrans %}{% endset %}
+{% endif %}
+<p>
+    {% trans with {
+        '{account}': accountName,
+        '{distributor}': distributorName,
+        '{scope}': scope | trim
+    } -%}
+        La cuenta {account} ha retirado a {distributor} como distribuidor de {scope}.
+    {%- endtrans %}
+</p>

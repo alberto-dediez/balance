@@ -3,7 +3,9 @@
 {% set page_title = 'Aportaciones a proyectos' | trans %}
 
 {% block top_actions %}
-    <twig:TopAction:Return path="{{ path('credits') }}" />
+    {% if account_feature_enabled('compensation') %}
+        <twig:TopAction:Return path="{{ path('credits') }}" />
+    {% endif %}
 {% endblock %}
 
 {% block table %}
@@ -11,7 +13,19 @@
         {
             'label': 'Proyecto' | trans,
             'sortable': false
+        }
+    ] %}
+
+    {% if isDistributor %}
+        {% set columns = columns | merge([{
+            'label': 'Cuenta' | trans
         }, {
+            'label': 'Propiedad' | trans
+        }]) %}
+    {% endif %}
+
+    {% set columns = columns | merge([
+        {
             'label': 'Aportante' | trans,
             'sortable': false
         }, {
@@ -31,10 +45,14 @@
         }, {
             'label': ''
         },
-    ] %}
+    ]) %}
 
     <twig:List:Table :columns="columns" :elements="projectContributions">
         <td>{{ element.projectId | project_name }}</td>
+        {% if isDistributor %}
+            <td>{{ element.accountId ? element.accountId | account_name : '---' }}</td>
+            <td>{{ element.originName ?? '---' }}</td>
+        {% endif %}
         <td>{{ element.contributorName }}</td>
         <td>{{ element.tonnes | number_format(4, ',', '.') }}</td>
         <td>{{ element.totalAmount | number_format(2, ',', '.') }} €</td>

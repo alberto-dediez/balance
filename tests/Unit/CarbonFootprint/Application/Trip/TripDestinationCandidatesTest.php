@@ -7,14 +7,18 @@ namespace App\Tests\Unit\CarbonFootprint\Application\Trip;
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Application\Trip\TripDestinationCandidates;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationMode;
+use App\Property\Domain\Model\DistributorAssignment\DistributorAssignment;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
+use App\Tests\Unit\Property\Application\DistributorAssignment\DistributedPropertiesPolicyMother;
+use App\Tests\Unit\Property\Domain\Model\DistributorAssignment\DistributorAssignmentMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Application\Account\ConsultantSupervisionPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
@@ -67,6 +71,51 @@ class TripDestinationCandidatesTest extends TestCase
         $candidates = $this->createSUT([$consultant, $managed])->candidatesFor($consultant->id());
 
         $this->assertSame([(string) $own->id()], $this->idsOf($candidates));
+    }
+
+    public function testIncludesDistributedPropertiesByAccountAndByProperty(): void
+    {
+        $distributor = AccountMother::distributorAccount();
+        $hotel = AccountMother::fromName('Hotel A');
+        $other = AccountMother::fromName('Hotel B');
+        $own = $this->locatedProperty('C propia', $distributor->id());
+        $byAccount = $this->locatedProperty('A por cuenta', $hotel->id());
+        $byProperty = $this->locatedProperty('B por propiedad', $other->id());
+        $this->locatedProperty('D no adherida', $other->id());
+
+        $candidates = $this->createSUT([$distributor, $hotel, $other], [
+            DistributorAssignmentMother::forAccount($distributor->id(), $hotel->id()),
+            DistributorAssignmentMother::forProperty($distributor->id(), $byProperty->id()),
+        ])->candidatesFor($distributor->id());
+
+        $this->assertSame([(string) $byAccount->id(), (string) $byProperty->id(), (string) $own->id()], $this->idsOf($candidates));
+    }
+
+    public function testDoesNotDuplicateOwnPropertyAlsoDistributed(): void
+    {
+        $distributor = AccountMother::distributorAccount();
+        $hotel = AccountMother::fromName('Hotel A');
+        $property = $this->locatedProperty('Hotel', $hotel->id());
+
+        $candidates = $this->createSUT([$distributor, $hotel], [
+            DistributorAssignmentMother::forAccount($distributor->id(), $hotel->id()),
+            DistributorAssignmentMother::forProperty($distributor->id(), $property->id()),
+        ])->candidatesFor($distributor->id());
+
+        $this->assertSame([(string) $property->id()], $this->idsOf($candidates));
+    }
+
+    public function testHotelWithoutTripCalculatorsFeatureIsStillACandidate(): void
+    {
+        $distributor = AccountMother::distributorAccount();
+        $hotel = AccountMother::withFeatures('Hotel A', (string) AccountId::generate(), new AccountFeatures(propertyTripCalculators: false));
+        $property = $this->locatedProperty('Hotel', $hotel->id());
+
+        $candidates = $this->createSUT([$distributor, $hotel], [
+            DistributorAssignmentMother::forAccount($distributor->id(), $hotel->id()),
+        ])->candidatesFor($distributor->id());
+
+        $this->assertSame([(string) $property->id()], $this->idsOf($candidates));
     }
 
     public function testAllPropertiesModeAllowsEveryCandidate(): void
@@ -130,13 +179,17 @@ class TripDestinationCandidatesTest extends TestCase
         return array_map(static fn(Property $property): string => (string) $property->id(), $properties);
     }
 
-    /** @param list<Account> $accounts */
-    private function createSUT(array $accounts): TripDestinationCandidates
+    /**
+     * @param list<Account>               $accounts
+     * @param list<DistributorAssignment> $assignments
+     */
+    private function createSUT(array $accounts, array $assignments = []): TripDestinationCandidates
     {
         return new TripDestinationCandidates(
             $this->propertyRepository,
             ConsultantSupervisionPolicyMother::create($accounts),
             new PropertyLocator(),
+            DistributedPropertiesPolicyMother::create($accounts, [], $assignments),
         );
     }
 }

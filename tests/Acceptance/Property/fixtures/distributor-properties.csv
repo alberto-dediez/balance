@@ -1,0 +1,7 @@
+organization_id;display_name;group;bioscore_hotel_id;match
+a1;HOTEL RH PRINCESA;RH Hoteles;44397;exacto
+a2;ESTUDIOS RH VINARÒS PLAYA;RH Hoteles;;revisar
+a3;Hotel Gaudea;;;sin coincidencia
+a4;HOTEL RH PRINCESA;RH Hoteles;44397;duplicada
+a5;Hotel Fantasma;RH Hoteles;;sin coincidencia
+a6;HOTEL RH IFACH;RH Hoteles;42885;exacto

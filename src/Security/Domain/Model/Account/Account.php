@@ -26,6 +26,7 @@ class Account implements \Stringable
         protected ?EmissionFactorGroupId $emissionFactorGroupId = null,
         protected bool $consultant = false,
         protected ?AccountId $consultantAccountId = null,
+        protected bool $distributor = false,
         protected AccountReportPermissions $reportPermissions = new AccountReportPermissions(),
         protected AccountFeatures $features = new AccountFeatures(),
     ) {
@@ -77,6 +78,11 @@ class Account implements \Stringable
         return $this->consultantAccountId;
     }
 
+    public function isDistributor(): bool
+    {
+        return $this->distributor;
+    }
+
     public function reportPermissions(): AccountReportPermissions
     {
         return $this->reportPermissions;
@@ -87,7 +93,7 @@ class Account implements \Stringable
         return $this->features;
     }
 
-    public function register(string $name, bool $active, ?EmissionFactorGroupId $emissionFactorGroupId = null, bool $consultant = false): void
+    public function register(string $name, bool $active, ?EmissionFactorGroupId $emissionFactorGroupId = null, bool $consultant = false, bool $distributor = false): void
     {
         $this->recordApplyAndPublish(
             new AccountRegistered(
@@ -96,6 +102,7 @@ class Account implements \Stringable
                 active: $active,
                 emissionFactorGroupId: $emissionFactorGroupId,
                 consultant: $consultant,
+                distributor: $distributor,
             ),
         );
     }
@@ -140,6 +147,16 @@ class Account implements \Stringable
             new AccountConsultantStatusChanged(
                 accountId: $this->id(),
                 consultant: $consultant,
+            ),
+        );
+    }
+
+    public function changeDistributorStatus(bool $distributor): void
+    {
+        $this->recordApplyAndPublish(
+            new AccountDistributorStatusChanged(
+                accountId: $this->id(),
+                distributor: $distributor,
             ),
         );
     }
@@ -206,6 +223,7 @@ class Account implements \Stringable
         $this->active = $event->active();
         $this->emissionFactorGroupId = $event->emissionFactorGroupId();
         $this->consultant = $event->consultant();
+        $this->distributor = $event->distributor();
 
         $this->registeredAt = $event->occurredOn();
     }
@@ -228,6 +246,11 @@ class Account implements \Stringable
     public function applyAccountConsultantStatusChanged(AccountConsultantStatusChanged $event): void
     {
         $this->consultant = $event->consultant();
+    }
+
+    public function applyAccountDistributorStatusChanged(AccountDistributorStatusChanged $event): void
+    {
+        $this->distributor = $event->distributor();
     }
 
     public function applyAccountConsultantChanged(AccountConsultantChanged $event): void

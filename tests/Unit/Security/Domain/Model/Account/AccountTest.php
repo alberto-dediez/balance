@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Security\Domain\Model\Account;
 
 use App\Security\Domain\Model\Account\AccountConsultantChanged;
 use App\Security\Domain\Model\Account\AccountConsultantStatusChanged;
+use App\Security\Domain\Model\Account\AccountDistributorStatusChanged;
 use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountFeaturesChanged;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRegistered;
 use App\Security\Domain\Model\Account\AccountReportPermissions;
 use App\Security\Domain\Model\Account\AccountReportPermissionsChanged;
 use App\Security\Domain\Model\Account\ConsultantCannotHaveConsultantException;
@@ -60,6 +62,36 @@ class AccountTest extends TestCase
 
         $this->assertTrue($lastEvent instanceof AccountConsultantStatusChanged);
         $this->assertTrue($account->isConsultant());
+    }
+
+    public function testChangeDistributorStatusPublishesEvent(): void
+    {
+        $account = AccountMother::fromName('MyAccount');
+
+        $account->changeDistributorStatus(true);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountDistributorStatusChanged::class, $lastEvent);
+        $this->assertTrue($lastEvent->distributor());
+        $this->assertTrue($account->isDistributor());
+
+        $account->changeDistributorStatus(false);
+
+        $this->assertFalse($account->isDistributor());
+    }
+
+    public function testRegisterWithDistributorFlag(): void
+    {
+        $account = AccountMother::distributorAccount();
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountRegistered::class, $lastEvent);
+        $this->assertTrue($lastEvent->distributor());
+        $this->assertTrue($account->isDistributor());
+        $this->assertFalse($account->isConsultant());
+        $this->assertFalse(AccountMother::fromName('Other')->isDistributor());
     }
 
     public function testAccountWithConsultantCannotBeMarkedAsConsultant(): void

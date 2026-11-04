@@ -1,0 +1,32 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Distribuidores' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Distribuidor' | trans
+        }, {
+            'label': 'Alcance' | trans
+        }, {
+            'label': 'Fecha de asignación' | trans
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    {% if assignments is empty %}
+        <p class="mb-0">{{ 'Ningún distribuidor tiene acceso a tu cuenta ni a tus propiedades.' | trans }}</p>
+    {% endif %}
+
+    <twig:List:Table :columns="columns" :elements="assignments">
+        <td>{{ element.distributorAccountId ? element.distributorAccountId | account_name : '---' }}</td>
+        <td>{{ element.isForProperty ? (element.propertyId | property_name) : ('Toda la cuenta' | trans) }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('distributors_remove', {'id': element.id}) }}" confirmText="{{ 'Al retirar el distribuidor dejará de ver esta cuenta o propiedad. ¿Seguro?' | trans }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

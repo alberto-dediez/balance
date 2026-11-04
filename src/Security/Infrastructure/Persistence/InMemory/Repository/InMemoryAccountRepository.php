@@ -96,6 +96,10 @@ class InMemoryAccountRepository implements AccountRepository
                 continue;
             }
 
+            if (null !== $filter->distributor && $filter->distributor !== $account->isDistributor()) {
+                continue;
+            }
+
             if (true == $account->isRemoved()) {
                 continue;
             }

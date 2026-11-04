@@ -1,0 +1,37 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Distribuidores' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Distribuidor' | trans
+        }, {
+            'label': 'Alcance' | trans
+        }, {
+            'label': 'Cuenta adherida' | trans
+        }, {
+            'label': 'Fecha de registro' | trans,
+            'sortable': true,
+            'sortableBy': 'registeredAt'
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    {% if assignments is empty %}
+        <p class="mb-0">{{ 'No hay asignaciones de distribuidor.' | trans }}</p>
+    {% endif %}
+
+    <twig:List:Table :columns="columns" :elements="assignments" :bulkForm="bulkForm">
+        <td>{{ element.distributorAccountId ? element.distributorAccountId | account_name : '---' }}</td>
+        <td>{{ element.isForProperty ? (element.propertyId | property_name) : ('Toda la cuenta' | trans) }}</td>
+        <td>{{ element.isForProperty ? ((element.propertyId | property_account_name) ?: '---') : (element.accountId | account_name) }}</td>
+        <td>{{ element.registeredAt | date('d/m/Y') }}</td>
+        <td>
+            {% if element | is_authorized('remove') %}
+                <twig:List:Action:Delete path="{{ path('admin_distributor_assignments_remove', {'id': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

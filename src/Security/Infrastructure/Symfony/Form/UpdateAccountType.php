@@ -47,6 +47,10 @@ class UpdateAccountType extends AbstractType
                 'placeholder' => new TranslatableMessage('Sin consultora'),
                 'required' => false,
             ])
+            ->add('distributor', BooleanType::class, [
+                'label' => new TranslatableMessage('Es distribuidora'),
+                'required' => true,
+            ])
             ->add('reportCanEditTexts', BooleanType::class, [
                 'label' => new TranslatableMessage('Puede editar los textos del informe de huella'),
                 'required' => true,

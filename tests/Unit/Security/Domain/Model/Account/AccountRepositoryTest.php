@@ -163,6 +163,19 @@ abstract class AccountRepositoryTest extends KernelTestCase
         $this->assertCount(2, $repository->findByFilter(new AccountFilter(consultant: false, limit: 0)));
     }
 
+    public function testFindByFilterByDistributorFlag(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::consultantAccount());
+        $repository->add(AccountMother::distributorAccount());
+
+        $this->assertCount(1, $repository->findByFilter(new AccountFilter(distributor: true, limit: 0)));
+        $this->assertCount(2, $repository->findByFilter(new AccountFilter(distributor: false, limit: 0)));
+        $this->assertCount(3, $repository->findByFilter(new AccountFilter(limit: 0)));
+    }
+
     public function testFindByFilterByConsultantAccountId(): void
     {
         $repository = $this->createSUT();

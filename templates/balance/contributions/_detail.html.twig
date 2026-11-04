@@ -1,5 +1,5 @@
 {#
-    Variables expected: contribution, project, payment
+    Variables expected: contribution, project, payment, hideContributorEmail (optional)
 #}
 <twig:Card title="{{ 'Aportación' | trans }}">
     <dl class="row mb-0">
@@ -79,8 +79,10 @@
         <dt class="col-sm-4">{{ 'Nombre' | trans }}</dt>
         <dd class="col-sm-8">{{ contribution.contributorName }}</dd>
 
-        <dt class="col-sm-4">{{ 'Email' | trans }}</dt>
-        <dd class="col-sm-8">{{ contribution.contributorEmail }}</dd>
+        {% if not (hideContributorEmail ?? false) %}
+            <dt class="col-sm-4">{{ 'Email' | trans }}</dt>
+            <dd class="col-sm-8">{{ contribution.contributorEmail }}</dd>
+        {% endif %}
 
         <dt class="col-sm-4">{{ 'País' | trans }}</dt>
         <dd class="col-sm-8">{{ contribution.contributorCountry }}</dd>

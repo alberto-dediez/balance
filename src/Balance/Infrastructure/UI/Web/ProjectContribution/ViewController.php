@@ -9,6 +9,8 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Payment\PaymentRepository;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,6 +25,7 @@ class ViewController extends AbstractController
         ProjectContributionRepository $projectContributionRepository,
         ProjectRepository $projectRepository,
         PaymentRepository $paymentRepository,
+        LoggedAccount $loggedAccount,
     ): Response {
         $projectContribution = $this->getProjectContributionFromId($projectContributionId, $projectContributionRepository);
 
@@ -30,11 +33,17 @@ class ViewController extends AbstractController
 
         $projectId = $projectContribution->projectId();
         $paymentId = $projectContribution->paymentId();
+        $contributionAccountId = $projectContribution->accountId();
+        $currentAccountId = $loggedAccount()?->id();
+        $isOwnContribution = $contributionAccountId instanceof AccountId
+            && $currentAccountId instanceof AccountId
+            && $contributionAccountId->equals($currentAccountId);
 
         return $this->render('@balance/contributions/view.html.twig', [
             'contribution' => $projectContribution,
             'project' => null !== $projectId ? $projectRepository->find($projectId) : null,
             'payment' => $paymentId instanceof PaymentId ? $paymentRepository->find($paymentId) : null,
+            'hideContributorEmail' => !$isOwnContribution,
         ]);
     }
 }

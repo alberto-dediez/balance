@@ -30,11 +30,11 @@ class RegisterAccountService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($account, Action::Register, $user);
 
-        $account->register($request->name, $request->active, $request->emissionFactorGroupId, $request->consultant);
+        $account->register($request->name, $request->active, $request->emissionFactorGroupId, $request->consultant, $request->distributor);
 
         $this->accountRepository->add($account);
 
-        return new RegisterAccountResponse($account->id(), $account->name(), $account->isActive(), $account->isConsultant());
+        return new RegisterAccountResponse($account->id(), $account->name(), $account->isActive(), $account->isConsultant(), $account->isDistributor());
     }
 
     public function isHandled(Command $command): bool

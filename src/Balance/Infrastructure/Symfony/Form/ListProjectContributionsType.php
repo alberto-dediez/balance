@@ -7,6 +7,7 @@ namespace App\Balance\Infrastructure\Symfony\Form;
 use App\Balance\Application\ProjectContribution\List\ListProjectContributionsRequest;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Infrastructure\Symfony\Form\Type\ProjectContributionStatusType;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -26,6 +27,19 @@ class ListProjectContributionsType extends BaseFilterType
                 'choices' => $options['projects'],
                 'choice_value' => static fn(?ProjectId $projectId): ?string => $projectId?->id(),
             ])
+        ;
+
+        if ([] !== $options['properties']) {
+            $builder->add('propertyId', AutocompleteType::class, [
+                'label' => new TranslatableMessage('Propiedad'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todas'),
+                'choices' => $options['properties'],
+                'choice_value' => static fn(?PropertyId $propertyId): ?string => $propertyId?->id(),
+            ]);
+        }
+
+        $builder
             ->add('status', ProjectContributionStatusType::class, [
                 'label' => new TranslatableMessage('Estado'),
                 'required' => false,
@@ -53,8 +67,10 @@ class ListProjectContributionsType extends BaseFilterType
         $resolver->setDefaults([
             'data_class' => ListProjectContributionsRequest::class,
             'projects' => [],
+            'properties' => [],
         ]);
 
         $resolver->setAllowedTypes('projects', 'array');
+        $resolver->setAllowedTypes('properties', 'array');
     }
 }

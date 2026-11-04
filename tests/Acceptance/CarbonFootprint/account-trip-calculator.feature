@@ -57,6 +57,38 @@ Feature:
         Then I see a text "Hotel Centro (Hoteles Norte)"
         Then I see a text "Hotel Centro (Hoteles Sur)"
 
+    Scenario: A distributor offers its own properties, those of its managed accounts and the distributed ones
+        Given account "Greenhost" with id "670" is a consultant
+        Given account "670" is a distributor
+        Given user "distributor@dediez.software" with role "ROLE_OWNER" of account "670" exists
+        Given account "Hoteles Norte" with id "671" exists
+        Given account "671" has consultant "670"
+        Given account "Hoteles Sur" with id "672" exists
+        Given account "Hoteles Este" with id "673" exists
+        Given distributor "670" is assigned to account "672"
+        Given property "Hotel Propio" with id "P0" of account "670" exists
+        Given property "P0" is located at "39.4698", "-0.3762"
+        Given property "Hotel Gestionado" with id "P1" of account "671" exists
+        Given property "P1" is located at "39.4699", "-0.3763"
+        Given property "Hotel Adherido" with id "P2" of account "672" exists
+        Given property "P2" is located at "39.4700", "-0.3764"
+        Given property "Hotel Suelto" with id "P3" of account "673" exists
+        Given property "P3" is located at "39.4701", "-0.3765"
+        Given property "Hotel Ajeno" with id "P4" of account "673" exists
+        Given property "P4" is located at "39.4702", "-0.3766"
+        Given distributor "670" is assigned to property "P3"
+        When I am logged as "distributor@dediez.software"
+        When I go to "/es/carbon-footprint/trip-calculator"
+        Then I see an option "P0" in form field "[propertyIds]"
+        Then I see an option "P1" in form field "[propertyIds]"
+        Then I see an option "P2" in form field "[propertyIds]"
+        Then I see an option "P3" in form field "[propertyIds]"
+        Then I do not see an option "P4" in form field "[propertyIds]"
+        When I submit a form with "mode:selected_properties|propertyIds:[P3]" and button "Guardar"
+        Then I am redirected to route "carbon_footprint_trip_calculator"
+        Then I see a text "Calculadora actualizada con éxito"
+        Then I see an option "P3" in form field "[propertyIds]" with attribute "selected" "selected"
+
     Scenario: The owner tells apart the properties with the same name of their own account
         Given property "Hotel Centro" with id "P1" of account "666" exists
         Given property "P1" is located at "39.4699", "-0.3763"

@@ -26,6 +26,7 @@ class ProjectContributionFilter
         public ?\DateTimeImmutable $from = null,
         public ?\DateTimeImmutable $to = null,
         public ?\DateTimeImmutable $expiresBefore = null,
+        public ?ProjectContributionScope $scope = null,
         int $limit = 10,
     ) {
         $this->limit = $limit;

@@ -152,3 +152,26 @@ Feature:
         When I go to "/es/admin/events"
         Then the response status should be 200
         Then I see a text "Cambiadas las funcionalidades de la cuenta"
+
+    Scenario: As an admin, I can mark an account as distributor
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        Then I see a form field "distributor" with value "0"
+        When I submit a form with "name:MyCompany|active:1|distributor:1" and button "Guardar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Cuenta actualizada"
+        When I go to "/es/admin/accounts/edit/333"
+        Then I see a form field "distributor" with value "1"
+
+    Scenario: As an admin, I see the change of the distributor status of an account in the events log
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        When I submit a form with "name:MyCompany|active:1|distributor:1" and button "Guardar"
+        When I go to "/es/admin/events"
+        Then the response status should be 200
+        Then I see a text "ha pasado a ser distribuidora"

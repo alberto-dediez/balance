@@ -60,8 +60,8 @@ class NavigationSearchProviderTest extends TestCase
 
         $results = $sut->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['Empleados', 'Usuarios', 'Marca y colores'], $this->titles($results));
-        $this->assertSame(['/es/employees', '/es/users', '/es/branding/edit'], $this->urls($results));
+        $this->assertSame(['Empleados', 'Usuarios', 'Distribuidores', 'Marca y colores'], $this->titles($results));
+        $this->assertSame(['/es/employees', '/es/users', '/es/distributors', '/es/branding/edit'], $this->urls($results));
         $this->assertSame([], $sut->search(new SearchTerm('Cuentas'), UserMother::adminUser(), 5));
     }
 
@@ -111,7 +111,7 @@ class NavigationSearchProviderTest extends TestCase
 
         $results = $sut->search(new SearchTerm('administration'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['Employees', 'Users', 'Marca y colores'], $this->titles($results));
+        $this->assertSame(['Employees', 'Users', 'Distribuidores', 'Marca y colores'], $this->titles($results));
         $this->assertSame('Administration', $results[0]->subtitle);
         $this->assertSame([], $sut->search(new SearchTerm('Administración'), UserMother::adminUser(), 5));
     }
@@ -128,7 +128,7 @@ class NavigationSearchProviderTest extends TestCase
     {
         $results = $this->createSUT(Role::Owner)->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['/es/employees', '/es/users', '/es/branding/edit'], $this->urls($results));
+        $this->assertSame(['/es/employees', '/es/users', '/es/distributors', '/es/branding/edit'], $this->urls($results));
     }
 
     /**

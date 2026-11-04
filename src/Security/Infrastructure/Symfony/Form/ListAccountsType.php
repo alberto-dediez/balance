@@ -39,6 +39,11 @@ class ListAccountsType extends BaseFilterType
                 'placeholder' => new TranslatableMessage('Todas las consultoras'),
                 'required' => false,
             ])
+            ->add('distributor', BooleanType::class, [
+                'label' => new TranslatableMessage('Es distribuidora'),
+                'placeholder' => new TranslatableMessage('Distribuidoras y no distribuidoras'),
+                'required' => false,
+            ])
         ;
 
         $builder->get('consultantAccountId')->addModelTransformer(

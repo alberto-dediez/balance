@@ -6,10 +6,12 @@ namespace App\CarbonFootprint\Application\Trip;
 
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripDestinationMode;
+use App\Property\Application\DistributorAssignment\DistributedPropertiesPolicy;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyScope;
 use App\Security\Application\Account\ConsultantSupervisionPolicy;
 use App\Security\Domain\Model\Account\AccountId;
 
@@ -19,15 +21,18 @@ final class TripDestinationCandidates
         private readonly PropertyRepository $propertyRepository,
         private readonly ConsultantSupervisionPolicy $consultantSupervisionPolicy,
         private readonly PropertyLocator $propertyLocator,
+        private readonly DistributedPropertiesPolicy $distributedPropertiesPolicy,
     ) {}
 
     /** @return list<Property> */
     public function candidatesFor(AccountId $accountId): array
     {
-        $accountIds = [$accountId, ...$this->consultantSupervisionPolicy->supervisedAccountIds($accountId)];
+        $scope = PropertyScope::forAccount($accountId)
+            ->merge(new PropertyScope(accountIds: $this->consultantSupervisionPolicy->supervisedAccountIds($accountId)))
+            ->merge($this->distributedPropertiesPolicy->scopeFor($accountId));
 
         $properties = array_values(array_filter(
-            $this->propertyRepository->findByFilter(new PropertyFilter(accountIds: $accountIds, limit: 0)),
+            $this->propertyRepository->findByFilter(new PropertyFilter(scope: $scope, limit: 0)),
             fn(Property $property): bool => null !== $this->propertyLocator->locate($property),
         ));
 

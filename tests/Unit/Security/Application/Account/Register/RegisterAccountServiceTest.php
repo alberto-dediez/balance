@@ -88,6 +88,32 @@ class RegisterAccountServiceTest extends TestCase
         $this->assertTrue($emissionFactorGroupId->equals($lastEvent->emissionFactorGroupId()));
     }
 
+    public function testRegistersDistributorAccount(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $sut = $this->createSUT($repository);
+
+        $request = new RegisterAccountRequest(
+            name: 'Greenhost',
+            active: true,
+            distributor: true,
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $accountPersisted = $repository->find($result->accountId);
+
+        $this->assertNotNull($accountPersisted);
+        $this->assertTrue($accountPersisted->isDistributor());
+        $this->assertTrue($result->distributor);
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountRegistered::class, $lastEvent);
+        $this->assertTrue($lastEvent->distributor());
+    }
+
     public function testUnauthorizedAccess(): void
     {
         $this->expectException(UnauthorizedActionException::class);

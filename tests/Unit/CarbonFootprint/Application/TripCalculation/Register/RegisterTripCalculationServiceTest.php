@@ -50,6 +50,7 @@ use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFact
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Mobility\MobilityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OvernightStay\OvernightStayMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
+use App\Tests\Unit\Property\Application\DistributorAssignment\DistributedPropertiesPolicyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Application\Account\ConsultantSupervisionPolicyMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -121,7 +122,7 @@ class RegisterTripCalculationServiceTest extends TestCase
             ConsentProofMother::POLICY_VERSION,
             new TripDestinationResolver(
                 $this->placeFinder,
-                new TripDestinationCandidates($this->propertyRepository, ConsultantSupervisionPolicyMother::create(), new PropertyLocator()),
+                new TripDestinationCandidates($this->propertyRepository, ConsultantSupervisionPolicyMother::create(), new PropertyLocator(), DistributedPropertiesPolicyMother::create()),
                 new InMemoryCountryRepository(),
                 new PropertyLocator(),
                 new IntlCountryRegionCode(),

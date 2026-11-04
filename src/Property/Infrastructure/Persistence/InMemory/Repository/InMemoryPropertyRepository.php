@@ -14,6 +14,7 @@ use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyScope;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -169,6 +170,10 @@ class InMemoryPropertyRepository implements PropertyRepository
                 continue;
             }
 
+            if ($filter->scope instanceof PropertyScope && !$this->isInScope($property, $filter->scope)) {
+                continue;
+            }
+
             if ($filter->destinationId instanceof DestinationId && (null == $property->info()->destinationId() || false === $filter->destinationId->equals($property->info()->destinationId()))) {
                 continue;
             }
@@ -208,6 +213,21 @@ class InMemoryPropertyRepository implements PropertyRepository
         $clonedFilter->page = 0;
 
         return count($this->findByFilter($clonedFilter));
+    }
+
+    private function isInScope(Property $property, PropertyScope $scope): bool
+    {
+        if ($this->belongsToAnyAccount($property, $scope->accountIds)) {
+            return true;
+        }
+
+        foreach ($scope->propertyIds as $propertyId) {
+            if ($propertyId->equals($property->id())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @param list<AccountId> $accountIds */

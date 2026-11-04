@@ -10,6 +10,7 @@ use App\Security\Application\Account\Update\UpdateAccountService;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountConsultantChanged;
 use App\Security\Domain\Model\Account\AccountConsultantStatusChanged;
+use App\Security\Domain\Model\Account\AccountDistributorStatusChanged;
 use App\Security\Domain\Model\Account\AccountEmissionFactorGroupChanged;
 use App\Security\Domain\Model\Account\AccountFeaturesChanged;
 use App\Security\Domain\Model\Account\AccountNameChanged;
@@ -541,6 +542,76 @@ class UpdateAccountServiceTest extends TestCase
         $sut($request, UserMother::adminUser());
 
         $this->assertCount($eventsBefore, $this->spySubscriber->events());
+    }
+
+    public function testOwnerCannotChangeDistributorStatus(): void
+    {
+        $this->expectException(UnauthorizedActionException::class);
+
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            distributor: true,
+        );
+
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id()));
+    }
+
+    public function testAdminChangesDistributorStatus(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: $account->name(),
+            active: $account->isActive(),
+            distributor: true,
+        );
+
+        $sut($request, UserMother::adminUser());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountDistributorStatusChanged::class, $lastEvent);
+        $this->assertTrue($account->isDistributor());
+    }
+
+    public function testOwnerKeepingDistributorStatusDoesNotNeedAdmin(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::distributorAccount();
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'Renamed',
+            active: $account->isActive(),
+            distributor: true,
+        );
+
+        $sut($request, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $account->id()));
+
+        $this->assertSame('Renamed', $account->name());
+        $this->assertTrue($account->isDistributor());
     }
 
     public function testIsHandle(): void

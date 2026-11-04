@@ -11,6 +11,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAlloca
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFilter;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionScope;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -83,6 +84,10 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         }
 
         if (null !== $filter->paymentId && (null === $paymentId || !$filter->paymentId->equals($paymentId))) {
+            return false;
+        }
+
+        if ($filter->scope instanceof ProjectContributionScope && !$filter->scope->includes($projectContribution)) {
             return false;
         }
 

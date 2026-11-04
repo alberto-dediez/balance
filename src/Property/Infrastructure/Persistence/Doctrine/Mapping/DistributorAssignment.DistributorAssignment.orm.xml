@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Property\Domain\Model\DistributorAssignment\DistributorAssignment" table="distributor_assignments">
+        <id name="id" type="distributor_assignment_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="distributorAccountId" type="account_id" column="distributor_account_id" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="true"/>
+        <field name="propertyId" type="property_id" column="property_id" nullable="true"/>
+        <field name="registeredBy" type="user_id" column="registered_by" nullable="true"/>
+        <field name="removed" type="boolean" nullable="false"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+
+        <indexes>
+            <index columns="distributor_account_id" name="IDX_distributor_assignments_distributor"/>
+            <index columns="account_id" name="IDX_distributor_assignments_account"/>
+            <index columns="property_id" name="IDX_distributor_assignments_property"/>
+        </indexes>
+    </entity>
+
+</doctrine-mapping>

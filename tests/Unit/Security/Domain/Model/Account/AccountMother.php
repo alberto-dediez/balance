@@ -54,6 +54,22 @@ class AccountMother
         return $account;
     }
 
+    public static function distributorAccount(): Account
+    {
+        $account = new Account(AccountId::generate());
+        $account->register('distributor-' . random_int(100, 999), true, EmissionFactorGroupMother::default()->id(), false, true);
+
+        return $account;
+    }
+
+    public static function distributorAccountFromNameAndId(string $name, string $id): Account
+    {
+        $account = new Account(new AccountId($id));
+        $account->register($name, true, EmissionFactorGroupMother::default()->id(), false, true);
+
+        return $account;
+    }
+
     public static function fromNameWithConsultant(string $name, AccountId $consultantAccountId): Account
     {
         $account = self::fromName($name);

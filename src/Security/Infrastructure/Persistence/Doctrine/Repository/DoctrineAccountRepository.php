@@ -112,6 +112,15 @@ class DoctrineAccountRepository implements AccountRepository
             ;
         }
 
+        if (null !== $filter->distributor) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('a.distributor', ':distributor'),
+                )
+                ->setParameter('distributor', $filter->distributor)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {

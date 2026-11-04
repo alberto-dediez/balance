@@ -14,6 +14,7 @@ use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyScope;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
@@ -234,6 +235,10 @@ class DoctrinePropertyRepository implements PropertyRepository
             }
         }
 
+        if ($filter->scope instanceof PropertyScope) {
+            $this->applyScope($qb, $filter->scope);
+        }
+
         if ($filter->operatingRegime instanceof OperatingRegime) {
             $qb
                 ->andWhere(
@@ -251,6 +256,29 @@ class DoctrinePropertyRepository implements PropertyRepository
         };
 
         return $qb;
+    }
+
+    private function applyScope(QueryBuilder $qb, PropertyScope $scope): void
+    {
+        if ($scope->isEmpty()) {
+            $qb->andWhere('1 = 0');
+
+            return;
+        }
+
+        $expr = $qb->expr()->orX();
+
+        if ([] !== $scope->accountIds) {
+            $expr->add($qb->expr()->in('p.accountId', ':scopeAccountIds'));
+            $qb->setParameter('scopeAccountIds', array_map(static fn(AccountId $accountId): string => (string) $accountId, $scope->accountIds));
+        }
+
+        if ([] !== $scope->propertyIds) {
+            $expr->add($qb->expr()->in('p.id', ':scopePropertyIds'));
+            $qb->setParameter('scopePropertyIds', array_map(static fn(PropertyId $propertyId): string => (string) $propertyId, $scope->propertyIds));
+        }
+
+        $qb->andWhere($expr);
     }
 
     /** @return Property[] */

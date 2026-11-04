@@ -17,8 +17,12 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkMother;
+use App\Tests\Unit\Property\Application\DistributorAssignment\DistributedPropertiesPolicyMother;
+use App\Tests\Unit\Property\Domain\Model\DistributorAssignment\DistributorAssignmentMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
+use App\Tests\Unit\Security\Application\Account\DistributorPolicyMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
@@ -147,6 +151,38 @@ class TripCalculationLinkAuthorizerTest extends TestCase
 
         $this->assertTrue($this->createSUT()->canDoThat($link, Action::Export, $this->ownerOf('account-id')));
         $this->assertFalse($this->createSUT()->canDoThat($link, Action::Export, $this->ownerOf('another-account-id')));
+    }
+
+    public function testDistributorCanViewButNotExportALinkOfADistributedProperty(): void
+    {
+        $distributor = AccountMother::distributorAccountFromNameAndId('Greenhost', 'distributor');
+        $hotel = AccountMother::fromNameAndId('Hotel', 'hotel');
+        $link = $this->linkToPropertyOfAccount('hotel');
+        $propertyId = $link->propertyId();
+        $this->assertInstanceOf(PropertyId::class, $propertyId);
+        $property = $this->propertyRepository->find($propertyId);
+        $this->assertNotNull($property);
+
+        $accounts = [$distributor, $hotel];
+        $sut = new TripCalculationLinkAuthorizer(
+            $this->propertyRepository,
+            new PropertyAuthorizer(
+                currentAccountIdProvider: new StubCurrentAccountIdProvider($distributor->id()),
+                accountFeaturesPolicy: AccountFeaturesPolicyMother::create($accounts),
+                distributedPropertiesPolicy: DistributedPropertiesPolicyMother::create(
+                    $accounts,
+                    [$property],
+                    [DistributorAssignmentMother::forAccount($distributor->id(), $hotel->id())],
+                ),
+                distributorPolicy: DistributorPolicyMother::create($accounts),
+            ),
+            new StubCurrentAccountIdProvider($distributor->id()),
+            null,
+            AccountFeaturesPolicyMother::create($accounts),
+        );
+
+        $this->assertTrue($sut->canDoThat($link, Action::View, $this->ownerOf('distributor')));
+        $this->assertFalse($sut->canDoThat($link, Action::Export, $this->ownerOf('distributor')));
     }
 
     public function testOnlySupportsTripCalculationLinks(): void

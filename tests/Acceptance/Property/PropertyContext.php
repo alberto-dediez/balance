@@ -10,18 +10,24 @@ use App\Property\Domain\Model\Company\CompanyId;
 use App\Property\Domain\Model\Company\CompanyRepository;
 use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Destination\DestinationRepository;
+use App\Property\Domain\Model\DistributorAssignment\DistributorAssignmentRepository;
+use App\Property\Domain\Model\Property\ExternalId;
+use App\Property\Domain\Model\Property\ExternalSource;
 use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\AccountId;
+use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Property\Domain\Model\Brand\BrandMother;
 use App\Tests\Unit\Property\Domain\Model\Category\CategoryMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
 use App\Tests\Unit\Property\Domain\Model\Destination\DestinationMother;
+use App\Tests\Unit\Property\Domain\Model\DistributorAssignment\DistributorAssignmentMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use Behat\Behat\Context\Context;
 use Behat\Step\Given;
@@ -42,6 +48,16 @@ final readonly class PropertyContext implements Context
     private function getPropertyRepository(): PropertyRepository
     {
         return $this->client->getContainer()->get(PropertyRepository::class);
+    }
+
+    private function getAccountRepository(): AccountRepository
+    {
+        return $this->client->getContainer()->get(AccountRepository::class);
+    }
+
+    private function getDistributorAssignmentRepository(): DistributorAssignmentRepository
+    {
+        return $this->client->getContainer()->get(DistributorAssignmentRepository::class);
     }
 
     private function getDestinationRepository(): DestinationRepository
@@ -83,6 +99,64 @@ final readonly class PropertyContext implements Context
         $property = PropertyMother::fromNameAndAccountAndId($name, $account, $id);
 
         $this->getPropertyRepository()->add($property);
+    }
+
+    #[Given('property :name with id :id of account :account and bioscore id :bioscoreId exists')]
+    public function propertyWithIdOfAccountAndBioscoreIdExists(string $name, string $id, string $account, string $bioscoreId): void
+    {
+        $property = PropertyMother::from(
+            propertyId: new PropertyId($id),
+            name: $name,
+            accountId: new AccountId($account),
+            externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, $bioscoreId),
+        );
+
+        $this->getPropertyRepository()->add($property);
+    }
+
+    #[Then('distributor :distributorId should be assigned to property :propertyId')]
+    public function distributorShouldBeAssignedToProperty(string $distributorId, string $propertyId): void
+    {
+        Assert::assertNotNull(
+            $this->getDistributorAssignmentRepository()->findForProperty(new AccountId($distributorId), new PropertyId($propertyId)),
+            sprintf('Distributor "%s" is not assigned to property "%s"', $distributorId, $propertyId),
+        );
+    }
+
+    #[Then('distributor :distributorId should not be assigned to property :propertyId')]
+    public function distributorShouldNotBeAssignedToProperty(string $distributorId, string $propertyId): void
+    {
+        Assert::assertNull(
+            $this->getDistributorAssignmentRepository()->findForProperty(new AccountId($distributorId), new PropertyId($propertyId)),
+            sprintf('Distributor "%s" is assigned to property "%s"', $distributorId, $propertyId),
+        );
+    }
+
+    #[Given('account :id is a distributor')]
+    public function accountIsADistributor(string $id): void
+    {
+        $account = $this->getAccountRepository()->find(new AccountId($id));
+        Assert::assertNotNull($account, sprintf('Account "%s" not found', $id));
+
+        $account->changeDistributorStatus(true);
+
+        $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('distributor :distributorId is assigned to account :accountId')]
+    public function distributorIsAssignedToAccount(string $distributorId, string $accountId): void
+    {
+        $this->getDistributorAssignmentRepository()->add(
+            DistributorAssignmentMother::forAccount(new AccountId($distributorId), new AccountId($accountId)),
+        );
+    }
+
+    #[Given('distributor :distributorId is assigned to property :propertyId')]
+    public function distributorIsAssignedToProperty(string $distributorId, string $propertyId): void
+    {
+        $this->getDistributorAssignmentRepository()->add(
+            DistributorAssignmentMother::forProperty(new AccountId($distributorId), new PropertyId($propertyId)),
+        );
     }
 
     #[Given('country :name with id :id exists')]
