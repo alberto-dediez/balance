@@ -13,6 +13,7 @@ use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Domain\Model\ImportationProfile\ImportationProfileChoicesMemorized;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationProfileRepository;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
+use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
@@ -21,17 +22,31 @@ use App\Tests\Unit\DataExchange\Application\ImportationProfile\ImportationProfil
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\TemporaryDirectory;
 use PHPUnit\Framework\TestCase;
 
 class MemorizeChoicesOnImportationExecutedTest extends TestCase
 {
+    use TemporaryDirectory;
+
+    private string $storagePath;
+
     private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
+        $this->storagePath = $this->temporaryDirectoryPath('importation-data-test');
+
         DomainEventPublisher::instance()->reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeTemporaryDirectory($this->storagePath);
+
+        parent::tearDown();
     }
 
     private function csvPath(): string
@@ -67,7 +82,7 @@ class MemorizeChoicesOnImportationExecutedTest extends TestCase
             ),
         ]);
 
-        $importationRepository = new InMemoryImportationRepository();
+        $importationRepository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $importationRepository->add($importation);
 
         $profileRepository = new InMemoryImportationProfileRepository();
@@ -108,7 +123,7 @@ class MemorizeChoicesOnImportationExecutedTest extends TestCase
             accountId: $accountId,
         );
 
-        $importationRepository = new InMemoryImportationRepository();
+        $importationRepository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $importationRepository->add($importation);
 
         $profileRepository = new InMemoryImportationProfileRepository();

@@ -103,6 +103,7 @@ test: | test-acceptance test-unit
 
 test-unit: ## Execute unit tests
 	@$(eval options ?=)
+	@$(TEST_CONT) rm -rf var/sqlite-test
 	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
 	@$(PHP_TEST) bin/phpunit $(options)
@@ -113,15 +114,26 @@ test-acceptance: ## Execute acceptance tests
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
 	@$(PHP_TEST) vendor/bin/behat $(options)
 
-test-parallel: | test-acceptance-parallel test-unit
+test-parallel: | test-acceptance-parallel test-unit-parallel
 
-test-acceptance-parallel: ## Execute acceptance tests in parallel, pass "processes=N" and/or "options="
+test-acceptance-parallel: ## Execute acceptance tests in parallel, pass "processes=N", "php_options=" and/or "options="
 	@$(eval options ?=)
 	@$(eval processes ?=)
+	@$(eval php_options ?=)
 	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
 	@$(PHP_TEST) bin/console cache:warmup -e test -q
-	@$(TEST_CONT) bash bin/behat-parallel $(if $(processes),-j $(processes)) $(options)
+	@$(TEST_CONT) $(if $(php_options),env BEHAT_PHP_OPTIONS="$(php_options)") bash bin/behat-parallel $(if $(processes),-j $(processes)) $(options)
+
+test-unit-parallel: ## Execute unit tests in parallel, pass "processes=N", "php_options=" and/or "options="
+	@$(eval options ?=)
+	@$(eval processes ?=)
+	@$(eval php_options ?=)
+	@$(TEST_CONT) rm -rf var/sqlite-test
+	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
+	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
+	@$(PHP_TEST) bin/console cache:warmup -e test -q
+	@$(TEST_CONT) $(if $(php_options),env PHPUNIT_PHP_OPTIONS="$(php_options)") bash bin/phpunit-parallel $(if $(processes),-j $(processes)) $(options)
 
 reset-test-cache: ## Clear testing cache
 	@$(PHP) bin/console cache:clear --env=test -q

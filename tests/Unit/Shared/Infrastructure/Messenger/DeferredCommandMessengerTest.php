@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Shared\Infrastructure\Messenger;
 
 use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
-use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Infrastructure\Messenger\DeferredCommandMessenger;
@@ -14,10 +12,7 @@ use App\Shared\Infrastructure\Messenger\DeferredMessage;
 use App\Shared\Infrastructure\Messenger\EnqueueCommandResponse;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
-use Symfony\Component\Messenger\Stamp\StampInterface;
 
 class DeferredCommandMessengerTest extends TestCase
 {
@@ -127,72 +122,5 @@ class DeferredCommandMessengerTest extends TestCase
         $this->sut->handle($command, UserMother::adminUser());
 
         $this->assertNull($this->messageBus->lastStampOfType(DelayStamp::class));
-    }
-}
-
-class FakeInnerCommand implements Command {}
-
-class StubImpersonatedAccount extends ImpersonatedAccount
-{
-    private ?AccountId $accountId = null;
-
-    public function __construct() {}
-
-    public function setAccountId(?AccountId $accountId): void
-    {
-        $this->accountId = $accountId;
-    }
-
-    public function accountId(): ?AccountId
-    {
-        return $this->accountId;
-    }
-}
-
-class FakeMessageBus implements MessageBusInterface
-{
-    /** @var object[] */
-    private array $dispatched = [];
-
-    /** @var list<StampInterface[]> */
-    private array $stamps = [];
-
-    public function dispatch(object $message, array $stamps = []): Envelope
-    {
-        $this->dispatched[] = $message;
-        $this->stamps[] = $stamps;
-
-        return new Envelope($message, $stamps);
-    }
-
-    public function lastDispatched(): ?object
-    {
-        if ([] === $this->dispatched) {
-            return null;
-        }
-
-        return $this->dispatched[count($this->dispatched) - 1];
-    }
-
-    /**
-     * @template T of StampInterface
-     *
-     * @param class-string<T> $stampClass
-     *
-     * @return T|null
-     */
-    public function lastStampOfType(string $stampClass): ?StampInterface
-    {
-        if ([] === $this->stamps) {
-            return null;
-        }
-
-        foreach ($this->stamps[count($this->stamps) - 1] as $stamp) {
-            if ($stamp instanceof $stampClass) {
-                return $stamp;
-            }
-        }
-
-        return null;
     }
 }

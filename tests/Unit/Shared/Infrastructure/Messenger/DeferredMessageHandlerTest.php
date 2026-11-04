@@ -5,18 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Shared\Infrastructure\Messenger;
 
 use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
-use App\Security\Infrastructure\Symfony\Security\ImpersonatedAccount;
-use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
-use App\Security\Infrastructure\Symfony\Security\LoggedUser;
-use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
-use App\Shared\Application\CommandBus\CommandHandler;
-use App\Shared\Application\CommandBus\CommandResponse;
-use App\Shared\Application\CommandBus\RegisterHandlerTrait;
-use App\Shared\Application\CommandBus\TimedCommand;
 use App\Shared\Infrastructure\Messenger\DeferredMessage;
 use App\Shared\Infrastructure\Messenger\DeferredMessageHandler;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -184,102 +175,5 @@ class DeferredMessageHandlerTest extends TestCase
             impersonatedAccount: $this->impersonatedAccount,
             loggedAccount: $this->loggedAccount,
         );
-    }
-}
-
-class FakeCommandForMessageHandler implements Command {}
-
-class FakeTimedCommandForMessageHandler implements TimedCommand
-{
-    public function __construct(
-        public \DateTimeImmutable $now,
-    ) {}
-
-    public function withNow(\DateTimeImmutable $now): self
-    {
-        return new self($now);
-    }
-}
-
-class ThrowingCommandHandlerForMessageHandler implements CommandHandler
-{
-    use RegisterHandlerTrait;
-
-    public function __construct()
-    {
-        $this->register();
-    }
-
-    public function handle(Command $command, User $user): ?CommandResponse
-    {
-        throw new \RuntimeException('Something went wrong while handling the command');
-    }
-
-    public function isHandled(Command $command): bool
-    {
-        return true;
-    }
-}
-
-class SpyImpersonatedAccount extends ImpersonatedAccount
-{
-    /** @var list<array{0: ?AccountId, 1: ?UserId}> */
-    private array $forceCalls = [];
-
-    public function __construct() {}
-
-    public function force(?AccountId $accountId, ?UserId $impersonatorId): void
-    {
-        $this->forceCalls[] = [$accountId, $impersonatorId];
-    }
-
-    /** @return list<array{0: ?AccountId, 1: ?UserId}> */
-    public function forceCalls(): array
-    {
-        return $this->forceCalls;
-    }
-}
-
-class SpyLoggedAccount extends LoggedAccount
-{
-    private int $resetCalls = 0;
-
-    public function __construct() {}
-
-    public function reset(): void
-    {
-        ++$this->resetCalls;
-    }
-
-    public function resetCalls(): int
-    {
-        return $this->resetCalls;
-    }
-}
-
-class SpyLoggedUser extends LoggedUser
-{
-    private ?User $forcedUserSpy = null;
-
-    /** @var array<int, ?User> */
-    private array $forcedUserCalls = [];
-
-    public function __construct() {}
-
-    public function forceUser(?User $user): void
-    {
-        $this->forcedUserSpy = $user;
-        $this->forcedUserCalls[] = $user;
-    }
-
-    public function getForcedUser(): ?User
-    {
-        return $this->forcedUserSpy;
-    }
-
-    /** @return array<int, ?User> */
-    public function forcedUserCalls(): array
-    {
-        return $this->forcedUserCalls;
     }
 }
