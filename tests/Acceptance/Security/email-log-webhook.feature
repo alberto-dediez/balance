@@ -19,6 +19,15 @@ Feature:
         Then the response status should be 202
         Then email log "0199f3b2-0000-7000-8000-000000000001" has been opened 2 times
 
+    Scenario: Automated openings are not counted
+        Given email log with id "0199f3b2-0000-7000-8000-000000000001" to "first@dediez.software" exists
+        When I send a "POST" request to "/webhook/sendgrid" with body:
+            """
+            [{"email":"first@dediez.software","timestamp":1700000000,"event":"delivered","sg_event_id":"e1","sg_message_id":"m1","email_log_id":"0199f3b2-0000-7000-8000-000000000001"},{"email":"first@dediez.software","timestamp":1700000002,"event":"open","sg_event_id":"e2","sg_message_id":"m1","email_log_id":"0199f3b2-0000-7000-8000-000000000001"},{"email":"first@dediez.software","timestamp":1700000100,"event":"open","sg_machine_open":true,"sg_event_id":"e3","sg_message_id":"m1","email_log_id":"0199f3b2-0000-7000-8000-000000000001"},{"email":"first@dediez.software","timestamp":1700000200,"event":"open","sg_machine_open":false,"sg_event_id":"e4","sg_message_id":"m1","email_log_id":"0199f3b2-0000-7000-8000-000000000001"}]
+            """
+        Then the response status should be 202
+        Then email log "0199f3b2-0000-7000-8000-000000000001" has been opened 1 times
+
     Scenario: An event for an unknown email is ignored
         Given email log with id "0199f3b2-0000-7000-8000-000000000001" to "first@dediez.software" exists
         When I send a "POST" request to "/webhook/sendgrid" with body:

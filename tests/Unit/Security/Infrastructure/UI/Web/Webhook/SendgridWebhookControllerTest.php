@@ -62,6 +62,43 @@ class SendgridWebhookControllerTest extends TestCase
         $this->assertEquals(1, $this->stored()->openCount());
     }
 
+    public function testMachineOpenIsIgnored(): void
+    {
+        $this->post([$this->event('open', ['sg_machine_open' => true])]);
+
+        $this->assertEquals(0, $this->stored()->openCount());
+    }
+
+    public function testNonMachineOpenCounts(): void
+    {
+        $this->post([$this->event('open', ['sg_machine_open' => false])]);
+
+        $this->assertEquals(1, $this->stored()->openCount());
+    }
+
+    public function testOpenListedBeforeDeliveryInTheSameSecondIsIgnored(): void
+    {
+        $this->post([
+            $this->event('open', ['timestamp' => 1700000001]),
+            $this->event('delivered', ['timestamp' => 1700000001]),
+            $this->event('click', ['timestamp' => 1700000002]),
+        ]);
+
+        $this->assertEquals(new \DateTimeImmutable('@1700000001'), $this->stored()->deliveredAt());
+        $this->assertEquals(0, $this->stored()->openCount());
+        $this->assertEquals(0, $this->stored()->clickCount());
+    }
+
+    public function testOpenAfterTwoSecondsOfDeliveryCounts(): void
+    {
+        $this->post([
+            $this->event('open', ['timestamp' => 1700000003]),
+            $this->event('delivered', ['timestamp' => 1700000000]),
+        ]);
+
+        $this->assertEquals(1, $this->stored()->openCount());
+    }
+
     public function testClickIncreasesCounter(): void
     {
         $this->post([$this->event('click')]);

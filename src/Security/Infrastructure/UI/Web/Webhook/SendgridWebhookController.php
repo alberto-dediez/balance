@@ -55,10 +55,8 @@ final class SendgridWebhookController extends AbstractController
             return new Response('Signature is wrong.', Response::HTTP_NOT_ACCEPTABLE);
         }
 
-        foreach ($events as $event) {
-            if (is_array($event)) {
-                $this->track($event);
-            }
+        foreach ($this->chronological($events) as $event) {
+            $this->track($event);
         }
 
         return new Response('', Response::HTTP_ACCEPTED);
@@ -81,6 +79,10 @@ final class SendgridWebhookController extends AbstractController
                 'sg_event_id' => $event['sg_event_id'] ?? null,
             ]);
 
+            return;
+        }
+
+        if (EmailTrackingEventType::Opened === $type && true === ($event['sg_machine_open'] ?? false)) {
             return;
         }
 
@@ -117,6 +119,36 @@ final class SendgridWebhookController extends AbstractController
                 'sg_message_id' => $event['sg_message_id'] ?? null,
             ]);
         }
+    }
+
+    /**
+     * @param array<mixed> $events
+     *
+     * @return array<array<mixed>>
+     */
+    private function chronological(array $events): array
+    {
+        $events = array_values(array_filter($events, is_array(...)));
+
+        usort($events, fn(array $a, array $b): int => [$this->timestampOf($a), $this->isEngagement($a)] <=> [$this->timestampOf($b), $this->isEngagement($b)]);
+
+        return $events;
+    }
+
+    /**
+     * @param array<mixed> $event
+     */
+    private function timestampOf(array $event): int
+    {
+        return is_numeric($event['timestamp'] ?? null) ? (int) $event['timestamp'] : 0;
+    }
+
+    /**
+     * @param array<mixed> $event
+     */
+    private function isEngagement(array $event): bool
+    {
+        return in_array($event['event'] ?? null, [EmailTrackingEventType::Opened->value, EmailTrackingEventType::Clicked->value], true);
     }
 
     /**
