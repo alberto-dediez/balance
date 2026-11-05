@@ -74,7 +74,25 @@ class ListController extends AbstractController
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
             'isDistributor' => $distributorPolicy->isActiveDistributor($account->id()),
+            'exportParameters' => $this->exportParameters($filter),
             'canRegister' => $this->isGranted(Action::Register->value, new Property(id: PropertyId::generate(), accountId: $account->id())),
         ]);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function exportParameters(ListPropertiesRequest $filter): array
+    {
+        $parameters = [
+            'name' => $filter->name,
+            'destinationId' => null === $filter->destinationId ? null : (string) $filter->destinationId,
+            'countryId' => null === $filter->countryId ? null : (string) $filter->countryId,
+            'operatingRegime' => $filter->operatingRegime?->value,
+            'orderBy' => $filter->orderBy,
+            'orderWay' => $filter->orderWay,
+        ];
+
+        return array_filter($parameters, static fn(?string $value): bool => null !== $value && '' !== $value);
     }
 }

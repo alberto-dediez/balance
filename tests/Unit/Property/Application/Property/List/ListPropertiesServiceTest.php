@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Property\Application\Property\List;
 
 use App\Property\Application\DistributorAssignment\DistributedPropertiesPolicy;
+use App\Property\Application\Property\List\DistributorPropertiesScope;
 use App\Property\Application\Property\List\ListPropertiesRequest;
 use App\Property\Application\Property\List\ListPropertiesService;
 use App\Property\Application\Property\PropertyAuthorizer;
@@ -182,7 +183,7 @@ class ListPropertiesServiceTest extends TestCase
             distributorPolicy: $distributorPolicy,
         );
 
-        return new ListPropertiesService($repository, $authorizer, $distributedPropertiesPolicy, $distributorPolicy);
+        return new ListPropertiesService($repository, $authorizer, new DistributorPropertiesScope($distributedPropertiesPolicy, $distributorPolicy));
     }
 
     private function createSUT(InMemoryPropertyRepository $repository): ListPropertiesService

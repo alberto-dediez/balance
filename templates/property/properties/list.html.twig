@@ -71,6 +71,7 @@
 {% endblock %}
 
 {% block list_actions %}
+    <twig:Link:Export path="{{ path('export', {code: 'properties'} | merge(exportParameters)) }}" />
     {% if canRegister %}
         <twig:Link:Register path="{{ path('properties_register') }}" />
     {% endif %}

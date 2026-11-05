@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Property\Application\Property\List;
 
-use App\Property\Application\DistributorAssignment\DistributedPropertiesPolicy;
 use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
-use App\Property\Domain\Model\Property\PropertyScope;
-use App\Security\Application\Account\DistributorPolicy;
 use App\Security\Application\Action;
-use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 
@@ -21,8 +17,7 @@ class ListPropertiesService
     public function __construct(
         private readonly PropertyRepository $repository,
         private readonly PropertyAuthorizer $authorizer,
-        private readonly ?DistributedPropertiesPolicy $distributedPropertiesPolicy = null,
-        private readonly ?DistributorPolicy $distributorPolicy = null,
+        private readonly ?DistributorPropertiesScope $distributorPropertiesScope = null,
     ) {}
 
     public function __invoke(ListPropertiesRequest $request, User $user): ListPropertiesResponse
@@ -48,16 +43,12 @@ class ListPropertiesService
         $accountId = $filter->accountId;
 
         if (!$accountId instanceof AccountId
-            || !$this->distributedPropertiesPolicy instanceof DistributedPropertiesPolicy
-            || !$this->distributorPolicy instanceof DistributorPolicy
+            || !$this->distributorPropertiesScope instanceof DistributorPropertiesScope
             || !$this->authorizer->isOwnerOfCurrentAccount($user, $accountId)
-            || !$this->distributorPolicy->isActiveDistributor($accountId)
         ) {
             return;
         }
 
-        $filter->scope = PropertyScope::forAccount($accountId)
-            ->merge($this->distributedPropertiesPolicy->scopeFor($accountId, AccountFeature::PropertyTripCalculators));
-        $filter->accountId = null;
+        $this->distributorPropertiesScope->expand($filter);
     }
 }
