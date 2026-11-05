@@ -25,4 +25,18 @@ final readonly class OrganizationalCarbonFootprintReportEmployeeSurvey
             marginOfError: $participation->marginOfError(),
         );
     }
+
+    public function hasSurvey(): bool
+    {
+        return null !== $this->answeredCount;
+    }
+
+    public function participationPercent(): ?float
+    {
+        if (null === $this->answeredCount || null === $this->totalEmployees || 0 === $this->totalEmployees) {
+            return null;
+        }
+
+        return $this->answeredCount / $this->totalEmployees * 100;
+    }
 }

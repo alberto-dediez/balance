@@ -117,6 +117,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $this->renderBoundariesSection($pdf, $data, $locale);
         $this->renderIncludedEmissionsSection($pdf, $data, $locale);
         $this->renderCategoryMethodsSection($pdf, $data, $locale);
+        $this->renderProviderContributionsSection($pdf, $data, $locale);
         $this->renderScopeSourceSections($pdf, $data, $locale);
         $this->renderOrganizationalResultsSection($pdf, $data, $charts, $locale);
         $this->renderEmissionFactorSourcesSection($pdf, $data, $texts, $locale);
@@ -165,7 +166,7 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $this->renderSectionTitle($pdf, $this->trans('Resultados', $locale));
         $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
-        $totalsRows = $this->emissionsRows($data->totalEmissions);
+        $totalsRows = $this->emissionsRows($data->totalEmissions, $locale);
         $totalsRows[] = [$this->trans('CO₂eq por asistente (kg)', $locale), $this->number($data->emissionsPerAttendee->co2eq())];
         array_push($totalsRows, ...$this->eventDualReportingRows($data, $locale));
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), true, false, true, false, '');
@@ -198,9 +199,17 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $this->renderSectionTitle($pdf, $this->trans('Resultados', $locale));
         $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
-        $totalsRows = $this->emissionsRows($data->totalEmissions);
+        $totalsRows = $this->emissionsRows($data->totalEmissions, $locale);
         array_push($totalsRows, ...$this->organizationalDualReportingRows($data, $locale));
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), true, false, true, false, '');
+
+        $co2eqOnlyNote = $this->co2eqOnlyNote($data, $locale);
+
+        if (null !== $co2eqOnlyNote) {
+            $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->MultiCell(0, 5, $co2eqOnlyNote, 0, 'L');
+            $this->setFont($pdf, 10, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+        }
 
         $pdf->Ln(4);
         $pdf->writeHTML($this->buildTableHtml([$this->trans('Alcance', $locale), 'CO₂eq (kg)', $this->trans('% del total', $locale)], $this->scopeRows($data, $locale)), true, false, true, false, '');
@@ -255,6 +264,30 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $pdf->writeHTML($this->buildTableHtml($header, $this->categoryMethodRows($data, $locale), ['12%', '30%', '28%', '16%', '14%']), true, false, true, false, '');
     }
 
+    private function renderProviderContributionsSection(\TCPDF $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
+    {
+        if ($data->scope3Excluded) {
+            return;
+        }
+
+        $pdf->AddPage();
+        $this->renderSectionTitle($pdf, $this->trans('Aportaciones de proveedores', $locale));
+        $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+
+        [$header, $rows, $widths] = $this->providerContributionRows($data, $locale);
+
+        if ([] === $rows) {
+            $pdf->writeHTML($this->markdownToStyledHtml($this->trans('No se han registrado aportaciones de proveedores', $locale)), true, false, true, false, '');
+
+            return;
+        }
+
+        $pdf->writeHTML($this->buildTableHtml($header, $rows, $widths), true, false, true, false, '');
+        $pdf->Ln(2);
+        $pdf->writeHTML($this->buildTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], [$this->supplierDataShareRow($data, $locale)], ['60%', '40%']), true, false, true, false, '');
+        $pdf->MultiCell(0, 5, $this->trans('Las aportaciones descartadas no se contabilizan en el inventario', $locale), 0, 'L');
+    }
+
     private function renderEmissionFactorSourcesSection(\TCPDF $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, Locale $locale): void
     {
         $pdf->AddPage();
@@ -284,6 +317,10 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $this->renderSectionTitle($pdf, $this->trans('Incertidumbre y calidad de los datos', $locale));
         $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
 
+        $pdf->writeHTML($this->markdownToStyledHtml('**' . $this->trans('Encuesta de desplazamientos de empleados', $locale) . '**'), true, false, true, false, '');
+        $pdf->writeHTML($this->buildTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $this->employeeSurveyRows($data, $locale), ['40%', '60%']), true, false, true, false, '');
+        $pdf->Ln(4);
+
         $header = [
             $this->trans('Alcance', $locale),
             $this->trans('Categoría', $locale),
@@ -307,12 +344,12 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
         $header = [
             $this->trans('Alcance', $locale),
             $this->trans('Fuente', $locale),
-            $this->trans('Incluida', $locale),
+            $this->trans('Estado', $locale),
             $this->trans('Motivo', $locale),
             $this->trans('Comentario', $locale),
         ];
 
-        $pdf->writeHTML($this->buildTableHtml($header, $this->includedEmissionsRows($data, $locale), ['14%', '30%', '10%', '20%', '26%']), true, false, true, false, '');
+        $pdf->writeHTML($this->buildTableHtml($header, $this->includedEmissionsRows($data, $locale), ['14%', '30%', '14%', '18%', '24%']), true, false, true, false, '');
 
         $footnote = $this->materialityFootnote($data, $locale);
 
@@ -354,6 +391,10 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
             }
 
             $pdf->writeHTML($this->buildTableHtml($header, $rows, $widths), true, false, true, false, '');
+
+            if (in_array($source, Scope::Scope3->companyOnlySources(), true)) {
+                $pdf->MultiCell(0, 5, $this->minimumBoundaryNote($locale), 0, 'L');
+            }
         }
     }
 
@@ -500,19 +541,26 @@ final class TcpdfCarbonFootprintReportPdfGenerator implements CarbonFootprintRep
             $pdf->writeHTML($this->markdownToStyledHtml($statement), true, false, true, false, '');
         }
 
-        if (null === $annex || (null !== $statement && !$annex->hasDecisions)) {
+        if (null === $annex) {
             return;
         }
 
         if (null === $statement) {
             $pdf->writeHTML($this->markdownToStyledHtml($this->materialityMethodologyParagraph($annex, $locale)), true, false, true, false, '');
-            $pdf->writeHTML($this->buildTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $this->materialityTraceabilityRows($annex, $locale), ['40%', '60%']), true, false, true, false, '');
+        }
 
-            if ($annex->showsAnswers()) {
-                $pdf->Ln(4);
-                $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
-                $pdf->writeHTML($this->buildTableHtml($this->materialityQuestionHeader($locale), $this->materialityQuestionRows($annex, $locale), ['18%', '52%', '15%', '15%']), true, false, true, false, '');
-            }
+        if ($annex->hasAssessment()) {
+            $pdf->writeHTML($this->buildTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $this->materialityTraceabilityRows($annex, $locale), ['40%', '60%']), true, false, true, false, '');
+        }
+
+        if (null !== $statement && !$annex->hasDecisions) {
+            return;
+        }
+
+        if (null === $statement && $annex->showsAnswers()) {
+            $pdf->Ln(4);
+            $this->setFont($pdf, 9, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
+            $pdf->writeHTML($this->buildTableHtml($this->materialityQuestionHeader($locale), $this->materialityQuestionRows($annex, $locale), ['18%', '52%', '15%', '15%']), true, false, true, false, '');
         }
 
         $pdf->Ln(4);

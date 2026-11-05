@@ -50,6 +50,21 @@ class MaterialityAssessmentSnapshotMother
         return self::build(true, withCustomTopic: true);
     }
 
+    public static function completedWithoutVerdicts(): MaterialityAssessmentSnapshot
+    {
+        return self::build(true, withVerdicts: false);
+    }
+
+    public static function completedWithoutScope3Topics(): MaterialityAssessmentSnapshot
+    {
+        return self::build(true, withTopics: false);
+    }
+
+    public static function withoutHighMagnitudeRule(): MaterialityAssessmentSnapshot
+    {
+        return self::build(true, highMagnitudeRule: null);
+    }
+
     public static function topicId(?int $topicNumber): string
     {
         return sprintf('topic-%s', $topicNumber ?? 'custom');
@@ -60,11 +75,11 @@ class MaterialityAssessmentSnapshotMother
         return new \DateTimeImmutable('2026-01-15 10:00:00');
     }
 
-    private static function build(bool $completed, ?string $changedQuestionId = null, ?string $removedQuestionId = null, bool $withCustomTopic = false): MaterialityAssessmentSnapshot
+    private static function build(bool $completed, ?string $changedQuestionId = null, ?string $removedQuestionId = null, bool $withCustomTopic = false, bool $withVerdicts = true, ?bool $highMagnitudeRule = true, bool $withTopics = true): MaterialityAssessmentSnapshot
     {
         $topics = [];
         $answers = [];
-        $definitions = self::TOPICS;
+        $definitions = $withTopics ? self::TOPICS : [];
 
         if ($withCustomTopic) {
             $definitions[0] = ['name' => 'Categoría propia', 'values' => [1, 1, 1, 1, 1], 'verdict' => MaterialityVerdict::Omit, 'forced' => false];
@@ -108,7 +123,7 @@ class MaterialityAssessmentSnapshotMother
                 scorePercent: $completed ? $scorePercent : null,
                 thresholdPercent: $completed ? 50 : null,
                 forcedByHighMagnitude: $completed && $definition['forced'],
-                verdict: $completed ? $definition['verdict'] : null,
+                verdict: $completed && $withVerdicts ? $definition['verdict'] : null,
             );
         }
 
@@ -120,7 +135,7 @@ class MaterialityAssessmentSnapshotMother
             completedByName: $completed ? 'jgarcia' : null,
             sectorName: 'Hostelería',
             thresholdPercent: $completed ? 50 : null,
-            highMagnitudeRule: true,
+            highMagnitudeRule: $highMagnitudeRule,
             questionSetVersion: self::questionSetVersion(),
             questionSetChangedSince: null !== $changedQuestionId || null !== $removedQuestionId,
             topics: $topics,

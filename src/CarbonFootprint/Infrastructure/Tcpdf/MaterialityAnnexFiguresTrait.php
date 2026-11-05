@@ -41,11 +41,11 @@ trait MaterialityAnnexFiguresTrait
             $sentences[] = $this->trans('Umbral de relevancia: {threshold} %.', $locale, ['{threshold}' => (string) $threshold]);
         }
 
-        if (null !== $assessment?->highMagnitudeRule) {
-            $sentences[] = $assessment->highMagnitudeRule
-                ? $this->trans('Regla de magnitud alta: activada.', $locale)
-                : $this->trans('Regla de magnitud alta: desactivada.', $locale);
-        }
+        $sentences[] = match ($assessment?->highMagnitudeRule) {
+            true => $this->trans('Regla de magnitud alta: activada.', $locale),
+            false => $this->trans('Regla de magnitud alta: desactivada.', $locale),
+            null => $this->trans('Regla de magnitud alta: no registrada en la evaluación.', $locale),
+        };
 
         return implode(' ', $sentences);
     }
@@ -240,6 +240,14 @@ trait MaterialityAnnexFiguresTrait
             return null === $data->scope3ExclusionComment || '' === $data->scope3ExclusionComment
                 ? $this->trans('El alcance 3 se ha excluido en su totalidad: {reason}. Las recomendaciones del análisis de materialidad no se aplican.', $locale, ['{reason}' => $reason])
                 : $this->trans('El alcance 3 se ha excluido en su totalidad: {reason}. {comment}. Las recomendaciones del análisis de materialidad no se aplican.', $locale, ['{reason}' => $reason, '{comment}' => $this->materialityPlain($data->scope3ExclusionComment)]);
+        }
+
+        if (true === $annex?->hasNoScope3Topics()) {
+            return $this->trans('La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.', $locale);
+        }
+
+        if (true === $annex?->isCompletedWithoutVerdicts()) {
+            return $this->trans('La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.', $locale);
         }
 
         if (null === $annex || $annex->isAnalysisMissing()) {

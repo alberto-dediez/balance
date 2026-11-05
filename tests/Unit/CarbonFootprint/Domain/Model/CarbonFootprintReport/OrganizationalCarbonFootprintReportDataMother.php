@@ -15,6 +15,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportActivityLine;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBaseYear;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBoundaryLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportEmployeeSurvey;
@@ -22,12 +23,15 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonF
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMaterialityAnnex;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMitigationAction;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMitigationPlan;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportProviderLine;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationEmissionSource;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjector;
 use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionId;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\ProviderContributionMode;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionStatus;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\Property\Domain\Model\Property\OperatingRegime;
 use App\Property\Domain\Model\Property\PropertyId;
@@ -354,6 +358,67 @@ class OrganizationalCarbonFootprintReportDataMother
         return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutAssessment());
     }
 
+    public static function withMaterialityAssessmentCompletedWithoutVerdicts(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::completedWithoutVerdicts());
+    }
+
+    public static function withMaterialityAssessmentCompletedWithoutScope3Topics(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::completedWithoutScope3Topics());
+    }
+
+    public static function withMaterialityAssessmentWithoutHighMagnitudeRule(CarbonFootprintReportSubjectType $subjectType = CarbonFootprintReportSubjectType::Property): OrganizationalCarbonFootprintReportData
+    {
+        return self::withMaterialityAnnex(self::withScope3($subjectType), OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutHighMagnitudeRule());
+    }
+
+    public static function withBaseYear(OrganizationalCarbonFootprintReportData $data, ?OrganizationalCarbonFootprintReportBaseYear $baseYear): OrganizationalCarbonFootprintReportData
+    {
+        return self::copy($data, ['baseYear' => $baseYear]);
+    }
+
+    public static function baseYear(int $year = 2023, string $baseYearTotalKgCo2eq = '8000', string $recalculationThresholdPercent = '5'): OrganizationalCarbonFootprintReportBaseYear
+    {
+        return new OrganizationalCarbonFootprintReportBaseYear($year, $baseYearTotalKgCo2eq, $recalculationThresholdPercent, 'Primer año con datos completos');
+    }
+
+    /** @param list<OrganizationalCarbonFootprintReportProviderLine>|null $providerLines */
+    public static function withProviderLines(?OrganizationalCarbonFootprintReportData $data = null, ?array $providerLines = null): OrganizationalCarbonFootprintReportData
+    {
+        $data ??= self::withScope3();
+        $isCompany = CarbonFootprintReportSubjectType::Company === $data->subjectType;
+
+        return self::copy($data, ['providerLines' => $providerLines ?? [
+            new OrganizationalCarbonFootprintReportProviderLine('Lavandería Norte', $isCompany ? 'Hotel Sol' : null, [Source::PurchasedGoodsAndServices], ProviderContributionMode::Manual, ProviderContributionStatus::Answered, new \DateTimeImmutable('2026-02-10'), '1098'),
+            new OrganizationalCarbonFootprintReportProviderLine('Transportes Sur', null, [Source::UpstreamTransport, Source::DownstreamTransport], ProviderContributionMode::Requested, ProviderContributionStatus::Pending, null, '0'),
+            new OrganizationalCarbonFootprintReportProviderLine('Catering Este', null, [Source::PurchasedGoodsAndServices], ProviderContributionMode::Requested, ProviderContributionStatus::Ignored, null, '0'),
+        ]]);
+    }
+
+    /** @param list<OrganizationalCarbonFootprintReportActivityLine> $activityLines */
+    public static function withActivityLines(OrganizationalCarbonFootprintReportData $data, array $activityLines): OrganizationalCarbonFootprintReportData
+    {
+        return self::copy($data, ['activityLines' => $activityLines]);
+    }
+
+    public static function withoutActivityIn(OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source): OrganizationalCarbonFootprintReportData
+    {
+        $emissionsByScopeAndSource = $data->emissionsByScopeAndSource;
+        $emissionsByScopeAndSource[$scope->value][$source->value] = new Emissions();
+
+        return self::copy($data, [
+            'emissionsByScopeAndSource' => $emissionsByScopeAndSource,
+            'activityLines' => array_values(array_filter($data->activityLines, static fn(OrganizationalCarbonFootprintReportActivityLine $line): bool => $line->scope !== $scope || $line->source !== $source)),
+        ]);
+    }
+
+    /** @param array<string, mixed> $overrides */
+    private static function copy(OrganizationalCarbonFootprintReportData $data, array $overrides): OrganizationalCarbonFootprintReportData
+    {
+        return new OrganizationalCarbonFootprintReportData(...array_merge(get_object_vars($data), $overrides));
+    }
+
     /** @param list<array{propertyId: ?string, name: string, emissions: Emissions}>|null $emissionsByProperty */
     private static function build(
         CarbonFootprintReportSubjectType $subjectType,
@@ -417,8 +482,8 @@ class OrganizationalCarbonFootprintReportDataMother
             $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::PurchasedGoodsAndServices, $isCompany ? 'Hotel Sol' : null, 'Servicios de limpieza', ActivityType::PurchaseService, CalculationMethod::SpendBased, 8000.0, Unit::Euro, '0.5', Unit::Euro, 2025, 'EXIOBASE', '4000');
             $activityLines[] = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope3, Source::BusinessTravel, $isCompany ? 'Hotel Sol' : null, 'Avión corto radio', ActivityType::Mobility, CalculationMethod::DistanceBased, 6000.0, Unit::Kilometer, '0.15', Unit::Kilometer, 2025, 'DEFRA', '900');
             $derivedLines = [
-                new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope1, Source::FixedFacilities), ActivityType::Combustible, new Emissions('210', '210', '0', '0'), ActivityId::generate()),
-                new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity), ActivityType::Electricity, new Emissions('380', '380', '0', '0'), ActivityId::generate()),
+                new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope1, Source::FixedFacilities), ActivityType::Combustible, new Emissions('210', '210', '0', '0'), ActivityId::generate(), 100.0, Unit::KWhPCS, '2.1', Unit::KWhPCS, 2024, 'DEFRA'),
+                new DerivedSourceLine(Source::FuelAndEnergyRelated, new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity), ActivityType::Electricity, new Emissions('380', '380', '0', '0'), ActivityId::generate(), 10000.0, Unit::KWh, '0.038', Unit::KWh, 2025, 'DEFRA'),
             ];
             $totalEmissions = new Emissions('9420', '9420', '0', '0');
             $locationBasedTotalEmissions = new Emissions('8920', '8920', '0', '0');

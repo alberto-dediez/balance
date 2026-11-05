@@ -44,13 +44,23 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             'Consolidation approach: operational control (franchised and leased-out properties are reported in scope 3 categories 14 and 13)',
             sprintf('Operating regime: %s', $this->data->operatingRegime->value ?? 'n/a'),
             '',
-            sprintf('Total emissions: %s kg CO2eq, %s kg CO2, %s kg CH4, %s kg N2O', $this->data->totalEmissions->co2eq(), $this->data->totalEmissions->co2(), $this->data->totalEmissions->ch4(), $this->data->totalEmissions->n2o()),
+            sprintf('Total emissions: %s kg CO2eq, %s kg CO2, %s kg CH4, %s kg N2O', $this->data->totalEmissions->co2eq(), $this->data->totalEmissions->co2(), $this->data->totalEmissions->ch4InKilograms(), $this->data->totalEmissions->n2oInKilograms()),
             sprintf('Location-based electricity emissions: %s kg CO2eq', $this->data->locationBasedElectricityEmissions->co2eq()),
-            sprintf('Location-based total emissions: %s kg CO2eq', $this->data->locationBasedTotalEmissions->co2eq()),
-            sprintf('Electricity activities without location-based factor: %d', $this->data->electricityActivitiesWithoutLocationBased),
-            '',
-            'Emissions by scope (kg CO2eq):',
         ];
+
+        if (!$this->data->precalculated) {
+            $lines[] = sprintf('Location-based total emissions: %s kg CO2eq', $this->data->locationBasedTotalEmissions->co2eq());
+        }
+
+        $lines[] = sprintf('Electricity activities without location-based factor: %d', $this->data->electricityActivitiesWithoutLocationBased);
+
+        if ($this->data->hasCo2eqOnlyActivities()) {
+            $lines[] = 'Refrigerant gas leaks and emissions reported by the organization or its suppliers are accounted only in CO2eq: their gas breakdown is not available and they are added to CO2.';
+        }
+
+        $lines[] = $this->baseYearLine();
+        $lines[] = '';
+        $lines[] = 'Emissions by scope (kg CO2eq):';
 
         foreach ($this->data->emissionsByScope as $scope => $emissions) {
             $lines[] = sprintf('- %s: %s', $scope, $emissions->co2eq());
@@ -100,6 +110,31 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             $lines[] = sprintf('- %s', $methodLine);
         }
 
+        if (!$this->data->scope3Excluded) {
+            $lines[] = '';
+
+            if ([] === $this->data->providerLines) {
+                $lines[] = 'Provider contributions: none registered';
+            } else {
+                $lines[] = 'Provider contributions (provider | property | categories | mode | status | answered at | kg CO2eq; ignored contributions are not accounted):';
+                foreach ($this->data->providerLines as $providerLine) {
+                    $lines[] = sprintf(
+                        '- %s | %s | %s | %s | %s | %s | %s',
+                        $providerLine->providerName,
+                        $providerLine->propertyName ?? 'n/a',
+                        implode(', ', array_map(static fn(Source $source): string => $source->value, $providerLine->sources)),
+                        $providerLine->mode->value,
+                        $providerLine->status->value,
+                        $providerLine->answeredAt?->format('Y-m-d') ?? 'n/a',
+                        $providerLine->emissionsCo2eq,
+                    );
+                }
+            }
+
+            $supplierDataShare = $this->data->supplierDataSharePercent();
+            $lines[] = sprintf('Supplier data share of scope 3: %s', null === $supplierDataShare ? 'n/a' : number_format($supplierDataShare, 2, '.', '') . ' %');
+        }
+
         $lines[] = '';
         $lines[] = 'Emission factor sources (source | factor years | activity lines | kg CO2eq):';
         foreach ($this->factorSourceLines() as $factorSourceLine) {
@@ -111,9 +146,10 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         $lines[] = null === $employeeSurvey
             ? 'Employee survey: no survey data'
             : sprintf(
-                'Employee survey: %s employees, %s answers, confidence level %s, margin of error %s',
+                'Employee survey: %s employees, %s answers, participation rate %s, confidence level %s, margin of error %s',
                 $employeeSurvey->totalEmployees ?? 'n/a',
                 $employeeSurvey->answeredCount ?? 'n/a',
+                null !== $employeeSurvey->participationPercent() ? number_format($employeeSurvey->participationPercent(), 2, '.', '') . ' %' : 'n/a',
                 null !== $employeeSurvey->confidenceLevel ? $employeeSurvey->confidenceLevel->value . ' %' : 'n/a',
                 null !== $employeeSurvey->marginOfError ? number_format($employeeSurvey->marginOfError * 100, 2, '.', '') . ' %' : 'n/a',
             );
@@ -161,7 +197,7 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             }
         }
 
-        $hasMaterialityAnalysis = null !== $this->data->materialityAnnex && !$this->data->materialityAnnex->isAnalysisMissing();
+        $hasMaterialityAnalysis = null !== $this->data->materialityAnnex && !$this->data->materialityAnnex->isAnalysisMissing() && !$this->data->materialityAnnex->hasNoScope3Topics();
         $appliesMaterialityAnalysis = $hasMaterialityAnalysis && !$this->data->scope3Excluded;
         $requestsMaterialityAnalysis = $this->requestsMaterialityAnalysis();
         $sectionCount = 7 + (null !== $mitigationPlan ? 1 : 0) + ($requestsMaterialityAnalysis ? 1 : 0);
@@ -179,6 +215,8 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             match (true) {
                 $this->data->scope3Excluded => 'state that scope 3 was excluded in full with the declared reason and that the materiality recommendations are not applied',
                 $hasMaterialityAnalysis => 'state that scope 3 exclusions follow the materiality assessment and cite its threshold and the verdicts above verbatim',
+                null !== $this->data->materialityAnnex && $this->data->materialityAnnex->hasNoScope3Topics() => 'state that the materiality assessment was completed without scope 3 categories and that scope 3 exclusions rely on the reason and comment declared for each excluded source',
+                null !== $this->data->materialityAnnex && $this->data->materialityAnnex->isCompletedWithoutVerdicts() => 'state that the materiality assessment was completed before the automatic verdicts were activated and that scope 3 exclusions rely on the reason and comment declared for each excluded source',
                 default => 'state that no materiality assessment was performed and exclusions rely on the declared reasons',
             },
         );
@@ -239,6 +277,14 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
             )];
 
             return null !== $annex && $annex->hasDecisions ? [...$lines, ...$this->materialityVerdictLines($annex)] : $lines;
+        }
+
+        if (null !== $annex && $annex->hasNoScope3Topics()) {
+            return ['The materiality assessment was completed without scope 3 categories; scope 3 exclusions rely on the reason and comment declared for each excluded source. Do not describe or invent verdicts.'];
+        }
+
+        if (null !== $annex && $annex->isCompletedWithoutVerdicts()) {
+            return ['The materiality assessment was completed before the automatic verdicts were activated; scope 3 exclusions rely on the reason and comment declared for each excluded source. Do not describe or invent verdicts.'];
         }
 
         if (null === $annex || $annex->isAnalysisMissing()) {
@@ -386,10 +432,41 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         $lines = [];
 
         foreach ($this->data->emissionFactorSourceSummary() as $row) {
-            $lines[] = sprintf('%s | %s | %d | %s', $row['method']->value ?? $row['source'] ?? 'n/a', [] === $row['years'] ? 'n/a' : implode(', ', $row['years']), $row['lines'], number_format($row['emissions'], 2, '.', ''));
+            $label = match (true) {
+                null !== $row['method'] && null !== $row['source'] => sprintf('%s (%s)', $row['method']->value, $row['source']),
+                null !== $row['method'] => $row['method']->value,
+                default => $row['source'] ?? 'n/a',
+            };
+
+            $lines[] = sprintf('%s | %s | %d | %s', $label, [] === $row['years'] ? 'n/a' : implode(', ', $row['years']), $row['lines'], number_format($row['emissions'], 2, '.', ''));
         }
 
         return $lines;
+    }
+
+    private function baseYearLine(): string
+    {
+        $baseYear = $this->data->baseYear;
+
+        if (null === $baseYear) {
+            return 'Base year: not declared';
+        }
+
+        $variation = $this->data->baseYearVariationPercent();
+
+        return sprintf(
+            'Base year: %d | base-year total %s kg CO2eq | recalculation threshold %s %% | variation %s | exceeds: %s | justification: %s',
+            $baseYear->year,
+            $baseYear->baseYearTotalKgCo2eq,
+            $baseYear->recalculationThresholdPercent,
+            match (true) {
+                $this->data->isBaseYear() => 'this footprint is the base year',
+                null === $variation => 'n/a',
+                default => sprintf('%+.2f %%', $variation),
+            },
+            $this->data->baseYearExceedsThreshold() ? 'yes' : 'no',
+            str_replace("\n", ' ', trim($baseYear->justification)),
+        );
     }
 
     private function boundaryTreatment(OrganizationalCarbonFootprintReportBoundaryLine $boundaryLine): string

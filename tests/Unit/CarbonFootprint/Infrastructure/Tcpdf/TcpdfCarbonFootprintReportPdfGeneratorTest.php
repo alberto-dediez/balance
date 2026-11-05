@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\Tcpdf;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityCategoryState;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
@@ -13,8 +15,11 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexJustification;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAnnexTopicLine;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportActivityLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Tcpdf\ClassicTcpdfCarbonFootprintReportPdfGenerator;
 use App\CarbonFootprint\Infrastructure\Tcpdf\TcpdfCarbonFootprintReportPdfGenerator;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -62,6 +67,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             yield $theme . ' property scope 3 excluded materiality es' => [$theme, 'property-scope-3-excluded-materiality', Locale::Spanish];
             yield $theme . ' property materiality reopened es' => [$theme, 'property-materiality-reopened', Locale::Spanish];
             yield $theme . ' property materiality narrative es' => [$theme, 'property-materiality-narrative', Locale::Spanish];
+            yield $theme . ' property materiality completed without verdicts es' => [$theme, 'property-materiality-completed-without-verdicts', Locale::Spanish];
         }
     }
 
@@ -141,22 +147,321 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
     }
 
     /** @dataProvider themes */
-    public function testAPropertyReportLeavesOutTheCompanyOnlySources(string $theme): void
+    public function testAPropertyReportDeclaresTheCompanyOnlySourcesAsNotApplicable(string $theme): void
+    {
+        $rows = $this->includedRowsByLabel($theme, OrganizationalCarbonFootprintReportDataMother::withScope3());
+        $companyRows = $this->includedRowsByLabel($theme, OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties());
+
+        $this->assertSame(['Alcance 3', 'Cat. 14 · Franquicias', 'No aplicable', 'Se informa en la huella de la empresa', '-'], $rows['Cat. 14 · Franquicias']);
+        $this->assertSame('No aplicable', $rows['Cat. 13 · Activos arrendados aguas abajo'][2]);
+        $this->assertSame('Calculada', $companyRows['Cat. 14 · Franquicias'][2]);
+        $this->assertSame('Calculada', $companyRows['Cat. 13 · Activos arrendados aguas abajo'][2]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheIncludedEmissionsListTheFifteenScope3CategoriesWithTheirStatus(string $theme): void
     {
         $generator = $this->generatorFor($theme);
 
         /** @var list<list<string>> $rows */
         $rows = (new \ReflectionMethod($generator, 'includedEmissionsRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::Spanish);
-        /** @var list<list<string>> $companyRows */
-        $companyRows = (new \ReflectionMethod($generator, 'includedEmissionsRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withScope3(CarbonFootprintReportSubjectType::Company), Locale::Spanish);
+        $scope3Rows = array_values(array_filter($rows, static fn(array $row): bool => 'Alcance 3' === $row[0]));
+        $byLabel = array_column($rows, null, 1);
 
-        $franchises = 'Cat. 14 · ' . $this->translator()->trans(Source::Franchises->value, [], 'source', Locale::Spanish->value);
-        $leasedAssets = 'Cat. 13 · ' . $this->translator()->trans(Source::DownstreamLeasedAssets->value, [], 'source', Locale::Spanish->value);
+        $this->assertCount(15, $scope3Rows);
+        $this->assertSame(['Alcance 3', 'Cat. 8 · Activos arrendados aguas arriba', 'No aplicable', 'Control operacional', '-'], $scope3Rows[7]);
+        $this->assertSame('Calculada', $byLabel['Cat. 1 · ' . $this->sourceName(Source::PurchasedGoodsAndServices)][2]);
+        $this->assertSame('Sin actividad declarada', $byLabel['Cat. 2 · ' . $this->sourceName(Source::CapitalGoods)][2]);
+        $this->assertSame(['Alcance 1', $this->sourceName(Source::RefrigerantLeaks), 'Excluida', $this->translator()->trans('not_applicable', [], 'exclusionReason', Locale::Spanish->value), 'Sin equipos de refrigeración'], $byLabel[$this->sourceName(Source::RefrigerantLeaks)]);
+        $this->assertSame('Calculada', $byLabel[$this->sourceName(Source::FixedFacilities)][2]);
+    }
 
-        $this->assertNotContains($franchises, array_column($rows, 1));
-        $this->assertNotContains($leasedAssets, array_column($rows, 1));
-        $this->assertContains($franchises, array_column($companyRows, 1));
-        $this->assertCount(count($rows) + 2, $companyRows);
+    /** @dataProvider themes */
+    public function testAScope1SourceWithoutActivityIsDeclaredAndHasNoPage(string $theme): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::withoutActivityIn(OrganizationalCarbonFootprintReportDataMother::forProperty(), Scope::Scope1, Source::OwnVehicles);
+
+        $this->assertSame('Sin actividad declarada', $this->includedRowsByLabel($theme, $data)[$this->sourceName(Source::OwnVehicles)][2]);
+
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<array{0: Scope, 1: Source, 2: string}> $definitions */
+        $definitions = (new \ReflectionMethod($generator, 'scopeSourceDefinitions'))->invoke($generator, $data, Locale::Spanish);
+        $pageSources = array_map(static fn(array $definition): Source => $definition[1], $definitions);
+
+        $this->assertNotContains(Source::OwnVehicles, $pageSources);
+        $this->assertContains(Source::FixedFacilities, $pageSources);
+        $this->assertContains(Source::RefrigerantLeaks, $pageSources);
+    }
+
+    /** @dataProvider themes */
+    public function testWithTheScope3ExcludedTheIncludedEmissionsHaveASingleScope3Row(string $theme): void
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<list<string>> $rows */
+        $rows = (new \ReflectionMethod($generator, 'includedEmissionsRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withScope3Excluded(), Locale::Spanish);
+        $scope3Rows = array_values(array_filter($rows, static fn(array $row): bool => 'Alcance 3' === $row[0]));
+
+        $this->assertSame([['Alcance 3', 'Alcance completo', 'Excluida', 'Sin datos disponibles', 'Sin datos de proveedores']], $scope3Rows);
+    }
+
+    /** @dataProvider themes */
+    public function testTheGasBreakdownIsPrintedInKilograms(string $theme): void
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<list<string>> $rows */
+        $rows = (new \ReflectionMethod($generator, 'emissionsRows'))->invoke($generator, new Emissions('3930', '3900', '5000', '2000'), Locale::Spanish);
+
+        $this->assertSame([['CO₂eq (kg)', '3.930,00'], ['CO₂ (kg)', '3.900,00'], ['CH₄ (kg)', '5,00'], ['N₂O (kg)', '2,00']], $rows);
+    }
+
+    /** @dataProvider themes */
+    public function testTheCo2eqOnlyNoteAppearsOnlyWithRefrigerantsOrReportedEmissions(string $theme): void
+    {
+        $this->assertNotNull($this->materialityInvoke($theme, 'co2eqOnlyNote', OrganizationalCarbonFootprintReportDataMother::precalculated(), Locale::Spanish));
+        $this->assertNull($this->materialityInvoke($theme, 'co2eqOnlyNote', OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish));
+    }
+
+    /** @dataProvider themes */
+    public function testTheBoundaryRowsDeclareTheBaseYearAndItsVariation(string $theme): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::withBaseYear(OrganizationalCarbonFootprintReportDataMother::withScope3(), OrganizationalCarbonFootprintReportDataMother::baseYear(baseYearTotalKgCo2eq: '8000', recalculationThresholdPercent: '5'));
+        $rows = array_column($this->rowsOf($theme, 'boundaryRows', $data), 1, 0);
+
+        $this->assertSame('2023', $rows['Año base']);
+        $this->assertSame('8.000,00', $rows['Emisiones del año base (kg CO₂eq)']);
+        $this->assertSame('5,0 %', $rows['Umbral de recálculo']);
+        $this->assertSame('+17,8 % · supera el umbral de recálculo', $rows['Variación respecto al año base']);
+        $this->assertSame('Primer año con datos completos', $rows['Justificación del año base']);
+    }
+
+    /** @dataProvider themes */
+    public function testTheBaseYearVariationBelowTheThresholdKeepsItsSign(string $theme): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::withBaseYear(OrganizationalCarbonFootprintReportDataMother::withScope3(), OrganizationalCarbonFootprintReportDataMother::baseYear(baseYearTotalKgCo2eq: '9600', recalculationThresholdPercent: '5'));
+
+        $this->assertSame('−1,9 %', array_column($this->rowsOf($theme, 'boundaryRows', $data), 1, 0)['Variación respecto al año base']);
+    }
+
+    /** @dataProvider themes */
+    public function testAZeroBaseYearSnapshotDeclaresThatTheThresholdIsExceeded(string $theme): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::withBaseYear(OrganizationalCarbonFootprintReportDataMother::withScope3(), OrganizationalCarbonFootprintReportDataMother::baseYear(baseYearTotalKgCo2eq: '0'));
+
+        $this->assertSame('— · supera el umbral de recálculo', array_column($this->rowsOf($theme, 'boundaryRows', $data), 1, 0)['Variación respecto al año base']);
+    }
+
+    /** @dataProvider themes */
+    public function testTheBoundaryRowsDeclareAMissingBaseYearAndTheBaseYearItself(string $theme): void
+    {
+        $withoutDeclaration = array_column($this->rowsOf($theme, 'boundaryRows', OrganizationalCarbonFootprintReportDataMother::withScope3()), 1, 0);
+        $baseYear = array_column($this->rowsOf($theme, 'boundaryRows', OrganizationalCarbonFootprintReportDataMother::withBaseYear(OrganizationalCarbonFootprintReportDataMother::withScope3(), OrganizationalCarbonFootprintReportDataMother::baseYear(year: 2025))), 1, 0);
+
+        $this->assertSame('No declarado', $withoutDeclaration['Año base']);
+        $this->assertArrayNotHasKey('Variación respecto al año base', $withoutDeclaration);
+        $this->assertSame('Esta huella es el año base', $baseYear['Variación respecto al año base']);
+    }
+
+    /** @dataProvider themes */
+    public function testTheProviderContributionsAreListedWithTheirTotalAndTheSupplierDataShare(string $theme): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::withProviderLines();
+        $generator = $this->generatorFor($theme);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>} $table */
+        $table = (new \ReflectionMethod($generator, 'providerContributionRows'))->invoke($generator, $data, Locale::Spanish);
+
+        $this->assertSame(['Proveedor', 'Categorías', 'Modo', 'Estado', 'Fecha de respuesta', 'Emisiones kgCO2eq'], $table[0]);
+        $this->assertCount(4, $table[1]);
+        $this->assertSame('Lavandería Norte', $table[1][0][0]);
+        $this->assertSame('Cat. 1 · ' . $this->sourceName(Source::PurchasedGoodsAndServices), $table[1][0][1]);
+        $this->assertSame($this->translator()->trans('answered', [], 'providerContributionStatus', Locale::Spanish->value), $table[1][0][3]);
+        $this->assertSame('10/02/2026', $table[1][0][4]);
+        $this->assertSame('1.098,00', $table[1][0][5]);
+        $this->assertSame('-', $table[1][1][4]);
+        $this->assertSame(['Total', '', '', '', '', '1.098,00'], $table[1][3]);
+        $this->assertCount(6, $table[2]);
+        $this->assertSame(['% de las emisiones del alcance 3 con datos aportados por proveedores', '20,0 %'], $this->materialityInvoke($theme, 'supplierDataShareRow', $data, Locale::Spanish));
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>} $companyTable */
+        $companyTable = (new \ReflectionMethod($generator, 'providerContributionRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withProviderLines(OrganizationalCarbonFootprintReportDataMother::withScope3(CarbonFootprintReportSubjectType::Company)), Locale::Spanish);
+        $this->assertSame('Hotel Sol', $companyTable[1][0][1]);
+        $this->assertCount(7, $companyTable[2]);
+    }
+
+    /** @dataProvider themes */
+    public function testWithoutProviderContributionsTheTableIsEmpty(string $theme): void
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>} $table */
+        $table = (new \ReflectionMethod($generator, 'providerContributionRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::Spanish);
+
+        $this->assertSame([], $table[1]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheEmployeeSurveyRowsDescribeTheParticipationAndTheExtrapolation(string $theme): void
+    {
+        $rows = array_column($this->rowsOf($theme, 'employeeSurveyRows', OrganizationalCarbonFootprintReportDataMother::withMixedMethods()), 1, 0);
+
+        $this->assertSame('40', $rows['Plantilla total']);
+        $this->assertSame('25', $rows['Respuestas recibidas']);
+        $this->assertSame('62,5 %', $rows['Tasa de participación']);
+        $this->assertSame('95 %', $rows['Nivel de confianza']);
+        $this->assertSame('±6,50 %', $rows['Margen de error']);
+        $this->assertArrayHasKey('Método de extrapolación', $rows);
+        $this->assertSame('Cat. 6 · ' . $this->sourceName(Source::BusinessTravel) . ', Cat. 7 · ' . $this->sourceName(Source::EmployeeCommuting), $rows['Categorías alimentadas']);
+    }
+
+    /** @dataProvider themes */
+    public function testWithoutEmployeeSurveyASingleRowDeclaresIt(string $theme): void
+    {
+        $this->assertSame([['No se ha realizado encuesta de empleados', '-']], $this->rowsOf($theme, 'employeeSurveyRows', OrganizationalCarbonFootprintReportDataMother::withScope3()));
+    }
+
+    /** @dataProvider themes */
+    public function testTheNonConsolidatedPropertyTableShowsTheCalculatedAndTheManualEmissions(string $theme): void
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} $leased */
+        $leased = (new \ReflectionMethod($generator, 'nonConsolidatedPropertyTable'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties(), Source::DownstreamLeasedAssets, Locale::Spanish);
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} $franchises */
+        $franchises = (new \ReflectionMethod($generator, 'nonConsolidatedPropertyTable'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::withNonConsolidatedProperties(), Source::Franchises, Locale::Spanish);
+
+        $this->assertSame(['Propiedad', 'Origen', 'Emisiones calculadas kgCO2eq', 'Valor manual kgCO2eq', 'Emisiones kgCO2eq'], $leased[0]);
+        $this->assertSame(['Hotel Arrendado', 'Valor manual', '0,00', '4.500,00', '4.500,00'], $leased[1][0]);
+        $this->assertSame(['Hotel Franquicia', 'Huella de la propiedad', '5.000,00', '-', '5.000,00'], $franchises[1][0]);
+        $this->assertStringStartsWith('Límite mínimo aplicado:', (string) $this->materialityInvoke($theme, 'minimumBoundaryNote', Locale::Spanish));
+    }
+
+    /** @dataProvider themes */
+    public function testTheSourceTablePrintsTheFactorWithItsUnit(string $theme): void
+    {
+        $table = $this->organizationalSourceTable($theme, OrganizationalCarbonFootprintReportDataMother::forProperty(), Scope::Scope1, Source::FixedFacilities);
+        $kWhPcs = $this->translator()->trans(Unit::KWhPCS->value, [], 'unitType', Locale::Spanish->value);
+
+        $this->assertSame('Factor', $table[0][2]);
+        $this->assertSame(['Gas natural', '100,00 ' . $kWhPcs, '1,80 kg CO₂eq / ' . $kWhPcs, '2025', 'MITECO', '180,00'], $table[1][0]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheElectricityTablesAndTheFactorAnnexesPrintTheFactorWithItsUnit(string $theme): void
+    {
+        $generator = $this->generatorFor($theme);
+        $electricityFactor = '0,25 kg CO₂eq / ' . $this->translator()->trans(Unit::KWh->value, [], 'unitType', Locale::Spanish->value);
+
+        /** @var array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} $electricityTable */
+        $electricityTable = (new \ReflectionMethod($generator, 'electricityTable'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish, false);
+        $this->assertSame($electricityFactor, $electricityTable[1][0][2]);
+
+        /** @var list<list<string>> $organizationalAnnex */
+        $organizationalAnnex = (new \ReflectionMethod($generator, 'organizationalAnnexRows'))->invoke($generator, OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish, false);
+        $organizationalElectricityRows = array_values(array_filter($organizationalAnnex, static fn(array $row): bool => 'Comercializadora Verde' === $row[0]));
+        $this->assertSame($electricityFactor, $organizationalElectricityRows[0][4]);
+
+        $this->assertSame($electricityFactor, $this->eventElectricityTableRows($theme, EventCarbonFootprintReportDataMother::withCompensation())[0][3]);
+
+        /** @var list<list<string>> $eventAnnex */
+        $eventAnnex = (new \ReflectionMethod($generator, 'eventAnnexRows'))->invoke($generator, EventCarbonFootprintReportDataMother::withCompensation(), Locale::Spanish);
+        $eventElectricityRows = array_values(array_filter($eventAnnex, static fn(array $row): bool => 'Comercializadora Verde' === $row[0]));
+        $this->assertSame($electricityFactor, $eventElectricityRows[0][4]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheDerivedTablePrintsTheQuantityAndTheWellToTankFactor(string $theme): void
+    {
+        $table = $this->organizationalSourceTable($theme, OrganizationalCarbonFootprintReportDataMother::withScope3(), Scope::Scope3, Source::FuelAndEnergyRelated);
+        $kWhPcs = $this->translator()->trans(Unit::KWhPCS->value, [], 'unitType', Locale::Spanish->value);
+
+        $this->assertSame(['Alcance', 'Fuente', 'Tipo', 'Cantidad', 'Factor WTT', 'Año', 'Fuente del factor', 'Emisiones kgCO2eq'], $table[0]);
+        $this->assertSame('100,00 ' . $kWhPcs, $table[1][0][3]);
+        $this->assertSame('2,10 kg CO₂eq / ' . $kWhPcs, $table[1][0][4]);
+        $this->assertSame('2024', $table[1][0][5]);
+        $this->assertSame('DEFRA', $table[1][0][6]);
+        $this->assertSame('0,038 kg CO₂eq / ' . $this->translator()->trans(Unit::KWh->value, [], 'unitType', Locale::Spanish->value), $table[1][1][4]);
+    }
+
+    /** @dataProvider themes */
+    public function testTheReportedFactorSourceIsPrintedWithItsLabel(string $theme): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::forProperty();
+        $reported = new OrganizationalCarbonFootprintReportActivityLine(Scope::Scope1, Source::FixedFacilities, null, 'Caldera comunicada', ActivityType::ReportedEmissions, CalculationMethod::ReportedByOrganization, 180.0, Unit::Kilogram, '1', Unit::Kilogram, 2025, 'reported', '180');
+        $data = OrganizationalCarbonFootprintReportDataMother::withActivityLines($data, [$reported]);
+
+        $sources = array_column($this->rowsOf($theme, 'emissionFactorSourceRows', $data), 0);
+        $table = $this->organizationalSourceTable($theme, $data, Scope::Scope1, Source::FixedFacilities);
+
+        $this->assertSame(['Comunicado por la organización'], $sources);
+        $this->assertSame('Comunicado por la organización', $table[1][0][4]);
+    }
+
+    /** @dataProvider themes */
+    public function testAPrecalculatedReportDoesNotDeclareALocationBasedTotal(string $theme): void
+    {
+        $this->assertSame('---', $this->organizationalDualReportingRows($theme, OrganizationalCarbonFootprintReportDataMother::precalculated())[2][1]);
+        $this->assertNotSame('---', $this->organizationalDualReportingRows($theme, OrganizationalCarbonFootprintReportDataMother::forProperty())[2][1]);
+    }
+
+    /** @return iterable<string, array{0: string, 1: string}> */
+    public static function annexWithAssessmentAndStatement(): iterable
+    {
+        foreach (['default', 'classic'] as $theme) {
+            yield $theme . ' reopened' => [$theme, 'property-materiality-reopened'];
+            yield $theme . ' scope 3 excluded' => [$theme, 'property-scope-3-excluded-materiality'];
+        }
+    }
+
+    /** @dataProvider annexWithAssessmentAndStatement */
+    public function testTheMaterialityTraceabilityIsPrintedWhenThereIsAnAssessment(string $theme, string $type): void
+    {
+        [$data, $texts] = $this->fixtureFor($type);
+        $translator = new RecordingTranslator($this->translator());
+        $generator = 'classic' === $theme
+            ? new ClassicTcpdfCarbonFootprintReportPdfGenerator($translator)
+            : new TcpdfCarbonFootprintReportPdfGenerator($translator, ThemeRegistryMother::withThemes([new GreenhostTheme()]));
+
+        @unlink($generator->generate($data, $texts, CarbonFootprintReportChartsMother::withFixturePng(), Locale::Spanish, $theme));
+
+        $this->assertContains('Identificador de la evaluación', $translator->ids);
+        $this->assertNotContains('El análisis sigue el GHG Protocol Scope 3 Standard (capítulo 6).', $translator->ids);
+    }
+
+    /** @dataProvider themes */
+    public function testAnAssessmentCompletedBeforeTheVerdictsIsDeclared(string $theme): void
+    {
+        $this->assertStringStartsWith('La evaluación de materialidad se completó antes de la activación de los veredictos automáticos', (string) $this->materialityInvoke($theme, 'materialityAnnexStatement', OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutVerdicts(), Locale::Spanish));
+    }
+
+    /** @dataProvider themes */
+    public function testAnAssessmentCompletedWithoutScope3TopicsIsDeclared(string $theme): void
+    {
+        $this->assertSame('La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.', $this->materialityInvoke($theme, 'materialityAnnexStatement', OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutScope3Topics(), Locale::Spanish));
+    }
+
+    /** @dataProvider themes */
+    public function testAMissingHighMagnitudeRuleIsDeclared(string $theme): void
+    {
+        $this->assertStringEndsWith('Regla de magnitud alta: no registrada en la evaluación.', (string) $this->materialityInvoke($theme, 'materialityMethodologyParagraph', OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutHighMagnitudeRule(), Locale::Spanish));
+    }
+
+    /** @return array<int|string, list<string>> */
+    private function includedRowsByLabel(string $theme, OrganizationalCarbonFootprintReportData $data): array
+    {
+        $generator = $this->generatorFor($theme);
+
+        /** @var list<list<string>> $rows */
+        $rows = (new \ReflectionMethod($generator, 'includedEmissionsRows'))->invoke($generator, $data, Locale::Spanish);
+
+        return array_column($rows, null, 1);
+    }
+
+    private function sourceName(Source $source): string
+    {
+        return $this->translator()->trans($source->value, [], 'source', Locale::Spanish->value);
     }
 
     /** @dataProvider themes */
@@ -229,7 +534,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
 
         $this->assertContains('kWh', $electricity[0]);
         $this->assertCount(3, $derived[1]);
-        $this->assertSame('590,00', $derived[1][2][3]);
+        $this->assertSame('590,00', $derived[1][2][7]);
     }
 
     /** @dataProvider themes */
@@ -353,7 +658,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $this->assertSame(['MITECO', '2025', '2', '1.430,00'], $bySource['MITECO']);
         $this->assertSame(['DEFRA', '2024', '1', '900,00'], $bySource['DEFRA']);
         $this->assertSame('1', $bySource['Sin fuente declarada'][2]);
-        $this->assertSame(['Derivado: emisiones del pozo al tanque (WTT)', '-', '2', '590,00'], $bySource['Derivado: emisiones del pozo al tanque (WTT)']);
+        $this->assertSame(['Derivado: emisiones del pozo al tanque (WTT) · DEFRA', '2024, 2025', '2', '590,00'], $bySource['Derivado: emisiones del pozo al tanque (WTT) · DEFRA']);
     }
 
     /** @dataProvider themes */
@@ -398,16 +703,15 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
     }
 
     /** @dataProvider themes */
-    public function testTheBoundaryRowsOfAPropertyDeclareTheCategoriesThatDoNotApply(string $theme): void
+    public function testTheBoundaryRowsNoLongerRepeatTheCategoriesThatDoNotApply(string $theme): void
     {
-        $rows = $this->rowsOf($theme, 'boundaryRows', OrganizationalCarbonFootprintReportDataMother::forProperty());
-        $companyRows = $this->rowsOf($theme, 'boundaryRows', OrganizationalCarbonFootprintReportDataMother::forCompanyWithBoundaryLines());
-        $notApplicable = ['Cat. 13 · Activos arrendados aguas abajo / Cat. 14 · Franquicias', 'Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)'];
+        $labels = array_column($this->rowsOf($theme, 'boundaryRows', OrganizationalCarbonFootprintReportDataMother::forProperty()), 0);
+        $companyLabels = array_column($this->rowsOf($theme, 'boundaryRows', OrganizationalCarbonFootprintReportDataMother::forCompanyWithBoundaryLines()), 0);
 
-        $this->assertContains(['Cat. 8 · Activos arrendados aguas arriba', 'No aplicable con el enfoque de control operacional'], $rows);
-        $this->assertContains($notApplicable, $rows);
-        $this->assertNotContains($notApplicable, $companyRows);
-        $this->assertContains(['Cat. 8 · Activos arrendados aguas arriba', 'No aplicable con el enfoque de control operacional'], $companyRows);
+        $this->assertNotContains('Cat. 8 · Activos arrendados aguas arriba', $labels);
+        $this->assertNotContains('Cat. 13 · Activos arrendados aguas abajo / Cat. 14 · Franquicias', $labels);
+        $this->assertNotContains('Cat. 8 · Activos arrendados aguas arriba', $companyLabels);
+        $this->assertContains('Categorías del alcance 3 contempladas', $labels);
     }
 
     /** @dataProvider themes */
@@ -779,6 +1083,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
             'company-materiality-override' => [OrganizationalCarbonFootprintReportDataMother::withMaterialityOverride(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-scope-3-excluded-materiality' => [OrganizationalCarbonFootprintReportDataMother::withScope3ExcludedAndMaterialityDecisions(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-materiality-reopened' => [OrganizationalCarbonFootprintReportDataMother::withReopenedMaterialityAssessment(), CarbonFootprintReportTextsMother::forOrganization()],
+            'property-materiality-completed-without-verdicts' => [OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutVerdicts(), CarbonFootprintReportTextsMother::forOrganization()],
             'property-materiality-narrative' => [OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessment(), CarbonFootprintReportTextsMother::withMaterialityAnalysis("La organización gestiona un hotel urbano.\n\n### Cat. 10 · Procesamiento de los productos vendidos\n\nEl hotel no vende productos intermedios.")],
             default => [OrganizationalCarbonFootprintReportDataMother::forCompanyWithTwoProperties(), CarbonFootprintReportTextsMother::forOrganization()],
         };
@@ -797,7 +1102,7 @@ final class TcpdfCarbonFootprintReportPdfGeneratorTest extends TestCase
         $translator->addLoader('xlf', new XliffFileLoader());
 
         foreach (Locale::cases() as $locale) {
-            foreach (['messages', 'scope', 'source', 'activityType', 'phase', 'exclusionReason', 'operatingRegime', 'eventSectorType', 'eventTypologyType', 'eventSizeType', 'materialityVerdictType', 'materialityCategoryStateType', 'materialityCriterionType', 'materialityAnswerValueType', 'materialityAnswerScaleType'] as $domain) {
+            foreach (['messages', 'scope', 'source', 'activityType', 'phase', 'exclusionReason', 'operatingRegime', 'eventSectorType', 'eventTypologyType', 'eventSizeType', 'materialityVerdictType', 'materialityCategoryStateType', 'materialityCriterionType', 'materialityAnswerValueType', 'materialityAnswerScaleType', 'unitType', 'providerContributionMode', 'providerContributionStatus'] as $domain) {
                 $catalogue = sprintf('%s/translations/%s+intl-icu.%s.xlf', $this->rootDirectory(), $domain, $locale->value);
 
                 if (is_file($catalogue)) {

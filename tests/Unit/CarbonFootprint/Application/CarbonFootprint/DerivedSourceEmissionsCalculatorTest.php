@@ -14,10 +14,12 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
+use App\CarbonFootprint\Domain\Model\Unit;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryActivityRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\CombustibleActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ElectricityActivityMother;
@@ -93,6 +95,37 @@ final class DerivedSourceEmissionsCalculatorTest extends TestCase
         $this->assertSame([Scope::Scope1, Scope::Scope2], array_map(static fn($line) => $line->origin->stage, $lines));
         $this->assertSame(Source::FuelAndEnergyRelated, $lines[0]->source);
         $this->assertSame('122.0', $lines[0]->emissions->co2eq());
+    }
+
+    public function testLinesCarryTheQuantityAndTheWellToTankFactorOfTheOriginActivity(): void
+    {
+        $footprint = $this->footprintWithScope1And2Activities();
+
+        $line = $this->createSUT()->lines($footprint, Scope::Scope3)[0];
+        $factor = ActivityMother::wellToTankEmissionFactor();
+
+        $this->assertSame(200.0, $line->quantity);
+        $this->assertSame(Unit::Liter, $line->unit);
+        $this->assertSame($factor->co2eq(), $line->factorCo2eq);
+        $this->assertSame($factor->unit(), $line->factorUnit);
+        $this->assertSame($factor->year(), $line->factorYear);
+        $this->assertSame($factor->source(), $line->factorSource);
+    }
+
+    public function testTheDerivedSourceIsNotCalculatedWhenTheScopeOrTheCategoryIsExcluded(): void
+    {
+        $this->assertTrue($this->createSUT()->isDerivedSourceCalculated($this->footprintWithScope1And2Activities(), Scope::Scope3));
+        $this->assertFalse($this->createSUT()->isDerivedSourceCalculated($this->footprintWithScope1And2Activities(), Scope::Scope1));
+
+        $scopeExcluded = $this->footprintWithScope1And2Activities();
+        $scopeExcluded->answerScope(Scope::Scope1);
+        $scopeExcluded->answerScope(Scope::Scope2);
+        $scopeExcluded->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable);
+        $this->assertFalse($this->createSUT()->isDerivedSourceCalculated($scopeExcluded, Scope::Scope3));
+
+        $categoryExcluded = $this->footprintWithScope1And2Activities();
+        $categoryExcluded->excludeSource(Scope::Scope3, Source::FuelAndEnergyRelated, ExclusionReason::NotSignificant);
+        $this->assertFalse($this->createSUT()->isDerivedSourceCalculated($categoryExcluded, Scope::Scope3));
     }
 
     public function testCalculateAddsUpTheNonConsolidatedPropertiesOfACompanyFootprint(): void

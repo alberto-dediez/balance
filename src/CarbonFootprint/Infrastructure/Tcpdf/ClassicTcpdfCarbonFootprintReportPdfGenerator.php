@@ -151,6 +151,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         $methodsHeader = [$this->trans('Alcance', $locale), $this->trans('Categoría', $locale), $this->trans('Método', $locale), $this->trans('Emisiones kgCO2eq', $locale), $this->trans('% de la categoría', $locale)];
         $methodsRows = $this->categoryMethodRows($data, $locale);
         $this->renderDataPage($pdf, $methodsTitle, null, $this->buildClassicTableHtml($methodsHeader, $methodsRows, ['12%', '30%', '28%', '16%', '14%']), $methodsTitle, count($methodsRows), $locale, 9);
+        $this->renderProviderContributionsPage($pdf, $data, $locale);
 
         $icons = [
             Source::FixedFacilities->value => 'fixed.jpg',
@@ -187,6 +188,10 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
                 : $this->buildClassicTableHtml($header, $rows, $widths, $groupHeaderCells, $hasTotal);
 
             $this->renderDataPage($pdf, $title, $icons[$source->value] ?? null, $tableHtml, $title, count($rows), $locale, isSourceData: true);
+
+            if ($isNonConsolidated && [] !== $rows) {
+                $this->writeClassicNote($pdf, $this->minimumBoundaryNote($locale));
+            }
         }
 
         $this->renderFootprintPage($pdf, $data, $locale);
@@ -200,6 +205,33 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         $this->renderMaterialityAnnexPages($pdf, $data, $texts, $locale);
     }
 
+    private function renderProviderContributionsPage(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
+    {
+        if ($data->scope3Excluded) {
+            return;
+        }
+
+        $title = $this->trans('Aportaciones de proveedores', $locale);
+        [$header, $rows, $widths] = $this->providerContributionRows($data, $locale);
+
+        if ([] === $rows) {
+            $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml([$this->trans('No se han registrado aportaciones de proveedores', $locale)], []), $title, 0, $locale);
+
+            return;
+        }
+
+        $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml($header, $rows, $widths, lastRowIsTotal: true), $title, count($rows), $locale, 9);
+        $this->writeClassicNote($pdf, implode(' ', $this->supplierDataShareRow($data, $locale)) . '. ' . $this->trans('Las aportaciones descartadas no se contabilizan en el inventario', $locale));
+    }
+
+    private function writeClassicNote(ReportTcpdf $pdf, string $text): void
+    {
+        $pdf->Ln(2);
+        $pdf->setX(self::TABLE_LEFT);
+        $this->setFont($pdf, 8.5, self::FONT_STYLE_REGULAR, self::COLOR_PRIMARY);
+        $pdf->MultiCell(self::TABLE_WIDTH, 4.5, $text, 0, 'L');
+    }
+
     private function renderMaterialityAnnexPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, Locale $locale): void
     {
         $title = $this->trans('Anexo: análisis de materialidad del alcance 3', $locale);
@@ -211,19 +243,26 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
             $this->renderTextPage($pdf, $title, $statement, 'context.jpg');
         }
 
-        if (null === $annex || (null !== $statement && !$annex->hasDecisions)) {
+        if (null === $annex) {
             return;
         }
 
         if (null === $statement) {
             $this->renderTextPage($pdf, $title, $this->materialityMethodologyParagraph($annex, $locale), 'context.jpg');
+        }
+
+        if ($annex->hasAssessment()) {
             $traceabilityRows = $this->materialityTraceabilityRows($annex, $locale);
             $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $traceabilityRows, ['40%', '60%']), $captionPrefix . ' · ' . $this->trans('Trazabilidad', $locale), count($traceabilityRows), $locale, 9);
+        }
 
-            if ($annex->showsAnswers()) {
-                $questionRows = $this->materialityQuestionRows($annex, $locale);
-                $this->renderDataPage($pdf, $this->trans('Preguntas del análisis de materialidad', $locale), null, $this->buildClassicTableHtml($this->materialityQuestionHeader($locale), $questionRows, ['18%', '52%', '15%', '15%']), $captionPrefix . ' · ' . $this->trans('Preguntas', $locale), count($questionRows), $locale, 9);
-            }
+        if (null !== $statement && !$annex->hasDecisions) {
+            return;
+        }
+
+        if (null === $statement && $annex->showsAnswers()) {
+            $questionRows = $this->materialityQuestionRows($annex, $locale);
+            $this->renderDataPage($pdf, $this->trans('Preguntas del análisis de materialidad', $locale), null, $this->buildClassicTableHtml($this->materialityQuestionHeader($locale), $questionRows, ['18%', '52%', '15%', '15%']), $captionPrefix . ' · ' . $this->trans('Preguntas', $locale), count($questionRows), $locale, 9);
         }
 
         $this->renderDataPage($pdf, $this->trans('Resultado por categoría', $locale), null, $this->buildMaterialityMatrixHtml($annex, $locale, ['7%', '27%', '12%', '10%', '14%', '16%', '14%']), $captionPrefix . ' · ' . $this->trans('Resultado por categoría', $locale), count($annex->topics), $locale, 8);
@@ -284,6 +323,9 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
     private function renderUncertaintyPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, CarbonFootprintReportTexts $texts, Locale $locale): void
     {
         $title = $this->trans('Incertidumbre y calidad de los datos', $locale);
+
+        $surveyRows = $this->employeeSurveyRows($data, $locale);
+        $this->renderDataPage($pdf, $title, null, $this->buildClassicTableHtml([$this->trans('Dato', $locale), $this->trans('Valor', $locale)], $surveyRows, ['40%', '60%']), $this->trans('Encuesta de desplazamientos de empleados', $locale), count($surveyRows), $locale, 9);
 
         $header = [$this->trans('Alcance', $locale), $this->trans('Categoría', $locale), $this->trans('Calidad de los datos', $locale), $this->trans('Observación', $locale)];
         $rows = $this->dataQualityRows($data, $locale);
@@ -450,12 +492,13 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
         $pdf->setXY(self::MARGIN_LEFT, self::TEXT_TOP);
         $pdf->MultiCell(100, 8, $title, 0, 'L');
 
-        $excluded = [];
-        foreach ($data->exclusionLines as $line) {
-            if (null !== $line->source) {
-                $excluded[$line->scope->value . '|' . $line->source->value] = true;
-            }
-        }
+        $suffixes = [
+            self::INCLUDED_CALCULATED => '',
+            self::INCLUDED_WITHOUT_ACTIVITY => ' ' . $this->trans('(sin actividad declarada)', $locale),
+            self::INCLUDED_EXCLUDED => ' ' . $this->trans('(excluida)', $locale),
+            self::INCLUDED_NOT_APPLICABLE => ' ' . $this->trans('(no aplicable)', $locale),
+        ];
+        $entries = $this->includedEmissionsEntries($data, $locale);
 
         $icons = [Scope::Scope1->value => 'cars.jpg', Scope::Scope2->value => 'lighting.jpg', Scope::Scope3->value => 'scope3.jpg'];
         $blockTop = 70.0;
@@ -473,9 +516,10 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
             if (Scope::Scope3 === $scope && $data->scope3Excluded) {
                 $labels[] = $this->trans('Alcance completo', $locale) . ' ' . $this->trans('(excluido)', $locale);
             } else {
-                foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
-                    $labels[] = $this->sourceLabel($source, $locale)
-                        . (isset($excluded[$scope->value . '|' . $source->value]) ? ' ' . $this->trans('(excluida)', $locale) : '');
+                foreach ($entries as $entry) {
+                    if ($entry['scope'] === $scope) {
+                        $labels[] = $entry['label'] . $suffixes[$entry['status']];
+                    }
                 }
             }
 
@@ -681,7 +725,7 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
     private function renderEventResultsPages(ReportTcpdf $pdf, EventCarbonFootprintReportData $data, Locale $locale): void
     {
-        $totalsRows = $this->emissionsRows($data->totalEmissions);
+        $totalsRows = $this->emissionsRows($data->totalEmissions, $locale);
         $totalsRows[] = [$this->trans('CO₂eq por asistente (kg)', $locale), $this->number($data->emissionsPerAttendee->co2eq())];
         array_push($totalsRows, ...$this->eventDualReportingRows($data, $locale));
         $this->renderDataPage($pdf, $this->trans('Resultados', $locale), 'cars.jpg', $this->buildClassicTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), $this->trans('Resultados', $locale), count($totalsRows), $locale);
@@ -706,9 +750,15 @@ final class ClassicTcpdfCarbonFootprintReportPdfGenerator implements CarbonFootp
 
     private function renderOrganizationalResultsPages(ReportTcpdf $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
     {
-        $totalsRows = $this->emissionsRows($data->totalEmissions);
+        $totalsRows = $this->emissionsRows($data->totalEmissions, $locale);
         array_push($totalsRows, ...$this->organizationalDualReportingRows($data, $locale));
         $this->renderDataPage($pdf, $this->trans('Resultados', $locale), null, $this->buildClassicTableHtml([$this->trans('Magnitud', $locale), $this->trans('Valor', $locale)], $totalsRows), $this->trans('Resultados', $locale), count($totalsRows), $locale);
+
+        $co2eqOnlyNote = $this->co2eqOnlyNote($data, $locale);
+
+        if (null !== $co2eqOnlyNote) {
+            $this->writeClassicNote($pdf, $co2eqOnlyNote);
+        }
 
         $scopeRows = $this->scopeRows($data, $locale);
         $this->renderDataPage($pdf, $this->trans('Emisiones por alcance', $locale), null, $this->buildClassicTableHtml([$this->trans('Alcance', $locale), 'CO₂eq (kg)', $this->trans('% del total', $locale)], $scopeRows), $this->trans('Emisiones por alcance', $locale), count($scopeRows), $locale);

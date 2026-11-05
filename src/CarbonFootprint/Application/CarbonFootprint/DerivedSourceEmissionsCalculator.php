@@ -18,6 +18,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
+use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 
@@ -69,8 +70,7 @@ final class DerivedSourceEmissionsCalculator
     /** @return list<DerivedSourceLine> */
     public function lines(CarbonFootprint $carbonFootprint, CalculationStage $stage): array
     {
-        if (!in_array(Source::FuelAndEnergyRelated, $this->derivedSources($stage), true)
-            || !$this->isCalculated($carbonFootprint, $stage, Source::FuelAndEnergyRelated)) {
+        if (!$this->isDerivedSourceCalculated($carbonFootprint, $stage)) {
             return [];
         }
 
@@ -78,8 +78,9 @@ final class DerivedSourceEmissionsCalculator
 
         foreach ($this->fuelAndEnergyActivities($carbonFootprint) as [$activity, $placement]) {
             $emissions = $this->wellToTankEmissions($activity);
+            $factor = $this->wellToTankEmissionFactor($activity);
 
-            if (null === $emissions || (float) $emissions->co2eq() <= 0.0) {
+            if (null === $emissions || null === $factor || (float) $emissions->co2eq() <= 0.0) {
                 continue;
             }
 
@@ -89,10 +90,22 @@ final class DerivedSourceEmissionsCalculator
                 activityType: ActivityType::fromActivity($activity),
                 emissions: $emissions,
                 activityId: $activity->id(),
+                quantity: $activity->quantity()->value(),
+                unit: $activity->quantity()->unit(),
+                factorCo2eq: $factor->co2eq(),
+                factorUnit: $factor->unit(),
+                factorYear: $factor->year(),
+                factorSource: $factor->source(),
             );
         }
 
         return $lines;
+    }
+
+    public function isDerivedSourceCalculated(CarbonFootprint $carbonFootprint, CalculationStage $stage): bool
+    {
+        return in_array(Source::FuelAndEnergyRelated, $this->derivedSources($stage), true)
+            && $this->isCalculated($carbonFootprint, $stage, Source::FuelAndEnergyRelated);
     }
 
     /** @return list<Source> */
@@ -140,6 +153,16 @@ final class DerivedSourceEmissionsCalculator
         }
 
         return $activities;
+    }
+
+    private function wellToTankEmissionFactor(Activity $activity): ?EmissionFactor
+    {
+        return match (true) {
+            $activity instanceof CombustibleActivity,
+            $activity instanceof MachineryFuelActivity,
+            $activity instanceof ElectricityActivity => $activity->wellToTankEmissionFactor(),
+            default => null,
+        };
     }
 
     private function wellToTankEmissions(Activity $activity): ?Emissions

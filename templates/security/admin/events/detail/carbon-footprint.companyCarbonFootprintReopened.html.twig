@@ -1,0 +1,4 @@
+{% trans with {
+    '{user}': element.userId | user_name,
+    '{footprint}': event.companyCarbonFootprintId ~ ''
+} %}{user} ha reabierto la huella de carbono {footprint}{% endtrans %}

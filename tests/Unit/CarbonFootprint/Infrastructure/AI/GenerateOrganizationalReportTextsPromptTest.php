@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateOrganizationalReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\AI\AiModelTier;
@@ -79,6 +81,86 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringContainsString('already calculated results', $prompt->text());
     }
 
+    public function testTheGasesOfTheTotalAreSentInKilograms(): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::forProperty();
+        $data = new OrganizationalCarbonFootprintReportData(...array_merge(get_object_vars($data), ['totalEmissions' => new Emissions('3930', '3900', '5000', '2000')]));
+
+        $text = new GenerateOrganizationalReportTextsPrompt($data, Locale::English)->text();
+
+        $this->assertStringContainsString('Total emissions: 3930 kg CO2eq, 3900 kg CO2, 5 kg CH4, 2 kg N2O', $text);
+    }
+
+    public function testAPrecalculatedFootprintDoesNotSendTheLocationBasedTotal(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::precalculated(), Locale::English)->text();
+
+        $this->assertStringNotContainsString('Location-based total emissions:', $text);
+    }
+
+    public function testTheCo2eqOnlyActivitiesAreDeclared(): void
+    {
+        $this->assertStringContainsString('accounted only in CO2eq', new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::precalculated(), Locale::English)->text());
+        $this->assertStringNotContainsString('accounted only in CO2eq', new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::English)->text());
+    }
+
+    public function testTheBaseYearIsSentWithItsVariationAndThreshold(): void
+    {
+        $data = OrganizationalCarbonFootprintReportDataMother::withBaseYear(OrganizationalCarbonFootprintReportDataMother::withScope3(), OrganizationalCarbonFootprintReportDataMother::baseYear(baseYearTotalKgCo2eq: '8000'));
+
+        $text = new GenerateOrganizationalReportTextsPrompt($data, Locale::English)->text();
+
+        $this->assertStringContainsString('Base year: 2023 | base-year total 8000 kg CO2eq | recalculation threshold 5 % | variation +17.75 % | exceeds: yes | justification: Primer año con datos completos', $text);
+    }
+
+    public function testAFootprintWithoutBaseYearDeclaresIt(): void
+    {
+        $this->assertStringContainsString('Base year: not declared', new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::English)->text());
+    }
+
+    public function testTheProviderContributionsAndTheSupplierDataShareAreSent(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withProviderLines(), Locale::English)->text();
+
+        $this->assertStringContainsString('- Lavandería Norte | n/a | purchased_goods_and_services | manual | answered | 2026-02-10 | 1098', $text);
+        $this->assertStringContainsString('- Catering Este | n/a | purchased_goods_and_services | requested | ignored | n/a | 0', $text);
+        $this->assertStringContainsString('Supplier data share of scope 3: 20.00 %', $text);
+    }
+
+    public function testWithoutProviderContributionsTheTextDeclaresIt(): void
+    {
+        $this->assertStringContainsString('Provider contributions: none registered', new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3(), Locale::English)->text());
+        $this->assertStringNotContainsString('Provider contributions', new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withScope3Excluded(), Locale::English)->text());
+    }
+
+    public function testAnAssessmentCompletedBeforeTheVerdictsIsDeclared(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutVerdicts(), Locale::English)->text();
+
+        $this->assertStringContainsString('completed before the automatic verdicts were activated', $text);
+        $this->assertStringNotContainsString('No materiality assessment was performed for this footprint', $text);
+    }
+
+    public function testAnAssessmentCompletedBeforeTheVerdictsDoesNotAskToDenyTheAssessmentInTheRegulatoryContext(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutVerdicts(), Locale::English)->text();
+
+        $this->assertStringNotContainsString('no materiality assessment was performed', $text);
+        $this->assertStringContainsString('state that the materiality assessment was completed before the automatic verdicts were activated and that scope 3 exclusions rely on the reason and comment declared for each excluded source; never add reasons that are not listed.', $text);
+    }
+
+    public function testAnAssessmentCompletedWithoutScope3TopicsIsDeclared(): void
+    {
+        $text = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutScope3Topics(), Locale::English)->text();
+
+        $this->assertStringContainsString('The materiality assessment was completed without scope 3 categories', $text);
+        $this->assertStringContainsString('state that the materiality assessment was completed without scope 3 categories and that scope 3 exclusions rely on the reason and comment declared for each excluded source; never add reasons that are not listed.', $text);
+        $this->assertStringNotContainsString('completed before the automatic verdicts were activated', $text);
+        $this->assertStringNotContainsString('No materiality assessment was performed for this footprint', $text);
+        $this->assertStringNotContainsString('no materiality assessment was performed', $text);
+        $this->assertStringNotContainsString('scope 3 exclusions follow the materiality assessment', $text);
+    }
+
     public function testAFootprintNotPrecalculatedDoesNotDeclareAlreadyCalculatedResults(): void
     {
         $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::English);
@@ -145,7 +227,7 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $this->assertStringContainsString('distance-based', $text);
         $this->assertStringContainsString('- MITECO | 2025 | 2 | 1430.00', $text);
         $this->assertStringContainsString('- DEFRA | 2024 | 1 | 900.00', $text);
-        $this->assertStringContainsString('Employee survey: 40 employees, 25 answers, confidence level 95 %, margin of error 6.50 %', $text);
+        $this->assertStringContainsString('Employee survey: 40 employees, 25 answers, participation rate 62.50 %, confidence level 95 %, margin of error 6.50 %', $text);
     }
 
     public function testTextIncludesTheOrganizationalBoundaryOfACompany(): void
@@ -166,7 +248,7 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
     {
         $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::withMixedMethods(), Locale::English);
 
-        $this->assertStringContainsString('- derived_well_to_tank | n/a | 2 | 590.00', $prompt->text());
+        $this->assertStringContainsString('- derived_well_to_tank (DEFRA) | 2024, 2025 | 2 | 590.00', $prompt->text());
     }
 
     public function testAPropertyWhoseCategoryIsExcludedIsOutsideTheCalculation(): void

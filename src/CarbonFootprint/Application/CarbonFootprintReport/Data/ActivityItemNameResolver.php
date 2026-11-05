@@ -25,6 +25,7 @@ use App\CarbonFootprint\Domain\Model\Activity\TransportActivity;
 use App\CarbonFootprint\Domain\Model\Activity\UseProfileActivity;
 use App\CarbonFootprint\Domain\Model\Activity\WasteActivity;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
+use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ActivityItemNameResolver
@@ -37,7 +38,7 @@ final class ActivityItemNameResolver
         private TranslatorInterface $translator,
     ) {}
 
-    public function resolve(Activity $activity, int $year, ?EmissionFactorGroupId $emissionFactorGroupId): string
+    public function resolve(Activity $activity, int $year, ?EmissionFactorGroupId $emissionFactorGroupId, ?Locale $locale = null): string
     {
         if ($activity instanceof ReportedEmissionsActivity) {
             return $activity->description();
@@ -47,12 +48,12 @@ final class ActivityItemNameResolver
         $itemId = $this->itemId($activity);
 
         if (null === $itemId) {
-            return $this->translator->trans($activityType->value, [], 'messages');
+            return $this->translator->trans($activityType->value, [], 'messages', $locale?->value);
         }
 
         $names = $this->namesFor($activityType, $year, $emissionFactorGroupId);
 
-        return $names[$itemId] ?? $this->translator->trans($activityType->value, [], 'messages');
+        return $names[$itemId] ?? $this->translator->trans($activityType->value, [], 'messages', $locale?->value);
     }
 
     /** @return array<string, string> */

@@ -6,6 +6,7 @@ namespace App\Tests\Unit\CarbonFootprint\Infrastructure\DataExchange;
 
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\Export\CarbonFootprintDetailRowsBuilder;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ProviderNameResolver;
 use App\CarbonFootprint\Application\EventCarbonFootprint\EventCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\EventCarbonFootprint\Export\EventCarbonFootprintDetailExportFilter;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
@@ -234,7 +235,7 @@ class EventCarbonFootprintDetailExportationTypeTest extends TestCase
                 $countedActivityReferences,
                 $this->itemNameResolver(),
                 new DerivedSourceEmissionsCalculator($this->activityRepository, $countedActivityReferences),
-                $this->providerRepository,
+                new ProviderNameResolver($this->providerRepository),
                 PropertyRepositoryMother::inMemory(),
                 new InMemoryUserRepository(),
             ),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\OrganizationalCarbonFootprintReportLinesBuilder;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ProviderNameResolver;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
@@ -174,7 +175,7 @@ class OrganizationalCarbonFootprintReportLinesBuilderTest extends TestCase
         return new OrganizationalCarbonFootprintReportLinesBuilder(
             $this->activityRepository,
             $this->itemNameResolver(),
-            $this->providerRepository,
+            new ProviderNameResolver($this->providerRepository),
             CountedActivityReferencesMother::create($this->contributionRepository),
             new FakeTranslator(),
         );

@@ -27,7 +27,7 @@ final class TcpdfJustifiedExclusionsDocumentPdfGeneratorTest extends TestCase
         yield 'company materiality override es' => ['company-materiality-override', Locale::Spanish, 3];
         yield 'property materiality reopened es' => ['property-materiality-reopened', Locale::Spanish, 3];
         yield 'property scope 3 excluded materiality es' => ['property-scope-3-excluded-materiality', Locale::Spanish, 3];
-        yield 'property without materiality es' => ['property-without-materiality', Locale::Spanish, 2];
+        yield 'property without materiality es' => ['property-without-materiality', Locale::Spanish, 3];
     }
 
     /** @dataProvider documents */
@@ -48,8 +48,8 @@ final class TcpdfJustifiedExclusionsDocumentPdfGeneratorTest extends TestCase
             $this->assertStringEndsWith("%%EOF\n", $contents);
             $this->assertGreaterThanOrEqual($minimumPages, $pages);
 
-            if (2 === $minimumPages) {
-                $this->assertSame(2, $pages);
+            if ('property-without-materiality' === $type) {
+                $this->assertSame(3, $pages);
             }
 
             $this->assertNotContains('Análisis', $translator->ids);
@@ -63,6 +63,38 @@ final class TcpdfJustifiedExclusionsDocumentPdfGeneratorTest extends TestCase
         } finally {
             @unlink($path);
         }
+    }
+
+    public function testAnAssessmentCompletedBeforeTheVerdictsIsDeclared(): void
+    {
+        $translator = $this->recordingTranslator();
+
+        @unlink(new TcpdfJustifiedExclusionsDocumentPdfGenerator($translator)->generate(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutVerdicts(), Locale::Spanish, PdfBranding::bioscore('Hotel Sol')));
+
+        $this->assertContains('La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.', $translator->ids);
+    }
+
+    public function testAnAssessmentCompletedWithoutScope3TopicsIsDeclared(): void
+    {
+        $translator = $this->recordingTranslator();
+
+        @unlink(new TcpdfJustifiedExclusionsDocumentPdfGenerator($translator)->generate(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentCompletedWithoutScope3Topics(), Locale::Spanish, PdfBranding::bioscore('Hotel Sol')));
+
+        $this->assertContains('La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.', $translator->ids);
+        $this->assertContains('Identificador de la evaluación', $translator->ids);
+        $this->assertNotContains('La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.', $translator->ids);
+        $this->assertNotContains('No se ha realizado un análisis de materialidad para esta huella. Las exclusiones del alcance 3 se sustentan únicamente en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.', $translator->ids);
+        $this->assertNotContains('Metodología del análisis de materialidad', $translator->ids);
+        $this->assertNotContains('Resultado por categoría', $translator->ids);
+    }
+
+    public function testAMissingHighMagnitudeRuleIsDeclared(): void
+    {
+        $translator = $this->recordingTranslator();
+
+        @unlink(new TcpdfJustifiedExclusionsDocumentPdfGenerator($translator)->generate(OrganizationalCarbonFootprintReportDataMother::withMaterialityAssessmentWithoutHighMagnitudeRule(), Locale::Spanish, PdfBranding::bioscore('Hotel Sol')));
+
+        $this->assertContains('Regla de magnitud alta: no registrada en la evaluación.', $translator->ids);
     }
 
     /** @return iterable<string, array{0: string}> */

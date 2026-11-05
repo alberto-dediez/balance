@@ -49,6 +49,15 @@ final class TcpdfPropertyCarbonFootprintCertificatePdfGeneratorTest extends Test
         $this->assertPreviewIsAPdf(PropertyCarbonFootprintCertificateDataMother::standard(), Locale::Spanish, 'marca-blanca', $branding);
     }
 
+    public function testTheFooterDeclaresTheScopesOfTheCalculation(): void
+    {
+        $generator = $this->generator();
+        $footerNotice = new \ReflectionMethod($generator, 'footerNotice');
+
+        $this->assertStringContainsString('conforme a los alcances 1, 2 y 3 del GHG Protocol', (string) $footerNotice->invoke($generator, PropertyCarbonFootprintCertificateDataMother::standard(), Locale::Spanish));
+        $this->assertStringContainsString('conforme a los alcances 1 y 2 del GHG Protocol (alcance 3 excluido del cálculo', (string) $footerNotice->invoke($generator, PropertyCarbonFootprintCertificateDataMother::scope3Excluded(), Locale::Spanish));
+    }
+
     private function assertPreviewIsAPdf(PropertyCarbonFootprintCertificateData $data, Locale $locale, string $name, ?PdfBranding $branding = null): void
     {
         $path = $this->generator()->generate($data, $locale, $branding ?? PdfBranding::bioscore());

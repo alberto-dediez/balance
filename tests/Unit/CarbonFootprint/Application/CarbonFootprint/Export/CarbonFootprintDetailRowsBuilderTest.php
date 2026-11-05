@@ -18,6 +18,7 @@ use App\CarbonFootprint\Application\CarbonFootprint\Export\CarbonFootprintDetail
 use App\CarbonFootprint\Application\CarbonFootprint\Export\CarbonFootprintDetailRowsBuilder;
 use App\CarbonFootprint\Application\CarbonFootprint\Export\CarbonFootprintDetailRowType;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ProviderNameResolver;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\Activity\ItemCondition;
@@ -196,6 +197,76 @@ class CarbonFootprintDetailRowsBuilderTest extends TestCase
             [CarbonFootprintDetailRowType::Activity, CarbonFootprintDetailRowType::Exclusion],
             array_map(static fn(CarbonFootprintDetailRow $row): CarbonFootprintDetailRowType => $row->rowType, $rows),
         );
+    }
+
+    public function testTheWellToTankOfAScope1ActivityIsEmptyWhenTheFuelAndEnergyCategoryIsExcluded(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::from('P-1', (string) PropertyCarbonFootprintId::generate());
+        $combustible = $this->save(CombustibleActivityMother::registeredWithWellToTank());
+        $footprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $footprint->excludeSource(Scope::Scope3, Source::FuelAndEnergyRelated, ExclusionReason::NotSignificant);
+
+        $rows = $this->createSUT()->build($footprint);
+
+        $this->assertSame(CarbonFootprintDetailRowType::Activity, $rows[0]->rowType);
+        $this->assertNull($rows[0]->wellToTankCo2eq);
+    }
+
+    public function testTheWellToTankOfAScope1ActivityIsEmptyWhenTheScope3IsExcluded(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withScope2Answered('P-1', (string) PropertyCarbonFootprintId::generate());
+        $combustible = $this->save(CombustibleActivityMother::registeredWithWellToTank());
+        $footprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+        $footprint->excludeStage(Scope::Scope3, ExclusionReason::NoDataAvailable, 'Sin datos');
+
+        $rows = $this->createSUT()->build($footprint);
+
+        $this->assertSame(CarbonFootprintDetailRowType::Activity, $rows[0]->rowType);
+        $this->assertNull($rows[0]->wellToTankCo2eq);
+    }
+
+    public function testAnActivityRowOfTheScope3CarriesTheMaterialityDecisionOfItsCategory(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([MaterialityDecisionInputMother::calculate(1, 62.5)]);
+        $material = $this->save(MaterialActivityMother::registered());
+        $footprint->addActivity($material->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+
+        $row = $this->rowsByActivityId($this->createSUT()->build($footprint))[(string) $material->id()];
+
+        $this->assertSame(MaterialityVerdict::Calculate, $row->materialityVerdict);
+        $this->assertSame(62.5, $row->materialityScorePercent);
+        $this->assertSame(50, $row->materialityThresholdPercent);
+        $this->assertNull($row->materialityOverride);
+    }
+
+    public function testAnOverrideThatKeepsTheCategoryActiveIsExportedInItsActivityRows(): void
+    {
+        $user = UserMother::fromUsernameAndRole('agarcia', Role::Owner);
+        $this->users->add($user);
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([MaterialityDecisionInputMother::omit(1, 10.0)]);
+        $footprint->includeSource(Scope::Scope3, Source::PurchasedGoodsAndServices);
+        $footprint->overrideMaterialityDecision(Source::PurchasedGoodsAndServices, $user->id(), 'Exigencia del cliente');
+        $material = $this->save(MaterialActivityMother::registered());
+        $footprint->addActivity($material->id(), new ActivityPlacement(Scope::Scope3, Source::PurchasedGoodsAndServices));
+
+        $row = $this->rowsByActivityId($this->createSUT()->build($footprint))[(string) $material->id()];
+
+        $this->assertSame(MaterialityVerdict::Omit, $row->materialityVerdict);
+        $this->assertStringStartsWith('agarcia · ', (string) $row->materialityOverride);
+        $this->assertStringEndsWith(' · Exigencia del cliente', (string) $row->materialityOverride);
+    }
+
+    public function testAScope1ActivityRowCarriesNoMateriality(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([MaterialityDecisionInputMother::calculate(1)]);
+        $combustible = $this->save(CombustibleActivityMother::registered());
+        $footprint->addActivity($combustible->id(), new ActivityPlacement(Scope::Scope1, Source::FixedFacilities));
+
+        $row = $this->rowsByActivityId($this->createSUT()->build($footprint))[(string) $combustible->id()];
+
+        $this->assertNull($row->materialityVerdict);
+        $this->assertNull($row->materialityScorePercent);
+        $this->assertNull($row->materialityOverride);
     }
 
     public function testBuildsTheNonConsolidatedPropertyRowsAndThePropertyOfTheActivitiesOfACompanyFootprint(): void
@@ -540,7 +611,7 @@ class CarbonFootprintDetailRowsBuilderTest extends TestCase
             $countedActivityReferences,
             $this->detailItemNameResolver(),
             new DerivedSourceEmissionsCalculator($this->activityRepository, $countedActivityReferences),
-            $this->providerRepository,
+            new ProviderNameResolver($this->providerRepository),
             $this->propertyRepository,
             $this->users,
         );

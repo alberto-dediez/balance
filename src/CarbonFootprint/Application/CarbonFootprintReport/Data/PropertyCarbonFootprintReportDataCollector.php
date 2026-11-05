@@ -6,9 +6,11 @@ namespace App\CarbonFootprint\Application\CarbonFootprintReport\Data;
 
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
+use App\CarbonFootprint\Domain\Model\BaseYearDeclaration\BaseYearDeclarationRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportSubjectType;
+use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportBaseYear;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportEmployeeSurvey;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
@@ -35,6 +37,9 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
         private OrganizationalEmployeeParticipationRepository $employeeParticipationRepository,
         private MaterialityAnnexBuilder $materialityAnnexBuilder,
+        private BaseYearDeclarationRepository $baseYearDeclarationRepository,
+        private ProviderContributionsReportBuilder $providerContributionsReportBuilder,
+        private ProviderNameResolver $providerNameResolver,
     ) {}
 
     public function supports(CarbonFootprintReportSubjectType $subjectType): bool
@@ -49,6 +54,8 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
 
     public function collectByCarbonFootprintId(string $carbonFootprintId, ?Locale $locale = null): CarbonFootprintReportData
     {
+        $this->providerNameResolver->reset();
+
         $propertyCarbonFootprint = $this->propertyCarbonFootprintRepository->find(new PropertyCarbonFootprintId($carbonFootprintId));
 
         if (null === $propertyCarbonFootprint) {
@@ -91,7 +98,7 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             emissionsByScope: $breakdown->byStage,
             emissionsByScopeAndSource: $breakdown->byStageAndSource,
             emissionsByProperty: [],
-            activityLines: $this->linesBuilder->activityLines($propertyCarbonFootprint, []),
+            activityLines: $this->linesBuilder->activityLines($propertyCarbonFootprint, [], $locale),
             exclusionLines: $this->linesBuilder->exclusionLines($propertyCarbonFootprint),
             mitigationPlan: $this->mitigationPlanBuilder->build(CarbonFootprintReportSubjectType::Property, $propertyCarbonFootprint, $locale),
             scope3Excluded: $propertyCarbonFootprint->isStageExcluded(Scope::Scope3),
@@ -104,6 +111,24 @@ final class PropertyCarbonFootprintReportDataCollector implements CarbonFootprin
             operatingRegime: $property->operatingRegime(),
             employeeSurvey: null === $employeeParticipation ? null : OrganizationalCarbonFootprintReportEmployeeSurvey::fromParticipation($employeeParticipation),
             materialityAnnex: $this->materialityAnnexBuilder->build($propertyCarbonFootprint, CarbonFootprintReportSubjectType::Property),
+            baseYear: $this->baseYearOf(CarbonFootprintReportSubjectType::Property, (string) $property->id()),
+            providerLines: $this->providerContributionsReportBuilder->build($propertyCarbonFootprint, CarbonFootprintReportSubjectType::Property, []),
+        );
+    }
+
+    private function baseYearOf(CarbonFootprintReportSubjectType $subjectType, string $subjectId): ?OrganizationalCarbonFootprintReportBaseYear
+    {
+        $declaration = $this->baseYearDeclarationRepository->findBySubject($subjectType, $subjectId);
+
+        if (null === $declaration) {
+            return null;
+        }
+
+        return new OrganizationalCarbonFootprintReportBaseYear(
+            year: $declaration->year(),
+            baseYearTotalKgCo2eq: $declaration->baseYearTotalKgCo2eq(),
+            recalculationThresholdPercent: $declaration->recalculationThresholdPercent(),
+            justification: $declaration->justification(),
         );
     }
 }

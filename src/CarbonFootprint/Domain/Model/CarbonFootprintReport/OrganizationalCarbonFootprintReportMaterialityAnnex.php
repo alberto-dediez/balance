@@ -44,6 +44,10 @@ final readonly class OrganizationalCarbonFootprintReportMaterialityAnnex
             return true;
         }
 
+        if ($this->hasNoScope3Topics()) {
+            return false;
+        }
+
         foreach ($this->assessment->topics ?? [] as $topic) {
             if (null !== $topic->verdict) {
                 return false;
@@ -51,6 +55,26 @@ final readonly class OrganizationalCarbonFootprintReportMaterialityAnnex
         }
 
         return true;
+    }
+
+    public function isCompletedWithoutVerdicts(): bool
+    {
+        if ($this->hasDecisions || !$this->showsAnswers() || $this->hasNoScope3Topics()) {
+            return false;
+        }
+
+        foreach ($this->assessment->topics ?? [] as $topic) {
+            if (null !== $topic->verdict) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function hasNoScope3Topics(): bool
+    {
+        return !$this->hasDecisions && $this->showsAnswers() && [] === $this->assessment?->topics;
     }
 
     public function requestsNarrative(bool $scope3Excluded): bool

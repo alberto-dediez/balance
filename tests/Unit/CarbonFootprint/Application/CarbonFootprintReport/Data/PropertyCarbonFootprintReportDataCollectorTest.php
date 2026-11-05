@@ -14,24 +14,30 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReport
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintId;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryEmissionFactorGroupRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyCarbonFootprintRepository;
+use App\EventOperations\Domain\Model\Provider\ProviderId;
 use App\Property\Domain\Model\Property\OperatingRegime;
+use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\BaseYearDeclaration\BaseYearDeclarationMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\MaterialityAssessmentSnapshotMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalEmployeeParticipation\OrganizationalEmployeeParticipationMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\OrganizationalProviderContribution\OrganizationalProviderContributionMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepositoryMother;
+use App\Tests\Unit\EventOperations\Domain\Model\Provider\ProviderMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Country\CountryMother;
@@ -89,6 +95,9 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
             $this->materialityAnnexBuilder(),
+            $this->baseYearDeclarations,
+            $this->providerContributionsReportBuilder(),
+            $this->providerNameResolver,
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
@@ -189,6 +198,9 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
             $this->materialityAnnexBuilder(),
+            $this->baseYearDeclarations,
+            $this->providerContributionsReportBuilder(),
+            $this->providerNameResolver,
         );
 
         $data = $sut->collect(CarbonFootprintReportMother::registeredFor(CarbonFootprintReportSubjectType::Property, (string) $footprint->id()));
@@ -302,6 +314,105 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
         $this->assertEquals($data, $byId);
     }
 
+    public function testIncludesTheBaseYearDeclaredForTheProperty(): void
+    {
+        [$footprints, $properties, $emissionFactorGroups, $property, $footprint] = $this->scope3Footprint();
+        $this->baseYearDeclarations->add(BaseYearDeclarationMother::declared(subjectId: (string) $property->id(), year: 2023, total: '8000', threshold: '7.5'));
+        $this->baseYearDeclarations->add(BaseYearDeclarationMother::declared(subjectId: 'another-property', year: 2020));
+
+        $data = $this->collectorFor($footprints, $properties, $emissionFactorGroups)->collectByCarbonFootprintId((string) $footprint->id());
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $data);
+        $this->assertNotNull($data->baseYear);
+        $this->assertSame(2023, $data->baseYear->year);
+        $this->assertSame('8000', $data->baseYear->baseYearTotalKgCo2eq);
+        $this->assertSame('7.5', $data->baseYear->recalculationThresholdPercent);
+    }
+
+    public function testWithoutDeclarationThereIsNoBaseYear(): void
+    {
+        [$footprints, $properties, $emissionFactorGroups, , $footprint] = $this->scope3Footprint();
+        $this->baseYearDeclarations->add(BaseYearDeclarationMother::declared(subjectId: 'another-property', year: 2020));
+
+        $data = $this->collectorFor($footprints, $properties, $emissionFactorGroups)->collectByCarbonFootprintId((string) $footprint->id());
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $data);
+        $this->assertNull($data->baseYear);
+    }
+
+    public function testIncludesTheProviderContributions(): void
+    {
+        [$footprints, $properties, $emissionFactorGroups, , $footprint] = $this->scope3Footprint();
+        $provider = ProviderMother::fromNameAndAccountAndId('Logística Sur', 'account-id', (string) ProviderId::generate());
+        $this->providers->add($provider);
+        $footprint->addActivity($this->transportActivity('300')->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $provider->id()));
+        $contribution = OrganizationalProviderContributionMother::manual(carbonFootprintId: (string) $footprint->id(), providerId: (string) $provider->id());
+        $contribution->answer();
+        $this->providerContributions->add($contribution);
+
+        $data = $this->collectorFor($footprints, $properties, $emissionFactorGroups)->collectByCarbonFootprintId((string) $footprint->id());
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $data);
+        $this->assertCount(1, $data->providerLines);
+        $this->assertSame('Logística Sur', $data->providerLines[0]->providerName);
+        $this->assertNull($data->providerLines[0]->propertyName);
+        $this->assertSame([Source::UpstreamTransport], $data->providerLines[0]->sources);
+        $this->assertSame(300.0, (float) $data->providerLines[0]->emissionsCo2eq);
+    }
+
+    public function testResolvesTheCurrentProviderNamesOnEachCollection(): void
+    {
+        [$footprints, $properties, $emissionFactorGroups, , $footprint] = $this->scope3Footprint();
+        $providerId = (string) ProviderId::generate();
+        $provider = ProviderMother::fromNameAndAccountAndId('Logística Sur', 'account-id', $providerId);
+        $this->providers->add($provider);
+        $footprint->addActivity($this->transportActivity('300')->id(), new ActivityPlacement(Scope::Scope3, Source::UpstreamTransport, providerId: $provider->id()));
+        $contribution = OrganizationalProviderContributionMother::manual(carbonFootprintId: (string) $footprint->id(), providerId: $providerId);
+        $contribution->answer();
+        $this->providerContributions->add($contribution);
+        $sut = $this->collectorFor($footprints, $properties, $emissionFactorGroups);
+
+        $sut->collectByCarbonFootprintId((string) $footprint->id());
+
+        $this->providers->remove($provider);
+        $this->providers->add(ProviderMother::fromNameAndAccountAndId('Transportes Norte', 'account-id', $providerId));
+
+        $data = $sut->collectByCarbonFootprintId((string) $footprint->id());
+
+        $this->assertInstanceOf(OrganizationalCarbonFootprintReportData::class, $data);
+        $this->assertSame('Transportes Norte', $data->providerLines[0]->providerName);
+    }
+
+    public function testTheEmployeesPrefixIsTranslatedInTheLocaleOfTheReport(): void
+    {
+        [$footprints, $properties, $emissionFactorGroups, , $footprint] = $this->scope3Footprint();
+        $footprint->addActivity($this->transportActivity('900')->id(), new ActivityPlacement(Scope::Scope3, Source::EmployeeCommuting, fromEmployees: true));
+        $translator = new LocaleSpyTranslator();
+        $this->linesTranslator = $translator;
+
+        $this->collectorFor($footprints, $properties, $emissionFactorGroups)->collectByCarbonFootprintId((string) $footprint->id(), Locale::English);
+
+        $this->assertSame(Locale::English->value, $translator->localeOf('Empleados'));
+    }
+
+    /** @return array{InMemoryPropertyCarbonFootprintRepository, InMemoryPropertyRepository, InMemoryEmissionFactorGroupRepository, Property, PropertyCarbonFootprint} */
+    private function scope3Footprint(): array
+    {
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel Sol', new AccountId('account-id'), new PropertyInfo(), null, null);
+        $properties = PropertyRepositoryMother::inMemory();
+        $properties->add($property);
+
+        $emissionFactorGroups = EmissionFactorGroupRepositoryMother::inMemory();
+        $emissionFactorGroups->add(EmissionFactorGroupMother::default());
+
+        $footprint = PropertyCarbonFootprintMother::withScope3Answered((string) $property->id(), (string) PropertyCarbonFootprintId::generate(), 'account-id', 2025);
+
+        $footprints = PropertyCarbonFootprintRepositoryMother::inMemory();
+        $footprints->add($footprint);
+
+        return [$footprints, $properties, $emissionFactorGroups, $property, $footprint];
+    }
+
     public function testSupportsOnlyProperties(): void
     {
         $sut = new PropertyCarbonFootprintReportDataCollector(
@@ -316,6 +427,9 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
             $this->materialityAnnexBuilder(),
+            $this->baseYearDeclarations,
+            $this->providerContributionsReportBuilder(),
+            $this->providerNameResolver,
         );
 
         $this->assertTrue($sut->supports(CarbonFootprintReportSubjectType::Property));
@@ -336,6 +450,9 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
             $this->materialityAnnexBuilder(),
+            $this->baseYearDeclarations,
+            $this->providerContributionsReportBuilder(),
+            $this->providerNameResolver,
         );
 
         $this->expectException(\RuntimeException::class);
@@ -360,6 +477,9 @@ class PropertyCarbonFootprintReportDataCollectorTest extends TestCase
             $this->derivedSourceEmissionsCalculator(),
             $this->employeeParticipationRepository,
             $this->materialityAnnexBuilder(),
+            $this->baseYearDeclarations,
+            $this->providerContributionsReportBuilder(),
+            $this->providerNameResolver,
         );
     }
 }

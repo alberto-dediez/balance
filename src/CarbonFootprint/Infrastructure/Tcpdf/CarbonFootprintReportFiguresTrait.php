@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Infrastructure\Tcpdf;
 
+use App\CarbonFootprint\Application\Activity\ReportedEmissionsEmissionFactorSelector;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionDefinition;
@@ -22,11 +23,17 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjection;
 use App\CarbonFootprint\Domain\Model\MitigationAction\MitigationProjectionSource;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\Unit;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Tcpdf\PdfKeyFigure;
 
 trait CarbonFootprintReportFiguresTrait
 {
+    private const string INCLUDED_CALCULATED = 'Calculada';
+    private const string INCLUDED_WITHOUT_ACTIVITY = 'Sin actividad declarada';
+    private const string INCLUDED_EXCLUDED = 'Excluida';
+    private const string INCLUDED_NOT_APPLICABLE = 'No aplicable';
+
     /** @param array<string, string> $parameters */
     private function trans(string $id, Locale $locale, array $parameters = []): string
     {
@@ -41,6 +48,32 @@ trait CarbonFootprintReportFiguresTrait
     private function tonnes(string $kilograms): string
     {
         return $this->number((float) $kilograms / 1000);
+    }
+
+    private function factorNumber(string $value): string
+    {
+        $decimals = str_contains($value, '.') ? strlen(rtrim(substr($value, (int) strpos($value, '.') + 1), '0')) : 0;
+
+        return $this->number($value, min(6, max(2, $decimals)));
+    }
+
+    private function signedPercentage(float $value): string
+    {
+        return ($value < 0 ? '−' : '+') . $this->number(abs($value), 1) . ' %';
+    }
+
+    private function unitLabel(Unit $unit, Locale $locale): string
+    {
+        return $this->translator->trans($unit->value, [], 'unitType', $locale->value);
+    }
+
+    private function factorSourceLabel(?string $source, Locale $locale): string
+    {
+        return match ($source) {
+            null => '-',
+            ReportedEmissionsEmissionFactorSelector::SOURCE => $this->trans(CalculationMethod::ReportedByOrganization->label(), $locale),
+            default => $source,
+        };
     }
 
     /** @return list<PdfKeyFigure> */
@@ -143,14 +176,23 @@ trait CarbonFootprintReportFiguresTrait
     }
 
     /** @return list<list<string>> */
-    private function emissionsRows(Emissions $emissions): array
+    private function emissionsRows(Emissions $emissions, Locale $locale): array
     {
         return [
-            ['CO₂eq (kg)', $this->number($emissions->co2eq())],
-            ['CO₂ (kg)', $this->number($emissions->co2())],
-            ['CH₄ (kg)', $this->number($emissions->ch4())],
-            ['N₂O (kg)', $this->number($emissions->n2o())],
+            [$this->trans('CO₂eq (kg)', $locale), $this->number($emissions->co2eq())],
+            [$this->trans('CO₂ (kg)', $locale), $this->number($emissions->co2())],
+            [$this->trans('CH₄ (kg)', $locale), $this->number($emissions->ch4InKilograms())],
+            [$this->trans('N₂O (kg)', $locale), $this->number($emissions->n2oInKilograms())],
         ];
+    }
+
+    private function co2eqOnlyNote(OrganizationalCarbonFootprintReportData $data, Locale $locale): ?string
+    {
+        if (!$data->hasCo2eqOnlyActivities()) {
+            return null;
+        }
+
+        return $this->trans('Las fugas de gases refrigerantes y las emisiones comunicadas por la organización o sus proveedores se contabilizan solo en CO₂eq: no tienen desglose por gas y su valor se incluye en la fila de CO₂.', $locale);
     }
 
     /**
@@ -301,35 +343,83 @@ trait CarbonFootprintReportFiguresTrait
     /** @return list<list<string>> */
     private function includedEmissionsRows(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
     {
-        $rows = [];
+        return array_map(fn(array $entry): array => [
+            $this->translator->trans($entry['scope']->value, [], 'scope', $locale->value),
+            $entry['label'],
+            $this->trans($entry['status'], $locale),
+            $entry['reason'],
+            $entry['comment'],
+        ], $this->includedEmissionsEntries($data, $locale));
+    }
+
+    /** @return list<array{scope: Scope, label: string, status: string, reason: string, comment: string}> */
+    private function includedEmissionsEntries(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $entries = [];
 
         foreach (Scope::cases() as $scope) {
             if (Scope::Scope3 === $scope && $data->scope3Excluded) {
-                $rows[] = [
-                    $this->translator->trans($scope->value, [], 'scope', $locale->value),
-                    $this->trans('Alcance completo', $locale),
-                    $this->trans('No', $locale),
-                    null === $data->scope3ExclusionReason ? '-' : $this->translator->trans($data->scope3ExclusionReason->value, [], 'exclusionReason', $locale->value),
-                    $data->scope3ExclusionComment ?? '-',
+                $entries[] = [
+                    'scope' => $scope,
+                    'label' => $this->trans('Alcance completo', $locale),
+                    'status' => self::INCLUDED_EXCLUDED,
+                    'reason' => null === $data->scope3ExclusionReason ? '-' : $this->translator->trans($data->scope3ExclusionReason->value, [], 'exclusionReason', $locale->value),
+                    'comment' => $data->scope3ExclusionComment ?? '-',
                 ];
 
                 continue;
             }
 
-            foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
-                $exclusion = $this->exclusionFor($data, $scope, $source);
+            if (Scope::Scope3 !== $scope) {
+                foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
+                    $entries[] = $this->includedSourceEntry($data, $scope, $source, $locale);
+                }
 
-                $rows[] = [
-                    $this->translator->trans($scope->value, [], 'scope', $locale->value),
-                    $this->sourceLabel($source, $locale),
-                    null === $exclusion ? $this->trans('Sí', $locale) : $this->trans('No', $locale),
-                    null === $exclusion ? '-' : $this->translator->trans($exclusion->reason->value, [], 'exclusionReason', $locale->value),
-                    $exclusion->comment ?? '-',
-                ];
+                continue;
+            }
+
+            foreach (range(1, 15) as $category) {
+                $source = Source::ofGhgProtocolCategory($category);
+
+                $entries[] = match (true) {
+                    null === $source => [
+                        'scope' => $scope,
+                        'label' => $this->trans('Cat. {number}', $locale, ['{number}' => (string) $category]) . ' · ' . $this->trans('Activos arrendados aguas arriba', $locale),
+                        'status' => self::INCLUDED_NOT_APPLICABLE,
+                        'reason' => $this->trans('Control operacional', $locale),
+                        'comment' => '-',
+                    ],
+                    !in_array($source, $scope->sourcesFor($data->subjectType), true) => [
+                        'scope' => $scope,
+                        'label' => $this->sourceLabel($source, $locale),
+                        'status' => self::INCLUDED_NOT_APPLICABLE,
+                        'reason' => $this->trans('Se informa en la huella de la empresa', $locale),
+                        'comment' => '-',
+                    ],
+                    default => $this->includedSourceEntry($data, $scope, $source, $locale),
+                };
             }
         }
 
-        return $rows;
+        return $entries;
+    }
+
+    /** @return array{scope: Scope, label: string, status: string, reason: string, comment: string} */
+    private function includedSourceEntry(OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source, Locale $locale): array
+    {
+        $exclusion = $this->exclusionFor($data, $scope, $source);
+
+        return [
+            'scope' => $scope,
+            'label' => $this->sourceLabel($source, $locale),
+            'status' => match (true) {
+                null !== $exclusion => self::INCLUDED_EXCLUDED,
+                $this->hasReportedSource($data, $scope, $source) => self::INCLUDED_CALCULATED,
+                default => self::INCLUDED_WITHOUT_ACTIVITY,
+            },
+            'reason' => null === $exclusion ? '-' : $this->translator->trans($exclusion->reason->value, [], 'exclusionReason', $locale->value),
+            'comment' => $exclusion->comment ?? '-',
+        ];
     }
 
     /** @return list<array{0: Scope, 1: Source, 2: string}> */
@@ -343,7 +433,7 @@ trait CarbonFootprintReportFiguresTrait
             }
 
             foreach ($this->stageSources([$scope], $data->subjectType) as $source) {
-                if (Scope::Scope3 === $scope && !$this->hasReportedSource($data, $scope, $source)) {
+                if (!$this->hasReportedSource($data, $scope, $source)) {
                     continue;
                 }
 
@@ -368,25 +458,7 @@ trait CarbonFootprintReportFiguresTrait
             return true;
         }
 
-        foreach ($data->activityLines as $line) {
-            if ($line->scope === $scope && $line->source === $source) {
-                return true;
-            }
-        }
-
-        foreach ($data->derivedLines as $line) {
-            if ($line->source === $source) {
-                return true;
-            }
-        }
-
-        foreach ($data->nonConsolidatedPropertyLines as $line) {
-            if ($line->source === $source) {
-                return true;
-            }
-        }
-
-        return false;
+        return $data->hasSourceLines($scope, $source);
     }
 
     private function exclusionFor(OrganizationalCarbonFootprintReportData $data, Scope $scope, Source $source): ?OrganizationalCarbonFootprintReportExclusionLine
@@ -422,7 +494,7 @@ trait CarbonFootprintReportFiguresTrait
             $widths[] = '14%';
         }
 
-        array_push($header, $this->trans('Cantidad', $locale), $this->trans('Factor kgCO2eq/unidad', $locale), $this->trans('Año', $locale), $this->trans('Fuente del factor', $locale), $this->trans('Emisiones kgCO2eq', $locale));
+        array_push($header, $this->trans('Cantidad', $locale), $this->trans('Factor', $locale), $this->trans('Año', $locale), $this->trans('Fuente del factor', $locale), $this->trans('Emisiones kgCO2eq', $locale));
         array_push($widths, '12%', '14%', '8%', $isCompany ? '18%' : '22%', '14%');
 
         $rows = [];
@@ -439,7 +511,7 @@ trait CarbonFootprintReportFiguresTrait
                 $row[] = $line->propertyName ?? $this->trans('Sin asignar a propiedad', $locale);
             }
 
-            array_push($row, sprintf('%s %s', $this->number($line->quantity), $line->unit->value), $line->factorCo2eq, (string) $line->factorYear, $line->factorSource ?? '-', $this->number($line->emissionsCo2eq));
+            array_push($row, sprintf('%s %s', $this->number($line->quantity), $this->unitLabel($line->unit, $locale)), $this->factorCell($line->factorCo2eq, $line->factorUnit, $locale), (string) $line->factorYear, $this->factorSourceLabel($line->factorSource, $locale), $this->number($line->emissionsCo2eq));
 
             $rows[] = $row;
             $total += (float) $line->emissionsCo2eq;
@@ -457,11 +529,25 @@ trait CarbonFootprintReportFiguresTrait
         return [$header, $rows, $widths, $hasTotal];
     }
 
+    private function factorCell(string $factorCo2eq, Unit $factorUnit, Locale $locale): string
+    {
+        return sprintf('%s kg CO₂eq / %s', $this->factorNumber($factorCo2eq), $this->unitLabel($factorUnit, $locale));
+    }
+
     /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
     private function derivedSourceTable(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
     {
-        $header = [$this->trans('Alcance', $locale), $this->trans('Fuente', $locale), $this->trans('Tipo', $locale), $this->trans('Emisiones kgCO2eq', $locale)];
-        $widths = ['20%', '35%', '25%', '20%'];
+        $header = [
+            $this->trans('Alcance', $locale),
+            $this->trans('Fuente', $locale),
+            $this->trans('Tipo', $locale),
+            $this->trans('Cantidad', $locale),
+            $this->trans('Factor WTT', $locale),
+            $this->trans('Año', $locale),
+            $this->trans('Fuente del factor', $locale),
+            $this->trans('Emisiones kgCO2eq', $locale),
+        ];
+        $widths = ['12%', '20%', '14%', '12%', '12%', '6%', '12%', '12%'];
 
         $rows = [];
         $total = 0.0;
@@ -475,6 +561,10 @@ trait CarbonFootprintReportFiguresTrait
                 $this->translator->trans($line->origin->stage->key(), [], 'scope', $locale->value),
                 $this->sourceLabel($line->origin->source, $locale),
                 $this->translator->trans($line->activityType->value, [], 'activityType', $locale->value),
+                sprintf('%s %s', $this->number($line->quantity), $this->unitLabel($line->unit, $locale)),
+                $this->factorCell($line->factorCo2eq, $line->factorUnit, $locale),
+                (string) $line->factorYear,
+                $this->factorSourceLabel($line->factorSource, $locale),
                 $this->number($line->emissions->co2eq()),
             ];
             $total += (float) $line->emissions->co2eq();
@@ -483,7 +573,7 @@ trait CarbonFootprintReportFiguresTrait
         $hasTotal = [] !== $rows;
 
         if ($hasTotal) {
-            $rows[] = [$this->trans('Total', $locale), '', '', $this->number($total)];
+            $rows[] = [$this->trans('Total', $locale), '', '', '', '', '', '', $this->number($total)];
         }
 
         return [$header, $rows, $widths, $hasTotal];
@@ -492,8 +582,14 @@ trait CarbonFootprintReportFiguresTrait
     /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
     private function nonConsolidatedPropertyTable(OrganizationalCarbonFootprintReportData $data, Source $source, Locale $locale): array
     {
-        $header = [$this->trans('Propiedad', $locale), $this->trans('Origen', $locale), $this->trans('Emisiones kgCO2eq', $locale)];
-        $widths = ['45%', '30%', '25%'];
+        $header = [
+            $this->trans('Propiedad', $locale),
+            $this->trans('Origen', $locale),
+            $this->trans('Emisiones calculadas kgCO2eq', $locale),
+            $this->trans('Valor manual kgCO2eq', $locale),
+            $this->trans('Emisiones kgCO2eq', $locale),
+        ];
+        $widths = ['30%', '22%', '16%', '16%', '16%'];
 
         $namesByProperty = [];
         foreach ($data->emissionsByProperty as $property) {
@@ -520,6 +616,8 @@ trait CarbonFootprintReportFiguresTrait
             $rows[] = [
                 $namesByProperty[(string) $line->propertyId] ?? (string) $line->propertyId,
                 $origin,
+                $this->number($line->calculatedEmissions->co2eq()),
+                null === $line->manualCo2eq ? '-' : $this->number($line->manualCo2eq),
                 $this->number($line->emissions->co2eq()),
             ];
             $total += (float) $line->emissions->co2eq();
@@ -528,10 +626,15 @@ trait CarbonFootprintReportFiguresTrait
         $hasTotal = [] !== $rows;
 
         if ($hasTotal) {
-            $rows[] = [$this->trans('Total', $locale), '', $this->number($total)];
+            $rows[] = [$this->trans('Total', $locale), '', '', '', $this->number($total)];
         }
 
         return [$header, $rows, $widths, $hasTotal];
+    }
+
+    private function minimumBoundaryNote(Locale $locale): string
+    {
+        return $this->trans('Límite mínimo aplicado: emisiones de alcance 1 y 2 del operador de cada propiedad franquiciada o arrendada a terceros, por el método de mercado (Scope 3 Standard, categorías 13 y 14).', $locale);
     }
 
     /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>, 3: bool} */
@@ -563,7 +666,7 @@ trait CarbonFootprintReportFiguresTrait
                 $row[] = $line->propertyName ?? $this->trans('Sin asignar a propiedad', $locale);
             }
 
-            array_push($row, $this->number($line->quantity), $line->factorCo2eq, $this->number($line->emissionsCo2eq), null !== $line->locationBasedEmissionsCo2eq ? $this->number($line->locationBasedEmissionsCo2eq) : '---');
+            array_push($row, $this->number($line->quantity), $this->factorCell($line->factorCo2eq, $line->factorUnit, $locale), $this->number($line->emissionsCo2eq), null !== $line->locationBasedEmissionsCo2eq ? $this->number($line->locationBasedEmissionsCo2eq) : '---');
 
             $rows[] = $row;
             $marketTotal += (float) $line->emissionsCo2eq;
@@ -589,7 +692,7 @@ trait CarbonFootprintReportFiguresTrait
         $rows = [
             [$this->trans('Alcance 2 · método de mercado (kg CO₂eq)', $locale), $this->number(($data->emissionsByScope[Scope::Scope2->value] ?? new Emissions())->co2eq())],
             [$this->trans('Alcance 2 · método de localización (kg CO₂eq)', $locale), $data->precalculated ? '---' : $this->number($data->locationBasedElectricityEmissions->co2eq())],
-            [$this->trans('Total · método de localización (kg CO₂eq)', $locale), $this->number($data->locationBasedTotalEmissions->co2eq())],
+            [$this->trans('Total · método de localización (kg CO₂eq)', $locale), $data->precalculated ? '---' : $this->number($data->locationBasedTotalEmissions->co2eq())],
         ];
 
         if ($data->electricityActivitiesWithoutLocationBased > 0) {
@@ -638,7 +741,7 @@ trait CarbonFootprintReportFiguresTrait
                 $line->itemName,
                 $this->translator->trans($line->phase->value, [], 'phase', $locale->value),
                 $this->number($line->quantity),
-                $line->factorCo2eq,
+                $this->factorCell($line->factorCo2eq, $line->factorUnit, $locale),
                 $this->number($line->emissionsCo2eq),
                 null !== $line->locationBasedEmissionsCo2eq ? $this->number($line->locationBasedEmissionsCo2eq) : '---',
             ];
@@ -827,8 +930,8 @@ trait CarbonFootprintReportFiguresTrait
                 $activityLine->itemName,
                 $this->translator->trans($activityLine->phase->value, [], 'phase', $locale->value),
                 $this->translator->trans($activityLine->source->value, [], 'source', $locale->value),
-                sprintf('%s %s', $this->number($activityLine->quantity), $activityLine->unit->value),
-                $activityLine->factorCo2eq,
+                sprintf('%s %s', $this->number($activityLine->quantity), $this->unitLabel($activityLine->unit, $locale)),
+                $this->factorCell($activityLine->factorCo2eq, $activityLine->factorUnit, $locale),
                 (string) $activityLine->factorYear,
                 $activityLine->factorSource ?? '-',
                 $this->number($activityLine->emissionsCo2eq),
@@ -864,7 +967,7 @@ trait CarbonFootprintReportFiguresTrait
                 $row[] = $line->propertyName ?? $this->trans('Sin asignar a propiedad', $locale);
             }
 
-            array_push($row, $this->sourceLabel($line->source, $locale), sprintf('%s %s', $this->number($line->quantity), $line->unit->value), $line->factorCo2eq, (string) $line->factorYear, $line->factorSource ?? '-', $this->number($line->emissionsCo2eq));
+            array_push($row, $this->sourceLabel($line->source, $locale), sprintf('%s %s', $this->number($line->quantity), $this->unitLabel($line->unit, $locale)), $this->factorCell($line->factorCo2eq, $line->factorUnit, $locale), (string) $line->factorYear, $this->factorSourceLabel($line->factorSource, $locale), $this->number($line->emissionsCo2eq));
 
             $rows[] = $row;
         }
@@ -879,6 +982,7 @@ trait CarbonFootprintReportFiguresTrait
         $rows = [
             [$isProperty ? $this->trans('Propiedad', $locale) : $this->trans('Empresa', $locale), $data->subjectName],
             [$this->trans('Enfoque de consolidación', $locale), $this->trans('Control operacional', $locale)],
+            ...$this->baseYearRows($data, $locale),
         ];
 
         if ($isProperty && null !== $data->operatingRegime) {
@@ -901,16 +1005,110 @@ trait CarbonFootprintReportFiguresTrait
         sort($categories);
 
         $rows[] = [$this->trans('Categorías del alcance 3 contempladas', $locale), implode(', ', array_map(fn(int $category): string => $this->trans('Cat. {number}', $locale, ['{number}' => (string) $category]), $categories))];
-        $rows[] = [$this->trans('Cat. {number}', $locale, ['{number}' => '8']) . ' · ' . $this->trans('Activos arrendados aguas arriba', $locale), $this->trans('No aplicable con el enfoque de control operacional', $locale)];
-
-        if ($isProperty) {
-            $rows[] = [
-                implode(' / ', array_map(fn(Source $source): string => $this->sourceLabel($source, $locale), Scope::Scope3->companyOnlySources())),
-                $this->trans('Se informan en la huella de la empresa (propiedades arrendadas a terceros o franquiciadas)', $locale),
-            ];
-        }
 
         return $rows;
+    }
+
+    /** @return list<list<string>> */
+    private function baseYearRows(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $baseYear = $data->baseYear;
+
+        if (null === $baseYear) {
+            return [[$this->trans('Año base', $locale), $this->trans('No declarado', $locale)]];
+        }
+
+        $variation = $data->baseYearVariationPercent();
+
+        return [
+            [$this->trans('Año base', $locale), (string) $baseYear->year],
+            [$this->trans('Emisiones del año base (kg CO₂eq)', $locale), $this->number($baseYear->baseYearTotalKgCo2eq)],
+            [$this->trans('Umbral de recálculo', $locale), $this->number($baseYear->recalculationThresholdPercent, 1) . ' %'],
+            [$this->trans('Variación respecto al año base', $locale), match (true) {
+                $data->isBaseYear() => $this->trans('Esta huella es el año base', $locale),
+                null === $variation && $data->baseYearExceedsThreshold() => '— · ' . $this->trans('supera el umbral de recálculo', $locale),
+                null === $variation => '—',
+                $data->baseYearExceedsThreshold() => $this->signedPercentage($variation) . ' · ' . $this->trans('supera el umbral de recálculo', $locale),
+                default => $this->signedPercentage($variation),
+            }],
+            [$this->trans('Justificación del año base', $locale), $baseYear->justification],
+        ];
+    }
+
+    /** @return array{0: list<string>, 1: list<list<string>>, 2: list<string>} */
+    private function providerContributionRows(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $isCompany = CarbonFootprintReportSubjectType::Company === $data->subjectType;
+        $header = [$this->trans('Proveedor', $locale)];
+
+        if ($isCompany) {
+            $header[] = $this->trans('Propiedad', $locale);
+        }
+
+        array_push($header, $this->trans('Categorías', $locale), $this->trans('Modo', $locale), $this->trans('Estado', $locale), $this->trans('Fecha de respuesta', $locale), $this->trans('Emisiones kgCO2eq', $locale));
+        $widths = $isCompany ? ['18%', '14%', '26%', '10%', '10%', '10%', '12%'] : ['22%', '32%', '12%', '10%', '10%', '14%'];
+
+        $rows = [];
+        $total = 0.0;
+
+        foreach ($data->providerLines as $line) {
+            $row = [$line->providerName];
+
+            if ($isCompany) {
+                $row[] = $line->propertyName ?? $this->trans('Sin asignar a propiedad', $locale);
+            }
+
+            array_push(
+                $row,
+                implode(' · ', array_map(fn(Source $source): string => $this->sourceLabel($source, $locale), $line->sources)),
+                $this->translator->trans($line->mode->value, [], 'providerContributionMode', $locale->value),
+                $this->translator->trans($line->status->value, [], 'providerContributionStatus', $locale->value),
+                $line->answeredAt?->format('d/m/Y') ?? '-',
+                $this->number($line->emissionsCo2eq),
+            );
+
+            $rows[] = $row;
+            $total += (float) $line->emissionsCo2eq;
+        }
+
+        if ([] !== $rows) {
+            $totalRow = array_fill(0, count($header) - 1, '');
+            $totalRow[0] = $this->trans('Total', $locale);
+            $totalRow[] = $this->number($total);
+            $rows[] = $totalRow;
+        }
+
+        return [$header, $rows, $widths];
+    }
+
+    /** @return list<string> */
+    private function supplierDataShareRow(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $share = $data->supplierDataSharePercent();
+
+        return [$this->trans('% de las emisiones del alcance 3 con datos aportados por proveedores', $locale), null === $share ? '—' : $this->number($share, 1) . ' %'];
+    }
+
+    /** @return list<list<string>> */
+    private function employeeSurveyRows(OrganizationalCarbonFootprintReportData $data, Locale $locale): array
+    {
+        $survey = $data->employeeSurvey;
+
+        if (null === $survey || !$survey->hasSurvey()) {
+            return [[$this->trans('No se ha realizado encuesta de empleados', $locale), '-']];
+        }
+
+        $participation = $survey->participationPercent();
+
+        return [
+            [$this->trans('Plantilla total', $locale), null === $survey->totalEmployees ? '-' : (string) $survey->totalEmployees],
+            [$this->trans('Respuestas recibidas', $locale), (string) $survey->answeredCount],
+            [$this->trans('Tasa de participación', $locale), null === $participation ? '-' : $this->number($participation, 1) . ' %'],
+            [$this->trans('Nivel de confianza', $locale), null === $survey->confidenceLevel ? '-' : $survey->confidenceLevel->value . ' %'],
+            [$this->trans('Margen de error', $locale), null === $survey->marginOfError ? '-' : '±' . $this->number($survey->marginOfError * 100) . ' %'],
+            [$this->trans('Método de extrapolación', $locale), $this->trans('Los kilómetros y las noches declarados por los empleados encuestados se extrapolan al total de la plantilla por proporción (plantilla total / respuestas)', $locale)],
+            [$this->trans('Categorías alimentadas', $locale), $this->sourceLabel(Source::BusinessTravel, $locale) . ', ' . $this->sourceLabel(Source::EmployeeCommuting, $locale)],
+        ];
     }
 
     /** @return list<list<string>> */
@@ -969,8 +1167,9 @@ trait CarbonFootprintReportFiguresTrait
 
         foreach ($data->emissionFactorSourceSummary() as $row) {
             $label = match (true) {
+                null !== $row['method'] && null !== $row['source'] => $this->trans($row['method']->label(), $locale) . ' · ' . $this->factorSourceLabel($row['source'], $locale),
                 null !== $row['method'] => $this->trans($row['method']->label(), $locale),
-                null !== $row['source'] => $row['source'],
+                null !== $row['source'] => $this->factorSourceLabel($row['source'], $locale),
                 default => $this->trans('Sin fuente declarada', $locale),
             };
 

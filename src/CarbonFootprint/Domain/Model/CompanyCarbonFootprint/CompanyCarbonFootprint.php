@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecisionInput;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityOverrideJustificationRequiredException;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -550,6 +551,10 @@ class CompanyCarbonFootprint implements CarbonFootprint, \Stringable
     public function overrideMaterialityDecision(Source $source, UserId $userId, string $justification): void
     {
         $this->ensureIsEditable();
+
+        if ('' === trim($justification)) {
+            throw new MaterialityOverrideJustificationRequiredException($source);
+        }
 
         $decision = $this->materialityDecisionFor($source);
 

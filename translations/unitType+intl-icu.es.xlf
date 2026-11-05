@@ -39,11 +39,11 @@
       </trans-unit>
       <trans-unit id="xvr1Zm3" resname="km">
         <source>km</source>
-        <target>Kilometro</target>
+        <target>Kilómetro</target>
       </trans-unit>
       <trans-unit id="OK_ZNT_" resname="pernoctacion">
         <source>pernoctacion</source>
-        <target>Pernoctacion</target>
+        <target>Pernoctación</target>
       </trans-unit>
       <trans-unit id="cPDCjEC" resname="EUR">
         <source>EUR</source>

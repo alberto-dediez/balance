@@ -12005,6 +12005,138 @@
         <source>No hay asignaciones de distribuidor.</source>
         <target>NEW_No hay asignaciones de distribuidor.</target>
       </trans-unit>
+      <trans-unit id="I8Obnqm" resname="No se han registrado aportaciones de proveedores">
+        <source>No se han registrado aportaciones de proveedores</source>
+        <target>NEW_No se han registrado aportaciones de proveedores</target>
+      </trans-unit>
+      <trans-unit id="R.0tGLG" resname="Las aportaciones descartadas no se contabilizan en el inventario">
+        <source>Las aportaciones descartadas no se contabilizan en el inventario</source>
+        <target>NEW_Las aportaciones descartadas no se contabilizan en el inventario</target>
+      </trans-unit>
+      <trans-unit id="gZt_exV" resname="Encuesta de desplazamientos de empleados">
+        <source>Encuesta de desplazamientos de empleados</source>
+        <target>NEW_Encuesta de desplazamientos de empleados</target>
+      </trans-unit>
+      <trans-unit id="TysjtsG" resname="Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1 y 2 del GHG Protocol (alcance 3 excluido del cálculo, método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.">
+        <source>Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1 y 2 del GHG Protocol (alcance 3 excluido del cálculo, método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.</source>
+        <target>NEW_Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1 y 2 del GHG Protocol (alcance 3 excluido del cálculo, método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.</target>
+      </trans-unit>
+      <trans-unit id="ECnk67f" resname="(sin actividad declarada)">
+        <source>(sin actividad declarada)</source>
+        <target>NEW_(sin actividad declarada)</target>
+      </trans-unit>
+      <trans-unit id="rtgMAom" resname="(no aplicable)">
+        <source>(no aplicable)</source>
+        <target>NEW_(no aplicable)</target>
+      </trans-unit>
+      <trans-unit id="H3cfbOy" resname="Regla de magnitud alta: no registrada en la evaluación.">
+        <source>Regla de magnitud alta: no registrada en la evaluación.</source>
+        <target>NEW_Regla de magnitud alta: no registrada en la evaluación.</target>
+      </trans-unit>
+      <trans-unit id="_2mPHi6" resname="La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.">
+        <source>La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</source>
+        <target>NEW_La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</target>
+      </trans-unit>
+      <trans-unit id="nbU1JoQ" resname="Las fugas de gases refrigerantes y las emisiones comunicadas por la organización o sus proveedores se contabilizan solo en CO₂eq: no tienen desglose por gas y su valor se incluye en la fila de CO₂.">
+        <source>Las fugas de gases refrigerantes y las emisiones comunicadas por la organización o sus proveedores se contabilizan solo en CO₂eq: no tienen desglose por gas y su valor se incluye en la fila de CO₂.</source>
+        <target>NEW_Las fugas de gases refrigerantes y las emisiones comunicadas por la organización o sus proveedores se contabilizan solo en CO₂eq: no tienen desglose por gas y su valor se incluye en la fila de CO₂.</target>
+      </trans-unit>
+      <trans-unit id="90cfRLJ" resname="Se informa en la huella de la empresa">
+        <source>Se informa en la huella de la empresa</source>
+        <target>NEW_Se informa en la huella de la empresa</target>
+      </trans-unit>
+      <trans-unit id="mBJOzfj" resname="Factor WTT">
+        <source>Factor WTT</source>
+        <target>NEW_Factor WTT</target>
+      </trans-unit>
+      <trans-unit id="qRClHGI" resname="Emisiones calculadas kgCO2eq">
+        <source>Emisiones calculadas kgCO2eq</source>
+        <target>NEW_Emisiones calculadas kgCO2eq</target>
+      </trans-unit>
+      <trans-unit id="RAPH7L6" resname="Valor manual kgCO2eq">
+        <source>Valor manual kgCO2eq</source>
+        <target>NEW_Valor manual kgCO2eq</target>
+      </trans-unit>
+      <trans-unit id="b4BeH6D" resname="Límite mínimo aplicado: emisiones de alcance 1 y 2 del operador de cada propiedad franquiciada o arrendada a terceros, por el método de mercado (Scope 3 Standard, categorías 13 y 14).">
+        <source>Límite mínimo aplicado: emisiones de alcance 1 y 2 del operador de cada propiedad franquiciada o arrendada a terceros, por el método de mercado (Scope 3 Standard, categorías 13 y 14).</source>
+        <target>NEW_Límite mínimo aplicado: emisiones de alcance 1 y 2 del operador de cada propiedad franquiciada o arrendada a terceros, por el método de mercado (Scope 3 Standard, categorías 13 y 14).</target>
+      </trans-unit>
+      <trans-unit id="Q00avjJ" resname="No declarado">
+        <source>No declarado</source>
+        <target>NEW_No declarado</target>
+      </trans-unit>
+      <trans-unit id="697LZf6" resname="Emisiones del año base (kg CO₂eq)">
+        <source>Emisiones del año base (kg CO₂eq)</source>
+        <target>NEW_Emisiones del año base (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="qWhcvaA" resname="Umbral de recálculo">
+        <source>Umbral de recálculo</source>
+        <target>NEW_Umbral de recálculo</target>
+      </trans-unit>
+      <trans-unit id="DQLfUC7" resname="Variación respecto al año base">
+        <source>Variación respecto al año base</source>
+        <target>NEW_Variación respecto al año base</target>
+      </trans-unit>
+      <trans-unit id="MJWJWLw" resname="Esta huella es el año base">
+        <source>Esta huella es el año base</source>
+        <target>NEW_Esta huella es el año base</target>
+      </trans-unit>
+      <trans-unit id="qUwZp9Y" resname="supera el umbral de recálculo">
+        <source>supera el umbral de recálculo</source>
+        <target>NEW_supera el umbral de recálculo</target>
+      </trans-unit>
+      <trans-unit id="3a3w7Ec" resname="% de las emisiones del alcance 3 con datos aportados por proveedores">
+        <source>% de las emisiones del alcance 3 con datos aportados por proveedores</source>
+        <target>NEW_% de las emisiones del alcance 3 con datos aportados por proveedores</target>
+      </trans-unit>
+      <trans-unit id="eKNdk5c" resname="No se ha realizado encuesta de empleados">
+        <source>No se ha realizado encuesta de empleados</source>
+        <target>NEW_No se ha realizado encuesta de empleados</target>
+      </trans-unit>
+      <trans-unit id="EE9e1XG" resname="Plantilla total">
+        <source>Plantilla total</source>
+        <target>NEW_Plantilla total</target>
+      </trans-unit>
+      <trans-unit id="2lYxsAU" resname="Tasa de participación">
+        <source>Tasa de participación</source>
+        <target>NEW_Tasa de participación</target>
+      </trans-unit>
+      <trans-unit id="XlctzCA" resname="Método de extrapolación">
+        <source>Método de extrapolación</source>
+        <target>NEW_Método de extrapolación</target>
+      </trans-unit>
+      <trans-unit id="989d6O4" resname="Los kilómetros y las noches declarados por los empleados encuestados se extrapolan al total de la plantilla por proporción (plantilla total / respuestas)">
+        <source>Los kilómetros y las noches declarados por los empleados encuestados se extrapolan al total de la plantilla por proporción (plantilla total / respuestas)</source>
+        <target>NEW_Los kilómetros y las noches declarados por los empleados encuestados se extrapolan al total de la plantilla por proporción (plantilla total / respuestas)</target>
+      </trans-unit>
+      <trans-unit id="TufNCb0" resname="Categorías alimentadas">
+        <source>Categorías alimentadas</source>
+        <target>NEW_Categorías alimentadas</target>
+      </trans-unit>
+      <trans-unit id="RDuIGfC" resname="{user} ha reabierto la huella de carbono {footprint}">
+        <source>{user} ha reabierto la huella de carbono {footprint}</source>
+        <target>NEW_{user} ha reabierto la huella de carbono {footprint}</target>
+      </trans-unit>
+      <trans-unit id="04UuSvM" resname="{user} ha completado la huella de carbono {footprint} con un total de {total} kg CO₂eq">
+        <source>{user} ha completado la huella de carbono {footprint} con un total de {total} kg CO₂eq</source>
+        <target>NEW_{user} ha completado la huella de carbono {footprint} con un total de {total} kg CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="bu.TWB." resname="Calculada">
+        <source>Calculada</source>
+        <target>NEW_Calculada</target>
+      </trans-unit>
+      <trans-unit id="HszGbnJ" resname="Sin actividad declarada">
+        <source>Sin actividad declarada</source>
+        <target>NEW_Sin actividad declarada</target>
+      </trans-unit>
+      <trans-unit id="sMMxpcY" resname="No aplicable">
+        <source>No aplicable</source>
+        <target>NEW_No aplicable</target>
+      </trans-unit>
+      <trans-unit id="kfGBZU0" resname="La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.">
+        <source>La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</source>
+        <target>NEW_La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

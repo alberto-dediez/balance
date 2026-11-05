@@ -12089,6 +12089,138 @@
         <source>No hay asignaciones de distribuidor.</source>
         <target>There are no distributor assignments.</target>
       </trans-unit>
+      <trans-unit id="I8Obnqm" resname="No se han registrado aportaciones de proveedores">
+        <source>No se han registrado aportaciones de proveedores</source>
+        <target>No supplier contributions have been registered</target>
+      </trans-unit>
+      <trans-unit id="R.0tGLG" resname="Las aportaciones descartadas no se contabilizan en el inventario">
+        <source>Las aportaciones descartadas no se contabilizan en el inventario</source>
+        <target>Dismissed contributions are not accounted for in the inventory</target>
+      </trans-unit>
+      <trans-unit id="gZt_exV" resname="Encuesta de desplazamientos de empleados">
+        <source>Encuesta de desplazamientos de empleados</source>
+        <target>Employee travel survey</target>
+      </trans-unit>
+      <trans-unit id="TysjtsG" resname="Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1 y 2 del GHG Protocol (alcance 3 excluido del cálculo, método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.">
+        <source>Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1 y 2 del GHG Protocol (alcance 3 excluido del cálculo, método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.</source>
+        <target>This certificate attests the carbon footprint of the property for the stated year, calculated on this platform in accordance with scopes 1 and 2 of the GHG Protocol (scope 3 excluded from the calculation, market-based method). The figure per stay results from dividing the total emissions by the overnight stays declared by the organization. It is valid as the footprint of that year unless revoked; its validity can be checked with the QR code.</target>
+      </trans-unit>
+      <trans-unit id="ECnk67f" resname="(sin actividad declarada)">
+        <source>(sin actividad declarada)</source>
+        <target>(no activity declared)</target>
+      </trans-unit>
+      <trans-unit id="rtgMAom" resname="(no aplicable)">
+        <source>(no aplicable)</source>
+        <target>(not applicable)</target>
+      </trans-unit>
+      <trans-unit id="H3cfbOy" resname="Regla de magnitud alta: no registrada en la evaluación.">
+        <source>Regla de magnitud alta: no registrada en la evaluación.</source>
+        <target>High-magnitude rule: not recorded in the assessment.</target>
+      </trans-unit>
+      <trans-unit id="_2mPHi6" resname="La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.">
+        <source>La evaluación de materialidad se completó antes de la activación de los veredictos automáticos; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</source>
+        <target>The materiality assessment was completed before automatic verdicts were activated; scope 3 exclusions rely on the reason and comment declared in the “Emissions included in each scope” table.</target>
+      </trans-unit>
+      <trans-unit id="nbU1JoQ" resname="Las fugas de gases refrigerantes y las emisiones comunicadas por la organización o sus proveedores se contabilizan solo en CO₂eq: no tienen desglose por gas y su valor se incluye en la fila de CO₂.">
+        <source>Las fugas de gases refrigerantes y las emisiones comunicadas por la organización o sus proveedores se contabilizan solo en CO₂eq: no tienen desglose por gas y su valor se incluye en la fila de CO₂.</source>
+        <target>Refrigerant gas leaks and emissions reported by the organization or its suppliers are accounted only in CO₂eq: they have no breakdown by gas and their value is included in the CO₂ row.</target>
+      </trans-unit>
+      <trans-unit id="90cfRLJ" resname="Se informa en la huella de la empresa">
+        <source>Se informa en la huella de la empresa</source>
+        <target>Reported in the company footprint</target>
+      </trans-unit>
+      <trans-unit id="mBJOzfj" resname="Factor WTT">
+        <source>Factor WTT</source>
+        <target>WTT factor</target>
+      </trans-unit>
+      <trans-unit id="qRClHGI" resname="Emisiones calculadas kgCO2eq">
+        <source>Emisiones calculadas kgCO2eq</source>
+        <target>Calculated emissions kgCO2eq</target>
+      </trans-unit>
+      <trans-unit id="RAPH7L6" resname="Valor manual kgCO2eq">
+        <source>Valor manual kgCO2eq</source>
+        <target>Manual value kgCO2eq</target>
+      </trans-unit>
+      <trans-unit id="b4BeH6D" resname="Límite mínimo aplicado: emisiones de alcance 1 y 2 del operador de cada propiedad franquiciada o arrendada a terceros, por el método de mercado (Scope 3 Standard, categorías 13 y 14).">
+        <source>Límite mínimo aplicado: emisiones de alcance 1 y 2 del operador de cada propiedad franquiciada o arrendada a terceros, por el método de mercado (Scope 3 Standard, categorías 13 y 14).</source>
+        <target>Minimum boundary applied: scope 1 and 2 emissions of the operator of each franchised or leased-out property, using the market-based method (Scope 3 Standard, categories 13 and 14).</target>
+      </trans-unit>
+      <trans-unit id="Q00avjJ" resname="No declarado">
+        <source>No declarado</source>
+        <target>Not declared</target>
+      </trans-unit>
+      <trans-unit id="697LZf6" resname="Emisiones del año base (kg CO₂eq)">
+        <source>Emisiones del año base (kg CO₂eq)</source>
+        <target>Base year emissions (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="qWhcvaA" resname="Umbral de recálculo">
+        <source>Umbral de recálculo</source>
+        <target>Recalculation threshold</target>
+      </trans-unit>
+      <trans-unit id="DQLfUC7" resname="Variación respecto al año base">
+        <source>Variación respecto al año base</source>
+        <target>Change from the base year</target>
+      </trans-unit>
+      <trans-unit id="MJWJWLw" resname="Esta huella es el año base">
+        <source>Esta huella es el año base</source>
+        <target>This footprint is the base year</target>
+      </trans-unit>
+      <trans-unit id="qUwZp9Y" resname="supera el umbral de recálculo">
+        <source>supera el umbral de recálculo</source>
+        <target>exceeds the recalculation threshold</target>
+      </trans-unit>
+      <trans-unit id="3a3w7Ec" resname="% de las emisiones del alcance 3 con datos aportados por proveedores">
+        <source>% de las emisiones del alcance 3 con datos aportados por proveedores</source>
+        <target>% of scope 3 emissions with data provided by suppliers</target>
+      </trans-unit>
+      <trans-unit id="eKNdk5c" resname="No se ha realizado encuesta de empleados">
+        <source>No se ha realizado encuesta de empleados</source>
+        <target>No employee survey has been carried out</target>
+      </trans-unit>
+      <trans-unit id="EE9e1XG" resname="Plantilla total">
+        <source>Plantilla total</source>
+        <target>Total workforce</target>
+      </trans-unit>
+      <trans-unit id="2lYxsAU" resname="Tasa de participación">
+        <source>Tasa de participación</source>
+        <target>Participation rate</target>
+      </trans-unit>
+      <trans-unit id="XlctzCA" resname="Método de extrapolación">
+        <source>Método de extrapolación</source>
+        <target>Extrapolation method</target>
+      </trans-unit>
+      <trans-unit id="989d6O4" resname="Los kilómetros y las noches declarados por los empleados encuestados se extrapolan al total de la plantilla por proporción (plantilla total / respuestas)">
+        <source>Los kilómetros y las noches declarados por los empleados encuestados se extrapolan al total de la plantilla por proporción (plantilla total / respuestas)</source>
+        <target>The kilometres and nights declared by the surveyed employees are extrapolated to the total workforce proportionally (total workforce / answers)</target>
+      </trans-unit>
+      <trans-unit id="TufNCb0" resname="Categorías alimentadas">
+        <source>Categorías alimentadas</source>
+        <target>Categories fed</target>
+      </trans-unit>
+      <trans-unit id="RDuIGfC" resname="{user} ha reabierto la huella de carbono {footprint}">
+        <source>{user} ha reabierto la huella de carbono {footprint}</source>
+        <target>{user} reopened the carbon footprint {footprint}</target>
+      </trans-unit>
+      <trans-unit id="04UuSvM" resname="{user} ha completado la huella de carbono {footprint} con un total de {total} kg CO₂eq">
+        <source>{user} ha completado la huella de carbono {footprint} con un total de {total} kg CO₂eq</source>
+        <target>{user} completed the carbon footprint {footprint} with a total of {total} kg CO₂eq</target>
+      </trans-unit>
+      <trans-unit id="bu.TWB." resname="Calculada">
+        <source>Calculada</source>
+        <target>Calculated</target>
+      </trans-unit>
+      <trans-unit id="HszGbnJ" resname="Sin actividad declarada">
+        <source>Sin actividad declarada</source>
+        <target>No activity declared</target>
+      </trans-unit>
+      <trans-unit id="sMMxpcY" resname="No aplicable">
+        <source>No aplicable</source>
+        <target>Not applicable</target>
+      </trans-unit>
+      <trans-unit id="kfGBZU0" resname="La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.">
+        <source>La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</source>
+        <target>The materiality assessment was completed without scope 3 categories; scope 3 exclusions rely on the reason and comment declared in the “Emissions included in each scope” table.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

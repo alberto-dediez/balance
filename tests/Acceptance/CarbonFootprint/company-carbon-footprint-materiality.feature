@@ -42,3 +42,18 @@ Feature:
         Then I do not see a text "No aplica a esta huella"
         Then "company" carbon footprint "999" should have source "franchises" excluded in scope "scope_3" with reason "not_significant"
         Then "company" carbon footprint "999" should have source "downstream_leased_assets" excluded in scope "scope_3" with reason "not_significant"
+
+    Scenario: The events log describes the completion and the reopening of the footprint
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given company carbon footprint with id "998" for company "C1" of account "666" and year "2025" with employees answered exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/company-carbon-footprints/998/step/mitigation-plan"
+        When I submit the mitigation plan step form
+        Then I am redirected to route "company_carbon_footprints_results"
+        When I submit a form with "" and button "Reabrir cálculo"
+        Then I am redirected to route "company_carbon_footprints_scope_1"
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/events"
+        Then the response status should be 200
+        Then I see a text "ha completado la huella de carbono"
+        Then I see a text "ha reabierto la huella de carbono"

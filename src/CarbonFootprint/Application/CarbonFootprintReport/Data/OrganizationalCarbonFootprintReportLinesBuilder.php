@@ -14,19 +14,15 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CalculationMethod;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportActivityLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
-use App\EventOperations\Domain\Model\Provider\ProviderId;
-use App\EventOperations\Domain\Model\Provider\ProviderRepository;
+use App\Shared\Domain\Model\Locale\Locale;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrganizationalCarbonFootprintReportLinesBuilder
 {
-    /** @var array<string, string> */
-    private array $providerNamesById = [];
-
     public function __construct(
         private ActivityRepository $activityRepository,
         private ActivityItemNameResolver $itemNameResolver,
-        private ProviderRepository $providerRepository,
+        private ProviderNameResolver $providerNameResolver,
         private CountedActivityReferences $countedActivityReferences,
         private TranslatorInterface $translator,
     ) {}
@@ -36,7 +32,7 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
      *
      * @return list<OrganizationalCarbonFootprintReportActivityLine>
      */
-    public function activityLines(CarbonFootprint $carbonFootprint, array $propertyNamesById): array
+    public function activityLines(CarbonFootprint $carbonFootprint, array $propertyNamesById, ?Locale $locale = null): array
     {
         $year = $carbonFootprint->calculationYear();
         $emissionFactorGroupId = $carbonFootprint->emissionFactorGroupId();
@@ -53,16 +49,16 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
 
             $propertyId = $reference->placement->propertyId;
             $locationBasedEmissions = $activity instanceof ElectricityActivity ? $activity->locationBasedEmissions() : null;
-            $itemName = $this->itemNameResolver->resolve($activity, $year, $emissionFactorGroupId);
+            $itemName = $this->itemNameResolver->resolve($activity, $year, $emissionFactorGroupId, $locale);
             $providerId = $reference->placement->providerId;
             $activityType = ActivityType::fromActivity($activity);
 
             if (null !== $providerId) {
-                $itemName = sprintf('%s · %s', $this->providerName($providerId), $itemName);
+                $itemName = sprintf('%s · %s', $this->providerNameResolver->resolve($providerId), $itemName);
             }
 
             if ($reference->placement->fromEmployees) {
-                $itemName = sprintf('%s · %s', $this->translator->trans('Empleados'), $itemName);
+                $itemName = sprintf('%s · %s', $this->translator->trans('Empleados', [], 'messages', $locale?->value), $itemName);
             }
 
             $lines[] = new OrganizationalCarbonFootprintReportActivityLine(
@@ -129,17 +125,6 @@ final class OrganizationalCarbonFootprintReportLinesBuilder
         }
 
         return $lines;
-    }
-
-    private function providerName(ProviderId $providerId): string
-    {
-        $key = (string) $providerId;
-
-        if (!isset($this->providerNamesById[$key])) {
-            $this->providerNamesById[$key] = $this->providerRepository->find($providerId)?->name() ?? $key;
-        }
-
-        return $this->providerNamesById[$key];
     }
 
     private static function sourcePosition(Source $source): int

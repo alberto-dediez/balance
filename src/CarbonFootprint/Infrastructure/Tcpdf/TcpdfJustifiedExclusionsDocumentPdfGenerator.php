@@ -104,16 +104,16 @@ final class TcpdfJustifiedExclusionsDocumentPdfGenerator implements JustifiedExc
 
         $scope3 = $this->translator->trans(Scope::Scope3->value, [], 'scope', $locale->value);
         $rows = array_values(array_filter($this->includedEmissionsRows($data, $locale), static fn(array $row): bool => $scope3 === $row[0]));
-        $header = [$this->trans('Alcance', $locale), $this->trans('Fuente', $locale), $this->trans('Incluida', $locale), $this->trans('Motivo', $locale), $this->trans('Comentario', $locale)];
+        $header = [$this->trans('Alcance', $locale), $this->trans('Fuente', $locale), $this->trans('Estado', $locale), $this->trans('Motivo', $locale), $this->trans('Comentario', $locale)];
 
-        $pdf->writeHTML($this->buildTableHtml($header, $rows, ['14%', '30%', '10%', '20%', '26%']), true, false, true, false, '');
+        $pdf->writeHTML($this->buildTableHtml($header, $rows, ['14%', '30%', '14%', '18%', '24%']), true, false, true, false, '');
     }
 
     private function renderMaterialitySections(\TCPDF $pdf, OrganizationalCarbonFootprintReportData $data, Locale $locale): void
     {
         $annex = $data->materialityAnnex;
 
-        if (null === $annex || $annex->isAnalysisMissing()) {
+        if (null === $annex || $annex->isAnalysisMissing() || $annex->hasNoScope3Topics()) {
             if (!$data->scope3Excluded) {
                 $pdf->Ln(2);
                 $this->setFont($pdf, 9.5, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);

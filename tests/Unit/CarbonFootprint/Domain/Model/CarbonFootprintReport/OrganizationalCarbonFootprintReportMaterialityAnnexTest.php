@@ -49,10 +49,36 @@ final class OrganizationalCarbonFootprintReportMaterialityAnnexTest extends Test
 
         $this->assertTrue(OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutAssessment()->isAnalysisMissing());
         $this->assertTrue(new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::draft(), false, [], [])->isAnalysisMissing());
-        $this->assertTrue(new OrganizationalCarbonFootprintReportMaterialityAnnex($completedWithoutVerdicts, false, [], [])->isAnalysisMissing());
+        $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex($completedWithoutVerdicts, false, [], [])->isAnalysisMissing());
+        $this->assertTrue(OrganizationalCarbonFootprintReportMaterialityAnnexMother::completedWithoutVerdicts()->isAnalysisMissing());
         $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex($completed, false, [], [])->isAnalysisMissing());
         $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::reopened()->isAnalysisMissing());
         $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex(null, true, [], [])->isAnalysisMissing());
+    }
+
+    public function testAnAssessmentCompletedWithoutVerdictsNorDecisionsIsDetected(): void
+    {
+        $this->assertTrue(OrganizationalCarbonFootprintReportMaterialityAnnexMother::completedWithoutVerdicts()->isCompletedWithoutVerdicts());
+        $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::completedWithoutVerdicts(), true, [], [])->isCompletedWithoutVerdicts());
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete()->isCompletedWithoutVerdicts());
+        $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::completed(), false, [], [])->isCompletedWithoutVerdicts());
+        $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::draft(), false, [], [])->isCompletedWithoutVerdicts());
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutAssessment()->isCompletedWithoutVerdicts());
+    }
+
+    public function testAnAssessmentCompletedWithoutScope3TopicsIsNeitherMissingNorCompletedWithoutVerdicts(): void
+    {
+        $annex = OrganizationalCarbonFootprintReportMaterialityAnnexMother::completedWithoutScope3Topics();
+
+        $this->assertTrue($annex->hasNoScope3Topics());
+        $this->assertFalse($annex->isAnalysisMissing());
+        $this->assertFalse($annex->isCompletedWithoutVerdicts());
+        $this->assertFalse($annex->requestsNarrative(false));
+        $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::completedWithoutScope3Topics(), true, [], [])->hasNoScope3Topics());
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::completedWithoutVerdicts()->hasNoScope3Topics());
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::complete()->hasNoScope3Topics());
+        $this->assertFalse(OrganizationalCarbonFootprintReportMaterialityAnnexMother::withoutAssessment()->hasNoScope3Topics());
+        $this->assertFalse(new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::draft(), false, [], [])->hasNoScope3Topics());
     }
 
     public function testTheAssessmentIsReopenedOnlyWhenItIsADraft(): void

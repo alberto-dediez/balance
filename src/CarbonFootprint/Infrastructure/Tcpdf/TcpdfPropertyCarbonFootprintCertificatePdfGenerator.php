@@ -73,7 +73,7 @@ final class TcpdfPropertyCarbonFootprintCertificatePdfGenerator implements Prope
             $this->renderChrome($pdf, $documentName);
             $this->renderHeading($pdf, $data, $locale);
             $this->renderPropertyBox($pdf, $data, $locale, $this->renderDetails($pdf, $data, $locale));
-            $this->renderFooter($pdf, $locale);
+            $this->renderFooter($pdf, $data, $locale);
 
             $path = sys_get_temp_dir() . '/' . uniqid('footprint-certificate-', true) . '-' . $locale->value . '.pdf';
             $this->savePDF($pdf, $path);
@@ -285,13 +285,13 @@ final class TcpdfPropertyCarbonFootprintCertificatePdfGenerator implements Prope
         return $top + self::QR_SIZE;
     }
 
-    private function renderFooter(ReportTcpdf $pdf, Locale $locale): void
+    private function renderFooter(ReportTcpdf $pdf, PropertyCarbonFootprintCertificateData $data, Locale $locale): void
     {
         $noticeWidth = self::RIGHT - self::SIGNATURE_WIDTH - 5 - self::LEFT;
 
         $pdf->Line(self::LEFT, self::FOOTER_RULE_Y, self::LEFT + $noticeWidth, self::FOOTER_RULE_Y, ['width' => 0.2, 'color' => $this->pdfBranding()->faintLine]);
 
-        $notice = $this->trans('Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1, 2 y 3 del GHG Protocol (método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.', $locale);
+        $notice = $this->footerNotice($data, $locale);
 
         $this->setFont($pdf, 8, self::FONT_STYLE_REGULAR, $this->pdfBranding()->bodyText);
         $pdf->setXY(self::LEFT, self::FOOTER_RULE_Y + 3);
@@ -302,6 +302,13 @@ final class TcpdfPropertyCarbonFootprintCertificatePdfGenerator implements Prope
         $pdf->Line(self::RIGHT - self::SIGNATURE_WIDTH, self::SIGNATURE_LINE_Y, self::RIGHT, self::SIGNATURE_LINE_Y, ['width' => 0.4, 'color' => $this->pdfBranding()->dark]);
 
         $this->renderLabel($pdf, self::RIGHT - self::SIGNATURE_WIDTH, self::SIGNATURE_LINE_Y + 2, self::SIGNATURE_WIDTH, $this->trans('Firma del emisor', $locale), 'R');
+    }
+
+    private function footerNotice(PropertyCarbonFootprintCertificateData $data, Locale $locale): string
+    {
+        return null === $data->scope3Co2eqKg
+            ? $this->trans('Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1 y 2 del GHG Protocol (alcance 3 excluido del cálculo, método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.', $locale)
+            : $this->trans('Este certificado acredita la huella de carbono de la propiedad para el año indicado, calculada en esta plataforma conforme a los alcances 1, 2 y 3 del GHG Protocol (método de mercado). La cifra por estancia resulta de dividir las emisiones totales entre las pernoctaciones declaradas por la organización. Vale como huella de ese año mientras no sea revocado; su vigencia puede comprobarse con el código QR.', $locale);
     }
 
     private function renderSignature(ReportTcpdf $pdf): void

@@ -52,6 +52,21 @@ class OrganizationalCarbonFootprintReportMaterialityAnnexMother
         return self::build(MaterialityAssessmentSnapshotMother::completed(), false, true);
     }
 
+    public static function completedWithoutVerdicts(): OrganizationalCarbonFootprintReportMaterialityAnnex
+    {
+        return new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::completedWithoutVerdicts(), false, [], []);
+    }
+
+    public static function completedWithoutScope3Topics(): OrganizationalCarbonFootprintReportMaterialityAnnex
+    {
+        return new OrganizationalCarbonFootprintReportMaterialityAnnex(MaterialityAssessmentSnapshotMother::completedWithoutScope3Topics(), false, [], []);
+    }
+
+    public static function withoutHighMagnitudeRule(): OrganizationalCarbonFootprintReportMaterialityAnnex
+    {
+        return self::build(MaterialityAssessmentSnapshotMother::withoutHighMagnitudeRule(), false, false);
+    }
+
     public static function line(
         MaterialityCategoryState $state,
         ?Source $source = Source::SoldProductsProcessing,

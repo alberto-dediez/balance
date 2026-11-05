@@ -172,3 +172,19 @@ Feature:
         Then I do not see a text "Estado en la huella"
         Then I do not see a text "Excluida (recomendación)"
         Then "property" carbon footprint "777" should have source "operations_waste" excluded in scope "scope_3" with reason "not_significant"
+
+    Scenario: The events log describes the completion and the reopening of the footprint
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given property carbon footprint with id "998" for property "1111" of account "666" and year "2024" with employees answered exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/property-carbon-footprints/998/step/mitigation-plan"
+        When I submit the mitigation plan step form
+        Then I am redirected to route "property_carbon_footprints_results"
+        When I submit a form with "" and button "Reabrir cálculo"
+        Then I am redirected to route "property_carbon_footprints_scope_1"
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/events"
+        Then the response status should be 200
+        Then I see a text "ha completado la huella de carbono"
+        Then I see a text "con un total de"
+        Then I see a text "ha reabierto la huella de carbono"

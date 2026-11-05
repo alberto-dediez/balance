@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityOverrideJustificationRequiredException;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintActivityRemoved;
@@ -1167,6 +1168,25 @@ final class CompanyCarbonFootprintTest extends TestCase
         $this->assertFalse($footprint->isSourceExcluded(Scope::Scope3, Source::OperationsWaste));
         $this->assertSame([], $footprint->materialityDecisions());
         $this->assertCount(1, array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof CompanyCarbonFootprintMaterialityDecisionsCleared));
+    }
+
+    /** @dataProvider blankJustifications */
+    public function testAnOverrideRequiresAJustification(string $justification): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withMaterialityAnswered('company-1', 'footprint-1');
+        $footprint->applyMaterialityDecisions([MaterialityDecisionInputMother::omit(4)], []);
+        $footprint->includeSource(Scope::Scope3, Source::UpstreamTransport);
+
+        $this->expectException(MaterialityOverrideJustificationRequiredException::class);
+
+        $footprint->overrideMaterialityDecision(Source::UpstreamTransport, UserId::generate(), $justification);
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function blankJustifications(): iterable
+    {
+        yield 'empty' => [''];
+        yield 'blank' => ['   '];
     }
 
     public function testACompletedCompanyFootprintIgnoresTheDecisions(): void

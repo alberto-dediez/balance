@@ -177,7 +177,7 @@ class CarbonFootprintDetailCellsFormatterTest extends TestCase
         self::assertSame('agarcia · 14/03/2026 · Exigencia del cliente principal', $cells['materialityOverride']);
     }
 
-    public function testTheMaterialityCellsOfAnActivityRowAreEmpty(): void
+    public function testTheMaterialityCellsAreEmptyWhenTheRowHasNoDecision(): void
     {
         $cells = $this->sut->cells(new CarbonFootprintDetailRow(CarbonFootprintDetailRowType::Activity, Scope::Scope3, Source::BusinessTravel), 'stage', 'scope');
 

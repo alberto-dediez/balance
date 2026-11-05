@@ -13,7 +13,9 @@ use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityCriterion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialitySettings\MaterialityDecisionRule;
+use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopic;
+use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Materiality\Domain\Model\MaterialityTopic\StandardScope3Category;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
@@ -164,6 +166,42 @@ final class MaterialityAssessmentSnapshotAdapterTest extends TestCase
         $this->materialityAssessments->add($this->completedBy(UserId::generate()));
 
         $this->assertNull($this->adapter()->find(CarbonFootprintReportSubjectType::Company, self::FOOTPRINT_ID));
+    }
+
+    public function testOnlyTheScope3CategoriesAndTheirQuestionsAreKept(): void
+    {
+        $scope1 = MaterialityTopicMother::from('Combustión fija', (string) MaterialityTopicId::generate(), MaterialityScope::Scope1, number: 1);
+        $scope2 = MaterialityTopicMother::from('Electricidad adquirida', (string) MaterialityTopicId::generate(), MaterialityScope::Scope2, number: 2);
+        $scope1Question = MaterialityQuestionMother::from('¿Hay calderas?', 'question-boilers', MaterialityCriterion::Risk, topicId: $scope1->id());
+        $this->materialityQuestions->add($scope1Question);
+
+        $assessment = MaterialityAssessmentMother::draft(
+            subjectType: MaterialityAssessmentSubjectType::Property,
+            carbonFootprintId: self::FOOTPRINT_ID,
+            topics: [$this->topic, $scope1, $scope2],
+            questions: [$this->magnitude, $this->outsourcing, $scope1Question],
+        );
+
+        foreach ($assessment->topics() as $topic) {
+            $values = [];
+
+            foreach ($assessment->answersOf($topic->topicId()) as $answer) {
+                $values[(string) $answer->id()] = MaterialityCriterion::Magnitude === $answer->criterion() && !$topic->topicId()->equals($this->topic->id()) ? MaterialityAnswerScale::Level->max() : 1;
+            }
+
+            $assessment->answerTopic($topic->id(), $values);
+        }
+
+        $assessment->complete(UserId::generate(), new MaterialityDecisionRule(80, true));
+        $this->materialityAssessments->add($assessment);
+
+        $snapshot = $this->adapter()->find(CarbonFootprintReportSubjectType::Property, self::FOOTPRINT_ID);
+
+        $this->assertNotNull($snapshot);
+        $this->assertSame([(string) $this->topic->id()], array_map(static fn($topic): string => $topic->topicId, $snapshot->topics));
+        $this->assertSame([(string) $this->topic->id()], array_values(array_unique(array_map(static fn($answer): string => $answer->topicId, $snapshot->answers))));
+        $this->assertSame(['question-magnitude', 'question-outsourcing'], array_map(static fn($answer): string => $answer->questionId, $snapshot->answers));
+        $this->assertNull($snapshot->highMagnitudeRule);
     }
 
     private function completedBy(UserId $userId): MaterialityAssessment

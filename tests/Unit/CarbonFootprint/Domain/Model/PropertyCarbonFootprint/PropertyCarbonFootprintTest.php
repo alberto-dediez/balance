@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityId;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityOverrideJustificationRequiredException;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
@@ -971,6 +972,34 @@ final class PropertyCarbonFootprintTest extends TestCase
         $this->assertNotNull($decision);
         $this->assertTrue($decision->isOverridden());
         $this->assertSame(30.0, $decision->scorePercent());
+    }
+
+    /** @dataProvider blankJustifications */
+    public function testAnOverrideRequiresAJustification(string $justification): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([MaterialityDecisionInputMother::omit(5)]);
+        $footprint->includeSource(Scope::Scope3, Source::OperationsWaste);
+
+        $this->expectException(MaterialityOverrideJustificationRequiredException::class);
+
+        $footprint->overrideMaterialityDecision(Source::OperationsWaste, UserId::generate(), $justification);
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function blankJustifications(): iterable
+    {
+        yield 'empty' => [''];
+        yield 'blank' => ['   '];
+    }
+
+    public function testAJustifiedOverrideIsPublished(): void
+    {
+        $footprint = PropertyCarbonFootprintMother::withMaterialityDecisions([MaterialityDecisionInputMother::omit(5)]);
+        $footprint->includeSource(Scope::Scope3, Source::OperationsWaste);
+
+        $footprint->overrideMaterialityDecision(Source::OperationsWaste, UserId::generate(), 'Tenemos datos');
+
+        $this->assertCount(1, array_filter($footprint->recordedEvents(), static fn($e) => $e instanceof PropertyCarbonFootprintMaterialityOverridden));
     }
 
     public function testAnOverrideIsRevertedWhenTheVerdictChanges(): void

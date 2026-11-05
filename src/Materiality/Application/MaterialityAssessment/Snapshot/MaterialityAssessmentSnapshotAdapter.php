@@ -17,6 +17,7 @@ use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentTopi
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityAnswerScale;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestion;
 use App\Materiality\Domain\Model\MaterialityQuestion\MaterialityQuestionRepository;
+use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Security\Domain\Model\User\UserRepository;
 
 class MaterialityAssessmentSnapshotAdapter implements MaterialityAssessmentSnapshotProvider
@@ -38,6 +39,11 @@ class MaterialityAssessmentSnapshotAdapter implements MaterialityAssessmentSnaps
             return null;
         }
 
+        $scope3Topics = array_values(array_filter(
+            $assessment->topics(),
+            static fn(MaterialityAssessmentTopic $topic): bool => MaterialityScope::Scope3 === $topic->scope(),
+        ));
+
         $topics = array_map(
             static fn(MaterialityAssessmentTopic $topic): MaterialityAssessmentSnapshotTopic => new MaterialityAssessmentSnapshotTopic(
                 topicId: (string) $topic->topicId(),
@@ -51,13 +57,13 @@ class MaterialityAssessmentSnapshotAdapter implements MaterialityAssessmentSnaps
                 forcedByHighMagnitude: $topic->isForcedByHighMagnitude(),
                 verdict: $topic->verdict(),
             ),
-            $assessment->topics(),
+            $scope3Topics,
         );
 
         $questions = [];
         $answers = [];
 
-        foreach ($assessment->topics() as $topic) {
+        foreach ($scope3Topics as $topic) {
             foreach ($assessment->answersOf($topic->topicId()) as $answer) {
                 $answers[] = $this->answerOf($answer, $questions);
             }
@@ -93,7 +99,7 @@ class MaterialityAssessmentSnapshotAdapter implements MaterialityAssessmentSnaps
             completedByName: null === $completedByUser ? null : (string) $completedByUser,
             sectorName: $assessment->sectorName(),
             thresholdPercent: $thresholdPercent,
-            highMagnitudeRule: $this->highMagnitudeRuleOf($assessment->topics()),
+            highMagnitudeRule: $this->highMagnitudeRuleOf($scope3Topics),
             questionSetVersion: $questionSetVersion,
             questionSetChangedSince: $questionSetChangedSince,
             topics: $topics,

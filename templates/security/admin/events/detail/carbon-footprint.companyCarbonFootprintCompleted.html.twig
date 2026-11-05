@@ -1,0 +1,5 @@
+{% trans with {
+    '{user}': element.userId | user_name,
+    '{footprint}': event.companyCarbonFootprintId ~ '',
+    '{total}': event.totalEmissions.co2eq | number_format(2, ',', '.')
+} %}{user} ha completado la huella de carbono {footprint} con un total de {total} kg CO₂eq{% endtrans %}

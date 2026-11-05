@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\CarbonFootprint\Export;
 
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ActivityItemNameResolver;
+use App\CarbonFootprint\Application\CarbonFootprintReport\Data\ProviderNameResolver;
 use App\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferences;
 use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
@@ -27,6 +28,7 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CalculationStage;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\CarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityDecision;
+use App\CarbonFootprint\Domain\Model\CarbonFootprint\MaterialityVerdict;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupId;
@@ -36,16 +38,12 @@ use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\Unit;
 use App\EventOperations\Domain\Model\Provider\ProviderId;
-use App\EventOperations\Domain\Model\Provider\ProviderRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\User\UserRepository;
 
 final class CarbonFootprintDetailRowsBuilder
 {
-    /** @var array<string, string> */
-    private array $providerNamesById = [];
-
     /** @var array<string, string> */
     private array $propertyNamesById = [];
 
@@ -54,7 +52,7 @@ final class CarbonFootprintDetailRowsBuilder
         private CountedActivityReferences $countedActivityReferences,
         private ActivityItemNameResolver $itemNameResolver,
         private DerivedSourceEmissionsCalculator $derivedSourceEmissionsCalculator,
-        private ProviderRepository $providerRepository,
+        private ProviderNameResolver $providerNameResolver,
         private PropertyRepository $propertyRepository,
         private UserRepository $userRepository,
     ) {}
@@ -62,7 +60,7 @@ final class CarbonFootprintDetailRowsBuilder
     /** @return list<CarbonFootprintDetailRow> */
     public function build(CarbonFootprint $carbonFootprint): array
     {
-        $this->providerNamesById = [];
+        $this->providerNameResolver->reset();
         $this->propertyNamesById = [];
 
         $year = $carbonFootprint->calculationYear();
@@ -77,7 +75,7 @@ final class CarbonFootprintDetailRowsBuilder
                 continue;
             }
 
-            $rows[] = $this->activityRow($activity, $reference->placement, $year, $emissionFactorGroupId);
+            $rows[] = $this->activityRow($carbonFootprint, $activity, $reference->placement, $year, $emissionFactorGroupId);
         }
 
         if (!$carbonFootprint instanceof EventCarbonFootprint) {
@@ -85,6 +83,7 @@ final class CarbonFootprintDetailRowsBuilder
                 $origin = $this->activityRepository->findById($line->activityId);
 
                 $rows[] = new CarbonFootprintDetailRow(
+                    ...$this->materialityFieldsFor($carbonFootprint, Scope::Scope3, $line->source),
                     rowType: CarbonFootprintDetailRowType::DerivedFuelAndEnergy,
                     stage: Scope::Scope3,
                     source: $line->source,
@@ -107,6 +106,7 @@ final class CarbonFootprintDetailRowsBuilder
                 $propertyName = $this->propertyNameOf($line->propertyId);
 
                 $rows[] = new CarbonFootprintDetailRow(
+                    ...$this->materialityFieldsFor($carbonFootprint, Scope::Scope3, $line->source),
                     rowType: CarbonFootprintDetailRowType::NonConsolidatedProperty,
                     stage: Scope::Scope3,
                     source: $line->source,
@@ -131,25 +131,33 @@ final class CarbonFootprintDetailRowsBuilder
         }
 
         foreach ($carbonFootprint->allExclusions() as $exclusion) {
-            $decision = Scope::Scope3 === $exclusion->stage() ? $carbonFootprint->materialityDecisionFor($exclusion->source()) : null;
-
             $rows[] = new CarbonFootprintDetailRow(
+                ...$this->materialityFieldsFor($carbonFootprint, $exclusion->stage(), $exclusion->source()),
                 rowType: CarbonFootprintDetailRowType::Exclusion,
                 stage: $exclusion->stage(),
                 source: $exclusion->source(),
                 exclusionReason: $exclusion->reason(),
                 exclusionComment: $exclusion->comment(),
-                materialityScorePercent: $decision?->scorePercent(),
-                materialityThresholdPercent: $decision?->thresholdPercent(),
-                materialityVerdict: $decision?->verdict(),
-                materialityForcedByHighMagnitude: $decision?->isForcedByHighMagnitude(),
-                materialityOverride: null === $decision ? null : $this->materialityOverrideOf($decision),
             );
         }
 
         usort($rows, static fn(CarbonFootprintDetailRow $a, CarbonFootprintDetailRow $b): int => self::sortKey($a) <=> self::sortKey($b));
 
         return $rows;
+    }
+
+    /** @return array{materialityScorePercent: ?float, materialityThresholdPercent: ?int, materialityVerdict: ?MaterialityVerdict, materialityForcedByHighMagnitude: ?bool, materialityOverride: ?string} */
+    private function materialityFieldsFor(CarbonFootprint $carbonFootprint, CalculationStage $stage, ?Source $source): array
+    {
+        $decision = Scope::Scope3 === $stage && null !== $source ? $carbonFootprint->materialityDecisionFor($source) : null;
+
+        return [
+            'materialityScorePercent' => $decision?->scorePercent(),
+            'materialityThresholdPercent' => $decision?->thresholdPercent(),
+            'materialityVerdict' => $decision?->verdict(),
+            'materialityForcedByHighMagnitude' => $decision?->isForcedByHighMagnitude(),
+            'materialityOverride' => null === $decision ? null : $this->materialityOverrideOf($decision),
+        ];
     }
 
     private function materialityOverrideOf(MaterialityDecision $decision): ?string
@@ -164,7 +172,7 @@ final class CarbonFootprintDetailRowsBuilder
         return sprintf('%s · %s · %s', null === $user ? '---' : (string) $user, $decision->overriddenAt()?->format('d/m/Y') ?? '---', $decision->overrideJustification() ?? '');
     }
 
-    private function activityRow(Activity $activity, ActivityPlacement $placement, int $year, ?EmissionFactorGroupId $emissionFactorGroupId): CarbonFootprintDetailRow
+    private function activityRow(CarbonFootprint $carbonFootprint, Activity $activity, ActivityPlacement $placement, int $year, ?EmissionFactorGroupId $emissionFactorGroupId): CarbonFootprintDetailRow
     {
         $emissionFactor = $activity->emissionFactor();
         $emissions = $activity->emissions();
@@ -172,6 +180,7 @@ final class CarbonFootprintDetailRowsBuilder
         $containerCapacity = $activity instanceof WasteActivity ? $activity->containerCapacity() : null;
 
         return new CarbonFootprintDetailRow(
+            ...$this->materialityFieldsFor($carbonFootprint, $placement->stage, $placement->source),
             rowType: CarbonFootprintDetailRowType::Activity,
             stage: $placement->stage,
             source: $placement->source,
@@ -199,12 +208,19 @@ final class CarbonFootprintDetailRowsBuilder
             emissionsCo2: $emissions->co2(),
             emissionsCh4: $emissions->ch4InKilograms(),
             emissionsN2o: $emissions->n2oInKilograms(),
-            wellToTankCo2eq: $this->wellToTankEmissionsOf($activity)?->co2eq(),
+            wellToTankCo2eq: $this->exportsWellToTank($carbonFootprint, $placement) ? $this->wellToTankEmissionsOf($activity)?->co2eq() : null,
             locationBasedCo2eq: $activity instanceof ElectricityActivity ? $activity->locationBasedEmissions()?->co2eq() : null,
             registeredAt: $activity->registeredAt(),
             updatedAt: $activity->updatedAt(),
             activityId: (string) $activity->id(),
         );
+    }
+
+    private function exportsWellToTank(CarbonFootprint $carbonFootprint, ActivityPlacement $placement): bool
+    {
+        return $carbonFootprint instanceof EventCarbonFootprint
+            || !$placement->stage instanceof Scope
+            || $this->derivedSourceEmissionsCalculator->isDerivedSourceCalculated($carbonFootprint, Scope::Scope3);
     }
 
     private function dataSourceOf(Activity $activity): ?string
@@ -248,13 +264,7 @@ final class CarbonFootprintDetailRowsBuilder
             return null;
         }
 
-        $key = (string) $providerId;
-
-        if (!isset($this->providerNamesById[$key])) {
-            $this->providerNamesById[$key] = $this->providerRepository->find($providerId)?->name() ?? $key;
-        }
-
-        return $this->providerNamesById[$key];
+        return $this->providerNameResolver->resolve($providerId);
     }
 
     private function propertyNameOf(?PropertyId $propertyId): ?string

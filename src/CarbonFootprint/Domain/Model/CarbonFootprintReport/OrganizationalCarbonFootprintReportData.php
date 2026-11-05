@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\CarbonFootprint\Domain\Model\CarbonFootprintReport;
 
+use App\CarbonFootprint\Domain\Model\Activity\ActivityType;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\DerivedSourceLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\NonConsolidatedPropertyLine;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\CarbonFootprint\Domain\Model\ProviderContribution\ProviderContributionStatus;
 use App\Property\Domain\Model\Property\OperatingRegime;
 
 final class OrganizationalCarbonFootprintReportData implements CarbonFootprintReportData
@@ -24,6 +26,7 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
      * @param list<DerivedSourceLine>                                              $derivedLines
      * @param list<NonConsolidatedPropertyLine>                                    $nonConsolidatedPropertyLines
      * @param list<OrganizationalCarbonFootprintReportBoundaryLine>                $boundaryLines
+     * @param list<OrganizationalCarbonFootprintReportProviderLine>                $providerLines
      */
     public function __construct(
         public readonly CarbonFootprintReportSubjectType $subjectType,
@@ -55,6 +58,8 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         public readonly array $boundaryLines = [],
         public readonly ?OrganizationalCarbonFootprintReportEmployeeSurvey $employeeSurvey = null,
         public readonly ?OrganizationalCarbonFootprintReportMaterialityAnnex $materialityAnnex = null,
+        public readonly ?OrganizationalCarbonFootprintReportBaseYear $baseYear = null,
+        public readonly array $providerLines = [],
     ) {}
 
     public function subjectType(): CarbonFootprintReportSubjectType
@@ -135,14 +140,20 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
             $rows[] = ['source' => $row['source'], 'method' => null, 'years' => $years, 'lines' => $row['lines'], 'emissions' => $row['emissions']];
         }
 
-        if ([] !== $this->derivedLines) {
-            $rows[] = [
-                'source' => null,
-                'method' => CalculationMethod::DerivedWellToTank,
-                'years' => [],
-                'lines' => count($this->derivedLines),
-                'emissions' => array_sum(array_map(static fn(DerivedSourceLine $line): float => (float) $line->emissions->co2eq(), $this->derivedLines)),
-            ];
+        $derivedSummary = [];
+
+        foreach ($this->derivedLines as $line) {
+            $key = $line->factorSource ?? '';
+            $derivedSummary[$key] ??= ['source' => $line->factorSource, 'years' => [], 'lines' => 0, 'emissions' => 0.0];
+            $derivedSummary[$key]['years'][$line->factorYear] = $line->factorYear;
+            ++$derivedSummary[$key]['lines'];
+            $derivedSummary[$key]['emissions'] += (float) $line->emissions->co2eq();
+        }
+
+        foreach ($derivedSummary as $row) {
+            $years = array_values($row['years']);
+            sort($years);
+            $rows[] = ['source' => $row['source'], 'method' => CalculationMethod::DerivedWellToTank, 'years' => $years, 'lines' => $row['lines'], 'emissions' => $row['emissions']];
         }
 
         foreach ([CalculationMethod::OperatorFootprint, CalculationMethod::OperatorContribution, CalculationMethod::ManualValue] as $method) {
@@ -162,6 +173,110 @@ final class OrganizationalCarbonFootprintReportData implements CarbonFootprintRe
         }
 
         return $rows;
+    }
+
+    public function hasCo2eqOnlyActivities(): bool
+    {
+        foreach ($this->activityLines as $line) {
+            if (in_array($line->activityType, [ActivityType::RefrigerantGas, ActivityType::ReportedEmissions], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function isBaseYear(): bool
+    {
+        return null !== $this->baseYear && $this->baseYear->year === $this->calculationYear;
+    }
+
+    public function baseYearVariationPercent(): ?float
+    {
+        $baseYear = $this->baseYear;
+
+        if (null === $baseYear || $this->isBaseYear()) {
+            return null;
+        }
+
+        $baseYearTotal = (float) $baseYear->baseYearTotalKgCo2eq;
+
+        if (0.0 === $baseYearTotal) {
+            return null;
+        }
+
+        return ((float) $this->totalEmissions->co2eq() - $baseYearTotal) / $baseYearTotal * 100;
+    }
+
+    public function baseYearExceedsThreshold(): bool
+    {
+        $baseYear = $this->baseYear;
+
+        if (null === $baseYear || $this->isBaseYear()) {
+            return false;
+        }
+
+        if (0.0 === (float) $baseYear->baseYearTotalKgCo2eq) {
+            return 0.0 !== (float) $this->totalEmissions->co2eq();
+        }
+
+        $variation = $this->baseYearVariationPercent();
+
+        if (null === $variation) {
+            return false;
+        }
+
+        return abs($variation) > (float) $baseYear->recalculationThresholdPercent;
+    }
+
+    public function supplierDataSharePercent(): ?float
+    {
+        if ($this->scope3Excluded) {
+            return null;
+        }
+
+        $scope3Total = (float) ($this->emissionsByScope[Scope::Scope3->value] ?? new Emissions())->co2eq();
+
+        if (0.0 === $scope3Total) {
+            return null;
+        }
+
+        $answered = 0.0;
+
+        foreach ($this->providerLines as $line) {
+            if (ProviderContributionStatus::Answered === $line->status) {
+                $answered += (float) $line->emissionsCo2eq;
+            }
+        }
+
+        return $answered / $scope3Total * 100;
+    }
+
+    public function hasSourceLines(Scope $scope, Source $source): bool
+    {
+        foreach ($this->activityLines as $line) {
+            if ($line->scope === $scope && $line->source === $source) {
+                return true;
+            }
+        }
+
+        if (Scope::Scope3 !== $scope) {
+            return false;
+        }
+
+        foreach ($this->derivedLines as $line) {
+            if ($line->source === $source) {
+                return true;
+            }
+        }
+
+        foreach ($this->nonConsolidatedPropertyLines as $line) {
+            if ($line->source === $source) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function hasMaterialityDecisions(): bool
