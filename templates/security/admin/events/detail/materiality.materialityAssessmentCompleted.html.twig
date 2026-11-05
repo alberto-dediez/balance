@@ -1,5 +1,5 @@
 {% trans with {
-    '{year}': event.year,
+    '{year}': event.year ~ '',
     '{carbonFootprintId}': event.carbonFootprintId,
     '{user}': element.userId | user_name
 } %}Se ha completado la evaluación de materialidad {year} de la huella {carbonFootprintId} por el usuario {user}{% endtrans %}

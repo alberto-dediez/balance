@@ -204,14 +204,14 @@ final class KpiDashboardView
 
         if (null !== $dashboard->variationVsPrevious) {
             $variations[] = [
-                'label' => $this->translator->trans('vs. {year}', ['{year}' => $dashboard->variationVsPrevious->fromYear]),
+                'label' => $this->translator->trans('vs. {year}', ['{year}' => (string) $dashboard->variationVsPrevious->fromYear]),
                 'variation' => $dashboard->variationVsPrevious,
             ];
         }
 
         if (null !== $dashboard->variationVsBaseYear) {
             $variations[] = [
-                'label' => $this->translator->trans('vs. año base ({year})', ['{year}' => $dashboard->variationVsBaseYear->fromYear]),
+                'label' => $this->translator->trans('vs. año base ({year})', ['{year}' => (string) $dashboard->variationVsBaseYear->fromYear]),
                 'variation' => $dashboard->variationVsBaseYear,
             ];
         }

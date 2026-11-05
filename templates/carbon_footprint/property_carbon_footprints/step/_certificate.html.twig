@@ -3,7 +3,7 @@
         {% if not reportGenerated %}
             <p class="text-muted">{{ 'El certificado de huella se puede emitir cuando el informe esté generado.' | trans }}</p>
         {% elseif propertyCarbonFootprint | is_authorized('edit') %}
-            <p class="text-muted">{{ 'Emite el certificado de huella por estancia del año {year} para comunicarla en tu web y canales de venta.' | trans({'{year}': propertyCarbonFootprint.year}) }}</p>
+            <p class="text-muted">{{ 'Emite el certificado de huella por estancia del año {year} para comunicarla en tu web y canales de venta.' | trans({'{year}': propertyCarbonFootprint.year ~ ''}) }}</p>
 
             {{ form_start(certificateForm) }}
                 {{ form_row(certificateForm.stays) }}

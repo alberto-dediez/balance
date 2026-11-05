@@ -1,9 +1,9 @@
 {% extends '@shared/layout/email.html.twig' %}
 
 {% block content %}
-    <h3>{% trans with {'{year}': year, '{property}': propertyName, '{company}': companyName} -%}Aporta los consumos de {year} de {property} para la huella de {company}{%- endtrans %}</h3>
+    <h3>{% trans with {'{year}': year ~ '', '{property}': propertyName, '{company}': companyName} -%}Aporta los consumos de {year} de {property} para la huella de {company}{%- endtrans %}</h3>
     <p>
-        {% trans with {'{name}': contactName ?? '', '{company}': companyName, '{property}': propertyName, '{year}': year} -%}
+        {% trans with {'{name}': contactName ?? '', '{company}': companyName, '{property}': propertyName, '{year}': year ~ ''} -%}
             Hola {name}, {company} está calculando su huella de carbono de {year} y necesita conocer las emisiones de alcance 1 y 2 de {property}, que explotas como franquiciado o arrendatario.
         {%- endtrans %}
     </p>

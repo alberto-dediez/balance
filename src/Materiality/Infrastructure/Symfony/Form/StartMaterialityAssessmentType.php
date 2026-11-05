@@ -30,7 +30,7 @@ class StartMaterialityAssessmentType extends AbstractType
 
         if (null !== $options['previous_year']) {
             $builder->add('copyPreviousAnswers', CheckboxType::class, [
-                'label' => new TranslatableMessage('Partir de la evaluación de {year}', ['{year}' => $options['previous_year']]),
+                'label' => new TranslatableMessage('Partir de la evaluación de {year}', ['{year}' => (string) $options['previous_year']]),
                 'required' => false,
                 'data' => true,
             ]);

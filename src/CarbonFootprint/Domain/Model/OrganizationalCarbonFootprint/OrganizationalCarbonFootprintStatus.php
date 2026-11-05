@@ -96,6 +96,14 @@ enum OrganizationalCarbonFootprintStatus: string
         };
     }
 
+    public function style(): string
+    {
+        return match ($this) {
+            self::Completed => 'bg-success',
+            default         => 'bg-info',
+        };
+    }
+
     public function advancedTo(self $candidate): self
     {
         if (self::Completed === $this) {

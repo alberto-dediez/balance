@@ -92,7 +92,7 @@
                                                 <td>{{ row.propertyName }}</td>
                                                 <td>
                                                     {% if row.originType == 'footprint' %}
-                                                        {{ 'Huella {year} completada' | trans({'{year}': row.year}) }}
+                                                        {{ 'Huella {year} completada' | trans({'{year}': row.year ~ ''}) }}
                                                     {% elseif row.originType == 'operator' %}
                                                         {{ 'Aportación del franquiciado o arrendatario' | trans }}
                                                     {% else %}

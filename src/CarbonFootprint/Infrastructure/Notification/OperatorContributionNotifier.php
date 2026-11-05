@@ -112,7 +112,7 @@ class OperatorContributionNotifier implements DomainEventSubscriber
         $this->localeSwitcher->runWithLocale($contactLocale->value, function () use ($recipient, $params, $accountId): void {
             $this->emailSender->__invoke(
                 recipient: $recipient,
-                subject: $this->translator->trans('Aporta los consumos de {year} de {property} para la huella de {company}', ['{year}' => $params['year'], '{property}' => $params['propertyName'], '{company}' => $params['companyName']]),
+                subject: $this->translator->trans('Aporta los consumos de {year} de {property} para la huella de {company}', ['{year}' => (string) $params['year'], '{property}' => $params['propertyName'], '{company}' => $params['companyName']]),
                 template: '@carbon_footprint/emails/operator_contribution_requested.html.twig',
                 params: $params + ['brandingTokens' => $this->brandingResolver->resolve($accountId)],
             );

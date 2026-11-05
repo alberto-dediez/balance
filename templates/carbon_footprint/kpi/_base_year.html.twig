@@ -4,7 +4,7 @@
     {% if dashboard.baseYearAlert and baseYear is not null and dashboard.baseYearCurrentTotalKg is not null %}
         <twig:Alert:Alert type="warning">
             {{ 'El total del año base ({year}) ha cambiado un {change} % desde su declaración y supera el umbral del {threshold} %. Revisa la serie y actualiza la declaración si procede.' | trans({
-                '{year}': baseYear.year,
+                '{year}': baseYear.year ~ '',
                 '{change}': (baseYear.changePercent(dashboard.baseYearCurrentTotalKg) ?? 0) | number_format(2, ',', '.'),
                 '{threshold}': baseYear.recalculationThresholdPercent | number_format(2, ',', '.'),
             }) }}

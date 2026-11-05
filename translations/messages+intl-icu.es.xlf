@@ -12221,6 +12221,82 @@
         <source>La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</source>
         <target>La evaluación de materialidad se completó sin categorías del alcance 3; las exclusiones del alcance 3 se sustentan en el motivo y el comentario declarados en la tabla “Emisiones incluidas en cada alcance”.</target>
       </trans-unit>
+      <trans-unit id="4XtNacA" resname="Huella organizacional">
+        <source>Huella organizacional</source>
+        <target>Huella organizacional</target>
+      </trans-unit>
+      <trans-unit id="gCE_vH1" resname="Aún no hay huellas organizacionales">
+        <source>Aún no hay huellas organizacionales</source>
+        <target>Aún no hay huellas organizacionales</target>
+      </trans-unit>
+      <trans-unit id="NuixcB0" resname="Calcula la huella de carbono de tus propiedades para ver estadísticas.">
+        <source>Calcula la huella de carbono de tus propiedades para ver estadísticas.</source>
+        <target>Calcula la huella de carbono de tus propiedades para ver estadísticas.</target>
+      </trans-unit>
+      <trans-unit id="WzNrx_F" resname="Ir a huellas de carbono">
+        <source>Ir a huellas de carbono</source>
+        <target>Ir a huellas de carbono</target>
+      </trans-unit>
+      <trans-unit id="h1f0RZ4" resname="Emisiones {year}">
+        <source>Emisiones {year}</source>
+        <target>Emisiones {year}</target>
+      </trans-unit>
+      <trans-unit id="7f5RhgK" resname="con plan de mitigación">
+        <source>con plan de mitigación</source>
+        <target>con plan de mitigación</target>
+      </trans-unit>
+      <trans-unit id="kpuhl2j" resname="Propiedades con huella">
+        <source>Propiedades con huella</source>
+        <target>Propiedades con huella</target>
+      </trans-unit>
+      <trans-unit id="WgKNwMi" resname="empresas con huella">
+        <source>empresas con huella</source>
+        <target>empresas con huella</target>
+      </trans-unit>
+      <trans-unit id="aFQa69Y" resname="Variación interanual">
+        <source>Variación interanual</source>
+        <target>Variación interanual</target>
+      </trans-unit>
+      <trans-unit id="TBM20nZ" resname="Respecto a {year}">
+        <source>Respecto a {year}</source>
+        <target>Respecto a {year}</target>
+      </trans-unit>
+      <trans-unit id="bvNVnMM" resname="Sin año anterior calculado">
+        <source>Sin año anterior calculado</source>
+        <target>Sin año anterior calculado</target>
+      </trans-unit>
+      <trans-unit id="6YQpUYJ" resname="Emisiones organizacionales por año">
+        <source>Emisiones organizacionales por año</source>
+        <target>Emisiones organizacionales por año</target>
+      </trans-unit>
+      <trans-unit id="qNmqlxK" resname="Completa tu primera huella organizacional para ver la evolución anual.">
+        <source>Completa tu primera huella organizacional para ver la evolución anual.</source>
+        <target>Completa tu primera huella organizacional para ver la evolución anual.</target>
+      </trans-unit>
+      <trans-unit id="xPH6pqi" resname="Emisiones por alcance {year}">
+        <source>Emisiones por alcance {year}</source>
+        <target>Emisiones por alcance {year}</target>
+      </trans-unit>
+      <trans-unit id="FoZaUb_" resname="Propiedades con más emisiones">
+        <source>Propiedades con más emisiones</source>
+        <target>Propiedades con más emisiones</target>
+      </trans-unit>
+      <trans-unit id="XH6aT5L" resname="Completa la huella de una propiedad para ver este ranking.">
+        <source>Completa la huella de una propiedad para ver este ranking.</source>
+        <target>Completa la huella de una propiedad para ver este ranking.</target>
+      </trans-unit>
+      <trans-unit id="TdSyB8v" resname="Últimas huellas organizacionales">
+        <source>Últimas huellas organizacionales</source>
+        <target>Últimas huellas organizacionales</target>
+      </trans-unit>
+      <trans-unit id="I9thb5r" resname="Propiedad / Empresa">
+        <source>Propiedad / Empresa</source>
+        <target>Propiedad / Empresa</target>
+      </trans-unit>
+      <trans-unit id="PeRnKn0" resname="Emisiones (t CO₂eq)">
+        <source>Emisiones (t CO₂eq)</source>
+        <target>Emisiones (t CO₂eq)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

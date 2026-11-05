@@ -11,6 +11,8 @@ use App\CarbonFootprint\Application\Dashboard\GetAdminDashboard\GetAdminDashboar
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\EventEmissions;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardRequest;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardService;
+use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\PropertyEmissions;
+use App\CarbonFootprint\Application\Dashboard\OrganizationalDashboard;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
@@ -71,7 +73,8 @@ class DashboardController extends AbstractController
             'propertyValues' => $this->roundValues($dashboard->emissionsByProperty),
             'companyCategories' => array_keys($dashboard->emissionsByCompany),
             'companyValues' => $this->roundValues($dashboard->emissionsByCompany),
-        ] + $this->compensationParameters($dashboard->compensations, $translator));
+        ] + $this->compensationParameters($dashboard->compensations, $translator)
+            + $this->organizationalParameters($dashboard->organizational, $translator));
     }
 
     private function adminDashboard(
@@ -123,6 +126,25 @@ class DashboardController extends AbstractController
                 (float) $aggregation->failed,
                 (float) $aggregation->expired,
             ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function organizationalParameters(?OrganizationalDashboard $organizational, TranslatorInterface $translator): array
+    {
+        if (!$organizational instanceof OrganizationalDashboard) {
+            return [];
+        }
+
+        $scopeValues = array_filter($organizational->referenceYearByScopeKg, static fn(float $value): bool => $value > 0.0);
+
+        return [
+            'organizationalYearCategories' => array_keys($organizational->emissionsByYearKg),
+            'organizationalYearValues' => $this->roundValues($organizational->emissionsByYearKg),
+            'organizationalScopeCategories' => $this->translateKeys($scopeValues, 'scope', $translator),
+            'organizationalScopeValues' => $this->roundValues($scopeValues),
+            'organizationalPropertyCategories' => array_map(static fn(PropertyEmissions $propertyEmissions): string => $propertyEmissions->property->name(), $organizational->topPropertiesByEmissions),
+            'organizationalPropertyValues' => array_map(static fn(PropertyEmissions $propertyEmissions): float => round($propertyEmissions->co2eq, 2), $organizational->topPropertiesByEmissions),
         ];
     }
 

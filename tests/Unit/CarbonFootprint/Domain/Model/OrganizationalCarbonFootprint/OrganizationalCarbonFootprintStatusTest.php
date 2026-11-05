@@ -130,4 +130,17 @@ final class OrganizationalCarbonFootprintStatusTest extends TestCase
         $this->assertSame(7, Status::EmployeesAnswered->stepNumber());
         $this->assertSame(8, Status::Completed->stepNumber());
     }
+
+    public function testStyle(): void
+    {
+        $this->assertSame('bg-success', Status::Completed->style());
+
+        foreach (Status::cases() as $status) {
+            if (Status::Completed === $status) {
+                continue;
+            }
+
+            $this->assertSame('bg-info', $status->style());
+        }
+    }
 }

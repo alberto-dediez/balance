@@ -6,6 +6,7 @@ namespace App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard;
 
 use App\CarbonFootprint\Application\Dashboard\DashboardCompensationsCalculator;
 use App\CarbonFootprint\Application\Dashboard\EmissionsBreakdownCalculator;
+use App\CarbonFootprint\Application\Dashboard\OrganizationalDashboardCalculator;
 use App\CarbonFootprint\Application\Dashboard\OwnerDashboardAuthorizer;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintFilter;
@@ -29,6 +30,7 @@ class GetOwnerDashboardService
         private CompanyRepository $companyRepository,
         private EmissionsBreakdownCalculator $emissionsBreakdownCalculator,
         private DashboardCompensationsCalculator $dashboardCompensationsCalculator,
+        private OrganizationalDashboardCalculator $organizationalDashboardCalculator,
         private OwnerDashboardAuthorizer $authorizer,
         private AccountFeaturesPolicy $accountFeaturesPolicy,
     ) {}
@@ -152,6 +154,9 @@ class GetOwnerDashboardService
             emissionsByProperty: $emissionsByProperty,
             emissionsByCompany: $emissionsByCompany,
             compensations: ($this->dashboardCompensationsCalculator)($request->accountId, $currentYear),
+            organizational: $this->accountFeaturesPolicy->isEnabled(AccountFeature::OrganizationalCarbonFootprint, $request->accountId)
+                ? ($this->organizationalDashboardCalculator)($request->accountId)
+                : null,
         );
     }
 }

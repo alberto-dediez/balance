@@ -117,7 +117,7 @@ class OrganizationalEmployeeContributionNotifier implements DomainEventSubscribe
             $this->localeSwitcher->runWithLocale($locale, function () use ($recipient, $employee, $params): void {
                 $this->emailSender->__invoke(
                     recipient: $recipient,
-                    subject: $this->translator->trans('Aporta tus desplazamientos y viajes de {year} para {subject}', ['{year}' => $params['year'], '{subject}' => $params['subjectName']]),
+                    subject: $this->translator->trans('Aporta tus desplazamientos y viajes de {year} para {subject}', ['{year}' => (string) $params['year'], '{subject}' => $params['subjectName']]),
                     template: '@carbon_footprint/emails/organizational_employee_contribution_requested.html.twig',
                     params: $params + ['brandingTokens' => $this->brandingResolver->resolve($employee->accountId())],
                 );
@@ -131,7 +131,7 @@ class OrganizationalEmployeeContributionNotifier implements DomainEventSubscribe
         $this->notifier->notify(new SystemNotification(
             recipientId: $user->id(),
             channel: NotificationChannel::Internal,
-            subject: $this->translator->trans('Aporta tus desplazamientos y viajes de {year} para {subject}', ['{year}' => $params['year'], '{subject}' => $params['subjectName']]),
+            subject: $this->translator->trans('Aporta tus desplazamientos y viajes de {year} para {subject}', ['{year}' => (string) $params['year'], '{subject}' => $params['subjectName']]),
             template: '@carbon_footprint/notification/organizational-employee-contribution-requested.notification.html.twig',
             params: $params,
             accountId: $employee->accountId(),

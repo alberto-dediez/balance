@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard;
 
 use App\CarbonFootprint\Application\Dashboard\DashboardCompensations;
+use App\CarbonFootprint\Application\Dashboard\OrganizationalDashboard;
 
 class GetOwnerDashboardResponse
 {
@@ -37,5 +38,6 @@ class GetOwnerDashboardResponse
         public readonly array $emissionsByProperty,
         public readonly array $emissionsByCompany,
         public readonly DashboardCompensations $compensations,
+        public readonly ?OrganizationalDashboard $organizational,
     ) {}
 }

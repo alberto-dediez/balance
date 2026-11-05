@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Unit\CarbonFootprint\Application\Dashboard;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionsAggregator;
+use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
+use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\Dashboard\DashboardCompensations;
 use App\CarbonFootprint\Application\Dashboard\DashboardCompensationsCalculator;
 use App\CarbonFootprint\Application\Dashboard\EmissionsBreakdownCalculator;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardRequest;
 use App\CarbonFootprint\Application\Dashboard\GetOwnerDashboard\GetOwnerDashboardService;
+use App\CarbonFootprint\Application\Dashboard\OrganizationalDashboard;
+use App\CarbonFootprint\Application\Dashboard\OrganizationalDashboardCalculator;
 use App\CarbonFootprint\Application\Dashboard\OwnerDashboardAuthorizer;
 use App\CarbonFootprint\Domain\Model\Activity\ActivityRepository;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
@@ -30,12 +34,16 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Application\OrganizationalProviderContribution\CountedActivityReferencesMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\MaterialActivityMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EventCarbonFootprint\EventCarbonFootprintRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\MitigationAction\MitigationActionRepositoryMother;
+use App\Tests\Unit\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepositoryMother;
 use App\Tests\Unit\EventOperations\Domain\Model\Event\EventMother;
@@ -120,6 +128,9 @@ class GetOwnerDashboardServiceTest extends TestCase
         $this->assertCount(2, $response->latestFootprints);
         $this->assertEquals(['Property A' => 1000.0], $response->emissionsByProperty);
         $this->assertEquals(['Company A' => 1000.0], $response->emissionsByCompany);
+        $this->assertInstanceOf(OrganizationalDashboard::class, $response->organizational);
+        $this->assertSame(1, $response->organizational->totalProperties);
+        $this->assertSame(1, $response->organizational->totalCompanies);
     }
 
     public function testDeniesAccessToAnotherAccount(): void
@@ -169,6 +180,25 @@ class GetOwnerDashboardServiceTest extends TestCase
         $this->assertInstanceOf(DashboardCompensations::class, $response->compensations);
     }
 
+    public function testWithoutOrganizationalCarbonFootprintTheDashboardDoesNotIncludeItsBlock(): void
+    {
+        $sut = $this->createSUT(
+            EventRepositoryMother::inMemory(),
+            EventCarbonFootprintRepositoryMother::inMemory(),
+            ActivityRepositoryMother::inMemory(),
+            PropertyRepositoryMother::inMemory(),
+            CompanyRepositoryMother::inMemory(),
+            new AccountFeatures(organizationalCarbonFootprint: false),
+        );
+
+        $response = $sut(
+            new GetOwnerDashboardRequest(accountId: new AccountId(self::ACCOUNT_ID)),
+            UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, new AccountId(self::ACCOUNT_ID)),
+        );
+
+        $this->assertNull($response->organizational);
+    }
+
     private function createSUT(
         EventRepository $eventRepository,
         EventCarbonFootprintRepository $eventCarbonFootprintRepository,
@@ -184,8 +214,28 @@ class GetOwnerDashboardServiceTest extends TestCase
             companyRepository: $companyRepository,
             emissionsBreakdownCalculator: new EmissionsBreakdownCalculator($activityRepository),
             dashboardCompensationsCalculator: $this->createCompensationsCalculator(),
+            organizationalDashboardCalculator: $this->createOrganizationalDashboardCalculator($activityRepository, $propertyRepository, $companyRepository),
             authorizer: new OwnerDashboardAuthorizer(),
             accountFeaturesPolicy: AccountFeaturesPolicyMother::forAccount(new AccountId(self::ACCOUNT_ID), $features),
+        );
+    }
+
+    private function createOrganizationalDashboardCalculator(
+        ActivityRepository $activityRepository,
+        PropertyRepository $propertyRepository,
+        CompanyRepository $companyRepository,
+    ): OrganizationalDashboardCalculator {
+        return new OrganizationalDashboardCalculator(
+            propertyCarbonFootprintRepository: PropertyCarbonFootprintRepositoryMother::inMemory(),
+            companyCarbonFootprintRepository: CompanyCarbonFootprintRepositoryMother::inMemory(),
+            propertyRepository: $propertyRepository,
+            companyRepository: $companyRepository,
+            mitigationActionRepository: MitigationActionRepositoryMother::inMemory(),
+            breakdownBuilder: new EmissionsBreakdownBuilder(
+                $activityRepository,
+                new DerivedSourceEmissionsCalculator($activityRepository, CountedActivityReferencesMother::create()),
+                CountedActivityReferencesMother::create(),
+            ),
         );
     }
 

@@ -1,9 +1,9 @@
 {% extends '@shared/layout/email.html.twig' %}
 
 {% block content %}
-    <h3>{% trans with {'{year}': year, '{subject}': subjectName|e} -%}Aporta tus datos de emisiones de {year} para {subject}{%- endtrans %}</h3>
+    <h3>{% trans with {'{year}': year ~ '', '{subject}': subjectName|e} -%}Aporta tus datos de emisiones de {year} para {subject}{%- endtrans %}</h3>
     <p>
-        {% trans with {'{name}': (contactName ?? companyName ?? '')|e, '{subject}': subjectName|e, '{year}': year} -%}
+        {% trans with {'{name}': (contactName ?? companyName ?? '')|e, '{subject}': subjectName|e, '{year}': year ~ ''} -%}
             Hola {name}, {subject} te solicita los datos de emisiones de los servicios que le prestaste en {year} para calcular su huella de carbono.
         {%- endtrans %}
     </p>

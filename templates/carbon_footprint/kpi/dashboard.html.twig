@@ -13,7 +13,7 @@
             : path('property_carbon_footprints_results', {propertyCarbonFootprintId: dashboard.selectedFootprintId}) }}">
             <twig:Icon name="solar:document-text-line-duotone" size="lg" class="me-2" />
 
-            {{ 'Ver resultados {year}' | trans({'{year}': dashboard.selectedYear}) }}
+            {{ 'Ver resultados {year}' | trans({'{year}': dashboard.selectedYear ~ ''}) }}
         </twig:TopAction>
     {% endif %}
 {% endblock %}
@@ -107,7 +107,7 @@
             {% if view.previousYear is not null %}
                 <div class="col-sm-6 col-xl d-flex">
                     <twig:Kpi:Tile
-                        label="{{ 'Variación vs. {year}' | trans({'{year}': view.previousYear}) }}"
+                        label="{{ 'Variación vs. {year}' | trans({'{year}': view.previousYear ~ ''}) }}"
                         value="{{ view.previousDeltaPercent is null ? '---' : ((view.previousDeltaPercent > 0 ? '+' : '') ~ view.previousDeltaPercent | number_format(2, ',', '.') ~ ' %') }}"
                         valueClass="{{ view.previousDeltaPercent is not null and view.previousDeltaPercent > 0 ? 'text-danger' : 'text-success' }}"
                     />

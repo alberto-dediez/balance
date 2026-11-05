@@ -22,105 +22,112 @@
     {% set eventsEnabled = account_feature_enabled('events') %}
     {% set compensationEnabled = account_feature_enabled('compensation') %}
     {% set calculatorsEnabled = account_feature_enabled('account_trip_calculator') or account_feature_enabled('property_trip_calculators') %}
+    {% set organizationalEnabled = account_feature_enabled('organizational_carbon_footprint') and dashboard.organizational is not null %}
 
-    {% if eventsEnabled and dashboard.totalEvents == 0 %}
-        <div class="card">
-            <div class="card-body text-center py-5">
-                <twig:Icon name="ic:twotone-event-available" size="xl" class="text-muted" />
-                <h5 class="mt-3">{{ 'Aún no hay datos que mostrar' | trans }}</h5>
-                <p class="text-muted mb-4">{{ 'Registra tu primer evento y calcula su huella de carbono para empezar a ver estadísticas.' | trans }}</p>
-                <a href="{{ path('events_register') }}" class="btn btn-primary">{{ 'Registrar evento' | trans }}</a>
-            </div>
-        </div>
-    {% elseif not eventsEnabled and not compensationEnabled and not calculatorsEnabled %}
+    {% if not eventsEnabled and not compensationEnabled and not calculatorsEnabled and not organizationalEnabled %}
         <twig:Alert:Alert type="info">
             {{ 'No hay estadísticas disponibles para las funcionalidades de esta cuenta.' | trans }}
         </twig:Alert:Alert>
     {% else %}
         {% if eventsEnabled %}
-            {% set completionPercent = dashboard.totalFootprints > 0 ? (dashboard.completedFootprints * 100 / dashboard.totalFootprints) | round : 0 %}
-            {% set totalInTonnes = dashboard.totalEmissionsCo2eq >= 1000 %}
+            {% if dashboard.totalEvents == 0 %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <twig:Icon name="ic:twotone-event-available" size="xl" class="text-muted" />
+                        <h5 class="mt-3">{{ 'Aún no hay datos que mostrar' | trans }}</h5>
+                        <p class="text-muted mb-4">{{ 'Registra tu primer evento y calcula su huella de carbono para empezar a ver estadísticas.' | trans }}</p>
+                        <a href="{{ path('events_register') }}" class="btn btn-primary">{{ 'Registrar evento' | trans }}</a>
+                    </div>
+                </div>
+            {% else %}
+                {% set completionPercent = dashboard.totalFootprints > 0 ? (dashboard.completedFootprints * 100 / dashboard.totalFootprints) | round : 0 %}
+                {% set totalInTonnes = dashboard.totalEmissionsCo2eq >= 1000 %}
 
-            <div class="row">
-                <div class="col-sm-6 col-xl-3 d-flex">
-                    <div class="card flex-fill">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <h6 class="text-muted fw-normal mb-1">{{ 'Eventos' | trans }}</h6>
-                                    <h3 class="fw-semibold mb-0">{{ dashboard.totalEvents }}</h3>
+                <div class="row">
+                    <div class="col-sm-6 col-xl-3 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted fw-normal mb-1">{{ 'Eventos' | trans }}</h6>
+                                        <h3 class="fw-semibold mb-0">{{ dashboard.totalEvents }}</h3>
+                                    </div>
+                                    <span class="p-2 bg-primary-subtle rounded d-flex">
+                                        <twig:Icon name="ic:twotone-event-available" size="lg" class="text-primary" />
+                                    </span>
                                 </div>
-                                <span class="p-2 bg-primary-subtle rounded d-flex">
-                                    <twig:Icon name="ic:twotone-event-available" size="lg" class="text-primary" />
-                                </span>
+                                <small class="text-muted">{{ dashboard.eventsThisYear }} {{ 'este año' | trans }}</small>
                             </div>
-                            <small class="text-muted">{{ dashboard.eventsThisYear }} {{ 'este año' | trans }}</small>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted fw-normal mb-1">{{ 'Huellas completadas' | trans }}</h6>
+                                        <h3 class="fw-semibold mb-0">{{ dashboard.completedFootprints }} <small class="fs-4 text-muted">/ {{ dashboard.totalFootprints }}</small></h3>
+                                    </div>
+                                    <span class="p-2 bg-success-subtle rounded d-flex">
+                                        <twig:Icon name="solar:leaf-line-duotone" size="lg" class="text-success" />
+                                    </span>
+                                </div>
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ completionPercent }}%" aria-valuenow="{{ completionPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted">{{ dashboard.inProgressFootprints }} {{ 'en curso' | trans }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted fw-normal mb-1">{{ 'Emisiones totales' | trans }}</h6>
+                                        <h3 class="fw-semibold mb-0">
+                                            {{ totalInTonnes
+                                                ? (dashboard.totalEmissionsCo2eq / 1000) | number_format(2, ',', '.')
+                                                : dashboard.totalEmissionsCo2eq | number_format(0, ',', '.') }}
+                                            <small class="fs-4 text-muted">{{ totalInTonnes ? 't CO₂eq' : 'kg CO₂eq' }}</small>
+                                        </h3>
+                                    </div>
+                                    <span class="p-2 bg-warning-subtle rounded d-flex">
+                                        <twig:Icon name="carbon:sustainability" size="lg" class="text-warning" />
+                                    </span>
+                                </div>
+                                <small class="text-muted">{{ 'Media por evento' | trans }}: {{ dashboard.averageEmissionsPerEventCo2eq | number_format(0, ',', '.') }} kg</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-xl-3 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="text-muted fw-normal mb-1">{{ 'Media por asistente' | trans }}</h6>
+                                        <h3 class="fw-semibold mb-0">
+                                            {{ dashboard.averageEmissionsPerAttendeeCo2eq | number_format(2, ',', '.') }}
+                                            <small class="fs-4 text-muted">kg CO₂eq</small>
+                                        </h3>
+                                    </div>
+                                    <span class="p-2 bg-info-subtle rounded d-flex">
+                                        <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" class="text-info" />
+                                    </span>
+                                </div>
+                                <small class="text-muted">{{ dashboard.totalEstimatedAttendees | number_format(0, ',', '.') }} {{ 'asistentes estimados' | trans }}</small>
+                            </div>
                         </div>
                     </div>
                 </div>
+            {% endif %}
+        {% endif %}
 
-                <div class="col-sm-6 col-xl-3 d-flex">
-                    <div class="card flex-fill">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <h6 class="text-muted fw-normal mb-1">{{ 'Huellas completadas' | trans }}</h6>
-                                    <h3 class="fw-semibold mb-0">{{ dashboard.completedFootprints }} <small class="fs-4 text-muted">/ {{ dashboard.totalFootprints }}</small></h3>
-                                </div>
-                                <span class="p-2 bg-success-subtle rounded d-flex">
-                                    <twig:Icon name="solar:leaf-line-duotone" size="lg" class="text-success" />
-                                </span>
-                            </div>
-                            <div class="progress mt-2" style="height: 6px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ completionPercent }}%" aria-valuenow="{{ completionPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <small class="text-muted">{{ dashboard.inProgressFootprints }} {{ 'en curso' | trans }}</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-xl-3 d-flex">
-                    <div class="card flex-fill">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <h6 class="text-muted fw-normal mb-1">{{ 'Emisiones totales' | trans }}</h6>
-                                    <h3 class="fw-semibold mb-0">
-                                        {{ totalInTonnes
-                                            ? (dashboard.totalEmissionsCo2eq / 1000) | number_format(2, ',', '.')
-                                            : dashboard.totalEmissionsCo2eq | number_format(0, ',', '.') }}
-                                        <small class="fs-4 text-muted">{{ totalInTonnes ? 't CO₂eq' : 'kg CO₂eq' }}</small>
-                                    </h3>
-                                </div>
-                                <span class="p-2 bg-warning-subtle rounded d-flex">
-                                    <twig:Icon name="carbon:sustainability" size="lg" class="text-warning" />
-                                </span>
-                            </div>
-                            <small class="text-muted">{{ 'Media por evento' | trans }}: {{ dashboard.averageEmissionsPerEventCo2eq | number_format(0, ',', '.') }} kg</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-xl-3 d-flex">
-                    <div class="card flex-fill">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <h6 class="text-muted fw-normal mb-1">{{ 'Media por asistente' | trans }}</h6>
-                                    <h3 class="fw-semibold mb-0">
-                                        {{ dashboard.averageEmissionsPerAttendeeCo2eq | number_format(2, ',', '.') }}
-                                        <small class="fs-4 text-muted">kg CO₂eq</small>
-                                    </h3>
-                                </div>
-                                <span class="p-2 bg-info-subtle rounded d-flex">
-                                    <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" class="text-info" />
-                                </span>
-                            </div>
-                            <small class="text-muted">{{ dashboard.totalEstimatedAttendees | number_format(0, ',', '.') }} {{ 'asistentes estimados' | trans }}</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        {% if organizationalEnabled %}
+            {{ include('@carbon_footprint/dashboard/_organizational.html.twig') }}
         {% endif %}
 
         {% if compensationEnabled %}
@@ -131,7 +138,7 @@
             {{ include('@carbon_footprint/dashboard/_forms.html.twig', {eventsEnabled: eventsEnabled, compensationEnabled: compensationEnabled, calculatorsEnabled: calculatorsEnabled}) }}
         {% endif %}
 
-        {% if eventsEnabled %}
+        {% if eventsEnabled and dashboard.totalEvents > 0 %}
             <div class="row">
                 <div class="col-lg-8 d-flex">
                     <div class="card flex-fill">
