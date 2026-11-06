@@ -68,8 +68,8 @@ class NodeListerTest extends TestCase
 
         $this->assertNotNull($adminNode);
         $this->assertTrue($adminNode->selected);
-        $this->assertTrue($adminNode->items[0]->selected);
-        $this->assertTrue($adminNode->items[0]->items[2]->selected);
+        $this->assertTrue($adminNode->items[1]->selected);
+        $this->assertTrue($adminNode->items[1]->items[2]->selected);
     }
 
     public function testNodesDoesNotMarkAnyNodeAsSelectedWhenCurrentPathDoesNotMatch(): void
@@ -82,8 +82,8 @@ class NodeListerTest extends TestCase
 
         $this->assertNotNull($adminNode);
         $this->assertFalse($adminNode->selected);
-        $this->assertFalse($adminNode->items[0]->selected);
-        $this->assertFalse($adminNode->items[0]->items[0]->selected);
+        $this->assertFalse($adminNode->items[1]->selected);
+        $this->assertFalse($adminNode->items[1]->items[0]->selected);
     }
 
     public function testNodesMarksOnlyTheMostSpecificLinkWhenTargetsOverlap(): void
@@ -101,8 +101,8 @@ class NodeListerTest extends TestCase
 
         $this->assertNotNull($adminNode);
 
-        $organization = $adminNode->items[0];
-        $audit = $adminNode->items[1];
+        $organization = $adminNode->items[1];
+        $audit = $adminNode->items[3];
 
         $this->assertFalse($organization->items[2]->selected);
         $this->assertFalse($organization->selected);
@@ -131,15 +131,15 @@ class NodeListerTest extends TestCase
 
         $this->assertNotNull($adminNode);
 
-        $groups = $adminNode->items;
+        $items = $adminNode->items;
 
-        $this->assertSame(['Organización', 'Auditoría', 'Huella de carbono'], $this->labels($groups));
-        $this->assertNull($groups[0]->target);
-        $this->assertNull($groups[1]->target);
-        $this->assertNull($groups[2]->target);
-        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios'], $this->labels($groups[0]->items));
-        $this->assertSame(['Firma de documentos', 'Registro'], $this->labels($groups[1]->items));
-        $this->assertSame(['Informes de huella', 'Grupos de coeficientes', 'Tipos de cambio'], $this->labels($groups[2]->items));
+        $this->assertSame(['Tipos de cambio', 'Organización', 'Bioscore', 'Auditoría'], $this->labels($items));
+        $this->assertSame([], $items[0]->items);
+        $this->assertNull($items[1]->target);
+        $this->assertNull($items[3]->target);
+        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios'], $this->labels($items[1]->items));
+        $this->assertSame(['Combustibles de instalaciones', 'Combustibles de vehículos', 'Gases refrigerantes', 'Comercializadoras eléctricas'], $this->labels($items[2]->items));
+        $this->assertSame(['Firma de documentos', 'Registro'], $this->labels($items[3]->items));
 
         $superAdmin = $this->createStub(AuthorizationCheckerInterface::class);
         $superAdmin->method('isGranted')->willReturnCallback(
@@ -149,7 +149,112 @@ class NodeListerTest extends TestCase
         $superAdminNode = $this->findNodeByLabel($this->createSUT($superAdmin)->nodes(), 'Administración');
 
         $this->assertNotNull($superAdminNode);
-        $this->assertSame(['Firma de documentos', 'Emails enviados', 'Registro'], $this->labels($superAdminNode->items[1]->items));
+        $this->assertSame(['Firma de documentos', 'Emails enviados', 'Registro'], $this->labels($superAdminNode->items[3]->items));
+    }
+
+    public function testAdminsSeeMastersGroupedByActivity(): void
+    {
+        $masters = $this->findNodeByLabel($this->createSUT(FakeSecurity::fromRole(Role::Admin))->nodes(), 'Maestros');
+
+        $this->assertNotNull($masters);
+        $this->assertSame('solar:database-line-duotone', $masters->icon);
+
+        $groups = $masters->items;
+
+        $this->assertSame(['Materiales', 'Productos vendidos', 'Inversiones', 'Instalaciones', 'Transporte'], $this->labels($groups));
+
+        foreach ($groups as $group) {
+            $this->assertNull($group->target);
+            $this->assertNull($group->icon);
+        }
+
+        $this->assertSame(['Materiales', 'Artículos de merchandising', 'Elementos de catering', 'Bienes y servicios comprados', 'Bienes de capital'], $this->labels($groups[0]->items));
+        $this->assertSame(['Procesos', 'Perfiles de uso'], $this->labels($groups[1]->items));
+        $this->assertSame(['Sectores económicos'], $this->labels($groups[2]->items));
+        $this->assertSame(['Combustibles', 'Comercializadoras eléctricas', 'Factores GdO', 'Mix eléctrico', 'Gases refrigerantes', 'Residuos'], $this->labels($groups[3]->items));
+        $this->assertSame(['Medios de transporte', 'Combustible de maquinaria', 'Movilidad', 'Pernoctaciones'], $this->labels($groups[4]->items));
+    }
+
+    public function testAbsorbedMastersAreNoLongerRoots(): void
+    {
+        $nodes = $this->createSUT(FakeSecurity::fromRole(Role::Admin))->nodes();
+
+        foreach (['Materiales', 'Productos vendidos', 'Inversiones', 'Instalaciones', 'Transporte'] as $label) {
+            $this->assertNull($this->findNodeByLabel($nodes, $label), $label);
+        }
+
+        foreach (['Medidas de mitigación', 'Bioscore', 'Materialidad'] as $label) {
+            $this->assertNull($this->findNodeByLabel($nodes, $label), $label);
+        }
+    }
+
+    public function testAdminsSeeCarbonFootprintLinksBeforeItsGroups(): void
+    {
+        $carbonFootprint = $this->findNodeByLabel($this->createSUT(FakeSecurity::fromRole(Role::Admin))->nodes(), 'Huella de carbono');
+
+        $this->assertNotNull($carbonFootprint);
+
+        $items = $carbonFootprint->items;
+
+        $this->assertSame(['Informes de huella', 'Grupos de coeficientes', 'Medidas de mitigación', 'Materialidad'], $this->labels($items));
+        $this->assertSame([], $items[0]->items);
+        $this->assertSame([], $items[1]->items);
+        $this->assertSame(['Medidas', 'Categorías de medidas'], $this->labels($items[2]->items));
+        $this->assertSame(['Categorías', 'Preguntas', 'Sectores', 'Configuración'], $this->labels($items[3]->items));
+    }
+
+    public function testAdminRootsKeepTheirOrderAroundMasters(): void
+    {
+        $this->assertSame(
+            ['Propiedades', 'Proyectos', 'Tesorería', 'Maestros', 'Huella de carbono', 'Administración', 'Biblioteca', 'Notificaciones', 'Novedades'],
+            $this->labels($this->createSUT(FakeSecurity::fromRole(Role::Admin))->nodes()),
+        );
+    }
+
+    public function testAMasterLeafSelectsItsGroupAndTheMastersRoot(): void
+    {
+        $nodes = $this->createSUT(FakeSecurity::fromRole(Role::Admin), '/es/admin/combustibles', ['admin_combustibles' => '/es/admin/combustibles'])->nodes();
+
+        $masters = $this->findNodeByLabel($nodes, 'Maestros');
+        $administration = $this->findNodeByLabel($nodes, 'Administración');
+
+        $this->assertNotNull($masters);
+        $this->assertNotNull($administration);
+        $this->assertTrue($masters->items[3]->items[0]->selected);
+        $this->assertTrue($masters->items[3]->selected);
+        $this->assertTrue($masters->selected);
+        $this->assertFalse($masters->items[0]->selected);
+        $this->assertFalse($administration->selected);
+    }
+
+    public function testEveryMasterTargetIsStillReachable(): void
+    {
+        $routes = [
+            'admin_materials' => '/es/admin/materials',
+            'admin_merchandising_items' => '/es/admin/merchandising-items',
+            'admin_catering_items' => '/es/admin/catering-items',
+            'admin_purchase_services' => '/es/admin/purchase-services',
+            'admin_capital_goods' => '/es/admin/capital-goods',
+            'admin_processes' => '/es/admin/processes',
+            'admin_use_profiles' => '/es/admin/use-profiles',
+            'admin_economic_sectors' => '/es/admin/economic-sectors',
+            'admin_combustibles' => '/es/admin/combustibles',
+            'admin_electricity_marketers' => '/es/admin/electricity-marketers',
+            'admin_gdo_factors' => '/es/admin/gdo-factors',
+            'admin_electricity_mixes' => '/es/admin/electricity-mixes',
+            'admin_refrigerant_gases' => '/es/admin/refrigerant-gases',
+            'admin_wastes' => '/es/admin/wastes',
+            'admin_transports' => '/es/admin/transports',
+            'admin_machinery_fuels' => '/es/admin/machinery-fuels',
+            'admin_mobilities' => '/es/admin/mobilities',
+            'admin_overnight_stays' => '/es/admin/overnight-stays',
+        ];
+
+        $targets = $this->targets($this->createSUT(FakeSecurity::fromRole(Role::Admin), routes: $routes)->nodes());
+
+        foreach ($routes as $name => $target) {
+            $this->assertContains($target, $targets, $name);
+        }
     }
 
     public function testOwnersAndUsersHaveNoGroups(): void
@@ -237,9 +342,9 @@ class NodeListerTest extends TestCase
         $adminNode = $this->findNodeByLabel($nodes, 'Administración');
 
         $this->assertNotNull($adminNode);
-        $this->assertSame(['Cuentas', 'Usuarios'], $this->labels($adminNode->items[0]->items));
-        $this->assertSame(['Firma de documentos', 'Registro'], $this->labels($adminNode->items[1]->items));
-        $this->assertSame(['Informes de huella', 'Grupos de coeficientes', 'Tipos de cambio'], $this->labels($adminNode->items[2]->items));
+        $this->assertSame(['Tipos de cambio', 'Organización', 'Bioscore', 'Auditoría'], $this->labels($adminNode->items));
+        $this->assertSame(['Cuentas', 'Usuarios'], $this->labels($adminNode->items[1]->items));
+        $this->assertSame(['Firma de documentos', 'Registro'], $this->labels($adminNode->items[3]->items));
     }
 
     public function testOwnersAndUsersReceiveProviderNodesFirst(): void

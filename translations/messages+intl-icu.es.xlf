@@ -12325,6 +12325,10 @@
         <source>Auditoría</source>
         <target>Auditoría</target>
       </trans-unit>
+      <trans-unit id="..ezF4G" resname="Maestros">
+        <source>Maestros</source>
+        <target>Maestros</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

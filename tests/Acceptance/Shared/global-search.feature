@@ -187,3 +187,35 @@ Feature:
         When I go to "/es/search?term=eventos" as an ajax request
         Then the response status should be 200
         Then I do not see a text 'href="/es/events"'
+
+    Scenario: An admin finds every activity master by the masters root
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/search?term=Maestros" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'data-search-category="navigation"'
+        Then I see a text 'href="/es/admin/materials"'
+        Then I see a text 'href="/es/admin/combustibles"'
+        Then I see a text 'href="/es/admin/transports"'
+        Then I see a text 'href="/es/admin/processes"'
+        Then I see a text 'href="/es/admin/economic-sectors"'
+        Then I see a text "Maestros &gt; Materiales"
+        Then I see a text "Maestros &gt; Instalaciones"
+        Then I do not see a text 'href="/es/admin/users"'
+        Then I do not see a text 'href="/es/admin/mitigation-measures"'
+
+    Scenario: A master group label finds only its screens
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/search?term=Instalaciones" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'href="/es/admin/combustibles"'
+        Then I do not see a text 'href="/es/admin/materials"'
+
+    Scenario: The masters menu is searched in English
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/en/search?term=Master%20data" as an ajax request
+        Then the response status should be 200
+        Then I see a text "Master data &gt; Materials"
+        Then I see a text 'href="/en/admin/materials"'

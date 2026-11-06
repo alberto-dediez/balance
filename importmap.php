@@ -117,4 +117,24 @@ return [
         'version' => '1.9.4',
         'type' => 'css',
     ],
+    'simplebar' => [
+        'version' => '6.3.3',
+    ],
+    'simplebar-core' => [
+        'version' => '1.3.2',
+    ],
+    'simplebar/dist/simplebar.min.css' => [
+        'version' => '6.3.3',
+        'type' => 'css',
+    ],
+    'lodash-es/debounce.js' => [
+        'version' => '4.17.21',
+    ],
+    'lodash-es/throttle.js' => [
+        'version' => '4.17.21',
+    ],
+    'simplebar-core/dist/simplebar.min.css' => [
+        'version' => '1.3.2',
+        'type' => 'css',
+    ],
 ];

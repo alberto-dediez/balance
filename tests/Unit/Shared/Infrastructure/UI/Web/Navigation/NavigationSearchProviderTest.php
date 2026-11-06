@@ -28,13 +28,13 @@ class NavigationSearchProviderTest extends TestCase
 
         $results = $sut->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios', 'Firma de documentos', 'Registro', 'Informes de huella', 'Grupos de coeficientes', 'Tipos de cambio'], $this->titles($results));
-        $this->assertSame(['Administración > Organización', 'Administración > Organización', 'Administración > Organización', 'Administración > Auditoría', 'Administración > Auditoría', 'Administración > Huella de carbono', 'Administración > Huella de carbono', 'Administración > Huella de carbono'], array_map(fn(SearchResult $result): ?string => $result->subtitle, $results));
+        $this->assertSame(['Tipos de cambio', 'Cuentas', 'Empleados', 'Usuarios', 'Combustibles de instalaciones', 'Combustibles de vehículos', 'Gases refrigerantes', 'Comercializadoras eléctricas', 'Firma de documentos', 'Registro'], $this->titles($results));
+        $this->assertSame(['Administración', 'Administración > Organización', 'Administración > Organización', 'Administración > Organización', 'Administración > Bioscore', 'Administración > Bioscore', 'Administración > Bioscore', 'Administración > Bioscore', 'Administración > Auditoría', 'Administración > Auditoría'], array_map(fn(SearchResult $result): ?string => $result->subtitle, $results));
         $this->assertSame(
-            ['/es/admin/accounts', '/es/admin/employees', '/es/admin/users', '/es/admin/signature-requests', '/es/admin/events', '/es/admin/carbon/footprint/reports', '/es/admin/emission/factor/groups', '/es/admin/exchange/rates'],
+            ['/es/admin/exchange/rates', '/es/admin/accounts', '/es/admin/employees', '/es/admin/users', '/es/admin/bioscore/facility/fuels', '/es/admin/bioscore/transport/fuels', '/es/admin/bioscore/refrigerant/gases', '/es/admin/bioscore/electricity/marketers', '/es/admin/signature-requests', '/es/admin/events'],
             $this->urls($results),
         );
-        $this->assertSame('solar:buildings-3-line-duotone', $results[0]->icon);
+        $this->assertSame('solar:dollar-minimalistic-line-duotone', $results[0]->icon);
         $this->assertNull($results[0]->route);
     }
 
@@ -44,6 +44,36 @@ class NavigationSearchProviderTest extends TestCase
 
         $this->assertSame(['Firma de documentos', 'Registro'], $this->titles($sut->search(new SearchTerm('Auditoría'), UserMother::adminUser(), 5)));
         $this->assertSame(['Cuentas', 'Empleados', 'Usuarios'], $this->titles($sut->search(new SearchTerm('Organización'), UserMother::adminUser(), 5)));
+    }
+
+    public function testAMasterGroupLabelFindsOnlyItsLeaves(): void
+    {
+        $results = $this->createSUT(Role::Admin)->search(new SearchTerm('Instalaciones'), UserMother::adminUser(), 5);
+        $masters = array_values(array_filter($results, static fn(SearchResult $result): bool => 'Maestros > Instalaciones' === $result->subtitle));
+
+        $this->assertSame(['Combustibles', 'Comercializadoras eléctricas', 'Factores GdO', 'Mix eléctrico', 'Gases refrigerantes', 'Residuos'], $this->titles($masters));
+        $this->assertSame(['Combustibles de instalaciones'], array_values(array_diff($this->titles($results), $this->titles($masters))));
+        $this->assertNotContains('Materiales', $this->titles($results));
+        $this->assertNotContains('Procesos', $this->titles($results));
+    }
+
+    public function testTheMastersRootFindsEveryMaster(): void
+    {
+        $results = $this->createSUT(Role::Admin)->search(new SearchTerm('Maestros'), UserMother::adminUser(), 5);
+        $titles = $this->titles($results);
+
+        $this->assertCount(18, $results);
+        $this->assertNotContains('Maestros', $titles);
+
+        foreach (['Productos vendidos', 'Inversiones', 'Instalaciones', 'Transporte'] as $group) {
+            $this->assertNotContains($group, $titles);
+        }
+
+        $this->assertCount(1, array_keys($titles, 'Materiales', true));
+
+        foreach ($results as $result) {
+            $this->assertContains($result->subtitle, ['Maestros > Materiales', 'Maestros > Productos vendidos', 'Maestros > Inversiones', 'Maestros > Instalaciones', 'Maestros > Transporte']);
+        }
     }
 
     public function testTheMatchIgnoresCaseAndAccents(): void
@@ -106,7 +136,7 @@ class NavigationSearchProviderTest extends TestCase
     {
         $results = $this->createSUT(Role::Admin)->search(new SearchTerm('ar'), UserMother::adminUser(), 1);
 
-        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Combustible de maquinaria', 'Usuarios', 'Informes de huella', 'Grupos de coeficientes', 'Tipos de cambio', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
+        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Combustible de maquinaria', 'Informes de huella', 'Grupos de coeficientes', 'Medidas', 'Categorías de medidas', 'Categorías', 'Preguntas', 'Sectores', 'Configuración', 'Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
     }
 
     public function testTranslatesTheEntriesToTheCurrentLocale(): void

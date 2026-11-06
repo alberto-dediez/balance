@@ -217,6 +217,136 @@ class NodeLister
         );
     }
 
+    private function mastersNode(): Node
+    {
+        return new Node(
+            label: new TranslatableMessage('Maestros'),
+            icon: 'solar:database-line-duotone',
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Grupos de coeficientes'),
+                    icon: 'solar:test-tube-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_emission_factor_groups'),
+                ),
+                new Node(
+                    label: new TranslatableMessage('Materiales'),
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Materiales'),
+                            icon: 'solar:layers-line-duotone',
+                            target: $this->router->generate('admin_materials'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Artículos de merchandising'),
+                            icon: 'solar:bag-smile-line-duotone',
+                            target: $this->router->generate('admin_merchandising_items'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Elementos de catering'),
+                            icon: 'solar:cup-hot-line-duotone',
+                            target: $this->router->generate('admin_catering_items'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Bienes y servicios comprados'),
+                            icon: 'solar:cart-large-minimalistic-line-duotone',
+                            target: $this->router->generate('admin_purchase_services'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Bienes de capital'),
+                            icon: 'solar:buildings-2-line-duotone',
+                            target: $this->router->generate('admin_capital_goods'),
+                        ),
+                    ],
+                ),
+                new Node(
+                    label: new TranslatableMessage('Productos vendidos'),
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Procesos'),
+                            icon: 'solar:settings-line-duotone',
+                            target: $this->router->generate('admin_processes'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Perfiles de uso'),
+                            icon: 'solar:tuning-3-line-duotone',
+                            target: $this->router->generate('admin_use_profiles'),
+                        ),
+                    ],
+                ),
+                new Node(
+                    label: new TranslatableMessage('Inversiones'),
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Sectores económicos'),
+                            icon: 'solar:graph-up-line-duotone',
+                            target: $this->router->generate('admin_economic_sectors'),
+                        ),
+                    ],
+                ),
+                new Node(
+                    label: new TranslatableMessage('Instalaciones'),
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Combustibles'),
+                            icon: 'solar:fire-line-duotone',
+                            target: $this->router->generate('admin_combustibles'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Comercializadoras eléctricas'),
+                            icon: 'solar:bolt-line-duotone',
+                            target: $this->router->generate('admin_electricity_marketers'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Factores GdO'),
+                            icon: 'solar:leaf-line-duotone',
+                            target: $this->router->generate('admin_gdo_factors'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Mix eléctrico'),
+                            icon: 'solar:map-point-line-duotone',
+                            target: $this->router->generate('admin_electricity_mixes'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Gases refrigerantes'),
+                            icon: 'solar:snowflake-line-duotone',
+                            target: $this->router->generate('admin_refrigerant_gases'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Residuos'),
+                            icon: 'solar:trash-bin-minimalistic-line-duotone',
+                            target: $this->router->generate('admin_wastes'),
+                        ),
+                    ],
+                ),
+                new Node(
+                    label: new TranslatableMessage('Transporte'),
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Medios de transporte'),
+                            icon: 'solar:bus-line-duotone',
+                            target: $this->router->generate('admin_transports'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Combustible de maquinaria'),
+                            icon: 'solar:settings-minimalistic-line-duotone',
+                            target: $this->router->generate('admin_machinery_fuels'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Movilidad'),
+                            icon: 'solar:routing-2-line-duotone',
+                            target: $this->router->generate('admin_mobilities'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Pernoctaciones'),
+                            icon: 'solar:sleeping-square-line-duotone',
+                            target: $this->router->generate('admin_overnight_stays'),
+                        ),
+                    ],
+                ),
+            ],
+        );
+    }
+
     /**
      * @return list<Node>
      */
@@ -317,205 +447,61 @@ class NodeLister
             ],
         );
 
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Materiales'),
-            icon: 'solar:layers-line-duotone',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Materiales'),
-                    icon: 'solar:layers-line-duotone',
-                    target: $this->router->generate('admin_materials'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Artículos de merchandising'),
-                    icon: 'solar:bag-smile-line-duotone',
-                    target: $this->router->generate('admin_merchandising_items'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Elementos de catering'),
-                    icon: 'solar:cup-hot-line-duotone',
-                    target: $this->router->generate('admin_catering_items'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Bienes y servicios comprados'),
-                    icon: 'solar:cart-large-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_purchase_services'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Bienes de capital'),
-                    icon: 'solar:buildings-2-line-duotone',
-                    target: $this->router->generate('admin_capital_goods'),
-                ),
-            ],
-        );
+        $nodes[] = $this->mastersNode();
 
         $nodes[] = new Node(
-            label: new TranslatableMessage('Productos vendidos'),
-            icon: 'solar:box-line-duotone',
-            target: '#productos-vendidos',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Procesos'),
-                    icon: 'solar:settings-line-duotone',
-                    target: $this->router->generate('admin_processes'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Perfiles de uso'),
-                    icon: 'solar:tuning-3-line-duotone',
-                    target: $this->router->generate('admin_use_profiles'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Inversiones'),
-            icon: 'solar:pie-chart-2-line-duotone',
-            target: '#inversiones',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Sectores económicos'),
-                    icon: 'solar:graph-up-line-duotone',
-                    target: $this->router->generate('admin_economic_sectors'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Instalaciones'),
-            icon: 'solar:buildings-3-line-duotone',
-            target: '#instalaciones',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Combustibles'),
-                    icon: 'solar:fire-line-duotone',
-                    target: $this->router->generate('admin_combustibles'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Comercializadoras eléctricas'),
-                    icon: 'solar:bolt-line-duotone',
-                    target: $this->router->generate('admin_electricity_marketers'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Factores GdO'),
-                    icon: 'solar:leaf-line-duotone',
-                    target: $this->router->generate('admin_gdo_factors'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Mix eléctrico'),
-                    icon: 'solar:map-point-line-duotone',
-                    target: $this->router->generate('admin_electricity_mixes'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Gases refrigerantes'),
-                    icon: 'solar:snowflake-line-duotone',
-                    target: $this->router->generate('admin_refrigerant_gases'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Residuos'),
-                    icon: 'solar:trash-bin-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_wastes'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Medidas de mitigación'),
+            label: new TranslatableMessage('Huella de carbono'),
             icon: 'solar:leaf-line-duotone',
-            target: '#medidas-de-mitigacion',
+            target: '#carbon-footprint',
             items: [
                 new Node(
-                    label: new TranslatableMessage('Medidas'),
-                    icon: 'solar:checklist-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_mitigation_measures'),
+                    label: new TranslatableMessage('Informes de huella'),
+                    icon: 'solar:document-text-line-duotone',
+                    target: $this->router->generate('admin_carbon_footprint_reports'),
                 ),
                 new Node(
-                    label: new TranslatableMessage('Categorías de medidas'),
-                    icon: 'solar:folder-line-duotone',
-                    target: $this->router->generate('admin_mitigation_measure_categories'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Transporte'),
-            icon: 'solar:bus-line-duotone',
-            target: '#transporte',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Medios de transporte'),
-                    icon: 'solar:bus-line-duotone',
-                    target: $this->router->generate('admin_transports'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Combustible de maquinaria'),
-                    icon: 'solar:settings-minimalistic-line-duotone',
-                    target: $this->router->generate('admin_machinery_fuels'),
+                    label: new TranslatableMessage('Medidas de mitigación'),
+                    icon: 'solar:leaf-line-duotone',
+                    target: '#medidas-de-mitigacion',
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Medidas'),
+                            icon: 'solar:checklist-minimalistic-line-duotone',
+                            target: $this->router->generate('admin_mitigation_measures'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Categorías de medidas'),
+                            icon: 'solar:folder-line-duotone',
+                            target: $this->router->generate('admin_mitigation_measure_categories'),
+                        ),
+                    ],
                 ),
                 new Node(
-                    label: new TranslatableMessage('Movilidad'),
-                    icon: 'solar:routing-2-line-duotone',
-                    target: $this->router->generate('admin_mobilities'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Pernoctaciones'),
-                    icon: 'solar:sleeping-square-line-duotone',
-                    target: $this->router->generate('admin_overnight_stays'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Bioscore'),
-            icon: 'solar:link-circle-line-duotone',
-            target: '#bioscore',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Combustibles de instalaciones'),
-                    icon: 'solar:fire-line-duotone',
-                    target: $this->router->generate('admin_bioscore_facility_fuels'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Combustibles de vehículos'),
-                    icon: 'solar:bus-line-duotone',
-                    target: $this->router->generate('admin_bioscore_transport_fuels'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Gases refrigerantes'),
-                    icon: 'solar:snowflake-line-duotone',
-                    target: $this->router->generate('admin_bioscore_refrigerant_gases'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Comercializadoras eléctricas'),
-                    icon: 'solar:bolt-line-duotone',
-                    target: $this->router->generate('admin_bioscore_electricity_marketers'),
-                ),
-            ],
-        );
-
-        $nodes[] = new Node(
-            label: new TranslatableMessage('Materialidad'),
-            icon: 'solar:clipboard-check-line-duotone',
-            target: '#materiality',
-            items: [
-                new Node(
-                    label: new TranslatableMessage('Categorías'),
-                    icon: 'solar:list-check-line-duotone',
-                    target: $this->router->generate('admin_materiality_topics'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Preguntas'),
-                    icon: 'solar:question-circle-line-duotone',
-                    target: $this->router->generate('admin_materiality_questions'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Sectores'),
-                    icon: 'solar:buildings-2-line-duotone',
-                    target: $this->router->generate('admin_materiality_sectors'),
-                ),
-                new Node(
-                    label: new TranslatableMessage('Configuración'),
-                    icon: 'solar:settings-line-duotone',
-                    target: $this->router->generate('admin_materiality_settings'),
+                    label: new TranslatableMessage('Materialidad'),
+                    icon: 'solar:clipboard-check-line-duotone',
+                    target: '#materiality',
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Categorías'),
+                            icon: 'solar:list-check-line-duotone',
+                            target: $this->router->generate('admin_materiality_topics'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Preguntas'),
+                            icon: 'solar:question-circle-line-duotone',
+                            target: $this->router->generate('admin_materiality_questions'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Sectores'),
+                            icon: 'solar:buildings-2-line-duotone',
+                            target: $this->router->generate('admin_materiality_sectors'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Configuración'),
+                            icon: 'solar:settings-line-duotone',
+                            target: $this->router->generate('admin_materiality_settings'),
+                        ),
+                    ],
                 ),
             ],
         );
@@ -564,39 +550,49 @@ class NodeLister
             target: $this->router->generate('admin_events'),
         );
 
-        $carbonFootprintItems = [
-            new Node(
-                label: new TranslatableMessage('Informes de huella'),
-                icon: 'solar:document-text-line-duotone',
-                target: $this->router->generate('admin_carbon_footprint_reports'),
-            ),
-            new Node(
-                label: new TranslatableMessage('Grupos de coeficientes'),
-                icon: 'solar:test-tube-minimalistic-line-duotone',
-                target: $this->router->generate('admin_emission_factor_groups'),
-            ),
-            new Node(
-                label: new TranslatableMessage('Tipos de cambio'),
-                icon: 'solar:dollar-minimalistic-line-duotone',
-                target: $this->router->generate('admin_exchange_rates'),
-            ),
-        ];
-
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
             items: [
                 new Node(
+                    label: new TranslatableMessage('Tipos de cambio'),
+                    icon: 'solar:dollar-minimalistic-line-duotone',
+                    target: $this->router->generate('admin_exchange_rates'),
+                ),
+                new Node(
                     label: new TranslatableMessage('Organización'),
                     items: $organizationItems,
                 ),
                 new Node(
-                    label: new TranslatableMessage('Auditoría'),
-                    items: $auditItems,
+                    label: new TranslatableMessage('Bioscore'),
+                    icon: 'solar:link-circle-line-duotone',
+                    target: '#bioscore',
+                    items: [
+                        new Node(
+                            label: new TranslatableMessage('Combustibles de instalaciones'),
+                            icon: 'solar:fire-line-duotone',
+                            target: $this->router->generate('admin_bioscore_facility_fuels'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Combustibles de vehículos'),
+                            icon: 'solar:bus-line-duotone',
+                            target: $this->router->generate('admin_bioscore_transport_fuels'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Gases refrigerantes'),
+                            icon: 'solar:snowflake-line-duotone',
+                            target: $this->router->generate('admin_bioscore_refrigerant_gases'),
+                        ),
+                        new Node(
+                            label: new TranslatableMessage('Comercializadoras eléctricas'),
+                            icon: 'solar:bolt-line-duotone',
+                            target: $this->router->generate('admin_bioscore_electricity_marketers'),
+                        ),
+                    ],
                 ),
                 new Node(
-                    label: new TranslatableMessage('Huella de carbono'),
-                    items: $carbonFootprintItems,
+                    label: new TranslatableMessage('Auditoría'),
+                    items: $auditItems,
                 ),
             ],
         );
