@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Notifications\Infrastructure\UI\Web\User\Notification;
 
+use App\Notifications\Application\Notification\NotificationAuthorizer;
 use App\Notifications\Application\Notification\Read\MarkNotificationAsReadRequest;
 use App\Notifications\Application\Notification\Read\MarkNotificationAsReadService;
 use App\Notifications\Domain\Model\Notification\Notification;
 use App\Notifications\Domain\Model\Notification\NotificationId;
+use App\Notifications\Domain\Model\Notification\NotificationNotFoundException;
 use App\Notifications\Domain\Model\Notification\NotificationRepository;
+use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,16 +29,31 @@ class ShowController extends AbstractController
         string $id,
         MarkNotificationAsReadService $markAsRead,
         NotificationRepository $notificationRepository,
+        NotificationAuthorizer $authorizer,
         LoggedUser $loggedUser,
     ): Response {
         if (!$this->internalNotificationsEnabled) {
             throw $this->createNotFoundException();
         }
 
+        $user = $loggedUser();
+
+        $notification = $notificationRepository->find(NotificationId::fromString($id));
+
+        if (!$notification instanceof Notification) {
+            throw $this->createNotFoundException();
+        }
+
         try {
-            $markAsRead(new MarkNotificationAsReadRequest($id), $loggedUser());
+            $authorizer->denyUnlessCanDoThat($notification, Action::View, $user);
+
+            if ($authorizer->canDoThat($notification, Action::Edit, $user)) {
+                $markAsRead(new MarkNotificationAsReadRequest($id), $user);
+            }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
+        } catch (NotificationNotFoundException) {
+            throw $this->createNotFoundException();
         }
 
         $notification = $notificationRepository->find(NotificationId::fromString($id));

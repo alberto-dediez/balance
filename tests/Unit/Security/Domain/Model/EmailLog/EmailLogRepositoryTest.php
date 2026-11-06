@@ -27,6 +27,21 @@ abstract class EmailLogRepositoryTest extends KernelTestCase
         $this->assertEquals($emailLog->id(), $recovered->id());
     }
 
+    public function testFindByProviderMessageId(): void
+    {
+        $repository = $this->createSUT();
+
+        $emailLog = EmailLogMother::from(providerMessageId: 'ZWMuQSX4RV6tbZVF7ujnyA');
+        $repository->add($emailLog);
+        $repository->add(EmailLogMother::from(providerMessageId: 'other-message-id'));
+
+        $recovered = $repository->findByProviderMessageId('ZWMuQSX4RV6tbZVF7ujnyA');
+
+        $this->assertNotNull($recovered);
+        $this->assertEquals($emailLog->id(), $recovered->id());
+        $this->assertNull($repository->findByProviderMessageId('unknown-message-id'));
+    }
+
     public function testRemove(): void
     {
         $repository = $this->createSUT();

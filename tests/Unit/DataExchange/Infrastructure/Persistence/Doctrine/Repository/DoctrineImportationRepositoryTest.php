@@ -10,11 +10,29 @@ use App\DataExchange\Infrastructure\Persistence\Doctrine\Repository\DoctrineImpo
 use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationRepositoryTest;
-use App\Tests\Unit\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepositoryTest;
+use App\Tests\Unit\Shared\TemporaryDirectory;
 use Doctrine\ORM\EntityManagerInterface;
 
 class DoctrineImportationRepositoryTest extends ImportationRepositoryTest
 {
+    use TemporaryDirectory;
+
+    private string $storagePath;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->storagePath = $this->temporaryDirectoryPath('importation-data-test');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeTemporaryDirectory($this->storagePath);
+
+        parent::tearDown();
+    }
+
     public function testARowCanOnlyBeClaimedOnceThroughTheDataRepository(): void
     {
         $importation = ImportationMother::fromNameAndFile('file-to-import.csv', new ImportationFile(path: __DIR__ . '/../../../../Domain/Model/Importation/file-to-import.csv'));
@@ -31,7 +49,7 @@ class DoctrineImportationRepositoryTest extends ImportationRepositoryTest
     {
         $manager = $this->getContainer()->get(EntityManagerInterface::class);
 
-        $dataRepository = new SqliteImportationDataRepository(SqliteImportationDataRepositoryTest::STORAGE_PATH);
+        $dataRepository = new SqliteImportationDataRepository($this->storagePath);
 
         return new DoctrineImportationRepository(manager: $manager, dataRepository: $dataRepository);
     }

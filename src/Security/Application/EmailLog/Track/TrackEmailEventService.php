@@ -16,7 +16,7 @@ class TrackEmailEventService
 
     public function __invoke(TrackEmailEventRequest $request): TrackEmailEventResponse
     {
-        $emailLog = $this->repository->find(EmailLogId::fromString($request->emailLogId));
+        $emailLog = $this->emailLogOf($request);
 
         if (!$emailLog instanceof EmailLog) {
             return new TrackEmailEventResponse(tracked: false);
@@ -37,5 +37,22 @@ class TrackEmailEventService
         $this->repository->add($emailLog);
 
         return new TrackEmailEventResponse(tracked: true);
+    }
+
+    private function emailLogOf(TrackEmailEventRequest $request): ?EmailLog
+    {
+        if (null !== $request->emailLogId && '' !== $request->emailLogId) {
+            $emailLog = $this->repository->find(EmailLogId::fromString($request->emailLogId));
+
+            if ($emailLog instanceof EmailLog) {
+                return $emailLog;
+            }
+        }
+
+        if (null === $request->providerMessageId || '' === $request->providerMessageId) {
+            return null;
+        }
+
+        return $this->repository->findByProviderMessageId($request->providerMessageId);
     }
 }

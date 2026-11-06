@@ -75,6 +75,23 @@ services:
             $mailerFrom: '%mailer.from%'
             $mailerDsn: '%env(MAILER_DSN)%'
 
+    App\Shared\Infrastructure\Email\SendgridTrackingSettingsHttpClient:
+        arguments:
+            $client: '@http_client'
+            $clickTracking: '%env(bool:SENDGRID_CLICK_TRACKING)%'
+
+    mailer.transport_factory.sendgrid:
+        class: Symfony\Component\Mailer\Bridge\Sendgrid\Transport\SendgridTransportFactory
+        autowire: false
+        autoconfigure: false
+        arguments:
+            - '@event_dispatcher'
+            - '@App\Shared\Infrastructure\Email\SendgridTrackingSettingsHttpClient'
+            - '@?logger'
+        tags:
+            - { name: mailer.transport_factory }
+            - { name: monolog.logger, channel: mailer }
+
     App\Shared\Infrastructure\Symfony\Event\EmailListener:
         public: true
         shared: true

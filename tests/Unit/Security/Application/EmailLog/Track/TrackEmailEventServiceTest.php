@@ -106,6 +106,51 @@ class TrackEmailEventServiceTest extends TestCase
         $this->assertEquals(EmailLogStatus::Sent, $this->stored()->status());
     }
 
+    public function testTrackedByProviderMessageIdWithoutEmailLogId(): void
+    {
+        $sut = new TrackEmailEventService($this->repository);
+
+        $response = $sut(new TrackEmailEventRequest(
+            emailLogId: null,
+            type: EmailTrackingEventType::Clicked,
+            occurredOn: new \DateTimeImmutable('+1 minute'),
+            providerMessageId: 'provider-message-id',
+        ));
+
+        $this->assertTrue($response->tracked);
+        $this->assertEquals(1, $this->stored()->clickCount());
+    }
+
+    public function testTrackedByProviderMessageIdWhenEmailLogIdIsUnknown(): void
+    {
+        $sut = new TrackEmailEventService($this->repository);
+
+        $response = $sut(new TrackEmailEventRequest(
+            emailLogId: (string) EmailLogId::generate(),
+            type: EmailTrackingEventType::Delivered,
+            occurredOn: new \DateTimeImmutable('NOW'),
+            providerMessageId: 'provider-message-id',
+        ));
+
+        $this->assertTrue($response->tracked);
+        $this->assertEquals(EmailLogStatus::Delivered, $this->stored()->status());
+    }
+
+    public function testUnknownProviderMessageIdIsNotTracked(): void
+    {
+        $sut = new TrackEmailEventService($this->repository);
+
+        $response = $sut(new TrackEmailEventRequest(
+            emailLogId: null,
+            type: EmailTrackingEventType::Delivered,
+            occurredOn: new \DateTimeImmutable('NOW'),
+            providerMessageId: 'unknown-message-id',
+        ));
+
+        $this->assertFalse($response->tracked);
+        $this->assertEquals(EmailLogStatus::Sent, $this->stored()->status());
+    }
+
     public function testRepeatedEventDoesNotDuplicateTransition(): void
     {
         $this->track(EmailTrackingEventType::Delivered);
@@ -127,14 +172,36 @@ class TrackEmailEventServiceTest extends TestCase
         $this->assertSame('', $this->stored()->statusReason());
     }
 
-    private function track(EmailTrackingEventType $type, ?string $reason = null): bool
+    public function testOpenWithinTwoSecondsOfDeliveryIsIgnored(): void
+    {
+        $deliveredAt = new \DateTimeImmutable('+1 minute');
+
+        $this->track(EmailTrackingEventType::Delivered, occurredOn: $deliveredAt);
+        $this->track(EmailTrackingEventType::Opened, occurredOn: $deliveredAt->modify('+2 seconds'));
+        $this->track(EmailTrackingEventType::Clicked, occurredOn: $deliveredAt->modify('+1 second'));
+
+        $this->assertEquals(0, $this->stored()->openCount());
+        $this->assertEquals(0, $this->stored()->clickCount());
+    }
+
+    public function testOpenAfterTwoSecondsOfDeliveryCounts(): void
+    {
+        $deliveredAt = new \DateTimeImmutable('+1 minute');
+
+        $this->track(EmailTrackingEventType::Delivered, occurredOn: $deliveredAt);
+        $this->track(EmailTrackingEventType::Opened, occurredOn: $deliveredAt->modify('+3 seconds'));
+
+        $this->assertEquals(1, $this->stored()->openCount());
+    }
+
+    private function track(EmailTrackingEventType $type, ?string $reason = null, ?\DateTimeImmutable $occurredOn = null): bool
     {
         $sut = new TrackEmailEventService($this->repository);
 
         return $sut(new TrackEmailEventRequest(
             emailLogId: (string) $this->emailLog->id(),
             type: $type,
-            occurredOn: new \DateTimeImmutable('NOW'),
+            occurredOn: $occurredOn ?? new \DateTimeImmutable('+1 minute'),
             reason: $reason,
         ))->tracked;
     }

@@ -10507,7 +10507,7 @@
       </trans-unit>
       <trans-unit id="F7jg8Ld" resname="Organización">
         <source>Organización</source>
-        <target>Organisation</target>
+        <target>Organization</target>
       </trans-unit>
       <trans-unit id="ZkBuAAe" resname="Huella por estancia">
         <source>Huella por estancia</source>
@@ -12296,6 +12296,34 @@
       <trans-unit id="PeRnKn0" resname="Emisiones (t CO₂eq)">
         <source>Emisiones (t CO₂eq)</source>
         <target>Emissions (t CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="wM51wfq" resname="La notificación se ha marcado como no leída">
+        <source>La notificación se ha marcado como no leída</source>
+        <target>The notification has been marked as unread</target>
+      </trans-unit>
+      <trans-unit id="4hlMvGt" resname="La notificación se ha marcado como leída">
+        <source>La notificación se ha marcado como leída</source>
+        <target>The notification has been marked as read</target>
+      </trans-unit>
+      <trans-unit id="wRWNKd_" resname="Marcar como no leída">
+        <source>Marcar como no leída</source>
+        <target>Mark as unread</target>
+      </trans-unit>
+      <trans-unit id="X9juXQe" resname="Se ha marcado como no leída la notificación «{subject}»">
+        <source>Se ha marcado como no leída la notificación «{subject}»</source>
+        <target>Notification «{subject}» has been marked as unread</target>
+      </trans-unit>
+      <trans-unit id="bbSVYCB" resname="No se ha podido marcar como no leída la notificación «{subject}»">
+        <source>No se ha podido marcar como no leída la notificación «{subject}»</source>
+        <target>Notification «{subject}» could not be marked as unread</target>
+      </trans-unit>
+      <trans-unit id="46G.mnD" resname="Notificación marcada como no leída">
+        <source>Notificación marcada como no leída</source>
+        <target>Notification marked as unread</target>
+      </trans-unit>
+      <trans-unit id="qth1N0B" resname="Auditoría">
+        <source>Auditoría</source>
+        <target>Audit</target>
       </trans-unit>
     </body>
   </file>

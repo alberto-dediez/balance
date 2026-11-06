@@ -1,0 +1,12 @@
+{% props group, first = false %}
+
+{% if not first %}
+    <li><span class="sidebar-divider lg"></span></li>
+{% endif %}
+<li class="nav-small-cap">
+    <span class="hide-menu">{{ group.label | trans }}</span>
+</li>
+
+{% for link in group.items %}
+    <twig:Sidebar:Link link="{{ link }}"></twig:Sidebar:Link>
+{% endfor %}

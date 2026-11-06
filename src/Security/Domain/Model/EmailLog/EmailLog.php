@@ -11,6 +11,8 @@ class EmailLog implements \Stringable
 {
     use AggregateRoot;
 
+    private const int AUTOMATED_ENGAGEMENT_SECONDS = 2;
+
     /** @param DomainEvent[] $events */
     public function __construct(
         private EmailLogId $id,
@@ -228,6 +230,10 @@ class EmailLog implements \Stringable
 
     public function registerOpen(\DateTimeImmutable $at): void
     {
+        if ($this->isAutomatedEngagement($at)) {
+            return;
+        }
+
         $this->recordApplyAndPublish(
             new EmailLogOpened(
                 emailLogId: $this->id(),
@@ -238,6 +244,10 @@ class EmailLog implements \Stringable
 
     public function registerClick(\DateTimeImmutable $at): void
     {
+        if ($this->isAutomatedEngagement($at)) {
+            return;
+        }
+
         $this->recordApplyAndPublish(
             new EmailLogClicked(
                 emailLogId: $this->id(),
@@ -263,6 +273,13 @@ class EmailLog implements \Stringable
                 emailLogId: $this->id(),
             ),
         );
+    }
+
+    private function isAutomatedEngagement(\DateTimeImmutable $at): bool
+    {
+        $elapsedSeconds = $at->getTimestamp() - ($this->deliveredAt ?? $this->sentAt)->getTimestamp();
+
+        return $elapsedSeconds >= 0 && $elapsedSeconds <= self::AUTOMATED_ENGAGEMENT_SECONDS;
     }
 
     public function applyEmailLogRegistered(EmailLogRegistered $event): void

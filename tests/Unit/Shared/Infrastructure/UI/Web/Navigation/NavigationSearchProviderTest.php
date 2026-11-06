@@ -28,14 +28,22 @@ class NavigationSearchProviderTest extends TestCase
 
         $results = $sut->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
-        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios', 'Firma de documentos', 'Informes de huella', 'Registro', 'Grupos de coeficientes', 'Tipos de cambio'], $this->titles($results));
-        $this->assertSame(array_fill(0, 8, 'Administración'), array_map(fn(SearchResult $result): ?string => $result->subtitle, $results));
+        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios', 'Firma de documentos', 'Registro', 'Informes de huella', 'Grupos de coeficientes', 'Tipos de cambio'], $this->titles($results));
+        $this->assertSame(['Administración > Organización', 'Administración > Organización', 'Administración > Organización', 'Administración > Auditoría', 'Administración > Auditoría', 'Administración > Huella de carbono', 'Administración > Huella de carbono', 'Administración > Huella de carbono'], array_map(fn(SearchResult $result): ?string => $result->subtitle, $results));
         $this->assertSame(
-            ['/es/admin/accounts', '/es/admin/employees', '/es/admin/users', '/es/admin/signature-requests', '/es/admin/carbon/footprint/reports', '/es/admin/events', '/es/admin/emission/factor/groups', '/es/admin/exchange/rates'],
+            ['/es/admin/accounts', '/es/admin/employees', '/es/admin/users', '/es/admin/signature-requests', '/es/admin/events', '/es/admin/carbon/footprint/reports', '/es/admin/emission/factor/groups', '/es/admin/exchange/rates'],
             $this->urls($results),
         );
         $this->assertSame('solar:buildings-3-line-duotone', $results[0]->icon);
         $this->assertNull($results[0]->route);
+    }
+
+    public function testAGroupLabelFindsOnlyItsLeaves(): void
+    {
+        $sut = $this->createSUT(Role::Admin);
+
+        $this->assertSame(['Firma de documentos', 'Registro'], $this->titles($sut->search(new SearchTerm('Auditoría'), UserMother::adminUser(), 5)));
+        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios'], $this->titles($sut->search(new SearchTerm('Organización'), UserMother::adminUser(), 5)));
     }
 
     public function testTheMatchIgnoresCaseAndAccents(): void
@@ -98,7 +106,7 @@ class NavigationSearchProviderTest extends TestCase
     {
         $results = $this->createSUT(Role::Admin)->search(new SearchTerm('ar'), UserMother::adminUser(), 1);
 
-        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Combustible de maquinaria', 'Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
+        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Combustible de maquinaria', 'Usuarios', 'Informes de huella', 'Grupos de coeficientes', 'Tipos de cambio', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
     }
 
     public function testTranslatesTheEntriesToTheCurrentLocale(): void
@@ -129,6 +137,32 @@ class NavigationSearchProviderTest extends TestCase
         $results = $this->createSUT(Role::Owner)->search(new SearchTerm('Administración'), UserMother::adminUser(), 5);
 
         $this->assertSame(['/es/employees', '/es/users', '/es/distributors', '/es/branding/edit'], $this->urls($results));
+    }
+
+    public function testALeafOfAGroupHasThePathAsSubtitle(): void
+    {
+        $results = $this->createThreeLevelSUT()->search(new SearchTerm('B1'), UserMother::adminUser(), 5);
+
+        $this->assertSame(['B1'], $this->titles($results));
+        $this->assertSame('Raíz > Grupo B', $results[0]->subtitle);
+        $this->assertSame(['/es/b1'], $this->urls($results));
+        $this->assertSame('solar:record-minimalistic-line-duotone', $results[0]->icon);
+    }
+
+    public function testGroupsAndRootsAreNotResults(): void
+    {
+        $sut = $this->createThreeLevelSUT();
+
+        $this->assertNotContains('/es/grupo-a', $this->urls($sut->search(new SearchTerm('Grupo A'), UserMother::adminUser(), 5)));
+        $this->assertSame(['Suelta', 'A1', 'A2', 'B1'], $this->titles($sut->search(new SearchTerm('Raíz'), UserMother::adminUser(), 5)));
+    }
+
+    public function testARootLeafHasNoSubtitle(): void
+    {
+        $results = $this->createThreeLevelSUT()->search(new SearchTerm('Inicio'), UserMother::adminUser(), 5);
+
+        $this->assertSame(['Inicio'], $this->titles($results));
+        $this->assertNull($results[0]->subtitle);
     }
 
     /**
@@ -179,5 +213,15 @@ class NavigationSearchProviderTest extends TestCase
         );
 
         return new NavigationSearchProvider($nodeLister, $translator ?? new FakeTranslator());
+    }
+
+    private function createThreeLevelSUT(): NavigationSearchProvider
+    {
+        $requestStack = new RequestStack();
+        $requestStack->push(Request::create('/es/search'));
+
+        $nodeLister = new ThreeLevelNodeLister(FakeSecurity::fromRole(Role::Admin), $this->createMock(RouterInterface::class), $requestStack);
+
+        return new NavigationSearchProvider($nodeLister, new FakeTranslator());
     }
 }

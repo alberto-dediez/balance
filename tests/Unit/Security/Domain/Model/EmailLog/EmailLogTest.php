@@ -255,10 +255,47 @@ class EmailLogTest extends TestCase
         $emailLog = EmailLogMother::sent();
         $emailLog->markAsBounced('bounce', new \DateTimeImmutable('NOW'));
 
-        $emailLog->registerOpen(new \DateTimeImmutable('NOW'));
+        $emailLog->registerOpen(new \DateTimeImmutable('+1 minute'));
 
         $this->assertEquals(EmailLogStatus::Bounced, $emailLog->status());
         $this->assertEquals(1, $emailLog->openCount());
+    }
+
+    public function testOpenAndClickWithinTwoSecondsOfDeliveryAreIgnored(): void
+    {
+        $emailLog = EmailLogMother::sentAt(new \DateTimeImmutable('2026-10-20 09:00:00'));
+        $emailLog->markAsDelivered(new \DateTimeImmutable('2026-10-20 10:00:00'));
+        $eventsBefore = count($this->spy->events());
+
+        $emailLog->registerOpen(new \DateTimeImmutable('2026-10-20 10:00:00'));
+        $emailLog->registerOpen(new \DateTimeImmutable('2026-10-20 10:00:02'));
+        $emailLog->registerClick(new \DateTimeImmutable('2026-10-20 10:00:01'));
+
+        $this->assertEquals(0, $emailLog->openCount());
+        $this->assertEquals(0, $emailLog->clickCount());
+        $this->assertNull($emailLog->firstOpenedAt());
+        $this->assertCount($eventsBefore, $this->spy->events());
+    }
+
+    public function testOpenWithinTwoSecondsOfSendingWithoutDeliveryIsIgnored(): void
+    {
+        $emailLog = EmailLogMother::sentAt(new \DateTimeImmutable('2026-10-20 10:00:00'));
+
+        $emailLog->registerOpen(new \DateTimeImmutable('2026-10-20 10:00:01'));
+
+        $this->assertEquals(0, $emailLog->openCount());
+    }
+
+    public function testOpenAndClickAfterTwoSecondsOfDeliveryCount(): void
+    {
+        $emailLog = EmailLogMother::sentAt(new \DateTimeImmutable('2026-10-20 09:00:00'));
+        $emailLog->markAsDelivered(new \DateTimeImmutable('2026-10-20 10:00:00'));
+
+        $emailLog->registerOpen(new \DateTimeImmutable('2026-10-20 10:00:03'));
+        $emailLog->registerClick(new \DateTimeImmutable('2026-10-20 10:00:03'));
+
+        $this->assertEquals(1, $emailLog->openCount());
+        $this->assertEquals(1, $emailLog->clickCount());
     }
 
     public function testMarkAsSpamReported(): void

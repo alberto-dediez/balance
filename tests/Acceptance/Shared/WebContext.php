@@ -491,6 +491,18 @@ final class WebContext implements Context
         Assert::assertCount(0, $this->client->getCrawler()->selectLink($name));
     }
 
+    #[Then('I see a link with title :title')]
+    public function iSeeALinkWithTitle(string $title): void
+    {
+        Assert::assertCount(1, $this->client->getCrawler()->filterXPath($this->visibleLinkWithTitleXPath($title)));
+    }
+
+    #[Then('I do not see a link with title :title')]
+    public function iDoNotSeeALinkWithTitle(string $title): void
+    {
+        Assert::assertCount(0, $this->client->getCrawler()->filterXPath($this->visibleLinkWithTitleXPath($title)));
+    }
+
     #[Then('I see a table with :rows rows')]
     public function iSeeATableWithRows(int $rows): void
     {
@@ -600,5 +612,13 @@ final class WebContext implements Context
             ->filter(sprintf('[name*="%s"] option', $name))
             ->reduce(fn(Crawler $option): bool => $option->attr('value') === $value || trim($option->text()) === $value)
             ->count();
+    }
+
+    private function visibleLinkWithTitleXPath(string $title): string
+    {
+        return sprintf(
+            "//a[@title=%s and not(contains(concat(' ', normalize-space(@class), ' '), ' d-none '))]",
+            Crawler::xpathLiteral($title),
+        );
     }
 }

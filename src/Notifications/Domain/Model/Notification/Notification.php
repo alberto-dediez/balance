@@ -167,6 +167,19 @@ class Notification implements \Stringable
         );
     }
 
+    public function markAsUnread(): void
+    {
+        if (null === $this->readAt) {
+            return;
+        }
+
+        $this->recordApplyAndPublish(
+            new NotificationUnread(
+                notificationId: $this->id(),
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -204,6 +217,11 @@ class Notification implements \Stringable
     public function applyNotificationRead(NotificationRead $event): void
     {
         $this->readAt = $event->readAt();
+    }
+
+    public function applyNotificationUnread(NotificationUnread $event): void
+    {
+        $this->readAt = null;
     }
 
     public function applyNotificationRemoved(NotificationRemoved $event): void

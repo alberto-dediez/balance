@@ -11,6 +11,8 @@ framework:
             - logout
             - remove
             - unpublish
+            - mark_as_read
+            - mark_as_unread
             - two-factor
             - two-factor-cancel
             - two-factor-disable

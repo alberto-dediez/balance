@@ -67,20 +67,33 @@ class NavigationSearchProvider implements SearchProvider
         $entries = [];
 
         foreach ($this->nodeLister->nodes() as $node) {
-            if (null !== $node->target && [] === $node->items) {
-                $entries[] = $this->entry($this->label($node->label), null, $node->target, $node->icon);
-            }
-
-            foreach ($node->items as $item) {
-                if (null === $item->target) {
-                    continue;
-                }
-
-                $entries[] = $this->entry($this->label($item->label), $this->label($node->label), $item->target, $item->icon);
-            }
+            $this->collect($node, [], $entries);
         }
 
         return $entries;
+    }
+
+    /**
+     * @param list<string>          $path
+     * @param list<NavigationEntry> $entries
+     */
+    private function collect(Node $node, array $path, array &$entries): void
+    {
+        if ([] !== $node->items) {
+            $label = $this->label($node->label);
+
+            foreach ($node->items as $item) {
+                $this->collect($item, [...$path, $label], $entries);
+            }
+
+            return;
+        }
+
+        if (null === $node->target) {
+            return;
+        }
+
+        $entries[] = $this->entry($this->label($node->label), [] === $path ? null : implode(' > ', $path), $node->target, $node->icon ?? '');
     }
 
     private function entry(string $title, ?string $subtitle, string $url, string $icon): NavigationEntry

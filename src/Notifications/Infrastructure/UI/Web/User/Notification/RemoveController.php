@@ -6,6 +6,7 @@ namespace App\Notifications\Infrastructure\UI\Web\User\Notification;
 
 use App\Notifications\Application\Notification\Remove\RemoveNotificationRequest;
 use App\Notifications\Application\Notification\Remove\RemoveNotificationService;
+use App\Notifications\Domain\Model\Notification\NotificationNotFoundException;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CsrfProtected;
@@ -35,6 +36,8 @@ class RemoveController extends AbstractController
             $removeNotification(new RemoveNotificationRequest($id), $loggedUser());
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
+        } catch (NotificationNotFoundException) {
+            throw $this->createNotFoundException();
         }
 
         $this->addFlash('success', new TranslatableMessage('La notificación ha sido eliminada'));

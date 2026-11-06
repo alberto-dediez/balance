@@ -10,6 +10,7 @@ use App\DataExchange\Domain\Model\Importation\ImportationConfigurationUpdated;
 use App\DataExchange\Domain\Model\Importation\ImportationFile;
 use App\DataExchange\Domain\Model\Importation\ImportationId;
 use App\DataExchange\Infrastructure\Persistence\InMemory\Repository\InMemoryImportationRepository;
+use App\DataExchange\Infrastructure\Persistence\PDO\Repository\SqliteImportationDataRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
@@ -18,17 +19,31 @@ use App\Tests\Unit\DataExchange\Application\Importation\ImportationAuthorizerMot
 use App\Tests\Unit\DataExchange\Domain\Model\Importation\ImportationMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
+use App\Tests\Unit\Shared\TemporaryDirectory;
 use PHPUnit\Framework\TestCase;
 
 class PairFieldsImportationServiceTest extends TestCase
 {
+    use TemporaryDirectory;
+
+    private string $storagePath;
+
     private SpyDomainEventSubscriber $spySubscriber;
 
     protected function setUp(): void
     {
+        $this->storagePath = $this->temporaryDirectoryPath('importation-data-test');
+
         DomainEventPublisher::instance()->reset();
 
         $this->spySubscriber = new SpyDomainEventSubscriber();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->removeTemporaryDirectory($this->storagePath);
+
+        parent::tearDown();
     }
 
     public function testUseCase(): void
@@ -39,7 +54,7 @@ class PairFieldsImportationServiceTest extends TestCase
 
         $importation = ImportationMother::fromNameAndFile('superheroes.csv', $importationFile);
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $accountId = $importation->accountId();
@@ -79,7 +94,7 @@ class PairFieldsImportationServiceTest extends TestCase
 
         $importation = ImportationMother::random();
 
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
         $repository->add($importation);
 
         $user = UserMother::fromUsernameAndRoleAndAccount(
@@ -100,7 +115,7 @@ class PairFieldsImportationServiceTest extends TestCase
 
     public function testIsHandle(): void
     {
-        $repository = new InMemoryImportationRepository();
+        $repository = new InMemoryImportationRepository(dataRepository: new SqliteImportationDataRepository($this->storagePath));
 
         $sut = $this->createSUT($repository);
 

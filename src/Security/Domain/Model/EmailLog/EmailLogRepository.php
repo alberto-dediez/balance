@@ -12,6 +12,8 @@ interface EmailLogRepository
 
     public function find(EmailLogId $emailLogId): ?EmailLog;
 
+    public function findByProviderMessageId(string $providerMessageId): ?EmailLog;
+
     /** @return list<EmailLog> */
     public function findByFilter(EmailLogFilter $filter): array;
 

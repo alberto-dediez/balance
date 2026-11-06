@@ -55,10 +55,8 @@ final class SendgridWebhookController extends AbstractController
             return new Response('Signature is wrong.', Response::HTTP_NOT_ACCEPTABLE);
         }
 
-        foreach ($events as $event) {
-            if (is_array($event)) {
-                $this->track($event);
-            }
+        foreach ($this->chronological($events) as $event) {
+            $this->track($event);
         }
 
         return new Response('', Response::HTTP_ACCEPTED);
@@ -70,15 +68,21 @@ final class SendgridWebhookController extends AbstractController
     private function track(array $event): void
     {
         $type = EmailTrackingEventType::tryFrom(is_string($event['event'] ?? null) ? $event['event'] : '');
-        $emailLogId = $event['email_log_id'] ?? null;
+        $emailLogId = is_string($event['email_log_id'] ?? null) && '' !== $event['email_log_id'] ? $event['email_log_id'] : null;
+        $providerMessageId = $this->providerMessageIdOf($event);
 
-        if (!$type instanceof EmailTrackingEventType || !is_string($emailLogId) || '' === $emailLogId) {
+        if (!$type instanceof EmailTrackingEventType || (null === $emailLogId && null === $providerMessageId)) {
             $this->logger->warning('Evento de SendGrid ignorado', [
                 'event' => $event['event'] ?? null,
                 'email_log_id' => $emailLogId,
+                'sg_message_id' => $event['sg_message_id'] ?? null,
                 'sg_event_id' => $event['sg_event_id'] ?? null,
             ]);
 
+            return;
+        }
+
+        if (EmailTrackingEventType::Opened === $type && true === ($event['sg_machine_open'] ?? false)) {
             return;
         }
 
@@ -93,12 +97,14 @@ final class SendgridWebhookController extends AbstractController
                     type: $type,
                     occurredOn: new \DateTimeImmutable('@' . (is_scalar($event['timestamp'] ?? null) ? (string) $event['timestamp'] : '')),
                     reason: is_scalar($reason) ? (string) $reason : null,
+                    providerMessageId: $providerMessageId,
                 ),
             );
         } catch (\Throwable $exception) {
             $this->logger->error('Error al procesar un evento de SendGrid', [
                 'event' => $type->value,
                 'email_log_id' => $emailLogId,
+                'sg_message_id' => $event['sg_message_id'] ?? null,
                 'sg_event_id' => $event['sg_event_id'] ?? null,
                 'exception' => $exception,
             ]);
@@ -110,7 +116,54 @@ final class SendgridWebhookController extends AbstractController
             $this->logger->warning('Evento de SendGrid sin email registrado', [
                 'event' => $type->value,
                 'email_log_id' => $emailLogId,
+                'sg_message_id' => $event['sg_message_id'] ?? null,
             ]);
         }
+    }
+
+    /**
+     * @param array<mixed> $events
+     *
+     * @return array<array<mixed>>
+     */
+    private function chronological(array $events): array
+    {
+        $events = array_values(array_filter($events, is_array(...)));
+
+        usort($events, fn(array $a, array $b): int => [$this->timestampOf($a), $this->isEngagement($a)] <=> [$this->timestampOf($b), $this->isEngagement($b)]);
+
+        return $events;
+    }
+
+    /**
+     * @param array<mixed> $event
+     */
+    private function timestampOf(array $event): int
+    {
+        return is_numeric($event['timestamp'] ?? null) ? (int) $event['timestamp'] : 0;
+    }
+
+    /**
+     * @param array<mixed> $event
+     */
+    private function isEngagement(array $event): bool
+    {
+        return in_array($event['event'] ?? null, [EmailTrackingEventType::Opened->value, EmailTrackingEventType::Clicked->value], true);
+    }
+
+    /**
+     * @param array<mixed> $event
+     */
+    private function providerMessageIdOf(array $event): ?string
+    {
+        $sgMessageId = $event['sg_message_id'] ?? null;
+
+        if (!is_string($sgMessageId) || '' === $sgMessageId) {
+            return null;
+        }
+
+        $providerMessageId = explode('.', $sgMessageId, 2)[0];
+
+        return '' === $providerMessageId ? null : $providerMessageId;
     }
 }

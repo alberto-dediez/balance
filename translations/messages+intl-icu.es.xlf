@@ -12297,6 +12297,34 @@
         <source>Emisiones (t CO₂eq)</source>
         <target>Emisiones (t CO₂eq)</target>
       </trans-unit>
+      <trans-unit id="wM51wfq" resname="La notificación se ha marcado como no leída">
+        <source>La notificación se ha marcado como no leída</source>
+        <target>La notificación se ha marcado como no leída</target>
+      </trans-unit>
+      <trans-unit id="4hlMvGt" resname="La notificación se ha marcado como leída">
+        <source>La notificación se ha marcado como leída</source>
+        <target>La notificación se ha marcado como leída</target>
+      </trans-unit>
+      <trans-unit id="wRWNKd_" resname="Marcar como no leída">
+        <source>Marcar como no leída</source>
+        <target>Marcar como no leída</target>
+      </trans-unit>
+      <trans-unit id="X9juXQe" resname="Se ha marcado como no leída la notificación «{subject}»">
+        <source>Se ha marcado como no leída la notificación «{subject}»</source>
+        <target>Se ha marcado como no leída la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="bbSVYCB" resname="No se ha podido marcar como no leída la notificación «{subject}»">
+        <source>No se ha podido marcar como no leída la notificación «{subject}»</source>
+        <target>No se ha podido marcar como no leída la notificación «{subject}»</target>
+      </trans-unit>
+      <trans-unit id="46G.mnD" resname="Notificación marcada como no leída">
+        <source>Notificación marcada como no leída</source>
+        <target>Notificación marcada como no leída</target>
+      </trans-unit>
+      <trans-unit id="qth1N0B" resname="Auditoría">
+        <source>Auditoría</source>
+        <target>Auditoría</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

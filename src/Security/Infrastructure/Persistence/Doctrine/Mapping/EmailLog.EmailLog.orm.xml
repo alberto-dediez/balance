@@ -14,6 +14,7 @@
             <index columns="sent_at" name="idx_email_log_sent_at"/>
             <index columns="recipient_email" name="idx_email_log_recipient"/>
             <index columns="status" name="idx_email_log_status"/>
+            <index columns="provider_message_id" name="idx_email_log_provider_message_id"/>
         </indexes>
 
         <field name="recipientEmail" type="string" length="255" column="recipient_email" nullable="false"/>

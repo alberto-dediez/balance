@@ -41,15 +41,23 @@ class NodeLister
      */
     public function nodes(): array
     {
+        return $this->markSelected($this->roots());
+    }
+
+    /**
+     * @return list<Node>
+     */
+    protected function roots(): array
+    {
         if ($this->hasRole(Role::Admin)) {
-            return $this->markSelected($this->toAdmins());
+            return $this->toAdmins();
         }
 
         if ($this->hasRole(Role::Owner)) {
-            return $this->markSelected($this->toOwners());
+            return $this->toOwners();
         }
 
-        return $this->markSelected($this->toUsers());
+        return $this->toUsers();
     }
 
     private function featureEnabled(AccountFeature $feature): bool
@@ -100,15 +108,29 @@ class NodeLister
         $bestTarget = $this->bestMatchingTarget($currentPath, $nodes);
 
         foreach ($nodes as $node) {
-            $node->selected = null !== $bestTarget && $node->target === $bestTarget;
-
-            foreach ($node->items as $item) {
-                $item->selected = $item->selected || (null !== $bestTarget && $item->target === $bestTarget);
-                $node->selected = $node->selected || $item->selected;
-            }
+            $this->select($node, $bestTarget);
         }
 
         return $nodes;
+    }
+
+    private function select(Node $node, ?string $bestTarget): bool
+    {
+        if ([] === $node->items) {
+            $node->selected = $node->selected || (null !== $bestTarget && $node->target === $bestTarget);
+
+            return $node->selected;
+        }
+
+        $selected = false;
+
+        foreach ($node->items as $item) {
+            $selected = $this->select($item, $bestTarget) || $selected;
+        }
+
+        $node->selected = $selected;
+
+        return $node->selected;
     }
 
     /**
@@ -118,21 +140,41 @@ class NodeLister
     {
         $best = null;
 
-        foreach ($nodes as $node) {
-            foreach ([$node, ...$node->items] as $candidate) {
-                $target = $candidate->target;
+        foreach ($this->leaves($nodes) as $leaf) {
+            $target = $leaf->target;
 
-                if (null === $target || !$this->matchesCurrentPath($currentPath, $target)) {
-                    continue;
-                }
+            if (null === $target || !$this->matchesCurrentPath($currentPath, $target)) {
+                continue;
+            }
 
-                if (null === $best || strlen($target) > strlen($best)) {
-                    $best = $target;
-                }
+            if (null === $best || strlen($target) > strlen($best)) {
+                $best = $target;
             }
         }
 
         return $best;
+    }
+
+    /**
+     * @param list<Node> $nodes
+     *
+     * @return list<Node>
+     */
+    private function leaves(array $nodes): array
+    {
+        $leaves = [];
+
+        foreach ($nodes as $node) {
+            if ([] === $node->items) {
+                $leaves[] = $node;
+
+                continue;
+            }
+
+            $leaves = [...$leaves, ...$this->leaves($node->items)];
+        }
+
+        return $leaves;
     }
 
     private function matchesCurrentPath(string $currentPath, string $target): bool
@@ -478,7 +520,7 @@ class NodeLister
             ],
         );
 
-        $administrationItems = [
+        $organizationItems = [
             new Node(
                 label: new TranslatableMessage('Cuentas'),
                 icon: 'solar:buildings-3-line-duotone',
@@ -487,57 +529,76 @@ class NodeLister
         ];
 
         if ($this->humanResourcesEnabled) {
-            $administrationItems[] = new Node(
+            $organizationItems[] = new Node(
                 label: new TranslatableMessage('Empleados'),
                 icon: 'solar:user-id-line-duotone',
                 target: $this->router->generate('admin_employees'),
             );
         }
 
-        $administrationItems[] = new Node(
+        $organizationItems[] = new Node(
             label: new TranslatableMessage('Usuarios'),
             icon: 'solar:users-group-rounded-line-duotone',
             target: $this->router->generate('admin_users'),
         );
-        $administrationItems[] = new Node(
-            label: new TranslatableMessage('Firma de documentos'),
-            icon: 'solar:verified-check-line-duotone',
-            target: $this->router->generate('admin_signature_requests'),
-        );
+
+        $auditItems = [
+            new Node(
+                label: new TranslatableMessage('Firma de documentos'),
+                icon: 'solar:verified-check-line-duotone',
+                target: $this->router->generate('admin_signature_requests'),
+            ),
+        ];
 
         if ($this->hasRole(Role::SuperAdmin)) {
-            $administrationItems[] = new Node(
+            $auditItems[] = new Node(
                 label: new TranslatableMessage('Emails enviados'),
                 icon: 'solar:letter-opened-line-duotone',
                 target: $this->router->generate('admin_emails'),
             );
         }
 
-        $administrationItems[] = new Node(
-            label: new TranslatableMessage('Informes de huella'),
-            icon: 'solar:document-text-line-duotone',
-            target: $this->router->generate('admin_carbon_footprint_reports'),
-        );
-        $administrationItems[] = new Node(
+        $auditItems[] = new Node(
             label: new TranslatableMessage('Registro'),
             icon: 'solar:record-minimalistic-line-duotone',
             target: $this->router->generate('admin_events'),
         );
-        $administrationItems[] = new Node(
-            label: new TranslatableMessage('Grupos de coeficientes'),
-            icon: 'solar:test-tube-minimalistic-line-duotone',
-            target: $this->router->generate('admin_emission_factor_groups'),
-        );
-        $administrationItems[] = new Node(
-            label: new TranslatableMessage('Tipos de cambio'),
-            icon: 'solar:dollar-minimalistic-line-duotone',
-            target: $this->router->generate('admin_exchange_rates'),
-        );
+
+        $carbonFootprintItems = [
+            new Node(
+                label: new TranslatableMessage('Informes de huella'),
+                icon: 'solar:document-text-line-duotone',
+                target: $this->router->generate('admin_carbon_footprint_reports'),
+            ),
+            new Node(
+                label: new TranslatableMessage('Grupos de coeficientes'),
+                icon: 'solar:test-tube-minimalistic-line-duotone',
+                target: $this->router->generate('admin_emission_factor_groups'),
+            ),
+            new Node(
+                label: new TranslatableMessage('Tipos de cambio'),
+                icon: 'solar:dollar-minimalistic-line-duotone',
+                target: $this->router->generate('admin_exchange_rates'),
+            ),
+        ];
 
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),
             icon: 'solar:shield-user-line-duotone',
-            items: $administrationItems,
+            items: [
+                new Node(
+                    label: new TranslatableMessage('Organización'),
+                    items: $organizationItems,
+                ),
+                new Node(
+                    label: new TranslatableMessage('Auditoría'),
+                    items: $auditItems,
+                ),
+                new Node(
+                    label: new TranslatableMessage('Huella de carbono'),
+                    items: $carbonFootprintItems,
+                ),
+            ],
         );
 
         $nodes[] = $this->libraryNode();
