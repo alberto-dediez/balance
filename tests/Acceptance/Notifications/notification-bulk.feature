@@ -132,3 +132,30 @@ Feature:
         Then the response status should be 200
         Then I see a text "Se ha marcado como leída la notificación «Asunto»"
         Then notification with id "11111111-1111-1111-1111-111111111111" is read
+
+    Scenario: As a user I can mark several notifications as unread at once
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" is read
+        Given notification with id "22222222-2222-2222-2222-222222222222" for user "user1@dediez.software" is read
+        Given notification with id "33333333-3333-3333-3333-333333333333" for user "user1@dediez.software" is read
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/notifications"
+        When I submit a form with "elements:[33333333-3333-3333-3333-333333333333,22222222-2222-2222-2222-222222222222]|action:mark-as-unread" and button "Realizar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Se ha marcado como no leída la notificación «Asunto»"
+        Then notification with id "33333333-3333-3333-3333-333333333333" is not read
+        Then notification with id "22222222-2222-2222-2222-222222222222" is not read
+        Then notification with id "11111111-1111-1111-1111-111111111111" is read
+        Then I see a text "Marcar todas como leídas"
+
+    Scenario: Marking an already unread notification as unread in bulk is accepted
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/notifications"
+        When I submit a form with "elements:[11111111-1111-1111-1111-111111111111]|action:mark-as-unread" and button "Realizar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "Se ha marcado como no leída la notificación «Asunto»"
+        Then notification with id "11111111-1111-1111-1111-111111111111" is not read

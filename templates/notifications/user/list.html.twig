@@ -43,6 +43,15 @@
         <td>
             <twig:List:Action:View path="{{ path('notification_show', {'id': element.id}) }}" />
 
+            <twig:List:Action:MarkAsRead path="{{ path('notification_mark_read', {'id': element.id}) }}"
+                class="{{ element.isRead ? 'd-none' : '' }}"
+                data-notification-mark-read
+            />
+            <twig:List:Action:MarkAsUnread path="{{ path('notification_mark_unread', {'id': element.id}) }}"
+                class="{{ element.isRead ? '' : 'd-none' }}"
+                data-notification-mark-unread
+            />
+
             <twig:List:Action:Delete path="{{ path('notification_remove', {'id': element.id}) }}" />
         </td>
     </twig:List:Table>

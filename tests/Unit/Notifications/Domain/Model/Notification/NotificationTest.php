@@ -9,6 +9,7 @@ use App\Notifications\Domain\Model\Notification\NotificationDeliveryFailed;
 use App\Notifications\Domain\Model\Notification\NotificationRead;
 use App\Notifications\Domain\Model\Notification\NotificationSent;
 use App\Notifications\Domain\Model\Notification\NotificationStatus;
+use App\Notifications\Domain\Model\Notification\NotificationUnread;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -76,5 +77,42 @@ class NotificationTest extends TestCase
         $notification->markAsRead();
 
         $this->assertEquals($firstReadAt, $notification->readAt());
+    }
+
+    public function testMarkAsUnreadClearsReadAtAndRecordsEvent(): void
+    {
+        $notification = NotificationMother::randomInternal();
+
+        $notification->markAsRead();
+        $notification->markAsUnread();
+
+        $event = $this->spy->lastEvent();
+
+        $this->assertNull($notification->readAt());
+        $this->assertFalse($notification->isRead());
+        $this->assertInstanceOf(NotificationUnread::class, $event);
+        $this->assertEquals($notification->id(), $event->notificationId());
+    }
+
+    public function testMarkAsUnreadIsIdempotentWhenNotRead(): void
+    {
+        $notification = NotificationMother::randomInternal();
+
+        $notification->markAsUnread();
+
+        $this->assertNull($notification->readAt());
+        $this->assertNotInstanceOf(NotificationUnread::class, $this->spy->lastEvent());
+    }
+
+    public function testMarkAsReadAfterUnreadRecordsAgain(): void
+    {
+        $notification = NotificationMother::randomInternal();
+
+        $notification->markAsRead();
+        $notification->markAsUnread();
+        $notification->markAsRead();
+
+        $this->assertTrue($notification->isRead());
+        $this->assertInstanceOf(NotificationRead::class, $this->spy->lastEvent());
     }
 }

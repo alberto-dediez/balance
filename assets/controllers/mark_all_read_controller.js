@@ -58,6 +58,12 @@ export default class extends Controller {
             element.classList.remove('bg-primary-subtle', 'text-primary');
             element.classList.add('bg-body-secondary', 'text-body-secondary');
         });
+
+        document.querySelectorAll('[data-notification-mark-read]')
+            .forEach(element => element.classList.add('d-none'));
+
+        document.querySelectorAll('[data-notification-mark-unread]')
+            .forEach(element => element.classList.remove('d-none'));
     }
 
     #notify(message) {

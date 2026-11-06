@@ -21,3 +21,13 @@ Feature:
     Scenario: Anonymous users cannot fetch the widget
         When I go to "/es/notifications/widget"
         Then the response status should be 403
+
+    Scenario: Marking a notification as unread brings it back to the widget
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given notification with id "11111111-1111-1111-1111-111111111111" for user "user1@dediez.software" is read
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/notifications/widget"
+        Then I see a text "No tienes notificaciones sin leer"
+        When I go to "/es/notifications/11111111-1111-1111-1111-111111111111/unread" with csrf token "mark_as_unread"
+        When I go to "/es/notifications/widget"
+        Then I see a text "Asunto"

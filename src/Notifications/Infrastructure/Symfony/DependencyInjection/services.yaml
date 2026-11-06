@@ -37,6 +37,14 @@ services:
         arguments:
             $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
 
+    App\Notifications\Infrastructure\UI\Web\User\Notification\MarkAsReadController:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
+
+    App\Notifications\Infrastructure\UI\Web\User\Notification\MarkAsUnreadController:
+        arguments:
+            $internalNotificationsEnabled: '%app.internal_notifications_enabled%'
+
     App\Notifications\Infrastructure\UI\Web\User\Notification\WidgetController:
         arguments:
             $internalNotificationsEnabled: '%app.internal_notifications_enabled%'

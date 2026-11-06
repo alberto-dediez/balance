@@ -58,6 +58,26 @@ class MarkNotificationAsReadServiceTest extends TestCase
         $sut(new MarkNotificationAsReadRequest((string) $notification->id()), UserMother::fromUsernameAndRole('intruder', Role::User));
     }
 
+    public function testNonRecipientAdminCannotMarkAsRead(): void
+    {
+        $repository = NotificationRepositoryMother::inMemory();
+
+        $notification = NotificationMother::randomInternal();
+        $repository->add($notification);
+
+        $sut = new MarkNotificationAsReadService($repository, new NotificationAuthorizer());
+
+        try {
+            $sut(new MarkNotificationAsReadRequest((string) $notification->id()), UserMother::adminUser());
+            $this->fail('Expected UnauthorizedActionException');
+        } catch (UnauthorizedActionException) {
+            $recovered = $repository->find($notification->id());
+
+            $this->assertNotNull($recovered);
+            $this->assertFalse($recovered->isRead());
+        }
+    }
+
     public function testReturnsResponseWithNotificationId(): void
     {
         $repository = NotificationRepositoryMother::inMemory();
