@@ -1,6 +1,11 @@
 # Development environment override
 services:
   php:
+    healthcheck:
+      # Chequeo cada 5 min en reposo; cada 2 s durante el arranque (start_period)
+      interval: 5m
+      start_period: 60s
+      start_interval: 2s
     build:
       context: .
       target: frankenphp_dev
@@ -32,6 +37,11 @@ services:
 
 ###> doctrine/doctrine-bundle ###
   database:
+    healthcheck:
+      # Chequeo cada 5 min en reposo; cada 2 s durante el arranque (start_period)
+      interval: 5m
+      start_period: 60s
+      start_interval: 2s
     ports:
       - "${LOCAL_IP:-127.0.0.1}:3306:3306"
 ###< doctrine/doctrine-bundle ###
