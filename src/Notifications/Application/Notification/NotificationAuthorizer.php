@@ -35,7 +35,9 @@ final class NotificationAuthorizer extends AbstractAuthorizer
 
     protected function canEdit(mixed $subject, User $user): bool
     {
-        return false;
+        return $subject instanceof Notification
+            && null !== $subject->recipientId()
+            && $subject->recipientId()->equals($user->id());
     }
 
     protected function canRemove(mixed $subject, User $user): bool

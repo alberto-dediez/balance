@@ -10,6 +10,7 @@ use App\Notifications\Application\Notification\Unread\UnreadNotificationsProvide
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Notifications\Infrastructure\Symfony\Form\ListUserNotificationsType;
 use App\Notifications\Infrastructure\UI\Web\User\Notification\Bulk\MarkAsReadAction;
+use App\Notifications\Infrastructure\UI\Web\User\Notification\Bulk\MarkAsUnreadAction;
 use App\Notifications\Infrastructure\UI\Web\User\Notification\Bulk\RemoveAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -69,6 +70,7 @@ class ListController extends AbstractController
             'elements' => $response->notifications,
             'actions' => [
                 new MarkAsReadAction(),
+                new MarkAsUnreadAction(),
                 new RemoveAction(),
             ],
         ]);

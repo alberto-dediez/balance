@@ -49,6 +49,40 @@ class NotificationAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($subject, Action::View, $owner));
     }
 
+    public function testRecipientCanEditOwnNotification(): void
+    {
+        $user = UserMother::fromUsernameAndRole('user', Role::User);
+        $subject = NotificationMother::internalFor($user->id());
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testAdminRecipientCanEditOwnNotification(): void
+    {
+        $user = UserMother::adminUser();
+        $subject = NotificationMother::internalFor($user->id());
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testNonRecipientUserCannotEditNotification(): void
+    {
+        $user = UserMother::fromUsernameAndRole('user', Role::User);
+        $subject = NotificationMother::randomInternal();
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, $user));
+    }
+
+    public function testNonRecipientAdminCanViewButCannotEditNotification(): void
+    {
+        $subject = NotificationMother::randomInternal();
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::View, UserMother::adminUser()));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, UserMother::adminUser()));
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::View, UserMother::superAdminUser()));
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Edit, UserMother::superAdminUser()));
+    }
+
     private function createSUT(): NotificationAuthorizer
     {
         return new NotificationAuthorizer();

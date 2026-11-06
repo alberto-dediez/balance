@@ -35,10 +35,12 @@ class NodeListerTest extends TestCase
 
         $sut = $this->createSUT($security, '/es/admin/users/edit/some-user-id');
 
-        $result = $sut->nodes();
+        $adminNode = $this->findNodeByLabel($sut->nodes(), 'Administración');
 
-        $this->assertTrue($result[0]->selected);
-        $this->assertTrue($result[0]->items[0]->selected);
+        $this->assertNotNull($adminNode);
+        $this->assertTrue($adminNode->selected);
+        $this->assertTrue($adminNode->items[0]->selected);
+        $this->assertTrue($adminNode->items[0]->items[2]->selected);
     }
 
     public function testNodesDoesNotMarkAnyNodeAsSelectedWhenCurrentPathDoesNotMatch(): void
@@ -47,10 +49,12 @@ class NodeListerTest extends TestCase
 
         $sut = $this->createSUT($security, '/es/profile');
 
-        $result = $sut->nodes();
+        $adminNode = $this->findNodeByLabel($sut->nodes(), 'Administración');
 
-        $this->assertFalse($result[0]->selected);
-        $this->assertFalse($result[0]->items[0]->selected);
+        $this->assertNotNull($adminNode);
+        $this->assertFalse($adminNode->selected);
+        $this->assertFalse($adminNode->items[0]->selected);
+        $this->assertFalse($adminNode->items[0]->items[0]->selected);
     }
 
     public function testNodesMarksOnlyTheMostSpecificLinkWhenTargetsOverlap(): void
@@ -67,9 +71,15 @@ class NodeListerTest extends TestCase
         $adminNode = $this->findNodeByLabel($result, 'Administración');
 
         $this->assertNotNull($adminNode);
+
+        $organization = $adminNode->items[0];
+        $audit = $adminNode->items[1];
+
+        $this->assertFalse($organization->items[2]->selected);
+        $this->assertFalse($organization->selected);
+        $this->assertTrue($audit->items[1]->selected);
+        $this->assertTrue($audit->selected);
         $this->assertTrue($adminNode->selected);
-        $this->assertFalse($adminNode->items[2]->selected);
-        $this->assertTrue($adminNode->items[4]->selected);
     }
 
     /**
@@ -84,6 +94,42 @@ class NodeListerTest extends TestCase
         }
 
         return null;
+    }
+
+    public function testAdminsSeeAdministrationGroupedInOrganizationAndAudit(): void
+    {
+        $adminNode = $this->findNodeByLabel($this->createSUT(FakeSecurity::fromRole(Role::Admin))->nodes(), 'Administración');
+
+        $this->assertNotNull($adminNode);
+
+        $groups = $adminNode->items;
+
+        $this->assertSame(['Organización', 'Auditoría'], $this->labels($groups));
+        $this->assertNull($groups[0]->target);
+        $this->assertNull($groups[1]->target);
+        $this->assertSame(['Cuentas', 'Empleados', 'Usuarios'], $this->labels($groups[0]->items));
+        $this->assertSame(['Firma de documentos', 'Registro'], $this->labels($groups[1]->items));
+
+        $superAdmin = $this->createStub(AuthorizationCheckerInterface::class);
+        $superAdmin->method('isGranted')->willReturnCallback(
+            static fn(mixed $attribute): bool => in_array($attribute, [Role::Admin->value, Role::SuperAdmin->value], true),
+        );
+
+        $superAdminNode = $this->findNodeByLabel($this->createSUT($superAdmin)->nodes(), 'Administración');
+
+        $this->assertNotNull($superAdminNode);
+        $this->assertSame(['Firma de documentos', 'Emails enviados', 'Registro'], $this->labels($superAdminNode->items[1]->items));
+    }
+
+    public function testOwnersAndUsersHaveNoGroups(): void
+    {
+        foreach ([Role::Owner, Role::User] as $role) {
+            foreach ($this->createSUT(FakeSecurity::fromRole($role))->nodes() as $root) {
+                foreach ($root->items as $item) {
+                    $this->assertSame([], $item->items, $role->value);
+                }
+            }
+        }
     }
 
     public function testUsersAndOwnersSeeAnnouncementsWhenEnabled(): void
@@ -160,10 +206,8 @@ class NodeListerTest extends TestCase
         $adminNode = $this->findNodeByLabel($nodes, 'Administración');
 
         $this->assertNotNull($adminNode);
-        $this->assertSame(
-            ['Cuentas', 'Usuarios', 'Firma de documentos', 'Registro'],
-            array_map(static fn(Node $item): string => $item->label instanceof TranslatableMessage ? $item->label->getMessage() : (string) $item->label, $adminNode->items),
-        );
+        $this->assertSame(['Cuentas', 'Usuarios'], $this->labels($adminNode->items[0]->items));
+        $this->assertSame(['Firma de documentos', 'Registro'], $this->labels($adminNode->items[1]->items));
     }
 
     public function testOwnersAndUsersReceiveProviderNodesFirst(): void
@@ -223,6 +267,63 @@ class NodeListerTest extends TestCase
         $this->assertTrue($result[0]->selected);
     }
 
+    public function testALeafOfAGroupMarksItselfItsGroupAndItsRootAsSelected(): void
+    {
+        $result = $this->createThreeLevelSUT('/es/b1')->nodes();
+
+        $root = $result[0];
+        [$loose, $groupA, $groupB] = $root->items;
+
+        $this->assertTrue($groupB->items[0]->selected);
+        $this->assertTrue($groupB->selected);
+        $this->assertTrue($root->selected);
+        $this->assertFalse($loose->selected);
+        $this->assertFalse($groupA->selected);
+        $this->assertFalse($groupA->items[0]->selected);
+        $this->assertFalse($groupA->items[1]->selected);
+        $this->assertFalse($result[1]->selected);
+    }
+
+    public function testTheMostSpecificLeafWinsAcrossLevels(): void
+    {
+        $result = $this->createThreeLevelSUT('/es/x/export')->nodes();
+
+        [$loose, $groupA] = $result[0]->items;
+
+        $this->assertTrue($groupA->items[0]->selected);
+        $this->assertTrue($groupA->selected);
+        $this->assertFalse($loose->selected);
+    }
+
+    public function testAGroupIsNeverSelectedByItsOwnTarget(): void
+    {
+        $result = $this->createThreeLevelSUT('/es/grupo-a')->nodes();
+
+        $this->assertFalse($result[0]->items[1]->selected);
+        $this->assertFalse($result[0]->selected);
+    }
+
+    public function testARootLeafIsStillSelected(): void
+    {
+        $result = $this->createThreeLevelSUT('/es/')->nodes();
+
+        $this->assertTrue($result[1]->selected);
+        $this->assertFalse($result[0]->selected);
+    }
+
+    /**
+     * @param list<Node> $nodes
+     *
+     * @return list<string>
+     */
+    private function labels(array $nodes): array
+    {
+        return array_map(
+            static fn(Node $node): string => $node->label instanceof TranslatableMessage ? $node->label->getMessage() : $node->label,
+            $nodes,
+        );
+    }
+
     /**
      * @param list<Node> $nodes
      *
@@ -233,11 +334,7 @@ class NodeListerTest extends TestCase
         $targets = [];
 
         foreach ($nodes as $node) {
-            $targets[] = $node->target;
-
-            foreach ($node->items as $item) {
-                $targets[] = $item->target;
-            }
+            $targets = [...$targets, $node->target, ...$this->targets($node->items)];
         }
 
         return $targets;
@@ -307,5 +404,13 @@ class NodeListerTest extends TestCase
             propertiesEnabled: $propertiesEnabled,
             humanResourcesEnabled: $humanResourcesEnabled,
         );
+    }
+
+    private function createThreeLevelSUT(string $currentPath): NodeLister
+    {
+        $requestStack = new RequestStack();
+        $requestStack->push(Request::create($currentPath));
+
+        return new ThreeLevelNodeLister(FakeSecurity::fromRole(Role::Admin), $this->createMock(RouterInterface::class), $requestStack);
     }
 }

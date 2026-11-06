@@ -35,7 +35,7 @@ class MarkNotificationAsReadService implements CommandHandler
             throw new NotificationNotFoundException($notificationId);
         }
 
-        $this->authorizer->denyUnlessCanDoThat($notification, SecurityAction::View, $user);
+        $this->authorizer->denyUnlessCanDoThat($notification, SecurityAction::Edit, $user);
 
         $notification->markAsRead();
 

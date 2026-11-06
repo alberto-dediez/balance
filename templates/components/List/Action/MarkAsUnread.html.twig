@@ -1,0 +1,10 @@
+{% props path %}
+
+{% set separator = '?' in path ? '&' : '?' %}
+
+<twig:List:Action path="{{ path ~ separator ~ '_token=' ~ csrf_token('mark_as_unread') | url_encode }}"
+    title="{{ 'Marcar como no leída' | trans }}"
+    {{ ...attributes }}
+>
+    <twig:Icon name="solar:letter-line-duotone" size="lg" />
+</twig:List:Action>

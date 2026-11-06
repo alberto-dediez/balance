@@ -7,6 +7,14 @@
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('notifications') }}" />
 
+    {% if notification | is_authorized('edit') %}
+        <twig:TopAction path="{{ path('notification_mark_unread', {'id': notification.id, '_token': csrf_token('mark_as_unread')}) }}">
+            <twig:Icon name="solar:letter-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Marcar como no leída' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     <twig:TopAction path="{{ path('notification_remove', {'id': notification.id, '_token': csrf_token('remove')}) }}"
         class="text-danger"
         data-controller="confirm"
