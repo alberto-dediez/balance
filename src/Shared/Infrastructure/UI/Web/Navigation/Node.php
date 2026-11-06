@@ -15,7 +15,7 @@ class Node
      */
     public function __construct(
         public string|TranslatableMessage $label,
-        public string $icon,
+        public ?string $icon = null,
         public ?string $target = null,
         public array $items = [],
         public bool $selected = false,

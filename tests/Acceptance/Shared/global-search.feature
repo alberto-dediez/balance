@@ -60,13 +60,25 @@ Feature:
         Then I see a text "Cuentas"
         Then I see a text "Usuarios"
         Then I see a text "Firma de documentos"
+        Then I see a text "Emails enviados"
         Then I see a text "Registro"
+        Then I see a text "Seguridad &gt; Organización"
+        Then I see a text "Seguridad &gt; Auditoría"
         Then I see a text 'href="/es/admin/accounts"'
         Then I see a text 'href="/es/admin/users"'
         Then I see a text 'href="/es/admin/signature-requests"'
         Then I see a text 'href="/es/admin/events"'
         Then I see a text "Cuentas" before a text "Registro"
         Then I do not see a text 'data-search-category="accounts"'
+
+    Scenario: A group label finds only its screens
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/search?term=Auditoría" as an ajax request
+        Then the response status should be 200
+        Then I see a text 'href="/es/admin/signature-requests"'
+        Then I see a text 'href="/es/admin/events"'
+        Then I do not see a text 'href="/es/admin/accounts"'
 
     Scenario: The actions category comes first
         Given account "Usuarios Demo" with id "a1" exists
@@ -95,6 +107,7 @@ Feature:
         Then the response status should be 200
         Then I see a text "Users"
         Then I see a text "Security"
+        Then I see a text "Security &gt; Organization"
         Then I see a text 'href="/en/admin/users"'
 
     Scenario: The match ignores accents and case

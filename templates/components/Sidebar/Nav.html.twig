@@ -4,8 +4,12 @@
             <span class="hide-menu">{{ node.label | trans }}</span>
         </li>
 
-        {% for link in node.items %}
-            <twig:Sidebar:Link link="{{ link }}"></twig:Sidebar:Link>
+        {% for item in node.items %}
+            {% if item.items is not empty %}
+                <twig:Sidebar:Group group="{{ item }}" first="{{ loop.first }}"></twig:Sidebar:Group>
+            {% else %}
+                <twig:Sidebar:Link link="{{ item }}"></twig:Sidebar:Link>
+            {% endif %}
         {% endfor %}
     </ul>
 </nav>

@@ -2221,6 +2221,14 @@
         <source>Notificación marcada como no leída</source>
         <target>Notificación marcada como no leída</target>
       </trans-unit>
+      <trans-unit id="F7jg8Ld" resname="Organización">
+        <source>Organización</source>
+        <target>Organización</target>
+      </trans-unit>
+      <trans-unit id="qth1N0B" resname="Auditoría">
+        <source>Auditoría</source>
+        <target>Auditoría</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
