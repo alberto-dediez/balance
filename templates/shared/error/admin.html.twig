@@ -1,0 +1,41 @@
+{% extends '@shared/base.html.twig' %}
+
+{% block title %}{{ block('error_title') }}{% endblock %}
+
+{% block body_tag %}class="authentication-bg"{% endblock %}
+
+{% block body %}
+    <div id="main-wrapper">
+        <div class="page-wrapper">
+            <div class="position-relative overflow-hidden min-vh-100 w-100 d-flex align-items-center justify-content-center">
+                <div class="row justify-content-center w-100">
+                    <div class="text-center mb-3">
+                        <a href="{{ path('home') }}">
+                            <img src="{{ asset('images/logo-dark.png') }}" alt="" height="48">
+                        </a>
+                    </div>
+                    <div class="col-md-8 col-lg-6 col-xxl-5">
+                        <div class="card mb-0 bg-body">
+                            <div class="card-body text-center p-4">
+                                <h1 class="fw-bolder display-1 mb-0 text-muted">{% block error_code %}{{ status_code | default(500) }}{% endblock %}</h1>
+
+                                <h4 class="mt-3 mb-2">{% block error_title %}{% trans %}Algo no ha ido bien{% endtrans %}{% endblock %}</h4>
+
+                                <p class="text-muted mb-4">
+                                    {% block error_message %}{% trans %}Se ha producido un error inesperado. Puedes volver a intentarlo en unos instantes.{% endtrans %}{% endblock %}
+                                </p>
+
+                                {% block error_incident %}{% endblock %}
+
+                                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                                    <a href="{{ path('home') }}" class="btn btn-primary">{% trans %}Ir al inicio{% endtrans %}</a>
+                                    <a href="javascript:history.back()" class="btn btn-outline-secondary">{% trans %}Volver atrás{% endtrans %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

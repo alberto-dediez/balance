@@ -38,11 +38,11 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+                default_target_path: '%app.admin_prefix%/'
             logout:
                 path: app_logout
                 enable_csrf: true
-                # where to redirect after logout
-                # target: app_any_route
+                target: '%app.admin_prefix%/'
                 
             login_throttling:
                 max_attempts: 3    
@@ -62,13 +62,15 @@ security:
         - { path: ^/openapi/documentation, roles: ROLE_ADMIN }
         - { path: ^/openapi/admin/documentation, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
-        - { path: '^/[a-z]{2}/sign', roles: PUBLIC_ACCESS }
-        - { path: '^/[a-z]{2}/library/public/media', roles: PUBLIC_ACCESS }
+        - { path: '^%app.admin_prefix%/[a-z]{2}/sign', roles: PUBLIC_ACCESS }
+        - { path: '^%app.admin_prefix%/[a-z]{2}/library/public/media', roles: PUBLIC_ACCESS }
         - { path: /recover-password, roles: PUBLIC_ACCESS }
         - { path: /login, roles: PUBLIC_ACCESS }
         - { path: /logout, role: PUBLIC_ACCESS }
         - { path: ^/webhook/, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/_components, roles: ROLE_USER }
+        - { path: '^%app.admin_prefix%/', roles: ROLE_USER }
+        - { path: ^/, roles: PUBLIC_ACCESS }
         
 
     role_hierarchy:

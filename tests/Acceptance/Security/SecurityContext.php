@@ -308,7 +308,7 @@ final class SecurityContext implements Context
         $response = $this->client->getResponse();
 
         Assert::assertTrue($response->isRedirect(), sprintf('La respuesta a "%s" no es una redirección (%d)', $path, $response->getStatusCode()));
-        Assert::assertEquals($target, parse_url((string) $response->headers->get('Location'), PHP_URL_PATH));
+        Assert::assertEquals($this->client->resolvePath($target), parse_url((string) $response->headers->get('Location'), PHP_URL_PATH));
     }
 
     #[Then('user :username has two factor method :method')]
@@ -415,7 +415,7 @@ final class SecurityContext implements Context
     #[Given('the page :path was requested before signing in')]
     public function thePageWasRequestedBeforeSigningIn(string $path): void
     {
-        $this->client->setSessionValue('_security.main.target_path', $path);
+        $this->client->setSessionValue('_security.main.target_path', $this->client->resolvePath($path));
     }
 
     #[Given('the SSO provider :key fails')]

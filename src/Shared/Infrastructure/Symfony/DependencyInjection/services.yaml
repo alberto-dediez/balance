@@ -1,6 +1,7 @@
 parameters:
     app.locale_default: '%env(LANGUAGE_DEFAULT)%'
     app.locale_list: '%env(LANGUAGE_LIST)%'
+    app.admin_prefix: '%env(ADMIN_PREFIX)%'
     company.name: '%env(COMPANY_NAME)%'
     mailer.from: '%env(MAILER_FROM)%'
     app.uploads_dir: '%kernel.project_dir%/var/uploads'
@@ -45,6 +46,10 @@ services:
             $defaultLocale: '%app.locale_default%'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    App\Shared\Infrastructure\Symfony\Twig\AdminPathExtension:
+        arguments:
+            $adminPrefix: '%app.admin_prefix%'
 
     App\Shared\Infrastructure\Email\SymfonyEmailSender:
         public: true

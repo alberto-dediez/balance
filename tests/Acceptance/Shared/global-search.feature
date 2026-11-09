@@ -64,10 +64,10 @@ Feature:
         Then I see a text "Registro"
         Then I see a text "Seguridad &gt; Organización"
         Then I see a text "Seguridad &gt; Auditoría"
-        Then I see a text 'href="/es/admin/accounts"'
-        Then I see a text 'href="/es/admin/users"'
-        Then I see a text 'href="/es/admin/signature-requests"'
-        Then I see a text 'href="/es/admin/events"'
+        Then I see a text '/es/admin/accounts"'
+        Then I see a text '/es/admin/users"'
+        Then I see a text '/es/admin/signature-requests"'
+        Then I see a text '/es/admin/events"'
         Then I see a text "Cuentas" before a text "Registro"
         Then I do not see a text 'data-search-category="accounts"'
 
@@ -76,9 +76,9 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/search?term=Auditoría" as an ajax request
         Then the response status should be 200
-        Then I see a text 'href="/es/admin/signature-requests"'
-        Then I see a text 'href="/es/admin/events"'
-        Then I do not see a text 'href="/es/admin/accounts"'
+        Then I see a text '/es/admin/signature-requests"'
+        Then I see a text '/es/admin/events"'
+        Then I do not see a text '/es/admin/accounts"'
 
     Scenario: The actions category comes first
         Given account "Usuarios Demo" with id "a1" exists
@@ -95,7 +95,7 @@ Feature:
         When I am logged as "acme-owner@dediez.software"
         When I go to "/es/search?term=Seguridad" as an ajax request
         Then the response status should be 200
-        Then I see a text 'href="/es/users"'
+        Then I see a text '/es/users"'
         Then I see a text "Usuarios"
         Then I do not see a text "/es/admin/users"
         Then I do not see a text "Cuentas"
@@ -108,7 +108,7 @@ Feature:
         Then I see a text "Users"
         Then I see a text "Security"
         Then I see a text "Security &gt; Organization"
-        Then I see a text 'href="/en/admin/users"'
+        Then I see a text '/en/admin/users"'
 
     Scenario: The match ignores accents and case
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
@@ -116,7 +116,7 @@ Feature:
         When I go to "/es/search?term=NOTIFICACION" as an ajax request
         Then the response status should be 200
         Then I see a text "Mis notificaciones"
-        Then I see a text 'href="/es/notifications"'
+        Then I see a text '/es/notifications"'
 
     Scenario: A short term does not search
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
@@ -164,5 +164,5 @@ Feature:
         When I impersonate account "Acme"
         When I go to "/es/search?term=Seguridad" as an ajax request
         Then the response status should be 200
-        Then I see a text 'href="/es/users"'
-        Then I do not see a text 'href="/es/admin/users"'
+        Then I see a text '/es/users"'
+        Then I do not see a text '/es/admin/users"'
