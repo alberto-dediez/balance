@@ -6,10 +6,13 @@ namespace App\Balance\Infrastructure\UI\Web\Admin\CreditPurchase;
 
 use App\Balance\Application\CreditPurchase\List\ListCreditPurchasesRequest;
 use App\Balance\Application\CreditPurchase\List\ListCreditPurchasesService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\Project\ProjectFilter;
 use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Infrastructure\Symfony\Form\ListCreditPurchasesType;
+use App\Security\Application\Action as SecurityAction;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CRUD\FilterTrait;
@@ -52,6 +55,7 @@ class ListController extends AbstractController
             'creditPurchases' => $response->creditPurchases,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
+            'canAssign' => $this->isGranted(SecurityAction::Admin->value, new CreditPurchase(id: CreditPurchaseId::generate())),
         ]);
     }
 }

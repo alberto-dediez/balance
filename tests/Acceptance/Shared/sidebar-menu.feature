@@ -24,7 +24,7 @@ Feature:
         Then the response status should be 200
         Then I see a text '<span class="hide-menu">Administración</span>' before a text 'href="/es/admin/exchange-rates"'
         Then I see a text 'href="/es/admin/exchange-rates"' before a text '<span class="hide-menu">Organización</span>'
-        Then I see 9 times the text 'sidebar-divider lg'
+        Then I see 10 times the text 'sidebar-divider lg'
 
     Scenario: A super admin sees the sent emails inside the audit group
         Given user "superadmin@dediez.software" with role "ROLE_SUPER_ADMIN" exists
@@ -57,12 +57,13 @@ Feature:
         Then I see a text 'class="sidebar-link active" href="/es/admin/materials"'
         Then I see a text 'mini-nav-item selected'
 
-    Scenario: The first masters group has no divider
+    Scenario: The emission factor groups link comes before the masters groups
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/materials"
         Then the response status should be 200
-        Then I see a text '<span class="hide-menu">Materiales</span>' before a text 'sidebar-divider lg'
+        Then I see a text 'href="/es/admin/emission-factor-groups"' before a text 'sidebar-divider lg'
+        Then I see a text 'sidebar-divider lg' before a text '<span class="hide-menu">Materiales</span>'
 
     Scenario: A master screen selects its group inside the masters root
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
@@ -79,8 +80,7 @@ Feature:
         When I go to "/es/admin/mitigation-measures"
         Then the response status should be 200
         Then I see a text 'class="sidebar-link active" href="/es/admin/mitigation-measures"'
-        Then I see a text '<span class="hide-menu">Huella de carbono</span>' before a text 'href="/es/admin/emission-factor-groups"'
-        Then I see a text 'href="/es/admin/emission-factor-groups"' before a text '<span class="hide-menu">Medidas de mitigación</span>'
+        Then I see a text '<span class="hide-menu">Huella de carbono</span>' before a text '<span class="hide-menu">Medidas de mitigación</span>'
         Then I see a text '<span class="hide-menu">Medidas de mitigación</span>' before a text 'href="/es/admin/mitigation-measures"'
         Then I see a text 'href="/es/admin/mitigation-measures"' before a text '<span class="hide-menu">Materialidad</span>'
 

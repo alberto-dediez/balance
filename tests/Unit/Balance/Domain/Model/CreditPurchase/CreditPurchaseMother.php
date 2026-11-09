@@ -135,6 +135,29 @@ class CreditPurchaseMother
         return $creditPurchase;
     }
 
+    public static function assigned(
+        ?AccountId $accountId = null,
+        ?ProjectId $projectId = null,
+        float $tonnes = 10.0,
+        CreditPurchasePaymentType $paymentType = CreditPurchasePaymentType::PaidByBioscore,
+        ?float $amount = null,
+        ?string $reference = null,
+    ): CreditPurchase {
+        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
+        $creditPurchase->assign(
+            accountId: $accountId ?? AccountId::generate(),
+            projectId: $projectId ?? ProjectId::generate(),
+            purchasedTonnes: $tonnes,
+            paymentType: $paymentType,
+            reference: $reference ?? 'ref-' . (string) $creditPurchase->id(),
+            certificate: null,
+            assignedBy: UserId::generate(),
+            amount: $amount,
+        );
+
+        return $creditPurchase;
+    }
+
     public static function partiallyValidated(?AccountId $accountId = null, ?ProjectId $projectId = null): CreditPurchase
     {
         $creditPurchase = self::pending($accountId, $projectId, 10.0);
@@ -155,6 +178,18 @@ class CreditPurchaseMother
         $creditPurchase->reject('No hay disponibilidad', UserId::generate());
 
         return $creditPurchase;
+    }
+
+    public static function pendingRequestedAt(\DateTimeImmutable $requestedAt, AccountId $accountId, ?ProjectId $projectId = null): CreditPurchase
+    {
+        return new CreditPurchase(
+            id: CreditPurchaseId::generate(),
+            accountId: $accountId,
+            projectId: $projectId ?? ProjectId::generate(),
+            requestedBy: UserId::generate(),
+            requestedTonnes: 10.0,
+            requestedAt: $requestedAt,
+        );
     }
 
     public static function forAccountAndProject(AccountId $accountId, ProjectId $projectId): CreditPurchase

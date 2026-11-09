@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -121,6 +122,15 @@ class DoctrineAccountRepository implements AccountRepository
             ;
         }
 
+        if ($filter->feature instanceof AccountFeature) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('a.features.' . $this->featureField($filter->feature), ':feature'),
+                )
+                ->setParameter('feature', true)
+            ;
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
@@ -160,5 +170,16 @@ class DoctrineAccountRepository implements AccountRepository
         ;
 
         return intval($count);
+    }
+
+    private function featureField(AccountFeature $feature): string
+    {
+        return match ($feature) {
+            AccountFeature::AccountTripCalculator => 'accountTripCalculator',
+            AccountFeature::PropertyTripCalculators => 'propertyTripCalculators',
+            AccountFeature::Events => 'events',
+            AccountFeature::Compensation => 'compensation',
+            AccountFeature::OrganizationalCarbonFootprint => 'organizationalCarbonFootprint',
+        };
     }
 }

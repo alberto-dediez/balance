@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Infrastructure\Symfony\Form\Type;
 
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -20,13 +21,15 @@ class AccountIdType extends AggregateRootIdType
         $resolver->setDefaults([
             'class' => AccountId::class,
             'excluded_account_id' => null,
+            'feature' => null,
         ]);
 
         $resolver->setAllowedTypes('excluded_account_id', ['null', AccountId::class]);
+        $resolver->setAllowedTypes('feature', ['null', AccountFeature::class]);
 
         $resolver->setNormalizer('choices', function ($options) {
             $excludedAccountId = $options['excluded_account_id'];
-            $accounts = $this->accountRepository->findByFilter(new AccountFilter(limit: 0));
+            $accounts = $this->accountRepository->findByFilter(new AccountFilter(feature: $options['feature'], limit: 0));
 
             if ($excludedAccountId instanceof AccountId) {
                 $accounts = array_values(array_filter(

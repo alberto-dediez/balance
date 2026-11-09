@@ -159,9 +159,11 @@ class NodeListerTest extends TestCase
         $this->assertNotNull($masters);
         $this->assertSame('solar:database-line-duotone', $masters->icon);
 
-        $groups = $masters->items;
+        $this->assertSame(['Grupos de coeficientes', 'Materiales', 'Productos vendidos', 'Inversiones', 'Instalaciones', 'Transporte'], $this->labels($masters->items));
+        $this->assertSame([], $masters->items[0]->items);
+        $this->assertNotNull($masters->items[0]->target);
 
-        $this->assertSame(['Materiales', 'Productos vendidos', 'Inversiones', 'Instalaciones', 'Transporte'], $this->labels($groups));
+        $groups = array_slice($masters->items, 1);
 
         foreach ($groups as $group) {
             $this->assertNull($group->target);
@@ -196,11 +198,10 @@ class NodeListerTest extends TestCase
 
         $items = $carbonFootprint->items;
 
-        $this->assertSame(['Informes de huella', 'Grupos de coeficientes', 'Medidas de mitigación', 'Materialidad'], $this->labels($items));
+        $this->assertSame(['Informes de huella', 'Medidas de mitigación', 'Materialidad'], $this->labels($items));
         $this->assertSame([], $items[0]->items);
-        $this->assertSame([], $items[1]->items);
-        $this->assertSame(['Medidas', 'Categorías de medidas'], $this->labels($items[2]->items));
-        $this->assertSame(['Categorías', 'Preguntas', 'Sectores', 'Configuración'], $this->labels($items[3]->items));
+        $this->assertSame(['Medidas', 'Categorías de medidas'], $this->labels($items[1]->items));
+        $this->assertSame(['Categorías', 'Preguntas', 'Sectores', 'Configuración'], $this->labels($items[2]->items));
     }
 
     public function testAdminRootsKeepTheirOrderAroundMasters(): void
@@ -220,8 +221,8 @@ class NodeListerTest extends TestCase
 
         $this->assertNotNull($masters);
         $this->assertNotNull($administration);
-        $this->assertTrue($masters->items[3]->items[0]->selected);
-        $this->assertTrue($masters->items[3]->selected);
+        $this->assertTrue($masters->items[4]->items[0]->selected);
+        $this->assertTrue($masters->items[4]->selected);
         $this->assertTrue($masters->selected);
         $this->assertFalse($masters->items[0]->selected);
         $this->assertFalse($administration->selected);

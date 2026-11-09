@@ -12329,6 +12329,66 @@
         <source>Maestros</source>
         <target>Master data</target>
       </trans-unit>
+      <trans-unit id="do9Ga7p" resname="Créditos asignados correctamente">
+        <source>Créditos asignados correctamente</source>
+        <target>Credits assigned successfully</target>
+      </trans-unit>
+      <trans-unit id="Od..trF" resname="Créditos asignados: se ha validado parcialmente la solicitud pendiente de la cuenta">
+        <source>Créditos asignados: se ha validado parcialmente la solicitud pendiente de la cuenta</source>
+        <target>Credits assigned: the pending request of the account has been partially validated</target>
+      </trans-unit>
+      <trans-unit id="w8I_N6s" resname="Créditos asignados: se ha validado la solicitud pendiente de la cuenta">
+        <source>Créditos asignados: se ha validado la solicitud pendiente de la cuenta</source>
+        <target>Credits assigned: the pending request of the account has been validated</target>
+      </trans-unit>
+      <trans-unit id="Viaj7mt" resname="La cuenta mantiene {count} solicitudes pendientes para este proyecto">
+        <source>La cuenta mantiene {count} solicitudes pendientes para este proyecto</source>
+        <target>The account still has {count} pending requests for this project</target>
+      </trans-unit>
+      <trans-unit id="s2mkKmh" resname="Selecciona la cuenta">
+        <source>Selecciona la cuenta</source>
+        <target>Select the account</target>
+      </trans-unit>
+      <trans-unit id="14lKT9Y" resname="Selecciona el proyecto">
+        <source>Selecciona el proyecto</source>
+        <target>Select the project</target>
+      </trans-unit>
+      <trans-unit id="TjqLRNc" resname="Toneladas asignadas">
+        <source>Toneladas asignadas</source>
+        <target>Assigned tonnes</target>
+      </trans-unit>
+      <trans-unit id="lAipDZG" resname="Si la cuenta tiene una solicitud pendiente para este proyecto, se validará con estos datos en lugar de crear un crédito nuevo">
+        <source>Si la cuenta tiene una solicitud pendiente para este proyecto, se validará con estos datos en lugar de crear un crédito nuevo</source>
+        <target>If the account has a pending request for this project, it will be validated with these details instead of creating a new credit</target>
+      </trans-unit>
+      <trans-unit id="K9CX0uC" resname="Asignar créditos">
+        <source>Asignar créditos</source>
+        <target>Assign credits</target>
+      </trans-unit>
+      <trans-unit id="PVtYc0l" resname="Se han asignado créditos de CO2 a su cuenta">
+        <source>Se han asignado créditos de CO2 a su cuenta</source>
+        <target>CO2 credits have been assigned to your account</target>
+      </trans-unit>
+      <trans-unit id="q44vCjm" resname="Se le han asignado {tonnes} toneladas de CO2 del proyecto {project} (identificador {reference}).">
+        <source>Se le han asignado {tonnes} toneladas de CO2 del proyecto {project} (identificador {reference}).</source>
+        <target>You have been assigned {tonnes} tonnes of CO2 from project {project} (identifier {reference}).</target>
+      </trans-unit>
+      <trans-unit id="szrYunb" resname="Asignar">
+        <source>Asignar</source>
+        <target>Assign</target>
+      </trans-unit>
+      <trans-unit id="50h6NZG" resname="El identificador {reference} ya está registrado en otra compra.">
+        <source>El identificador {reference} ya está registrado en otra compra.</source>
+        <target>The identifier {reference} is already registered in another purchase.</target>
+      </trans-unit>
+      <trans-unit id="ESUZ3_X" resname="La cuenta no tiene activada la funcionalidad de compensación">
+        <source>La cuenta no tiene activada la funcionalidad de compensación</source>
+        <target>The account does not have the compensation feature enabled</target>
+      </trans-unit>
+      <trans-unit id="xIKT6Xu" resname="{count, plural, one {La cuenta mantiene # solicitud pendiente para este proyecto} other {La cuenta mantiene # solicitudes pendientes para este proyecto}}">
+        <source>{count, plural, one {La cuenta mantiene # solicitud pendiente para este proyecto} other {La cuenta mantiene # solicitudes pendientes para este proyecto}}</source>
+        <target>{count, plural, one {The account still has # pending request for this project} other {The account still has # pending requests for this project}}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

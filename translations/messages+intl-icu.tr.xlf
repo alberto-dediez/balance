@@ -12245,6 +12245,66 @@
         <source>Notificación marcada como no leída</source>
         <target>NEW_Notificación marcada como no leída</target>
       </trans-unit>
+      <trans-unit id="do9Ga7p" resname="Créditos asignados correctamente">
+        <source>Créditos asignados correctamente</source>
+        <target>NEW_Créditos asignados correctamente</target>
+      </trans-unit>
+      <trans-unit id="Od..trF" resname="Créditos asignados: se ha validado parcialmente la solicitud pendiente de la cuenta">
+        <source>Créditos asignados: se ha validado parcialmente la solicitud pendiente de la cuenta</source>
+        <target>NEW_Créditos asignados: se ha validado parcialmente la solicitud pendiente de la cuenta</target>
+      </trans-unit>
+      <trans-unit id="w8I_N6s" resname="Créditos asignados: se ha validado la solicitud pendiente de la cuenta">
+        <source>Créditos asignados: se ha validado la solicitud pendiente de la cuenta</source>
+        <target>NEW_Créditos asignados: se ha validado la solicitud pendiente de la cuenta</target>
+      </trans-unit>
+      <trans-unit id="Viaj7mt" resname="La cuenta mantiene {count} solicitudes pendientes para este proyecto">
+        <source>La cuenta mantiene {count} solicitudes pendientes para este proyecto</source>
+        <target>NEW_La cuenta mantiene {count} solicitudes pendientes para este proyecto</target>
+      </trans-unit>
+      <trans-unit id="s2mkKmh" resname="Selecciona la cuenta">
+        <source>Selecciona la cuenta</source>
+        <target>NEW_Selecciona la cuenta</target>
+      </trans-unit>
+      <trans-unit id="14lKT9Y" resname="Selecciona el proyecto">
+        <source>Selecciona el proyecto</source>
+        <target>NEW_Selecciona el proyecto</target>
+      </trans-unit>
+      <trans-unit id="TjqLRNc" resname="Toneladas asignadas">
+        <source>Toneladas asignadas</source>
+        <target>NEW_Toneladas asignadas</target>
+      </trans-unit>
+      <trans-unit id="lAipDZG" resname="Si la cuenta tiene una solicitud pendiente para este proyecto, se validará con estos datos en lugar de crear un crédito nuevo">
+        <source>Si la cuenta tiene una solicitud pendiente para este proyecto, se validará con estos datos en lugar de crear un crédito nuevo</source>
+        <target>NEW_Si la cuenta tiene una solicitud pendiente para este proyecto, se validará con estos datos en lugar de crear un crédito nuevo</target>
+      </trans-unit>
+      <trans-unit id="K9CX0uC" resname="Asignar créditos">
+        <source>Asignar créditos</source>
+        <target>NEW_Asignar créditos</target>
+      </trans-unit>
+      <trans-unit id="PVtYc0l" resname="Se han asignado créditos de CO2 a su cuenta">
+        <source>Se han asignado créditos de CO2 a su cuenta</source>
+        <target>NEW_Se han asignado créditos de CO2 a su cuenta</target>
+      </trans-unit>
+      <trans-unit id="q44vCjm" resname="Se le han asignado {tonnes} toneladas de CO2 del proyecto {project} (identificador {reference}).">
+        <source>Se le han asignado {tonnes} toneladas de CO2 del proyecto {project} (identificador {reference}).</source>
+        <target>NEW_Se le han asignado {tonnes} toneladas de CO2 del proyecto {project} (identificador {reference}).</target>
+      </trans-unit>
+      <trans-unit id="szrYunb" resname="Asignar">
+        <source>Asignar</source>
+        <target>NEW_Asignar</target>
+      </trans-unit>
+      <trans-unit id="50h6NZG" resname="El identificador {reference} ya está registrado en otra compra.">
+        <source>El identificador {reference} ya está registrado en otra compra.</source>
+        <target>NEW_El identificador {reference} ya está registrado en otra compra.</target>
+      </trans-unit>
+      <trans-unit id="ESUZ3_X" resname="La cuenta no tiene activada la funcionalidad de compensación">
+        <source>La cuenta no tiene activada la funcionalidad de compensación</source>
+        <target>NEW_La cuenta no tiene activada la funcionalidad de compensación</target>
+      </trans-unit>
+      <trans-unit id="xIKT6Xu" resname="{count, plural, one {La cuenta mantiene # solicitud pendiente para este proyecto} other {La cuenta mantiene # solicitudes pendientes para este proyecto}}">
+        <source>{count, plural, one {La cuenta mantiene # solicitud pendiente para este proyecto} other {La cuenta mantiene # solicitudes pendientes para este proyecto}}</source>
+        <target>NEW_{count, plural, one {La cuenta mantiene # solicitud pendiente para este proyecto} other {La cuenta mantiene # solicitudes pendientes para este proyecto}}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -6,20 +6,24 @@ namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditAlertThreshold;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseAssigned;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseCancelled;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseNotPendingException;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseOrigin;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRangeCorrected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseReceived;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRejected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRequested;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseTransferred;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
 use App\Balance\Domain\Model\CreditPurchase\CreditThresholdReached;
 use App\Balance\Domain\Model\CreditPurchase\InsufficientTransferableCreditException;
 use App\Balance\Domain\Model\CreditPurchase\NonTransferableCreditPurchaseException;
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Library\Domain\Model\Media\MediaId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventPublisher;
@@ -501,5 +505,193 @@ class CreditPurchaseTest extends TestCase
         $this->assertTrue($accountId->equals($creditPurchase->accountId()));
         $this->assertTrue($projectId->equals($creditPurchase->projectId()));
         $this->assertSame(5.0, $creditPurchase->requestedTonnes());
+    }
+
+    public function testAssignPublishesCreditPurchaseAssigned(): void
+    {
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+        $assignedBy = UserId::generate();
+        $certificate = MediaId::generate();
+
+        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
+        $creditPurchase->assign(
+            accountId: $accountId,
+            projectId: $projectId,
+            purchasedTonnes: 25.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'ASSIGN-1',
+            certificate: $certificate,
+            assignedBy: $assignedBy,
+            amount: 250.0,
+        );
+
+        $this->assertNotNull($creditPurchase->accountId());
+        $this->assertNotNull($creditPurchase->projectId());
+        $this->assertNotNull($creditPurchase->requestedBy());
+        $this->assertNotNull($creditPurchase->resolvedBy());
+        $this->assertTrue($accountId->equals($creditPurchase->accountId()));
+        $this->assertTrue($projectId->equals($creditPurchase->projectId()));
+        $this->assertSame(CreditPurchaseStatus::Validated, $creditPurchase->status());
+        $this->assertSame(25.0, $creditPurchase->requestedTonnes());
+        $this->assertSame(25.0, $creditPurchase->purchasedTonnes());
+        $this->assertFalse($creditPurchase->isPartiallyFulfilled());
+        $this->assertSame(25.0, $creditPurchase->availableTonnes());
+        $this->assertSame(25.0, $creditPurchase->ceilingTonnes());
+        $this->assertFalse($creditPurchase->isTransferred());
+        $this->assertSame(1, $creditPurchase->lotNumber());
+        $this->assertSame(CreditPurchaseOrigin::Assigned, $creditPurchase->origin());
+        $this->assertTrue($creditPurchase->isAssigned());
+        $this->assertTrue($assignedBy->equals($creditPurchase->requestedBy()));
+        $this->assertTrue($assignedBy->equals($creditPurchase->resolvedBy()));
+        $this->assertEquals($creditPurchase->requestedAt(), $creditPurchase->resolvedAt());
+        $this->assertSame(250.0, $creditPurchase->amount());
+        $this->assertSame('ASSIGN-1', $creditPurchase->reference());
+        $this->assertEquals($certificate, $creditPurchase->certificate());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseAssigned::class, $lastEvent);
+        $this->assertSame([
+            'creditPurchaseId' => (string) $creditPurchase->id(),
+            'accountId' => (string) $accountId,
+            'projectId' => (string) $projectId,
+            'purchasedTonnes' => 25.0,
+            'amount' => 250.0,
+            'paymentType' => CreditPurchasePaymentType::PaidByBioscore->value,
+            'reference' => 'ASSIGN-1',
+            'certificate' => (string) $certificate,
+            'assignedBy' => (string) $assignedBy,
+        ], $lastEvent->payload());
+    }
+
+    public function testAssignWithZeroTonnesThrows(): void
+    {
+        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $creditPurchase->assign(
+            accountId: AccountId::generate(),
+            projectId: ProjectId::generate(),
+            purchasedTonnes: 0.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'ASSIGN-1',
+            certificate: null,
+            assignedBy: UserId::generate(),
+        );
+    }
+
+    public function testAssignWithNegativeAmountThrows(): void
+    {
+        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $creditPurchase->assign(
+            accountId: AccountId::generate(),
+            projectId: ProjectId::generate(),
+            purchasedTonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'ASSIGN-1',
+            certificate: null,
+            assignedBy: UserId::generate(),
+            amount: -1.0,
+        );
+    }
+
+    public function testAssignOverAnAlreadyRequestedPurchaseThrows(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pending();
+
+        $this->expectException(CreditPurchaseNotPendingException::class);
+
+        $creditPurchase->assign(
+            accountId: AccountId::generate(),
+            projectId: ProjectId::generate(),
+            purchasedTonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'ASSIGN-1',
+            certificate: null,
+            assignedBy: UserId::generate(),
+        );
+    }
+
+    public function testAssignedPurchasePaidByBioscoreCanBeTransferred(): void
+    {
+        $creditPurchase = CreditPurchaseMother::assigned(tonnes: 100.0);
+
+        $creditPurchase->transfer(
+            tonnes: 40.0,
+            amount: 0.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+
+        $this->assertSame(60.0, $creditPurchase->availableTonnes());
+        $this->assertInstanceOf(CreditPurchaseTransferred::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testAssignedPurchasePaidByClientCannotBeTransferred(): void
+    {
+        $creditPurchase = CreditPurchaseMother::assigned(tonnes: 100.0, paymentType: CreditPurchasePaymentType::PaidByClient);
+
+        $this->expectException(NonTransferableCreditPurchaseException::class);
+
+        $creditPurchase->transfer(
+            tonnes: 40.0,
+            amount: 0.0,
+            destinationCreditPurchaseId: CreditPurchaseId::generate(),
+            destinationAccountId: AccountId::generate(),
+            transferredBy: UserId::generate(),
+        );
+    }
+
+    public function testRebuildReconstructsAnAssignedPurchase(): void
+    {
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+        $id = CreditPurchaseId::generate();
+
+        $assigned = new CreditPurchaseAssigned(
+            creditPurchaseId: $id,
+            accountId: $accountId,
+            projectId: $projectId,
+            purchasedTonnes: 25.0,
+            amount: null,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: 'ASSIGN-1',
+            certificate: null,
+            assignedBy: UserId::generate(),
+        );
+
+        $rebuiltEvent = CreditPurchaseAssigned::rebuildFromPayload(
+            $assigned->id(),
+            $assigned->occurredOn(),
+            $assigned->payload(),
+        );
+
+        $creditPurchase = new CreditPurchase(id: $id, events: [$rebuiltEvent]);
+        $creditPurchase->rebuild();
+
+        $this->assertNotNull($creditPurchase->accountId());
+        $this->assertNotNull($creditPurchase->projectId());
+        $this->assertTrue($accountId->equals($creditPurchase->accountId()));
+        $this->assertTrue($projectId->equals($creditPurchase->projectId()));
+        $this->assertSame(CreditPurchaseStatus::Validated, $creditPurchase->status());
+        $this->assertSame(25.0, $creditPurchase->availableTonnes());
+        $this->assertSame(CreditPurchaseOrigin::Assigned, $creditPurchase->origin());
+        $this->assertSame('ASSIGN-1', $creditPurchase->reference());
+        $this->assertNull($creditPurchase->amount());
+        $this->assertNull($creditPurchase->certificate());
+    }
+
+    public function testOriginOfEachBirthPath(): void
+    {
+        $this->assertSame(CreditPurchaseOrigin::Requested, CreditPurchaseMother::pending()->origin());
+        $this->assertSame(CreditPurchaseOrigin::Requested, CreditPurchaseMother::validated()->origin());
+        $this->assertSame(CreditPurchaseOrigin::Received, CreditPurchaseMother::receivedLot(reference: 'SERIAL-1')->origin());
+        $this->assertSame(CreditPurchaseOrigin::Assigned, CreditPurchaseMother::assigned()->origin());
     }
 }

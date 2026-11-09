@@ -19,6 +19,9 @@
             {% endif %}
         </dd>
 
+        <dt class="col-sm-4">{{ 'Origen' | trans }}</dt>
+        <dd class="col-sm-8">{{ creditPurchase.origin.value | trans({}, 'creditPurchaseOrigin') }}</dd>
+
         <dt class="col-sm-4">{{ 'Identificador' | trans }}</dt>
         <dd class="col-sm-8">
             {{ creditPurchase.reference ?? '-' }}
@@ -31,6 +34,8 @@
 
         {% if isReceivedLot %}
             <dt class="col-sm-4">{{ 'Toneladas recibidas' | trans }}</dt>
+        {% elseif creditPurchase.isAssigned %}
+            <dt class="col-sm-4">{{ 'Toneladas asignadas' | trans }}</dt>
         {% else %}
             <dt class="col-sm-4">{{ 'Toneladas solicitadas' | trans }}</dt>
         {% endif %}
@@ -73,7 +78,11 @@
         <dt class="col-sm-4">{{ 'Toneladas libres' | trans }}</dt>
         <dd class="col-sm-8">{{ availableTonnes | number_format(4, ',', '.') }} t</dd>
 
-        <dt class="col-sm-4">{{ 'Fecha de solicitud' | trans }}</dt>
+        {% if creditPurchase.isAssigned %}
+            <dt class="col-sm-4">{{ 'Fecha de asignación' | trans }}</dt>
+        {% else %}
+            <dt class="col-sm-4">{{ 'Fecha de solicitud' | trans }}</dt>
+        {% endif %}
         <dd class="col-sm-8">{{ creditPurchase.requestedAt | date('d/m/Y H:i') }}</dd>
 
         {% if creditPurchase.resolvedAt %}

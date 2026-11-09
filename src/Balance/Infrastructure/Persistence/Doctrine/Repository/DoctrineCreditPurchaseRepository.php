@@ -108,6 +108,13 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
             ;
         }
 
+        if (null !== $filter->origin) {
+            $qb
+                ->andWhere($qb->expr()->eq('cp.origin', ':origin'))
+                ->setParameter('origin', $filter->origin->value)
+            ;
+        }
+
         if (null !== $filter->paymentType) {
             $qb
                 ->andWhere($qb->expr()->eq('cp.paymentType', ':paymentType'))

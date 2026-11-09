@@ -82,6 +82,23 @@ class CreditPurchaseAuthorizerTest extends TestCase
         $this->assertTrue($sut->canDoThat($subject, Action::Edit, UserMother::adminUser()));
     }
 
+    public function testAdminAndSuperAdminCanAdmin(): void
+    {
+        $subject = new CreditPurchase(id: CreditPurchaseId::generate(), accountId: AccountId::generate());
+
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Admin, UserMother::adminUser()));
+        $this->assertTrue($this->createSUT()->canDoThat($subject, Action::Admin, UserMother::superAdminUser()));
+    }
+
+    public function testOwnerCannotAdmin(): void
+    {
+        $accountId = AccountId::generate();
+        $user = UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId);
+        $subject = new CreditPurchase(id: CreditPurchaseId::generate(), accountId: $accountId);
+
+        $this->assertFalse($this->createSUT()->canDoThat($subject, Action::Admin, $user));
+    }
+
     private function createSUT(): CreditPurchaseAuthorizer
     {
         return new CreditPurchaseAuthorizer();

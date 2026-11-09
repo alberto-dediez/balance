@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="MIMhV6q" resname="requested">
+        <source>requested</source>
+        <target>Solicitado</target>
+      </trans-unit>
+      <trans-unit id="DbIYOch" resname="assigned">
+        <source>assigned</source>
+        <target>Asignado por el administrador</target>
+      </trans-unit>
+      <trans-unit id="TWRt04I" resname="received">
+        <source>received</source>
+        <target>Recibido por transferencia</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

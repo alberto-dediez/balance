@@ -1,0 +1,17 @@
+<p>
+    {% trans with {
+        '{project}': projectName,
+        '{tonnes}': purchasedTonnes,
+        '{reference}': reference
+    } -%}
+        Se le han asignado {tonnes} toneladas de CO2 del proyecto {project} (identificador {reference}).
+    {%- endtrans %}
+    {% if projectMitecoId %}
+        {% trans with {'{mitecoId}': projectMitecoId} -%}(Registro Miteco {mitecoId}){%- endtrans %}
+    {% endif %}
+</p>
+<p>
+    <a href="{{ path('credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}">
+        {% trans -%}Ver el detalle de la compra{%- endtrans -%}
+    </a>
+</p>

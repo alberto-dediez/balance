@@ -269,6 +269,23 @@ final class BalanceContext implements Context
         $this->getCreditPurchaseRepository()->add($creditPurchase);
     }
 
+    #[Given('credit purchase :id assigned to account :accountId and project :projectId with :tonnes tonnes and reference :reference exists')]
+    public function creditPurchaseAssignedExists(string $id, string $accountId, string $projectId, string $tonnes, string $reference): void
+    {
+        $creditPurchase = new CreditPurchase(id: new CreditPurchaseId($id));
+        $creditPurchase->assign(
+            accountId: new AccountId($accountId),
+            projectId: new ProjectId($projectId),
+            purchasedTonnes: (float) $tonnes,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            reference: $reference,
+            certificate: null,
+            assignedBy: UserId::generate(),
+        );
+
+        $this->getCreditPurchaseRepository()->add($creditPurchase);
+    }
+
     #[Given('credit purchase :id is validated with :purchasedTonnes tonnes and reference :reference')]
     public function creditPurchaseIsValidated(string $id, string $purchasedTonnes, string $reference): void
     {

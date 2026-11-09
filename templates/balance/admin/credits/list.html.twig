@@ -29,7 +29,10 @@
             'label': 'Estado' | trans,
             'sortable': false
         }, {
-            'label': 'Fecha de solicitud' | trans,
+            'label': 'Origen' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha' | trans,
             'sortable': true,
             'sortableBy': 'requestedAt'
         }, {
@@ -41,7 +44,7 @@
         {% set project = element.projectId | project_name %}
         <td>{{ element.accountId | account_name }}</td>
         <td>{{ project }}</td>
-        <td>{{ element.lotNumber > 1 ? '-' : element.requestedTonnes }}</td>
+        <td>{{ element.lotNumber > 1 or element.isAssigned ? '-' : element.requestedTonnes }}</td>
         <td>{{ element.purchasedTonnes ?? '-' }}</td>
         <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
         <td>{{ element.paymentType ? (element.paymentType.value | trans({}, 'creditPurchasePaymentType')) : '-' }}</td>
@@ -57,6 +60,7 @@
                 <span class="badge bg-warning text-dark">{{ 'Parcial' | trans }}</span>
             {% endif %}
         </td>
+        <td>{{ element.origin.value | trans({}, 'creditPurchaseOrigin') }}</td>
         <td>{{ element.requestedAt | date('d/m/Y') }}</td>
         <td>
             {% if element.status.value == 'validated' %}
@@ -77,3 +81,9 @@
         </td>
     </twig:List:Table>
 {% endblock %}
+
+{% block list_actions %}
+    {% if canAssign %}
+        <twig:Link:AssignCredits path="{{ path('admin_credit_purchases_register') }}" />
+    {% endif %}
+{% endblock list_actions %}

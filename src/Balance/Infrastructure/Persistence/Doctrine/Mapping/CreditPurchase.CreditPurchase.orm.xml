@@ -27,6 +27,7 @@
         <field name="upperOffsetTonnes" type="float" column="upper_offset_tonnes" nullable="false"/>
         <field name="voidedTonnes" type="float" column="voided_tonnes" nullable="false"/>
         <field name="lotNumber" type="integer" column="lot_number" nullable="false"/>
+        <field name="origin" type="string" column="origin" length="20" enum-type="App\Balance\Domain\Model\CreditPurchase\CreditPurchaseOrigin" nullable="false"/>
         <field name="requestedAt" type="datetime_immutable" column="requested_at" nullable="false"/>
         <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true"/>
         <field name="cancelledAt" type="datetime_immutable" column="cancelled_at" nullable="true"/>

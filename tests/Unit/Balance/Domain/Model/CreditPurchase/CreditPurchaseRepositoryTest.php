@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditAlertThreshold;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseFilter;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseOrigin;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
@@ -69,6 +70,65 @@ abstract class CreditPurchaseRepositoryTest extends KernelTestCase
         $result = $repository->findByFilter(new CreditPurchaseFilter(status: CreditPurchaseStatus::Validated, limit: 0));
 
         $this->assertCount(1, $result);
+    }
+
+    public function testFindByFilterByOrigin(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $assigned = CreditPurchaseMother::assigned($accountId, ProjectId::generate());
+
+        $repository->add($assigned);
+        $repository->add(CreditPurchaseMother::validated($accountId, ProjectId::generate()));
+        $repository->add(CreditPurchaseMother::receivedLot(reference: 'SERIAL-ORIGIN', accountId: $accountId));
+
+        $result = array_values($repository->findByFilter(
+            new CreditPurchaseFilter(accountId: $accountId, origin: CreditPurchaseOrigin::Assigned, limit: 0),
+        ));
+
+        $this->assertCount(1, $result);
+        $this->assertTrue($assigned->id()->equals($result[0]->id()));
+
+        $this->assertCount(1, $repository->findByFilter(
+            new CreditPurchaseFilter(accountId: $accountId, origin: CreditPurchaseOrigin::Received, limit: 0),
+        ));
+        $this->assertCount(1, $repository->findByFilter(
+            new CreditPurchaseFilter(accountId: $accountId, origin: CreditPurchaseOrigin::Requested, limit: 0),
+        ));
+    }
+
+    public function testFindByFilterOrdersByRequestedAtByDefault(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $middle = CreditPurchaseMother::pendingRequestedAt(new \DateTimeImmutable('-2 days'), $accountId);
+        $oldest = CreditPurchaseMother::pendingRequestedAt(new \DateTimeImmutable('-3 days'), $accountId);
+        $newest = CreditPurchaseMother::pendingRequestedAt(new \DateTimeImmutable('-1 day'), $accountId);
+
+        $repository->add($middle);
+        $repository->add($oldest);
+        $repository->add($newest);
+
+        $ascending = array_map(
+            static fn($creditPurchase): string => (string) $creditPurchase->id(),
+            array_values($repository->findByFilter(new CreditPurchaseFilter(accountId: $accountId, limit: 0))),
+        );
+
+        $this->assertSame([(string) $oldest->id(), (string) $middle->id(), (string) $newest->id()], $ascending);
+
+        $descendingFilter = new CreditPurchaseFilter(accountId: $accountId, limit: 0);
+        $descendingFilter->orderWay = 'DESC';
+
+        $descending = array_map(
+            static fn($creditPurchase): string => (string) $creditPurchase->id(),
+            array_values($repository->findByFilter($descendingFilter)),
+        );
+
+        $this->assertSame([(string) $newest->id(), (string) $middle->id(), (string) $oldest->id()], $descending);
     }
 
     public function testExistsByReference(): void

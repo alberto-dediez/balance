@@ -62,7 +62,7 @@ class NavigationSearchProviderTest extends TestCase
         $results = $this->createSUT(Role::Admin)->search(new SearchTerm('Maestros'), UserMother::adminUser(), 5);
         $titles = $this->titles($results);
 
-        $this->assertCount(18, $results);
+        $this->assertCount(19, $results);
         $this->assertNotContains('Maestros', $titles);
 
         foreach (['Productos vendidos', 'Inversiones', 'Instalaciones', 'Transporte'] as $group) {
@@ -72,7 +72,7 @@ class NavigationSearchProviderTest extends TestCase
         $this->assertCount(1, array_keys($titles, 'Materiales', true));
 
         foreach ($results as $result) {
-            $this->assertContains($result->subtitle, ['Maestros > Materiales', 'Maestros > Productos vendidos', 'Maestros > Inversiones', 'Maestros > Instalaciones', 'Maestros > Transporte']);
+            $this->assertContains($result->subtitle, ['Maestros', 'Maestros > Materiales', 'Maestros > Productos vendidos', 'Maestros > Inversiones', 'Maestros > Instalaciones', 'Maestros > Transporte']);
         }
     }
 
@@ -136,7 +136,7 @@ class NavigationSearchProviderTest extends TestCase
     {
         $results = $this->createSUT(Role::Admin)->search(new SearchTerm('ar'), UserMother::adminUser(), 1);
 
-        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Combustible de maquinaria', 'Informes de huella', 'Grupos de coeficientes', 'Medidas', 'Categorías de medidas', 'Categorías', 'Preguntas', 'Sectores', 'Configuración', 'Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
+        $this->assertSame(['Marcas', 'Beneficiarios', 'Artículos de merchandising', 'Combustible de maquinaria', 'Informes de huella', 'Medidas', 'Categorías de medidas', 'Categorías', 'Preguntas', 'Sectores', 'Configuración', 'Usuarios', 'Archivos', 'Subir archivo', 'Enviar notificación', 'Gestionar novedades'], $this->titles($results));
     }
 
     public function testTranslatesTheEntriesToTheCurrentLocale(): void

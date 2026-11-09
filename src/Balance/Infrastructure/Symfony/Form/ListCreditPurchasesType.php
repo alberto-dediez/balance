@@ -6,6 +6,7 @@ namespace App\Balance\Infrastructure\Symfony\Form;
 
 use App\Balance\Application\CreditPurchase\List\ListCreditPurchasesRequest;
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Balance\Infrastructure\Symfony\Form\Type\CreditPurchaseOriginType;
 use App\Balance\Infrastructure\Symfony\Form\Type\CreditPurchaseStatusType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
@@ -28,6 +29,11 @@ class ListCreditPurchasesType extends BaseFilterType
             ])
             ->add('status', CreditPurchaseStatusType::class, [
                 'label' => new TranslatableMessage('Estado'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos'),
+            ])
+            ->add('origin', CreditPurchaseOriginType::class, [
+                'label' => new TranslatableMessage('Origen'),
                 'required' => false,
                 'placeholder' => new TranslatableMessage('Todos'),
             ])

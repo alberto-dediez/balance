@@ -1,0 +1,9 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% set page_title = ('Compras de créditos de CO2' | trans)
+    ~ ' > '
+    ~ ('Asignar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_credit_purchases') }}" />
+{% endblock %}

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Security\Domain\Model\Account;
 
+use App\Security\Domain\Model\Account\AccountFeature;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -173,6 +175,19 @@ abstract class AccountRepositoryTest extends KernelTestCase
 
         $this->assertCount(1, $repository->findByFilter(new AccountFilter(distributor: true, limit: 0)));
         $this->assertCount(2, $repository->findByFilter(new AccountFilter(distributor: false, limit: 0)));
+        $this->assertCount(3, $repository->findByFilter(new AccountFilter(limit: 0)));
+    }
+
+    public function testFindByFilterByFeature(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(AccountMother::random());
+        $repository->add(AccountMother::distributorAccount());
+        $repository->add(AccountMother::withFeatures('Sin compensación', '0199f0a4-6b38-7b5e-8f3a-1c2d3e4f5a6b', new AccountFeatures(compensation: false)));
+
+        $this->assertCount(2, $repository->findByFilter(new AccountFilter(feature: AccountFeature::Compensation, limit: 0)));
+        $this->assertCount(3, $repository->findByFilter(new AccountFilter(feature: AccountFeature::Events, limit: 0)));
         $this->assertCount(3, $repository->findByFilter(new AccountFilter(limit: 0)));
     }
 

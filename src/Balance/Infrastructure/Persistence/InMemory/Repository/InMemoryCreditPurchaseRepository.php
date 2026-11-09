@@ -84,6 +84,10 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
             return false;
         }
 
+        if (null !== $filter->origin && $filter->origin !== $creditPurchase->origin()) {
+            return false;
+        }
+
         if (null !== $filter->paymentType && $filter->paymentType !== $creditPurchase->paymentType()) {
             return false;
         }
@@ -109,7 +113,20 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
 
         $offset = $filter->page * $filter->limit;
 
-        foreach ($this->creditPurchases as $creditPurchase) {
+        $creditPurchases = array_values($this->creditPurchases);
+
+        $way = 'ASC' === $filter->orderWay ? 1 : -1;
+        $byResolvedAt = 'resolvedAt' === $filter->orderBy;
+
+        usort(
+            $creditPurchases,
+            static fn(CreditPurchase $a, CreditPurchase $b): int => $way * ($byResolvedAt
+                ? $a->resolvedAt() <=> $b->resolvedAt()
+                : $a->requestedAt() <=> $b->requestedAt())
+                ?: (string) $a->id() <=> (string) $b->id(),
+        );
+
+        foreach ($creditPurchases as $creditPurchase) {
             if (!$this->matches($creditPurchase, $filter)) {
                 continue;
             }

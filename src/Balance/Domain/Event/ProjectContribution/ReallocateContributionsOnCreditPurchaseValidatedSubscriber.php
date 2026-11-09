@@ -6,6 +6,7 @@ namespace App\Balance\Domain\Event\ProjectContribution;
 
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateUnderallocatedContributionsRequest;
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateUnderallocatedContributionsService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseAssigned;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseValidated;
 use App\Balance\Domain\Model\Project\ProjectId;
@@ -31,7 +32,7 @@ class ReallocateContributionsOnCreditPurchaseValidatedSubscriber implements Doma
             throw new \RuntimeException('Incorrect event!');
         }
 
-        assert($event instanceof CreditPurchaseValidated);
+        assert($event instanceof CreditPurchaseValidated || $event instanceof CreditPurchaseAssigned);
 
         $creditPurchase = $this->creditPurchaseRepository->find($event->creditPurchaseId());
 
@@ -53,6 +54,6 @@ class ReallocateContributionsOnCreditPurchaseValidatedSubscriber implements Doma
 
     public function isSubscribedTo(DomainEvent $event): bool
     {
-        return $event instanceof CreditPurchaseValidated;
+        return $event instanceof CreditPurchaseValidated || $event instanceof CreditPurchaseAssigned;
     }
 }

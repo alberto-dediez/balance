@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Security\Infrastructure\Persistence\InMemory\Repository;
 
 use App\Security\Domain\Model\Account\Account;
+use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\Account\AccountFilter;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
@@ -97,6 +98,10 @@ class InMemoryAccountRepository implements AccountRepository
             }
 
             if (null !== $filter->distributor && $filter->distributor !== $account->isDistributor()) {
+                continue;
+            }
+
+            if ($filter->feature instanceof AccountFeature && !$account->features()->isEnabled($filter->feature)) {
                 continue;
             }
 

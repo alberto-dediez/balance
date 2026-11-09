@@ -37,6 +37,7 @@ class CreditPurchase
         private float $upperOffsetTonnes = 0.0,
         private float $voidedTonnes = 0.0,
         private int $lotNumber = 1,
+        private CreditPurchaseOrigin $origin = CreditPurchaseOrigin::Requested,
         array $events = [],
         private \DateTimeImmutable $requestedAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $resolvedAt = null,
@@ -103,6 +104,16 @@ class CreditPurchase
     public function lotNumber(): int
     {
         return $this->lotNumber;
+    }
+
+    public function origin(): CreditPurchaseOrigin
+    {
+        return $this->origin;
+    }
+
+    public function isAssigned(): bool
+    {
+        return CreditPurchaseOrigin::Assigned === $this->origin;
     }
 
     public function isTransferred(): bool
@@ -343,6 +354,43 @@ class CreditPurchase
         );
     }
 
+    public function assign(
+        AccountId $accountId,
+        ProjectId $projectId,
+        float $purchasedTonnes,
+        CreditPurchasePaymentType $paymentType,
+        string $reference,
+        ?MediaId $certificate,
+        UserId $assignedBy,
+        ?float $amount = null,
+    ): void {
+        if (CreditPurchaseStatus::Pending !== $this->status || $this->accountId instanceof AccountId) {
+            throw new CreditPurchaseNotPendingException($this->id());
+        }
+
+        if ($purchasedTonnes <= 0.0) {
+            throw new \InvalidArgumentException('Purchased tonnes must be greater than zero.');
+        }
+
+        if (null !== $amount && $amount < 0.0) {
+            throw new \InvalidArgumentException('Purchase amount cannot be negative.');
+        }
+
+        $this->recordApplyAndPublish(
+            new CreditPurchaseAssigned(
+                creditPurchaseId: $this->id(),
+                accountId: $accountId,
+                projectId: $projectId,
+                purchasedTonnes: $purchasedTonnes,
+                amount: $amount,
+                paymentType: $paymentType,
+                reference: $reference,
+                certificate: $certificate,
+                assignedBy: $assignedBy,
+            ),
+        );
+    }
+
     public function correctRange(float $offsetTonnes, float $upperOffsetTonnes): void
     {
         if (CreditPurchaseStatus::Validated !== $this->status || $this->lotNumber <= 1) {
@@ -391,7 +439,27 @@ class CreditPurchase
         $this->paymentType = $event->paymentType();
         $this->reference = $event->reference();
         $this->lotNumber = $event->lotNumber();
+        $this->origin = CreditPurchaseOrigin::Received;
         $this->certificate = null !== $event->certificate() ? (string) $event->certificate() : null;
+        $this->requestedAt = $event->occurredOn();
+        $this->resolvedAt = $event->occurredOn();
+    }
+
+    public function applyCreditPurchaseAssigned(CreditPurchaseAssigned $event): void
+    {
+        $this->accountId = $event->accountId();
+        $this->projectId = $event->projectId();
+        $this->requestedBy = $event->assignedBy();
+        $this->resolvedBy = $event->assignedBy();
+        $this->requestedTonnes = $event->purchasedTonnes();
+        $this->purchasedTonnes = $event->purchasedTonnes();
+        $this->status = CreditPurchaseStatus::Validated;
+        $this->amount = $event->amount();
+        $this->paymentType = $event->paymentType();
+        $this->reference = $event->reference();
+        $this->certificate = null !== $event->certificate() ? (string) $event->certificate() : null;
+        $this->lotNumber = 1;
+        $this->origin = CreditPurchaseOrigin::Assigned;
         $this->requestedAt = $event->occurredOn();
         $this->resolvedAt = $event->occurredOn();
     }
@@ -459,6 +527,7 @@ class CreditPurchase
         $this->requestedBy = $event->requestedBy();
         $this->requestedTonnes = $event->requestedTonnes();
         $this->status = CreditPurchaseStatus::Pending;
+        $this->origin = CreditPurchaseOrigin::Requested;
         $this->requestedAt = $event->occurredOn();
     }
 
