@@ -70,6 +70,14 @@ class AccountMother
         return $account;
     }
 
+    public static function inactiveDistributorAccountFromNameAndId(string $name, string $id): Account
+    {
+        $account = new Account(new AccountId($id));
+        $account->register($name, false, EmissionFactorGroupMother::default()->id(), false, true);
+
+        return $account;
+    }
+
     public static function fromNameWithConsultant(string $name, AccountId $consultantAccountId): Account
     {
         $account = self::fromName($name);
