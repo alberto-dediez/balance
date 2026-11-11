@@ -12,6 +12,8 @@ class CreditPurchaseFilter
 {
     use Filter;
 
+    public ?bool $withAvailableTonnes = null;
+
     public function __construct(
         public ?AccountId $accountId = null,
         public ?ProjectId $projectId = null,
@@ -20,7 +22,9 @@ class CreditPurchaseFilter
         public ?CreditPurchaseOrigin $origin = null,
         public ?string $reference = null,
         int $limit = 10,
+        ?bool $withAvailableTonnes = null,
     ) {
         $this->limit = $limit;
+        $this->withAvailableTonnes = $withAvailableTonnes;
     }
 }

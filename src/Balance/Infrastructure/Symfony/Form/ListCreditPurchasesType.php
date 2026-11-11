@@ -10,6 +10,7 @@ use App\Balance\Infrastructure\Symfony\Form\Type\CreditPurchaseOriginType;
 use App\Balance\Infrastructure\Symfony\Form\Type\CreditPurchaseStatusType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
 use App\Shared\Infrastructure\Symfony\Form\Type\AutocompleteType;
+use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -40,6 +41,11 @@ class ListCreditPurchasesType extends BaseFilterType
             ->add('reference', TextType::class, [
                 'label' => new TranslatableMessage('Identificador'),
                 'required' => false,
+            ])
+            ->add('withAvailableTonnes', BooleanType::class, [
+                'label' => new TranslatableMessage('Con toneladas disponibles'),
+                'required' => false,
+                'placeholder' => new TranslatableMessage('Todos'),
             ])
         ;
 

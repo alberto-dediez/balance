@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Balance\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Balance\Infrastructure\Persistence\Doctrine\Repository\DoctrineCreditPurchaseRepository;
+use App\Balance\Infrastructure\Persistence\Doctrine\Repository\DoctrineProjectContributionRepository;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepositoryTest;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -16,5 +18,12 @@ class DoctrineCreditPurchaseRepositoryTest extends CreditPurchaseRepositoryTest
         $manager = $this->getContainer()->get(EntityManagerInterface::class);
 
         return new DoctrineCreditPurchaseRepository($manager);
+    }
+
+    protected function createProjectContributionRepository(): ProjectContributionRepository
+    {
+        $manager = $this->getContainer()->get(EntityManagerInterface::class);
+
+        return new DoctrineProjectContributionRepository($manager);
     }
 }

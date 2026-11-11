@@ -451,6 +451,22 @@ final class BalanceContext implements Context
         Assert::fail(sprintf('No lot %d found for serial "%s".', $lotNumber, $reference));
     }
 
+    #[When('I filter the admin credits list by available tonnes :choice')]
+    public function iFilterTheAdminCreditsListByAvailableTonnes(string $choice): void
+    {
+        $value = match ($choice) {
+            'yes' => '1',
+            'no' => '0',
+            'all' => '',
+            default => throw new \InvalidArgumentException(sprintf('Unknown available tonnes choice "%s".', $choice)),
+        };
+
+        $form = $this->client->getCrawler()->filter('#right-bar form')->selectButton('Filtrar')->form();
+        $form->setValues([sprintf('%s[withAvailableTonnes]', $form->getNode()->getAttribute('name')) => $value]);
+
+        $this->client->submit($form);
+    }
+
     #[Then('project :projectId should be adhered to account :accountId')]
     public function projectShouldBeAdheredToAccount(string $projectId, string $accountId): void
     {

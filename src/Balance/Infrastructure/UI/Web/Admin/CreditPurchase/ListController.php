@@ -41,7 +41,7 @@ class ListController extends AbstractController
 
             [$filter, $form] = $this->filter(
                 $request,
-                fn(): ListCreditPurchasesRequest => new ListCreditPurchasesRequest(),
+                fn(): ListCreditPurchasesRequest => new ListCreditPurchasesRequest(withAvailableTonnes: true),
                 ListCreditPurchasesType::class,
                 ['projects' => $projectChoices],
             );

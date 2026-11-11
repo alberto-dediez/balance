@@ -11,6 +11,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionCreditAllocation;
 use App\Security\Domain\Model\Account\AccountId;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -126,6 +127,37 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
             $qb
                 ->andWhere($qb->expr()->like('cp.reference', ':reference'))
                 ->setParameter('reference', "%{$filter->reference}%")
+            ;
+        }
+
+        if (null !== $filter->withAvailableTonnes) {
+            $unallocatedTonnes = 'cp.purchasedTonnes - cp.offsetTonnes - cp.upperOffsetTonnes - cp.voidedTonnes - :tonneTolerance';
+            $allocatedTonnes = sprintf(
+                '(SELECT COALESCE(SUM(a.tonnes), 0) FROM %s a WHERE a.creditPurchaseId = cp.id)',
+                ProjectContributionCreditAllocation::class,
+            );
+
+            $condition = $filter->withAvailableTonnes
+                ? $qb->expr()->orX(
+                    $qb->expr()->eq('cp.status', ':pendingStatus'),
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('cp.status', ':validatedStatus'),
+                        $qb->expr()->gt($unallocatedTonnes, $allocatedTonnes),
+                    ),
+                )
+                : $qb->expr()->andX(
+                    $qb->expr()->neq('cp.status', ':pendingStatus'),
+                    $qb->expr()->orX(
+                        $qb->expr()->neq('cp.status', ':validatedStatus'),
+                        $qb->expr()->lte($unallocatedTonnes, $allocatedTonnes),
+                    ),
+                );
+
+            $qb
+                ->andWhere($condition)
+                ->setParameter('pendingStatus', CreditPurchaseStatus::Pending->value)
+                ->setParameter('validatedStatus', CreditPurchaseStatus::Validated->value)
+                ->setParameter('tonneTolerance', CreditBalance::TONNE_TOLERANCE)
             ;
         }
 

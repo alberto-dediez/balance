@@ -202,6 +202,16 @@ class CreditPurchase
         return max(0.0, $this->purchasedTonnes - $this->offsetTonnes - $this->upperOffsetTonnes - $this->voidedTonnes);
     }
 
+    public function hasTonnesToManage(float $allocatedTonnes): bool
+    {
+        if (CreditPurchaseStatus::Pending === $this->status) {
+            return true;
+        }
+
+        return CreditPurchaseStatus::Validated === $this->status
+            && $this->availableTonnes() - $allocatedTonnes > CreditBalance::TONNE_TOLERANCE;
+    }
+
     public function ceilingTonnes(): float
     {
         return ($this->purchasedTonnes ?? 0.0) - $this->upperOffsetTonnes - $this->voidedTonnes;

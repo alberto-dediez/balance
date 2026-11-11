@@ -694,4 +694,55 @@ class CreditPurchaseTest extends TestCase
         $this->assertSame(CreditPurchaseOrigin::Received, CreditPurchaseMother::receivedLot(reference: 'SERIAL-1')->origin());
         $this->assertSame(CreditPurchaseOrigin::Assigned, CreditPurchaseMother::assigned()->origin());
     }
+
+    public function testPendingPurchaseHasTonnesToManage(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pending();
+
+        $this->assertTrue($creditPurchase->hasTonnesToManage(0.0));
+        $this->assertTrue($creditPurchase->hasTonnesToManage(100.0));
+    }
+
+    public function testValidatedPurchaseHasTonnesToManageWhileFreeTonnesRemain(): void
+    {
+        $creditPurchase = CreditPurchaseMother::validated(tonnes: 10.0);
+
+        $this->assertTrue($creditPurchase->hasTonnesToManage(2.0));
+        $this->assertFalse($creditPurchase->hasTonnesToManage(10.0));
+    }
+
+    public function testFullyTransferredPurchaseHasNoTonnesToManage(): void
+    {
+        $creditPurchase = CreditPurchaseMother::transferred(tonnes: 100.0, transferredTonnes: 100.0);
+
+        $this->assertFalse($creditPurchase->hasTonnesToManage(0.0));
+    }
+
+    public function testTransferredAndAllocatedPurchaseHasTonnesToManageOnlyWithFreeTonnes(): void
+    {
+        $creditPurchase = CreditPurchaseMother::transferred(tonnes: 100.0, transferredTonnes: 60.0);
+
+        $this->assertFalse($creditPurchase->hasTonnesToManage(40.0));
+        $this->assertTrue($creditPurchase->hasTonnesToManage(39.0));
+    }
+
+    public function testFreeTonnesWithinToleranceAreNotTonnesToManage(): void
+    {
+        $creditPurchase = CreditPurchaseMother::validated(tonnes: 10.0);
+
+        $this->assertFalse($creditPurchase->hasTonnesToManage(9.9999995));
+    }
+
+    public function testRejectedPurchaseHasNoTonnesToManage(): void
+    {
+        $this->assertFalse(CreditPurchaseMother::rejected()->hasTonnesToManage(0.0));
+    }
+
+    public function testCancelledPurchaseHasNoTonnesToManage(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pending();
+        $creditPurchase->cancel();
+
+        $this->assertFalse($creditPurchase->hasTonnesToManage(0.0));
+    }
 }

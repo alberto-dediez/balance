@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditAlertThreshold;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseFilter;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseOrigin;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Balance\Domain\Model\ProjectContribution\AllocatedCreditLine;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class CreditPurchaseRepositoryTest extends KernelTestCase
@@ -337,5 +341,172 @@ abstract class CreditPurchaseRepositoryTest extends KernelTestCase
         $this->assertFalse($recovered->hasNotified(CreditAlertThreshold::Depleted));
     }
 
+    public function testFindByFilterWithAvailableTonnes(): void
+    {
+        $repository = $this->createSUT();
+        $this->addAvailableTonnesDataSet($repository);
+
+        $filter = new CreditPurchaseFilter(limit: 0, withAvailableTonnes: true);
+
+        $this->assertCount(3, $repository->findByFilter($filter));
+        $this->assertSame(3, $repository->totalResultsByFilter($filter));
+    }
+
+    public function testFindByFilterWithoutAvailableTonnes(): void
+    {
+        $repository = $this->createSUT();
+        $this->addAvailableTonnesDataSet($repository);
+
+        $filter = new CreditPurchaseFilter(limit: 0, withAvailableTonnes: false);
+
+        $this->assertCount(4, $repository->findByFilter($filter));
+        $this->assertSame(4, $repository->totalResultsByFilter($filter));
+    }
+
+    public function testFindByFilterIgnoresAvailableTonnesWhenNull(): void
+    {
+        $repository = $this->createSUT();
+        $this->addAvailableTonnesDataSet($repository);
+
+        $this->assertCount(7, $repository->findByFilter(new CreditPurchaseFilter(limit: 0)));
+    }
+
+    public function testAvailableTonnesFilterKeepsPaginationConsistent(): void
+    {
+        $repository = $this->createSUT();
+        $this->addAvailableTonnesDataSet($repository);
+
+        $firstPage = new CreditPurchaseFilter(limit: 2, withAvailableTonnes: true);
+        $secondPage = new CreditPurchaseFilter(limit: 2, withAvailableTonnes: true);
+        $secondPage->page = 1;
+
+        $ids = array_map(
+            static fn(CreditPurchase $creditPurchase): string => (string) $creditPurchase->id(),
+            [...array_values($repository->findByFilter($firstPage)), ...array_values($repository->findByFilter($secondPage))],
+        );
+
+        $this->assertCount(3, $ids);
+        $this->assertCount(3, array_unique($ids));
+        $this->assertSame(3, $repository->totalResultsByFilter($firstPage));
+    }
+
+    public function testAvailableTonnesFilterCombinesWithStatus(): void
+    {
+        $repository = $this->createSUT();
+        $this->addAvailableTonnesDataSet($repository);
+
+        $this->assertCount(0, $repository->findByFilter(
+            new CreditPurchaseFilter(status: CreditPurchaseStatus::Rejected, limit: 0, withAvailableTonnes: true),
+        ));
+        $this->assertCount(1, $repository->findByFilter(
+            new CreditPurchaseFilter(status: CreditPurchaseStatus::Rejected, limit: 0, withAvailableTonnes: false),
+        ));
+    }
+
+    public function testAvailableTonnesFilterHonoursOffsetsTransfersAndTolerance(): void
+    {
+        $repository = $this->createSUT();
+        $projectContributionRepository = $this->createProjectContributionRepository();
+
+        $transferredAndAllocated = CreditPurchaseMother::transferred(tonnes: 100.0, transferredTonnes: 60.0);
+        $receivedLowerLot = CreditPurchaseMother::receivedLot(reference: 'REF-LOWER', purchasedTonnes: 100.0, offsetTonnes: 60.0);
+        $receivedMiddleLot = CreditPurchaseMother::receivedLot(reference: 'REF-MIDDLE', purchasedTonnes: 100.0, offsetTonnes: 40.0, upperOffsetTonnes: 40.0);
+        $spentWithinTolerance = CreditPurchaseMother::validated(tonnes: 10.0);
+        $receivedMiddleLotWithTonnes = CreditPurchaseMother::receivedLot(reference: 'REF-MIDDLE-AVAILABLE', purchasedTonnes: 100.0, offsetTonnes: 40.0, upperOffsetTonnes: 40.0);
+        $availableAboveTolerance = CreditPurchaseMother::validated(tonnes: 10.0);
+
+        $allocations = [
+            [$transferredAndAllocated, 40.0, 0.0],
+            [$receivedLowerLot, 40.0, 60.0],
+            [$receivedMiddleLot, 20.0, 40.0],
+            [$spentWithinTolerance, 9.9999995, 0.0],
+            [$receivedMiddleLotWithTonnes, 10.0, 40.0],
+            [$availableAboveTolerance, 9.99999, 0.0],
+        ];
+
+        foreach ($allocations as [$creditPurchase, $tonnes, $startTonnes]) {
+            $repository->add($creditPurchase);
+
+            $contribution = ProjectContributionMother::ownCreditFunded(
+                $creditPurchase->accountId(),
+                $creditPurchase->projectId(),
+                $tonnes,
+            );
+            $contribution->allocateCredits([
+                new AllocatedCreditLine(
+                    position: 0,
+                    creditPurchaseId: $creditPurchase->id(),
+                    purchaseReference: $creditPurchase->reference(),
+                    tonnes: $tonnes,
+                    startTonnes: $startTonnes,
+                ),
+            ]);
+            $projectContributionRepository->add($contribution);
+        }
+
+        $this->assertSame(
+            $this->sortedIds([$receivedMiddleLotWithTonnes, $availableAboveTolerance]),
+            $this->sortedIds($repository->findByFilter(new CreditPurchaseFilter(limit: 0, withAvailableTonnes: true))),
+        );
+        $this->assertSame(
+            $this->sortedIds([$transferredAndAllocated, $receivedLowerLot, $receivedMiddleLot, $spentWithinTolerance]),
+            $this->sortedIds($repository->findByFilter(new CreditPurchaseFilter(limit: 0, withAvailableTonnes: false))),
+        );
+    }
+
     abstract protected function createSUT(): CreditPurchaseRepository;
+
+    abstract protected function createProjectContributionRepository(): ProjectContributionRepository;
+
+    /**
+     * @param array<CreditPurchase> $creditPurchases
+     *
+     * @return list<string>
+     */
+    private function sortedIds(array $creditPurchases): array
+    {
+        $ids = array_map(
+            static fn(CreditPurchase $creditPurchase): string => (string) $creditPurchase->id(),
+            array_values($creditPurchases),
+        );
+        sort($ids);
+
+        return $ids;
+    }
+
+    private function addAvailableTonnesDataSet(CreditPurchaseRepository $repository): void
+    {
+        $projectContributionRepository = $this->createProjectContributionRepository();
+
+        $spent = CreditPurchaseMother::validated(tonnes: 10.0);
+        $partial = CreditPurchaseMother::validated(tonnes: 10.0);
+        $cancelled = CreditPurchaseMother::pending();
+        $cancelled->cancel();
+
+        $repository->add($spent);
+        $repository->add(CreditPurchaseMother::transferred(tonnes: 100.0, transferredTonnes: 100.0));
+        $repository->add($partial);
+        $repository->add(CreditPurchaseMother::validated(tonnes: 10.0));
+        $repository->add(CreditPurchaseMother::pending());
+        $repository->add(CreditPurchaseMother::rejected());
+        $repository->add($cancelled);
+
+        foreach ([[$spent, 10.0], [$partial, 2.0]] as [$creditPurchase, $tonnes]) {
+            $contribution = ProjectContributionMother::ownCreditFunded(
+                $creditPurchase->accountId(),
+                $creditPurchase->projectId(),
+                $tonnes,
+            );
+            $contribution->allocateCredits([
+                new AllocatedCreditLine(
+                    position: 0,
+                    creditPurchaseId: $creditPurchase->id(),
+                    purchaseReference: $creditPurchase->reference(),
+                    tonnes: $tonnes,
+                    startTonnes: 0.0,
+                ),
+            ]);
+            $projectContributionRepository->add($contribution);
+        }
+    }
 }

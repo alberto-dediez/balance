@@ -20,6 +20,7 @@ use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentSubj
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityScope;
 use App\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicId;
 use App\Materiality\Domain\Model\MaterialityTopic\StandardScope3Category;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Materiality\Application\MaterialityAssessment\MaterialityAssessmentContextTrait;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentMother;
 use App\Tests\Unit\Materiality\Domain\Model\MaterialityTopic\MaterialityTopicMother;
@@ -34,6 +35,11 @@ final class ApplyMaterialityDecisionsOnMaterialityAssessmentCompletedSubscriberT
     protected function setUp(): void
     {
         $this->initMaterialityAssessment();
+    }
+
+    protected function tearDown(): void
+    {
+        DomainEventPublisher::instance()->reset();
     }
 
     public function testIsSubscribedToMaterialityAssessmentCompleted(): void

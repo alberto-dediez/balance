@@ -12469,6 +12469,10 @@
         <source>Fecha de creación</source>
         <target>Fecha de creación</target>
       </trans-unit>
+      <trans-unit id="_75t__2" resname="Con toneladas disponibles">
+        <source>Con toneladas disponibles</source>
+        <target>Con toneladas disponibles</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

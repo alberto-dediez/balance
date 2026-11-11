@@ -11,6 +11,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -20,6 +21,7 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
     /** @param array<string, CreditPurchase> $creditPurchases */
     public function __construct(
         private array $creditPurchases = [],
+        private ?ProjectContributionRepository $projectContributionRepository = null,
     ) {}
 
     public function add(CreditPurchase $creditPurchase): void
@@ -99,7 +101,29 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
             return false;
         }
 
+        if (
+            null !== $filter->withAvailableTonnes
+            && $filter->withAvailableTonnes !== $creditPurchase->hasTonnesToManage($this->allocatedTonnes($creditPurchase))
+        ) {
+            return false;
+        }
+
         return true;
+    }
+
+    private function allocatedTonnes(CreditPurchase $creditPurchase): float
+    {
+        if (!$this->projectContributionRepository instanceof ProjectContributionRepository) {
+            return 0.0;
+        }
+
+        $allocatedTonnes = 0.0;
+
+        foreach ($this->projectContributionRepository->findAllocationsByCreditPurchase($creditPurchase->id()) as $allocation) {
+            $allocatedTonnes += $allocation->tonnes();
+        }
+
+        return $allocatedTonnes;
     }
 
     /** @return array<int, CreditPurchase> */

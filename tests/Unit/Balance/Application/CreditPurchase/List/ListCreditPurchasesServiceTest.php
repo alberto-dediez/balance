@@ -59,4 +59,20 @@ class ListCreditPurchasesServiceTest extends TestCase
 
         $sut(new ListCreditPurchasesRequest(accountId: AccountId::generate(), limit: 0), $user);
     }
+
+    public function testAdminListsOnlyPurchasesWithAvailableTonnesWhenRequested(): void
+    {
+        $repository = CreditPurchaseRepositoryMother::inMemory();
+        $repository->add(CreditPurchaseMother::transferred(tonnes: 100.0, transferredTonnes: 100.0));
+        $repository->add(CreditPurchaseMother::rejected());
+        $repository->add(CreditPurchaseMother::validated());
+
+        $sut = new ListCreditPurchasesService($repository, new CreditPurchaseAuthorizer());
+
+        $admin = UserMother::adminUser();
+
+        $this->assertSame(1, $sut(new ListCreditPurchasesRequest(limit: 0, withAvailableTonnes: true), $admin)->totalResults);
+        $this->assertSame(2, $sut(new ListCreditPurchasesRequest(limit: 0, withAvailableTonnes: false), $admin)->totalResults);
+        $this->assertSame(3, $sut(new ListCreditPurchasesRequest(limit: 0), $admin)->totalResults);
+    }
 }

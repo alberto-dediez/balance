@@ -12305,6 +12305,90 @@
         <source>{count, plural, one {La cuenta mantiene # solicitud pendiente para este proyecto} other {La cuenta mantiene # solicitudes pendientes para este proyecto}}</source>
         <target>NEW_{count, plural, one {La cuenta mantiene # solicitud pendiente para este proyecto} other {La cuenta mantiene # solicitudes pendientes para este proyecto}}</target>
       </trans-unit>
+      <trans-unit id="yqyAUZm" resname="Token revocado">
+        <source>Token revocado</source>
+        <target>Token iptal edildi</target>
+      </trans-unit>
+      <trans-unit id="QP4a78k" resname="Has alcanzado el máximo de 10 tokens activos. Revoca alguno para crear otro">
+        <source>Has alcanzado el máximo de 10 tokens activos. Revoca alguno para crear otro</source>
+        <target>En fazla 10 aktif token sınırına ulaştınız. Yeni bir token oluşturmak için birini iptal edin</target>
+      </trans-unit>
+      <trans-unit id="6mICORv" resname="La fecha de caducidad debe ser posterior a hoy">
+        <source>La fecha de caducidad debe ser posterior a hoy</source>
+        <target>Son kullanma tarihi bugünden sonra olmalıdır</target>
+      </trans-unit>
+      <trans-unit id="HyDKbPN" resname="Permitir tokens de API">
+        <source>Permitir tokens de API</source>
+        <target>API tokenlarına izin ver</target>
+      </trans-unit>
+      <trans-unit id="PFJ_EQd" resname="Fecha de caducidad">
+        <source>Fecha de caducidad</source>
+        <target>Son kullanma tarihi</target>
+      </trans-unit>
+      <trans-unit id="p2A6Qar" resname="Déjala vacía para que no caduque">
+        <source>Déjala vacía para que no caduque</source>
+        <target>Süresinin dolmaması için boş bırakın</target>
+      </trans-unit>
+      <trans-unit id="TMWXIPc" resname="Crear token">
+        <source>Crear token</source>
+        <target>Token oluştur</target>
+      </trans-unit>
+      <trans-unit id="_75t__2" resname="Con toneladas disponibles">
+        <source>Con toneladas disponibles</source>
+        <target>Kullanılabilir tonu olan</target>
+      </trans-unit>
+      <trans-unit id="tJ9bH5R" resname="Tokens de API">
+        <source>Tokens de API</source>
+        <target>API tokenları</target>
+      </trans-unit>
+      <trans-unit id="5ypAiqh" resname="Acceso a la API sin contraseña">
+        <source>Acceso a la API sin contraseña</source>
+        <target>Şifresiz API erişimi</target>
+      </trans-unit>
+      <trans-unit id="E0JO1Dp" resname="Revocar">
+        <source>Revocar</source>
+        <target>İptal et</target>
+      </trans-unit>
+      <trans-unit id="22HLF9u" resname="¿Seguro que quieres revocar este token? Dejará de funcionar de inmediato">
+        <source>¿Seguro que quieres revocar este token? Dejará de funcionar de inmediato</source>
+        <target>Bu tokenı iptal etmek istediğinizden emin misiniz? Hemen çalışmayı durduracaktır</target>
+      </trans-unit>
+      <trans-unit id="nMigcHS" resname="Copia el token ahora. No podrás volver a verlo">
+        <source>Copia el token ahora. No podrás volver a verlo</source>
+        <target>Tokenı şimdi kopyalayın. Bir daha göremeyeceksiniz</target>
+      </trans-unit>
+      <trans-unit id=".fl7_mh" resname="Sin caducidad">
+        <source>Sin caducidad</source>
+        <target>Süresiz</target>
+      </trans-unit>
+      <trans-unit id="IuVS6eh" resname="Volver a mis tokens">
+        <source>Volver a mis tokens</source>
+        <target>Tokenlarıma dön</target>
+      </trans-unit>
+      <trans-unit id="VDGUTe6" resname="Token">
+        <source>Token</source>
+        <target>Token</target>
+      </trans-unit>
+      <trans-unit id="S7fvM5I" resname="Caducidad">
+        <source>Caducidad</source>
+        <target>Son kullanma</target>
+      </trans-unit>
+      <trans-unit id="zKP0E6Q" resname="Token creado">
+        <source>Token creado</source>
+        <target>Token oluşturuldu</target>
+      </trans-unit>
+      <trans-unit id="Z3dK9.I" resname="Nunca">
+        <source>Nunca</source>
+        <target>Hiçbir zaman</target>
+      </trans-unit>
+      <trans-unit id="YHvidvQ" resname="Último uso">
+        <source>Último uso</source>
+        <target>Son kullanım</target>
+      </trans-unit>
+      <trans-unit id="J8shuoP" resname="Fecha de creación">
+        <source>Fecha de creación</source>
+        <target>Oluşturulma tarihi</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
