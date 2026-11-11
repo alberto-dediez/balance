@@ -35,6 +35,7 @@ nelmio_api_doc:
                                             example: 'user@example.com'
                                         password:
                                             type: string
+                                            description: 'Contraseña o token de API del usuario'
                                             example: 'your_password'
                     responses:
                         '200':

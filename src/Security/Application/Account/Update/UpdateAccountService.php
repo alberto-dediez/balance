@@ -30,6 +30,12 @@ class UpdateAccountService implements CommandHandler
 
         $this->authorizer->denyUnlessCanDoThat($account, Action::Edit, $user);
 
+        $apiTokensChanged = $request->apiTokensEnabled !== $account->allowsApiTokens();
+
+        if ($apiTokensChanged) {
+            $this->authorizer->denyUnlessCanDoThat($account, Action::Admin, $user);
+        }
+
         if ($request->name !== $account->name()) {
             $account->changeName($request->name);
         }
@@ -38,12 +44,17 @@ class UpdateAccountService implements CommandHandler
             $account->changeStatus($request->active);
         }
 
+        if ($apiTokensChanged) {
+            $account->changeApiTokensPermission($request->apiTokensEnabled);
+        }
+
         $this->repository->add($account);
 
         return new UpdateAccountResponse(
             accountId: $account->id(),
             name: $account->name(),
             active: $account->isActive(),
+            apiTokensEnabled: $account->allowsApiTokens(),
         );
     }
 

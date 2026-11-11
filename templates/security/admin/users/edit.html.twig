@@ -3,6 +3,14 @@
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('admin_users') }}" />
 
+    {% if user | is_authorized('edit') %}
+        <twig:TopAction path="{{ path('admin_users_api_tokens', {userId: user.id}) }}">
+            <twig:Icon name="solar:key-square-2-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Tokens de API' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
     {% if user.twoFactorMethod and user | is_authorized('edit') %}
         <twig:TopAction path="{{ path('admin_users_two_factor_reset', {userId: user.id, _token: csrf_token('two-factor-reset')}) }}"
             data-controller="confirm"

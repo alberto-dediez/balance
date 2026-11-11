@@ -29,6 +29,10 @@ class UpdateAccountType extends AbstractType
                 'label' => new TranslatableMessage('Activa'),
                 'required' => true,
             ])
+            ->add('apiTokensEnabled', BooleanType::class, [
+                'label' => new TranslatableMessage('Permitir tokens de API'),
+                'required' => true,
+            ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),
             ])

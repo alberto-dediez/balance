@@ -7,8 +7,10 @@ namespace App\Tests\Unit\Security\Application\Account\Update;
 use App\Security\Application\Account\Update\UpdateAccountRequest;
 use App\Security\Application\Account\Update\UpdateAccountService;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountApiTokensPermissionChanged;
 use App\Security\Domain\Model\Account\AccountNameChanged;
 use App\Security\Domain\Model\Account\AccountStatusChanged;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountRepository;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Security\Application\Account\AccountAuthorizerMother;
@@ -147,6 +149,95 @@ class UpdateAccountServiceTest extends TestCase
         );
 
         $sut($request, $user);
+    }
+
+    public function testAdminChangesApiTokensPermission(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'MyAccount',
+            active: true,
+            apiTokensEnabled: true,
+        );
+
+        $result = $sut($request, UserMother::adminUser());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(AccountApiTokensPermissionChanged::class, $lastEvent);
+        $this->assertTrue($lastEvent->enabled());
+        $this->assertTrue($result->apiTokensEnabled);
+        $this->assertTrue($account->allowsApiTokens());
+    }
+
+    public function testOwnerCannotChangeApiTokensPermission(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner@example.com', Role::Owner, $account->id(), $account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'Company ABC',
+            active: true,
+            apiTokensEnabled: true,
+        );
+
+        try {
+            $sut($request, $owner);
+            $this->fail('UnauthorizedActionException was expected');
+        } catch (UnauthorizedActionException) {
+        }
+
+        $accountPersisted = $repository->find($account->id());
+
+        $this->assertNotNull($accountPersisted);
+        $this->assertSame('MyAccount', $accountPersisted->name());
+        $this->assertFalse($accountPersisted->allowsApiTokens());
+
+        foreach ($this->spySubscriber->events() as $event) {
+            $this->assertNotInstanceOf(AccountNameChanged::class, $event);
+        }
+    }
+
+    public function testOwnerCanStillChangeOnlyTheName(): void
+    {
+        $repository = new InMemoryAccountRepository();
+
+        $account = AccountMother::fromName('MyAccount');
+
+        $repository->add($account);
+
+        $owner = UserMother::fromUsernameAndRoleAndAccount('owner@example.com', Role::Owner, $account->id(), $account);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdateAccountRequest(
+            accountId: $account->id(),
+            name: 'Company ABC',
+            active: true,
+            apiTokensEnabled: false,
+        );
+
+        $result = $sut($request, $owner);
+
+        $this->assertSame('Company ABC', $result->name);
+        $this->assertFalse($result->apiTokensEnabled);
+        $this->assertInstanceOf(AccountNameChanged::class, $this->spySubscriber->lastEvent());
     }
 
     public function testIsHandle(): void

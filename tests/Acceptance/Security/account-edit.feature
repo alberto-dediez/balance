@@ -22,7 +22,7 @@ Feature:
     Given account "MyCompany" with id "333" exists
     When I am logged as "admin@dediez.software"
     When I go to "/es/admin/accounts/edit/333"
-    When I submit a form with "name:OtherCompany|active:0" and button "Guardar"
+    When I submit a form with "name:OtherCompany|active:0|apiTokensEnabled:0" and button "Guardar"
     When I follow redirect
     Then the response status should be 200
     Then I see a text "Cuenta actualizada"
@@ -32,5 +32,17 @@ Feature:
     Given account "MyCompany" with id "333" exists
     When I am logged as "admin@dediez.software"
     When I go to "/es/admin/accounts/edit/333"
-    When I submit a form with "name:OtherCompany|active:0" and button "Guardar y salir"
+    When I submit a form with "name:OtherCompany|active:0|apiTokensEnabled:0" and button "Guardar y salir"
     Then I am redirected to "/es/admin/accounts" 
+  Scenario: As an admin, I can allow api tokens for an account
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    Given account "MyCompany" with id "333" exists
+    Given user "user1@dediez.software" with role "ROLE_USER" of account "333" exists
+    When I am logged as "admin@dediez.software"
+    When I go to "/es/admin/accounts/edit/333"
+    Then I see a text "Permitir tokens de API"
+    When I submit a form with "name:MyCompany|active:1|apiTokensEnabled:1" and button "Guardar y salir"
+    Then I am redirected to "/es/admin/accounts"
+    When I am logged as "user1@dediez.software"
+    When I go to "/es/profile/api-tokens"
+    Then the response status should be 200

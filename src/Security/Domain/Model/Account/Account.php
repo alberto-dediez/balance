@@ -22,6 +22,7 @@ class Account implements \Stringable
         array $events = [],
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null,
+        protected bool $apiTokensEnabled = false,
     ) {
         $this->events = $events;
     }
@@ -44,6 +45,11 @@ class Account implements \Stringable
     public function isRemoved(): bool
     {
         return $this->removed;
+    }
+
+    public function allowsApiTokens(): bool
+    {
+        return $this->apiTokensEnabled;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -87,6 +93,16 @@ class Account implements \Stringable
         );
     }
 
+    public function changeApiTokensPermission(bool $enabled): void
+    {
+        $this->recordApplyAndPublish(
+            new AccountApiTokensPermissionChanged(
+                accountId: $this->id(),
+                enabled: $enabled,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -112,6 +128,11 @@ class Account implements \Stringable
     public function applyAccountStatusChanged(AccountStatusChanged $event): void
     {
         $this->active = $event->active();
+    }
+
+    public function applyAccountApiTokensPermissionChanged(AccountApiTokensPermissionChanged $event): void
+    {
+        $this->apiTokensEnabled = $event->enabled();
     }
 
     public function applyAccountRemoved(AccountRemoved $event): void

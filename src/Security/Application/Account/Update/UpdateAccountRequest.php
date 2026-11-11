@@ -9,5 +9,5 @@ use App\Shared\Application\CommandBus\Command;
 
 class UpdateAccountRequest implements Command
 {
-    public function __construct(public AccountId $accountId, public string $name, public bool $active) {}
+    public function __construct(public AccountId $accountId, public string $name, public bool $active, public bool $apiTokensEnabled = false) {}
 }

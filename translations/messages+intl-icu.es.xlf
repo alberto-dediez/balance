@@ -2229,6 +2229,90 @@
         <source>Auditoría</source>
         <target>Auditoría</target>
       </trans-unit>
+      <trans-unit id="yqyAUZm" resname="Token revocado">
+        <source>Token revocado</source>
+        <target>Token revocado</target>
+      </trans-unit>
+      <trans-unit id="QP4a78k" resname="Has alcanzado el máximo de 10 tokens activos. Revoca alguno para crear otro">
+        <source>Has alcanzado el máximo de 10 tokens activos. Revoca alguno para crear otro</source>
+        <target>Has alcanzado el máximo de 10 tokens activos. Revoca alguno para crear otro</target>
+      </trans-unit>
+      <trans-unit id="6mICORv" resname="La fecha de caducidad debe ser posterior a hoy">
+        <source>La fecha de caducidad debe ser posterior a hoy</source>
+        <target>La fecha de caducidad debe ser posterior a hoy</target>
+      </trans-unit>
+      <trans-unit id="HyDKbPN" resname="Permitir tokens de API">
+        <source>Permitir tokens de API</source>
+        <target>Permitir tokens de API</target>
+      </trans-unit>
+      <trans-unit id="PFJ_EQd" resname="Fecha de caducidad">
+        <source>Fecha de caducidad</source>
+        <target>Fecha de caducidad</target>
+      </trans-unit>
+      <trans-unit id="p2A6Qar" resname="Déjala vacía para que no caduque">
+        <source>Déjala vacía para que no caduque</source>
+        <target>Déjala vacía para que no caduque</target>
+      </trans-unit>
+      <trans-unit id="TMWXIPc" resname="Crear token">
+        <source>Crear token</source>
+        <target>Crear token</target>
+      </trans-unit>
+      <trans-unit id="tJ9bH5R" resname="Tokens de API">
+        <source>Tokens de API</source>
+        <target>Tokens de API</target>
+      </trans-unit>
+      <trans-unit id="5ypAiqh" resname="Acceso a la API sin contraseña">
+        <source>Acceso a la API sin contraseña</source>
+        <target>Acceso a la API sin contraseña</target>
+      </trans-unit>
+      <trans-unit id="E0JO1Dp" resname="Revocar">
+        <source>Revocar</source>
+        <target>Revocar</target>
+      </trans-unit>
+      <trans-unit id="22HLF9u" resname="¿Seguro que quieres revocar este token? Dejará de funcionar de inmediato">
+        <source>¿Seguro que quieres revocar este token? Dejará de funcionar de inmediato</source>
+        <target>¿Seguro que quieres revocar este token? Dejará de funcionar de inmediato</target>
+      </trans-unit>
+      <trans-unit id="nMigcHS" resname="Copia el token ahora. No podrás volver a verlo">
+        <source>Copia el token ahora. No podrás volver a verlo</source>
+        <target>Copia el token ahora. No podrás volver a verlo</target>
+      </trans-unit>
+      <trans-unit id=".fl7_mh" resname="Sin caducidad">
+        <source>Sin caducidad</source>
+        <target>Sin caducidad</target>
+      </trans-unit>
+      <trans-unit id="IuVS6eh" resname="Volver a mis tokens">
+        <source>Volver a mis tokens</source>
+        <target>Volver a mis tokens</target>
+      </trans-unit>
+      <trans-unit id="VDGUTe6" resname="Token">
+        <source>Token</source>
+        <target>Token</target>
+      </trans-unit>
+      <trans-unit id="S7fvM5I" resname="Caducidad">
+        <source>Caducidad</source>
+        <target>Caducidad</target>
+      </trans-unit>
+      <trans-unit id="zKP0E6Q" resname="Token creado">
+        <source>Token creado</source>
+        <target>Token creado</target>
+      </trans-unit>
+      <trans-unit id="CSX..ne" resname="Nuevo">
+        <source>Nuevo</source>
+        <target>Nuevo</target>
+      </trans-unit>
+      <trans-unit id="Z3dK9.I" resname="Nunca">
+        <source>Nunca</source>
+        <target>Nunca</target>
+      </trans-unit>
+      <trans-unit id="YHvidvQ" resname="Último uso">
+        <source>Último uso</source>
+        <target>Último uso</target>
+      </trans-unit>
+      <trans-unit id="J8shuoP" resname="Fecha de creación">
+        <source>Fecha de creación</source>
+        <target>Fecha de creación</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

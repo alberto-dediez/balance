@@ -1,0 +1,11 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Tokens de API' | trans %}
+
+{% block table %}
+    {% include '@security/api-tokens/_table.html.twig' with {'revokeRoute': 'profile_api_tokens_revoke', 'revokeParams': {}} %}
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('profile_api_tokens_register') }}" />
+{% endblock list_actions %}

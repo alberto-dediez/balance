@@ -40,6 +40,7 @@ class EditController extends AbstractController
             accountId: $account->id(),
             name: $account->name(),
             active: $account->isActive(),
+            apiTokensEnabled: $account->allowsApiTokens(),
         );
 
         $form = $this->createForm(UpdateAccountType::class, $updateRequest);

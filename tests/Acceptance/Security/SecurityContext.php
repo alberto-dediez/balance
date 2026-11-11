@@ -8,6 +8,9 @@ use App\Security\Application\EmailLog\Purge\PurgeEmailLogsRequest;
 use App\Security\Application\EmailLog\Purge\PurgeEmailLogsService;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\ApiToken\ApiTokenId;
+use App\Security\Domain\Model\ApiToken\ApiTokenRepository;
+use App\Security\Domain\Model\ApiToken\ApiTokenSecret;
 use App\Security\Domain\Model\EmailLog\EmailLogFilter;
 use App\Security\Domain\Model\EmailLog\EmailLogId;
 use App\Security\Domain\Model\EmailLog\EmailLogRepository;
@@ -25,6 +28,7 @@ use App\Security\Domain\Model\SignatureRequest\Signer;
 use App\Security\Domain\Model\SignatureRequest\Token;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\TwoFactorMethod;
+use App\Security\Domain\Model\User\User;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Sso\InMemory\InMemorySsoProvider;
@@ -36,6 +40,7 @@ use App\Shared\Domain\Model\Locale\Locale;
 use App\Shared\Infrastructure\Symfony\Event\EmailListener;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\ApiToken\ApiTokenMother;
 use App\Tests\Unit\Security\Domain\Model\EmailLog\EmailLogMother;
 use App\Tests\Unit\Security\Domain\Model\RecordedEvent\RecordedEventMother;
 use App\Tests\Unit\Security\Domain\Model\SignatureRequest\SignatureRequestMother;
@@ -100,6 +105,20 @@ final class SecurityContext implements Context
     private function getRecordedEventRepository(): RecordedEventRepository
     {
         return $this->client->getContainer()->get(RecordedEventRepository::class);
+    }
+
+    private function getApiTokenRepository(): ApiTokenRepository
+    {
+        return $this->client->getContainer()->get(ApiTokenRepository::class);
+    }
+
+    private function getUserByUsername(string $username): User
+    {
+        $user = $this->getUserRepository()->findByUsername($username);
+
+        Assert::assertNotNull($user);
+
+        return $user;
     }
 
     private function getEmailLogRepository(): EmailLogRepository
@@ -404,6 +423,92 @@ final class SecurityContext implements Context
         $account->changeStatus(false);
 
         $this->getAccountRepository()->add($account);
+    }
+
+    #[Given('account :name with id :id allows api tokens')]
+    public function accountWithIdAllowsApiTokens(string $name, string $id): void
+    {
+        $this->getAccountRepository()->add(AccountMother::withApiTokensEnabled($name, $id));
+    }
+
+    #[Given('user :username has an api token :plainValue named :name')]
+    public function userHasAnApiTokenNamed(string $username, string $plainValue, string $name): void
+    {
+        $user = $this->getUserByUsername($username);
+
+        $this->getApiTokenRepository()->add(
+            ApiTokenMother::withSecret(ApiTokenSecret::fromPlainValue($plainValue), $user->id(), $user->accountId(), $name),
+        );
+    }
+
+    #[Given('user :username has an api token :plainValue named :name with id :id')]
+    public function userHasAnApiTokenNamedWithId(string $username, string $plainValue, string $name, string $id): void
+    {
+        $user = $this->getUserByUsername($username);
+
+        $this->getApiTokenRepository()->add(
+            ApiTokenMother::from(new ApiTokenId($id), $user->id(), $user->accountId(), $name, ApiTokenSecret::fromPlainValue($plainValue)),
+        );
+    }
+
+    #[Given('user :username has an expired api token :plainValue named :name')]
+    public function userHasAnExpiredApiTokenNamed(string $username, string $plainValue, string $name): void
+    {
+        $user = $this->getUserByUsername($username);
+
+        $this->getApiTokenRepository()->add(
+            ApiTokenMother::expired($user->id(), $user->accountId(), $name, ApiTokenSecret::fromPlainValue($plainValue)),
+        );
+    }
+
+    #[Given('user :username has a revoked api token :plainValue named :name')]
+    public function userHasARevokedApiTokenNamed(string $username, string $plainValue, string $name): void
+    {
+        $user = $this->getUserByUsername($username);
+
+        $this->getApiTokenRepository()->add(
+            ApiTokenMother::revoked($user->id(), $user->accountId(), $name, ApiTokenSecret::fromPlainValue($plainValue)),
+        );
+    }
+
+    #[Given('user :username has :count active api tokens')]
+    public function userHasActiveApiTokens(string $username, int $count): void
+    {
+        $user = $this->getUserByUsername($username);
+
+        for ($i = 1; $i <= $count; ++$i) {
+            $this->getApiTokenRepository()->add(ApiTokenMother::active($user->id(), $user->accountId(), 'Token ' . $i));
+        }
+    }
+
+    #[Given('the api token :plainValue is revoked')]
+    public function theApiTokenIsRevoked(string $plainValue): void
+    {
+        $apiToken = $this->getApiTokenRepository()->findByTokenHash(ApiTokenSecret::hashFor($plainValue));
+
+        Assert::assertNotNull($apiToken);
+        Assert::assertNotNull($apiToken->userId());
+
+        $apiToken->revoke($apiToken->userId(), new \DateTimeImmutable('NOW'));
+
+        $this->getApiTokenRepository()->add($apiToken);
+    }
+
+    #[Then('the api token :plainValue should be revoked')]
+    public function theApiTokenShouldBeRevoked(string $plainValue): void
+    {
+        $apiToken = $this->getApiTokenRepository()->findByTokenHash(ApiTokenSecret::hashFor($plainValue));
+
+        Assert::assertNotNull($apiToken);
+        Assert::assertTrue($apiToken->isRevoked());
+    }
+
+    #[Then('user :username should have :count active api tokens')]
+    public function userHasActiveApiTokensCount(string $username, int $count): void
+    {
+        $user = $this->getUserByUsername($username);
+
+        Assert::assertSame($count, $this->getApiTokenRepository()->countActiveByUserId($user->id(), new \DateTimeImmutable('NOW')));
     }
 
     #[Given('the SSO provider :key identifies the user as :email')]

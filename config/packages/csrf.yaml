@@ -19,3 +19,4 @@ framework:
             - two-factor-email
             - two-factor-totp
             - two-factor-reset
+            - revoke

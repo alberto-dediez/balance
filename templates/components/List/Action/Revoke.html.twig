@@ -1,0 +1,13 @@
+{% props path %}
+
+{% set separator = '?' in path ? '&' : '?' %}
+
+<twig:List:Action path="{{ path ~ separator ~ '_token=' ~ csrf_token('revoke') | url_encode }}"
+    title="{{ 'Revocar' | trans }}"
+    class="text-danger"
+    data-controller="confirm"
+    data-confirm-text-param="{{ '¿Seguro que quieres revocar este token? Dejará de funcionar de inmediato' | trans }}"
+    data-action="confirm#link:prevent"
+>
+    <twig:Icon name="solar:shield-cross-line-duotone" size="lg" />
+</twig:List:Action>
