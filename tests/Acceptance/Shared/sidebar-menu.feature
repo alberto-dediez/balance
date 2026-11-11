@@ -12,10 +12,10 @@ Feature:
         Then I see a text "Organización" before a text "Auditoría"
         Then I see a text '<span class="hide-menu">Organización</span>' before a text '<span class="hide-menu">Bioscore</span>'
         Then I see a text '<span class="hide-menu">Bioscore</span>' before a text '<span class="hide-menu">Auditoría</span>'
-        Then I see a text "Auditoría" before a text 'href="/es/admin/events"'
-        Then I see a text 'class="sidebar-link active" href="/es/admin/users"'
+        Then I see a text "Auditoría" before a text '/es/admin/events"'
+        Then I see a text 'class="sidebar-link active" href="' before a text '/es/admin/users"'
         Then I see a text 'mini-nav-item selected'
-        Then I do not see a text 'href="/es/admin/emails"'
+        Then I do not see a text '/es/admin/emails"'
 
     Scenario: Loose links come before the groups of a root
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
@@ -31,8 +31,8 @@ Feature:
         When I am logged as "superadmin@dediez.software"
         When I go to "/es/admin/users"
         Then the response status should be 200
-        Then I see a text "Auditoría" before a text 'href="/es/admin/emails"'
-        Then I see a text 'href="/es/admin/emails"' before a text 'href="/es/admin/events"'
+        Then I see a text "Auditoría" before a text '/es/admin/emails"'
+        Then I see a text '/es/admin/emails"' before a text '/es/admin/events"'
 
     Scenario: An owner sees no groups
         Given account "Acme" with id "a1" exists

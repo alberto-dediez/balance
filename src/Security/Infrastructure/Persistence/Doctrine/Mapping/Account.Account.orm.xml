@@ -19,6 +19,7 @@
         <field name="consultant" type="boolean" nullable="false"/>
         <field name="consultantAccountId" type="account_id" column="consultant_account_id" nullable="true"/>
         <field name="distributor" type="boolean" nullable="false"/>
+        <field name="apiTokensEnabled" type="boolean" column="api_tokens_enabled" nullable="false"/>
 
         <embedded name="reportPermissions" class="App\Security\Domain\Model\Account\AccountReportPermissions" use-column-prefix="true" column-prefix="report_" />
         <embedded name="features" class="App\Security\Domain\Model\Account\AccountFeatures" use-column-prefix="true" column-prefix="feature_" />

@@ -1,0 +1,15 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = ('Usuarios' | trans)
+    ~ ' > '
+    ~ ('Tokens de API' | trans)
+    ~ ' > '
+    ~ user.username %}
+
+{% block table %}
+    {% include '@security/api-tokens/_table.html.twig' with {'revokeParams': {'userId': user.id}} %}
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link color="primarySubtle" path="{{ path('users_edit', {'userId': user.id}) }}">{{ 'Volver' | trans }}</twig:Link>
+{% endblock list_actions %}

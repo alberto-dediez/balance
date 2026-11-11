@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ block('error_title') }}</title>
+    <style>
+        body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #333; background: #f5f5f5; }
+        .error { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; box-sizing: border-box; }
+        .error-box { max-width: 32rem; text-align: center; }
+        .error-code { font-size: 5rem; font-weight: 700; margin: 0; color: #999; }
+        .error-title { margin: 1rem 0 .5rem; }
+        .error-message { color: #666; margin-bottom: 1.5rem; }
+        .error-links a { display: inline-block; margin: .25rem; padding: .5rem 1rem; border: 1px solid #333; border-radius: .25rem; color: #333; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="error">
+        <div class="error-box">
+            <h1 class="error-code">{% block error_code %}{{ status_code | default(500) }}{% endblock %}</h1>
+
+            <h2 class="error-title">{% block error_title %}{% trans %}Algo no ha ido bien{% endtrans %}{% endblock %}</h2>
+
+            <p class="error-message">
+                {% block error_message %}{% trans %}Se ha producido un error inesperado. Puedes volver a intentarlo en unos instantes.{% endtrans %}{% endblock %}
+            </p>
+
+            {% block error_incident %}{% endblock %}
+
+            <div class="error-links">
+                <a href="/">{% trans %}Ir al inicio{% endtrans %}</a>
+                <a href="javascript:history.back()">{% trans %}Volver atrás{% endtrans %}</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

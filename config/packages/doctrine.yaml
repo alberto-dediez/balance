@@ -29,6 +29,7 @@ doctrine:
             provider_id: App\EventOperations\Infrastructure\Persistence\Doctrine\Type\ProviderIdType
             event_id: App\EventOperations\Infrastructure\Persistence\Doctrine\Type\EventIdType
             signature_request_id: App\Security\Infrastructure\Persistence\Doctrine\Type\SignatureRequestIdType
+            api_token_id: App\Security\Infrastructure\Persistence\Doctrine\Type\ApiTokenIdType
             email_log_id: App\Security\Infrastructure\Persistence\Doctrine\Type\EmailLogIdType
             two_factor_method: App\Security\Infrastructure\Persistence\Doctrine\Type\TwoFactorMethodType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType

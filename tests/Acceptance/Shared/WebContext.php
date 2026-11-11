@@ -10,7 +10,9 @@ use App\Shared\Domain\Model\Geo\GeoBounds;
 use App\Shared\Domain\Model\Geo\GeoPoint;
 use App\Shared\Infrastructure\Timezone\CookieTimezoneProvider;
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Hook\BeforeScenario;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -42,6 +44,14 @@ final class WebContext implements Context
     public function __construct(KernelBrowser $client)
     {
         $this->client = AcceptanceClient::instance($client);
+    }
+
+    #[BeforeScenario]
+    public function configureAdminPrefix(BeforeScenarioScope $scope): void
+    {
+        $tags = array_merge($scope->getFeature()->getTags(), $scope->getScenario()->getTags());
+
+        $this->client->resolveAdminPrefix(!in_array('public', $tags, true));
     }
 
     private function getUserRepository(): UserRepository
@@ -348,7 +358,28 @@ final class WebContext implements Context
     {
         $this->client->followRedirect();
 
-        Assert::assertEquals($path, $this->client->getRequest()->getPathInfo());
+        Assert::assertEquals($this->client->resolvePath($path), $this->client->getRequest()->getPathInfo());
+    }
+
+    #[Then('the response redirects to :path')]
+    public function theResponseRedirectsTo(string $path): void
+    {
+        $response = $this->client->getResponse();
+
+        Assert::assertTrue($response->isRedirect(), sprintf('La respuesta no es una redirección (%d)', $response->getStatusCode()));
+        Assert::assertEquals($this->client->resolvePath($path), parse_url((string) $response->headers->get('Location'), PHP_URL_PATH));
+    }
+
+    #[Then('the path :path resolves to the administration')]
+    public function thePathResolvesToTheAdministration(string $path): void
+    {
+        Assert::assertSame($this->client->adminPrefix() . $path, $this->client->resolvePath($path));
+    }
+
+    #[Then('the path :path is used as written')]
+    public function thePathIsUsedAsWritten(string $path): void
+    {
+        Assert::assertSame($path, $this->client->resolvePath($path));
     }
 
     #[Then('I am redirected to route :name')]

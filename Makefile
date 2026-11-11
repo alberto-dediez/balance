@@ -4,7 +4,9 @@ DOCKER_COMP = docker compose --env-file .env $(shell [ -f .env.local ] && echo "
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
 DATABASE_CONT = $(DOCKER_COMP) exec database
-TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" -e STRIPE_SECRET_KEY="sk_test_dummy" -e STRIPE_WEBHOOK_SECRET="whsec_dummy" -e ACCOUNT_IMPERSONATION_ENABLED=true -e ANNOUNCEMENTS_ENABLED=true php
+ADMIN_PREFIX_ENV = $(if $(admin_prefix),-e ADMIN_PREFIX=$(admin_prefix))
+TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" -e STRIPE_SECRET_KEY="sk_test_dummy" -e STRIPE_WEBHOOK_SECRET="whsec_dummy" -e ACCOUNT_IMPERSONATION_ENABLED=true -e ANNOUNCEMENTS_ENABLED=true $(ADMIN_PREFIX_ENV) php
+
 # Executables
 PHP      = $(PHP_CONT) php
 PHP_TEST = $(TEST_CONT) php -d memory_limit=512M
@@ -107,22 +109,24 @@ test-unit: ## Execute unit tests
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
 	@$(PHP_TEST) bin/phpunit $(options)
 
-test-acceptance: ## Execute acceptance tests
+test-acceptance: ## Execute acceptance tests, pass "options=" and/or "admin_prefix=" (e.g. admin_prefix=/management)
 	@$(eval options ?=)
+	@$(if $(admin_prefix),$(PHP_TEST) bin/console cache:clear --env=test -q,true)
 	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
-	@$(PHP_TEST) vendor/bin/behat $(options)
+	@$(PHP_TEST) vendor/bin/behat $(options); status=$$?; $(if $(admin_prefix),$(PHP) bin/console cache:clear --env=test -q;) exit $$status
 
 test-parallel: | test-acceptance-parallel test-unit-parallel
 
-test-acceptance-parallel: ## Execute acceptance tests in parallel, pass "processes=N", "php_options=" and/or "options="
+test-acceptance-parallel: ## Execute acceptance tests in parallel, pass "processes=N", "php_options=", "options=" and/or "admin_prefix=" (e.g. admin_prefix=/management)
 	@$(eval options ?=)
 	@$(eval processes ?=)
 	@$(eval php_options ?=)
 	@$(PHP_TEST) bin/console doc:sch:drop -e test --force -q
 	@$(PHP_TEST) bin/console doc:sch:upd -e test --force -q
+	@$(if $(admin_prefix),$(PHP_TEST) bin/console cache:clear --env=test -q,true)
 	@$(PHP_TEST) bin/console cache:warmup -e test -q
-	@$(TEST_CONT) $(if $(php_options),env BEHAT_PHP_OPTIONS="$(php_options)") bash bin/behat-parallel $(if $(processes),-j $(processes)) $(options)
+	@$(TEST_CONT) $(if $(php_options),env BEHAT_PHP_OPTIONS="$(php_options)") bash bin/behat-parallel $(if $(processes),-j $(processes)) $(options); status=$$?; $(if $(admin_prefix),$(PHP) bin/console cache:clear --env=test -q;) exit $$status
 
 test-unit-parallel: ## Execute unit tests in parallel, pass "processes=N", "php_options=" and/or "options="
 	@$(eval options ?=)

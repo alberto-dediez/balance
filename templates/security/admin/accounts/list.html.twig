@@ -17,6 +17,8 @@
         }, {
             'label': 'Es distribuidora' | trans
         }, {
+            'label': 'Tokens de API' | trans
+        }, {
             'label': 'Fecha de registro' | trans,
             'sortable': true,
             'sortableBy': 'registeredAt'
@@ -31,6 +33,7 @@
         <td>{{ element.consultant | show_field_value | trans }}</td>
         <td>{{ element.consultantAccountId ? element.consultantAccountId | account_name : '—' }}</td>
         <td>{{ element.distributor | show_field_value | trans }}</td>
+        <td>{{ element.allowsApiTokens | show_field_value | trans }}</td>
         <td>{{ element.registeredAt | date('d/m/Y') }}</td>
         <td>
             {% if element | is_authorized('edit') %}

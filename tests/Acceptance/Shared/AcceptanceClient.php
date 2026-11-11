@@ -16,6 +16,9 @@ use Symfony\Component\DomCrawler\Link;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profile;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\RouterInterface;
 
 final class AcceptanceClient
 {
@@ -29,6 +32,8 @@ final class AcceptanceClient
     private ?SecurityUser $user = null;
 
     private ?\Exception $exception = null;
+
+    private bool $resolveAdminPrefix = true;
 
     private function __construct(private readonly KernelBrowser $client)
     {
@@ -51,7 +56,7 @@ final class AcceptanceClient
         $server = null == $server ? ($this->server) : array_merge($server, $this->server);
 
         try {
-            $this->crawler = $this->client->request($method, $path, [], [], $server, $body);
+            $this->crawler = $this->client->request($method, $this->resolvePath($path, $method), [], [], $server, $body);
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -67,7 +72,7 @@ final class AcceptanceClient
     public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = [], array $server = []): void
     {
         try {
-            $this->crawler = $this->client->request($method, $path, $parameters, $files, array_merge($server, $this->server));
+            $this->crawler = $this->client->request($method, $this->resolvePath($path, $method), $parameters, $files, array_merge($server, $this->server));
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -200,6 +205,50 @@ final class AcceptanceClient
     public function getKernelBrowser(): KernelBrowser
     {
         return $this->client;
+    }
+
+    public function resolveAdminPrefix(bool $enabled): void
+    {
+        $this->resolveAdminPrefix = $enabled;
+    }
+
+    public function adminPrefix(): string
+    {
+        return (string) $this->getContainer()->getParameter('app.admin_prefix');
+    }
+
+    public function resolvePath(string $path, string $method = 'GET'): string
+    {
+        $prefix = $this->adminPrefix();
+
+        if (
+            !$this->resolveAdminPrefix
+            || '' === $prefix
+            || !str_starts_with($path, '/')
+            || $path === $prefix
+            || str_starts_with($path, $prefix . '/')
+        ) {
+            return $path;
+        }
+
+        if ($this->routeExists($prefix . (string) parse_url($path, PHP_URL_PATH), $method)) {
+            return $prefix . $path;
+        }
+
+        return $path;
+    }
+
+    private function routeExists(string $path, string $method): bool
+    {
+        try {
+            $this->getContainer()->get(RouterInterface::class)->matchRequest(Request::create($path, $method));
+        } catch (ResourceNotFoundException) {
+            return false;
+        } catch (MethodNotAllowedException) {
+            return true;
+        }
+
+        return true;
     }
 
     public function reset(): void

@@ -51,6 +51,10 @@ class UpdateAccountType extends AbstractType
                 'label' => new TranslatableMessage('Es distribuidora'),
                 'required' => true,
             ])
+            ->add('apiTokensEnabled', BooleanType::class, [
+                'label' => new TranslatableMessage('Permitir tokens de API'),
+                'required' => true,
+            ])
             ->add('reportCanEditTexts', BooleanType::class, [
                 'label' => new TranslatableMessage('Puede editar los textos del informe de huella'),
                 'required' => true,

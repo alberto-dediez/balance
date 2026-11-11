@@ -29,6 +29,7 @@ class Account implements \Stringable
         protected bool $distributor = false,
         protected AccountReportPermissions $reportPermissions = new AccountReportPermissions(),
         protected AccountFeatures $features = new AccountFeatures(),
+        protected bool $apiTokensEnabled = false,
     ) {
         $this->events = $events;
     }
@@ -51,6 +52,11 @@ class Account implements \Stringable
     public function isRemoved(): bool
     {
         return $this->removed;
+    }
+
+    public function allowsApiTokens(): bool
+    {
+        return $this->apiTokensEnabled;
     }
 
     public function registeredAt(): \DateTimeImmutable
@@ -208,6 +214,16 @@ class Account implements \Stringable
         );
     }
 
+    public function changeApiTokensPermission(bool $enabled): void
+    {
+        $this->recordApplyAndPublish(
+            new AccountApiTokensPermissionChanged(
+                accountId: $this->id(),
+                enabled: $enabled,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -272,6 +288,11 @@ class Account implements \Stringable
             $event->compensation(),
             $event->organizationalCarbonFootprint(),
         );
+    }
+
+    public function applyAccountApiTokensPermissionChanged(AccountApiTokensPermissionChanged $event): void
+    {
+        $this->apiTokensEnabled = $event->enabled();
     }
 
     public function applyAccountRemoved(AccountRemoved $event): void
