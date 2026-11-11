@@ -17,7 +17,7 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Tu perfil se ha actualizado correctamente"
-        Then I see a text "/es/library/media/1111/show"
+        Then I see a text "es/library/media/1111/show"
 
     Scenario: A picture picked for the profile becomes visible to the whole platform
         Given user "user@dediez.software" with role "ROLE_USER" exists
@@ -38,11 +38,11 @@ Feature:
         When I submit a form with "preferredLocale:es|picture:1111" and button "Guardar"
         When I follow redirect
         When I go to "/es/profile"
-        Then I see a text "/es/library/media/1111/show"
+        Then I see a text "es/library/media/1111/show"
         When I submit a form with "preferredLocale:es|picture:" and button "Guardar"
         When I follow redirect
         Then the response status should be 200
-        Then I do not see a text "/es/library/media/1111/show"
+        Then I do not see a text "es/library/media/1111/show"
 
     Scenario: As a logged user I can update my preferred locale
         Given user "user@dediez.software" with role "ROLE_USER" exists

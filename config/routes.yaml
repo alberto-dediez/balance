@@ -10,7 +10,7 @@ shared-web:
         path: ../src/Shared/Infrastructure/UI/Web/
         namespace: App\Shared\Infrastructure\UI\Web
     type: attribute
-    prefix: /{_locale}
+    prefix: '%app.admin_prefix%/{_locale}'
     requirements:
         _locale: '%app.locale_list%'
     defaults:
@@ -25,7 +25,7 @@ security-web:
             - '../src/Security/Infrastructure/UI/Web/Sso/'
             - '../src/Security/Infrastructure/UI/Web/Webhook/'
     type: attribute
-    prefix: /{_locale}
+    prefix: '%app.admin_prefix%/{_locale}'
     requirements:
         _locale: '%app.locale_list%'
     defaults:
@@ -36,7 +36,7 @@ security-public-sign:
         path: ../src/Security/Infrastructure/UI/Web/Public/
         namespace: App\Security\Infrastructure\UI\Web\Public
     type: attribute
-    prefix: /{_locale}
+    prefix: '%app.admin_prefix%/{_locale}'
     requirements:
         _locale: '%app.locale_list%'
     defaults:
@@ -90,7 +90,7 @@ data-exchange-web:
         path: ../src/DataExchange/Infrastructure/UI/Web/
         namespace: App\DataExchange\Infrastructure\UI\Web
     type: attribute
-    prefix: /{_locale}
+    prefix: '%app.admin_prefix%/{_locale}'
     requirements:
         _locale: '%app.locale_list%'
     defaults:
@@ -113,7 +113,7 @@ notifications-web:
         path: ../src/Notifications/Infrastructure/UI/Web/
         namespace: App\Notifications\Infrastructure\UI\Web
     type: attribute
-    prefix: /{_locale}
+    prefix: '%app.admin_prefix%/{_locale}'
     requirements:
         _locale: '%app.locale_list%'
     defaults:
@@ -124,7 +124,7 @@ library-web:
         path: ../src/Library/Infrastructure/UI/Web/
         namespace: App\Library\Infrastructure\UI\Web
     type: attribute
-    prefix: /{_locale}
+    prefix: '%app.admin_prefix%/{_locale}'
     requirements:
         _locale: '%app.locale_list%'
     defaults:
@@ -135,15 +135,15 @@ changelog-web:
         path: ../src/Changelog/Infrastructure/UI/Web/
         namespace: App\Changelog\Infrastructure\UI\Web
     type: attribute
-    prefix: /{_locale}
+    prefix: '%app.admin_prefix%/{_locale}'
     requirements:
         _locale: '%app.locale_list%'
     defaults:
         _locale: '%app.locale_default%'
 
 home_fallback:
-    path: /
+    path: '%app.admin_prefix%/'
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
     defaults:
-        path: /es
+        path: '%app.admin_prefix%/%app.locale_default%'
         permanent: true

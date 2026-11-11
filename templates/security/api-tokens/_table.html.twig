@@ -1,0 +1,39 @@
+{% set columns = [
+    {
+        'label': 'Nombre' | trans,
+        'sortable': true,
+        'sortableBy': 'name'
+    }, {
+        'label': 'Token' | trans
+    }, {
+        'label': 'Estado' | trans
+    }, {
+        'label': 'Caducidad' | trans,
+        'sortable': true,
+        'sortableBy': 'expiresAt'
+    }, {
+        'label': 'Último uso' | trans,
+        'sortable': true,
+        'sortableBy': 'lastUsedAt'
+    }, {
+        'label': 'Fecha de creación' | trans,
+        'sortable': true,
+        'sortableBy': 'registeredAt'
+    }, {
+        'label': ''
+    }
+] %}
+
+<twig:List:Table :columns="columns" :elements="apiTokens">
+    <td>{{ element.name }}</td>
+    <td><code>{{ element.tokenPrefix }}…</code></td>
+    <td>{% include '@security/api-tokens/_status_badge.html.twig' with {'status': element.currentStatus} only %}</td>
+    <td>{{ element.expiresAt is not null ? element.expiresAt | date('d/m/Y', false) : 'Sin caducidad' | trans }}</td>
+    <td>{{ element.lastUsedAt is not null ? element.lastUsedAt | date('d/m/Y H:i') : 'Nunca' | trans }}</td>
+    <td>{{ element.registeredAt | date('d/m/Y', false) }}</td>
+    <td>
+        {% if element.currentStatus.value == 'Active' and element | is_authorized('remove') %}
+            <twig:List:Action:Revoke path="{{ path(revokeRoute, revokeParams | merge({'apiTokenId': element.id})) }}" />
+        {% endif %}
+    </td>
+</twig:List:Table>

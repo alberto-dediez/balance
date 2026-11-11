@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Security\Domain\Model\ApiToken\ApiToken" table="api_tokens">
+        <id name="id" type="api_token_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <indexes>
+            <index columns="user_id" name="idx_api_token_user"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="token_hash" name="uq_api_token_token_hash"/>
+        </unique-constraints>
+
+        <field name="userId" type="user_id" column="user_id" nullable="false"/>
+        <field name="accountId" type="account_id" column="account_id" nullable="true"/>
+        <field name="name" type="string" length="100" nullable="false"/>
+        <field name="tokenHash" type="string" length="64" column="token_hash" nullable="false"/>
+        <field name="tokenPrefix" type="string" length="12" column="token_prefix" nullable="false"/>
+        <field name="expiresAt" type="datetime_immutable" column="expires_at" nullable="true"/>
+        <field name="lastUsedAt" type="datetime_immutable" column="last_used_at" nullable="true"/>
+        <field name="revokedAt" type="datetime_immutable" column="revoked_at" nullable="true"/>
+        <field name="revokedBy" type="user_id" column="revoked_by" nullable="true"/>
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
+    </entity>
+
+</doctrine-mapping>

@@ -17,6 +17,7 @@
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
         <field name="consultant" type="boolean" nullable="false"/>
         <field name="consultantAccountId" type="account_id" column="consultant_account_id" nullable="true"/>
+        <field name="apiTokensEnabled" type="boolean" column="api_tokens_enabled" nullable="false"/>
     </entity>
 
 </doctrine-mapping>

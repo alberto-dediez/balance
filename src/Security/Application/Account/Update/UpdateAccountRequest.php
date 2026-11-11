@@ -15,5 +15,6 @@ class UpdateAccountRequest implements Command
         public bool $active,
         public bool $consultant = false,
         public ?AccountId $consultantAccountId = null,
+        public bool $apiTokensEnabled = false,
     ) {}
 }

@@ -1,0 +1,21 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('profile_api_tokens') }}" />
+{% endblock %}
+
+{% set page_title = ('Tokens de API' | trans)
+    ~ ' > '
+    ~ ('Token creado' | trans) %}
+
+{% block content %}
+    <twig:Alert type="warning">{% trans -%}Copia el token ahora. No podrás volver a verlo{%- endtrans %}</twig:Alert>
+
+    <twig:Card>
+        <twig:View:Field label="{{ 'Nombre' | trans }}">{{ apiToken.name }}</twig:View:Field>
+        <twig:View:Field label="{{ 'Token' | trans }}"><code class="user-select-all">{{ apiToken.plainValue }}</code></twig:View:Field>
+        <twig:View:Field label="{{ 'Caducidad' | trans }}">{{ apiToken.expiresAt is not null ? apiToken.expiresAt | date('d/m/Y', false) : 'Sin caducidad' | trans }}</twig:View:Field>
+
+        <twig:Link color="primarySubtle" path="{{ path('profile_api_tokens') }}" class="w-100 justify-content-center">{% trans -%}Volver a mis tokens{%- endtrans %}</twig:Link>
+    </twig:Card>
+{% endblock %}

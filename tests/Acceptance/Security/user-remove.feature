@@ -44,3 +44,15 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/admin/users/remove/333"
         Then the response status should be 403
+
+    Scenario: When a user is removed, their api tokens are revoked
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user "user1@dediez.software" with id "333" exists
+        Given user "user1@dediez.software" has an api token "hyd_removed_user_0000000000000000000000000000" named "Integration"
+        Given user "admin@dediez.software" has an api token "hyd_admin_keeps_00000000000000000000000000000" named "Integration"
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/users/remove/333" with csrf token "remove"
+        When I follow redirect
+        Then the response status should be 200
+        Then the api token "hyd_removed_user_0000000000000000000000000000" should be revoked
+        Then user "admin@dediez.software" should have 1 active api tokens

@@ -1,0 +1,9 @@
+{% extends '@shared/layout/register.html.twig' %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('profile_api_tokens') }}" />
+{% endblock %}
+
+{% set page_title = ('Tokens de API' | trans)
+    ~ ' > '
+    ~ ('Nuevo' | trans) %}

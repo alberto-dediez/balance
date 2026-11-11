@@ -50,6 +50,14 @@ class AccountMother
         return $account;
     }
 
+    public static function withApiTokensEnabled(string $name, string $id): Account
+    {
+        $account = self::fromNameAndId($name, $id);
+        $account->changeApiTokensPermission(true);
+
+        return $account;
+    }
+
     public static function random(): Account
     {
         return self::fromName('account-' . random_int(100, 999));

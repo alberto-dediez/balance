@@ -47,6 +47,7 @@ class EditController extends AbstractController
             active: $account->isActive(),
             consultant: $account->isConsultant(),
             consultantAccountId: $account->consultantAccountId(),
+            apiTokensEnabled: $account->allowsApiTokens(),
         );
 
         $form = $this->createForm(UpdateAccountType::class, $updateRequest);

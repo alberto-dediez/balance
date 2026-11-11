@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Shared;
 
+use App\Security\Domain\Model\ApiToken\ApiTokenRepository;
+use App\Security\Domain\Model\ApiToken\ApiTokenSecret;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Security\Infrastructure\Symfony\Security\SecurityUser;
 use Behat\Behat\Context\Context;
@@ -56,6 +58,42 @@ final readonly class ApiContext implements Context
         $this->client->loginUserInApi(
             new SecurityUser($user),
         );
+    }
+
+    #[When('I am authenticated in API as :username with api token :plainValue')]
+    public function iAmAuthenticatedInApiAsWithApiToken(string $username, string $plainValue): void
+    {
+        $user = $this->getUserRepository()->findByUsername($username);
+
+        Assert::assertNotNull($user);
+
+        $apiToken = $this->client->getContainer()->get(ApiTokenRepository::class)->findByTokenHash(ApiTokenSecret::hashFor($plainValue));
+
+        Assert::assertNotNull($apiToken);
+
+        $encoder = $this->client->getContainer()->get(JWTEncoderInterface::class);
+
+        $this->client->setBearerToken($encoder->encode([
+            'username' => $user->username(),
+            'roles' => (new SecurityUser($user))->getRoles(),
+            'api_token_id' => (string) $apiToken->id(),
+        ]));
+    }
+
+    #[When('I use the token of the response as bearer')]
+    public function iUseTheTokenOfTheResponseAsBearer(): void
+    {
+        $response = $this->client->getResponse()->getContent();
+
+        Assert::assertNotFalse($response);
+
+        $jsonResponse = json_decode($response, true);
+
+        Assert::assertIsArray($jsonResponse);
+        Assert::assertArrayHasKey('token', $jsonResponse);
+        Assert::assertIsString($jsonResponse['token']);
+
+        $this->client->setBearerToken($jsonResponse['token']);
     }
 
     #[When('I have an expired token for :username')]
