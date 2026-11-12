@@ -28,6 +28,8 @@ services:
 
     App\Shared\:
         resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/Maintenance/'
 
     App\Fixtures\:
         resource: '../../../../../fixtures/'
