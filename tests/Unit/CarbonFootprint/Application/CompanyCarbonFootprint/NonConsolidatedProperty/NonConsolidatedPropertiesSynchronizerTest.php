@@ -7,6 +7,7 @@ namespace App\Tests\Unit\CarbonFootprint\Application\CompanyCarbonFootprint\NonC
 use App\CarbonFootprint\Application\CarbonFootprint\DerivedSourceEmissionsCalculator;
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompletedPropertyFootprintFinder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyAnswer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
@@ -66,7 +67,7 @@ class NonConsolidatedPropertiesSynchronizerTest extends TestCase
 
         $this->sut = new NonConsolidatedPropertiesSynchronizer(new NonConsolidatedPropertyEmissionsResolver(
             new CompanyProperties($this->propertyRepository),
-            $this->propertyCarbonFootprintRepository,
+            new CompletedPropertyFootprintFinder($this->propertyCarbonFootprintRepository),
             new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
             $this->operatorContributionRepository,
             new OperatorContributionEmissionsCalculator(new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create())),

@@ -12473,6 +12473,46 @@
         <source>Con toneladas disponibles</source>
         <target>With available tonnes</target>
       </trans-unit>
+      <trans-unit id="lH6c2UB" resname="No se han podido cargar las huellas de propiedad: {error}">
+        <source>No se han podido cargar las huellas de propiedad: {error}</source>
+        <target>Property footprints could not be loaded: {error}</target>
+      </trans-unit>
+      <trans-unit id="MlxGOMS" resname="Ninguna propiedad de la empresa tiene una huella completada con actividades en este alcance">
+        <source>Ninguna propiedad de la empresa tiene una huella completada con actividades en este alcance</source>
+        <target>No property of the company has a completed footprint with activities in this scope</target>
+      </trans-unit>
+      <trans-unit id="hlnniGW" resname="Actividades copiadas desde huellas de propiedad: {activities} actividades en {properties} propiedad(es)">
+        <source>Actividades copiadas desde huellas de propiedad: {activities} actividades en {properties} propiedad(es)</source>
+        <target>Activities copied from property footprints: {activities} activities in {properties} property(ies)</target>
+      </trans-unit>
+      <trans-unit id="BRc6R38" resname="Propiedades omitidas ({count}): {items}">
+        <source>Propiedades omitidas ({count}): {items}</source>
+        <target>Skipped properties ({count}): {items}</target>
+      </trans-unit>
+      <trans-unit id="edouqYV" resname="Las emisiones recalculadas con los factores de emisión vigentes difieren de las de la huella de propiedad: {items}">
+        <source>Las emisiones recalculadas con los factores de emisión vigentes difieren de las de la huella de propiedad: {items}</source>
+        <target>Emissions recalculated with the current emission factors differ from those of the property footprint: {items}</target>
+      </trans-unit>
+      <trans-unit id="u.ciaic" resname="Cargar desde huellas de propiedad">
+        <source>Cargar desde huellas de propiedad</source>
+        <target>Load from property footprints</target>
+      </trans-unit>
+      <trans-unit id="97CRei3" resname="Se sustituirán las actividades de este alcance de las propiedades con huella de propiedad completada del mismo año. Las emisiones se recalcularán con los factores de emisión vigentes y pueden diferir de las de la huella de propiedad. ¿Desea continuar?">
+        <source>Se sustituirán las actividades de este alcance de las propiedades con huella de propiedad completada del mismo año. Las emisiones se recalcularán con los factores de emisión vigentes y pueden diferir de las de la huella de propiedad. ¿Desea continuar?</source>
+        <target>The activities of this scope will be replaced for the properties with a completed property footprint of the same year. Emissions will be recalculated with the current emission factors and may differ from those of the property footprint. Do you want to continue?</target>
+      </trans-unit>
+      <trans-unit id="Bou2dT1" resname="No se pueden cargar huellas de propiedad en una huella ya calculada">
+        <source>No se pueden cargar huellas de propiedad en una huella ya calculada</source>
+        <target>Property footprints cannot be loaded into a precalculated footprint</target>
+      </trans-unit>
+      <trans-unit id="Vz82Sa4" resname="Solo se pueden cargar los alcances 1 y 2">
+        <source>Solo se pueden cargar los alcances 1 y 2</source>
+        <target>Only scopes 1 and 2 can be loaded</target>
+      </trans-unit>
+      <trans-unit id="JYA5L3h" resname="No se pueden modificar los alcances de una huella completada">
+        <source>No se pueden modificar los alcances de una huella completada</source>
+        <target>The scopes of a completed footprint cannot be modified</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

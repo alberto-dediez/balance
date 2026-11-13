@@ -1,0 +1,12 @@
+{% props path %}
+
+<twig:TopAction
+    :path="path"
+    data-controller="confirm"
+    data-confirm-text-param="{{ 'Se sustituirán las actividades de este alcance de las propiedades con huella de propiedad completada del mismo año. Las emisiones se recalcularán con los factores de emisión vigentes y pueden diferir de las de la huella de propiedad. ¿Desea continuar?' | trans }}"
+    data-action="confirm#link:prevent"
+>
+    <twig:Icon name="solar:buildings-2-line-duotone" size="lg" class="me-2" />
+
+    {{ 'Cargar desde huellas de propiedad' | trans }}
+</twig:TopAction>

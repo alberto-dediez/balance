@@ -12473,6 +12473,46 @@
         <source>Con toneladas disponibles</source>
         <target>Con toneladas disponibles</target>
       </trans-unit>
+      <trans-unit id="lH6c2UB" resname="No se han podido cargar las huellas de propiedad: {error}">
+        <source>No se han podido cargar las huellas de propiedad: {error}</source>
+        <target>No se han podido cargar las huellas de propiedad: {error}</target>
+      </trans-unit>
+      <trans-unit id="MlxGOMS" resname="Ninguna propiedad de la empresa tiene una huella completada con actividades en este alcance">
+        <source>Ninguna propiedad de la empresa tiene una huella completada con actividades en este alcance</source>
+        <target>Ninguna propiedad de la empresa tiene una huella completada con actividades en este alcance</target>
+      </trans-unit>
+      <trans-unit id="hlnniGW" resname="Actividades copiadas desde huellas de propiedad: {activities} actividades en {properties} propiedad(es)">
+        <source>Actividades copiadas desde huellas de propiedad: {activities} actividades en {properties} propiedad(es)</source>
+        <target>Actividades copiadas desde huellas de propiedad: {activities} actividades en {properties} propiedad(es)</target>
+      </trans-unit>
+      <trans-unit id="BRc6R38" resname="Propiedades omitidas ({count}): {items}">
+        <source>Propiedades omitidas ({count}): {items}</source>
+        <target>Propiedades omitidas ({count}): {items}</target>
+      </trans-unit>
+      <trans-unit id="edouqYV" resname="Las emisiones recalculadas con los factores de emisión vigentes difieren de las de la huella de propiedad: {items}">
+        <source>Las emisiones recalculadas con los factores de emisión vigentes difieren de las de la huella de propiedad: {items}</source>
+        <target>Las emisiones recalculadas con los factores de emisión vigentes difieren de las de la huella de propiedad: {items}</target>
+      </trans-unit>
+      <trans-unit id="u.ciaic" resname="Cargar desde huellas de propiedad">
+        <source>Cargar desde huellas de propiedad</source>
+        <target>Cargar desde huellas de propiedad</target>
+      </trans-unit>
+      <trans-unit id="97CRei3" resname="Se sustituirán las actividades de este alcance de las propiedades con huella de propiedad completada del mismo año. Las emisiones se recalcularán con los factores de emisión vigentes y pueden diferir de las de la huella de propiedad. ¿Desea continuar?">
+        <source>Se sustituirán las actividades de este alcance de las propiedades con huella de propiedad completada del mismo año. Las emisiones se recalcularán con los factores de emisión vigentes y pueden diferir de las de la huella de propiedad. ¿Desea continuar?</source>
+        <target>Se sustituirán las actividades de este alcance de las propiedades con huella de propiedad completada del mismo año. Las emisiones se recalcularán con los factores de emisión vigentes y pueden diferir de las de la huella de propiedad. ¿Desea continuar?</target>
+      </trans-unit>
+      <trans-unit id="Bou2dT1" resname="No se pueden cargar huellas de propiedad en una huella ya calculada">
+        <source>No se pueden cargar huellas de propiedad en una huella ya calculada</source>
+        <target>No se pueden cargar huellas de propiedad en una huella ya calculada</target>
+      </trans-unit>
+      <trans-unit id="Vz82Sa4" resname="Solo se pueden cargar los alcances 1 y 2">
+        <source>Solo se pueden cargar los alcances 1 y 2</source>
+        <target>Solo se pueden cargar los alcances 1 y 2</target>
+      </trans-unit>
+      <trans-unit id="JYA5L3h" resname="No se pueden modificar los alcances de una huella completada">
+        <source>No se pueden modificar los alcances de una huella completada</source>
+        <target>No se pueden modificar los alcances de una huella completada</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

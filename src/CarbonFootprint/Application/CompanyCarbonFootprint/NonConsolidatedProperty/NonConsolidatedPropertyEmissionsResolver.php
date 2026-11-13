@@ -6,21 +6,20 @@ namespace App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidated
 
 use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompletedPropertyFootprintFinder;
 use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OperatorContribution\OperatorContributionRepository;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprint;
-use App\CarbonFootprint\Domain\Model\PropertyCarbonFootprint\PropertyCarbonFootprintRepository;
 use App\Property\Domain\Model\Property\Property;
-use App\Security\Domain\Model\Account\AccountId;
 
 class NonConsolidatedPropertyEmissionsResolver
 {
     public function __construct(
         private CompanyProperties $companyProperties,
-        private PropertyCarbonFootprintRepository $propertyCarbonFootprintRepository,
+        private CompletedPropertyFootprintFinder $completedPropertyFootprintFinder,
         private EmissionsBreakdownBuilder $breakdownBuilder,
         private OperatorContributionRepository $operatorContributionRepository,
         private OperatorContributionEmissionsCalculator $operatorContributionEmissionsCalculator,
@@ -65,20 +64,7 @@ class NonConsolidatedPropertyEmissionsResolver
 
     private function origin(Property $property, CompanyCarbonFootprint $companyCarbonFootprint): ?PropertyCarbonFootprint
     {
-        $propertyCarbonFootprint = $this->propertyCarbonFootprintRepository->findByPropertyIdAndYear($property->id(), $companyCarbonFootprint->year());
-
-        if (null === $propertyCarbonFootprint || $propertyCarbonFootprint->isRemoved() || !$propertyCarbonFootprint->isCompleted()) {
-            return null;
-        }
-
-        $accountId = $propertyCarbonFootprint->accountId();
-        $companyAccountId = $companyCarbonFootprint->accountId();
-
-        if (!$accountId instanceof AccountId || !$companyAccountId instanceof AccountId || !$accountId->equals($companyAccountId)) {
-            return null;
-        }
-
-        return $propertyCarbonFootprint;
+        return $this->completedPropertyFootprintFinder->find($property, $companyCarbonFootprint);
     }
 
     private function scope1And2Emissions(PropertyCarbonFootprint $propertyCarbonFootprint): Emissions

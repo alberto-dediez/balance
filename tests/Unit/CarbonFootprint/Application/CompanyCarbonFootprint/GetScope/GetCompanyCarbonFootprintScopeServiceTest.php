@@ -23,6 +23,7 @@ use App\CarbonFootprint\Application\CarbonFootprint\EmissionsBreakdownBuilder;
 use App\CarbonFootprint\Application\CarbonFootprint\StageSectionsBuilder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompletedPropertyFootprintFinder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope\GetCompanyCarbonFootprintScopeRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\GetScope\GetCompanyCarbonFootprintScopeService;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
@@ -128,7 +129,7 @@ class GetCompanyCarbonFootprintScopeServiceTest extends TestCase
             new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()),
             new NonConsolidatedPropertyEmissionsResolver(
                 $companyProperties,
-                $this->propertyCarbonFootprintRepository,
+                new CompletedPropertyFootprintFinder($this->propertyCarbonFootprintRepository),
                 new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
                 $operatorContributionRepository,
                 $operatorContributionEmissionsCalculator,

@@ -17,6 +17,7 @@ use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Application\CommandBus\CommandResponse;
 use App\Shared\Application\CommandBus\RegisterHandlerTrait;
+use App\Shared\Application\Transaction\TransactionalSession;
 
 class ReplaceCompanyCarbonFootprintScopeAnswersService implements CommandHandler
 {
@@ -28,6 +29,7 @@ class ReplaceCompanyCarbonFootprintScopeAnswersService implements CommandHandler
         private CompanyCarbonFootprintAuthorizer $authorizer,
         private StageAnswersProcessor $answersProcessor,
         private StageAnswersSynchronizer $answersSynchronizer,
+        private TransactionalSession $transactionalSession,
     ) {}
 
     public function __invoke(ReplaceCompanyCarbonFootprintScopeAnswersRequest $request, User $user): ReplaceCompanyCarbonFootprintScopeAnswersResponse
@@ -39,6 +41,10 @@ class ReplaceCompanyCarbonFootprintScopeAnswersService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($companyCarbonFootprint, SecurityAction::Edit, $user);
+
+        if ($companyCarbonFootprint->isCompleted()) {
+            throw new \InvalidArgumentException('No se pueden modificar los alcances de una huella completada');
+        }
 
         $companyPropertyIds = [];
         foreach ($this->companyProperties->consolidated($companyCarbonFootprint->companyId()) as $property) {
@@ -66,26 +72,28 @@ class ReplaceCompanyCarbonFootprintScopeAnswersService implements CommandHandler
         $includedSources = [];
         $activities = 0;
 
-        foreach ($request->answersByProperty as $block) {
-            $validated = $this->answersProcessor->validate($request->scope, $block->sectionAnswers, []);
+        $this->transactionalSession->run(function () use ($request, $user, $companyCarbonFootprint, $exclusions, &$includedSources, &$activities): void {
+            foreach ($request->answersByProperty as $block) {
+                $validated = $this->answersProcessor->validate($request->scope, $block->sectionAnswers, []);
 
-            foreach ($validated->sectionAnswers as $sectionAnswer) {
-                $activities += count($sectionAnswer->answers);
+                foreach ($validated->sectionAnswers as $sectionAnswer) {
+                    $activities += count($sectionAnswer->answers);
 
-                $source = $sectionAnswer->definition->source;
+                    $source = $sectionAnswer->definition->source;
 
-                if ([] === $sectionAnswer->answers || !isset($exclusions[$source->value]) || isset($includedSources[$source->value])) {
-                    continue;
+                    if ([] === $sectionAnswer->answers || !isset($exclusions[$source->value]) || isset($includedSources[$source->value])) {
+                        continue;
+                    }
+
+                    $companyCarbonFootprint->includeSource($request->scope, $source);
+                    $includedSources[$source->value] = $source;
                 }
 
-                $companyCarbonFootprint->includeSource($request->scope, $source);
-                $includedSources[$source->value] = $source;
+                $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, propertyId: $block->propertyId);
             }
 
-            $this->answersSynchronizer->sync($companyCarbonFootprint, $request->scope, $validated->sectionAnswers, $user, propertyId: $block->propertyId);
-        }
-
-        $this->companyCarbonFootprintRepository->add($companyCarbonFootprint);
+            $this->companyCarbonFootprintRepository->add($companyCarbonFootprint);
+        });
 
         return new ReplaceCompanyCarbonFootprintScopeAnswersResponse($activities, array_values($includedSources), count($request->answersByProperty));
     }

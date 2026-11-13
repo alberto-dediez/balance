@@ -9,6 +9,7 @@
     {% endif %}
     {% if not readOnly and not precalculated %}
         <twig:TopAction:BioscoreConsumptions path="{{ path('company_carbon_footprints_bioscore_load', {companyCarbonFootprintId: companyCarbonFootprintId, scope: 'scope_1', _token: csrf_token('bioscore_load_' ~ companyCarbonFootprint.id)}) }}" />
+        <twig:TopAction:PropertyFootprints path="{{ path('company_carbon_footprints_property_footprints_load', {companyCarbonFootprintId: companyCarbonFootprintId, scope: 'scope_1', _token: csrf_token('property_footprints_load_' ~ companyCarbonFootprint.id)}) }}" />
     {% endif %}
 {% endblock %}
 

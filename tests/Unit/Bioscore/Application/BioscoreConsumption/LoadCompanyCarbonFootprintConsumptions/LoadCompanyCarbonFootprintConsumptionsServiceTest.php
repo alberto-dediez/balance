@@ -53,6 +53,7 @@ use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Shared\Infrastructure\Persistence\InMemory\Transaction\InMemoryTransactionalSession;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemMother;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreCatalogItem\BioscoreCatalogItemRepositoryMother;
 use App\Tests\Unit\Bioscore\Domain\Model\BioscoreConsumption\BioscoreConsumptionMother;
@@ -149,6 +150,7 @@ class LoadCompanyCarbonFootprintConsumptionsServiceTest extends TestCase
             $footprintAuthorizer,
             new StageAnswersProcessor(),
             new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), $this->propertyRepository)),
+            new InMemoryTransactionalSession(),
         );
 
         $this->sut = new LoadCompanyCarbonFootprintConsumptionsService(

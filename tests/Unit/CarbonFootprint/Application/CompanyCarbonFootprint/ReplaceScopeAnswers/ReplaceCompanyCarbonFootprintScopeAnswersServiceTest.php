@@ -22,6 +22,7 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprin
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\ReplaceScopeAnswers\ReplaceCompanyCarbonFootprintScopeAnswersService;
+use App\CarbonFootprint\Domain\Model\Activity\Activity;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\CombustibleAnswer;
 use App\CarbonFootprint\Domain\Model\Activity\Answer\RefrigerantGasAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\ActivityPlacement;
@@ -29,9 +30,11 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\ExclusionReason;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\SectionAnswer;
 use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\Combustible\Combustible;
+use App\CarbonFootprint\Domain\Model\Combustible\CombustibleId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\EmissionFactor\EmissionFactor;
+use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\OrganizationalCarbonFootprintStatus;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
 use App\CarbonFootprint\Domain\Model\Quantity;
@@ -49,11 +52,9 @@ use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\CarbonFootprint\Application\Activity\EmissionsCalculatorMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\Activity\ActivityRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\Combustible\CombustibleRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintMother;
-use App\Tests\Unit\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepositoryMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\RefrigerantGas\RefrigerantGasRepositoryMother;
@@ -61,6 +62,7 @@ use App\Tests\Unit\EventOperations\Domain\Model\Event\EventRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\Transaction\SpyTransactionalSession;
 use PHPUnit\Framework\TestCase;
 
 class ReplaceCompanyCarbonFootprintScopeAnswersServiceTest extends TestCase
@@ -75,14 +77,47 @@ class ReplaceCompanyCarbonFootprintScopeAnswersServiceTest extends TestCase
     private RefrigerantGas $refrigerantGas;
     private PropertyId $firstPropertyId;
     private PropertyId $secondPropertyId;
+    private SpyTransactionalSession $transactionalSession;
+    /** @var array<int, array{string, bool}> */
+    private array $writes = [];
     private ReplaceCompanyCarbonFootprintScopeAnswersService $sut;
 
     protected function setUp(): void
     {
         DomainEventPublisher::instance()->reset();
 
-        $this->activityRepository = ActivityRepositoryMother::inMemory();
-        $this->repository = CompanyCarbonFootprintRepositoryMother::inMemory();
+        $this->transactionalSession = new SpyTransactionalSession();
+        $this->writes = [];
+        $this->activityRepository = new class (function (): void {
+            $this->writes[] = ['activity', $this->transactionalSession->isActive()];
+        }) extends InMemoryActivityRepository {
+
+            public function __construct(private \Closure $onWrite)
+            {
+                parent::__construct();
+            }
+
+            public function save(Activity $activity): void
+            {
+                ($this->onWrite)();
+                parent::save($activity);
+            }
+        };
+        $this->repository = new class (function (): void {
+            $this->writes[] = ['footprint', $this->transactionalSession->isActive()];
+        }) extends InMemoryCompanyCarbonFootprintRepository {
+
+            public function __construct(private \Closure $onWrite)
+            {
+                parent::__construct();
+            }
+
+            public function add(CompanyCarbonFootprint $companyCarbonFootprint): void
+            {
+                ($this->onWrite)();
+                parent::add($companyCarbonFootprint);
+            }
+        };
         $this->propertyRepository = PropertyRepositoryMother::inMemory();
 
         $this->firstPropertyId = new PropertyId('property-1');
@@ -133,6 +168,7 @@ class ReplaceCompanyCarbonFootprintScopeAnswersServiceTest extends TestCase
             new CompanyCarbonFootprintAuthorizer(),
             new StageAnswersProcessor(),
             new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), $this->propertyRepository)),
+            $this->transactionalSession,
         );
     }
 
@@ -234,6 +270,73 @@ class ReplaceCompanyCarbonFootprintScopeAnswersServiceTest extends TestCase
         $this->assertFalse($footprint->isSourceExcluded(Scope::Scope1, Source::RefrigerantLeaks));
         $this->assertCount(1, $footprint->activityIds(new ActivityPlacement(Scope::Scope1, Source::RefrigerantLeaks, propertyId: $this->firstPropertyId)));
         $this->assertCount(1, $footprint->activityIds(new ActivityPlacement(Scope::Scope1, Source::RefrigerantLeaks, propertyId: $this->secondPropertyId)));
+    }
+
+    public function testACompletedFootprintIsRejectedBeforeRegisteringActivities(): void
+    {
+        $footprint = CompanyCarbonFootprintMother::withEmployeesAnswered(self::COMPANY_ID, (string) CompanyCarbonFootprintId::generate(), 'account-id-test', self::YEAR);
+        $footprint->complete(new Emissions());
+        $this->repository->add($footprint);
+
+        try {
+            ($this->sut)(new ReplaceCompanyCarbonFootprintScopeAnswersRequest(
+                $footprint->id(),
+                Scope::Scope1,
+                [new PropertySectionAnswers($this->firstPropertyId, [$this->combustibleSection()])],
+            ), $this->ownerUser());
+            $this->fail('Expected InvalidArgumentException');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertSame('No se pueden modificar los alcances de una huella completada', $e->getMessage());
+        }
+
+        $this->assertTrue($footprint->isCompleted());
+        $this->assertCount(0, $footprint->activityIds(new ActivityPlacement(Scope::Scope1, Source::FixedFacilities, propertyId: $this->firstPropertyId)));
+    }
+
+    public function testTheBlocksAreSynchronizedAndPersistedInsideOneTransaction(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $this->writes = [];
+
+        ($this->sut)(new ReplaceCompanyCarbonFootprintScopeAnswersRequest(
+            $footprint->id(),
+            Scope::Scope1,
+            [
+                new PropertySectionAnswers($this->firstPropertyId, [$this->combustibleSection()]),
+                new PropertySectionAnswers($this->secondPropertyId, [$this->refrigerantGasSection()]),
+            ],
+        ), $this->ownerUser());
+
+        $this->assertSame(1, $this->transactionalSession->runs());
+        $this->assertSame(0, $this->transactionalSession->rolledBack());
+        $this->assertSame([['activity', true], ['activity', true], ['footprint', true]], $this->writes);
+    }
+
+    public function testAFailureInALaterBlockPropagatesFromTheTransactionWithoutPersistingTheFootprint(): void
+    {
+        $footprint = $this->registeredFootprint();
+        $this->writes = [];
+
+        try {
+            ($this->sut)(new ReplaceCompanyCarbonFootprintScopeAnswersRequest(
+                $footprint->id(),
+                Scope::Scope1,
+                [
+                    new PropertySectionAnswers($this->firstPropertyId, [$this->combustibleSection()]),
+                    new PropertySectionAnswers($this->secondPropertyId, [new SectionAnswer(
+                        Scope::Scope1->sections()[0],
+                        [new CombustibleAnswer(new CombustibleId('missing-combustible'), new Quantity(1000.0, Unit::KWh))],
+                    )]),
+                ],
+            ), $this->ownerUser());
+            $this->fail('Expected InvalidArgumentException');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertSame('Combustible "missing-combustible" not found.', $e->getMessage());
+        }
+
+        $this->assertSame(1, $this->transactionalSession->runs());
+        $this->assertSame(1, $this->transactionalSession->rolledBack());
+        $this->assertSame([['activity', true]], $this->writes);
     }
 
     public function testOtherAccountIsDenied(): void

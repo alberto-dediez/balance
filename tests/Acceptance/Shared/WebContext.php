@@ -18,9 +18,13 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Security\Core\Exception\LogoutException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -137,11 +141,53 @@ final class WebContext implements Context
     #[When('I go to :path with csrf token :tokenId as :parameter')]
     public function iGoToWithCsrfToken(string $path, string $tokenId, string $parameter = '_token'): void
     {
-        $tokenManager = $this->client->getContainer()->get(CsrfTokenManagerInterface::class);
-        $token = $tokenManager->getToken($tokenId)->getValue();
+        $token = $this->csrfToken($tokenId);
         $separator = str_contains($path, '?') ? '&' : '?';
 
         $this->client->request('GET', $path . $separator . $parameter . '=' . urlencode($token), ['HTTP_SEC_FETCH_SITE' => 'same-origin']);
+    }
+
+    private function csrfToken(string $tokenId): string
+    {
+        $tokenManager = $this->client->getContainer()->get(CsrfTokenManagerInterface::class);
+
+        try {
+            return $tokenManager->getToken($tokenId)->getValue();
+        } catch (SessionNotFoundException) {
+            return $this->sessionCsrfToken($tokenManager, $tokenId);
+        }
+    }
+
+    private function sessionCsrfToken(CsrfTokenManagerInterface $tokenManager, string $tokenId): string
+    {
+        $container = $this->client->getContainer();
+        $cookieJar = $this->client->getCookieJar();
+        $session = $container->get('session.factory')->createSession();
+        $sessionCookie = $cookieJar->get($session->getName());
+
+        if ($sessionCookie instanceof Cookie) {
+            $session->setId($sessionCookie->getValue());
+        }
+
+        $request = new Request();
+        $request->setSession($session);
+
+        $requestStack = $container->get(RequestStack::class);
+        $requestStack->push($request);
+
+        try {
+            $token = $tokenManager->getToken($tokenId)->getValue();
+        } finally {
+            $requestStack->pop();
+        }
+
+        $session->save();
+
+        if (!$sessionCookie instanceof Cookie) {
+            $cookieJar->set(new Cookie($session->getName(), $session->getId()));
+        }
+
+        return $token;
     }
 
     #[When('I press :text')]

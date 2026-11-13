@@ -3577,6 +3577,32 @@ final readonly class CarbonFootprintContext implements Context
         };
     }
 
+    #[Given(':subjectType carbon footprint :id has an electricity marketer :marketerId activity of :co2eq kg')]
+    public function carbonFootprintHasAnElectricityActivity(string $subjectType, string $id, string $marketerId, string $co2eq): void
+    {
+        $carbonFootprint = $this->findCarbonFootprint($subjectType, $id);
+        $accountId = $carbonFootprint->accountId();
+        Assert::assertNotNull($accountId);
+
+        $activity = ElectricityActivity::register(
+            id: ActivityId::generate(),
+            accountId: $accountId,
+            electricityMarketerId: new ElectricityMarketerId($marketerId),
+            gdOFactorId: null,
+            emissionFactor: new EmissionFactor('1.5', '1.0', '0.2', '0.3', $carbonFootprint->calculationYear(), EmissionFactorGroupMother::default()->id(), Unit::KWh, 'IPCC'),
+            emissions: new Emissions($co2eq, $co2eq, '0', '0'),
+            quantity: new Quantity(100.0, Unit::KWh),
+        );
+        $this->getActivityRepository()->save($activity);
+
+        $carbonFootprint->addActivity($activity->id(), new ActivityPlacement(Scope::Scope2, Source::BuildingElectricity));
+
+        match ($subjectType) {
+            'property' => $this->getPropertyCarbonFootprintRepository()->add($this->propertyCarbonFootprint($id)),
+            default => $this->getCompanyCarbonFootprintRepository()->add($this->companyCarbonFootprint($id)),
+        };
+    }
+
     #[Given('property carbon footprint :id has its mitigation plan started')]
     public function propertyCarbonFootprintHasItsMitigationPlanStarted(string $id): void
     {

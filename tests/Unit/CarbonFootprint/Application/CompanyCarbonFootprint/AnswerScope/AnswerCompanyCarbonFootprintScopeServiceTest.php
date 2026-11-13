@@ -39,6 +39,7 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\AnswerCom
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\AnswerScope\PropertySectionAnswers;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprintAuthorizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompletedPropertyFootprintFinder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyAnswer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
@@ -215,7 +216,7 @@ class AnswerCompanyCarbonFootprintScopeServiceTest extends TestCase
             new StageAnswersSynchronizer($handlers, new CarbonFootprintCountryResolver(EventRepositoryMother::inMemory(), $this->propertyRepository)),
             new NonConsolidatedPropertiesSynchronizer(new NonConsolidatedPropertyEmissionsResolver(
                 $companyProperties,
-                PropertyCarbonFootprintRepositoryMother::inMemory(),
+                new CompletedPropertyFootprintFinder(PropertyCarbonFootprintRepositoryMother::inMemory()),
                 new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create()),
                 OperatorContributionRepositoryMother::inMemory(),
                 new OperatorContributionEmissionsCalculator(new EmissionsBreakdownBuilder($this->activityRepository, new DerivedSourceEmissionsCalculator($this->activityRepository, CountedActivityReferencesMother::create()), CountedActivityReferencesMother::create())),

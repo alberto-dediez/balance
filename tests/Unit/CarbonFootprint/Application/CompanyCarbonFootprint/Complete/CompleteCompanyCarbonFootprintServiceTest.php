@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyCarbonFootprin
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompanyProperties;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\Complete\CompleteCompanyCarbonFootprintRequest;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\Complete\CompleteCompanyCarbonFootprintService;
+use App\CarbonFootprint\Application\CompanyCarbonFootprint\CompletedPropertyFootprintFinder;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertiesSynchronizer;
 use App\CarbonFootprint\Application\CompanyCarbonFootprint\NonConsolidatedProperty\NonConsolidatedPropertyEmissionsResolver;
 use App\CarbonFootprint\Application\OperatorContribution\OperatorContributionEmissionsCalculator;
@@ -101,7 +102,7 @@ class CompleteCompanyCarbonFootprintServiceTest extends TestCase
             ),
             new NonConsolidatedPropertiesSynchronizer(new NonConsolidatedPropertyEmissionsResolver(
                 new CompanyProperties($this->propertyRepository),
-                $this->propertyCarbonFootprintRepository,
+                new CompletedPropertyFootprintFinder($this->propertyCarbonFootprintRepository),
                 $breakdownBuilder,
                 OperatorContributionRepositoryMother::inMemory(),
                 new OperatorContributionEmissionsCalculator($breakdownBuilder),
