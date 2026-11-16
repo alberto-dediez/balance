@@ -5,6 +5,7 @@
         <title>{% block title %}{{ (page_title is defined ? page_title : ('Bienvenido' | trans)) }} {% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        {% set liveHub = live_hub_url() %}{% if liveHub %}<meta name="live-hub" content="{{ liveHub }}">{% endif %}
         
         <!-- App favicon -->
         <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}">

@@ -22,6 +22,8 @@ class RecordedEventFilter
          */
         public ?array $allowedEventNames = null,
         int $limit = 10,
+        public ?bool $byAssistant = null,
+        public ?string $assistantExecutionId = null,
     ) {
         $this->limit = $limit;
         $this->orderWay = 'DESC';

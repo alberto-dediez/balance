@@ -4,6 +4,7 @@ twig:
         locale_list: '%app.locale_list%'
         company_name: '%company.name%'
         account_impersonation_enabled: '%app.account_impersonation_enabled%'
+        assistant_suggestions: '%shared.assistant.suggestions%'
     form_themes: 
         - 'bootstrap_5_layout.html.twig'
         - '@shared/form/custom_types.html.twig'
@@ -15,6 +16,7 @@ twig:
         'templates/notifications': 'notifications'
         'templates/library': 'library'
         'templates/changelog': 'changelog'
+        'templates/assistant': 'assistant'
         '%kernel.project_dir%/assets': assets
 
 when@test:

@@ -5,3 +5,11 @@ imports:
     - { resource: '../src/Notifications/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Library/Infrastructure/Symfony/DependencyInjection/services.yaml' }
     - { resource: '../src/Changelog/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+    - { resource: '../src/Assistant/Infrastructure/Symfony/DependencyInjection/services.yaml' }
+
+parameters:
+    shared.assistant.suggestions:
+        - '¿Qué cuentas están activas?'
+        - 'Crea una cuenta nueva y registra en ella a un usuario.'
+        - '¿Cuál es la última novedad publicada?'
+        - 'Resume el documento que te adjunto.'

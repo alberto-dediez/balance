@@ -8,6 +8,7 @@ use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventRequest
 use App\Security\Application\RecordedEvent\Register\RegisterRecordedEventService;
 use App\Security\Domain\Model\User\User;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Shared\Application\Assistant\CurrentAssistantExecution;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\RegisterTrait;
@@ -17,7 +18,7 @@ class RecordEventSubscriber implements DomainEventSubscriber
 {
     use RegisterTrait;
 
-    public function __construct(private LoggedUser $loggedUser, private RegisterRecordedEventService $registerRecordedEvent)
+    public function __construct(private LoggedUser $loggedUser, private RegisterRecordedEventService $registerRecordedEvent, private CurrentAssistantExecution $assistantExecution)
     {
         $this->register();
     }
@@ -37,6 +38,7 @@ class RecordEventSubscriber implements DomainEventSubscriber
                 userId: $loggedUser instanceof User ? $loggedUser->id() : UserMother::systemUser()->id(),
                 event: $event,
                 impersonatorId: $impersonator instanceof User ? $impersonator->id() : null,
+                assistantExecutionId: $this->assistantExecution->executionId(),
             ),
             $loggedUser,
         );

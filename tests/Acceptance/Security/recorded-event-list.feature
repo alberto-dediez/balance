@@ -35,3 +35,22 @@ Feature:
         When I go to "/es/admin/events"
         Then the response status should be 200
         Then I see a text "<s>ffffffff-0000-0000-0000-000000000009</s>"
+
+    Scenario: As admin I can filter the recorded events done by the AI assistant
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given user with id "aaaaaaaa-0000-0000-0000-000000000001" has logged in
+        Given user with id "aaaaaaaa-0000-0000-0000-000000000002" has been removed by the assistant execution "bbbbbbbb-0000-0000-0000-000000000001"
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/events"
+        Then I see a text "Hecho por el asistente"
+        Then I see a text "Asistente IA</span>"
+        When I filter by "byAssistant" with "1"
+        Then the response status should be 200
+        Then I see a text "Asistente IA</span>"
+        Then I see a text "aaaaaaaa-0000-0000-0000-000000000002"
+        Then I do not see a text "ha entrado en el sistema"
+        When I filter by "byAssistant" with "0"
+        Then the response status should be 200
+        Then I see a text "ha entrado en el sistema"
+        Then I do not see a text "Asistente IA</span>"
+        Then I do not see a text "Eliminado el usuario"

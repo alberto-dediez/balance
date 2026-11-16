@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Assistant\Domain\Model\Conversation\ToolCall" table="assistant_tool_call">
+        <indexes>
+            <index name="idx_assistant_tool_call_message" columns="message_id"/>
+        </indexes>
+
+        <id name="id" type="assistant_tool_call_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="message" target-entity="App\Assistant\Domain\Model\Conversation\Message" inversed-by="toolCalls">
+            <join-column name="message_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="position" type="integer" nullable="false"/>
+        <field name="tool" type="string" length="64" nullable="false"/>
+        <field name="summary" type="text" nullable="false"/>
+        <field name="failed" type="boolean" nullable="false"/>
+        <field name="durationMs" type="integer" column="duration_ms" nullable="false"/>
+        <field name="result" type="text" nullable="true"/>
+
+        <one-to-many field="arguments" target-entity="App\Assistant\Domain\Model\Conversation\ToolCallArgument" mapped-by="toolCall" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

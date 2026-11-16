@@ -63,13 +63,14 @@ final class AcceptanceClient
     }
 
     /**
-     * @param array<string, mixed> $parameters
-     * @param array<string, mixed> $files
+     * @param array<string, mixed>  $parameters
+     * @param array<string, mixed>  $files
+     * @param array<string, string> $server
      */
-    public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = []): void
+    public function requestWithFiles(string $method, string $path, array $parameters = [], array $files = [], array $server = []): void
     {
         try {
-            $this->crawler = $this->client->request($method, $this->resolvePath($path, $method), $parameters, $files, $this->server);
+            $this->crawler = $this->client->request($method, $this->resolvePath($path, $method), $parameters, $files, array_merge($server, $this->server));
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -77,10 +78,11 @@ final class AcceptanceClient
         }
     }
 
-    public function submit(Form $formData): void
+    /** @param array<string, string> $server */
+    public function submit(Form $formData, array $server = []): void
     {
         try {
-            $this->crawler = $this->client->submit($formData);
+            $this->crawler = $this->client->submit($formData, [], array_merge($server, $this->server));
 
             $this->exception = null;
         } catch (\Exception $e) {
@@ -95,7 +97,7 @@ final class AcceptanceClient
 
     public function followRedirect(): void
     {
-        $this->client->followRedirect();
+        $this->crawler = $this->client->followRedirect();
     }
 
     public function getRequest(): Request
@@ -106,6 +108,11 @@ final class AcceptanceClient
     public function getResponse(): Response
     {
         return $this->client->getResponse();
+    }
+
+    public function getResponseBody(): string
+    {
+        return $this->client->getInternalResponse()->getContent();
     }
 
     public function getCrawler(): Crawler
@@ -163,6 +170,17 @@ final class AcceptanceClient
     public function setCookie(string $name, string $value): void
     {
         $this->client->getCookieJar()->set(new Cookie($name, $value));
+    }
+
+    public function cookieValue(string $name): ?string
+    {
+        foreach ($this->client->getCookieJar()->all() as $cookie) {
+            if ($name === $cookie->getName()) {
+                return $cookie->getValue();
+            }
+        }
+
+        return null;
     }
 
     public function clearCookiesExcept(string $name): void

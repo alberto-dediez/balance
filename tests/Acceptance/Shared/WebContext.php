@@ -246,7 +246,7 @@ final readonly class WebContext implements Context
     {
         $crawler = $this->client->getCrawler();
 
-        $nodes = $crawler->filter('table tr');
+        $nodes = $crawler->filter('table:not(.keyboard-shortcuts__table) tr');
 
         Assert::assertCount($rows, $nodes);
     }

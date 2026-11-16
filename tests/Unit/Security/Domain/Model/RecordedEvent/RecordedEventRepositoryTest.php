@@ -94,6 +94,26 @@ abstract class RecordedEventRepositoryTest extends KernelTestCase
         $this->assertEquals($impersonatorId, $result[0]->impersonatorId());
     }
 
+    public function testFindByFilterByAssistant(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(RecordedEventMother::random());
+        $repository->add(RecordedEventMother::byAssistant('0190f3a4-1b2c-7d3e-8f40-123456789abc'));
+        $repository->add(RecordedEventMother::byAssistant('0190f3a4-1b2c-7d3e-8f40-cba987654321'));
+
+        $byAssistant = $repository->findByFilter(new RecordedEventFilter(byAssistant: true));
+        $notByAssistant = $repository->findByFilter(new RecordedEventFilter(byAssistant: false));
+        $ofExecution = $repository->findByFilter(new RecordedEventFilter(assistantExecutionId: '0190f3a4-1b2c-7d3e-8f40-123456789abc'));
+
+        $this->assertCount(2, $byAssistant);
+        $this->assertTrue($byAssistant[0]->isByAssistant());
+        $this->assertCount(1, $notByAssistant);
+        $this->assertFalse($notByAssistant[0]->isByAssistant());
+        $this->assertCount(1, $ofExecution);
+        $this->assertSame('0190f3a4-1b2c-7d3e-8f40-123456789abc', $ofExecution[0]->assistantExecutionId());
+    }
+
     public function testFindByFilterWithLimitZeroReturnAllElements(): void
     {
         $repository = $this->createSUT();

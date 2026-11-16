@@ -1,0 +1,5 @@
+{% if event.role.value == 'user' %}
+    {% trans %}Mensaje enviado al asistente{% endtrans %}
+{% else %}
+    {% trans %}Respuesta del asistente en curso{% endtrans %}
+{% endif %}

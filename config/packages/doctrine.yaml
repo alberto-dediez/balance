@@ -24,6 +24,12 @@ doctrine:
             media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType
             announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
             youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
+            assistant_conversation_id: App\Assistant\Infrastructure\Persistence\Doctrine\Type\ConversationIdType
+            assistant_message_id: App\Assistant\Infrastructure\Persistence\Doctrine\Type\MessageIdType
+            assistant_tool_call_id: App\Assistant\Infrastructure\Persistence\Doctrine\Type\ToolCallIdType
+            assistant_message_attachment_id: App\Assistant\Infrastructure\Persistence\Doctrine\Type\MessageAttachmentIdType
+            assistant_action_plan_id: App\Assistant\Infrastructure\Persistence\Doctrine\Type\ActionPlanIdType
+            assistant_plan_step_id: App\Assistant\Infrastructure\Persistence\Doctrine\Type\PlanStepIdType
 
     orm:
         auto_generate_proxy_classes: true
@@ -72,6 +78,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Changelog/Infrastructure/Persistence/Doctrine/Mapping'
                 prefix: 'App\Changelog\Domain\Model'
                 alias: Changelog
+            Assistant:
+                type: xml
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Assistant/Infrastructure/Persistence/Doctrine/Mapping'
+                prefix: 'App\Assistant\Domain\Model'
+                alias: Assistant
         controller_resolver:
             auto_mapping: false
 

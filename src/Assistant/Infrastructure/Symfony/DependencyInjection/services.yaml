@@ -1,0 +1,73 @@
+parameters:
+    assistant.enabled_default: 'false'
+    assistant.enabled: '%env(bool:default:assistant.enabled_default:ASSISTANT_ENABLED)%'
+    assistant.query_ai_tier_default: 'low'
+    assistant.query_ai_tier: '%env(default:assistant.query_ai_tier_default:ASSISTANT_QUERY_AI_TIER)%'
+    assistant.query_ai_effort_default: 'medium'
+    assistant.query_ai_effort: '%env(default:assistant.query_ai_effort_default:ASSISTANT_QUERY_AI_EFFORT)%'
+    assistant.action_ai_tier_default: 'high'
+    assistant.action_ai_tier: '%env(default:assistant.action_ai_tier_default:ASSISTANT_ACTION_AI_TIER)%'
+    assistant.action_ai_effort_default: 'medium'
+    assistant.action_ai_effort: '%env(default:assistant.action_ai_effort_default:ASSISTANT_ACTION_AI_EFFORT)%'
+    assistant.daily_cost_limit_usd_default: '5'
+    assistant.daily_cost_limit_usd: '%env(default:assistant.daily_cost_limit_usd_default:ASSISTANT_DAILY_COST_LIMIT_USD)%'
+    assistant.retention_days_default: '90'
+    assistant.retention_days: '%env(int:default:assistant.retention_days_default:ASSISTANT_RETENTION_DAYS)%'
+    assistant.max_tool_rounds_default: '12'
+    assistant.max_tool_rounds: '%env(int:default:assistant.max_tool_rounds_default:ASSISTANT_MAX_TOOL_ROUNDS)%'
+    assistant.plan_ttl_minutes_default: '60'
+    assistant.plan_ttl_minutes: '%env(int:default:assistant.plan_ttl_minutes_default:ASSISTANT_PLAN_TTL_MINUTES)%'
+    assistant.stale_minutes_default: '10'
+    assistant.stale_minutes: '%env(int:default:assistant.stale_minutes_default:ASSISTANT_STALE_MINUTES)%'
+    assistant.document_max_bytes_default: '10485760'
+    assistant.document_max_bytes: '%env(int:default:assistant.document_max_bytes_default:ASSISTANT_DOCUMENT_MAX_BYTES)%'
+    assistant.transcript_attachments_max_bytes_default: '12582912'
+    assistant.transcript_attachments_max_bytes: '%env(int:default:assistant.transcript_attachments_max_bytes_default:ASSISTANT_TRANSCRIPT_ATTACHMENTS_MAX_BYTES)%'
+    assistant.attachments_dir: '%app.uploads_dir%/assistant/conversations'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Assistant\:
+        resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/DependencyInjection/'
+
+    App\Assistant\Application\AssistantSettings:
+        arguments:
+            $enabled: '%assistant.enabled%'
+            $queryTier: '%assistant.query_ai_tier%'
+            $queryEffort: '%assistant.query_ai_effort%'
+            $actionTier: '%assistant.action_ai_tier%'
+            $actionEffort: '%assistant.action_ai_effort%'
+            $dailyCostLimitUsd: '%assistant.daily_cost_limit_usd%'
+            $retentionDays: '%assistant.retention_days%'
+            $maxToolRounds: '%assistant.max_tool_rounds%'
+            $planTtlMinutes: '%assistant.plan_ttl_minutes%'
+            $staleMinutes: '%assistant.stale_minutes%'
+            $documentMaxBytes: '%assistant.document_max_bytes%'
+            $transcriptAttachmentsMaxBytes: '%assistant.transcript_attachments_max_bytes%'
+
+    App\Assistant\Infrastructure\Storage\LocalConversationAttachmentStorage:
+        arguments:
+            $basePath: '%assistant.attachments_dir%'
+
+    App\Assistant\Domain\Model\Conversation\ConversationAttachmentStorage:
+        alias: App\Assistant\Infrastructure\Storage\LocalConversationAttachmentStorage
+
+when@test:
+    services:
+        App\Assistant\Domain\Model\Conversation\ConversationAttachmentStorage:
+            alias: App\Assistant\Infrastructure\Storage\InMemoryConversationAttachmentStorage
+            public: true
+
+        App\Assistant\Infrastructure\Storage\InMemoryConversationAttachmentStorage:
+            public: true
+
+        App\Assistant\Infrastructure\Persistence\InMemory\Repository\InMemoryConversationRepository:
+            public: true
+
+        App\Assistant\Infrastructure\Persistence\InMemory\Repository\InMemoryActionPlanRepository:
+            public: true

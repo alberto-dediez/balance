@@ -1,0 +1,5 @@
+{% trans with {
+    '{position}': event.position,
+    '{tool}': event.tool,
+    '{summary}': event.summary | e
+} %}Paso {position} ({tool}) ejecutado: {summary}{% endtrans %}

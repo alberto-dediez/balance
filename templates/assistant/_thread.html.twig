@@ -1,0 +1,59 @@
+<div class="assistant-thread" data-assistant-thread data-conversation-id="{{ view.conversation.id }}" data-busy="{{ view.busy ? '1' : '0' }}" data-fingerprint="{{ view.fingerprint }}" data-spent="{{ include('@assistant/_spent.html.twig', {spentToday: view.spentToday, dailyLimit: view.dailyLimit}) | trim }}">
+    {% for entry in view.entries %}
+        {% set message = entry.message %}
+        {% if message.isUser %}
+            <div class="assistant-question">{{ message.text }}</div>
+            {% if message.attachments is not empty %}
+                <div class="assistant-attachments assistant-attachments--sent">
+                    {% for attachment in message.attachments %}
+                        <a class="assistant-attachment" href="{{ path('assistant_attachment_download', {conversationId: view.conversation.id, attachmentId: attachment.id}) }}">
+                            <twig:Icon name="solar:file-line-duotone" />
+                            <span class="assistant-attachment__name">{{ attachment.fileName }}</span>
+                            <span class="assistant-attachment__size">{{ attachment.size | file_size }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="assistant-answer">
+                {% if message.isPending %}
+                    <span class="assistant-pending" role="status">
+                        <span class="assistant-typing" aria-hidden="true"><span></span><span></span><span></span></span>
+                        {% if message.kind.value == 'execution' %}{{ 'Ejecutando…' | trans }}{% else %}{{ 'Pensando…' | trans }}{% endif %}
+                    </span>
+                    <form method="post" class="d-inline-block ms-2" action="{{ path('assistant_stop', {conversationId: view.conversation.id}) }}" data-action="submit->assistant-panel#stop">
+                        <input type="hidden" name="_token" data-controller="csrf-protection" value="{{ csrf_token('stop-assistant') }}">
+                        <twig:SubmitButton color="secondarySubtle" class="btn-sm py-0 px-2">{{ 'Detener' | trans }}</twig:SubmitButton>
+                    </form>
+                {% elseif message.isFailed %}
+                    <twig:Alert type="danger">{{ message.error | trans }}</twig:Alert>
+                {% elseif message.kind.value != 'plan' %}
+                    <div class="assistant-markdown">{{ message.text | assistant_markdown | raw }}</div>
+                    <button type="button" class="assistant-answer__action" data-action="assistant-panel#copy" data-copy-text="{{ message.text }}">
+                        <twig:Icon name="solar:copy-line-duotone" />
+                        {{ 'Copiar' | trans }}
+                    </button>
+                {% endif %}
+
+                {% if message.toolCalls is not empty %}
+                    <details class="assistant-tools">
+                        <summary><twig:Icon name="solar:magnifer-line-duotone" />{{ 'Consultas realizadas ({count})' | trans({'{count}': message.toolCalls | length}) }}</summary>
+                        <ul>
+                            {% for call in message.toolCalls %}
+                                <li class="{{ call.failed ? 'text-danger' : '' }}">
+                                    <strong>{{ (view.toolLabels[call.tool] ?? call.tool) | trans }}</strong>
+                                    {% for argument in call.arguments %}<span class="ms-1">{{ argument.name }}: {{ argument.value }}</span>{% endfor %}
+                                    — {{ call.summary }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </details>
+                {% endif %}
+
+                {% if entry.plan and message.kind.value == 'plan' %}
+                    {% include '@assistant/_plan.html.twig' with {plan: entry.plan, executable: entry.executable, view: view} %}
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>

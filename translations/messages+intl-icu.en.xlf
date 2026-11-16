@@ -2313,6 +2313,462 @@
         <source>Fecha de creación</source>
         <target>Creation date</target>
       </trans-unit>
+      <trans-unit id="TRgUYwd" resname="Hecho por el asistente">
+        <source>Hecho por el asistente</source>
+        <target>Done by the assistant</target>
+      </trans-unit>
+      <trans-unit id="daS5l.A" resname="Todos">
+        <source>Todos</source>
+        <target>All</target>
+      </trans-unit>
+      <trans-unit id="Z21pe4D" resname="El mensaje no es válido">
+        <source>El mensaje no es válido</source>
+        <target>The message is not valid</target>
+      </trans-unit>
+      <trans-unit id="RJBg2Nr" resname="Pregunta o pide algo…">
+        <source>Pregunta o pide algo…</source>
+        <target>Ask or request something…</target>
+      </trans-unit>
+      <trans-unit id="Bhs9VbX" resname="Consumo del asistente">
+        <source>Consumo del asistente</source>
+        <target>Assistant usage</target>
+      </trans-unit>
+      <trans-unit id="EKH2iFs" resname="Atajos de teclado">
+        <source>Atajos de teclado</source>
+        <target>Keyboard shortcuts</target>
+      </trans-unit>
+      <trans-unit id="xsnEa0t" resname="Una letra crea o lanza una acción, Shift + letra abre el listado y Ctrl + letra lleva al detalle.">
+        <source>Una letra crea o lanza una acción, Shift + letra abre el listado y Ctrl + letra lleva al detalle.</source>
+        <target>A single letter creates or launches an action, Shift + letter opens the list and Ctrl + letter goes to the detail.</target>
+      </trans-unit>
+      <trans-unit id="4E3gJVn" resname="Las teclas sueltas y las combinaciones con Shift solo actúan fuera de los campos de texto.">
+        <source>Las teclas sueltas y las combinaciones con Shift solo actúan fuera de los campos de texto.</source>
+        <target>Single keys and Shift combinations only work outside text fields.</target>
+      </trans-unit>
+      <trans-unit id="ZoQyz7l" resname="Ctrl+Enter envía el formulario del campo en el que estás escribiendo.">
+        <source>Ctrl+Enter envía el formulario del campo en el que estás escribiendo.</source>
+        <target>Ctrl+Enter sends the form of the field you are typing in.</target>
+      </trans-unit>
+      <trans-unit id="xlg1_Sl" resname="Sin actividad en el periodo">
+        <source>Sin actividad en el periodo</source>
+        <target>No activity in the period</target>
+      </trans-unit>
+      <trans-unit id="BUforlo" resname="Coste (USD)">
+        <source>Coste (USD)</source>
+        <target>Cost (USD)</target>
+      </trans-unit>
+      <trans-unit id="Pc1HUpD" resname="Mensajes">
+        <source>Mensajes</source>
+        <target>Messages</target>
+      </trans-unit>
+      <trans-unit id=".gOxBZM" resname="Tokens de entrada">
+        <source>Tokens de entrada</source>
+        <target>Input tokens</target>
+      </trans-unit>
+      <trans-unit id="SQOYob2" resname="Tokens de salida">
+        <source>Tokens de salida</source>
+        <target>Output tokens</target>
+      </trans-unit>
+      <trans-unit id="TFdTqeJ" resname="Día">
+        <source>Día</source>
+        <target>Day</target>
+      </trans-unit>
+      <trans-unit id="x_Eel8Q" resname="Modelo">
+        <source>Modelo</source>
+        <target>Model</target>
+      </trans-unit>
+      <trans-unit id="L2mlJ9Y" resname="Asistente IA">
+        <source>Asistente IA</source>
+        <target>AI assistant</target>
+      </trans-unit>
+      <trans-unit id="gDmK5x7" resname="No se ha podido contactar con el asistente">
+        <source>No se ha podido contactar con el asistente</source>
+        <target>The assistant could not be reached</target>
+      </trans-unit>
+      <trans-unit id="dpEaaSU" resname="Respuesta copiada">
+        <source>Respuesta copiada</source>
+        <target>Answer copied</target>
+      </trans-unit>
+      <trans-unit id="t6sNfeQ" resname="Solo se pueden adjuntar 5 ficheros por mensaje">
+        <source>Solo se pueden adjuntar 5 ficheros por mensaje</source>
+        <target>Only 5 files can be attached per message</target>
+      </trans-unit>
+      <trans-unit id="fSBFIm2" resname="El fichero {name} no es de un tipo legible">
+        <source>El fichero {name} no es de un tipo legible</source>
+        <target>The file {name} is not of a readable type</target>
+      </trans-unit>
+      <trans-unit id="LtVh4gc" resname="El fichero {name} supera el tamaño máximo">
+        <source>El fichero {name} supera el tamaño máximo</source>
+        <target>The file {name} exceeds the maximum size</target>
+      </trans-unit>
+      <trans-unit id="bD1Kn1d" resname="El fichero {name} está vacío">
+        <source>El fichero {name} está vacío</source>
+        <target>The file {name} is empty</target>
+      </trans-unit>
+      <trans-unit id="A8rabu4" resname="La imagen {name} supera el tamaño máximo">
+        <source>La imagen {name} supera el tamaño máximo</source>
+        <target>The image {name} exceeds the maximum size</target>
+      </trans-unit>
+      <trans-unit id="4Vuzskg" resname="Los ficheros adjuntos superan en conjunto el tamaño máximo de un mensaje">
+        <source>Los ficheros adjuntos superan en conjunto el tamaño máximo de un mensaje</source>
+        <target>The attached files together exceed the maximum size of a message</target>
+      </trans-unit>
+      <trans-unit id="lbmdmmw" resname="Semana">
+        <source>Semana</source>
+        <target>Week</target>
+      </trans-unit>
+      <trans-unit id="wzQ6dbG" resname="Mes">
+        <source>Mes</source>
+        <target>Month</target>
+      </trans-unit>
+      <trans-unit id="kViO1OP" resname="Todo">
+        <source>Todo</source>
+        <target>All</target>
+      </trans-unit>
+      <trans-unit id="j06PaYI" resname="Anterior">
+        <source>Anterior</source>
+        <target>Previous</target>
+      </trans-unit>
+      <trans-unit id="Kpu6T5q" resname="Siguiente">
+        <source>Siguiente</source>
+        <target>Next</target>
+      </trans-unit>
+      <trans-unit id=".RTKgE4" resname="Todo el historial">
+        <source>Todo el historial</source>
+        <target>Whole history</target>
+      </trans-unit>
+      <trans-unit id="sbzsTWL" resname="Del {from} al {to}">
+        <source>Del {from} al {to}</source>
+        <target>From {from} to {to}</target>
+      </trans-unit>
+      <trans-unit id="W9OZ1SC" resname="Agregado">
+        <source>Agregado</source>
+        <target>Aggregate</target>
+      </trans-unit>
+      <trans-unit id="X28W0Q2" resname="Listar cuentas">
+        <source>Listar cuentas</source>
+        <target>List accounts</target>
+      </trans-unit>
+      <trans-unit id="PHy6mBz" resname="Listar emails enviados">
+        <source>Listar emails enviados</source>
+        <target>List sent emails</target>
+      </trans-unit>
+      <trans-unit id="_FZbCHf" resname="Listar registro de actividad">
+        <source>Listar registro de actividad</source>
+        <target>List activity log</target>
+      </trans-unit>
+      <trans-unit id="HwrqyYR" resname="Listar solicitudes de firma">
+        <source>Listar solicitudes de firma</source>
+        <target>List signature requests</target>
+      </trans-unit>
+      <trans-unit id="dbLg1P0" resname="Listar tokens de API">
+        <source>Listar tokens de API</source>
+        <target>List API tokens</target>
+      </trans-unit>
+      <trans-unit id="fU5DmyM" resname="Listar usuarios">
+        <source>Listar usuarios</source>
+        <target>List users</target>
+      </trans-unit>
+      <trans-unit id="sYcz.F3" resname="Modificar cuenta">
+        <source>Modificar cuenta</source>
+        <target>Edit account</target>
+      </trans-unit>
+      <trans-unit id="Nu9x0Vh" resname="Registrar cuenta">
+        <source>Registrar cuenta</source>
+        <target>Register account</target>
+      </trans-unit>
+      <trans-unit id="Kq12eTF" resname="Registrar usuario">
+        <source>Registrar usuario</source>
+        <target>Register user</target>
+      </trans-unit>
+      <trans-unit id="NDIHK4a" resname="Ver cuenta">
+        <source>Ver cuenta</source>
+        <target>View account</target>
+      </trans-unit>
+      <trans-unit id="dVOxSA0" resname="Ver usuario">
+        <source>Ver usuario</source>
+        <target>View user</target>
+      </trans-unit>
+      <trans-unit id="GwsWPAu" resname="Ejecución del plan iniciada">
+        <source>Ejecución del plan iniciada</source>
+        <target>Plan execution started</target>
+      </trans-unit>
+      <trans-unit id="HQ7GSPC" resname="Conversación con el asistente eliminada">
+        <source>Conversación con el asistente eliminada</source>
+        <target>Assistant conversation removed</target>
+      </trans-unit>
+      <trans-unit id="eVUjAjp" resname="Conversación con el asistente iniciada">
+        <source>Conversación con el asistente iniciada</source>
+        <target>Conversation with the assistant started</target>
+      </trans-unit>
+      <trans-unit id="ki47Cw1" resname="Plan descartado por un mensaje nuevo">
+        <source>Plan descartado por un mensaje nuevo</source>
+        <target>Plan discarded by a new message</target>
+      </trans-unit>
+      <trans-unit id="f0.R.l7" resname="Plan descartado">
+        <source>Plan descartado</source>
+        <target>Plan discarded</target>
+      </trans-unit>
+      <trans-unit id="QJ.18uM" resname="Plan fallido: {reason} ({cost} USD)">
+        <source>Plan fallido: {reason} ({cost} USD)</source>
+        <target>Plan failed: {reason} ({cost} USD)</target>
+      </trans-unit>
+      <trans-unit id="v9XkNAD" resname="Plan propuesto: {summary}">
+        <source>Plan propuesto: {summary}</source>
+        <target>Plan proposed: {summary}</target>
+      </trans-unit>
+      <trans-unit id="4VQLFBY" resname="resultado del paso {step}">
+        <source>resultado del paso {step}</source>
+        <target>result of step {step}</target>
+      </trans-unit>
+      <trans-unit id="aS5vL5i" resname="Conversación con el asistente renombrada">
+        <source>Conversación con el asistente renombrada</source>
+        <target>Assistant conversation renamed</target>
+      </trans-unit>
+      <trans-unit id="X_3AqbT" resname="Paso {position} ({tool}) fallido: {error}">
+        <source>Paso {position} ({tool}) fallido: {error}</source>
+        <target>Step {position} ({tool}) failed: {error}</target>
+      </trans-unit>
+      <trans-unit id="d3Cwjvl" resname="Respuesta del asistente completada ({calls} consultas, {cost} USD)">
+        <source>Respuesta del asistente completada ({calls} consultas, {cost} USD)</source>
+        <target>Assistant answer completed ({calls} queries, {cost} USD)</target>
+      </trans-unit>
+      <trans-unit id="c28rH51" resname="Plan aprobado por {user}">
+        <source>Plan aprobado por {user}</source>
+        <target>Plan approved by {user}</target>
+      </trans-unit>
+      <trans-unit id="lDdLiDy" resname="Paso {position} ({tool}) ejecutado: {summary}">
+        <source>Paso {position} ({tool}) ejecutado: {summary}</source>
+        <target>Step {position} ({tool}) executed: {summary}</target>
+      </trans-unit>
+      <trans-unit id="45zGwqv" resname="Plan caducado">
+        <source>Plan caducado</source>
+        <target>Plan expired</target>
+      </trans-unit>
+      <trans-unit id="I0wX7.e" resname="Respuesta del asistente fallida">
+        <source>Respuesta del asistente fallida</source>
+        <target>Assistant answer failed</target>
+      </trans-unit>
+      <trans-unit id="KHdFaJx" resname="Plan ejecutado ({cost} USD)">
+        <source>Plan ejecutado ({cost} USD)</source>
+        <target>Plan executed ({cost} USD)</target>
+      </trans-unit>
+      <trans-unit id="9XBChpi" resname="Mensaje enviado al asistente">
+        <source>Mensaje enviado al asistente</source>
+        <target>Message sent to the assistant</target>
+      </trans-unit>
+      <trans-unit id="bKAOyDa" resname="Respuesta del asistente en curso">
+        <source>Respuesta del asistente en curso</source>
+        <target>Assistant answer in progress</target>
+      </trans-unit>
+      <trans-unit id="ZKon015" resname="Hoy: {spent} / {limit} USD">
+        <source>Hoy: {spent} / {limit} USD</source>
+        <target>Today: {spent} / {limit} USD</target>
+      </trans-unit>
+      <trans-unit id="DAgtGrX" resname="Hoy: {spent} USD">
+        <source>Hoy: {spent} USD</source>
+        <target>Today: {spent} USD</target>
+      </trans-unit>
+      <trans-unit id="JLGE2y9" resname="Todavía no hay conversaciones">
+        <source>Todavía no hay conversaciones</source>
+        <target>There are no conversations yet</target>
+      </trans-unit>
+      <trans-unit id="Gf75GCu" resname="Renombrar">
+        <source>Renombrar</source>
+        <target>Rename</target>
+      </trans-unit>
+      <trans-unit id="SoRDIEn" resname="¿Eliminar esta conversación? Esta acción no se puede deshacer">
+        <source>¿Eliminar esta conversación? Esta acción no se puede deshacer</source>
+        <target>Remove this conversation? This action cannot be undone</target>
+      </trans-unit>
+      <trans-unit id="AoKhKcU" resname="Nueva conversación">
+        <source>Nueva conversación</source>
+        <target>New conversation</target>
+      </trans-unit>
+      <trans-unit id="yRCNKqa" resname="Conversaciones">
+        <source>Conversaciones</source>
+        <target>Conversations</target>
+      </trans-unit>
+      <trans-unit id="WeJlKLp" resname="Ampliar">
+        <source>Ampliar</source>
+        <target>Widen</target>
+      </trans-unit>
+      <trans-unit id="Bzc1myg" resname="Reducir">
+        <source>Reducir</source>
+        <target>Reduce</target>
+      </trans-unit>
+      <trans-unit id="gYIigbC" resname="Minimizar">
+        <source>Minimizar</source>
+        <target>Minimize</target>
+      </trans-unit>
+      <trans-unit id="xIHlMSv" resname="Restaurar">
+        <source>Restaurar</source>
+        <target>Restore</target>
+      </trans-unit>
+      <trans-unit id="aAN14gq" resname="Suelta aquí los ficheros para adjuntarlos">
+        <source>Suelta aquí los ficheros para adjuntarlos</source>
+        <target>Drop the files here to attach them</target>
+      </trans-unit>
+      <trans-unit id="lgEVl9l" resname="Quitar fichero">
+        <source>Quitar fichero</source>
+        <target>Remove file</target>
+      </trans-unit>
+      <trans-unit id="TJGJSRW" resname="Adjuntar ficheros">
+        <source>Adjuntar ficheros</source>
+        <target>Attach files</target>
+      </trans-unit>
+      <trans-unit id=".5NzGyg" resname="Detener">
+        <source>Detener</source>
+        <target>Stop</target>
+      </trans-unit>
+      <trans-unit id="NNJavYe" resname="Ejecutando…">
+        <source>Ejecutando…</source>
+        <target>Executing…</target>
+      </trans-unit>
+      <trans-unit id="h9rFG7E" resname="Pensando…">
+        <source>Pensando…</source>
+        <target>Thinking…</target>
+      </trans-unit>
+      <trans-unit id="8YgvUlK" resname="Copiar">
+        <source>Copiar</source>
+        <target>Copy</target>
+      </trans-unit>
+      <trans-unit id="OGO6RhZ" resname="Consultas realizadas ({count})">
+        <source>Consultas realizadas ({count})</source>
+        <target>Queries made ({count})</target>
+      </trans-unit>
+      <trans-unit id="e_tk8ze" resname="¿En qué te ayudo?">
+        <source>¿En qué te ayudo?</source>
+        <target>How can I help you?</target>
+      </trans-unit>
+      <trans-unit id="c6hl99Q" resname="Pregunta lo que necesites sobre los datos de la plataforma o pide una acción: te propondré un plan que solo se ejecutará si pulsas «Ejecutar».">
+        <source>Pregunta lo que necesites sobre los datos de la plataforma o pide una acción: te propondré un plan que solo se ejecutará si pulsas «Ejecutar».</source>
+        <target>Ask anything about the platform data or request an action: I will propose a plan that only runs if you press «Execute».</target>
+      </trans-unit>
+      <trans-unit id="_ZZeu.Y" resname="¿Qué tareas tiene abiertas este proyecto?">
+        <source>¿Qué tareas tiene abiertas este proyecto?</source>
+        <target>Which tasks are open in this project?</target>
+      </trans-unit>
+      <trans-unit id="uOCkKWG" resname="¿Cuánto llevamos facturado este año a este cliente?">
+        <source>¿Cuánto llevamos facturado este año a este cliente?</source>
+        <target>How much have we invoiced this client this year?</target>
+      </trans-unit>
+      <trans-unit id="TtQ7sao" resname="Crea una tarea en este proyecto con estas tres acciones.">
+        <source>Crea una tarea en este proyecto con estas tres acciones.</source>
+        <target>Create a task in this project with these three actions.</target>
+      </trans-unit>
+      <trans-unit id="Dg27P02" resname="Resume el documento que te adjunto.">
+        <source>Resume el documento que te adjunto.</source>
+        <target>Summarize the document I attach.</target>
+      </trans-unit>
+      <trans-unit id="WBYPvVw" resname="Ejecutar">
+        <source>Ejecutar</source>
+        <target>Execute</target>
+      </trans-unit>
+      <trans-unit id="xzEBZr9" resname="Descartar">
+        <source>Descartar</source>
+        <target>Discard</target>
+      </trans-unit>
+      <trans-unit id="Og8Z4Om" resname="Resultado del paso {step}">
+        <source>Resultado del paso {step}</source>
+        <target>Result of step {step}</target>
+      </trans-unit>
+      <trans-unit id="dgjIqnh" resname="Aprobado por {user} el {date}">
+        <source>Aprobado por {user} el {date}</source>
+        <target>Approved by {user} on {date}</target>
+      </trans-unit>
+      <trans-unit id="OvLOKFp" resname="Plan propuesto">
+        <source>Plan propuesto</source>
+        <target>Proposed plan</target>
+      </trans-unit>
+      <trans-unit id="n0RIWY9" resname="Buscar en la plataforma">
+        <source>Buscar en la plataforma</source>
+        <target>Search the platform</target>
+      </trans-unit>
+      <trans-unit id="9Ityj7h" resname="Enviar formulario">
+        <source>Enviar formulario</source>
+        <target>Send form</target>
+      </trans-unit>
+      <trans-unit id="ERbMh_d" resname="Límite">
+        <source>Límite</source>
+        <target>Limit</target>
+      </trans-unit>
+      <trans-unit id="Tm2w0xy" resname="Término">
+        <source>Término</source>
+        <target>Term</target>
+      </trans-unit>
+      <trans-unit id="BqkgILC" resname="Listar mis notificaciones">
+        <source>Listar mis notificaciones</source>
+        <target>List my notifications</target>
+      </trans-unit>
+      <trans-unit id="PSgmH_W" resname="Solo sin leer">
+        <source>Solo sin leer</source>
+        <target>Unread only</target>
+      </trans-unit>
+      <trans-unit id="RxeQfXX" resname="Anuncio">
+        <source>Anuncio</source>
+        <target>Announcement</target>
+      </trans-unit>
+      <trans-unit id="rFVNaLF" resname="Buscar en documentos de novedades">
+        <source>Buscar en documentos de novedades</source>
+        <target>Search changelog documents</target>
+      </trans-unit>
+      <trans-unit id="X5xdMWO" resname="Leer manual de novedad">
+        <source>Leer manual de novedad</source>
+        <target>Read changelog manual</target>
+      </trans-unit>
+      <trans-unit id="r4PqUO8" resname="Leer manual técnico de novedad">
+        <source>Leer manual técnico de novedad</source>
+        <target>Read technical manual of news entry</target>
+      </trans-unit>
+      <trans-unit id="AtvIQ1n" resname="Listar anuncios">
+        <source>Listar anuncios</source>
+        <target>List announcements</target>
+      </trans-unit>
+      <trans-unit id="VjKfder" resname="Listar novedades">
+        <source>Listar novedades</source>
+        <target>List news</target>
+      </trans-unit>
+      <trans-unit id="Ps8.juE" resname="Novedad">
+        <source>Novedad</source>
+        <target>News entry</target>
+      </trans-unit>
+      <trans-unit id="Y8lA9Kj" resname="Texto">
+        <source>Texto</source>
+        <target>Text</target>
+      </trans-unit>
+      <trans-unit id="18ZDc.Y" resname="Ver anuncio">
+        <source>Ver anuncio</source>
+        <target>View announcement</target>
+      </trans-unit>
+      <trans-unit id="FphbKMY" resname="Ver novedad">
+        <source>Ver novedad</source>
+        <target>View news entry</target>
+      </trans-unit>
+      <trans-unit id="iOezdmA" resname="Fichero">
+        <source>Fichero</source>
+        <target>File</target>
+      </trans-unit>
+      <trans-unit id="GqhXaZ9" resname="Leer fichero">
+        <source>Leer fichero</source>
+        <target>Read file</target>
+      </trans-unit>
+      <trans-unit id="dhvS9A." resname="Listar ficheros de la biblioteca">
+        <source>Listar ficheros de la biblioteca</source>
+        <target>List library files</target>
+      </trans-unit>
+      <trans-unit id="1zeL0mj" resname="¿Qué cuentas están activas?">
+        <source>¿Qué cuentas están activas?</source>
+        <target>Which accounts are active?</target>
+      </trans-unit>
+      <trans-unit id="j36OL2J" resname="Crea una cuenta nueva y registra en ella a un usuario.">
+        <source>Crea una cuenta nueva y registra en ella a un usuario.</source>
+        <target>Create a new account and register a user in it.</target>
+      </trans-unit>
+      <trans-unit id="hra9jcO" resname="¿Cuál es la última novedad publicada?">
+        <source>¿Cuál es la última novedad publicada?</source>
+        <target>What is the latest published news entry?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

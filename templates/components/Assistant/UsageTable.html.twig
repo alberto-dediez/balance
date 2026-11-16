@@ -1,0 +1,23 @@
+{% props label, totals, date = false %}
+
+{% set columns = [
+    {'label': label},
+    {'label': 'Mensajes' | trans, 'class': 'text-end'},
+    {'label': 'Tokens de entrada' | trans, 'class': 'text-end'},
+    {'label': 'Tokens de salida' | trans, 'class': 'text-end'},
+    {'label': 'Coste (USD)' | trans, 'class': 'text-end'}
+] %}
+{% set rows = [] %}
+{% for name, usage in totals %}
+    {% set rows = rows | merge([{'name': name, 'usage': usage}]) %}
+{% endfor %}
+
+<div class="usage-table">
+    <twig:List:Table :columns="columns" :elements="rows">
+        <td>{{ date ? element.name | date('d/m/Y') : element.name }}</td>
+        <td class="text-end text-nowrap">{{ element.usage.messages | number_format(0, ',', '.') }}</td>
+        <td class="text-end text-nowrap">{{ element.usage.inputTokens | number_format(0, ',', '.') }}</td>
+        <td class="text-end text-nowrap">{{ element.usage.outputTokens | number_format(0, ',', '.') }}</td>
+        <td class="text-end text-nowrap">{{ element.usage.costUsd | number_format(2, ',', '.') ~ ' $' }}</td>
+    </twig:List:Table>
+</div>

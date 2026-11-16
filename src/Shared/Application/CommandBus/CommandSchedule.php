@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Shared\Application\CommandBus;
 
+use App\Assistant\Application\Conversation\ExpireStale\ExpireStaleAssistantWorkRequest;
+use App\Assistant\Application\Conversation\Purge\PurgeConversationsRequest;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
 use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
@@ -38,6 +40,16 @@ class CommandSchedule
                 id: 'security:purge-email-logs',
                 command: new PurgeEmailLogsRequest(new \DateTimeImmutable('NOW')),
                 time: '03:00',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'assistant:purge-conversations',
+                command: new PurgeConversationsRequest(new \DateTimeImmutable('NOW')),
+                time: '03:20',
+            ),
+            ScheduledCommand::everyMinutes(
+                id: 'assistant:expire-stale-work',
+                command: new ExpireStaleAssistantWorkRequest(new \DateTimeImmutable('NOW')),
+                minutes: 5,
             ),
             ScheduledCommand::everyMinutes(
                 id: 'changelog:publish-scheduled-announcements',

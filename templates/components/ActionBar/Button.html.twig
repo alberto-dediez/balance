@@ -1,5 +1,10 @@
-{% props button, type='primary' %}
+{% props button, type='primary', shortcut=null %}
+
+{% set shortcut = shortcut ?? (
+    button.vars.name in ['register', 'saveAndReturn']
+    or (button.vars.name == 'save' and button.parent.saveAndReturn is not defined)
+) %}
 
 <div class="col-sm-6 col-md-3 col-lg-2">
-    {{ form_widget(button, {'attr': {'class': 'w-100 btn btn-' ~ type}}) }}
+    {{ form_widget(button, {'attr': shortcut ? {'class': 'w-100 btn btn-' ~ type, 'data-submit-shortcut': '1'} : {'class': 'w-100 btn btn-' ~ type}}) }}
 </div>

@@ -91,6 +91,23 @@ class DoctrineRecordedEventRepository implements RecordedEventRepository
             ;
         }
 
+        if (true === $filter->byAssistant) {
+            $qb->andWhere($qb->expr()->isNotNull('e.assistantExecutionId'));
+        }
+
+        if (false === $filter->byAssistant) {
+            $qb->andWhere($qb->expr()->isNull('e.assistantExecutionId'));
+        }
+
+        if (!in_array($filter->assistantExecutionId, [null, ''], true)) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('e.assistantExecutionId', ':assistantExecutionId'),
+                )
+                ->setParameter('assistantExecutionId', $filter->assistantExecutionId)
+            ;
+        }
+
         if (!in_array($filter->aggregateRootId, [null, '', '0'], true)) {
             $qb
                 ->andWhere(

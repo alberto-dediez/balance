@@ -2,7 +2,7 @@
     <div class="modal fade" id="global-search" tabindex="-1" aria-label="{{ 'Buscar' | trans }}"
          data-controller="global-search"
          data-global-search-url-value="{{ path('search') }}"
-         data-action="shown.bs.modal->global-search#focus hidden.bs.modal->global-search#reset keydown@window->global-search#shortcut">
+         data-action="shown.bs.modal->global-search#focus hidden.bs.modal->global-search#reset keyboard-shortcuts:global-search@window->global-search#open">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header global-search__header">

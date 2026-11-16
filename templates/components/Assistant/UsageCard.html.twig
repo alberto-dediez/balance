@@ -1,0 +1,28 @@
+{% if this.enabled %}
+    {% set usage = this.usage %}
+
+    <twig:Card title="{{ 'Asistente IA' | trans }}" icon="solar:chat-round-dots-line-duotone" class="mb-4">
+        {% if usage.totals.isEmpty %}
+            <twig:Alert type="info">{{ 'Sin actividad en el periodo' | trans }}</twig:Alert>
+        {% else %}
+            <div class="row row-cols-2 row-cols-xl-4">
+                <div class="col">
+                    <twig:View:Stat label="{{ 'Coste (USD)' | trans }}" value="{{ usage.totals.costUsd | number_format(2, ',', '.') ~ ' $' }}" />
+                </div>
+                <div class="col">
+                    <twig:View:Stat label="{{ 'Mensajes' | trans }}" value="{{ usage.totals.messages | number_format(0, ',', '.') }}" />
+                </div>
+                <div class="col">
+                    <twig:View:Stat label="{{ 'Tokens de entrada' | trans }}" value="{{ usage.totals.inputTokens | number_format(0, ',', '.') }}" />
+                </div>
+                <div class="col">
+                    <twig:View:Stat label="{{ 'Tokens de salida' | trans }}" value="{{ usage.totals.outputTokens | number_format(0, ',', '.') }}" />
+                </div>
+            </div>
+
+            <twig:Assistant:UsageTable label="{{ 'Día' | trans }}" :totals="usage.days" :date="true" />
+            <twig:Assistant:UsageTable label="{{ 'Usuario' | trans }}" :totals="usage.users" />
+            <twig:Assistant:UsageTable label="{{ 'Modelo' | trans }}" :totals="usage.models" />
+        {% endif %}
+    </twig:Card>
+{% endif %}

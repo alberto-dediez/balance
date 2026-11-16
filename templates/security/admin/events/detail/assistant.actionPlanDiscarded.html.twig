@@ -1,0 +1,5 @@
+{% if event.reason.value == 'superseded' %}
+    {% trans %}Plan descartado por un mensaje nuevo{% endtrans %}
+{% else %}
+    {% trans %}Plan descartado{% endtrans %}
+{% endif %}

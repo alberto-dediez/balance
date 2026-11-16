@@ -22,6 +22,8 @@ class NodeLister
         private readonly ?CurrentRolesProvider $currentRolesProvider = null,
         #[Autowire(param: 'app.announcements_enabled')]
         private readonly bool $announcementsEnabled = true,
+        #[Autowire(param: 'assistant.enabled')]
+        private readonly bool $assistantEnabled = false,
     ) {}
 
     /**
@@ -213,6 +215,14 @@ class NodeLister
             icon: 'solar:record-minimalistic-line-duotone',
             target: $this->router->generate('admin_events'),
         );
+
+        if ($this->assistantEnabled) {
+            $auditItems[] = new Node(
+                label: new TranslatableMessage('Consumo del asistente'),
+                icon: 'solar:pie-chart-2-line-duotone',
+                target: $this->router->generate('admin_assistant_usage'),
+            );
+        }
 
         $nodes[] =  new Node(
             label: new TranslatableMessage('Seguridad'),

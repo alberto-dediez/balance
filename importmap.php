@@ -24,6 +24,9 @@ return [
     'timezone' => [
         'path' => './assets/js/timezone.js',
     ],
+    'live' => [
+        'path' => './assets/js/live.js',
+    ],
     'toast' => [
         'path' => './assets/js/toast.js',
     ],

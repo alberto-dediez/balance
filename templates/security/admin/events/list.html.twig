@@ -36,7 +36,10 @@
                 'event': element.rebuild()
             } %}
         </td>
-        <td>{{ element.userId | user_name | trans | raw }}</td>
+        <td>
+            {{ element.userId | user_name | trans | raw }}
+            {% if element.isByAssistant %}<twig:Badge:Assistant />{% endif %}
+        </td>
         <td>
             {% if element.isImpersonated %}
                 <span class="badge bg-warning-subtle text-warning">{{ element.impersonatorId | user_name | trans | raw }}</span>

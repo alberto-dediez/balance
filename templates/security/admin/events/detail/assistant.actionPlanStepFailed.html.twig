@@ -1,0 +1,5 @@
+{% trans with {
+    '{position}': event.position,
+    '{tool}': event.tool,
+    '{error}': event.error | e
+} %}Paso {position} ({tool}) fallido: {error}{% endtrans %}

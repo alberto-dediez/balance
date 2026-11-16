@@ -1,0 +1,5 @@
+{% if dailyLimit > 0 %}
+    {{ 'Hoy: {spent} / {limit} USD' | trans({'{spent}': spentToday | number_format(2, ',', '.'), '{limit}': dailyLimit | number_format(2, ',', '.')}) }}
+{% else %}
+    {{ 'Hoy: {spent} USD' | trans({'{spent}': spentToday | number_format(2, ',', '.')}) }}
+{% endif %}
