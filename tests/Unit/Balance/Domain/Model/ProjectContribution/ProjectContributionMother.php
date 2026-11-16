@@ -29,6 +29,7 @@ class ProjectContributionMother
         bool $isCompany = false,
         ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
         Locale $locale = Locale::Spanish,
+        ?AccountId $creditAccountId = null,
     ): ProjectContribution {
         $projectContribution = new ProjectContribution(id: $id ?? ProjectContributionId::generate());
         $projectContribution->register(
@@ -59,6 +60,7 @@ class ProjectContributionMother
             locale: $locale,
             expiresAt: $expiresAt ?? new \DateTimeImmutable('+12 hours'),
             paymentId: $paymentId,
+            creditAccountId: $creditAccountId,
         );
 
         return $projectContribution;
@@ -72,11 +74,30 @@ class ProjectContributionMother
         ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
         ?string $originName = 'Hotel Los Olivos',
         Locale $locale = Locale::Spanish,
+        ?AccountId $creditAccountId = null,
     ): ProjectContribution {
-        $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId, originName: $originName, origin: $origin, locale: $locale);
+        $projectContribution = self::pending($accountId, $projectId, $tonnes, originId: $originId, originName: $originName, origin: $origin, locale: $locale, creditAccountId: $creditAccountId);
         $projectContribution->pay();
 
         return $projectContribution;
+    }
+
+    public static function paidWithSharedCredit(
+        AccountId $accountId,
+        AccountId $creditAccountId,
+        ?ProjectId $projectId = null,
+        float $tonnes = 1.0,
+    ): ProjectContribution {
+        return self::paid($accountId, $projectId, $tonnes, creditAccountId: $creditAccountId);
+    }
+
+    public static function pendingWithSharedCredit(
+        AccountId $accountId,
+        AccountId $creditAccountId,
+        ?ProjectId $projectId = null,
+        float $tonnes = 1.0,
+    ): ProjectContribution {
+        return self::pending($accountId, $projectId, $tonnes, creditAccountId: $creditAccountId);
     }
 
     public static function ownCreditFunded(
@@ -208,6 +229,7 @@ class ProjectContributionMother
         return new ProjectContribution(
             id: ProjectContributionId::generate(),
             accountId: $accountId,
+            creditAccountId: $accountId,
             projectId: $projectId,
             originId: (string) ProjectContributionId::generate(),
             originName: 'Hotel Los Olivos',

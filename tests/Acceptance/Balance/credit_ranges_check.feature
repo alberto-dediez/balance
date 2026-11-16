@@ -33,6 +33,21 @@ Feature:
         Then I expect status code 0
         Then I want to see "3 received lot(s) checked, every range is correct." in command output
 
+    Scenario: A lot of a distributor consumed by a contribution of a distributed account keeps exact ranges
+        Given user "payment" with role "ROLE_ADMIN" exists
+        Given account "888" is a distributor
+        Given distributor "888" is assigned to account "777"
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/credits/2222/transfer"
+        When I submit a form with "destinationAccountIds:[888]|tonnes:40" and button "Transferir crédito"
+        When I follow redirect
+        Given contribution "C1" of account "777" backed by the credit of account "888" for project "1111" with "2" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C1" succeeded
+        Then account "888" should have "38" available tonnes in project "1111"
+        When command "balance:credit-ranges:check" is executed with argument "username:admin@dediez.software"
+        Then I expect status code 0
+        Then I want to see "1 received lot(s) checked, every range is correct." in command output
+
     Scenario: The check fails when the user does not exist
         When command "balance:credit-ranges:check" is executed with argument "username:nobody@dediez.software"
         Then I expect status code 1

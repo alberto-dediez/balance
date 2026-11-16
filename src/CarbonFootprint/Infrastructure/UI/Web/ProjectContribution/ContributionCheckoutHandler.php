@@ -67,6 +67,8 @@ final class ContributionCheckoutHandler
                     contributorCountry: (string) $country,
                     contributorIsCompany: $this->isCompany($contribution),
                     contributorVatNumber: $this->nullableString($contribution['vatNumber'] ?? null),
+                    allowSharedCredit: $context->allowSharedCredit,
+                    propertyId: $context->propertyId,
                 ))
                 : null;
         } catch (ProjectNotContributableException|\InvalidArgumentException) {
@@ -117,6 +119,8 @@ final class ContributionCheckoutHandler
     {
         return ($this->listContributionOptions)(new ListContributionOptionsRequest(
             accountId: $context->accountId,
+            allowSharedCredit: $context->allowSharedCredit,
+            propertyId: $context->propertyId,
         ))->find($projectId);
     }
 
@@ -210,6 +214,8 @@ final class ContributionCheckoutHandler
                 contributorCompanyName: $this->nullableString($contribution['companyName'] ?? null),
                 contributorVatNumber: $this->nullableString($contribution['vatNumber'] ?? null),
                 locale: LocaleGetter::locale(),
+                allowSharedCredit: $context->allowSharedCredit,
+                propertyId: $context->propertyId,
             ));
         } catch (InsufficientProjectCreditException) {
             $this->addFlash($request, 'danger', new TranslatableMessage('Este proyecto ya no tiene crédito suficiente para compensar tu huella.'));

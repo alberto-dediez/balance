@@ -7,6 +7,7 @@ namespace App\Balance\Application\ProjectContribution\Reallocate;
 use App\Balance\Application\CreditPurchase\Balance\CreditReservationLock;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseFilter;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
@@ -93,7 +94,9 @@ final class ReallocateUnderallocatedContributionsService
         $lines = [];
         $position = $contribution->nextAllocationPosition();
 
-        foreach ($this->validatedPurchases($accountId, $projectId) as $creditPurchase) {
+        $paymentType = $contribution->allowedCreditPaymentType();
+
+        foreach ($this->validatedPurchases($accountId, $projectId, $paymentType) as $creditPurchase) {
             if ($pending <= self::MIN_ALLOCATABLE_TONNES) {
                 break;
             }
@@ -128,7 +131,7 @@ final class ReallocateUnderallocatedContributionsService
     private function underallocatedContributions(AccountId $accountId, ProjectId $projectId): array
     {
         $contributions = array_values($this->projectContributionRepository->findByFilter(new ProjectContributionFilter(
-            accountId: $accountId,
+            creditAccountId: $accountId,
             projectId: $projectId,
             status: ProjectContributionStatus::Paid,
             limit: 0,
@@ -149,12 +152,13 @@ final class ReallocateUnderallocatedContributionsService
     }
 
     /** @return list<CreditPurchase> */
-    private function validatedPurchases(AccountId $accountId, ProjectId $projectId): array
+    private function validatedPurchases(AccountId $accountId, ProjectId $projectId, ?CreditPurchasePaymentType $paymentType): array
     {
         $purchases = array_values($this->creditPurchaseRepository->findByFilter(new CreditPurchaseFilter(
             accountId: $accountId,
             projectId: $projectId,
             status: CreditPurchaseStatus::Validated,
+            paymentType: $paymentType,
             limit: 0,
         )));
 

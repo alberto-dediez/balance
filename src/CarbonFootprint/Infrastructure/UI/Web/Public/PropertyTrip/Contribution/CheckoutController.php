@@ -74,6 +74,8 @@ class CheckoutController extends AbstractController
                 originId: $tripCalculationId,
                 originName: $link->property?->name() ?? ($tripCalculation->destinationLabel() ?? $link->ownerName),
                 token: $token,
+                allowSharedCredit: true,
+                propertyId: $link->property?->id(),
             ),
             $this->contributionRoutes($link->tripCalculationLink, $token, $tripCalculationId),
             $projectId,

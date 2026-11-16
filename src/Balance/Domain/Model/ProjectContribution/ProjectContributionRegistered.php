@@ -47,6 +47,7 @@ final class ProjectContributionRegistered extends DomainEvent
         private ?\DateTimeImmutable $expiresAt,
         private ProjectContributionFunding $funding = ProjectContributionFunding::Payment,
         private ?PaymentId $paymentId = null,
+        private ?AccountId $creditAccountId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -198,6 +199,11 @@ final class ProjectContributionRegistered extends DomainEvent
         return $this->paymentId;
     }
 
+    public function creditAccountId(): AccountId
+    {
+        return $this->creditAccountId ?? $this->accountId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->projectContributionId();
@@ -235,6 +241,7 @@ final class ProjectContributionRegistered extends DomainEvent
             'expiresAt' => $this->expiresAt?->format(\DateTimeInterface::ATOM),
             'funding' => $this->funding->value,
             'paymentId' => null !== $this->paymentId ? (string) $this->paymentId : null,
+            'creditAccountId' => (string) $this->creditAccountId(),
         ];
     }
 
@@ -273,6 +280,7 @@ final class ProjectContributionRegistered extends DomainEvent
             expiresAt: null !== ($payload['expiresAt'] ?? null) ? new \DateTimeImmutable((string) $payload['expiresAt']) : null,
             funding: ProjectContributionFunding::tryFrom((string) ($payload['funding'] ?? '')) ?? ProjectContributionFunding::Payment,
             paymentId: null !== $payload['paymentId'] ? new PaymentId($payload['paymentId']) : null,
+            creditAccountId: new AccountId($payload['creditAccountId'] ?? $payload['accountId']),
             id: $id,
             occurredOn: $occurredOn,
         );

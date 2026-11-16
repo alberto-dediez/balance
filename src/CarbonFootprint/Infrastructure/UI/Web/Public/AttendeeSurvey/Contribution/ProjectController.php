@@ -61,6 +61,7 @@ class ProjectController extends AbstractController
         $options = $listContributionOptions(new ListContributionOptionsRequest(
             accountId: $accountId,
             co2eqKg: (float) $response->emissions()->co2eq(),
+            allowSharedCredit: true,
         ));
 
         $option = $options->find($projectId);

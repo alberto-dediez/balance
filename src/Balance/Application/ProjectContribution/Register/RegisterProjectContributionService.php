@@ -17,6 +17,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\Payments\Application\Payment\Start\StartPaymentRequest;
 use App\Payments\Application\Payment\Start\StartPaymentService;
 use App\Security\Application\User\SystemActor\SystemActorResolver;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Application\CommandBus\DeferredCommand;
 use App\Shared\Application\CommandBus\Priority;
@@ -43,10 +44,12 @@ final class RegisterProjectContributionService
         $id = $request->projectContributionId;
         $expiresAt = $now->modify(sprintf('+%d hours', $this->reservationHours));
 
+        $creditAccountId = $this->quote($request, $now)->creditAccountId ?? $request->accountId;
+
         [$projectContribution, $quote] = $this->creditReservationLock->withLock(
-            $request->accountId,
+            $creditAccountId,
             $request->projectId,
-            fn(): array => $this->reserve($request, $now, $expiresAt),
+            fn(): array => $this->reserve($request, $creditAccountId, $now, $expiresAt),
         );
 
         $amounts = $quote->amounts;
@@ -96,19 +99,11 @@ final class RegisterProjectContributionService
      */
     private function reserve(
         RegisterProjectContributionRequest $request,
+        AccountId $creditAccountId,
         \DateTimeImmutable $now,
         \DateTimeImmutable $expiresAt,
     ): array {
-        $quote = $this->quoteContribution->__invoke(new QuoteContributionRequest(
-            accountId: $request->accountId,
-            projectId: $request->projectId,
-            co2eqKg: $request->co2eqKg,
-            freeAmount: $request->freeAmount,
-            contributorCountry: $request->contributorCountry,
-            contributorIsCompany: $request->contributorIsCompany,
-            contributorVatNumber: $request->contributorVatNumber,
-            now: $now,
-        ));
+        $quote = $this->quote($request, $now);
 
         $amounts = $quote->amounts;
 
@@ -116,7 +111,9 @@ final class RegisterProjectContributionService
             throw new ContributionAmountTooLowException($amounts->totalAmount, ContributionCalculator::MIN_TOTAL_AMOUNT);
         }
 
-        if ($quote->limitedByCredit && $amounts->tonnes > $quote->availableTonnes) {
+        $quotedCreditAccountId = $quote->creditAccountId ?? $request->accountId;
+
+        if ($quote->limitedByCredit && (!$quotedCreditAccountId->equals($creditAccountId) || $amounts->tonnes > $quote->availableTonnes)) {
             throw new InsufficientProjectCreditException($request->projectId, $amounts->tonnes, $quote->availableTonnes);
         }
 
@@ -148,10 +145,27 @@ final class RegisterProjectContributionService
             contributorVatNumber: $request->contributorVatNumber,
             locale: $request->locale ?? LocaleGetter::locale(),
             expiresAt: $expiresAt,
+            creditAccountId: $creditAccountId,
         );
 
         $this->projectContributionRepository->add($projectContribution);
 
         return [$projectContribution, $quote];
+    }
+
+    private function quote(RegisterProjectContributionRequest $request, \DateTimeImmutable $now): QuoteContributionResponse
+    {
+        return $this->quoteContribution->__invoke(new QuoteContributionRequest(
+            accountId: $request->accountId,
+            projectId: $request->projectId,
+            co2eqKg: $request->co2eqKg,
+            freeAmount: $request->freeAmount,
+            contributorCountry: $request->contributorCountry,
+            contributorIsCompany: $request->contributorIsCompany,
+            contributorVatNumber: $request->contributorVatNumber,
+            now: $now,
+            allowSharedCredit: $request->allowSharedCredit,
+            propertyId: $request->propertyId,
+        ));
     }
 }

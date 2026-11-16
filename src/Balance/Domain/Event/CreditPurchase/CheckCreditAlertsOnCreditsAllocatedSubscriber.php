@@ -49,7 +49,7 @@ class CheckCreditAlertsOnCreditsAllocatedSubscriber implements DomainEventSubscr
             return;
         }
 
-        $accountId = $projectContribution->accountId();
+        $accountId = $projectContribution->creditAccountId();
         $projectId = $projectContribution->projectId();
 
         if (!$accountId instanceof AccountId || !$projectId instanceof ProjectId) {

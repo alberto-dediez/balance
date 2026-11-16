@@ -84,6 +84,34 @@ class CheckCreditAlertsOnCreditsAllocatedSubscriberTest extends TestCase
         $this->assertSame((string) $projectId, (string) $request->projectId);
     }
 
+    public function testHandleDefersTheCheckOfTheDistributorWhenTheContributionUsesSharedCredit(): void
+    {
+        $hotelAccountId = AccountId::generate();
+        $distributorAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $repository = ProjectContributionRepositoryMother::inMemory();
+        $projectContribution = ProjectContributionMother::paidWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 2.0);
+        $repository->add($projectContribution);
+
+        $sut = $this->createSUT($repository);
+        $sut->handle(new ProjectContributionCreditsAllocated(
+            projectContributionId: $projectContribution->id(),
+            lines: [],
+        ));
+
+        $commands = $this->commandHandler->commands();
+
+        $this->assertCount(1, $commands);
+        $this->assertInstanceOf(DeferredCommand::class, $commands[0]['command']);
+
+        $request = $commands[0]['command']->command();
+
+        $this->assertInstanceOf(CheckCreditAlertsRequest::class, $request);
+        $this->assertSame((string) $distributorAccountId, (string) $request->accountId);
+        $this->assertSame((string) $projectId, (string) $request->projectId);
+    }
+
     public function testHandleIgnoresUnknownContributions(): void
     {
         $sut = $this->createSUT(ProjectContributionRepositoryMother::inMemory());

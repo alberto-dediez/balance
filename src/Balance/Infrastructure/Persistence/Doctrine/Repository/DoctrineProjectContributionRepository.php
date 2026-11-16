@@ -75,6 +75,13 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ;
         }
 
+        if (null !== $filter->creditAccountId) {
+            $qb
+                ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
+                ->setParameter('creditAccountId', (string) $filter->creditAccountId)
+            ;
+        }
+
         if (null !== $filter->projectId) {
             $qb
                 ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
@@ -243,20 +250,20 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         ;
     }
 
-    public function committedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float
+    public function committedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float
     {
-        return $this->committedTonnesByAccount($accountId, $now)[(string) $projectId] ?? 0.0;
+        return $this->committedTonnesByAccount($creditAccountId, $now)[(string) $projectId] ?? 0.0;
     }
 
     /** @return array<string, float> */
-    public function committedTonnesByAccount(AccountId $accountId, \DateTimeImmutable $now): array
+    public function committedTonnesByAccount(AccountId $creditAccountId, \DateTimeImmutable $now): array
     {
         $qb = $this->manager->createQueryBuilder();
 
         $rows = $qb
             ->select('pc.projectId as projectId, SUM(pc.tonnes) as tonnes')
             ->from(ProjectContribution::class, 'pc')
-            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
             ->andWhere($qb->expr()->neq('pc.funding', ':imported'))
             ->andWhere(
                 $qb->expr()->orX(
@@ -268,7 +275,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
                 ),
             )
             ->groupBy('pc.projectId')
-            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('creditAccountId', (string) $creditAccountId)
             ->setParameter('imported', ProjectContributionFunding::Imported->value)
             ->setParameter('paid', ProjectContributionStatus::Paid->value)
             ->setParameter('pending', ProjectContributionStatus::Pending->value)
@@ -287,7 +294,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
     }
 
     /** @return array<string, float> */
-    public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array
+    public function allocatedTonnesByPurchase(AccountId $creditAccountId, ProjectId $projectId): array
     {
         $qb = $this->manager->createQueryBuilder();
 
@@ -295,10 +302,10 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ->select('a.creditPurchaseId as creditPurchaseId, SUM(a.tonnes) as tonnes')
             ->from(ProjectContributionCreditAllocation::class, 'a')
             ->innerJoin('a.projectContribution', 'pc')
-            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
             ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
             ->groupBy('a.creditPurchaseId')
-            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('creditAccountId', (string) $creditAccountId)
             ->setParameter('projectId', (string) $projectId)
             ->getQuery()
             ->getResult()
@@ -315,7 +322,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
 
     /** @return array<string, float> */
     public function committedAllocatedTonnesByPurchase(
-        AccountId $accountId,
+        AccountId $creditAccountId,
         ProjectId $projectId,
         \DateTimeImmutable $now,
     ): array {
@@ -325,7 +332,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ->select('a.creditPurchaseId as creditPurchaseId, SUM(a.tonnes) as tonnes')
             ->from(ProjectContributionCreditAllocation::class, 'a')
             ->innerJoin('a.projectContribution', 'pc')
-            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
             ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
             ->andWhere(
                 $qb->expr()->orX(
@@ -337,7 +344,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
                 ),
             )
             ->groupBy('a.creditPurchaseId')
-            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('creditAccountId', (string) $creditAccountId)
             ->setParameter('projectId', (string) $projectId)
             ->setParameter('paid', ProjectContributionStatus::Paid->value)
             ->setParameter('pending', ProjectContributionStatus::Pending->value)
@@ -356,7 +363,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
     }
 
     /** @return list<ProjectContribution> */
-    public function underallocatedContributions(?AccountId $accountId, ?ProjectId $projectId): array
+    public function underallocatedContributions(?AccountId $creditAccountId, ?ProjectId $projectId): array
     {
         $qb = $this->manager->createQueryBuilder();
 
@@ -375,10 +382,10 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ->setParameter('tolerance', ProjectContribution::TONNE_TOLERANCE)
         ;
 
-        if ($accountId instanceof AccountId) {
+        if ($creditAccountId instanceof AccountId) {
             $qb
-                ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
-                ->setParameter('accountId', (string) $accountId)
+                ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
+                ->setParameter('creditAccountId', (string) $creditAccountId)
             ;
         }
 
@@ -416,7 +423,7 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
     }
 
     /** @return array<string, list<ProjectContributionCreditAllocation>> */
-    public function findAllocationsByAccount(AccountId $accountId): array
+    public function findAllocationsByAccount(AccountId $creditAccountId): array
     {
         $qb = $this->manager->createQueryBuilder();
 
@@ -425,9 +432,9 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
             ->select('a', 'pc')
             ->from(ProjectContributionCreditAllocation::class, 'a')
             ->innerJoin('a.projectContribution', 'pc')
-            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
             ->orderBy('a.startTonnes', 'ASC')
-            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('creditAccountId', (string) $creditAccountId)
             ->getQuery()
             ->getResult()
         ;
@@ -439,6 +446,56 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         }
 
         return $allocations;
+    }
+
+    public function unallocatedSharedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float
+    {
+        $contributionsQb = $this->sharedReservingQueryBuilder($creditAccountId, $projectId, $now);
+
+        $committed = (float) $contributionsQb
+            ->select('COALESCE(SUM(pc.tonnes), 0)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        $allocationsQb = $this->sharedReservingQueryBuilder($creditAccountId, $projectId, $now);
+
+        $allocated = (float) $allocationsQb
+            ->select('COALESCE(SUM(a.tonnes), 0)')
+            ->innerJoin('pc.creditAllocations', 'a')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+
+        return max(0.0, $committed - $allocated);
+    }
+
+    private function sharedReservingQueryBuilder(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): QueryBuilder
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        return $qb
+            ->from(ProjectContribution::class, 'pc')
+            ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
+            ->andWhere($qb->expr()->neq('pc.accountId', ':creditAccountId'))
+            ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
+            ->andWhere($qb->expr()->neq('pc.funding', ':imported'))
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('pc.status', ':paid'),
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('pc.status', ':pending'),
+                        $qb->expr()->gt('pc.expiresAt', ':now'),
+                    ),
+                ),
+            )
+            ->setParameter('creditAccountId', (string) $creditAccountId)
+            ->setParameter('projectId', (string) $projectId)
+            ->setParameter('imported', ProjectContributionFunding::Imported->value)
+            ->setParameter('paid', ProjectContributionStatus::Paid->value)
+            ->setParameter('pending', ProjectContributionStatus::Pending->value)
+            ->setParameter('now', $now)
+        ;
     }
 
     public function committedTonnesForProject(ProjectId $projectId, \DateTimeImmutable $now): float
@@ -469,18 +526,18 @@ class DoctrineProjectContributionRepository implements ProjectContributionReposi
         ;
     }
 
-    public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float
+    public function reservedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float
     {
         $qb = $this->manager->createQueryBuilder();
 
         return (float) $qb
             ->select('COALESCE(SUM(pc.tonnes), 0)')
             ->from(ProjectContribution::class, 'pc')
-            ->andWhere($qb->expr()->eq('pc.accountId', ':accountId'))
+            ->andWhere($qb->expr()->eq('pc.creditAccountId', ':creditAccountId'))
             ->andWhere($qb->expr()->eq('pc.projectId', ':projectId'))
             ->andWhere($qb->expr()->eq('pc.status', ':pending'))
             ->andWhere($qb->expr()->gt('pc.expiresAt', ':now'))
-            ->setParameter('accountId', (string) $accountId)
+            ->setParameter('creditAccountId', (string) $creditAccountId)
             ->setParameter('projectId', (string) $projectId)
             ->setParameter('pending', ProjectContributionStatus::Pending->value)
             ->setParameter('now', $now)

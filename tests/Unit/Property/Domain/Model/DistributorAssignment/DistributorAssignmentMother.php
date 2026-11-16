@@ -27,4 +27,26 @@ class DistributorAssignmentMother
 
         return $assignment;
     }
+
+    public static function forAccountRegisteredAt(AccountId $distributorAccountId, AccountId $accountId, \DateTimeImmutable $registeredAt): DistributorAssignment
+    {
+        return new DistributorAssignment(
+            id: DistributorAssignmentId::generate(),
+            distributorAccountId: $distributorAccountId,
+            accountId: $accountId,
+            registeredBy: UserId::generate(),
+            registeredAt: $registeredAt,
+        );
+    }
+
+    public static function forPropertyRegisteredAt(AccountId $distributorAccountId, PropertyId $propertyId, \DateTimeImmutable $registeredAt): DistributorAssignment
+    {
+        return new DistributorAssignment(
+            id: DistributorAssignmentId::generate(),
+            distributorAccountId: $distributorAccountId,
+            propertyId: $propertyId,
+            registeredBy: UserId::generate(),
+            registeredAt: $registeredAt,
+        );
+    }
 }

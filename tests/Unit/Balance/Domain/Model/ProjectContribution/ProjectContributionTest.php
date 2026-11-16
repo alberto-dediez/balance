@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Domain\Model\ProjectContribution;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionExpired;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionFailed;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionImportedAsPaid;
@@ -11,6 +12,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionPaid;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionPaymentUnreconciled;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRegistered;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionStatus;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -27,6 +29,68 @@ class ProjectContributionTest extends TestCase
         $this->assertSame(40.0, $contribution->taxableAmount());
         $this->assertSame(48.4, $contribution->totalAmount());
         $this->assertInstanceOf(ProjectContributionRegistered::class, array_values($contribution->recordedEvents())[0]);
+    }
+
+    public function testRegisteringWithoutCreditAccountUsesTheOwnAccount(): void
+    {
+        $accountId = AccountId::generate();
+
+        $contribution = ProjectContributionMother::pending($accountId);
+
+        $this->assertNotNull($contribution->creditAccountId());
+        $this->assertTrue($accountId->equals($contribution->creditAccountId()));
+        $this->assertFalse($contribution->usesSharedCredit());
+    }
+
+    public function testRegisteringWithAnotherCreditAccountUsesSharedCredit(): void
+    {
+        $accountId = AccountId::generate();
+        $distributorAccountId = AccountId::generate();
+
+        $contribution = ProjectContributionMother::pendingWithSharedCredit($accountId, $distributorAccountId);
+
+        $this->assertNotNull($contribution->accountId());
+        $this->assertNotNull($contribution->creditAccountId());
+        $this->assertTrue($accountId->equals($contribution->accountId()));
+        $this->assertTrue($distributorAccountId->equals($contribution->creditAccountId()));
+        $this->assertTrue($contribution->usesSharedCredit());
+    }
+
+    public function testTheAllowedCreditPaymentTypeDependsOnHowTheContributionIsFunded(): void
+    {
+        $this->assertSame(CreditPurchasePaymentType::PaidByClient, ProjectContributionMother::ownCreditFunded()->allowedCreditPaymentType());
+        $this->assertSame(
+            CreditPurchasePaymentType::PaidByBioscore,
+            ProjectContributionMother::paidWithSharedCredit(AccountId::generate(), AccountId::generate())->allowedCreditPaymentType(),
+        );
+        $this->assertNull(ProjectContributionMother::paid()->allowedCreditPaymentType());
+    }
+
+    public function testRebuildingARegisteredEventWithoutCreditAccountFallsBackToTheAccount(): void
+    {
+        $accountId = AccountId::generate();
+        $event = array_values(ProjectContributionMother::pendingWithSharedCredit($accountId, AccountId::generate())->recordedEvents())[0];
+
+        $this->assertInstanceOf(ProjectContributionRegistered::class, $event);
+
+        $payload = $event->payload();
+        unset($payload['creditAccountId']);
+
+        $rebuilt = ProjectContributionRegistered::rebuildFromPayload($event->id(), $event->occurredOn(), $payload);
+
+        $this->assertTrue($accountId->equals($rebuilt->creditAccountId()));
+    }
+
+    public function testRebuildingARegisteredEventKeepsTheCreditAccount(): void
+    {
+        $distributorAccountId = AccountId::generate();
+        $event = array_values(ProjectContributionMother::pendingWithSharedCredit(AccountId::generate(), $distributorAccountId)->recordedEvents())[0];
+
+        $this->assertInstanceOf(ProjectContributionRegistered::class, $event);
+
+        $rebuilt = ProjectContributionRegistered::rebuildFromPayload($event->id(), $event->occurredOn(), $event->payload());
+
+        $this->assertTrue($distributorAccountId->equals($rebuilt->creditAccountId()));
     }
 
     public function testRegisteringWithoutDateUsesTheCurrentMoment(): void

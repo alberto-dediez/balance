@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Balance\Application\ProjectContribution\Quote;
 
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
 final class QuoteContributionRequest
@@ -18,5 +19,7 @@ final class QuoteContributionRequest
         public readonly bool $contributorIsCompany = false,
         public readonly ?string $contributorVatNumber = null,
         public readonly ?\DateTimeImmutable $now = null,
+        public readonly bool $allowSharedCredit = false,
+        public readonly ?PropertyId $propertyId = null,
     ) {}
 }

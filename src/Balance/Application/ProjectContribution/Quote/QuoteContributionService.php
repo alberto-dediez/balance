@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Balance\Application\ProjectContribution\Quote;
 
-use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
+use App\Balance\Application\CreditPurchase\Balance\CreditSource;
+use App\Balance\Application\CreditPurchase\Balance\CreditSourceSelector;
 use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Domain\Model\Project\Project;
@@ -21,9 +22,9 @@ final class QuoteContributionService
     public function __construct(
         private ProjectRepository $projectRepository,
         private AccountProjectRepository $accountProjectRepository,
-        private CreditAvailability $creditAvailability,
         private ContributionCalculator $contributionCalculator,
         private AccountFeaturesPolicy $accountFeaturesPolicy,
+        private CreditSourceSelector $creditSourceSelector,
     ) {}
 
     public function __invoke(QuoteContributionRequest $request): QuoteContributionResponse
@@ -39,11 +40,9 @@ final class QuoteContributionService
             throw new ProjectNotContributableException($request->projectId);
         }
 
-        $adhered = $this->accountProjectRepository->findByFilter(
-            new AccountProjectFilter(accountId: $request->accountId, projectId: $request->projectId, limit: 1),
-        );
+        $limitedByCredit = ProjectType::EmissionCompensation === $project->projectType();
 
-        if (0 === count($adhered)) {
+        if (!$this->hasAdhered($request) && !($limitedByCredit && $this->hasSharedCandidate($request, $now))) {
             throw new ProjectNotContributableException($request->projectId);
         }
 
@@ -54,22 +53,68 @@ final class QuoteContributionService
             throw new ProjectNotContributableException($request->projectId);
         }
 
-        $limitedByCredit = ProjectType::EmissionCompensation === $project->projectType();
+        $amounts = $this->amounts($request, $pricePerTonne, $costPerTonne);
         $availableTonnes = \INF;
+        $creditAccountId = $request->accountId;
 
         if ($limitedByCredit) {
-            $availableTonnes = $this->creditAvailability
-                ->for($request->accountId, $request->projectId, $now)
-                ->availableTonnes()
-            ;
+            $source = $this->creditSourceSelector->select(
+                accountId: $request->accountId,
+                projectId: $request->projectId,
+                allowShared: $request->allowSharedCredit,
+                propertyId: $request->propertyId,
+                tonnes: $amounts->tonnes,
+                now: $now,
+            );
+
+            $availableTonnes = $this->creditSourceSelector->maxAvailableTonnes(
+                accountId: $request->accountId,
+                projectId: $request->projectId,
+                allowShared: $request->allowSharedCredit,
+                propertyId: $request->propertyId,
+                now: $now,
+            );
+
+            $creditAccountId = $source instanceof CreditSource ? $source->accountId : $request->accountId;
         }
 
         return new QuoteContributionResponse(
             project: $project,
-            amounts: $this->amounts($request, $pricePerTonne, $costPerTonne),
+            amounts: $amounts,
             limitedByCredit: $limitedByCredit,
             availableTonnes: $availableTonnes,
+            creditAccountId: $creditAccountId,
         );
+    }
+
+    private function hasAdhered(QuoteContributionRequest $request): bool
+    {
+        return [] !== $this->accountProjectRepository->findByFilter(
+            new AccountProjectFilter(accountId: $request->accountId, projectId: $request->projectId, limit: 1),
+        );
+    }
+
+    private function hasSharedCandidate(QuoteContributionRequest $request, \DateTimeImmutable $now): bool
+    {
+        if (!$request->allowSharedCredit) {
+            return false;
+        }
+
+        $candidates = $this->creditSourceSelector->candidates(
+            accountId: $request->accountId,
+            projectId: $request->projectId,
+            allowShared: true,
+            propertyId: $request->propertyId,
+            now: $now,
+        );
+
+        foreach ($candidates as $candidate) {
+            if ($candidate->shared) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function amounts(

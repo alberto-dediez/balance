@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Application\ProjectContribution\Quote;
 
-use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionRequest;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\ProjectContribution\ContributionCalculator;
@@ -19,6 +19,7 @@ use App\Payments\Domain\Model\Vat\VatNumberFormatValidator;
 use App\Payments\Infrastructure\Vat\InMemory\InMemoryVatCountryProvider;
 use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\Balance\Application\CreditPurchase\Balance\CreditSourceSelectorMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
@@ -27,7 +28,9 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\DistributorAssignment\DistributorAssignmentMother;
 use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use PHPUnit\Framework\TestCase;
 
 class QuoteContributionServiceTest extends TestCase
@@ -35,10 +38,12 @@ class QuoteContributionServiceTest extends TestCase
     private AccountId $accountId;
     private ProjectId $projectId;
     private InMemoryProjectContributionRepository $contributions;
+    private AccountId $distributorAccountId;
 
     protected function setUp(): void
     {
         $this->accountId = AccountId::generate();
+        $this->distributorAccountId = AccountId::generate();
         $this->projectId = ProjectId::generate();
         $this->contributions = ProjectContributionRepositoryMother::inMemory();
     }
@@ -170,12 +175,63 @@ class QuoteContributionServiceTest extends TestCase
         $sut($this->request(co2eqKg: null));
     }
 
+    public function testTheDistributorCreditBacksTheQuoteWhenTheOwnCreditIsNotEnough(): void
+    {
+        $response = $this->createSUT(purchasedTonnes: 1.0, sharedTonnes: 8.0)($this->request(allowSharedCredit: true));
+
+        $this->assertTrue($response->limitedByCredit);
+        $this->assertNotNull($response->creditAccountId);
+        $this->assertTrue($this->distributorAccountId->equals($response->creditAccountId));
+        $this->assertSame(8.0, $response->availableTonnes);
+    }
+
+    public function testTheOwnCreditBacksTheQuoteWhenItIsEnough(): void
+    {
+        $response = $this->createSUT(purchasedTonnes: 3.0, sharedTonnes: 8.0)($this->request(allowSharedCredit: true));
+
+        $this->assertNotNull($response->creditAccountId);
+        $this->assertTrue($this->accountId->equals($response->creditAccountId));
+        $this->assertSame(8.0, $response->availableTonnes);
+    }
+
+    public function testWithoutSharedCreditAllowedTheOwnAccountBacksTheQuote(): void
+    {
+        $response = $this->createSUT(purchasedTonnes: 1.0, sharedTonnes: 8.0)($this->request());
+
+        $this->assertNotNull($response->creditAccountId);
+        $this->assertTrue($this->accountId->equals($response->creditAccountId));
+        $this->assertSame(1.0, $response->availableTonnes);
+    }
+
+    public function testANotAdheredAccountIsQuotedWithTheDistributorCredit(): void
+    {
+        $response = $this->createSUT(purchasedTonnes: 0.0, adhered: false, sharedTonnes: 8.0)($this->request(allowSharedCredit: true));
+
+        $this->assertNotNull($response->creditAccountId);
+        $this->assertTrue($this->distributorAccountId->equals($response->creditAccountId));
+    }
+
+    public function testRejectsAProjectWithoutAdhesionNorSharedCredit(): void
+    {
+        $this->expectException(ProjectNotContributableException::class);
+
+        $this->createSUT(purchasedTonnes: 0.0, adhered: false)($this->request(allowSharedCredit: true));
+    }
+
+    public function testRejectsAProjectWithoutAdhesionWhenSharedCreditIsNotAllowed(): void
+    {
+        $this->expectException(ProjectNotContributableException::class);
+
+        $this->createSUT(purchasedTonnes: 0.0, adhered: false, sharedTonnes: 8.0)($this->request());
+    }
+
     private function request(
         ?float $co2eqKg = 2000.0,
         ?float $freeAmount = null,
         string $country = 'ESP',
         bool $isCompany = false,
         ?string $vatNumber = null,
+        bool $allowSharedCredit = false,
     ): QuoteContributionRequest {
         return new QuoteContributionRequest(
             accountId: $this->accountId,
@@ -185,6 +241,7 @@ class QuoteContributionServiceTest extends TestCase
             contributorCountry: $country,
             contributorIsCompany: $isCompany,
             contributorVatNumber: $vatNumber,
+            allowSharedCredit: $allowSharedCredit,
         );
     }
 
@@ -195,6 +252,7 @@ class QuoteContributionServiceTest extends TestCase
         float $purchasedTonnes = 10.0,
         bool $adhered = true,
         bool $compensation = true,
+        float $sharedTonnes = 0.0,
     ): QuoteContributionService {
         $projects = ProjectRepositoryMother::inMemory();
         $projects->add(ProjectMother::contributable(
@@ -218,10 +276,27 @@ class QuoteContributionServiceTest extends TestCase
             );
         }
 
+        $assignments = [];
+
+        if ($sharedTonnes > 0.0) {
+            $accountProjects->add(AccountProjectMother::from($this->distributorAccountId, $this->projectId));
+            $creditPurchases->add(CreditPurchaseMother::validated(
+                $this->distributorAccountId,
+                $this->projectId,
+                tonnes: $sharedTonnes,
+                paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            ));
+            $assignments[] = DistributorAssignmentMother::forAccount($this->distributorAccountId, $this->accountId);
+        }
+
+        $accounts = [
+            AccountMother::withFeatures('account', (string) $this->accountId, new AccountFeatures(compensation: $compensation)),
+            AccountMother::distributorAccountFromNameAndId('Greenhost', (string) $this->distributorAccountId),
+        ];
+
         return new QuoteContributionService(
             $projects,
             $accountProjects,
-            new CreditAvailability($creditPurchases, $this->contributions),
             new ContributionCalculator(new VatCalculator(
                 new VatNumberFormatValidator(),
                 new InMemoryVatCountryProvider([
@@ -230,7 +305,8 @@ class QuoteContributionServiceTest extends TestCase
                 ]),
                 homeCountry: 'ESP',
             )),
-            AccountFeaturesPolicyMother::forAccount($this->accountId, new AccountFeatures(compensation: $compensation)),
+            AccountFeaturesPolicyMother::create($accounts),
+            CreditSourceSelectorMother::create($accountProjects, $creditPurchases, $this->contributions, $accounts, $assignments),
         );
     }
 }

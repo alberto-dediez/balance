@@ -526,6 +526,7 @@ final class BalanceContext implements Context
         string $expiresAt,
         ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
         ?string $originId = null,
+        ?string $creditAccountId = null,
     ): void {
         $contribution = new ProjectContribution(id: new ProjectContributionId($id));
         $payment = PaymentMother::pending(subjectId: $id);
@@ -560,9 +561,42 @@ final class BalanceContext implements Context
             locale: Locale::Spanish,
             expiresAt: new \DateTimeImmutable($expiresAt),
             paymentId: $payment->id(),
+            creditAccountId: null !== $creditAccountId ? new AccountId($creditAccountId) : null,
         );
 
         $this->getProjectContributionRepository()->add($contribution);
+    }
+
+    #[Given('contribution :id of account :accountId backed by the credit of account :creditAccountId for project :projectId with :tonnes tonnes is pending until :expiresAt')]
+    public function pendingContributionBackedByTheCreditOfAnotherAccountExists(
+        string $id,
+        string $accountId,
+        string $creditAccountId,
+        string $projectId,
+        string $tonnes,
+        string $expiresAt,
+    ): void {
+        $this->pendingContributionExists($id, $accountId, $projectId, $tonnes, $expiresAt, creditAccountId: $creditAccountId);
+    }
+
+    #[Then('the only contribution should belong to account :accountId backed by the credit of account :creditAccountId')]
+    public function theOnlyContributionShouldBelongToAccountBackedByTheCreditOf(string $accountId, string $creditAccountId): void
+    {
+        $contributions = $this->getProjectContributionRepository()->findByFilter(new ProjectContributionFilter(limit: 0));
+
+        Assert::assertCount(1, $contributions);
+        Assert::assertSame($accountId, (string) $contributions[0]->accountId());
+        Assert::assertSame($creditAccountId, (string) $contributions[0]->creditAccountId());
+    }
+
+    #[Then('the only contribution should consume :tonnes tonnes of credit purchase :creditPurchaseId')]
+    public function theOnlyContributionShouldConsumeTonnesOfCreditPurchase(string $tonnes, string $creditPurchaseId): void
+    {
+        $contributions = $this->getProjectContributionRepository()->findByFilter(new ProjectContributionFilter(limit: 0));
+
+        Assert::assertCount(1, $contributions);
+
+        $this->contributionShouldConsumeTonnesOfCreditPurchase((string) $contributions[0]->id(), $tonnes, $creditPurchaseId);
     }
 
     #[When('the credit alerts are checked')]

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Balance\Application\ProjectContribution\Options;
 
 use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
+use App\Balance\Application\CreditPurchase\Balance\CreditSource;
+use App\Balance\Application\CreditPurchase\Balance\CreditSourceSelector;
 use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Domain\Model\Project\Project;
@@ -22,6 +24,7 @@ final class ListContributionOptionsService
         private ProjectRepository $projectRepository,
         private CreditAvailability $creditAvailability,
         private AccountFeaturesPolicy $accountFeaturesPolicy,
+        private CreditSourceSelector $creditSourceSelector,
     ) {}
 
     public function __invoke(ListContributionOptionsRequest $request): ListContributionOptionsResponse
@@ -33,17 +36,7 @@ final class ListContributionOptionsService
         $now = $request->now ?? new \DateTimeImmutable('NOW');
         $options = [];
 
-        $accountProjects = $this->accountProjectRepository->findByFilter(
-            new AccountProjectFilter(accountId: $request->accountId, limit: 0),
-        );
-
-        foreach ($accountProjects as $accountProject) {
-            $projectId = $accountProject->projectId();
-
-            if (!$projectId instanceof ProjectId) {
-                continue;
-            }
-
+        foreach ($this->projectIds($request, $now) as ['projectId' => $projectId, 'adhered' => $adhered]) {
             $project = $this->projectRepository->find($projectId);
 
             if (!$project instanceof Project || $project->isRemoved()) {
@@ -58,11 +51,16 @@ final class ListContributionOptionsService
             }
 
             $limitedByCredit = ProjectType::EmissionCompensation === $project->projectType();
+
+            if (!$limitedByCredit && !$adhered) {
+                continue;
+            }
+
             $availableTonnes = \INF;
             $ownAvailableTonnes = 0.0;
             $funding = ProjectContributionFunding::Payment;
 
-            if ($limitedByCredit) {
+            if ($limitedByCredit && $request->ownerMode) {
                 $availableTonnes = $this->creditAvailability
                     ->for($request->accountId, $projectId, $now)
                     ->availableTonnes()
@@ -72,16 +70,27 @@ final class ListContributionOptionsService
                     continue;
                 }
 
-                if ($request->ownerMode) {
-                    $ownAvailableTonnes = $this->creditAvailability->ownFor($request->accountId, $projectId, $now);
+                $ownAvailableTonnes = $this->creditAvailability->ownFor($request->accountId, $projectId, $now);
 
-                    if ($ownAvailableTonnes > 0.0) {
-                        $funding = ProjectContributionFunding::OwnCredit;
-                        $availableTonnes = $ownAvailableTonnes;
-                    }
-                } elseif (!$this->hasEnoughCredit($availableTonnes, $request->co2eqKg)) {
+                if ($ownAvailableTonnes > 0.0) {
+                    $funding = ProjectContributionFunding::OwnCredit;
+                    $availableTonnes = $ownAvailableTonnes;
+                }
+            } elseif ($limitedByCredit) {
+                $source = $this->creditSourceSelector->select(
+                    accountId: $request->accountId,
+                    projectId: $projectId,
+                    allowShared: $request->allowSharedCredit,
+                    propertyId: $request->propertyId,
+                    tonnes: null !== $request->co2eqKg ? $request->co2eqKg / 1000 : null,
+                    now: $now,
+                );
+
+                if (!$source instanceof CreditSource) {
                     continue;
                 }
+
+                $availableTonnes = $source->availableTonnes;
             }
 
             $options[] = new ContributionOption(
@@ -101,8 +110,31 @@ final class ListContributionOptionsService
         return new ListContributionOptionsResponse($options);
     }
 
-    private function hasEnoughCredit(float $availableTonnes, ?float $co2eqKg): bool
+    /** @return array<string, array{projectId: ProjectId, adhered: bool}> */
+    private function projectIds(ListContributionOptionsRequest $request, \DateTimeImmutable $now): array
     {
-        return null === $co2eqKg || $availableTonnes >= $co2eqKg / 1000;
+        $projectIds = [];
+
+        $accountProjects = $this->accountProjectRepository->findByFilter(
+            new AccountProjectFilter(accountId: $request->accountId, limit: 0),
+        );
+
+        foreach ($accountProjects as $accountProject) {
+            $projectId = $accountProject->projectId();
+
+            if ($projectId instanceof ProjectId) {
+                $projectIds[(string) $projectId] = ['projectId' => $projectId, 'adhered' => true];
+            }
+        }
+
+        if ($request->ownerMode || !$request->allowSharedCredit) {
+            return $projectIds;
+        }
+
+        foreach ($this->creditSourceSelector->sharedProjectIds($request->accountId, $request->propertyId, $now) as $projectId) {
+            $projectIds[(string) $projectId] ??= ['projectId' => $projectId, 'adhered' => false];
+        }
+
+        return $projectIds;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution;
 
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 
 final readonly class ContributionContext
@@ -16,5 +17,7 @@ final readonly class ContributionContext
         public string $originId,
         public string $originName,
         public string $token,
+        public bool $allowSharedCredit = false,
+        public ?PropertyId $propertyId = null,
     ) {}
 }

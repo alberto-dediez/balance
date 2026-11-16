@@ -11,6 +11,7 @@
         </id>
 
         <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="creditAccountId" type="account_id" column="credit_account_id" nullable="false"/>
         <field name="projectId" type="project_id" column="project_id" nullable="false"/>
         <field name="origin" type="string" column="origin" length="40" enum-type="App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin" nullable="false"/>
         <field name="originId" type="string" column="origin_id" length="36" nullable="true"/>
@@ -59,6 +60,7 @@
 
         <indexes>
             <index columns="account_id,project_id,status" name="idx_project_contribution_balance"/>
+            <index columns="credit_account_id,project_id,status" name="idx_project_contribution_credit_balance"/>
             <index columns="status,expires_at" name="idx_project_contribution_expiration"/>
             <index columns="origin,origin_id" name="idx_project_contribution_origin"/>
             <index columns="payment_id" name="idx_project_contribution_payment"/>

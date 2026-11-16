@@ -59,7 +59,7 @@ final class ReallocateAllUnderallocatedContributionsService implements CommandHa
         );
 
         foreach ($contributions as $contribution) {
-            $accountId = $contribution->accountId();
+            $accountId = $contribution->creditAccountId();
             $projectId = $contribution->projectId();
 
             if (!$accountId instanceof AccountId || !$projectId instanceof ProjectId) {

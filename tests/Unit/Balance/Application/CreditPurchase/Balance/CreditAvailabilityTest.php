@@ -221,13 +221,141 @@ class CreditAvailabilityTest extends TestCase
         $this->assertSame(0.0, $own);
     }
 
+    public function testSharedAvailabilityOnlyCountsTheLotsBioscorePaid(): void
+    {
+        $accountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $creditPurchases = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchases->add(CreditPurchaseMother::validated($accountId, $projectId, tonnes: 5.0));
+        $creditPurchases->add(CreditPurchaseMother::validated(
+            $accountId,
+            $projectId,
+            tonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+        ));
+
+        $shared = $this->createSUT($creditPurchases)->sharedFor($accountId, $projectId);
+
+        $this->assertSame(10.0, $shared);
+    }
+
+    public function testSharedAvailabilityDiscountsWhatIsAlreadyAllocatedToThoseLots(): void
+    {
+        $distributorAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $bioscorePurchase = CreditPurchaseMother::validated(
+            $distributorAccountId,
+            $projectId,
+            tonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+        );
+
+        $creditPurchases = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchases->add($bioscorePurchase);
+
+        $contributions = ProjectContributionRepositoryMother::inMemory();
+        $contributions->add($this->allocatedTo($bioscorePurchase, AccountId::generate(), $projectId, tonnes: 2.0, creditAccountId: $distributorAccountId));
+
+        $shared = $this->createSUT($creditPurchases, $contributions)->sharedFor($distributorAccountId, $projectId);
+
+        $this->assertSame(8.0, $shared);
+    }
+
+    public function testSharedAvailabilityNeverExceedsTheGlobalOne(): void
+    {
+        $distributorAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $creditPurchases = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchases->add(CreditPurchaseMother::validated(
+            $distributorAccountId,
+            $projectId,
+            tonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+        ));
+        $creditPurchases->add(CreditPurchaseMother::validated($distributorAccountId, $projectId, tonnes: 5.0));
+
+        $contributions = ProjectContributionRepositoryMother::inMemory();
+        $contributions->add(ProjectContributionMother::pending($distributorAccountId, $projectId, tonnes: 12.0));
+
+        $shared = $this->createSUT($creditPurchases, $contributions)->sharedFor($distributorAccountId, $projectId);
+
+        $this->assertSame(3.0, $shared);
+    }
+
+    public function testContributionsOfAnotherAccountBackedByTheCreditConsumeIt(): void
+    {
+        $distributorAccountId = AccountId::generate();
+        $hotelAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $creditPurchases = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchases->add(CreditPurchaseMother::validated($distributorAccountId, $projectId, tonnes: 10.0));
+
+        $contributions = ProjectContributionRepositoryMother::inMemory();
+        $contributions->add(ProjectContributionMother::pendingWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 2.0));
+
+        $sut = $this->createSUT($creditPurchases, $contributions);
+
+        $this->assertSame(8.0, $sut->for($distributorAccountId, $projectId)->availableTonnes());
+        $this->assertSame(0.0, $sut->for($hotelAccountId, $projectId)->consumedTonnes());
+    }
+
+    public function testSharedReservationsWithoutLotDiscountTheSharedAvailability(): void
+    {
+        $distributorAccountId = AccountId::generate();
+        $hotelAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $creditPurchases = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchases->add(CreditPurchaseMother::validated(
+            $distributorAccountId,
+            $projectId,
+            tonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+        ));
+        $creditPurchases->add(CreditPurchaseMother::validated($distributorAccountId, $projectId, tonnes: 20.0));
+
+        $contributions = ProjectContributionRepositoryMother::inMemory();
+        $contributions->add(ProjectContributionMother::pendingWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 2.0));
+
+        $sut = $this->createSUT($creditPurchases, $contributions);
+
+        $this->assertSame(8.0, $sut->sharedFor($distributorAccountId, $projectId));
+        $this->assertSame(20.0, $sut->ownFor($distributorAccountId, $projectId));
+    }
+
+    public function testSharedReservationsCannotExceedTheBioscoreCreditEvenWithClientPaidLots(): void
+    {
+        $distributorAccountId = AccountId::generate();
+        $hotelAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+
+        $creditPurchases = CreditPurchaseRepositoryMother::inMemory();
+        $creditPurchases->add(CreditPurchaseMother::validated(
+            $distributorAccountId,
+            $projectId,
+            tonnes: 10.0,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+        ));
+        $creditPurchases->add(CreditPurchaseMother::validated($distributorAccountId, $projectId, tonnes: 5.0));
+
+        $contributions = ProjectContributionRepositoryMother::inMemory();
+        $contributions->add(ProjectContributionMother::pendingWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 10.0));
+
+        $this->assertSame(0.0, $this->createSUT($creditPurchases, $contributions)->sharedFor($distributorAccountId, $projectId));
+    }
+
     private function allocatedTo(
         CreditPurchase $creditPurchase,
         AccountId $accountId,
         ProjectId $projectId,
         float $tonnes,
+        ?AccountId $creditAccountId = null,
     ): ProjectContribution {
-        $projectContribution = ProjectContributionMother::paid($accountId, $projectId, tonnes: $tonnes);
+        $projectContribution = ProjectContributionMother::paid($accountId, $projectId, tonnes: $tonnes, creditAccountId: $creditAccountId);
         $projectContribution->allocateCredits([
             new AllocatedCreditLine(
                 position: 0,

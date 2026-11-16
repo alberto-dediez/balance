@@ -69,6 +69,7 @@ class CheckoutController extends AbstractController
                 originId: $responseId,
                 originName: $survey->event->name(),
                 token: $token,
+                allowSharedCredit: true,
             ),
             $this->contributionRoutes($token, $responseId),
             $projectId,

@@ -60,6 +60,7 @@ class ChooseController extends AbstractController
         $options = $listContributionOptions(new ListContributionOptionsRequest(
             accountId: $accountId,
             co2eqKg: (float) $response->emissions()->co2eq(),
+            allowSharedCredit: true,
         ));
 
         $covers = [];

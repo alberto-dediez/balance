@@ -71,6 +71,7 @@ class ResultController extends AbstractController
             $options = $listContributionOptions(new ListContributionOptionsRequest(
                 accountId: $accountId,
                 co2eqKg: (float) $attendeeSurveyResponse->emissions()->co2eq(),
+                allowSharedCredit: true,
             ));
 
             $hasContributionOptions = !$options->isEmpty();

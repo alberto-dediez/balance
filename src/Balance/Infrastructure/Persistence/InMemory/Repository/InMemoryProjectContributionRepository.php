@@ -51,11 +51,16 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
     private function matches(ProjectContribution $projectContribution, ProjectContributionFilter $filter): bool
     {
         $accountId = $projectContribution->accountId();
+        $creditAccountId = $projectContribution->creditAccountId();
         $projectId = $projectContribution->projectId();
         $paymentId = $projectContribution->paymentId();
         $expiresAt = $projectContribution->expiresAt();
 
         if (null !== $filter->accountId && (null === $accountId || !$filter->accountId->equals($accountId))) {
+            return false;
+        }
+
+        if (null !== $filter->creditAccountId && (null === $creditAccountId || !$filter->creditAccountId->equals($creditAccountId))) {
             return false;
         }
 
@@ -139,17 +144,17 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         return count($this->findByFilter($clonedFilter));
     }
 
-    public function committedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float
+    public function committedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float
     {
-        return $this->committedTonnesByAccount($accountId, $now)[(string) $projectId] ?? 0.0;
+        return $this->committedTonnesByAccount($creditAccountId, $now)[(string) $projectId] ?? 0.0;
     }
 
     /** @return array<string, float> */
-    public function committedTonnesByAccount(AccountId $accountId, \DateTimeImmutable $now): array
+    public function committedTonnesByAccount(AccountId $creditAccountId, \DateTimeImmutable $now): array
     {
         $committed = [];
 
-        foreach ($this->findByFilter(new ProjectContributionFilter(accountId: $accountId, limit: 0)) as $projectContribution) {
+        foreach ($this->findByFilter(new ProjectContributionFilter(creditAccountId: $creditAccountId, limit: 0)) as $projectContribution) {
             $projectId = $projectContribution->projectId();
 
             if (!$projectId instanceof ProjectId || $projectContribution->funding()->isImported() || !$projectContribution->reservesCredit($now)) {
@@ -164,12 +169,12 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
     }
 
     /** @return array<string, float> */
-    public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array
+    public function allocatedTonnesByPurchase(AccountId $creditAccountId, ProjectId $projectId): array
     {
         $allocated = [];
 
         $contributions = $this->findByFilter(new ProjectContributionFilter(
-            accountId: $accountId,
+            creditAccountId: $creditAccountId,
             projectId: $projectId,
             limit: 0,
         ));
@@ -186,14 +191,14 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
 
     /** @return array<string, float> */
     public function committedAllocatedTonnesByPurchase(
-        AccountId $accountId,
+        AccountId $creditAccountId,
         ProjectId $projectId,
         \DateTimeImmutable $now,
     ): array {
         $allocated = [];
 
         $contributions = $this->findByFilter(new ProjectContributionFilter(
-            accountId: $accountId,
+            creditAccountId: $creditAccountId,
             projectId: $projectId,
             limit: 0,
         ));
@@ -213,11 +218,11 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
     }
 
     /** @return list<ProjectContribution> */
-    public function underallocatedContributions(?AccountId $accountId, ?ProjectId $projectId): array
+    public function underallocatedContributions(?AccountId $creditAccountId, ?ProjectId $projectId): array
     {
         $contributions = array_values(array_filter(
             $this->findByFilter(new ProjectContributionFilter(
-                accountId: $accountId,
+                creditAccountId: $creditAccountId,
                 projectId: $projectId,
                 status: ProjectContributionStatus::Paid,
                 limit: 0,
@@ -257,11 +262,11 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
     }
 
     /** @return array<string, list<ProjectContributionCreditAllocation>> */
-    public function findAllocationsByAccount(AccountId $accountId): array
+    public function findAllocationsByAccount(AccountId $creditAccountId): array
     {
         $allocations = [];
 
-        foreach ($this->findByFilter(new ProjectContributionFilter(accountId: $accountId, limit: 0)) as $projectContribution) {
+        foreach ($this->findByFilter(new ProjectContributionFilter(creditAccountId: $creditAccountId, limit: 0)) as $projectContribution) {
             foreach ($projectContribution->creditAllocations() as $allocation) {
                 $allocations[(string) $allocation->creditPurchaseId()][] = $allocation;
             }
@@ -279,6 +284,27 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         return $allocations;
     }
 
+    public function unallocatedSharedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float
+    {
+        $unallocated = 0.0;
+
+        $contributions = $this->findByFilter(new ProjectContributionFilter(
+            creditAccountId: $creditAccountId,
+            projectId: $projectId,
+            limit: 0,
+        ));
+
+        foreach ($contributions as $projectContribution) {
+            if (!$projectContribution->usesSharedCredit() || $projectContribution->funding()->isImported() || !$projectContribution->reservesCredit($now)) {
+                continue;
+            }
+
+            $unallocated += max(0.0, $projectContribution->tonnes() - $projectContribution->allocatedTonnes());
+        }
+
+        return $unallocated;
+    }
+
     public function committedTonnesForProject(ProjectId $projectId, \DateTimeImmutable $now): float
     {
         $committed = 0.0;
@@ -292,12 +318,12 @@ class InMemoryProjectContributionRepository implements ProjectContributionReposi
         return $committed;
     }
 
-    public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float
+    public function reservedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float
     {
         $reserved = 0.0;
 
         $pending = $this->findByFilter(new ProjectContributionFilter(
-            accountId: $accountId,
+            creditAccountId: $creditAccountId,
             projectId: $projectId,
             status: ProjectContributionStatus::Pending,
             limit: 0,

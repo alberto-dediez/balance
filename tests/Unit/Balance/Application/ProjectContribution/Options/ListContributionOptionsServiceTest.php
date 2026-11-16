@@ -16,8 +16,13 @@ use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryAccountPr
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryCreditPurchaseRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectContributionRepository;
 use App\Balance\Infrastructure\Persistence\InMemory\Repository\InMemoryProjectRepository;
+use App\Property\Domain\Model\DistributorAssignment\DistributorAssignment;
+use App\Property\Domain\Model\Property\Property;
+use App\Property\Domain\Model\Property\PropertyId;
+use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Tests\Unit\Balance\Application\CreditPurchase\Balance\CreditSourceSelectorMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
@@ -26,7 +31,10 @@ use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionMother;
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\DistributorAssignment\DistributorAssignmentMother;
+use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use PHPUnit\Framework\TestCase;
 
 class ListContributionOptionsServiceTest extends TestCase
@@ -36,10 +44,18 @@ class ListContributionOptionsServiceTest extends TestCase
     private InMemoryAccountProjectRepository $accountProjects;
     private InMemoryCreditPurchaseRepository $creditPurchases;
     private InMemoryProjectContributionRepository $contributions;
+    private Account $distributor;
+
+    /** @var list<DistributorAssignment> */
+    private array $assignments = [];
+
+    /** @var list<Property> */
+    private array $properties = [];
 
     protected function setUp(): void
     {
         $this->accountId = AccountId::generate();
+        $this->distributor = AccountMother::distributorAccountFromNameAndId('Greenhost', (string) AccountId::generate());
         $this->projects = ProjectRepositoryMother::inMemory();
         $this->accountProjects = AccountProjectRepositoryMother::inMemory();
         $this->creditPurchases = CreditPurchaseRepositoryMother::inMemory();
@@ -221,6 +237,130 @@ class ListContributionOptionsServiceTest extends TestCase
         $this->assertTrue($response->isEmpty());
     }
 
+    public function testOffersTheDistributorProjectToADistributedAccountNotAdheredToIt(): void
+    {
+        $this->distributeAccount();
+        $project = $this->distributorProject(10.0);
+
+        $option = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, co2eqKg: 2000.0, allowSharedCredit: true))
+            ->find((string) $project->id());
+
+        $this->assertNotNull($option);
+        $this->assertTrue($option->limitedByCredit);
+        $this->assertSame(10.0, $option->availableTonnes);
+        $this->assertSame(ProjectContributionFunding::Payment, $option->funding);
+    }
+
+    public function testWithoutSharedCreditAllowedTheDistributorProjectIsNotOffered(): void
+    {
+        $this->distributeAccount();
+        $this->distributorProject(10.0);
+        $ownProject = $this->adheredProject(purchasedTonnes: 10.0);
+
+        $response = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, co2eqKg: 2000.0));
+
+        $this->assertCount(1, $response->options);
+        $this->assertNotNull($response->find((string) $ownProject->id()));
+    }
+
+    public function testTheDistributorProjectIsNotOfferedWithoutCompensationInTheDistributor(): void
+    {
+        $this->distributor->changeFeatures(new AccountFeatures(compensation: false));
+        $this->distributeAccount();
+        $this->distributorProject(10.0);
+
+        $response = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, allowSharedCredit: true));
+
+        $this->assertTrue($response->isEmpty());
+    }
+
+    public function testTheDistributorProjectIsNotOfferedWithoutCompensationInTheDistributedAccount(): void
+    {
+        $this->distributeAccount();
+        $this->distributorProject(10.0);
+
+        $response = $this->createSUT(new AccountFeatures(compensation: false))(new ListContributionOptionsRequest($this->accountId, allowSharedCredit: true));
+
+        $this->assertTrue($response->isEmpty());
+    }
+
+    public function testAnAdheredProjectWithoutOwnCreditIsCoveredByTheDistributor(): void
+    {
+        $this->distributeAccount();
+        $project = $this->distributorProject(10.0);
+        $this->accountProjects->add(AccountProjectMother::from($this->accountId, $project->id()));
+
+        $option = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, co2eqKg: 2000.0, allowSharedCredit: true))
+            ->find((string) $project->id());
+
+        $this->assertNotNull($option);
+        $this->assertSame(10.0, $option->availableTonnes);
+    }
+
+    public function testInOwnerModeTheDistributorCreditIsNeverOffered(): void
+    {
+        $this->distributeAccount();
+        $sharedProject = $this->distributorProject(10.0);
+        $this->accountProjects->add(AccountProjectMother::from($this->accountId, $sharedProject->id()));
+        $ownProject = $this->adheredProject(purchasedTonnes: 3.0);
+
+        $response = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, ownerMode: true, allowSharedCredit: true));
+
+        $this->assertNull($response->find((string) $sharedProject->id()));
+
+        $option = $response->find((string) $ownProject->id());
+
+        $this->assertNotNull($option);
+        $this->assertSame(ProjectContributionFunding::OwnCredit, $option->funding);
+        $this->assertSame(3.0, $option->availableTonnes);
+    }
+
+    public function testAPropertyAssignmentOnlyOffersCreditForThatProperty(): void
+    {
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel 1', $this->accountId);
+        $this->properties[] = $property;
+        $this->assignments[] = DistributorAssignmentMother::forProperty($this->distributor->id(), $property->id());
+        $project = $this->distributorProject(10.0);
+
+        $sut = $this->createSUT();
+
+        $this->assertTrue($sut(new ListContributionOptionsRequest($this->accountId, allowSharedCredit: true))->isEmpty());
+        $this->assertNotNull(
+            $sut(new ListContributionOptionsRequest($this->accountId, allowSharedCredit: true, propertyId: $property->id()))
+                ->find((string) $project->id()),
+        );
+    }
+
+    public function testASocialProjectOfTheDistributorIsNotOffered(): void
+    {
+        $this->distributeAccount();
+        $this->distributorProject(10.0, ProjectType::SocialProject);
+
+        $response = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, allowSharedCredit: true));
+
+        $this->assertTrue($response->isEmpty());
+    }
+
+    private function distributeAccount(): void
+    {
+        $this->assignments[] = DistributorAssignmentMother::forAccount($this->distributor->id(), $this->accountId);
+    }
+
+    private function distributorProject(float $sharedTonnes, ProjectType $projectType = ProjectType::EmissionCompensation): Project
+    {
+        $project = ProjectMother::contributable(projectType: $projectType, id: ProjectId::generate());
+        $this->projects->add($project);
+        $this->accountProjects->add(AccountProjectMother::from($this->distributor->id(), $project->id()));
+        $this->creditPurchases->add(CreditPurchaseMother::validated(
+            $this->distributor->id(),
+            $project->id(),
+            tonnes: $sharedTonnes,
+            paymentType: CreditPurchasePaymentType::PaidByBioscore,
+        ));
+
+        return $project;
+    }
+
     private function adheredProject(
         float $purchasedTonnes,
         ProjectType $projectType = ProjectType::EmissionCompensation,
@@ -254,11 +394,21 @@ class ListContributionOptionsServiceTest extends TestCase
 
     private function createSUT(AccountFeatures $features = new AccountFeatures()): ListContributionOptionsService
     {
+        $accounts = [AccountMother::withFeatures('account', (string) $this->accountId, $features), $this->distributor];
+
         return new ListContributionOptionsService(
             $this->accountProjects,
             $this->projects,
             new CreditAvailability($this->creditPurchases, $this->contributions),
-            AccountFeaturesPolicyMother::forAccount($this->accountId, $features),
+            AccountFeaturesPolicyMother::create($accounts),
+            CreditSourceSelectorMother::create(
+                $this->accountProjects,
+                $this->creditPurchases,
+                $this->contributions,
+                $accounts,
+                $this->assignments,
+                $this->properties,
+            ),
         );
     }
 }

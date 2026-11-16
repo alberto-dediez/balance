@@ -31,7 +31,7 @@ Si tienes activado el segundo factor (o tu plataforma lo exige a todos), despué
 - Con **aplicación de autenticación**: escribe el código que muestra la aplicación de tu móvil.
 - Con **email**: te llega un código de 6 dígitos a tu correo. Si no lo recibes, pulsa **¿No has recibido el código? Reenviar**.
 
-Escribe el código en **Código de verificación** y pulsa **Verificar**. Si te equivocas, verás **Código incorrecto. Te quedan {n} intentos.** con el número de intentos que te quedan. Para volver atrás pulsa **Cancelar y volver al acceso**.
+Escribe el código en **Código de verificación** y pulsa **Verificar**. Si te equivocas, verás **Código incorrecto. Te quedan … intentos.** con el número de intentos que te quedan. Para volver atrás pulsa **Cancelar y volver al acceso**.
 
 ## Recuperar la contraseña
 

@@ -54,3 +54,4 @@ services:
     App\Payments\Domain\Model\Payee\PayeeSubjectDirectory: '@App\Balance\Infrastructure\Payee\AccountAndProjectPayeeSubjectDirectory'
     App\Payments\Domain\Model\Payout\PayoutStatementLinesProvider: '@App\Balance\Infrastructure\Payout\LedgerPayoutStatementLinesProvider'
     App\Payments\Infrastructure\UI\Web\Admin\Payee\PayeeSettlementProvider: '@App\Balance\Infrastructure\Payee\LedgerPayeeSettlementProvider'
+    App\Balance\Domain\Model\CreditPurchase\SharedCreditProviders: '@App\Balance\Infrastructure\SharedCredit\DistributorSharedCreditProviders'

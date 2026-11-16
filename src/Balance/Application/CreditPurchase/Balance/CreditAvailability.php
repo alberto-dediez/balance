@@ -33,28 +33,20 @@ final class CreditAvailability
 
     public function ownFor(AccountId $accountId, ProjectId $projectId, ?\DateTimeImmutable $now = null): float
     {
-        $purchases = $this->creditPurchaseRepository->findByFilter(new CreditPurchaseFilter(
-            accountId: $accountId,
-            projectId: $projectId,
-            status: CreditPurchaseStatus::Validated,
-            paymentType: CreditPurchasePaymentType::PaidByClient,
-            limit: 0,
-        ));
+        return $this->availableByPaymentType($accountId, $projectId, CreditPurchasePaymentType::PaidByClient, 0.0, $now);
+    }
 
-        $allocated = $this->projectContributionRepository->allocatedTonnesByPurchase($accountId, $projectId);
+    public function sharedFor(AccountId $accountId, ProjectId $projectId, ?\DateTimeImmutable $now = null): float
+    {
+        $now ??= new \DateTimeImmutable('NOW');
 
-        $ownPurchased = 0.0;
-        $ownAllocated = 0.0;
-
-        foreach ($purchases as $creditPurchase) {
-            $ownPurchased += $creditPurchase->availableTonnes();
-            $ownAllocated += $allocated[(string) $creditPurchase->id()] ?? 0.0;
-        }
-
-        return max(0.0, min(
-            $ownPurchased - $ownAllocated,
-            $this->for($accountId, $projectId, $now)->availableTonnes(),
-        ));
+        return $this->availableByPaymentType(
+            $accountId,
+            $projectId,
+            CreditPurchasePaymentType::PaidByBioscore,
+            $this->projectContributionRepository->unallocatedSharedTonnes($accountId, $projectId, $now),
+            $now,
+        );
     }
 
     /** @return array<CreditBalance> */
@@ -70,6 +62,37 @@ final class CreditAvailability
             ),
             $this->creditPurchaseRepository->balancesByAccount($accountId),
         );
+    }
+
+    private function availableByPaymentType(
+        AccountId $accountId,
+        ProjectId $projectId,
+        CreditPurchasePaymentType $paymentType,
+        float $committedWithoutLotTonnes,
+        ?\DateTimeImmutable $now,
+    ): float {
+        $purchases = $this->creditPurchaseRepository->findByFilter(new CreditPurchaseFilter(
+            accountId: $accountId,
+            projectId: $projectId,
+            status: CreditPurchaseStatus::Validated,
+            paymentType: $paymentType,
+            limit: 0,
+        ));
+
+        $allocated = $this->projectContributionRepository->allocatedTonnesByPurchase($accountId, $projectId);
+
+        $purchased = 0.0;
+        $allocatedToPurchases = 0.0;
+
+        foreach ($purchases as $creditPurchase) {
+            $purchased += $creditPurchase->availableTonnes();
+            $allocatedToPurchases += $allocated[(string) $creditPurchase->id()] ?? 0.0;
+        }
+
+        return max(0.0, min(
+            $purchased - $allocatedToPurchases - $committedWithoutLotTonnes,
+            $this->for($accountId, $projectId, $now)->availableTonnes(),
+        ));
     }
 
     private function withConsumed(CreditBalance $balance, float $consumedTonnes): CreditBalance

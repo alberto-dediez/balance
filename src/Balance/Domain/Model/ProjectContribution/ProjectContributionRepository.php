@@ -22,31 +22,33 @@ interface ProjectContributionRepository
 
     public function totalResultsByFilter(ProjectContributionFilter $filter): int;
 
-    public function committedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float;
+    public function committedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float;
 
     /** @return array<string, float> */
-    public function committedTonnesByAccount(AccountId $accountId, \DateTimeImmutable $now): array;
+    public function committedTonnesByAccount(AccountId $creditAccountId, \DateTimeImmutable $now): array;
 
-    public function reservedTonnes(AccountId $accountId, ProjectId $projectId, \DateTimeImmutable $now): float;
+    public function reservedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float;
+
+    public function unallocatedSharedTonnes(AccountId $creditAccountId, ProjectId $projectId, \DateTimeImmutable $now): float;
 
     public function committedTonnesForProject(ProjectId $projectId, \DateTimeImmutable $now): float;
 
     /** @return array<string, float> */
-    public function allocatedTonnesByPurchase(AccountId $accountId, ProjectId $projectId): array;
+    public function allocatedTonnesByPurchase(AccountId $creditAccountId, ProjectId $projectId): array;
 
     /** @return array<string, float> */
     public function committedAllocatedTonnesByPurchase(
-        AccountId $accountId,
+        AccountId $creditAccountId,
         ProjectId $projectId,
         \DateTimeImmutable $now,
     ): array;
 
     /** @return list<ProjectContribution> */
-    public function underallocatedContributions(?AccountId $accountId, ?ProjectId $projectId): array;
+    public function underallocatedContributions(?AccountId $creditAccountId, ?ProjectId $projectId): array;
 
     /** @return list<ProjectContributionCreditAllocation> */
     public function findAllocationsByCreditPurchase(CreditPurchaseId $creditPurchaseId): array;
 
     /** @return array<string, list<ProjectContributionCreditAllocation>> */
-    public function findAllocationsByAccount(AccountId $accountId): array;
+    public function findAllocationsByAccount(AccountId $creditAccountId): array;
 }

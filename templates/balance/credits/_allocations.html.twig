@@ -134,7 +134,9 @@
             <td>{{ purchasedTonnes > 0 ? ((element.tonnes / purchasedTonnes * 100) | number_format(2, ',', '.') ~ ' %') : '-' }}</td>
             <td>{{ contribution.registeredAt | date('d/m/Y') }}</td>
             <td>
-                <twig:List:Action:View path="{{ path(contributionRoute, {'projectContributionId': contribution.id}) }}" />
+                {% if contribution | is_authorized('view') %}
+                    <twig:List:Action:View path="{{ path(contributionRoute, {'projectContributionId': contribution.id}) }}" />
+                {% endif %}
             </td>
         </twig:List:Table>
     {% endif %}

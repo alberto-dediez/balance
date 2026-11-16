@@ -73,6 +73,8 @@ class ResultController extends AbstractController
             $options = $listContributionOptions(new ListContributionOptionsRequest(
                 accountId: $accountId,
                 co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
+                allowSharedCredit: true,
+                propertyId: $response->property?->id(),
             ));
 
             $hasContributionOptions = !$options->isEmpty();

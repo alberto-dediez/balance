@@ -7,6 +7,7 @@ namespace App\Balance\Application\ProjectContribution\Register;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Domain\Model\Locale\Locale;
 
@@ -31,5 +32,7 @@ final class RegisterProjectContributionRequest
         public readonly ?string $contributorVatNumber = null,
         public readonly ?Locale $locale = null,
         public readonly ?\DateTimeImmutable $now = null,
+        public readonly bool $allowSharedCredit = false,
+        public readonly ?PropertyId $propertyId = null,
     ) {}
 }

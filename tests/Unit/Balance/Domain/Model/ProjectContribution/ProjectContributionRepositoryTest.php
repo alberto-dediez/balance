@@ -318,6 +318,85 @@ abstract class ProjectContributionRepositoryTest extends KernelTestCase
         $this->assertTrue($second->id()->equals($contributions[1]->id()));
     }
 
+    public function testFindByFilterByCreditAccountId(): void
+    {
+        $repository = $this->createSUT();
+
+        $hotelAccountId = AccountId::generate();
+        $distributorAccountId = AccountId::generate();
+
+        $repository->add(ProjectContributionMother::paidWithSharedCredit($hotelAccountId, $distributorAccountId));
+        $repository->add(ProjectContributionMother::paid($distributorAccountId));
+        $repository->add(ProjectContributionMother::paid($hotelAccountId));
+
+        $this->assertCount(2, $repository->findByFilter(new ProjectContributionFilter(creditAccountId: $distributorAccountId, limit: 0)));
+        $this->assertCount(1, $repository->findByFilter(new ProjectContributionFilter(creditAccountId: $hotelAccountId, limit: 0)));
+        $this->assertCount(2, $repository->findByFilter(new ProjectContributionFilter(accountId: $hotelAccountId, limit: 0)));
+    }
+
+    public function testCreditConsumptionIsGroupedByCreditAccount(): void
+    {
+        $repository = $this->createSUT();
+
+        $hotelAccountId = AccountId::generate();
+        $distributorAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+        $creditPurchaseId = CreditPurchaseId::generate();
+        $now = new \DateTimeImmutable('NOW');
+
+        $repository->add($this->allocated(
+            ProjectContributionMother::paidWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 3.0),
+            $creditPurchaseId,
+            1.0,
+        ));
+        $repository->add(ProjectContributionMother::pendingWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 2.0));
+
+        $this->assertSame(5.0, $repository->committedTonnes($distributorAccountId, $projectId, $now));
+        $this->assertSame([(string) $projectId => 5.0], $repository->committedTonnesByAccount($distributorAccountId, $now));
+        $this->assertSame(2.0, $repository->reservedTonnes($distributorAccountId, $projectId, $now));
+        $this->assertSame([(string) $creditPurchaseId => 1.0], $repository->allocatedTonnesByPurchase($distributorAccountId, $projectId));
+        $this->assertSame([(string) $creditPurchaseId => 1.0], $repository->committedAllocatedTonnesByPurchase($distributorAccountId, $projectId, $now));
+        $this->assertCount(1, $repository->underallocatedContributions($distributorAccountId, $projectId));
+        $this->assertCount(1, $repository->findAllocationsByAccount($distributorAccountId)[(string) $creditPurchaseId]);
+
+        $this->assertSame(0.0, $repository->committedTonnes($hotelAccountId, $projectId, $now));
+        $this->assertSame([], $repository->committedTonnesByAccount($hotelAccountId, $now));
+        $this->assertSame(0.0, $repository->reservedTonnes($hotelAccountId, $projectId, $now));
+        $this->assertSame([], $repository->allocatedTonnesByPurchase($hotelAccountId, $projectId));
+        $this->assertSame([], $repository->committedAllocatedTonnesByPurchase($hotelAccountId, $projectId, $now));
+        $this->assertSame([], $repository->underallocatedContributions($hotelAccountId, $projectId));
+        $this->assertSame([], $repository->findAllocationsByAccount($hotelAccountId));
+    }
+
+    public function testUnallocatedSharedTonnesOnlyCountsLiveSharedContributionsWithoutLot(): void
+    {
+        $repository = $this->createSUT();
+
+        $hotelAccountId = AccountId::generate();
+        $distributorAccountId = AccountId::generate();
+        $projectId = ProjectId::generate();
+        $now = new \DateTimeImmutable('NOW');
+
+        $repository->add($this->allocated(
+            ProjectContributionMother::paidWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 3.0),
+            CreditPurchaseId::generate(),
+            1.0,
+        ));
+        $repository->add(ProjectContributionMother::pendingWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 2.0));
+        $repository->add(ProjectContributionMother::pending(
+            $hotelAccountId,
+            $projectId,
+            tonnes: 4.0,
+            expiresAt: new \DateTimeImmutable('-1 hour'),
+            creditAccountId: $distributorAccountId,
+        ));
+        $repository->add(ProjectContributionMother::paid($distributorAccountId, $projectId, tonnes: 5.0));
+        $repository->add(ProjectContributionMother::paidWithSharedCredit($hotelAccountId, $distributorAccountId, ProjectId::generate(), 6.0));
+
+        $this->assertSame(4.0, $repository->unallocatedSharedTonnes($distributorAccountId, $projectId, $now));
+        $this->assertSame(0.0, $repository->unallocatedSharedTonnes($hotelAccountId, $projectId, $now));
+    }
+
     private function allocated(
         ProjectContribution $projectContribution,
         CreditPurchaseId $creditPurchaseId,

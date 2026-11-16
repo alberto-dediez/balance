@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Balance\Application\ProjectContribution;
 
-use App\Balance\Application\CreditPurchase\Balance\CreditAvailability;
 use App\Balance\Application\ProjectContribution\Expire\ExpireProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Quote\QuoteContributionService;
 use App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionRequest;
 use App\Balance\Application\ProjectContribution\Register\RegisterProjectContributionService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\Project\Project;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectType;
@@ -34,6 +34,7 @@ use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Shared\Application\CommandBus\CommandBusDispatcher;
 use App\Shared\Domain\Model\Locale\Locale;
+use App\Tests\Unit\Balance\Application\CreditPurchase\Balance\CreditSourceSelectorMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectMother;
 use App\Tests\Unit\Balance\Domain\Model\AccountProject\AccountProjectRepositoryMother;
 use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseMother;
@@ -44,8 +45,10 @@ use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionM
 use App\Tests\Unit\Balance\Domain\Model\ProjectContribution\ProjectContributionRepositoryMother;
 use App\Tests\Unit\Notifications\Application\Notification\Send\SpyDeferredCommandHandler;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentRepositoryMother;
+use App\Tests\Unit\Property\Domain\Model\DistributorAssignment\DistributorAssignmentMother;
 use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Application\User\SystemActor\SystemActorResolverMother;
+use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
 use PHPUnit\Framework\TestCase;
 
 class RegisterProjectContributionServiceTest extends TestCase
@@ -57,10 +60,12 @@ class RegisterProjectContributionServiceTest extends TestCase
     private SpyDeferredCommandHandler $deferredCommands;
     private FakePaymentGateway $gateway;
     private FakeCreditReservationLock $lock;
+    private AccountId $distributorAccountId;
 
     protected function setUp(): void
     {
         $this->accountId = AccountId::generate();
+        $this->distributorAccountId = AccountId::generate();
         $this->projectId = ProjectId::generate();
         $this->contributions = ProjectContributionRepositoryMother::inMemory();
         CommandBusDispatcher::instance()->reset();
@@ -273,11 +278,93 @@ class RegisterProjectContributionServiceTest extends TestCase
         $sut($this->request());
     }
 
+    public function testTheContributionOfADistributedAccountIsBackedByTheDistributorCredit(): void
+    {
+        $sut = $this->createSUT(purchasedTonnes: 0.0, sharedTonnes: 10.0);
+
+        $response = $sut($this->request(allowSharedCredit: true));
+
+        $contribution = $this->contributions->find($response->projectContributionId);
+
+        $this->assertNotNull($contribution);
+        $this->assertNotNull($contribution->accountId());
+        $this->assertNotNull($contribution->creditAccountId());
+        $this->assertTrue($this->accountId->equals($contribution->accountId()));
+        $this->assertTrue($this->distributorAccountId->equals($contribution->creditAccountId()));
+        $this->assertTrue($contribution->usesSharedCredit());
+        $this->assertEquals([[$this->distributorAccountId, $this->projectId]], $this->lock->locks());
+        $this->assertSame(2.0, $this->contributions->committedTonnes($this->distributorAccountId, $this->projectId, new \DateTimeImmutable('NOW')));
+    }
+
+    public function testTheOwnCreditIsUsedWhenItIsEnough(): void
+    {
+        $sut = $this->createSUT(purchasedTonnes: 10.0, sharedTonnes: 10.0);
+
+        $response = $sut($this->request(allowSharedCredit: true));
+
+        $contribution = $this->contributions->find($response->projectContributionId);
+
+        $this->assertNotNull($contribution);
+        $this->assertFalse($contribution->usesSharedCredit());
+        $this->assertEquals([[$this->accountId, $this->projectId]], $this->lock->locks());
+    }
+
+    public function testRejectsAContributionWhenTheDistributorCreditIsExhausted(): void
+    {
+        $this->contributions->add(
+            ProjectContributionMother::pendingWithSharedCredit(AccountId::generate(), $this->distributorAccountId, $this->projectId, 9.0),
+        );
+
+        $sut = $this->createSUT(purchasedTonnes: 0.0, sharedTonnes: 10.0);
+
+        $this->expectException(InsufficientProjectCreditException::class);
+
+        $sut($this->request(allowSharedCredit: true));
+    }
+
+    public function testPendingSharedReservationsCannotBeCoveredByTheDistributorClientPaidLots(): void
+    {
+        $this->contributions->add(
+            ProjectContributionMother::pendingWithSharedCredit(AccountId::generate(), $this->distributorAccountId, $this->projectId, 9.0),
+        );
+
+        $sut = $this->createSUT(purchasedTonnes: 0.0, sharedTonnes: 10.0, distributorOwnTonnes: 5.0);
+
+        $this->expectException(InsufficientProjectCreditException::class);
+
+        $sut($this->request(allowSharedCredit: true));
+    }
+
+    public function testWithoutSharedCreditAllowedTheDistributorCreditIsNotUsed(): void
+    {
+        $sut = $this->createSUT(purchasedTonnes: 0.0, sharedTonnes: 10.0);
+
+        $this->expectException(InsufficientProjectCreditException::class);
+
+        $sut($this->request());
+    }
+
+    public function testRejectsWhenTheCreditSourceChangesWhileWaitingForTheLock(): void
+    {
+        $this->lock = new FakeCreditReservationLock(beforeReservation: function (): void {
+            $this->contributions->add(
+                ProjectContributionMother::pendingWithSharedCredit(AccountId::generate(), $this->distributorAccountId, $this->projectId, 9.0),
+            );
+        });
+
+        $sut = $this->createSUT(purchasedTonnes: 0.0, sharedTonnes: 10.0);
+
+        $this->expectException(InsufficientProjectCreditException::class);
+
+        $sut($this->request(allowSharedCredit: true));
+    }
+
     private function request(
         ?float $co2eqKg = 2000.0,
         ?float $freeAmount = null,
         ?\DateTimeImmutable $now = null,
         ?Locale $locale = null,
+        bool $allowSharedCredit = false,
     ): RegisterProjectContributionRequest {
         return new RegisterProjectContributionRequest(
             projectContributionId: ProjectContributionId::generate(),
@@ -293,6 +380,7 @@ class RegisterProjectContributionServiceTest extends TestCase
             freeAmount: $freeAmount,
             locale: $locale,
             now: $now,
+            allowSharedCredit: $allowSharedCredit,
         );
     }
 
@@ -303,6 +391,8 @@ class RegisterProjectContributionServiceTest extends TestCase
         float $purchasedTonnes = 10.0,
         bool $adhered = true,
         ?PaymentGateway $gateway = null,
+        float $sharedTonnes = 0.0,
+        float $distributorOwnTonnes = 0.0,
     ): RegisterProjectContributionService {
         $projects = ProjectRepositoryMother::inMemory();
         $projects->add($this->project($projectType, $pricePerTonne, $costPerTonne));
@@ -321,13 +411,34 @@ class RegisterProjectContributionServiceTest extends TestCase
             );
         }
 
-        $creditAvailability = new CreditAvailability($creditPurchases, $this->contributions);
+        $assignments = [];
+
+        if ($sharedTonnes > 0.0) {
+            $accountProjects->add(AccountProjectMother::from($this->distributorAccountId, $this->projectId));
+            $creditPurchases->add(CreditPurchaseMother::validated(
+                $this->distributorAccountId,
+                $this->projectId,
+                tonnes: $sharedTonnes,
+                paymentType: CreditPurchasePaymentType::PaidByBioscore,
+            ));
+            $assignments[] = DistributorAssignmentMother::forAccount($this->distributorAccountId, $this->accountId);
+        }
+
+        if ($distributorOwnTonnes > 0.0) {
+            $creditPurchases->add(
+                CreditPurchaseMother::validated($this->distributorAccountId, $this->projectId, tonnes: $distributorOwnTonnes),
+            );
+        }
+
+        $accounts = [
+            AccountMother::withFeatures('account', (string) $this->accountId, new AccountFeatures()),
+            AccountMother::distributorAccountFromNameAndId('Greenhost', (string) $this->distributorAccountId),
+        ];
 
         return new RegisterProjectContributionService(
             new QuoteContributionService(
                 $projects,
                 $accountProjects,
-                $creditAvailability,
                 new ContributionCalculator(new VatCalculator(
                     new VatNumberFormatValidator(),
                     new InMemoryVatCountryProvider([
@@ -335,7 +446,8 @@ class RegisterProjectContributionServiceTest extends TestCase
                     ]),
                     homeCountry: 'ESP',
                 )),
-                AccountFeaturesPolicyMother::forAccount($this->accountId, new AccountFeatures()),
+                AccountFeaturesPolicyMother::create($accounts),
+                CreditSourceSelectorMother::create($accountProjects, $creditPurchases, $this->contributions, $accounts, $assignments),
             ),
             $this->contributions,
             new StartPaymentService(PaymentRepositoryMother::inMemory(), $gateway ?? $this->gateway),

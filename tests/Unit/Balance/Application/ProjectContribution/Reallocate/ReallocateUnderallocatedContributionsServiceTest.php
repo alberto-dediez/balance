@@ -10,6 +10,7 @@ use App\Balance\Application\ProjectContribution\Reallocate\ReallocateUnderalloca
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateUnderallocatedContributionsResponse;
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateUnderallocatedContributionsService;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
@@ -192,6 +193,63 @@ class ReallocateUnderallocatedContributionsServiceTest extends TestCase
         $this->assertSame(0.0, $response->reallocatedTonnes);
     }
 
+    public function testASharedCreditContributionIsOnlyReallocatedWithTheDistributorLotsBioscorePaid(): void
+    {
+        $this->givenCompensationProject();
+
+        $contribution = ProjectContributionMother::paidWithSharedCredit(AccountId::generate(), $this->accountId, $this->projectId, 5.0);
+        $this->contributions->add($contribution);
+
+        $this->givenValidatedPurchase(10.0, '-3 days');
+        $bioscore = $this->givenValidatedPurchase(3.0, '-1 day', CreditPurchasePaymentType::PaidByBioscore);
+
+        $response = $this->reallocate();
+
+        $this->assertSame(1, $response->contributionsCovered);
+        $this->assertSame(3.0, $response->reallocatedTonnes);
+
+        $allocations = $contribution->creditAllocations();
+
+        $this->assertCount(1, $allocations);
+        $this->assertTrue($bioscore->id()->equals($allocations[0]->creditPurchaseId()));
+        $this->assertSame(2.0, $contribution->unallocatedTonnes());
+    }
+
+    public function testAnOwnCreditContributionIsNotReallocatedWithLotsBioscorePaid(): void
+    {
+        $this->givenCompensationProject();
+
+        $contribution = ProjectContributionMother::ownCreditFunded($this->accountId, $this->projectId, 4.0);
+        $this->contributions->add($contribution);
+
+        $this->givenValidatedPurchase(10.0, '-1 day', CreditPurchasePaymentType::PaidByBioscore);
+
+        $response = $this->reallocate();
+
+        $this->assertSame(0, $response->contributionsCovered);
+        $this->assertSame([], $contribution->creditAllocations());
+    }
+
+    public function testAnOwnCreditContributionIsReallocatedWithTheLotsTheClientPaid(): void
+    {
+        $this->givenCompensationProject();
+
+        $contribution = ProjectContributionMother::ownCreditFunded($this->accountId, $this->projectId, 4.0);
+        $this->contributions->add($contribution);
+
+        $this->givenValidatedPurchase(10.0, '-2 days', CreditPurchasePaymentType::PaidByBioscore);
+        $own = $this->givenValidatedPurchase(10.0, '-1 day');
+
+        $response = $this->reallocate();
+
+        $allocations = $contribution->creditAllocations();
+
+        $this->assertSame(1, $response->contributionsCovered);
+        $this->assertCount(1, $allocations);
+        $this->assertTrue($own->id()->equals($allocations[0]->creditPurchaseId()));
+        $this->assertSame(4.0, $allocations[0]->tonnes());
+    }
+
     private function givenCompensationProject(): void
     {
         $this->projects->add(ProjectMother::contributable(
@@ -200,13 +258,17 @@ class ReallocateUnderallocatedContributionsServiceTest extends TestCase
         ));
     }
 
-    private function givenValidatedPurchase(float $tonnes, string $resolvedAt): CreditPurchase
-    {
+    private function givenValidatedPurchase(
+        float $tonnes,
+        string $resolvedAt,
+        CreditPurchasePaymentType $paymentType = CreditPurchasePaymentType::PaidByClient,
+    ): CreditPurchase {
         $purchase = CreditPurchaseMother::validatedAt(
             new \DateTimeImmutable($resolvedAt),
             $this->accountId,
             $this->projectId,
             $tonnes,
+            $paymentType,
         );
 
         $this->purchases->add($purchase);

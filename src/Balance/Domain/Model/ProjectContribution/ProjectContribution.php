@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Balance\Domain\Model\ProjectContribution;
 
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Vat\VatExemptionReason;
@@ -25,6 +26,7 @@ class ProjectContribution
     public function __construct(
         private ProjectContributionId $id,
         private ?AccountId $accountId = null,
+        private ?AccountId $creditAccountId = null,
         private ?ProjectId $projectId = null,
         private ProjectContributionOrigin $origin = ProjectContributionOrigin::PropertyTripCalculation,
         private ?string $originId = null,
@@ -70,6 +72,18 @@ class ProjectContribution
     public function accountId(): ?AccountId
     {
         return $this->accountId;
+    }
+
+    public function creditAccountId(): ?AccountId
+    {
+        return $this->creditAccountId;
+    }
+
+    public function usesSharedCredit(): bool
+    {
+        return $this->accountId instanceof AccountId
+            && $this->creditAccountId instanceof AccountId
+            && !$this->accountId->equals($this->creditAccountId);
     }
 
     public function projectId(): ?ProjectId
@@ -200,6 +214,15 @@ class ProjectContribution
     public function isOwnCreditFunded(): bool
     {
         return $this->funding->isOwnCredit();
+    }
+
+    public function allowedCreditPaymentType(): ?CreditPurchasePaymentType
+    {
+        if ($this->isOwnCreditFunded()) {
+            return CreditPurchasePaymentType::PaidByClient;
+        }
+
+        return $this->usesSharedCredit() ? CreditPurchasePaymentType::PaidByBioscore : null;
     }
 
     public function status(): ProjectContributionStatus
@@ -362,6 +385,7 @@ class ProjectContribution
         ProjectContributionFunding $funding = ProjectContributionFunding::Payment,
         ?PaymentId $paymentId = null,
         ?\DateTimeImmutable $registeredAt = null,
+        ?AccountId $creditAccountId = null,
     ): void {
         if ($tonnes <= 0.0) {
             throw new \InvalidArgumentException('Contribution tonnes must be greater than zero.');
@@ -402,6 +426,7 @@ class ProjectContribution
                 expiresAt: $expiresAt,
                 funding: $funding,
                 paymentId: $paymentId,
+                creditAccountId: $creditAccountId ?? $accountId,
                 occurredOn: $registeredAt,
             ),
         );
@@ -559,6 +584,7 @@ class ProjectContribution
     public function applyProjectContributionRegistered(ProjectContributionRegistered $event): void
     {
         $this->accountId = $event->accountId();
+        $this->creditAccountId = $event->creditAccountId();
         $this->projectId = $event->projectId();
         $this->origin = $event->origin();
         $this->originId = $event->originId();

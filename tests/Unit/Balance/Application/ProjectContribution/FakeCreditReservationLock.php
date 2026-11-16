@@ -13,8 +13,14 @@ class FakeCreditReservationLock implements CreditReservationLock
     /** @var array<int, array{AccountId, ProjectId}> */
     private array $locks = [];
 
-    /** @param ?\Closure(): void $beforeRelease Lets a test observe the state written while the lock is held. */
-    public function __construct(private ?\Closure $beforeRelease = null) {}
+    /**
+     * @param ?\Closure(): void $beforeRelease     lets a test observe the state written while the lock is held
+     * @param ?\Closure(): void $beforeReservation
+     */
+    public function __construct(
+        private ?\Closure $beforeRelease = null,
+        private ?\Closure $beforeReservation = null,
+    ) {}
 
     /**
      * @template T
@@ -26,6 +32,10 @@ class FakeCreditReservationLock implements CreditReservationLock
     public function withLock(AccountId $accountId, ProjectId $projectId, callable $reservation): mixed
     {
         $this->locks[] = [$accountId, $projectId];
+
+        if ($this->beforeReservation instanceof \Closure) {
+            ($this->beforeReservation)();
+        }
 
         try {
             return $reservation();

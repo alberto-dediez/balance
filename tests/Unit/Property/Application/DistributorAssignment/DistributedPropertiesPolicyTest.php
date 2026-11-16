@@ -165,4 +165,82 @@ class DistributedPropertiesPolicyTest extends TestCase
         $this->assertCount(1, $scope->accountIds);
         $this->assertCount(1, $scope->propertyIds);
     }
+
+    public function testDistributorsOfAnAccountAreTheAssignedOnes(): void
+    {
+        $distributor = AccountMother::distributorAccountFromNameAndId('Greenhost', 'distributor');
+        $other = AccountMother::distributorAccountFromNameAndId('Other', 'other');
+        $hotel = AccountMother::fromNameAndId('Hotel', 'hotel');
+
+        $sut = DistributedPropertiesPolicyMother::create(
+            [$distributor, $other, $hotel],
+            [],
+            [DistributorAssignmentMother::forAccount($distributor->id(), $hotel->id())],
+        );
+
+        $this->assertSame([(string) $distributor->id()], array_map('strval', $sut->distributorsOf($hotel->id())));
+        $this->assertSame([], $sut->distributorsOf($distributor->id()));
+    }
+
+    public function testDistributorsOfAPropertyOnlyCountWhenThePropertyIsGiven(): void
+    {
+        $distributor = AccountMother::distributorAccountFromNameAndId('Greenhost', 'distributor');
+        $hotel = AccountMother::fromNameAndId('Hotel', 'hotel');
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel 1', $hotel->id());
+        $otherProperty = PropertyMother::from(PropertyId::generate(), 'Hotel 2', $hotel->id());
+
+        $sut = DistributedPropertiesPolicyMother::create(
+            [$distributor, $hotel],
+            [$property, $otherProperty],
+            [DistributorAssignmentMother::forProperty($distributor->id(), $property->id())],
+        );
+
+        $this->assertSame([(string) $distributor->id()], array_map('strval', $sut->distributorsOf($hotel->id(), $property->id())));
+        $this->assertSame([], $sut->distributorsOf($hotel->id()));
+        $this->assertSame([], $sut->distributorsOf($hotel->id(), $otherProperty->id()));
+    }
+
+    public function testDistributorsOfAreSortedByAssignmentDateWithoutDuplicates(): void
+    {
+        $older = AccountMother::distributorAccountFromNameAndId('Older', 'older');
+        $newer = AccountMother::distributorAccountFromNameAndId('Newer', 'newer');
+        $hotel = AccountMother::fromNameAndId('Hotel', 'hotel');
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel 1', $hotel->id());
+
+        $sut = DistributedPropertiesPolicyMother::create(
+            [$older, $newer, $hotel],
+            [$property],
+            [
+                DistributorAssignmentMother::forAccountRegisteredAt($newer->id(), $hotel->id(), new \DateTimeImmutable('-1 day')),
+                DistributorAssignmentMother::forPropertyRegisteredAt($older->id(), $property->id(), new \DateTimeImmutable('-3 days')),
+                DistributorAssignmentMother::forAccountRegisteredAt($older->id(), $hotel->id(), new \DateTimeImmutable('-2 hours')),
+                DistributorAssignmentMother::forPropertyRegisteredAt($newer->id(), $property->id(), new \DateTimeImmutable('-1 hour')),
+            ],
+        );
+
+        $this->assertSame(
+            [(string) $older->id(), (string) $newer->id()],
+            array_map('strval', $sut->distributorsOf($hotel->id(), $property->id())),
+        );
+    }
+
+    public function testUnmarkedOrInactiveDistributorsAreNotDistributorsOfAnAccount(): void
+    {
+        $unmarked = AccountMother::distributorAccountFromNameAndId('Unmarked', 'unmarked');
+        $unmarked->changeDistributorStatus(false);
+        $inactive = AccountMother::distributorAccountFromNameAndId('Inactive', 'inactive');
+        $inactive->changeStatus(false);
+        $hotel = AccountMother::fromNameAndId('Hotel', 'hotel');
+
+        $sut = DistributedPropertiesPolicyMother::create(
+            [$unmarked, $inactive, $hotel],
+            [],
+            [
+                DistributorAssignmentMother::forAccount($unmarked->id(), $hotel->id()),
+                DistributorAssignmentMother::forAccount($inactive->id(), $hotel->id()),
+            ],
+        );
+
+        $this->assertSame([], $sut->distributorsOf($hotel->id()));
+    }
 }

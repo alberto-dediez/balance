@@ -8,6 +8,7 @@ use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderall
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderallocatedContributionsResponse;
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderallocatedContributionsService;
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateUnderallocatedContributionsService;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Balance\Domain\Model\Project\ProjectType;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContribution;
@@ -106,6 +107,30 @@ class ReallocateAllUnderallocatedContributionsServiceTest extends TestCase
         $this->assertSame(1, $response->pairsProcessed);
         $this->assertSame(5.0, $scoped->allocatedTonnes());
         $this->assertSame(0.0, $ignored->allocatedTonnes());
+    }
+
+    public function testTheSweepReallocatesSharedContributionsWithTheDistributorCredit(): void
+    {
+        $hotelAccountId = AccountId::generate();
+        $distributorAccountId = AccountId::generate();
+        $projectId = $this->givenCompensationProject();
+
+        $this->purchases->add(CreditPurchaseMother::validatedAt(
+            new \DateTimeImmutable('-1 day'),
+            $distributorAccountId,
+            $projectId,
+            10.0,
+            CreditPurchasePaymentType::PaidByBioscore,
+        ));
+
+        $contribution = ProjectContributionMother::paidWithSharedCredit($hotelAccountId, $distributorAccountId, $projectId, 4.0);
+        $this->contributions->add($contribution);
+
+        $response = $this->reallocate();
+
+        $this->assertSame(1, $response->pairsProcessed);
+        $this->assertSame(1, $response->contributionsCovered);
+        $this->assertSame(4.0, $contribution->allocatedTonnes());
     }
 
     public function testNothingHappensWithoutUnderallocatedContributions(): void

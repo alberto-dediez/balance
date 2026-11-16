@@ -71,6 +71,48 @@ final class DistributedPropertiesPolicy
         return (new PropertyScope())->merge(new PropertyScope($accountIds, $propertyIds));
     }
 
+    /** @return list<AccountId> */
+    public function distributorsOf(AccountId $accountId, ?PropertyId $propertyId = null): array
+    {
+        $assignments = $this->distributorAssignmentRepository->findByFilter(
+            new DistributorAssignmentFilter(accountId: $accountId, limit: 0),
+        );
+
+        if ($propertyId instanceof PropertyId) {
+            $assignments = [
+                ...$assignments,
+                ...$this->distributorAssignmentRepository->findByFilter(
+                    new DistributorAssignmentFilter(propertyId: $propertyId, limit: 0),
+                ),
+            ];
+        }
+
+        usort(
+            $assignments,
+            static fn(DistributorAssignment $a, DistributorAssignment $b): int => $a->registeredAt() <=> $b->registeredAt(),
+        );
+
+        $distributors = [];
+
+        foreach ($assignments as $assignment) {
+            $distributorAccountId = $assignment->distributorAccountId();
+
+            if (
+                !$distributorAccountId instanceof AccountId
+                || $assignment->isRemoved()
+                || $distributorAccountId->equals($accountId)
+                || isset($distributors[(string) $distributorAccountId])
+                || !$this->distributorPolicy->isActiveDistributor($distributorAccountId)
+            ) {
+                continue;
+            }
+
+            $distributors[(string) $distributorAccountId] = $distributorAccountId;
+        }
+
+        return array_values($distributors);
+    }
+
     private function accountHasFeature(AccountId $accountId, ?AccountFeature $requiredFeature): bool
     {
         return !$requiredFeature instanceof AccountFeature || $this->accountFeaturesPolicy->isEnabled($requiredFeature, $accountId);

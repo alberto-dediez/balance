@@ -225,6 +225,41 @@ class AllocateContributionCreditsServiceTest extends TestCase
         );
     }
 
+    public function testASharedCreditContributionOnlyConsumesTheDistributorLotsBioscorePaid(): void
+    {
+        $this->givenCompensationProject();
+
+        $this->givenValidatedPurchase(10.0, '-3 days');
+        $bioscore = $this->givenValidatedPurchase(10.0, '-1 day', CreditPurchasePaymentType::PaidByBioscore);
+
+        $hotelAccountId = AccountId::generate();
+        $contribution = ProjectContributionMother::paidWithSharedCredit($hotelAccountId, $this->accountId, $this->projectId, 4.0);
+        $this->contributions->add($contribution);
+
+        $this->allocate($contribution);
+
+        $allocations = $contribution->creditAllocations();
+
+        $this->assertCount(1, $allocations);
+        $this->assertTrue($bioscore->id()->equals($allocations[0]->creditPurchaseId()));
+        $this->assertSame(4.0, $allocations[0]->tonnes());
+        $this->assertSame([(string) $bioscore->id() => 4.0], $this->contributions->allocatedTonnesByPurchase($this->accountId, $this->projectId));
+    }
+
+    public function testASharedCreditContributionNeverConsumesTheDistributorLotsTheDistributorPaid(): void
+    {
+        $this->givenCompensationProject();
+
+        $this->givenValidatedPurchase(10.0, '-3 days');
+
+        $contribution = ProjectContributionMother::paidWithSharedCredit(AccountId::generate(), $this->accountId, $this->projectId, 4.0);
+        $this->contributions->add($contribution);
+
+        $this->allocate($contribution);
+
+        $this->assertSame([], $contribution->creditAllocations());
+    }
+
     private function givenCompensationProject(): void
     {
         $this->projects->add(ProjectMother::contributable(
