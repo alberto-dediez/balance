@@ -9,6 +9,12 @@ parameters:
     error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
     error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
     error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
+    error_report.erp.enabled: '%env(bool:ERROR_NOTIFICATIONS_ERP_ENABLED)%'
+    error_report.erp.url: '%env(ERROR_NOTIFICATIONS_ERP_URL)%'
+    error_report.erp.username: '%env(ERROR_NOTIFICATIONS_ERP_USERNAME)%'
+    error_report.erp.api_token: '%env(ERROR_NOTIFICATIONS_ERP_API_TOKEN)%'
+    error_report.erp.project_id: '%env(ERROR_NOTIFICATIONS_ERP_PROJECT_ID)%'
+    error_report.erp.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_ERP_THROTTLE_MINUTES)%'
     ovh.s3.endpoint: '%env(OVH_S3_ENDPOINT)%'
     ovh.s3.region: '%env(OVH_S3_REGION)%'
     ovh.s3.bucket: '%env(OVH_S3_BUCKET)%'
@@ -105,7 +111,38 @@ services:
         tags:
             - { name: monolog.logger, channel: error_report }
 
-    App\Shared\Domain\Model\ErrorReport\ErrorReportNotifier: '@App\Shared\Infrastructure\ErrorReport\EmailErrorReportNotifier'
+    error_report.erp_throttle:
+        class: App\Shared\Infrastructure\ErrorReport\CacheErrorReportThrottle
+        arguments:
+            $cache: '@cache.app'
+            $throttleMinutes: '%error_report.erp.throttle_minutes%'
+            $keyPrefix: 'error_report_erp'
+
+    App\Shared\Infrastructure\ErrorReport\Erp\ErpErrorReportClient:
+        arguments:
+            $httpClient: '@http_client'
+            $cache: '@cache.app'
+            $url: '%error_report.erp.url%'
+            $username: '%error_report.erp.username%'
+            $apiToken: '%error_report.erp.api_token%'
+
+    App\Shared\Infrastructure\ErrorReport\Erp\ErpErrorReportNotifier:
+        arguments:
+            $throttle: '@error_report.erp_throttle'
+            $enabled: '%error_report.erp.enabled%'
+            $projectId: '%error_report.erp.project_id%'
+        tags:
+            - { name: monolog.logger, channel: error_report }
+
+    App\Shared\Infrastructure\ErrorReport\ChainErrorReportNotifier:
+        arguments:
+            $notifiers:
+                - '@App\Shared\Infrastructure\ErrorReport\EmailErrorReportNotifier'
+                - '@App\Shared\Infrastructure\ErrorReport\Erp\ErpErrorReportNotifier'
+        tags:
+            - { name: monolog.logger, channel: error_report }
+
+    App\Shared\Domain\Model\ErrorReport\ErrorReportNotifier: '@App\Shared\Infrastructure\ErrorReport\ChainErrorReportNotifier'
 
     App\Shared\Domain\Model\ErrorReport\ErrorReportThrottle: '@App\Shared\Infrastructure\ErrorReport\CacheErrorReportThrottle'
 
@@ -230,6 +267,7 @@ when@prod:
 when@test:
     parameters:
         app.uploads_dir: '%kernel.project_dir%/var/uploads_test%env(default::TEST_TOKEN)%'
+        error_report.erp.enabled: false
 
     services:
         _defaults:

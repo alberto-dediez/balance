@@ -12,6 +12,7 @@ class CacheErrorReportThrottle implements ErrorReportThrottle
     public function __construct(
         private readonly CacheItemPoolInterface $cache,
         private readonly int $throttleMinutes,
+        private readonly string $keyPrefix = 'error_report',
     ) {}
 
     public function shouldNotify(string $fingerprint): bool
@@ -21,7 +22,7 @@ class CacheErrorReportThrottle implements ErrorReportThrottle
         }
 
         try {
-            $item = $this->cache->getItem(sprintf('error_report_%s', $fingerprint));
+            $item = $this->cache->getItem(sprintf('%s_%s', $this->keyPrefix, $fingerprint));
 
             if ($item->isHit()) {
                 return false;
