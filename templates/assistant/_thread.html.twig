@@ -29,7 +29,7 @@
                     <twig:Alert type="danger">{{ message.error | trans }}</twig:Alert>
                 {% elseif message.kind.value != 'plan' %}
                     <div class="assistant-markdown">{{ message.text | assistant_markdown | raw }}</div>
-                    <button type="button" class="assistant-answer__action" data-action="assistant-panel#copy" data-copy-text="{{ message.text }}">
+                    <button type="button" class="assistant-answer__action" data-action="assistant-panel#copy" data-copy-text="{{ message.text | assistant_copy_text }}">
                         <twig:Icon name="solar:copy-line-duotone" />
                         {{ 'Copiar' | trans }}
                     </button>

@@ -8,6 +8,7 @@ use App\Security\Domain\Model\User\User;
 use App\Shared\Application\Assistant\AssistantTool;
 use App\Shared\Application\Assistant\ToolArguments;
 use App\Shared\Application\Assistant\ToolContext;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolMode;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
@@ -88,8 +89,7 @@ class GlobalSearchTool implements AssistantTool
                             static fn(SearchResult $result): array => [
                                 'title' => $result->title,
                                 'subtitle' => $result->subtitle,
-                                'route' => $result->route,
-                                'routeParameters' => $result->routeParameters,
+                                'href' => null === $result->route ? null : ToolLink::href($result->route, $result->routeParameters),
                             ],
                             $category->results,
                         ),

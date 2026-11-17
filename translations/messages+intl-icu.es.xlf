@@ -2769,6 +2769,18 @@
         <source>¿Cuál es la última novedad publicada?</source>
         <target>¿Cuál es la última novedad publicada?</target>
       </trans-unit>
+      <trans-unit id="oq4rY5e" resname="Ver tokens">
+        <source>Ver tokens</source>
+        <target>Ver tokens</target>
+      </trans-unit>
+      <trans-unit id="LkQiQAe" resname="Listar pantallas">
+        <source>Listar pantallas</source>
+        <target>Listar pantallas</target>
+      </trans-unit>
+      <trans-unit id="eAjpOkT" resname="Ver notificaciones">
+        <source>Ver notificaciones</source>
+        <target>Ver notificaciones</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -63,7 +63,7 @@ class ListRecordedEventsToolTest extends TestCase
         $this->assertSame('accountRegistered', $event['eventName']);
         $this->assertSame('security', $event['context']);
         $this->assertSame((string) $accountId, $event['aggregateRootId']);
-        $this->assertSame(['id' => (string) $ana->id(), 'username' => 'ana@acme.test'], $event['user']);
+        $this->assertSame(['id' => (string) $ana->id(), 'href' => 'route:admin_users_edit?userId=' . $ana->id(), 'username' => 'ana@acme.test'], $event['user']);
         $this->assertFalse($event['byAssistant']);
         $this->assertSame(['occurredOn', 'eventName', 'context', 'aggregateRootId', 'user', 'byAssistant'], array_keys($event));
         $this->assertStringNotContainsString('Confidential Corp', (string) json_encode($result->data));

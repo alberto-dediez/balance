@@ -52,6 +52,7 @@ class ListAccountsToolTest extends TestCase
         $this->assertSame(1, $result->data['total']);
         $this->assertSame([[
             'id' => (string) $acme->id(),
+            'href' => 'route:admin_accounts_edit?accountId=' . $acme->id(),
             'name' => 'Acme',
             'active' => true,
             'registeredAt' => $this->context()->dateTime($acme->registeredAt()),

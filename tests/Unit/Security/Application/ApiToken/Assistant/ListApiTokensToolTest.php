@@ -79,6 +79,7 @@ class ListApiTokensToolTest extends TestCase
         $this->assertSame(1, $active->data['total']);
         $this->assertSame('CI', $active->data['apiTokens'][0]['name']);
         $this->assertSame(['name', 'status', 'registeredAt', 'expiresAt', 'lastUsedAt', 'revokedAt'], array_keys($active->data['apiTokens'][0]));
+        $this->assertSame('route:admin_users_api_tokens?userId=' . $this->owner->id(), $all->link?->hrefFrom($all->references));
 
         $serialized = (string) json_encode([$all->summary, $all->data, $all->references]);
 

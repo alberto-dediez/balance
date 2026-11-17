@@ -47,7 +47,8 @@ class ListAnnouncementsToolTest extends TestCase
 
         $this->assertSame(3, $result->data['total']);
         $this->assertSame('3 anuncios encontrados', $result->summary);
-        $this->assertEqualsCanonicalizing(['id', 'title', 'summary', 'category', 'status', 'date', 'publishedAt', 'scheduledAt', 'hasManual', 'hasVideo'], array_keys($result->data['announcements'][0]));
+        $this->assertEqualsCanonicalizing(['id', 'href', 'title', 'summary', 'category', 'status', 'date', 'publishedAt', 'scheduledAt', 'hasManual', 'hasVideo'], array_keys($result->data['announcements'][0]));
+        $this->assertSame('route:admin_announcements_edit?announcementId=' . $result->data['announcements'][0]['id'], $result->data['announcements'][0]['href']);
     }
 
     public function testFiltersByStatusAndCategory(): void

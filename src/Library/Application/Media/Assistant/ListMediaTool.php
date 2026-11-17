@@ -17,6 +17,7 @@ use App\Shared\Application\Assistant\AssistantTool;
 use App\Shared\Application\Assistant\ToolArguments;
 use App\Shared\Application\Assistant\ToolContext;
 use App\Shared\Application\Assistant\ToolDocument;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolMode;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
@@ -86,6 +87,7 @@ class ListMediaTool implements AssistantTool
                 'media' => array_map(
                     static fn(Media $media): array => [
                         'mediaId' => (string) $media->id(),
+                        'href' => ToolLink::href('library_media_show', ['mediaId' => (string) $media->id()]),
                         'name' => $media->name(),
                         'fileName' => $media->fileName(),
                         'mimeType' => $media->mimeType(),

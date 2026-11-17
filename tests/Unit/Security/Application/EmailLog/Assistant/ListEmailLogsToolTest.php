@@ -46,12 +46,14 @@ class ListEmailLogsToolTest extends TestCase
 
     public function testListsTheEmailsWithoutTheirBody(): void
     {
-        $this->emailLogs->add(EmailLogMother::from(recipientEmail: 'ana@acme.test', subject: 'Bienvenida', template: '@security/users/welcome.email.html.twig', sentAt: new \DateTimeImmutable('2026-11-15 09:30:00')));
+        $emailLog = EmailLogMother::from(recipientEmail: 'ana@acme.test', subject: 'Bienvenida', template: '@security/users/welcome.email.html.twig', sentAt: new \DateTimeImmutable('2026-11-15 09:30:00'));
+        $this->emailLogs->add($emailLog);
 
         $result = $this->sut->execute($this->arguments([]), UserMother::superAdminUser(), $this->context());
 
         $this->assertSame(1, $result->data['total']);
         $this->assertSame([[
+            'href' => 'route:admin_emails_show?emailLogId=' . $emailLog->id(),
             'recipient' => 'ana@acme.test',
             'subject' => 'Bienvenida',
             'status' => 'Sent',

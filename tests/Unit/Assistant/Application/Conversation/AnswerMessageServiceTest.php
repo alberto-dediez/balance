@@ -24,6 +24,7 @@ use App\Shared\Application\Ai\Agent\AiStopReason;
 use App\Shared\Application\Ai\Agent\AiToolCall;
 use App\Shared\Application\Ai\AiAttachment;
 use App\Shared\Application\Ai\AiUsage;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
 use App\Tests\Unit\Assistant\Application\AssistantServiceFixtures;
@@ -292,6 +293,24 @@ class AnswerMessageServiceTest extends TestCase
 
         $call = $this->conversation->messageOf($this->messageId)?->toolCalls()[0];
         $this->assertSame('{"total":2}', $call?->result());
+    }
+
+    public function testTheResultSentToTheModelAndKeptInTheToolCallIncludesTheLinkReference(): void
+    {
+        $this->tools = [FakeAssistantTool::read('view_account')->willReturn(new ToolResult(
+            'Cuenta Acme',
+            ['name' => 'Acme'],
+            ['accountId' => self::PROJECT_ID],
+            new ToolLink('Ver cuenta', 'admin_accounts_edit', ['accountId']),
+        ))];
+        $this->client->enqueueToolCalls(new AiToolCall('t1', 'view_account', []));
+        $this->client->enqueueText('[Acme](route:admin_accounts_edit?accountId=' . self::PROJECT_ID . ')');
+
+        $this->answer();
+
+        $expected = '{"name":"Acme","_link":{"label":"Ver cuenta","href":"route:admin_accounts_edit?accountId=' . self::PROJECT_ID . '"}}';
+        $this->assertSame($expected, $this->lastMessageOfRequest(1)->blocks[0]->text);
+        $this->assertSame($expected, $this->conversation->messageOf($this->messageId)?->toolCalls()[0]->result());
     }
 
     public function testTheToolsReceiveTheDocumentSizeLimit(): void

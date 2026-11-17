@@ -14,6 +14,7 @@ use App\Security\Domain\Model\User\User;
 use App\Shared\Application\Assistant\AssistantTool;
 use App\Shared\Application\Assistant\ToolArguments;
 use App\Shared\Application\Assistant\ToolContext;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolMode;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
@@ -68,6 +69,7 @@ class SearchChangelogDocumentsTool implements AssistantTool
                 'matches' => array_map(
                     static fn(ChangelogDocumentMatch $match): array => [
                         'slug' => (string) $match->entry->slug,
+                        'href' => ToolLink::href('admin_changelog_entry', ['slug' => (string) $match->entry->slug]),
                         'title' => $match->entry->title,
                         'date' => $context->date($match->entry->date),
                         'source' => $match->source,

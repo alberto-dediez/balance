@@ -13,6 +13,7 @@ use App\Assistant\Application\Engine\ConversationTranscript;
 use App\Assistant\Application\Engine\Toolbox;
 use App\Assistant\Application\Engine\ToolNotAllowedException;
 use App\Assistant\Application\Engine\ToolOutcome;
+use App\Assistant\Application\Engine\ToolResultContent;
 use App\Assistant\Application\Engine\ToolRunner;
 use App\Assistant\Application\Engine\ToolSchemaBuilder;
 use App\Assistant\Domain\Model\ActionPlan\ActionPlanFilter;
@@ -238,7 +239,7 @@ class AnswerMessageService implements CommandHandler
 
         $content = null === $outcome->result
             ? (string) $outcome->error
-            : (string) json_encode($outcome->result->data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE);
+            : ToolResultContent::of($outcome->result);
 
         $conversation->recordToolCall(
             $messageId,

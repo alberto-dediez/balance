@@ -66,9 +66,10 @@ class ListUsersToolTest extends TestCase
         $this->assertSame(1, $result->data['total']);
         $this->assertSame([[
             'id' => (string) $ana->id(),
+            'href' => 'route:admin_users_edit?userId=' . $ana->id(),
             'username' => 'ana@acme.test',
             'roles' => ['ROLE_OWNER', 'ROLE_USER'],
-            'account' => ['id' => (string) $account->id(), 'name' => 'Acme'],
+            'account' => ['id' => (string) $account->id(), 'href' => 'route:admin_accounts_edit?accountId=' . $account->id(), 'name' => 'Acme'],
             'active' => $ana->isActive(),
             'registeredAt' => $this->context()->dateTime($ana->registeredAt()),
             'twoFactor' => false,

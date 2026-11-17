@@ -68,9 +68,10 @@ class ViewUserTool implements AssistantTool
             summary: sprintf('Usuario «%s»', $found->username()),
             data: [
                 'id' => (string) $found->id(),
+                'href' => ToolLink::href('admin_users_edit', ['userId' => (string) $found->id()]),
                 'username' => $found->username(),
                 'roles' => array_map(static fn(Role $role): string => $role->value, $found->roles()),
-                'account' => $accountId instanceof AccountId ? ['id' => (string) $accountId, 'name' => $found->account()?->name()] : null,
+                'account' => $accountId instanceof AccountId ? ['id' => (string) $accountId, 'href' => ToolLink::href('admin_accounts_edit', ['accountId' => (string) $accountId]), 'name' => $found->account()?->name()] : null,
                 'active' => $found->isActive(),
                 'registeredAt' => $context->dateTime($found->registeredAt()),
                 'twoFactor' => $found->hasTwoFactor(),

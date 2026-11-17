@@ -56,7 +56,8 @@ class ListSignatureRequestsToolTest extends TestCase
         $this->assertSame((string) $signatureRequest->id(), $result->data['signatureRequests'][0]['id']);
         $this->assertSame($accountId, $result->data['signatureRequests'][0]['accountId']);
         $this->assertSame('Pending', $result->data['signatureRequests'][0]['status']);
-        $this->assertSame(['id', 'accountId', 'status', 'registeredAt', 'updatedAt', 'expiresAt'], array_keys($result->data['signatureRequests'][0]));
+        $this->assertSame('route:admin_signature_requests_show?signatureRequestId=' . $signatureRequest->id(), $result->data['signatureRequests'][0]['href']);
+        $this->assertSame(['id', 'href', 'accountId', 'status', 'registeredAt', 'updatedAt', 'expiresAt'], array_keys($result->data['signatureRequests'][0]));
         $this->assertSame('admin_signature_requests', $result->link?->route);
     }
 

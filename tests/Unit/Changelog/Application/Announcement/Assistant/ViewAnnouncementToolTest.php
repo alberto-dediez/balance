@@ -46,6 +46,7 @@ class ViewAnnouncementToolTest extends TestCase
         $this->assertSame((string) $announcement->manualId(), $result->data['manualMediaId']);
         $this->assertFalse($result->data['truncated']);
         $this->assertSame(['announcementId' => (string) $announcement->id()], $result->references);
+        $this->assertSame('route:admin_announcements_edit?announcementId=' . $announcement->id(), $result->link?->hrefFrom($result->references));
     }
 
     public function testTruncatesALongBody(): void

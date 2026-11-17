@@ -30,6 +30,7 @@ class ListChangelogEntriesToolTest extends TestCase
         $this->assertSame(1, $result->data['total']);
         $this->assertSame([[
             'slug' => 'changelog-entry',
+            'href' => 'route:admin_changelog_entry?slug=changelog-entry',
             'title' => 'Título de prueba',
             'date' => '2026-09-14',
             'category' => 'feature',

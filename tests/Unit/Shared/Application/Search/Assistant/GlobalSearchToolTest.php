@@ -41,8 +41,8 @@ class GlobalSearchToolTest extends TestCase
         $this->assertSame(['customers', 'tasks'], array_column($result->data['categories'], 'key'));
         $this->assertSame('Customers', $result->data['categories'][0]['label']);
         $this->assertSame([
-            ['title' => 'customers 1', 'subtitle' => null, 'route' => 'customers_edit', 'routeParameters' => ['id' => '1']],
-            ['title' => 'customers 2', 'subtitle' => null, 'route' => 'customers_edit', 'routeParameters' => ['id' => '2']],
+            ['title' => 'customers 1', 'subtitle' => null, 'href' => 'route:customers_edit?id=1'],
+            ['title' => 'customers 2', 'subtitle' => null, 'href' => 'route:customers_edit?id=2'],
         ], $result->data['categories'][0]['results']);
     }
 

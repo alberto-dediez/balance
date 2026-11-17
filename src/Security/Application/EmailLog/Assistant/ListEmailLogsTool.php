@@ -85,6 +85,7 @@ class ListEmailLogsTool implements AssistantTool
             data: [
                 'emails' => array_map(
                     static fn(EmailLog $emailLog): array => [
+                        'href' => ToolLink::href('admin_emails_show', ['emailLogId' => (string) $emailLog->id()]),
                         'recipient' => $emailLog->recipientEmail(),
                         'subject' => $emailLog->subject(),
                         'status' => $emailLog->status()->value,

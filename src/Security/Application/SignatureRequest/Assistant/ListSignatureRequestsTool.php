@@ -82,6 +82,7 @@ class ListSignatureRequestsTool implements AssistantTool
                 'signatureRequests' => array_map(
                     static fn(SignatureRequest $signatureRequest): array => [
                         'id' => (string) $signatureRequest->id(),
+                        'href' => ToolLink::href('admin_signature_requests_show', ['signatureRequestId' => (string) $signatureRequest->id()]),
                         'accountId' => null === $signatureRequest->accountId() ? null : (string) $signatureRequest->accountId(),
                         'status' => $signatureRequest->status()->value,
                         'registeredAt' => $context->dateTime($signatureRequest->registeredAt()),

@@ -102,7 +102,7 @@ class ListRecordedEventsTool implements AssistantTool
         );
     }
 
-    /** @return array{id: string, username: ?string}|null */
+    /** @return array{id: string, href: string, username: ?string}|null */
     private function userOf(RecordedEvent $event): ?array
     {
         $userId = $event->userId();
@@ -111,6 +111,6 @@ class ListRecordedEventsTool implements AssistantTool
             return null;
         }
 
-        return ['id' => (string) $userId, 'username' => $this->userFinder->find($userId)?->username()];
+        return ['id' => (string) $userId, 'href' => ToolLink::href('admin_users_edit', ['userId' => (string) $userId]), 'username' => $this->userFinder->find($userId)?->username()];
     }
 }

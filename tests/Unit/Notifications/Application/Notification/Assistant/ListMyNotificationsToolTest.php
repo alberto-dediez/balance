@@ -54,6 +54,7 @@ class ListMyNotificationsToolTest extends TestCase
         $this->assertSame('Mía', $result->data['notifications'][0]['subject']);
         $this->assertFalse($result->data['notifications'][0]['read']);
         $this->assertSame(['subject', 'createdAt', 'read'], array_keys($result->data['notifications'][0]));
+        $this->assertSame('route:notifications', $result->link?->hrefFrom($result->references));
     }
 
     public function testFiltersTheUnreadNotifications(): void

@@ -15,6 +15,7 @@ use App\Security\Domain\Model\User\UserId;
 use App\Shared\Application\Assistant\AssistantTool;
 use App\Shared\Application\Assistant\ToolArguments;
 use App\Shared\Application\Assistant\ToolContext;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolMode;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
@@ -63,10 +64,11 @@ class ListApiTokensTool implements AssistantTool
     public function execute(ToolArguments $arguments, User $user, ToolContext $context): ToolResult
     {
         $status = $arguments->string('status');
+        $userId = (string) $arguments->string('userId');
 
         $response = ($this->listApiTokens)(
             new ListApiTokensRequest(
-                userId: new UserId((string) $arguments->string('userId')),
+                userId: new UserId($userId),
                 status: null === $status ? null : ApiTokenStatus::from($status),
                 limit: min($arguments->limit(), ToolResult::ITEMS_MAX_COUNT),
             ),
@@ -89,6 +91,8 @@ class ListApiTokensTool implements AssistantTool
                 ),
                 'total' => $response->totalResults,
             ],
+            references: ['userId' => $userId],
+            link: new ToolLink('Ver tokens', 'admin_users_api_tokens', ['userId']),
         );
     }
 }

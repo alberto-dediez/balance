@@ -100,9 +100,10 @@ class ListUsersTool implements AssistantTool
 
         return [
             'id' => (string) $user->id(),
+            'href' => ToolLink::href('admin_users_edit', ['userId' => (string) $user->id()]),
             'username' => $user->username(),
             'roles' => array_map(static fn(Role $role): string => $role->value, $user->roles()),
-            'account' => $accountId instanceof AccountId ? ['id' => (string) $accountId, 'name' => $user->account()?->name()] : null,
+            'account' => $accountId instanceof AccountId ? ['id' => (string) $accountId, 'href' => ToolLink::href('admin_accounts_edit', ['accountId' => (string) $accountId]), 'name' => $user->account()?->name()] : null,
             'active' => $user->isActive(),
             'registeredAt' => $context->dateTime($user->registeredAt()),
             'twoFactor' => $user->hasTwoFactor(),

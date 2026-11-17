@@ -16,6 +16,7 @@ use App\Security\Domain\Model\User\User;
 use App\Shared\Application\Assistant\AssistantTool;
 use App\Shared\Application\Assistant\ToolArguments;
 use App\Shared\Application\Assistant\ToolContext;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolMode;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
@@ -82,6 +83,7 @@ class ListAnnouncementsTool implements AssistantTool
                 'announcements' => array_map(
                     static fn(Announcement $announcement): array => [
                         'id' => (string) $announcement->id(),
+                        'href' => ToolLink::href('admin_announcements_edit', ['announcementId' => (string) $announcement->id()]),
                         'title' => $announcement->title(),
                         'summary' => $announcement->summary(),
                         'category' => $announcement->category()->value,

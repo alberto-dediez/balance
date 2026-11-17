@@ -54,6 +54,7 @@ class ListMediaToolTest extends TestCase
         $this->assertSame(1, $result->data['total']);
         $this->assertSame([[
             'mediaId' => (string) $own->id(),
+            'href' => 'route:library_media_show?mediaId=' . $own->id(),
             'name' => 'contrato.pdf',
             'fileName' => 'contrato.pdf',
             'mimeType' => 'image/png',

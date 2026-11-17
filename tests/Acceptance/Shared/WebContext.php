@@ -223,6 +223,15 @@ final readonly class WebContext implements Context
         Assert::assertCount(1, $button);
     }
 
+    #[Then('I see a link :name to :path')]
+    public function iSeeALinkTo(string $name, string $path): void
+    {
+        $links = $this->client->getCrawler()->selectLink($name);
+
+        Assert::assertCount(1, $links);
+        Assert::assertSame($this->client->resolvePath($path), $links->attr('href'));
+    }
+
     #[Then('I do not see a link with name :name')]
     public function iDoNotSeeALinkWithName(string $name): void
     {

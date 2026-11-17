@@ -49,6 +49,7 @@ class ViewUserToolTest extends TestCase
         $result = $this->sut->execute($this->arguments(['userId' => (string) $ana->id()]), UserMother::adminUser(), $this->context());
 
         $this->assertSame((string) $ana->id(), $result->data['id']);
+        $this->assertSame('route:admin_users_edit?userId=' . $ana->id(), $result->data['href']);
         $this->assertSame('ana@acme.test', $result->data['username']);
         $this->assertSame(['ROLE_USER'], $result->data['roles']);
         $this->assertNull($result->data['account']);

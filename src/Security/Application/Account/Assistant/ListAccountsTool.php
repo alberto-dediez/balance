@@ -77,6 +77,7 @@ class ListAccountsTool implements AssistantTool
                 'accounts' => array_map(
                     static fn(Account $account): array => [
                         'id' => (string) $account->id(),
+                        'href' => ToolLink::href('admin_accounts_edit', ['accountId' => (string) $account->id()]),
                         'name' => $account->name(),
                         'active' => $account->isActive(),
                         'registeredAt' => $context->dateTime($account->registeredAt()),

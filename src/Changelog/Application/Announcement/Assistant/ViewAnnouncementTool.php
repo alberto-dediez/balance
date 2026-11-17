@@ -16,6 +16,7 @@ use App\Shared\Application\Assistant\AssistantTool;
 use App\Shared\Application\Assistant\InvalidToolArgumentsException;
 use App\Shared\Application\Assistant\ToolArguments;
 use App\Shared\Application\Assistant\ToolContext;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolMode;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
@@ -90,6 +91,7 @@ class ViewAnnouncementTool implements AssistantTool
                 'hasVideo' => $announcement->hasVideo(),
             ],
             references: ['announcementId' => (string) $announcement->id()],
+            link: new ToolLink('Ver anuncio', 'admin_announcements_edit', ['announcementId']),
         );
     }
 }

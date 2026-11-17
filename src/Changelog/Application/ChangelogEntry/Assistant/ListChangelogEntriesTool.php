@@ -14,6 +14,7 @@ use App\Security\Domain\Model\User\User;
 use App\Shared\Application\Assistant\AssistantTool;
 use App\Shared\Application\Assistant\ToolArguments;
 use App\Shared\Application\Assistant\ToolContext;
+use App\Shared\Application\Assistant\ToolLink;
 use App\Shared\Application\Assistant\ToolMode;
 use App\Shared\Application\Assistant\ToolParameter;
 use App\Shared\Application\Assistant\ToolResult;
@@ -77,6 +78,7 @@ class ListChangelogEntriesTool implements AssistantTool
                 'entries' => array_map(
                     static fn(ChangelogEntry $entry): array => [
                         'slug' => (string) $entry->slug,
+                        'href' => ToolLink::href('admin_changelog_entry', ['slug' => (string) $entry->slug]),
                         'title' => $entry->title,
                         'date' => $context->date($entry->date),
                         'category' => $entry->category->value,
