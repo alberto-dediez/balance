@@ -550,3 +550,31 @@ a.assistant-attachment:hover {
         background-color: var(--bs-secondary-bg);
     }
 }
+
+.assistant-sources {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.assistant-sources__title {
+    color: var(--bs-secondary-color);
+}
+
+.assistant-sources__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 50rem;
+    color: var(--bs-body-color);
+    text-decoration: none;
+
+    &:hover {
+        background-color: var(--bs-secondary-bg);
+    }
+}

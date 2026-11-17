@@ -1,0 +1,9 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = ('Guía' | trans) ~ ' > ' ~ article.title %}
+
+{% block content %}
+    <twig:Card>
+        {% include '@changelog/guide/_body.html.twig' %}
+    </twig:Card>
+{% endblock %}

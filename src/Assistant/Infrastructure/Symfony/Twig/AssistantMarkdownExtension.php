@@ -114,6 +114,10 @@ class AssistantMarkdownExtension extends AbstractExtension
                 if (null !== $resolved) {
                     $link->setUrl($resolved);
 
+                    if ($this->links->isDocument($url)) {
+                        $link->data->set('attributes/data-assistant-document', '1');
+                    }
+
                     continue;
                 }
 

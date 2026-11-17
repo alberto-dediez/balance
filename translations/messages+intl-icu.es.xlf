@@ -2781,6 +2781,34 @@
         <source>Ver notificaciones</source>
         <target>Ver notificaciones</target>
       </trans-unit>
+      <trans-unit id="PJMQZSe" resname="Fuente">
+        <source>Fuente</source>
+        <target>Fuente</target>
+      </trans-unit>
+      <trans-unit id="795BSAa" resname="Fuentes">
+        <source>Fuentes</source>
+        <target>Fuentes</target>
+      </trans-unit>
+      <trans-unit id="zBIlXUX" resname="Buscar en la guía">
+        <source>Buscar en la guía</source>
+        <target>Buscar en la guía</target>
+      </trans-unit>
+      <trans-unit id="kNIdxM9" resname="Leer artículo de la guía">
+        <source>Leer artículo de la guía</source>
+        <target>Leer artículo de la guía</target>
+      </trans-unit>
+      <trans-unit id="hKUXPi1" resname="Artículo">
+        <source>Artículo</source>
+        <target>Artículo</target>
+      </trans-unit>
+      <trans-unit id="LvHsssB" resname="Ver guía">
+        <source>Ver guía</source>
+        <target>Ver guía</target>
+      </trans-unit>
+      <trans-unit id="R2waSF_" resname="Guía">
+        <source>Guía</source>
+        <target>Guía</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

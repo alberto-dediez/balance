@@ -13,3 +13,5 @@ parameters:
         - 'Crea una cuenta nueva y registra en ella a un usuario.'
         - '¿Cuál es la última novedad publicada?'
         - 'Resume el documento que te adjunto.'
+    shared.assistant.document_routes:
+        - 'guide_article'

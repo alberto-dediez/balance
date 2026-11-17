@@ -35,6 +35,10 @@ services:
         exclude:
             - '../../../Infrastructure/Symfony/DependencyInjection/'
 
+    App\Assistant\Infrastructure\Symfony\Twig\AssistantLinkResolver:
+        arguments:
+            $documentRoutes: '%shared.assistant.document_routes%'
+
     App\Assistant\Application\AssistantSettings:
         arguments:
             $enabled: '%assistant.enabled%'

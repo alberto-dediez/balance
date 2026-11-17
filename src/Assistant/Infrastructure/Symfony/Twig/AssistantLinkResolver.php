@@ -10,11 +10,28 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AssistantLinkResolver
 {
-    public function __construct(private readonly UrlGeneratorInterface $urlGenerator) {}
+    /** @param list<string> $documentRoutes */
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly array $documentRoutes = [],
+    ) {}
 
     public function isReference(string $href): bool
     {
         return str_starts_with($href, ToolLink::SCHEME);
+    }
+
+    public function isDocument(string $href): bool
+    {
+        if (!$this->isReference($href)) {
+            return false;
+        }
+
+        $reference = substr($href, strlen(ToolLink::SCHEME));
+        $separator = strpos($reference, '?');
+        $name = false === $separator ? $reference : substr($reference, 0, $separator);
+
+        return in_array($name, $this->documentRoutes, true);
     }
 
     public function isInternal(string $url): bool

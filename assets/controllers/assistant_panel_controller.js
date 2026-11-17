@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { Tooltip } from 'bootstrap';
+import { Modal, Tooltip } from 'bootstrap';
 
 import { subscribe } from 'live';
 import { showToast } from 'toast';
@@ -54,9 +54,11 @@ export default class extends Controller {
                 this.toggle();
             }
         };
+        this.onDocumentClick = (event) => this.#openDocument(event);
         this.onVisibility = () => this.#schedule();
 
         document.addEventListener('click', this.onToggleClick);
+        document.addEventListener('click', this.onDocumentClick);
         document.addEventListener('visibilitychange', this.onVisibility);
 
         this.unsubscribe = subscribe('assistant', () => {
@@ -76,11 +78,55 @@ export default class extends Controller {
     disconnect() {
         this.#stopPolling();
         document.removeEventListener('click', this.onToggleClick);
+        document.removeEventListener('click', this.onDocumentClick);
         document.removeEventListener('visibilitychange', this.onVisibility);
 
         if (this.unsubscribe) {
             this.unsubscribe();
         }
+    }
+
+    #openDocument(event) {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+
+        if (!(event.target instanceof Element)) {
+            return;
+        }
+
+        const link = event.target.closest('a[data-assistant-document]');
+        const modal = document.getElementById('assistant-document');
+
+        if (!link || !modal || !(this.element.contains(link) || modal.contains(link))) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const href = link.getAttribute('href');
+
+        fetch(href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then((response) => {
+                if (this.#sessionLost(response)) {
+                    return null;
+                }
+
+                if (!response.ok) {
+                    throw new Error(String(response.status));
+                }
+
+                return response.text();
+            })
+            .then((html) => {
+                if (html === null) {
+                    return;
+                }
+
+                modal.querySelector('[data-assistant-document-content]').innerHTML = html;
+                Modal.getOrCreateInstance(modal).show();
+            })
+            .catch(() => window.location.assign(href));
     }
 
     toggle() {

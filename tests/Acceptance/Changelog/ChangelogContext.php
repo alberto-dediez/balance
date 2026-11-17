@@ -12,7 +12,11 @@ use App\Changelog\Domain\Model\Announcement\YouTubeVideo;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogCategory;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntry;
 use App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntrySlug;
+use App\Changelog\Domain\Model\GuideArticle\GuideArticle;
+use App\Changelog\Domain\Model\GuideArticle\GuideArticlePath;
+use App\Changelog\Domain\Model\GuideArticle\GuideProfile;
 use App\Changelog\Infrastructure\Persistence\InMemory\InMemoryChangelogEntryRepository;
+use App\Changelog\Infrastructure\Persistence\InMemory\InMemoryGuideArticleRepository;
 use App\Changelog\Infrastructure\Persistence\InMemory\Repository\InMemoryAnnouncementRepository;
 use App\Changelog\Infrastructure\Storage\InMemoryManualStorage;
 use App\Library\Domain\Model\Media\MediaId;
@@ -27,6 +31,7 @@ use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Changelog\Domain\Model\Announcement\AnnouncementMother;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
 use Behat\Step\Then;
@@ -49,6 +54,7 @@ final class ChangelogContext implements Context
     public function after(AfterScenarioScope $scope): void
     {
         $this->getChangelogEntryRepository()->clear();
+        $this->getGuideArticleRepository()->clear();
         $this->getManualStorage()->clear();
         $this->getAnnouncementRepository()->clear();
         $this->getLowPriorityTransport()->reset();
@@ -58,6 +64,11 @@ final class ChangelogContext implements Context
     private function getChangelogEntryRepository(): InMemoryChangelogEntryRepository
     {
         return $this->client->getContainer()->get(InMemoryChangelogEntryRepository::class);
+    }
+
+    private function getGuideArticleRepository(): InMemoryGuideArticleRepository
+    {
+        return $this->client->getContainer()->get(InMemoryGuideArticleRepository::class);
     }
 
     private function getManualStorage(): InMemoryManualStorage
@@ -243,6 +254,19 @@ final class ChangelogContext implements Context
         }
 
         $announcement->translate($title, $summary, $body, $video, $manualId, $locale);
+    }
+
+    #[Given('guide article :path for profile :profile with title :title and body:')]
+    public function guideArticleExists(string $path, string $profile, string $title, PyStringNode $body): void
+    {
+        $this->getGuideArticleRepository()->add(new GuideArticle(
+            profile: GuideProfile::from($profile),
+            path: new GuideArticlePath($path),
+            title: $title,
+            summary: $title . ' summary',
+            menu: 'Menú > ' . $title,
+            body: $body->getRaw(),
+        ));
     }
 
     #[Given('changelog entry :slug titled :title in category :category exists')]

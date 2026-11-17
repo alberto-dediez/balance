@@ -29,6 +29,7 @@ parameters:
     shared.live_updates_enabled: '%env(bool:LIVE_UPDATES_ENABLED)%'
     shared.assistant.disabled_tools: []
     shared.assistant.suggestions: []
+    shared.assistant.document_routes: []
     app.ai_provider: '%env(AI_PROVIDER)%'
     app.ai_log_enabled: '%env(bool:AI_LOG_ENABLED)%'
     app.anthropic_api_key: '%env(ANTHROPIC_API_KEY)%'

@@ -33,6 +33,19 @@
                         <twig:Icon name="solar:copy-line-duotone" />
                         {{ 'Copiar' | trans }}
                     </button>
+
+                    {% set sources = assistant_sources(message) %}
+                    {% if sources is not empty %}
+                        <div class="assistant-sources">
+                            <span class="assistant-sources__title">{{ 'Fuentes' | trans }}</span>
+                            {% for source in sources %}
+                                <a class="assistant-sources__item" href="{{ source.url }}"{% if source.document %} data-assistant-document="1"{% endif %}>
+                                    <twig:Icon name="solar:book-2-line-duotone" />
+                                    {{ source.label }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 {% endif %}
 
                 {% if message.toolCalls is not empty %}

@@ -44,6 +44,22 @@ class AssistantMarkdownExtensionTest extends TestCase
         $this->assertStringNotContainsString('target="_blank"', $html);
     }
 
+    public function testAReferenceToADocumentRouteOpensInTheDocumentModal(): void
+    {
+        $html = self::createSUT()->toHtml('[Usuarios](route:guide_article?path=seguridad%2Fusuarios)');
+
+        $this->assertStringContainsString('href="/es/guide/seguridad/usuarios"', $html);
+        $this->assertStringContainsString('data-assistant-document="1"', $html);
+    }
+
+    public function testAReferenceToAnotherRouteIsNotADocument(): void
+    {
+        $html = self::createSUT()->toHtml('[Usuarios](route:admin_users)');
+
+        $this->assertStringContainsString('href="/es/admin/users"', $html);
+        $this->assertStringNotContainsString('data-assistant-document', $html);
+    }
+
     public function testAReferenceThatDoesNotResolveIsPlainText(): void
     {
         $html = self::createSUT()->toHtml('Mira [Nada](route:no_existe) aquí');

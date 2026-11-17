@@ -20,12 +20,13 @@ class AssistantLinkResolverTest extends TestCase
         $routes = new RouteCollection();
         $routes->add('admin_users', new Route('/{_locale}/admin/users'));
         $routes->add('admin_accounts_edit', new Route('/{_locale}/admin/accounts/edit/{accountId}', requirements: ['accountId' => '[0-9a-f-]{36}']));
+        $routes->add('guide_article', new Route('/{_locale}/guide/{path}', requirements: ['path' => '.+']));
         $routes->add('_profiler', new Route('/_profiler'));
 
         $context = new RequestContext(host: 'hydra.test', scheme: 'https');
         $context->setParameter('_locale', 'es');
 
-        return new AssistantLinkResolver(new UrlGenerator($routes, $context));
+        return new AssistantLinkResolver(new UrlGenerator($routes, $context), ['guide_article']);
     }
 
     public function testRecognisesReferences(): void
@@ -34,6 +35,16 @@ class AssistantLinkResolverTest extends TestCase
 
         $this->assertTrue($resolver->isReference('route:admin_users'));
         $this->assertFalse($resolver->isReference('/es/admin/users'));
+    }
+
+    public function testRecognisesDocumentReferences(): void
+    {
+        $resolver = self::createSUT();
+
+        $this->assertTrue($resolver->isDocument('route:guide_article'));
+        $this->assertTrue($resolver->isDocument('route:guide_article?path=a%2Fb'));
+        $this->assertFalse($resolver->isDocument('route:admin_users'));
+        $this->assertFalse($resolver->isDocument('/es/guide/a'));
     }
 
     public function testResolvesWithParameters(): void

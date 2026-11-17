@@ -1,0 +1,7 @@
+<div class="modal-header">
+    <h5 class="modal-title d-flex align-items-center gap-2"><twig:Icon name="solar:book-2-line-duotone" size="lg" /> {{ article.title }}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Cerrar' | trans }}"></button>
+</div>
+<div class="modal-body">
+    {% include '@changelog/guide/_body.html.twig' %}
+</div>
