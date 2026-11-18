@@ -1,0 +1,30 @@
+{% if this.enabled %}
+    <div class="modal fade" id="keyboard-shortcuts" tabindex="-1" aria-label="{{ 'Atajos de teclado' | trans }}"
+         data-controller="keyboard-shortcuts"
+         data-action="keydown@window->keyboard-shortcuts#handle keyboard-shortcuts:help@window->keyboard-shortcuts#open">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title d-flex align-items-center gap-2"><twig:Icon name="solar:keyboard-line-duotone" size="lg" /> {{ 'Atajos de teclado' | trans }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Cerrar' | trans }}"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <table class="table table-hover mb-0 keyboard-shortcuts__table">
+                        <tbody>
+                            {% for shortcut in this.shortcuts %}
+                                <tr data-keyboard-shortcuts-target="shortcut"
+                                    data-combination="{{ shortcut.combination.id }}" data-global="{{ shortcut.combination.isGlobal ? '1' : '0' }}"{% if shortcut.submit %} data-submit="1"{% endif %}{% if shortcut.withinModal %} data-within-modal="1"{% endif %}
+                                    {% if shortcut.route %}data-url="{{ path(shortcut.route, shortcut.routeParameters) }}"{% endif %}
+                                    {% if shortcut.event %}data-event="{{ shortcut.event }}"{% endif %}>
+                                    <td><twig:Icon name="{{ shortcut.icon }}" class="me-2" />{{ shortcut.label | trans }}</td>
+                                    <td class="text-end text-nowrap"><kbd>{{ shortcut.combination.label }}</kbd></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p class="keyboard-shortcuts__hint mb-0 fs-2 text-body-secondary">{{ 'Una letra crea o lanza una acción, Shift + letra abre el listado y Ctrl + letra lleva al detalle.' | trans }} {{ 'Las teclas sueltas y las combinaciones con Shift solo actúan fuera de los campos de texto.' | trans }} {{ 'Ctrl+Enter envía el formulario del campo en el que estás escribiendo.' | trans }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

@@ -9,19 +9,19 @@ parameters:
     error_report.enabled: '%env(bool:ERROR_NOTIFICATIONS_ENABLED)%'
     error_report.recipients: '%env(ERROR_NOTIFICATION_RECIPIENTS)%'
     error_report.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_THROTTLE_MINUTES)%'
-    app.ai_provider: '%env(AI_PROVIDER)%'
-    app.ai_log_enabled: '%env(bool:AI_LOG_ENABLED)%'
     app.gemini_api_key: '%env(GEMINI_API_KEY)%'
     app.gemini_model_low: '%env(GEMINI_MODEL_LOW)%'
     app.gemini_model_medium: '%env(GEMINI_MODEL_MEDIUM)%'
     app.gemini_model_high: '%env(GEMINI_MODEL_HIGH)%'
-    app.anthropic_api_key: '%env(ANTHROPIC_API_KEY)%'
-    app.anthropic_model_low: '%env(ANTHROPIC_MODEL_LOW)%'
-    app.anthropic_model_medium: '%env(ANTHROPIC_MODEL_MEDIUM)%'
-    app.anthropic_model_high: '%env(ANTHROPIC_MODEL_HIGH)%'
     app.google_maps_api_key: '%env(GOOGLE_MAPS_API_KEY)%'
     app.google_maps_enabled: '%env(bool:GOOGLE_MAPS_ENABLED)%'
     app.google_maps_region: '%env(GOOGLE_MAPS_REGION)%'
+    error_report.erp.enabled: '%env(bool:ERROR_NOTIFICATIONS_ERP_ENABLED)%'
+    error_report.erp.url: '%env(ERROR_NOTIFICATIONS_ERP_URL)%'
+    error_report.erp.username: '%env(ERROR_NOTIFICATIONS_ERP_USERNAME)%'
+    error_report.erp.api_token: '%env(ERROR_NOTIFICATIONS_ERP_API_TOKEN)%'
+    error_report.erp.project_id: '%env(ERROR_NOTIFICATIONS_ERP_PROJECT_ID)%'
+    error_report.erp.throttle_minutes: '%env(int:ERROR_NOTIFICATIONS_ERP_THROTTLE_MINUTES)%'
     ovh.s3.endpoint: '%env(OVH_S3_ENDPOINT)%'
     ovh.s3.region: '%env(OVH_S3_REGION)%'
     ovh.s3.bucket: '%env(OVH_S3_BUCKET)%'
@@ -33,6 +33,16 @@ parameters:
         async_high: high
         async: medium
         async_low: low
+    shared.live_updates_enabled: '%env(bool:LIVE_UPDATES_ENABLED)%'
+    shared.assistant.disabled_tools: []
+    shared.assistant.suggestions: []
+    shared.assistant.document_routes: []
+    app.ai_provider: '%env(AI_PROVIDER)%'
+    app.ai_log_enabled: '%env(bool:AI_LOG_ENABLED)%'
+    app.anthropic_api_key: '%env(ANTHROPIC_API_KEY)%'
+    app.anthropic_model_low: '%env(ANTHROPIC_MODEL_LOW)%'
+    app.anthropic_model_medium: '%env(ANTHROPIC_MODEL_MEDIUM)%'
+    app.anthropic_model_high: '%env(ANTHROPIC_MODEL_HIGH)%'
 
 services:
     _defaults:
@@ -41,6 +51,8 @@ services:
 
     App\Shared\:
         resource: '../../../'
+        exclude:
+            - '../../../Infrastructure/Symfony/Maintenance/'
 
     App\Fixtures\:
         resource: '../../../../../fixtures/'
@@ -107,7 +119,38 @@ services:
         tags:
             - { name: monolog.logger, channel: error_report }
 
-    App\Shared\Domain\Model\ErrorReport\ErrorReportNotifier: '@App\Shared\Infrastructure\ErrorReport\EmailErrorReportNotifier'
+    error_report.erp_throttle:
+        class: App\Shared\Infrastructure\ErrorReport\CacheErrorReportThrottle
+        arguments:
+            $cache: '@cache.app'
+            $throttleMinutes: '%error_report.erp.throttle_minutes%'
+            $keyPrefix: 'error_report_erp'
+
+    App\Shared\Infrastructure\ErrorReport\Erp\ErpErrorReportClient:
+        arguments:
+            $httpClient: '@http_client'
+            $cache: '@cache.app'
+            $url: '%error_report.erp.url%'
+            $username: '%error_report.erp.username%'
+            $apiToken: '%error_report.erp.api_token%'
+
+    App\Shared\Infrastructure\ErrorReport\Erp\ErpErrorReportNotifier:
+        arguments:
+            $throttle: '@error_report.erp_throttle'
+            $enabled: '%error_report.erp.enabled%'
+            $projectId: '%error_report.erp.project_id%'
+        tags:
+            - { name: monolog.logger, channel: error_report }
+
+    App\Shared\Infrastructure\ErrorReport\ChainErrorReportNotifier:
+        arguments:
+            $notifiers:
+                - '@App\Shared\Infrastructure\ErrorReport\EmailErrorReportNotifier'
+                - '@App\Shared\Infrastructure\ErrorReport\Erp\ErpErrorReportNotifier'
+        tags:
+            - { name: monolog.logger, channel: error_report }
+
+    App\Shared\Domain\Model\ErrorReport\ErrorReportNotifier: '@App\Shared\Infrastructure\ErrorReport\ChainErrorReportNotifier'
 
     App\Shared\Domain\Model\ErrorReport\ErrorReportThrottle: '@App\Shared\Infrastructure\ErrorReport\CacheErrorReportThrottle'
 
@@ -153,36 +196,67 @@ services:
             $maxWaitMinutes: '%shared.health_check.queue_max_wait_minutes%'
         tags: [{ name: shared.health_indicator, priority: 10 }]
 
+    App\Shared\Infrastructure\Ai\AiRequestLog:
+        arguments:
+            $enabled: '%app.ai_log_enabled%'
+            $dir: '%kernel.project_dir%/var/ai-logs'
+
+    App\Shared\Infrastructure\Live\BufferedLiveUpdates:
+        arguments:
+            $enabled: '%shared.live_updates_enabled%'
+
+    App\Shared\Application\Live\LiveUpdates: '@App\Shared\Infrastructure\Live\BufferedLiveUpdates'
+
+    App\Shared\Application\Assistant\CurrentAssistantExecution: '@App\Shared\Infrastructure\Assistant\ResettableCurrentAssistantExecution'
+
+    App\Shared\Infrastructure\Live\LiveSubscriptionCookieSubscriber:
+        arguments:
+            $enabled: '%shared.live_updates_enabled%'
+
+    App\Shared\Infrastructure\Symfony\Twig\LiveExtension:
+        arguments:
+            $enabled: '%shared.live_updates_enabled%'
+
 when@dev:
     services:
         _defaults:
             autowire: true
             autoconfigure: true
 
-        App\Shared\Infrastructure\AI\AiRequestLog:
-            arguments:
-                $enabled: '%app.ai_log_enabled%'
-                $dir: '%kernel.project_dir%/var/ai-logs'
-
-        App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
+        App\Shared\Infrastructure\Ai\Gemini\GeminiAiClient:
             arguments:
                 $apiKey: '%app.gemini_api_key%'
                 $modelLow: '%app.gemini_model_low%'
                 $modelMedium: '%app.gemini_model_medium%'
                 $modelHigh: '%app.gemini_model_high%'
 
-        App\Shared\Infrastructure\AI\Anthropic\AnthropicHttpClient:
+        App\Shared\Infrastructure\Ai\Anthropic\AnthropicAiClient:
             arguments:
                 $apiKey: '%app.anthropic_api_key%'
                 $modelLow: '%app.anthropic_model_low%'
                 $modelMedium: '%app.anthropic_model_medium%'
                 $modelHigh: '%app.anthropic_model_high%'
 
-        App\Shared\Infrastructure\AI\ProviderAiClient:
+        App\Shared\Infrastructure\Ai\ProviderAiClient:
             arguments:
                 $provider: '%app.ai_provider%'
 
-        App\Shared\Infrastructure\AI\AiClient: '@App\Shared\Infrastructure\AI\ProviderAiClient'
+        App\Shared\Application\Ai\AiClient:
+            alias: App\Shared\Infrastructure\Ai\ProviderAiClient
+
+        App\Shared\Infrastructure\Ai\Anthropic\AnthropicAiAgentClient:
+            arguments:
+                $apiKey: '%app.anthropic_api_key%'
+                $modelLow: '%app.anthropic_model_low%'
+                $modelMedium: '%app.anthropic_model_medium%'
+                $modelHigh: '%app.anthropic_model_high%'
+
+        App\Shared\Infrastructure\Ai\ProviderAiAgentClient:
+            arguments:
+                $provider: '%app.ai_provider%'
+
+        App\Shared\Application\Ai\Agent\AiAgentClient:
+            alias: App\Shared\Infrastructure\Ai\ProviderAiAgentClient
 
 when@prod:
     services:
@@ -190,34 +264,45 @@ when@prod:
             autowire: true
             autoconfigure: true
 
-        App\Shared\Infrastructure\AI\AiRequestLog:
-            arguments:
-                $enabled: '%app.ai_log_enabled%'
-                $dir: '%kernel.project_dir%/var/ai-logs'
-
-        App\Shared\Infrastructure\AI\Gemini\GeminiHttpClient:
+        App\Shared\Infrastructure\Ai\Gemini\GeminiAiClient:
             arguments:
                 $apiKey: '%app.gemini_api_key%'
                 $modelLow: '%app.gemini_model_low%'
                 $modelMedium: '%app.gemini_model_medium%'
                 $modelHigh: '%app.gemini_model_high%'
 
-        App\Shared\Infrastructure\AI\Anthropic\AnthropicHttpClient:
+        App\Shared\Infrastructure\Ai\Anthropic\AnthropicAiClient:
             arguments:
                 $apiKey: '%app.anthropic_api_key%'
                 $modelLow: '%app.anthropic_model_low%'
                 $modelMedium: '%app.anthropic_model_medium%'
                 $modelHigh: '%app.anthropic_model_high%'
 
-        App\Shared\Infrastructure\AI\ProviderAiClient:
+        App\Shared\Infrastructure\Ai\ProviderAiClient:
             arguments:
                 $provider: '%app.ai_provider%'
 
-        App\Shared\Infrastructure\AI\AiClient: '@App\Shared\Infrastructure\AI\ProviderAiClient'
+        App\Shared\Application\Ai\AiClient:
+            alias: App\Shared\Infrastructure\Ai\ProviderAiClient
+
+        App\Shared\Infrastructure\Ai\Anthropic\AnthropicAiAgentClient:
+            arguments:
+                $apiKey: '%app.anthropic_api_key%'
+                $modelLow: '%app.anthropic_model_low%'
+                $modelMedium: '%app.anthropic_model_medium%'
+                $modelHigh: '%app.anthropic_model_high%'
+
+        App\Shared\Infrastructure\Ai\ProviderAiAgentClient:
+            arguments:
+                $provider: '%app.ai_provider%'
+
+        App\Shared\Application\Ai\Agent\AiAgentClient:
+            alias: App\Shared\Infrastructure\Ai\ProviderAiAgentClient
 
 when@test:
     parameters:
         app.uploads_dir: '%kernel.project_dir%/var/uploads_test%env(default::TEST_TOKEN)%'
+        error_report.erp.enabled: false
 
     services:
         _defaults:
@@ -229,3 +314,17 @@ when@test:
             tags: [{ name: shared.health_indicator, priority: 0 }]
 
         App\Shared\Domain\Model\Geo\PlaceFinder: '@App\Shared\Infrastructure\Geo\NullPlaceFinder'
+
+        App\Shared\Infrastructure\Ai\InMemoryAiClient:
+            public: true
+
+        App\Shared\Application\Ai\AiClient:
+            alias: App\Shared\Infrastructure\Ai\InMemoryAiClient
+            public: true
+
+        App\Shared\Infrastructure\Ai\InMemoryAiAgentClient:
+            public: true
+
+        App\Shared\Application\Ai\Agent\AiAgentClient:
+            alias: App\Shared\Infrastructure\Ai\InMemoryAiAgentClient
+            public: true

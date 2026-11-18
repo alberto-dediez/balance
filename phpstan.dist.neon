@@ -44,9 +44,20 @@ parameters:
             message: '#Parameter \#1 .* of method .*::__invoke\(\) expects .*, .*Command given\.#'
             path: src/Shared/Application/CommandBus/CommandInvokeHandlerTrait.php
         -
-            identifier: symfonyContainer.privateService
-            path: tests/Acceptance/
-        -
             message: '#Variable \$outputFile might not be defined\.#'
             identifier: variable.undefined
             path: src/Property/Infrastructure/UI/Console/Property/ImportCommand.php
+        -
+            message: '#^Method App\\Assistant\\Application\\Engine\\ConversationTranscript::messagesFor\(\) should return list<App\\Shared\\Application\\Ai\\Agent\\AiAgentMessage> but returns array<int<0, max>, App\\Shared\\Application\\Ai\\Agent\\AiAgentMessage>\.$#'
+            identifier: return.type
+            path: src/Assistant/Application/Engine/ConversationTranscript.php
+            reportUnmatched: false
+        -
+            message: '#^Property App\\Tests\\Unit\\Assistant\\Application\\Engine\\FakeAssistantTool@anonymous/tests/Unit/Assistant/Application/ActionPlan/ExecuteActionPlanServiceTest\.php:\d+::\$executionIds is never read, only written\.$#'
+            identifier: property.onlyWritten
+            path: tests/Unit/Assistant/Application/ActionPlan/ExecuteActionPlanServiceTest.php
+            reportUnmatched: false
+        -
+            message: '#Service ".*" is private\.#'
+            paths:
+                - tests/*

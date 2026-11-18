@@ -29,11 +29,42 @@ export default class extends Controller {
             previewStyle: 'vertical',
             toolbarItems,
             hideModeSwitch: this.hideModeSwitchValue,
+            plugins: [context => this.#submitShortcutPlugin(context)],
         });
 
         this.editor.on('change', () => {
             this.inputTarget.value = this.editor.getMarkdown();
         });
+    }
+
+    #submitShortcutPlugin(context) {
+        const form = this.element.closest('form');
+        const hasSubmitShortcut = () => form !== null && form.querySelector('[data-submit-shortcut="1"]') !== null;
+        const isInTableCell = state => {
+            const { $from } = state.selection;
+
+            for (let depth = $from.depth; depth > 0; depth--) {
+                if (['tableHeadCell', 'tableBodyCell'].includes($from.node(depth).type.name)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+        const plugin = () => new context.pmState.Plugin({
+            props: {
+                handleDOMEvents: {
+                    keydown: (view, event) => event.key === 'Enter'
+                        && (event.ctrlKey || event.metaKey)
+                        && !event.shiftKey
+                        && !event.altKey
+                        && !isInTableCell(view.state)
+                        && hasSubmitShortcut(),
+                },
+            },
+        });
+
+        return { wysiwygPlugins: [plugin], markdownPlugins: [plugin] };
     }
 
     disconnect() {

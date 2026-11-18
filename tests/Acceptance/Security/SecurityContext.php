@@ -413,6 +413,12 @@ final class SecurityContext implements Context
         ));
     }
 
+    #[Given('user with id :id has been removed by the assistant execution :executionId')]
+    public function userWithIdHasBeenRemovedByTheAssistantExecution(string $id, string $executionId): void
+    {
+        $this->getRecordedEventRepository()->add(RecordedEventMother::byAssistant($executionId, new UserId($id)));
+    }
+
     #[Given('user :username with role :role with id :id exists')]
     public function userWithRoleWithIdExists(string $username, string $role, string $id): void
     {

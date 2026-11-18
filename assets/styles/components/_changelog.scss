@@ -64,3 +64,21 @@
         text-align: left;
     }
 }
+
+.guide-article {
+    blockquote {
+        margin: 0 0 1rem;
+        padding: 0.5rem 1rem;
+        border-left: 4px solid var(--bs-primary);
+        background-color: var(--bs-tertiary-bg);
+        color: var(--bs-secondary-color);
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    table th:first-child {
+        width: 30%;
+    }
+}

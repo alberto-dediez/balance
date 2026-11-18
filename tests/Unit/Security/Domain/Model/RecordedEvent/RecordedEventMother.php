@@ -33,6 +33,15 @@ class RecordedEventMother
         );
     }
 
+    public static function byAssistant(string $executionId, ?UserId $removedUserId = null): RecordedEvent
+    {
+        return new RecordedEvent(
+            userId: UserId::generate(),
+            event: new UserRemoved(userId: $removedUserId ?? UserId::generate()),
+            assistantExecutionId: $executionId,
+        );
+    }
+
     public static function fromUser(UserId $userId): RecordedEvent
     {
         return self::from(

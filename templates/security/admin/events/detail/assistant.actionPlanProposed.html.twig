@@ -1,0 +1,11 @@
+{% trans with {'{summary}': event.summary | e} %}Plan propuesto: {summary}{% endtrans %}
+<ol class="mb-0 ps-3">
+    {% for step in event.steps %}
+        <li>
+            {{ step.label | trans }}:
+            {% for argument in step.arguments %}
+                {{ argument.name }} = {% if argument.fromStep %}{% trans with {'{step}': argument.fromStep} %}resultado del paso {step}{% endtrans %}{% else %}{{ argument.display ?? argument.value }}{% endif %}{{ not loop.last ? ', ' }}
+            {% endfor %}
+        </li>
+    {% endfor %}
+</ol>

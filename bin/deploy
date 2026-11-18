@@ -2,6 +2,7 @@
 #
 # Despliegue en producción (Plesk + Supervisor).
 # Plesk Git ya ha actualizado el código: se lanza como acción de despliegue adicional.
+# Mientras dura, la web responde 503 (var/maintenance.lock, comprobado en public/index.php).
 # Se ejecuta como el system user de Plesk, nunca como root.
 # Requiere /etc/sudoers.d/<grupo>-supervisor (ver infra/supervisor/README.md).
 #
@@ -26,6 +27,7 @@ DEPLOY_LOG="${DEPLOY_LOG:-$PROJECT_DIR/var/log/deploy.log}"
 DEPLOY_WEBHOOK_URL="${DEPLOY_WEBHOOK_URL:-}"
 DEPLOY_GIT_DIR="${DEPLOY_GIT_DIR:-}"
 DEPLOY_GIT_REF="${DEPLOY_GIT_REF:-}"
+MAINTENANCE_FLAG="$PROJECT_DIR/var/maintenance.lock"
 
 export APP_ENV=prod
 export APP_DEBUG=0
@@ -133,6 +135,10 @@ on_exit() {
 
     printf '\n\033[31m!! El deploy ha fallado en el paso "%s" (código %s). Los workers siguen parados: corrige el error y vuelve a lanzar bin/deploy (o sudo %s start "%s:*").\033[0m\n' \
         "$CURRENT_STEP" "$exit_code" "$SUPERVISORCTL" "$SUPERVISOR_GROUP" >&2
+    if [ -f "$MAINTENANCE_FLAG" ]; then
+        printf '\033[31m!! La web sigue en modo mantenimiento: al relanzar bin/deploy se quita sola al terminar, o bórrala a mano con rm %s.\033[0m\n' \
+            "$MAINTENANCE_FLAG" >&2
+    fi
     notify_webhook failed "$exit_code"
 }
 
@@ -154,6 +160,10 @@ main() {
     printf '\n######## Deploy %s (%s) ########\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$([ "$DEPLOY_COMMIT" != desconocido ] && printf '%s' "$DEPLOY_COMMIT" || printf 'sin git')"
 
     trap on_exit EXIT
+
+    step "Activando el modo mantenimiento"
+    mkdir -p "$(dirname "$MAINTENANCE_FLAG")"
+    date '+%Y-%m-%d %H:%M:%S' > "$MAINTENANCE_FLAG"
 
     step "Parando los workers (esperan a terminar el mensaje en curso)"
     supervisor stop "$SUPERVISOR_GROUP:*" || printf 'Algún worker ya estaba parado; se continúa.\n'
@@ -177,6 +187,9 @@ main() {
     console importmap:install
     console sass:build
     console asset-map:compile
+
+    step "Desactivando el modo mantenimiento"
+    rm -f "$MAINTENANCE_FLAG"
 
     step "Aplicando los cambios de la configuración de Supervisor"
     supervisor reread

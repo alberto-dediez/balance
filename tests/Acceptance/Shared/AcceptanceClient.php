@@ -123,6 +123,11 @@ final class AcceptanceClient
         return $this->client->getResponse();
     }
 
+    public function getResponseBody(): string
+    {
+        return $this->client->getInternalResponse()->getContent();
+    }
+
     public function getCrawler(): Crawler
     {
         $response = $this->client->getResponse()->getContent();
@@ -183,6 +188,17 @@ final class AcceptanceClient
     public function setCookie(string $name, string $value): void
     {
         $this->client->getCookieJar()->set(new Cookie($name, $value));
+    }
+
+    public function cookieValue(string $name): ?string
+    {
+        foreach ($this->client->getCookieJar()->all() as $cookie) {
+            if ($name === $cookie->getName()) {
+                return $cookie->getValue();
+            }
+        }
+
+        return null;
     }
 
     public function clearCookiesExcept(string $name): void

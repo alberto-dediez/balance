@@ -1,0 +1,4 @@
+{% trans with {
+    '{calls}': event.toolCalls,
+    '{cost}': event.costUsd | number_format(4, ',', '.')
+} %}Respuesta del asistente completada ({calls} consultas, {cost} USD){% endtrans %}

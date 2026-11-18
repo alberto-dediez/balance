@@ -73,6 +73,14 @@ class InMemoryRecordedEventRepository implements RecordedEventRepository
                 continue;
             }
 
+            if (null !== $filter->byAssistant && $filter->byAssistant !== $event->isByAssistant()) {
+                continue;
+            }
+
+            if (!in_array($filter->assistantExecutionId, [null, '', $event->assistantExecutionId()], true)) {
+                continue;
+            }
+
             if (!in_array($filter->aggregateRootId, [null, '', '0', $event->aggregateRootId()], true)) {
                 continue;
             }

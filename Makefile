@@ -5,7 +5,7 @@ DOCKER_COMP = docker compose --env-file .env $(shell [ -f .env.local ] && echo "
 PHP_CONT = $(DOCKER_COMP) exec php
 DATABASE_CONT = $(DOCKER_COMP) exec database
 ADMIN_PREFIX_ENV = $(if $(admin_prefix),-e ADMIN_PREFIX=$(admin_prefix))
-TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" -e ACCOUNT_IMPERSONATION_ENABLED=true -e ANNOUNCEMENTS_ENABLED=true $(ADMIN_PREFIX_ENV) php
+TEST_CONT     = $(DOCKER_COMP) exec -e APP_ENV=test -e DATABASE_URL="sqlite:///./var/data.db" -e SYMFONY_DEPRECATIONS_HELPER="disabled=1" -e ACCOUNT_IMPERSONATION_ENABLED=true -e ANNOUNCEMENTS_ENABLED=true -e ASSISTANT_ENABLED=true $(ADMIN_PREFIX_ENV) php
 
 # Executables
 PHP      = $(PHP_CONT) php

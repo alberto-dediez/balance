@@ -1,0 +1,23 @@
+{% if this.enabled %}
+    <aside class="assistant-panel"
+           hidden
+           data-controller="assistant-panel"
+           data-assistant-panel-panel-url-value="{{ path('assistant_panel') }}"
+           data-assistant-panel-conversations-url-value="{{ path('assistant_conversations') }}"
+           data-assistant-panel-status-url-template-value="{{ path('assistant_status', {conversationId: '__ID__'}) }}"
+           data-assistant-panel-thread-url-template-value="{{ path('assistant_thread', {conversationId: '__ID__'}) }}"
+           data-assistant-panel-interval-value="3000"
+           data-assistant-panel-error-value="{{ 'No se ha podido contactar con el asistente' | trans }}"
+           data-assistant-panel-max-bytes-value="{{ this.documentMaxBytes }}"
+           data-assistant-panel-image-max-bytes-value="{{ this.imageMaxBytes }}"
+           data-assistant-panel-total-max-bytes-value="{{ this.totalMaxBytes }}"
+           data-assistant-panel-copied-value="{{ 'Respuesta copiada' | trans }}"
+           data-assistant-panel-too-many-value="{{ 'Solo se pueden adjuntar 5 ficheros por mensaje' | trans }}"
+           data-assistant-panel-not-readable-value="{{ 'El fichero {name} no es de un tipo legible' | trans }}"
+           data-assistant-panel-too-large-value="{{ 'El fichero {name} supera el tamaño máximo' | trans }}"
+           data-assistant-panel-empty-value="{{ 'El fichero {name} está vacío' | trans }}"
+           data-assistant-panel-image-too-large-value="{{ 'La imagen {name} supera el tamaño máximo' | trans }}"
+           data-assistant-panel-total-too-large-value="{{ 'Los ficheros adjuntos superan en conjunto el tamaño máximo de un mensaje' | trans }}"
+           data-action="keyboard-shortcuts:assistant-toggle@window->assistant-panel#toggle dragover->assistant-panel#dragover dragleave->assistant-panel#dragleave drop->assistant-panel#drop">
+    </aside>
+{% endif %}

@@ -2,6 +2,7 @@ parameters:
     changelog.dir: '%kernel.project_dir%/changelog'
     changelog.entries_dir: '%changelog.dir%/entries'
     changelog.manuals_dir: '%changelog.dir%/manuals'
+    changelog.guide_dir: '%kernel.project_dir%/guide'
     app.announcements_enabled: '%env(bool:ANNOUNCEMENTS_ENABLED)%'
 
 services:
@@ -20,12 +21,19 @@ services:
         arguments:
             $entriesPath: '%changelog.entries_dir%'
 
+    App\Changelog\Infrastructure\Persistence\Filesystem\FilesystemGuideArticleRepository:
+        arguments:
+            $guidePath: '%changelog.guide_dir%'
+
     App\Changelog\Infrastructure\Storage\LocalManualStorage:
         arguments:
             $basePath: '%changelog.manuals_dir%'
 
     App\Changelog\Domain\Model\ChangelogEntry\ChangelogEntryRepository:
         alias: App\Changelog\Infrastructure\Persistence\Filesystem\FilesystemChangelogEntryRepository
+
+    App\Changelog\Domain\Model\GuideArticle\GuideArticleRepository:
+        alias: App\Changelog\Infrastructure\Persistence\Filesystem\FilesystemGuideArticleRepository
 
     App\Changelog\Domain\Model\ChangelogEntry\ManualStorage:
         alias: App\Changelog\Infrastructure\Storage\LocalManualStorage
@@ -39,6 +47,12 @@ when@test:
             alias: App\Changelog\Infrastructure\Persistence\InMemory\InMemoryChangelogEntryRepository
 
         App\Changelog\Infrastructure\Persistence\InMemory\InMemoryChangelogEntryRepository:
+            public: true
+
+        App\Changelog\Domain\Model\GuideArticle\GuideArticleRepository:
+            alias: App\Changelog\Infrastructure\Persistence\InMemory\InMemoryGuideArticleRepository
+
+        App\Changelog\Infrastructure\Persistence\InMemory\InMemoryGuideArticleRepository:
             public: true
 
         App\Changelog\Domain\Model\ChangelogEntry\ManualStorage:

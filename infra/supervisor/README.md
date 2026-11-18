@@ -245,21 +245,25 @@ sudo -u <PROJECT_USER> -H bash -c 'cd <PROJECT_DIR> && bash bin/deploy; echo "EX
 
 En este orden:
 
-1. **Para los workers** (`supervisorctl stop '<GRUPO>:*'`). Cada worker termina el mensaje en curso (hasta `stopwaitsecs=3600`, durante los que el despliegue de Plesk queda esperando) y Supervisor los deja parados hasta el `start`; los mensajes nuevos se acumulan en `messenger_messages`. Si algún worker ya estaba parado (`ERROR (not running)`, por ejemplo tras un despliegue fallido) se avisa y se continúa: `supervisorctl` devuelve error en ese caso y antes abortaba el despliegue entero sin ejecutar las migraciones.
-2. **Instala dependencias** (`composer install --optimize-autoloader --no-scripts`, con las dependencias de desarrollo) con el Composer y el PHP CLI de Plesk. Sin scripts para que Composer no limpie la caché por su cuenta; sus `auto-scripts` se ejecutan en los pasos siguientes.
-3. **Limpia la caché** (`cache:clear --no-warmup`) y la **calienta** (`cache:warmup`).
-4. **Ejecuta las migraciones**, después de la caché para que no fallen con un contenedor desactualizado.
-5. **Compila los assets** (`assets:install`, `importmap:install`, `sass:build`, `asset-map:compile`); `public/assets/` no se versiona.
-6. **Aplica la configuración de Supervisor** (`reread` + `update <GRUPO>`) en todos los despliegues: si `<GRUPO>-workers.ini` no ha cambiado no hace nada; si ha cambiado, aplica el cambio sea cual sea.
-7. **Lanza los workers** (`start '<GRUPO>:*'`) y muestra su estado.
+1. **Activa el modo mantenimiento**: crea `var/maintenance.lock`. Mientras existe, `public/index.php` responde 503 sin cargar `vendor/` ni arrancar el kernel (la página estática `templates/maintenance.html` en la web y `{"status":"maintenance"}` en `/api`, también en `/health-check` y `/api/health-check`), salvo las rutas que empiezan por `/webhooks/deployments`. Así se evitan los 500 del código nuevo ejecutándose con el contenedor compilado de la versión anterior.
+2. **Para los workers** (`supervisorctl stop '<GRUPO>:*'`). Cada worker termina el mensaje en curso (hasta `stopwaitsecs=3600`, durante los que el despliegue de Plesk queda esperando) y Supervisor los deja parados hasta el `start`; los mensajes nuevos se acumulan en `messenger_messages`. Si algún worker ya estaba parado (`ERROR (not running)`, por ejemplo tras un despliegue fallido) se avisa y se continúa: `supervisorctl` devuelve error en ese caso y antes abortaba el despliegue entero sin ejecutar las migraciones.
+3. **Instala dependencias** (`composer install --optimize-autoloader --no-scripts`, con las dependencias de desarrollo) con el Composer y el PHP CLI de Plesk. Sin scripts para que Composer no limpie la caché por su cuenta; sus `auto-scripts` se ejecutan en los pasos siguientes.
+4. **Limpia la caché** (`cache:clear --no-warmup`) y la **calienta** (`cache:warmup`).
+5. **Ejecuta las migraciones**, después de la caché para que no fallen con un contenedor desactualizado.
+6. **Compila los assets** (`assets:install`, `importmap:install`, `sass:build`, `asset-map:compile`); `public/assets/` no se versiona.
+7. **Desactiva el modo mantenimiento** (borra `var/maintenance.lock`): código, caché, esquema y assets ya cuadran. Si falla un paso posterior de Supervisor, la web ya está operativa.
+8. **Aplica la configuración de Supervisor** (`reread` + `update <GRUPO>`) en todos los despliegues: si `<GRUPO>-workers.ini` no ha cambiado no hace nada; si ha cambiado, aplica el cambio sea cual sea.
+9. **Lanza los workers** (`start '<GRUPO>:*'`) y muestra su estado.
 
 Los comandos de `bin/console` se ejecutan con `memory_limit=512M`: el PHP CLI de Plesk trae 128M y calentar la caché de Twig los supera.
 
-Plesk Git actualiza los ficheros **antes** de lanzar la acción, así que los workers conviven unos segundos con el código nuevo hasta que el paso 1 los para; Plesk no ofrece una acción previa al despliegue.
+Plesk Git actualiza los ficheros **antes** de lanzar la acción, así que los workers conviven unos segundos con el código nuevo hasta que el paso 2 los para; Plesk no ofrece una acción previa al despliegue. Por lo mismo, los segundos entre la copia de Plesk y el arranque del script (paso 1) siguen sin cubrir por el modo mantenimiento.
 
 No usar `restart` ni `messenger:stop-workers` en el despliegue: ambos hacen que Supervisor relance los workers al instante, en mitad del borrado de la caché.
 
-Si un paso falla, el script se detiene, indica en qué paso ha fallado, notifica el webhook si está configurado y **deja los workers parados** a propósito (con dependencias a medias o una migración fallida es más seguro no procesar mensajes). Corregir el error y relanzar `bin/deploy`, o arrancarlos a mano con `supervisorctl start '<GRUPO>:*'`.
+Si un paso falla, el script se detiene, indica en qué paso ha fallado, notifica el webhook si está configurado y **deja los workers parados** a propósito (con dependencias a medias o una migración fallida es más seguro no procesar mensajes). Corregir el error y relanzar `bin/deploy`, o arrancarlos a mano con `supervisorctl start '<GRUPO>:*'`. También **deja la web en modo mantenimiento** (`var/maintenance.lock` sigue existiendo): al relanzar `bin/deploy` se quita sola cuando termina bien; para quitarla a mano, `rm <PROJECT_DIR>/var/maintenance.lock`.
+
+**OPcache:** `bin/deploy` no resetea OPcache (`opcache_reset()` en CLI no afecta a PHP-FPM y el usuario de Plesk no puede recargar FPM). Comprobar con `/opt/plesk/php/8.4/bin/php -i | grep validate_timestamps` (y en el PHP-FPM del dominio, p. ej. con un `phpinfo()` temporal) que `opcache.validate_timestamps` está a `On`. Si está a `Off`, hay que recargar PHP-FPM después de cada despliegue.
 
 ## Problemas frecuentes
 

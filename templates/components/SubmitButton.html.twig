@@ -1,0 +1,27 @@
+{% props color = 'primary' %}
+
+{% set button = html_cva(
+    base: 'btn d-flex align-items-center',
+    variants: {
+        color: {
+            info: 'btn-info',
+            primary: 'btn-primary',
+            infoSubtle: 'bg-info-subtle text-info',
+            primarySubtle: 'bg-primary-subtle text-primary',
+            secondarySubtle: 'bg-secondary-subtle text-secondary',
+            successSubtle: 'bg-success-subtle text-success',
+            warningSubtle: 'bg-warning-subtle text-warning',
+            dangerSubtle: 'bg-danger-subtle text-danger',
+            purpleSubtle: 'bg-purple-subtle text-purple',
+            indigoSubtle: 'bg-indigo-subtle text-indigo',
+            darkSubtle: 'bg-dark-subtle text-white'
+        }
+    }
+) %}
+
+<button type="submit"
+    class="{{ button.apply({color}, attributes.render('class')) }}"
+    {{ attributes.without('class') }}
+>
+    {% block content %}{% endblock %}
+</button>

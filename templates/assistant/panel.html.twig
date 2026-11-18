@@ -1,0 +1,56 @@
+<div class="assistant-panel__header" data-action="click->assistant-panel#restore">
+    <twig:Icon name="solar:chat-round-dots-line-duotone" size="lg" class="text-primary flex-shrink-0" />
+    <span class="assistant-panel__title">{{ view ? view.conversation.title : ('Asistente IA' | trans) }}</span>
+    <button type="button" class="assistant-panel__action" title="{{ 'Nueva conversación' | trans }}" aria-label="{{ 'Nueva conversación' | trans }}" data-bs-toggle="tooltip" data-action="assistant-panel#newConversation">
+        <twig:Icon name="solar:pen-new-square-line-duotone" size="lg" />
+    </button>
+    <button type="button" class="assistant-panel__action" title="{{ 'Conversaciones' | trans }}" aria-label="{{ 'Conversaciones' | trans }}" data-bs-toggle="tooltip" data-action="assistant-panel#showConversations">
+        <twig:Icon name="solar:history-line-duotone" size="lg" />
+    </button>
+    <button type="button" class="assistant-panel__action" title="{{ 'Ampliar' | trans }}" aria-label="{{ 'Ampliar' | trans }}" aria-pressed="false" data-bs-toggle="tooltip" data-assistant-panel-target="wideButton" data-wide-label="{{ 'Ampliar' | trans }}" data-narrow-label="{{ 'Reducir' | trans }}" data-action="assistant-panel#toggleWide">
+        <twig:Icon name="solar:maximize-square-line-duotone" size="lg" />
+    </button>
+    <button type="button" class="assistant-panel__action" title="{{ 'Minimizar' | trans }}" aria-label="{{ 'Minimizar' | trans }}" data-bs-toggle="tooltip" data-assistant-panel-target="minimizeButton" data-minimize-label="{{ 'Minimizar' | trans }}" data-restore-label="{{ 'Restaurar' | trans }}" data-action="assistant-panel#toggleMinimized">
+        <twig:Icon name="solar:double-alt-arrow-down-line-duotone" size="lg" class="assistant-panel__minimize-icon" />
+        <twig:Icon name="solar:double-alt-arrow-up-line-duotone" size="lg" class="assistant-panel__restore-icon" />
+    </button>
+    <button type="button" class="assistant-panel__action" title="{{ 'Cerrar' | trans }}" aria-label="{{ 'Cerrar' | trans }}" data-action="assistant-panel#close">
+        <twig:Icon name="solar:close-circle-line-duotone" size="lg" />
+    </button>
+</div>
+
+<div class="assistant-panel__thread" data-assistant-panel-target="thread">
+    {% if view %}
+        {% include '@assistant/_thread.html.twig' with {view: view} %}
+    {% else %}
+        {% include '@assistant/_empty.html.twig' %}
+    {% endif %}
+</div>
+
+<div class="assistant-panel__dropzone" aria-hidden="true">
+    <twig:Icon name="solar:cloud-upload-line-duotone" size="xl" />
+    <span>{{ 'Suelta aquí los ficheros para adjuntarlos' | trans }}</span>
+</div>
+
+<div class="assistant-panel__footer">
+    {{ form_start(form, {attr: {'data-assistant-panel-target': 'form', 'data-action': 'submit->assistant-panel#send'}}) }}
+        {{ form_row(form.text, {attr: {'data-assistant-panel-target': 'input', 'data-action': 'input->assistant-panel#saveDraft keydown->assistant-panel#submitOnEnter paste->assistant-panel#paste'}}) }}
+        <div class="assistant-attachments" data-assistant-panel-target="attachments" data-remove-label="{{ 'Quitar fichero' | trans }}"></div>
+        <input type="file" id="{{ form.attachments.vars.id }}" name="{{ form.attachments.vars.full_name }}" multiple accept="{{ form.attachments.vars.attr.accept }}" class="d-none" data-assistant-panel-target="fileInput" data-action="change->assistant-panel#filesChanged">
+        {% do form.attachments.setRendered %}
+        {{ form_widget(form.conversationId, {attr: {'data-assistant-panel-target': 'conversationId'}}) }}
+        {{ form_widget(form.screenPath, {attr: {'data-assistant-panel-target': 'screenPath'}}) }}
+        {{ form_widget(form.screenTitle, {attr: {'data-assistant-panel-target': 'screenTitle'}}) }}
+        <div class="assistant-panel__meta">
+            <span class="d-flex align-items-center gap-2">
+                <button type="button" class="assistant-panel__action" title="{{ 'Adjuntar ficheros' | trans }}" aria-label="{{ 'Adjuntar ficheros' | trans }}" data-bs-toggle="tooltip" data-action="assistant-panel#pickFiles">
+                    <twig:Icon name="solar:paperclip-line-duotone" size="lg" />
+                </button>
+                <span data-assistant-panel-target="spent">
+                    {% include '@assistant/_spent.html.twig' with {spentToday: spentToday, dailyLimit: dailyLimit} %}
+                </span>
+            </span>
+            {{ form_widget(form.send, {attr: {class: 'btn btn-primary btn-sm px-3', 'data-submit-shortcut': '1'}}) }}
+        </div>
+    {{ form_end(form) }}
+</div>

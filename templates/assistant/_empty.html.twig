@@ -1,0 +1,13 @@
+<div class="assistant-empty">
+    <span class="assistant-empty__icon">
+        <twig:Icon name="solar:chat-round-dots-line-duotone" size="xl" />
+    </span>
+    <p class="fw-semibold mb-1">{{ '¿En qué te ayudo?' | trans }}</p>
+    <p class="text-muted small mb-0">{{ 'Pregunta lo que necesites sobre los datos de la plataforma o pide una acción: te propondré un plan que solo se ejecutará si pulsas «Ejecutar».' | trans }}</p>
+    <div class="assistant-empty__suggestions">
+        {% for text in assistant_suggestions %}
+            {% set suggestion = text | trans %}
+            <button type="button" class="assistant-suggestion" data-action="assistant-panel#suggest" data-assistant-panel-text-param="{{ suggestion }}">{{ suggestion }}</button>
+        {% endfor %}
+    </div>
+</div>

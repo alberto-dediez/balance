@@ -67,6 +67,16 @@
                 </a>
             {% endif %}
 
+            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#keyboard-shortcuts" class="py-8 px-7 mt-8 d-flex align-items-center">
+                <span class="d-flex align-items-center justify-content-center bg-info-subtle text-info rounded round">
+                   <twig:Icon name="solar:keyboard-line-duotone" size="lg" />
+                </span>
+                <div class="w-75 v-middle ps-3">
+                    <h5 class="mb-1 fs-3 fw-medium">{% trans -%}Atajos de teclado{%- endtrans %}</h5>
+                    <span class="fs-2 d-block text-body-secondary">Ctrl+F1</span>
+                </div>
+            </a>
+
             {% if is_granted('IS_IMPERSONATOR') %}
                 <a href="{{ path('home', {'_switch_user': '_exit'}) }}" class="py-8 px-7 mt-8 d-flex align-items-center">
                     <span class="d-flex align-items-center justify-content-center bg-warning-subtle text-warning rounded round">

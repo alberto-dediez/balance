@@ -1,9 +1,17 @@
-{% props title = null %}
+{% props title = null, icon = null %}
 
 <div class="card {{ attributes.render('class') }}" {{ attributes.without('class') }}>
     {% block title %}
         {% if title %}
-            <div class="card-header fw-semibold">{{ title }}</div>
+            <div class="card-header d-flex align-items-center gap-2">
+                {% if icon %}
+                    <twig:Icon name="{{ icon }}" size="lg" class="text-primary card-header-icon" />
+                {% endif %}
+
+                <span class="fw-semibold card-header-title flex-grow-1">{{ title }}</span>
+
+                {% block actions %}{% endblock %}
+            </div>
         {% endif %}
     {% endblock title %}
     <div class="card-body">

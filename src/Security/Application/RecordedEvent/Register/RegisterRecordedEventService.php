@@ -28,6 +28,7 @@ class RegisterRecordedEventService implements CommandHandler
             userId: $request->userId,
             event: $request->event,
             impersonatorId: $request->impersonatorId,
+            assistantExecutionId: $request->assistantExecutionId,
         );
 
         if (null == $performBy) {

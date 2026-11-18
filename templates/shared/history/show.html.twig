@@ -33,6 +33,7 @@
                                     </td>
                                     <td>
                                         {{ event.userId | user_name | trans | raw }}
+                                        {% if event.isByAssistant %}<twig:Badge:Assistant />{% endif %}
                                         {% if event.isImpersonated %}
                                             <span class="badge bg-warning-subtle text-warning">{{ 'Suplantado por' | trans }}: {{ event.impersonatorId | user_name | trans | raw }}</span>
                                         {% endif %}

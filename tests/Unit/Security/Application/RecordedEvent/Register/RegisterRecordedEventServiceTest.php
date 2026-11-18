@@ -64,6 +64,26 @@ class RegisterRecordedEventServiceTest extends TestCase
         $this->assertEquals($impersonator->id(), $recordedEventPersisted->impersonatorId());
     }
 
+    public function testRecordsTheAssistantExecution(): void
+    {
+        $repository = new InMemoryRecordedEventRepository();
+
+        $result = $this->createSUT($repository)(
+            new RegisterRecordedEventRequest(
+                userId: UserId::generate(),
+                event: new UserRemoved(UserId::generate()),
+                assistantExecutionId: '0190f3a4-1b2c-7d3e-8f40-123456789abc',
+            ),
+            UserMother::registeredUser(),
+        );
+
+        $recordedEvent = $repository->find($result->recordedEventId);
+
+        $this->assertNotNull($recordedEvent);
+        $this->assertTrue($recordedEvent->isByAssistant());
+        $this->assertSame('0190f3a4-1b2c-7d3e-8f40-123456789abc', $recordedEvent->assistantExecutionId());
+    }
+
     public function testEventsAreNotImpersonatedByDefault(): void
     {
         $repository = new InMemoryRecordedEventRepository();

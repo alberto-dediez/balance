@@ -26,4 +26,28 @@ class CacheErrorReportThrottleTest extends TestCase
         $this->assertTrue($sut->shouldNotify('a-fingerprint'));
         $this->assertTrue($sut->shouldNotify('a-fingerprint'));
     }
+
+    public function testThrottlesWithDifferentPrefixesDoNotBlockEachOther(): void
+    {
+        $cache = new ArrayAdapter();
+
+        $email = new CacheErrorReportThrottle($cache, 60);
+        $erp = new CacheErrorReportThrottle($cache, 60, 'error_report_erp');
+
+        $this->assertTrue($email->shouldNotify('a-fingerprint'));
+        $this->assertTrue($erp->shouldNotify('a-fingerprint'));
+        $this->assertFalse($email->shouldNotify('a-fingerprint'));
+        $this->assertFalse($erp->shouldNotify('a-fingerprint'));
+    }
+
+    public function testItStoresTheFingerprintWithTheDefaultPrefix(): void
+    {
+        $cache = new ArrayAdapter();
+
+        $sut = new CacheErrorReportThrottle($cache, 60);
+
+        $sut->shouldNotify('a-fingerprint');
+
+        $this->assertTrue($cache->hasItem('error_report_a-fingerprint'));
+    }
 }

@@ -31,4 +31,5 @@ Un fichero con el frontmatter inválido **no rompe la sección**: simplemente no
 listado ni en el detalle. Revisa los logs de la aplicación si una entrada "desaparece".
 
 Los manuales viven en `manuals/`: normalmente los publica la skill `feature-changelog` a partir de
-los manuales generados por `feature-manual` para un plan cerrado.
+los manuales generados por `feature-manual` para un plan cerrado. Las tareas hechas sin plan publican
+su entrada con la skill `manual-changelog`, sin `plan`, `manual` ni `techManual`.

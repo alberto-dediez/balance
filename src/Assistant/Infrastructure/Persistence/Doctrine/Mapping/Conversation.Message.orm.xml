@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Assistant\Domain\Model\Conversation\Message" table="assistant_message">
+        <unique-constraints>
+            <unique-constraint name="uniq_assistant_message_position" columns="conversation_id,position"/>
+        </unique-constraints>
+        <indexes>
+            <index name="idx_assistant_message_status" columns="status,created_at"/>
+        </indexes>
+
+        <id name="id" type="assistant_message_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="conversation" target-entity="App\Assistant\Domain\Model\Conversation\Conversation" inversed-by="messages">
+            <join-column name="conversation_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="position" type="integer" nullable="false"/>
+        <field name="role" type="string" length="10" enum-type="App\Assistant\Domain\Model\Conversation\MessageRole" nullable="false"/>
+        <field name="kind" type="string" length="10" enum-type="App\Assistant\Domain\Model\Conversation\MessageKind" nullable="false"/>
+        <field name="status" type="string" length="10" enum-type="App\Assistant\Domain\Model\Conversation\MessageStatus" nullable="false"/>
+        <field name="text" type="text" nullable="false"/>
+        <field name="error" type="text" nullable="true"/>
+        <field name="screenPath" type="string" length="512" column="screen_path" nullable="true"/>
+        <field name="screenTitle" type="string" length="255" column="screen_title" nullable="true"/>
+        <field name="timezone" type="string" length="64" nullable="true"/>
+        <field name="planId" type="assistant_action_plan_id" column="plan_id" nullable="true"/>
+        <embedded name="usage" class="App\Assistant\Domain\Model\AssistantUsage" use-column-prefix="false" />
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="completedAt" type="datetime_immutable" column="completed_at" nullable="true"/>
+
+        <one-to-many field="toolCalls" target-entity="App\Assistant\Domain\Model\Conversation\ToolCall" mapped-by="message" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="attachments" target-entity="App\Assistant\Domain\Model\Conversation\MessageAttachment" mapped-by="message" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

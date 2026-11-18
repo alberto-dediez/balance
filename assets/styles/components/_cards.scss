@@ -21,6 +21,15 @@
     color: var(--bs-card-subtitle-color);
   }
 
+.card-header-icon {
+    flex-shrink: 0;
+}
+
+.card-header-title {
+    min-width: 0;
+    color: var(--bs-card-title-color);
+}
+
 .card-hover {
     transition: 0.2s ease-in;
 

@@ -19,8 +19,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const tooltipTriggerList = Array.from(
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
   );
-  tooltipTriggerList.forEach((tooltipTriggerEl) => {
-    new Tooltip(tooltipTriggerEl);
+  const tooltipList = tooltipTriggerList.map((tooltipTriggerEl) => {
+    const tooltip = new Tooltip(tooltipTriggerEl);
+    tooltipTriggerEl.addEventListener("show.bs.tooltip", () => {
+      tooltipList.forEach((other) => {
+        if (other !== tooltip) {
+          other.hide();
+        }
+      });
+    });
+    tooltipTriggerEl.addEventListener("click", () => tooltip.hide());
+    return tooltip;
   });
 
   // =================================

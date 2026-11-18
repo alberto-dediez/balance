@@ -1,0 +1,3 @@
+{% props status %}
+
+<span class="badge bg-{{ status.color }}-subtle text-{{ status.color }} {{ attributes.render('class') }}" {{ attributes.without('class') }}>{{ status.value | trans({}, 'assistantPlanStatusType') }}</span>

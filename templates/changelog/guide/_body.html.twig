@@ -1,0 +1,7 @@
+<div class="text-muted mb-3">
+    {{ article.menu }}{% if article.updated %}{% if article.menu %} · {% endif %}{{ article.updated | date('d/m/Y H:i') }}{% endif %}
+</div>
+
+<div class="changelog-body guide-article">
+    {{ article | guide_article_html | raw }}
+</div>
