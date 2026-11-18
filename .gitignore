@@ -53,3 +53,4 @@ phpstan.neon
 
 .claude
 CLAUDE.md
+.agents
