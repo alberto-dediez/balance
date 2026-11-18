@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Assistant\Domain\Model\Conversation\MessageAttachment" table="assistant_message_attachment">
+        <indexes>
+            <index name="idx_assistant_message_attachment_message" columns="message_id"/>
+        </indexes>
+
+        <id name="id" type="assistant_message_attachment_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="message" target-entity="App\Assistant\Domain\Model\Conversation\Message" inversed-by="attachments">
+            <join-column name="message_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="position" type="integer" nullable="false"/>
+        <field name="fileName" type="string" length="255" column="file_name" nullable="false"/>
+        <field name="mimeType" type="string" length="100" column="mime_type" nullable="false"/>
+        <field name="size" type="integer" nullable="false"/>
+        <field name="path" type="string" length="512" nullable="false"/>
+    </entity>
+
+</doctrine-mapping>

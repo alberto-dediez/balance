@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Assistant\Domain\Model\ActionPlan\PlanStep" table="assistant_plan_step">
+        <unique-constraints>
+            <unique-constraint name="uniq_assistant_plan_step_position" columns="plan_id,position"/>
+        </unique-constraints>
+
+        <id name="id" type="assistant_plan_step_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <many-to-one field="plan" target-entity="App\Assistant\Domain\Model\ActionPlan\ActionPlan" inversed-by="steps">
+            <join-column name="plan_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <field name="position" type="integer" nullable="false"/>
+        <field name="tool" type="string" length="64" nullable="false"/>
+        <field name="label" type="string" length="255" nullable="false"/>
+        <field name="status" type="string" length="10" enum-type="App\Assistant\Domain\Model\ActionPlan\PlanStepStatus" nullable="false"/>
+        <field name="resultSummary" type="text" column="result_summary" nullable="true"/>
+        <field name="error" type="text" nullable="true"/>
+        <field name="linkLabel" type="string" length="255" column="link_label" nullable="true"/>
+        <field name="linkRoute" type="string" length="128" column="link_route" nullable="true"/>
+        <field name="executedAt" type="datetime_immutable" column="executed_at" nullable="true"/>
+
+        <one-to-many field="arguments" target-entity="App\Assistant\Domain\Model\ActionPlan\PlanStepArgument" mapped-by="step" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="outputs" target-entity="App\Assistant\Domain\Model\ActionPlan\PlanStepOutput" mapped-by="step" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

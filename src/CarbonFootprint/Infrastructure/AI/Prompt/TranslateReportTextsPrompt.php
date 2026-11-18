@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\AI\Prompt;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
+use App\Shared\Application\Ai\AiEffort;
+use App\Shared\Application\Ai\AiModelTier;
+use App\Shared\Application\Ai\AiPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\AiModelTier;
-use App\Shared\Infrastructure\AI\AiPrompt;
-use App\Shared\Infrastructure\AI\AiThinkingLevel;
 
 final class TranslateReportTextsPrompt implements AiPrompt
 {
@@ -17,6 +17,21 @@ final class TranslateReportTextsPrompt implements AiPrompt
         private readonly Locale $from,
         private readonly Locale $to,
     ) {}
+
+    public function name(): string
+    {
+        return 'carbon-footprint-report-texts-translation';
+    }
+
+    public function system(): string
+    {
+        return 'You are a professional translator specialized in sustainability and carbon footprint reports.';
+    }
+
+    public function attachments(): array
+    {
+        return [];
+    }
 
     public function text(): string
     {
@@ -73,9 +88,9 @@ final class TranslateReportTextsPrompt implements AiPrompt
         ];
     }
 
-    public function thinkingLevel(): AiThinkingLevel
+    public function effort(): AiEffort
     {
-        return AiThinkingLevel::MINIMAL;
+        return AiEffort::LOW;
     }
 
     public function modelTier(): AiModelTier

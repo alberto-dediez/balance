@@ -214,6 +214,17 @@ changelog-web:
     defaults:
         _locale: '%app.locale_default%'
 
+assistant-web:
+    resource:
+        path: ../src/Assistant/Infrastructure/UI/Web/
+        namespace: App\Assistant\Infrastructure\UI\Web
+    type: attribute
+    prefix: '%app.admin_prefix%/{_locale}'
+    requirements:
+        _locale: '%app.locale_list%'
+    defaults:
+        _locale: '%app.locale_default%'
+
 home_fallback:
     path: '%app.admin_prefix%/'
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction

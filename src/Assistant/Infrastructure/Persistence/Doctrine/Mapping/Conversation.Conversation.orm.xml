@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Assistant\Domain\Model\Conversation\Conversation" table="assistant_conversation">
+        <indexes>
+            <index name="idx_assistant_conversation_user_activity" columns="user_id,last_activity_at"/>
+        </indexes>
+
+        <id name="id" type="assistant_conversation_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="userId" type="user_id" column="user_id" nullable="false"/>
+        <field name="title" type="string" length="120" nullable="false"/>
+        <field name="startedAt" type="datetime_immutable" column="started_at" nullable="false"/>
+        <field name="lastActivityAt" type="datetime_immutable" column="last_activity_at" nullable="false"/>
+
+        <one-to-many field="messages" target-entity="App\Assistant\Domain\Model\Conversation\Message" mapped-by="conversation" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

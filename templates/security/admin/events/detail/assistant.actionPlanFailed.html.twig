@@ -1,0 +1,1 @@
+{% trans with {'{reason}': event.reason | e, '{cost}': event.costUsd | number_format(4, ',', '.')} %}Plan fallido: {reason} ({cost} USD){% endtrans %}

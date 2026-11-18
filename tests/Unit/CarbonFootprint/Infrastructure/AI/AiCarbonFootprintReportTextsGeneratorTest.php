@@ -11,7 +11,7 @@ use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateEventReportTextsPrompt;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateOrganizationalReportTextsPrompt;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\TranslateReportTextsPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\InMemoryAiClient;
+use App\Shared\Infrastructure\Ai\InMemoryAiClient;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +21,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testMapsAnEventResponseIntoTexts(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'executiveSummary' => 'Summary line 1\nSummary line 2',
             'methodology' => 'Methodology text',
             'emissionFactorSources' => 'Sources text',
@@ -44,7 +44,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testMapsAnOrganizationalResponseIntoTexts(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
             'methodology' => 'Methodology text',
@@ -66,7 +66,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testKeepsTheMitigationPlanSectionWhenItArrives(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
             'methodology' => 'Methodology text',
@@ -85,7 +85,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testKeepsTheMaterialityAnalysisSectionWhenItArrives(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
             'methodology' => 'Methodology text',
@@ -104,7 +104,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testAMissingMaterialityAnalysisSectionDoesNotFail(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
             'methodology' => 'Methodology text',
@@ -123,7 +123,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testOmitsAnEmptyMitigationPlanSection(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'purpose' => 'Purpose text',
             'regulatoryContext' => 'Context text',
             'methodology' => 'Methodology text',
@@ -142,7 +142,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testTranslateSendsTranslatePromptAndMapsResponse(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'executiveSummary' => 'Translated summary',
             'methodology' => 'Translated methodology',
             'emissionFactorSources' => 'Translated sources',
@@ -165,7 +165,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testThrowsWhenResponseKeepsReturningCorruptedCharacters(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'executiveSummary' => "El car\x01cter del a\x06o",
             'methodology' => 'Methodology text',
             'emissionFactorSources' => 'Sources text',
@@ -183,7 +183,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testEmptyOptionalSectionIsOmitted(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse([
+        $client->enqueue([
             'executiveSummary' => 'Summary',
             'methodology' => 'Methodology text',
             'emissionFactorSources' => 'Sources text',
@@ -221,7 +221,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testThrowsWhenTheResponseKeepsMissingRequiredSections(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse(['executiveSummary' => 'Only summary']);
+        $client->enqueue(['executiveSummary' => 'Only summary']);
 
         $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
@@ -234,7 +234,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testTranslateThrowsWhenATranslatedSectionComesBackEmpty(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse(['purpose' => 'Translated purpose', 'conclusion' => '']);
+        $client->enqueue(['purpose' => 'Translated purpose', 'conclusion' => '']);
 
         $sut = new AiCarbonFootprintReportTextsGenerator($client);
 
@@ -247,7 +247,7 @@ class AiCarbonFootprintReportTextsGeneratorTest extends TestCase
     public function testTranslateSkipsEmptySectionsAndKeepsThemEmpty(): void
     {
         $client = new InMemoryAiClient();
-        $client->setResponse(['purpose' => 'Translated purpose', 'conclusion' => 'Translated conclusion']);
+        $client->enqueue(['purpose' => 'Translated purpose', 'conclusion' => 'Translated conclusion']);
 
         $sut = new AiCarbonFootprintReportTextsGenerator($client);
 

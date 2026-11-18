@@ -13,10 +13,10 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonF
 use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateEventReportTextsPrompt;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateOrganizationalReportTextsPrompt;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\TranslateReportTextsPrompt;
+use App\Shared\Application\Ai\AiClient;
+use App\Shared\Application\Ai\AiPrompt;
+use App\Shared\Application\Ai\AiResponseException;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\AiClient;
-use App\Shared\Infrastructure\AI\AiPrompt;
-use App\Shared\Infrastructure\AI\AiResponseException;
 
 final class AiCarbonFootprintReportTextsGenerator implements CarbonFootprintReportTextsGenerator
 {
@@ -71,7 +71,7 @@ final class AiCarbonFootprintReportTextsGenerator implements CarbonFootprintRepo
 
         for ($attempt = 1; $attempt <= self::MAX_ATTEMPTS; ++$attempt) {
             try {
-                $result = $this->aiClient->send($prompt);
+                $result = $this->aiClient->send($prompt)->data;
             } catch (AiResponseException $exception) {
                 $lastFailure = $exception->getMessage();
 

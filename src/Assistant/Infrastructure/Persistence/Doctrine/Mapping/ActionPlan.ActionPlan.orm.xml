@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Assistant\Domain\Model\ActionPlan\ActionPlan" table="assistant_action_plan">
+        <indexes>
+            <index name="idx_assistant_action_plan_conversation" columns="conversation_id"/>
+            <index name="idx_assistant_action_plan_status" columns="status,proposed_at"/>
+            <index name="idx_assistant_action_plan_user" columns="user_id,proposed_at"/>
+        </indexes>
+
+        <id name="id" type="assistant_action_plan_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="conversationId" type="assistant_conversation_id" column="conversation_id" nullable="false"/>
+        <field name="userId" type="user_id" column="user_id" nullable="false"/>
+        <field name="summary" type="text" nullable="false"/>
+        <field name="timezone" type="string" length="64" nullable="false"/>
+        <field name="status" type="string" length="10" enum-type="App\Assistant\Domain\Model\ActionPlan\ActionPlanStatus" nullable="false"/>
+        <field name="failureReason" type="text" column="failure_reason" nullable="true"/>
+        <field name="discardReason" type="string" length="10" column="discard_reason" enum-type="App\Assistant\Domain\Model\ActionPlan\DiscardReason" nullable="true"/>
+        <field name="approvedBy" type="user_id" column="approved_by" nullable="true"/>
+        <field name="proposedAt" type="datetime_immutable" column="proposed_at" nullable="false"/>
+        <field name="approvedAt" type="datetime_immutable" column="approved_at" nullable="true"/>
+        <field name="startedAt" type="datetime_immutable" column="started_at" nullable="true"/>
+        <field name="finishedAt" type="datetime_immutable" column="finished_at" nullable="true"/>
+        <field name="lastProgressAt" type="datetime_immutable" column="last_progress_at" nullable="true"/>
+        <field name="rejectedCalls" type="integer" column="rejected_calls" nullable="false"/>
+        <field name="version" type="integer" version="true"/>
+        <embedded name="usage" class="App\Assistant\Domain\Model\AssistantUsage" use-column-prefix="false" />
+
+        <one-to-many field="steps" target-entity="App\Assistant\Domain\Model\ActionPlan\PlanStep" mapped-by="plan" orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+
+</doctrine-mapping>

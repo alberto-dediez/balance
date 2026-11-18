@@ -1,0 +1,11 @@
+{% extends '@shared/layout/app.html.twig' %}
+
+{% set page_title = 'Consumo del asistente' | trans %}
+
+{% block content %}
+    <twig:Card>
+        <twig:Period:Selector route="admin_assistant_usage" :period="period" :date="date" :now="now" />
+    </twig:Card>
+
+    <twig:Assistant:UsageCard :period="period" />
+{% endblock %}

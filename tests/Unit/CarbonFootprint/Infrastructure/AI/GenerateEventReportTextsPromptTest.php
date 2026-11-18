@@ -9,8 +9,8 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportExclusionLine;
 use App\CarbonFootprint\Domain\Model\EventCarbonFootprint\Phase;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateEventReportTextsPrompt;
+use App\Shared\Application\Ai\AiModelTier;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\AiModelTier;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportDataMother;
 use PHPUnit\Framework\TestCase;
 

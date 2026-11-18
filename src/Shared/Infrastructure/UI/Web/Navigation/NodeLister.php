@@ -8,16 +8,21 @@ use App\Security\Application\Account\AccountFeaturesPolicy;
 use App\Security\Application\Account\DistributorPolicy;
 use App\Security\Domain\Model\Account\AccountFeature;
 use App\Security\Domain\Model\User\Role;
+use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CurrentAccount\CurrentAccountIdProvider;
 use App\Shared\Application\CurrentRoles\CurrentRolesProvider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class NodeLister
 {
+    /** @var list<Role>|null */
+    private ?array $roles = null;
+
     public function __construct(
         private readonly AuthorizationCheckerInterface $checker,
         private readonly RouterInterface $router,
@@ -34,6 +39,9 @@ class NodeLister
         private readonly ?AccountFeaturesPolicy $accountFeaturesPolicy = null,
         private readonly ?CurrentAccountIdProvider $currentAccountIdProvider = null,
         private readonly ?DistributorPolicy $distributorPolicy = null,
+        #[Autowire(param: 'assistant.enabled')]
+        private readonly bool $assistantEnabled = false,
+        private readonly ?RoleHierarchyInterface $roleHierarchy = null,
     ) {}
 
     /**
@@ -42,6 +50,20 @@ class NodeLister
     public function nodes(): array
     {
         return $this->markSelected($this->roots());
+    }
+
+    /**
+     * @return list<Node>
+     */
+    public function nodesFor(User $user): array
+    {
+        $this->roles = array_values($user->roles());
+
+        try {
+            return $this->roots();
+        } finally {
+            $this->roles = null;
+        }
     }
 
     /**
@@ -82,6 +104,13 @@ class NodeLister
 
     private function hasRole(Role $role): bool
     {
+        if (null !== $this->roles) {
+            $names = array_map(static fn(Role $userRole): string => $userRole->value, $this->roles);
+            $reachable = null === $this->roleHierarchy ? $names : $this->roleHierarchy->getReachableRoleNames($names);
+
+            return in_array($role->value, $reachable, true);
+        }
+
         $currentRoles = $this->currentRolesProvider?->currentLoggedUserRoles();
 
         if (null === $currentRoles) {
@@ -549,6 +578,14 @@ class NodeLister
             icon: 'solar:record-minimalistic-line-duotone',
             target: $this->router->generate('admin_events'),
         );
+
+        if ($this->assistantEnabled) {
+            $auditItems[] = new Node(
+                label: new TranslatableMessage('Consumo del asistente'),
+                icon: 'solar:pie-chart-2-line-duotone',
+                target: $this->router->generate('admin_assistant_usage'),
+            );
+        }
 
         $nodes[] =  new Node(
             label: new TranslatableMessage('Administración'),

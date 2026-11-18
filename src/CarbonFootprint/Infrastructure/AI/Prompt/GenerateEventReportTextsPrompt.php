@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Infrastructure\AI\Prompt;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\EventCarbonFootprintReportData;
+use App\Shared\Application\Ai\AiEffort;
+use App\Shared\Application\Ai\AiModelTier;
+use App\Shared\Application\Ai\AiPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\AiModelTier;
-use App\Shared\Infrastructure\AI\AiPrompt;
-use App\Shared\Infrastructure\AI\AiThinkingLevel;
 
 final class GenerateEventReportTextsPrompt implements AiPrompt
 {
@@ -18,6 +18,21 @@ final class GenerateEventReportTextsPrompt implements AiPrompt
         private readonly EventCarbonFootprintReportData $data,
         private readonly Locale $locale,
     ) {}
+
+    public function name(): string
+    {
+        return 'carbon-footprint-event-report-texts';
+    }
+
+    public function system(): string
+    {
+        return 'You are a sustainability consultant specialized in the environmental impact of events.';
+    }
+
+    public function attachments(): array
+    {
+        return [];
+    }
 
     public function text(): string
     {
@@ -185,9 +200,9 @@ final class GenerateEventReportTextsPrompt implements AiPrompt
         return $schema;
     }
 
-    public function thinkingLevel(): AiThinkingLevel
+    public function effort(): AiEffort
     {
-        return AiThinkingLevel::MEDIUM;
+        return AiEffort::MEDIUM;
     }
 
     public function modelTier(): AiModelTier

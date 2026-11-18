@@ -22,7 +22,7 @@ class RecordedEvent
      */
     private readonly array $payload;
 
-    public function __construct(private readonly ?UserId $userId, DomainEvent $event, private readonly ?UserId $impersonatorId = null)
+    public function __construct(private readonly ?UserId $userId, DomainEvent $event, private readonly ?UserId $impersonatorId = null, private readonly ?string $assistantExecutionId = null)
     {
         $this->id = new RecordedEventId(
             (string) $event->id(),
@@ -53,6 +53,16 @@ class RecordedEvent
     public function isImpersonated(): bool
     {
         return $this->impersonatorId instanceof UserId;
+    }
+
+    public function assistantExecutionId(): ?string
+    {
+        return $this->assistantExecutionId;
+    }
+
+    public function isByAssistant(): bool
+    {
+        return null !== $this->assistantExecutionId;
     }
 
     public function aggregateRootId(): ?string

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <embeddable name="App\Assistant\Domain\Model\AssistantUsage">
+        <field name="model" type="string" length="64" nullable="true"/>
+        <field name="inputTokens" type="integer" column="input_tokens" nullable="false"/>
+        <field name="outputTokens" type="integer" column="output_tokens" nullable="false"/>
+        <field name="cacheReadTokens" type="integer" column="cache_read_tokens" nullable="false"/>
+        <field name="cacheCreationTokens" type="integer" column="cache_creation_tokens" nullable="false"/>
+        <field name="costUsd" type="decimal" column="cost_usd" precision="10" scale="6" nullable="false"/>
+        <field name="durationMs" type="integer" column="duration_ms" nullable="false"/>
+    </embeddable>
+
+</doctrine-mapping>

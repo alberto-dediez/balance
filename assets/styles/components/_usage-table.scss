@@ -1,0 +1,9 @@
+.usage-table {
+    .table {
+        margin-bottom: 1.5rem;
+    }
+
+    th:not(:first-child) {
+        text-align: end;
+    }
+}

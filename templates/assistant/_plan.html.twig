@@ -1,0 +1,71 @@
+<twig:Card title="{{ 'Plan propuesto' | trans }}" icon="solar:checklist-minimalistic-line-duotone" class="assistant-plan">
+    <twig:block name="actions">
+        <twig:Badge:AssistantPlanStatus :status="plan.status" />
+    </twig:block>
+    <twig:block name="content">
+        <p class="mb-2">{{ plan.summary }}</p>
+
+        <ol class="assistant-plan__steps">
+            {% for step in plan.steps %}
+                <li>
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                        <span class="fw-semibold">{{ step.label | trans }}</span>
+                        <twig:Badge:AssistantStepStatus :status="step.status" />
+                    </div>
+                    <table class="table table-sm small mb-1">
+                        <tbody>
+                            {% set shown = [] %}
+                            {% for argument in step.argumentList %}
+                                {% if argument.name not in shown or argument.display is null %}
+                                    {% set shown = shown|merge([argument.name]) %}
+                                    <tr>
+                                        <th class="text-nowrap fw-normal text-muted">{{ (view.parameterLabels[step.tool][argument.name] ?? argument.name) | trans }}</th>
+                                        <td>
+                                            {% if argument.fromStep %}
+                                                {{ 'Resultado del paso {step}' | trans({'{step}': argument.fromStep}) }}
+                                            {% else %}
+                                                {% set argumentText = argument.display ?? argument.value %}
+                                                {{ argumentText != '' ? argumentText : '---' }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if step.resultSummary %}
+                        <div class="small">
+                            {{ step.resultSummary }}
+                            {% if step.hasLink %}
+                                <a href="{{ path(step.linkRoute, step.linkParameters) }}">{{ step.linkLabel | trans }}</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {% if step.error %}
+                        <div class="small text-danger">{{ step.error }}</div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+
+        {% if plan.approvedAt and plan.approvedBy %}
+            <div class="small text-muted mt-2">{{ 'Aprobado por {user} el {date}' | trans({'{user}': plan.approvedBy | user_name, '{date}': plan.approvedAt | date('d/m/Y H:i')}) | raw }}</div>
+        {% endif %}
+
+        {% if executable %}
+            <div class="d-flex gap-2 mt-3">
+                <form method="post" action="{{ path('assistant_plan_execute', {planId: plan.id}) }}" data-action="submit->assistant-panel#execute">
+                    <input type="hidden" name="_token" data-controller="csrf-protection" value="{{ csrf_token('execute-plan') }}">
+                    <twig:SubmitButton color="primary" class="btn-sm gap-1">
+                        <twig:Icon name="solar:play-line-duotone" />
+                        {{ 'Ejecutar' | trans }}
+                    </twig:SubmitButton>
+                </form>
+                <form method="post" action="{{ path('assistant_plan_discard', {planId: plan.id}) }}" data-action="submit->assistant-panel#discard">
+                    <input type="hidden" name="_token" data-controller="csrf-protection" value="{{ csrf_token('discard-plan') }}">
+                    <twig:SubmitButton color="dangerSubtle" class="btn-sm">{{ 'Descartar' | trans }}</twig:SubmitButton>
+                </form>
+            </div>
+        {% endif %}
+    </twig:block>
+</twig:Card>

@@ -19,4 +19,9 @@ framework:
             - two-factor-email
             - two-factor-totp
             - two-factor-reset
+            - execute-plan
+            - discard-plan
+            - stop-assistant
+            - rename-conversation
+            - remove-conversation
             - revoke

@@ -14,10 +14,10 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonF
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportMaterialityAnnex;
 use App\CarbonFootprint\Domain\Model\OrganizationalCarbonFootprint\Scope;
+use App\Shared\Application\Ai\AiEffort;
+use App\Shared\Application\Ai\AiModelTier;
+use App\Shared\Application\Ai\AiPrompt;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\AiModelTier;
-use App\Shared\Infrastructure\AI\AiPrompt;
-use App\Shared\Infrastructure\AI\AiThinkingLevel;
 
 final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
 {
@@ -27,6 +27,21 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         private readonly OrganizationalCarbonFootprintReportData $data,
         private readonly Locale $locale,
     ) {}
+
+    public function name(): string
+    {
+        return 'carbon-footprint-organizational-report-texts';
+    }
+
+    public function system(): string
+    {
+        return 'You are a sustainability consultant specialized in organizational carbon footprints calculated according to the GHG Protocol.';
+    }
+
+    public function attachments(): array
+    {
+        return [];
+    }
 
     public function text(): string
     {
@@ -507,9 +522,9 @@ final class GenerateOrganizationalReportTextsPrompt implements AiPrompt
         ];
     }
 
-    public function thinkingLevel(): AiThinkingLevel
+    public function effort(): AiEffort
     {
-        return AiThinkingLevel::MEDIUM;
+        return AiEffort::MEDIUM;
     }
 
     public function modelTier(): AiModelTier

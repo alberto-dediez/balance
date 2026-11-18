@@ -7,6 +7,8 @@
         <div class="page-wrapper">
             <twig:Topbar></twig:Topbar>
             <twig:Search:Modal></twig:Search:Modal>
+            <twig:Shortcuts:Modal></twig:Shortcuts:Modal>
+            <twig:Assistant:DocumentModal></twig:Assistant:DocumentModal>
 
             <div class="body-wrapper">
                 <div class="container-fluid">
@@ -30,6 +32,8 @@
     <div class="dark-transparent sidebartoggler"></div>
 
     {% block right_bar %}{% endblock %}
+
+    <twig:Assistant:Panel></twig:Assistant:Panel>
 
     <twig:Messages></twig:Messages>
 {% endblock body %}

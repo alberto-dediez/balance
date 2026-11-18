@@ -6,8 +6,8 @@ namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTexts;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\TranslateReportTextsPrompt;
+use App\Shared\Application\Ai\AiModelTier;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\AiModelTier;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\CarbonFootprintReportTextsMother;
 use PHPUnit\Framework\TestCase;
 

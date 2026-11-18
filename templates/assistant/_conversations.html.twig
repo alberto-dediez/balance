@@ -1,0 +1,36 @@
+{% if conversations is empty and page == 0 %}
+    <div class="text-muted small p-2">{{ 'Todavía no hay conversaciones' | trans }}</div>
+{% else %}
+    <div class="list-group list-group-flush assistant-conversations" data-assistant-conversations>
+        {% for conversation in conversations %}
+            <div class="list-group-item assistant-conversation {{ (conversation.id ~ '') == current ? 'active' : '' }}" data-assistant-conversation>
+                <a href="javascript:void(0)"
+                   class="assistant-conversation__open"
+                   data-action="assistant-panel#open"
+                   data-assistant-panel-conversation-id-param="{{ conversation.id }}">
+                    <div class="text-truncate" data-assistant-conversation-title>{{ conversation.title }}</div>
+                    <div class="small text-muted">{{ conversation.lastActivityAt | date('d/m/Y H:i') }}</div>
+                </a>
+                <button type="button" class="assistant-panel__action" title="{{ 'Renombrar' | trans }}" aria-label="{{ 'Renombrar' | trans }}" data-bs-toggle="tooltip"
+                        data-action="assistant-panel#rename"
+                        data-assistant-panel-url-param="{{ path('assistant_conversation_rename', {conversationId: conversation.id}) }}"
+                        data-assistant-panel-token-param="{{ csrf_token('rename-conversation') }}"
+                        data-title="{{ conversation.title }}"
+                        data-assistant-panel-conversation-id-param="{{ conversation.id }}">
+                    <twig:Icon name="solar:pen-line-duotone" size="lg" />
+                </button>
+                <button type="button" class="assistant-panel__action text-danger" title="{{ 'Eliminar' | trans }}" aria-label="{{ 'Eliminar' | trans }}" data-bs-toggle="tooltip"
+                        data-action="assistant-panel#remove"
+                        data-assistant-panel-url-param="{{ path('assistant_conversation_remove', {conversationId: conversation.id}) }}"
+                        data-assistant-panel-token-param="{{ csrf_token('remove-conversation') }}"
+                        data-assistant-panel-confirm-param="{{ '¿Eliminar esta conversación? Esta acción no se puede deshacer' | trans }}"
+                        data-assistant-panel-conversation-id-param="{{ conversation.id }}">
+                    <twig:Icon name="solar:trash-bin-trash-line-duotone" size="lg" />
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+    {% if hasMore %}
+        <button type="button" class="btn btn-sm btn-link w-100" data-action="assistant-panel#showConversations" data-assistant-panel-page-param="{{ page + 1 }}">{{ 'Cargar más' | trans }}</button>
+    {% endif %}
+{% endif %}

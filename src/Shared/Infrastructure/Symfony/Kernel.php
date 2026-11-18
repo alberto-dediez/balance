@@ -9,6 +9,7 @@ use App\Shared\Application\CommandBus\CommandHandler;
 use App\Shared\Domain\Event\DomainEvent;
 use App\Shared\Domain\Event\DomainEventSubscriber;
 use App\Shared\Domain\Event\EventRegistry;
+use App\Shared\Infrastructure\Assistant\DisabledAssistantToolsPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -56,5 +57,7 @@ class Kernel extends BaseKernel implements CompilerPassInterface
         $container->registerForAutoconfiguration(Authorizer::class)
             ->addTag('application.authorizer')
         ;
+
+        $container->addCompilerPass(new DisabledAssistantToolsPass());
     }
 }

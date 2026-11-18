@@ -7,6 +7,7 @@ twig:
         legal_notice_url: '%app.legal_notice_url%'
         cookie_config_url: '%app.cookie_config_url%'
         account_impersonation_enabled: '%app.account_impersonation_enabled%'
+        assistant_suggestions: '%shared.assistant.suggestions%'
     form_themes: 
         - 'bootstrap_5_layout.html.twig'
         - '@shared/form/custom_types.html.twig'
@@ -27,6 +28,7 @@ twig:
         'templates/changelog': 'changelog'
         'templates/bioscore': 'bioscore'
         'templates/materiality': 'materiality'
+        'templates/assistant': 'assistant'
         '%kernel.project_dir%/assets': assets
 
 when@test:

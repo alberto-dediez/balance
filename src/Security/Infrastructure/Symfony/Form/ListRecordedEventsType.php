@@ -7,6 +7,7 @@ namespace App\Security\Infrastructure\Symfony\Form;
 use App\Security\Application\RecordedEvent\List\ListRecordedEventsRequest;
 use App\Security\Infrastructure\Symfony\Form\Type\UserIdType;
 use App\Shared\Infrastructure\Symfony\Form\BaseFilterType;
+use App\Shared\Infrastructure\Symfony\Form\Type\BooleanType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -35,6 +36,11 @@ class ListRecordedEventsType extends BaseFilterType
             ])
             ->add('aggregateRootId', TextType::class, [
                 'label' => new TranslatableMessage('Entidad'),
+                'required' => false,
+            ])
+            ->add('byAssistant', BooleanType::class, [
+                'label' => new TranslatableMessage('Hecho por el asistente'),
+                'placeholder' => new TranslatableMessage('Todos'),
                 'required' => false,
             ])
         ;

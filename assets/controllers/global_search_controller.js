@@ -22,12 +22,8 @@ export default class extends Controller {
         this.modal.dispose();
     }
 
-    shortcut(event) {
-        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-            event.preventDefault();
-
-            this.modal.show();
-        }
+    open() {
+        this.modal.show();
     }
 
     focus() {

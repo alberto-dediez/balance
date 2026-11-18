@@ -8,9 +8,9 @@ use App\CarbonFootprint\Domain\Model\CarbonFootprint\Source;
 use App\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportData;
 use App\CarbonFootprint\Domain\Model\Emissions;
 use App\CarbonFootprint\Infrastructure\AI\Prompt\GenerateOrganizationalReportTextsPrompt;
+use App\Shared\Application\Ai\AiEffort;
+use App\Shared\Application\Ai\AiModelTier;
 use App\Shared\Domain\Model\Locale\Locale;
-use App\Shared\Infrastructure\AI\AiModelTier;
-use App\Shared\Infrastructure\AI\AiThinkingLevel;
 use App\Tests\Unit\CarbonFootprint\Domain\Model\CarbonFootprintReport\OrganizationalCarbonFootprintReportDataMother;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +34,7 @@ class GenerateOrganizationalReportTextsPromptTest extends TestCase
         $prompt = new GenerateOrganizationalReportTextsPrompt(OrganizationalCarbonFootprintReportDataMother::forProperty(), Locale::Spanish);
 
         $this->assertSame(AiModelTier::MEDIUM, $prompt->modelTier());
-        $this->assertSame(AiThinkingLevel::MEDIUM, $prompt->thinkingLevel());
+        $this->assertSame(AiEffort::MEDIUM, $prompt->effort());
     }
 
     public function testTextIncludesTheSubjectDataTotalsAndExclusions(): void

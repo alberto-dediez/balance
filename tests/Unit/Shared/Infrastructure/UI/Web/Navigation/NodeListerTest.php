@@ -14,6 +14,7 @@ use App\Shared\Infrastructure\UI\Web\Navigation\NodeLister;
 use App\Tests\Unit\Security\Application\Account\AccountFeaturesPolicyMother;
 use App\Tests\Unit\Security\Application\Account\DistributorPolicyMother;
 use App\Tests\Unit\Security\Domain\Model\Account\AccountMother;
+use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Security\Infrastructure\Symfony\Security\FakeSecurity;
 use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Role\RoleHierarchy;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class NodeListerTest extends TestCase
@@ -46,6 +48,14 @@ class NodeListerTest extends TestCase
         'admin_events' => '/es/admin/events',
         'distributors' => '/es/distributors',
     ];
+
+    public static function roleHierarchy(): RoleHierarchy
+    {
+        return new RoleHierarchy([
+            Role::Admin->value => [Role::User->value],
+            Role::SuperAdmin->value => [Role::Admin->value, 'ROLE_ALLOWED_TO_SWITCH'],
+        ]);
+    }
 
     public function testNodesReturnsAtLeastUsersWhenLoggedAsAdmin(): void
     {
@@ -449,6 +459,62 @@ class NodeListerTest extends TestCase
         $this->assertFalse($result[0]->selected);
     }
 
+    public function testNodesForAnAdminWithoutSessionReturnsTheAdminMenu(): void
+    {
+        $administration = $this->findNodeByLabel($this->createSUT($this->denyAll(), propertiesEnabled: false, humanResourcesEnabled: false)->nodesFor(UserMother::adminUser()), 'Administración');
+
+        $this->assertInstanceOf(Node::class, $administration);
+        $this->assertSame(['Tipos de cambio', 'Organización', 'Bioscore', 'Auditoría'], $this->labels($administration->items));
+        $this->assertSame(['Firma de documentos', 'Registro'], $this->labels($administration->items[3]->items));
+    }
+
+    public function testNodesForASuperAdminIncludesTheSentEmails(): void
+    {
+        $administration = $this->findNodeByLabel($this->createSUT($this->denyAll(), propertiesEnabled: false, humanResourcesEnabled: false)->nodesFor(UserMother::superAdminUser()), 'Administración');
+
+        $this->assertInstanceOf(Node::class, $administration);
+        $this->assertSame(['Firma de documentos', 'Emails enviados', 'Registro'], $this->labels($administration->items[3]->items));
+    }
+
+    public function testNodesForAnOwnerReturnsTheOwnerMenu(): void
+    {
+        $sut = $this->createSUT($this->denyAll(), routes: ['users' => '/es/users']);
+
+        $this->assertContains('/es/users', $this->targets($sut->nodesFor(UserMother::ownerUser())));
+    }
+
+    public function testNodesForDecidesWithTheRoleHierarchyNotTheEnumOrder(): void
+    {
+        $hierarchy = new RoleHierarchy([Role::Owner->value => [Role::Admin->value]]);
+        $router = $this->createStub(RouterInterface::class);
+        $router->method('generate')->willReturn('/es/admin/users');
+
+        $sut = new NodeLister($this->denyAll(), $router, new RequestStack(), propertiesEnabled: false, humanResourcesEnabled: false, roleHierarchy: $hierarchy);
+        $withoutHierarchy = new NodeLister($this->denyAll(), $router, new RequestStack(), propertiesEnabled: false, humanResourcesEnabled: false, roleHierarchy: new RoleHierarchy([]));
+
+        $administration = $this->findNodeByLabel($sut->nodesFor(UserMother::ownerUser()), 'Administración');
+
+        $this->assertInstanceOf(Node::class, $administration);
+        $this->assertSame(['Tipos de cambio', 'Organización', 'Bioscore', 'Auditoría'], $this->labels($administration->items));
+        $this->assertSame(['Biblioteca', 'Notificaciones', 'Novedades'], $this->labels($withoutHierarchy->nodesFor(UserMother::superAdminUser())));
+    }
+
+    public function testNodesForDoesNotMarkAnyNodeAsSelected(): void
+    {
+        $result = $this->createSUT($this->denyAll())->nodesFor(UserMother::adminUser());
+
+        $this->assertFalse($result[0]->selected);
+    }
+
+    public function testAfterNodesForTheNodesAreDecidedByTheSessionAgain(): void
+    {
+        $sut = $this->createSUT($this->denyAll());
+
+        $sut->nodesFor(UserMother::adminUser());
+
+        $this->assertNotContains('Seguridad', $this->labels($sut->nodes()));
+    }
+
     /**
      * @param list<Node> $nodes
      *
@@ -747,7 +813,16 @@ class NodeListerTest extends TestCase
             accountFeaturesPolicy: $features instanceof AccountFeatures ? AccountFeaturesPolicyMother::forAccount(new AccountId(self::ACCOUNT_ID), $features) : null,
             currentAccountIdProvider: $features instanceof AccountFeatures ? new StubCurrentAccountIdProvider(new AccountId(self::ACCOUNT_ID)) : null,
             distributorPolicy: $distributorPolicy,
+            roleHierarchy: self::roleHierarchy(),
         );
+    }
+
+    private function denyAll(): AuthorizationCheckerInterface
+    {
+        $checker = $this->createStub(AuthorizationCheckerInterface::class);
+        $checker->method('isGranted')->willReturn(false);
+
+        return $checker;
     }
 
     private function createThreeLevelSUT(string $currentPath): NodeLister

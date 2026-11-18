@@ -1,0 +1,32 @@
+{% props route, period, date, now %}
+
+<div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+    <div class="btn-group btn-group-sm" role="group">
+        <a href="{{ path(route, {'period': 'week', 'date': date | date('Y-m-d')}) }}" class="btn {{ period.type == 'week' ? 'btn-primary' : 'btn-outline-primary' }}">{{ 'Semana' | trans }}</a>
+        <a href="{{ path(route, {'period': 'month', 'date': date | date('Y-m-d')}) }}" class="btn {{ period.type == 'month' ? 'btn-primary' : 'btn-outline-primary' }}">{{ 'Mes' | trans }}</a>
+        <a href="{{ path(route, {'period': 'all'}) }}" class="btn {{ period.isAll ? 'btn-primary' : 'btn-outline-primary' }}">{{ 'Todo' | trans }}</a>
+    </div>
+
+    {% block between %}{% endblock %}
+
+    {% if not period.isAll %}
+        <div class="btn-group btn-group-sm" role="group">
+            <a href="{{ path(route, {'period': period.type, 'date': period.previous.from | date('Y-m-d')}) }}" class="btn btn-outline-primary">{{ 'Anterior' | trans }}</a>
+            {% if period.containsToday(now) %}
+                <a class="btn btn-outline-primary disabled" aria-disabled="true">{{ 'Siguiente' | trans }}</a>
+            {% else %}
+                <a href="{{ path(route, {'period': period.type, 'date': period.next.from | date('Y-m-d')}) }}" class="btn btn-outline-primary">{{ 'Siguiente' | trans }}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <span class="fs-3 fw-semibold">
+        {% if period.isAll %}
+            {{ 'Todo el historial' | trans }}
+        {% elseif period.type == 'month' %}
+            {{ period.from | date('m/Y') }}
+        {% else %}
+            {{ 'Del {from} al {to}' | trans({'{from}': period.from | date('d/m/Y'), '{to}': period.lastDay | date('d/m/Y')}) }}
+        {% endif %}
+    </span>
+</div>

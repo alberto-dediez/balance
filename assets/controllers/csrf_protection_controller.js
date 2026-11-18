@@ -32,14 +32,35 @@ export function generateCsrfToken (formElement) {
 
     if (!csrfCookie && nameCheck.test(csrfToken)) {
         csrfField.setAttribute('data-csrf-protection-cookie-value', csrfCookie = csrfToken);
-        csrfField.defaultValue = csrfToken = btoa(String.fromCharCode.apply(null, (window.crypto || window.msCrypto).getRandomValues(new Uint8Array(18))));
+        csrfField.defaultValue = csrfToken = randomCsrfToken();
         csrfField.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     if (csrfCookie && tokenCheck.test(csrfToken)) {
-        const cookie = csrfCookie + '_' + csrfToken + '=' + csrfCookie + '; path=/; samesite=strict';
-        document.cookie = window.location.protocol === 'https:' ? '__Host-' + cookie + '; secure' : cookie;
+        setCsrfCookie(csrfCookie, csrfToken);
     }
+}
+
+// Double-submit a CSRF token for a request sent with fetch(): returns the token to send as `_token`
+// and stores it in the cookie expected by Symfony's SameOriginCsrfTokenManager
+export function doubleSubmitCsrfToken (csrfCookie) {
+    if (!nameCheck.test(csrfCookie)) {
+        return csrfCookie;
+    }
+
+    const csrfToken = randomCsrfToken();
+    setCsrfCookie(csrfCookie, csrfToken);
+
+    return csrfToken;
+}
+
+function randomCsrfToken () {
+    return btoa(String.fromCharCode.apply(null, (window.crypto || window.msCrypto).getRandomValues(new Uint8Array(18))));
+}
+
+function setCsrfCookie (csrfCookie, csrfToken) {
+    const cookie = csrfCookie + '_' + csrfToken + '=' + csrfCookie + '; path=/; samesite=strict';
+    document.cookie = window.location.protocol === 'https:' ? '__Host-' + cookie + '; secure' : cookie;
 }
 
 export function generateCsrfHeaders (formElement) {

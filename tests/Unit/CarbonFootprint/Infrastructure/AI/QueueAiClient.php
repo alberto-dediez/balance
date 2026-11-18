@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\CarbonFootprint\Infrastructure\AI;
 
-use App\Shared\Infrastructure\AI\AiClient;
-use App\Shared\Infrastructure\AI\AiPrompt;
+use App\Shared\Application\Ai\AiClient;
+use App\Shared\Application\Ai\AiPrompt;
+use App\Shared\Application\Ai\AiResponse;
+use App\Shared\Application\Ai\AiUsage;
 
 final class QueueAiClient implements AiClient
 {
@@ -14,12 +16,11 @@ final class QueueAiClient implements AiClient
     /** @param list<array<mixed>> $responses */
     public function __construct(private array $responses) {}
 
-    /** @return array<mixed> */
-    public function send(AiPrompt $prompt): array
+    public function send(AiPrompt $prompt): AiResponse
     {
         ++$this->calls;
 
-        return array_shift($this->responses) ?? [];
+        return new AiResponse(array_shift($this->responses) ?? [], AiUsage::none());
     }
 
     public function calls(): int

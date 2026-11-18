@@ -551,7 +551,7 @@ final class WebContext implements Context
     }
 
     #[Then('I see a link to :href')]
-    public function iSeeALinkTo(string $href): void
+    public function iSeeALinkToHref(string $href): void
     {
         Assert::assertGreaterThan(0, $this->client->getCrawler()->filterXPath(sprintf('//a[@href="%s"]', $href))->count());
     }
@@ -560,6 +560,15 @@ final class WebContext implements Context
     public function iDoNotSeeALinkTo(string $href): void
     {
         Assert::assertSame(0, $this->client->getCrawler()->filterXPath(sprintf('//a[@href="%s"]', $href))->count());
+    }
+
+    #[Then('I see a link :name to :path')]
+    public function iSeeALinkTo(string $name, string $path): void
+    {
+        $links = $this->client->getCrawler()->selectLink($name);
+
+        Assert::assertCount(1, $links);
+        Assert::assertSame($this->client->resolvePath($path), $links->attr('href'));
     }
 
     #[Then('I do not see a link with name :name')]
@@ -585,7 +594,7 @@ final class WebContext implements Context
     {
         $crawler = $this->client->getCrawler();
 
-        $nodes = $crawler->filter('table tr');
+        $nodes = $crawler->filter('table:not(.keyboard-shortcuts__table) tr');
 
         Assert::assertCount($rows, $nodes);
     }
