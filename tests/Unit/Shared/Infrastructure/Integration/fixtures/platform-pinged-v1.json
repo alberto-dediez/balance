@@ -1,0 +1,14 @@
+{
+  "id": "0193a1c2-7f00-7c3e-9b1d-2f6c1a9e4b10",
+  "type": "platform.pinged",
+  "version": 1,
+  "source": "waste",
+  "sequence": 1234,
+  "occurredOn": "2026-11-19T10:15:00+00:00",
+  "aggregateId": null,
+  "accountRef": null,
+  "correlationId": "0193a1c2-7f00-7c3e-9b1d-2f6c1a9e4b10",
+  "causationId": null,
+  "hops": 0,
+  "payload": { "message": "hola" }
+}

@@ -11,6 +11,7 @@ use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsReque
 use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
 use App\Security\Application\EmailLog\Purge\PurgeEmailLogsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
+use App\Shared\Application\Integration\Purge\PurgeIntegrationMessagesRequest;
 
 /**
  * Hardcoded registry of commands that must be dispatched periodically.
@@ -45,6 +46,11 @@ class CommandSchedule
                 id: 'assistant:purge-conversations',
                 command: new PurgeConversationsRequest(new \DateTimeImmutable('NOW')),
                 time: '03:20',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'shared:purge-integration-messages',
+                command: new PurgeIntegrationMessagesRequest(new \DateTimeImmutable('NOW')),
+                time: '03:40',
             ),
             ScheduledCommand::everyMinutes(
                 id: 'assistant:expire-stale-work',

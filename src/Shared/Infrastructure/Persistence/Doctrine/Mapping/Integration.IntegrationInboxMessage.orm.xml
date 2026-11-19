@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Shared\Domain\Model\Integration\IntegrationInboxMessage" table="integration_inbox">
+        <id name="messageId" type="string" length="36" column="message_id">
+            <generator strategy="NONE" />
+        </id>
+
+        <indexes>
+            <index columns="received_at" name="idx_integration_inbox_received_at"/>
+            <index columns="correlation_id" name="idx_integration_inbox_correlation"/>
+        </indexes>
+
+        <field name="source" type="string" length="64" column="source" nullable="false"/>
+        <field name="type" type="string" length="150" column="type" nullable="false"/>
+        <field name="version" type="integer" column="version" nullable="false"/>
+        <field name="aggregateId" type="string" length="64" column="aggregate_id" nullable="true"/>
+        <field name="sequence" type="integer" column="sequence" nullable="false"/>
+        <field name="correlationId" type="string" length="36" column="correlation_id" nullable="false"/>
+        <field name="causationId" type="string" length="36" column="causation_id" nullable="true"/>
+        <field name="hops" type="integer" column="hops" nullable="false"/>
+        <field name="status" type="string" length="32" enum-type="App\Shared\Domain\Model\Integration\IntegrationInboxStatus" column="status" nullable="false"/>
+        <field name="receivedAt" type="datetime_immutable" column="received_at" nullable="false"/>
+    </entity>
+</doctrine-mapping>

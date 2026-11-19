@@ -17,7 +17,7 @@ COMPOSER_EXTERNAL = docker run --rm -v $(CURDIR):/app -w /app composer:latest
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : help build bioscore-network up start down logs sh composer vendor sf cc
+.PHONY        : help build bioscore-network up start down logs sh composer vendor sf cc broker-up broker-down broker-logs integration-consume integration-relay
 
 ## —— 🎵 🐳 The Symfony Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -40,6 +40,15 @@ down: ## Stop the docker hub
 
 logs: ## Show live logs
 	@$(DOCKER_COMP) logs --tail=0 --follow
+
+broker-up: bioscore-network ## Start the shared RabbitMQ broker (single instance on the bioscore network)
+	@docker compose -f infra/rabbitmq/compose.yaml up --detach
+
+broker-down: ## Stop the shared RabbitMQ broker
+	@docker compose -f infra/rabbitmq/compose.yaml down
+
+broker-logs: ## Show live logs of the shared RabbitMQ broker
+	@docker compose -f infra/rabbitmq/compose.yaml logs -f
 
 sh: ## Connect to the FrankenPHP container
 	@$(PHP_CONT) sh
@@ -201,7 +210,7 @@ translation:
 
 ## —— Messages ————————————————————————————————————————————————————————————
 queues: ## Start workers for all priority queues (high, medium, low)
-	@$(PHP) bin/console messenger:consume --all --exclude-receivers=failed -vv
+	@$(PHP) bin/console messenger:consume --all --exclude-receivers=failed --exclude-receivers=integration_in --exclude-receivers=integration_out --exclude-receivers=integration_retry --exclude-receivers=integration_failed -vv
 
 queues-high: ## Start worker for the high priority queue
 	@$(PHP) bin/console messenger:consume async_high -vv
@@ -211,6 +220,12 @@ queues-medium: ## Start worker for the medium priority queue
 
 queues-low: ## Start worker for the low priority queue
 	@$(PHP) bin/console messenger:consume async_low -vv
+
+integration-consume: ## Start the integration events consumer (broker inbox and retries)
+	@$(PHP) bin/console messenger:consume integration_in integration_retry -vv
+
+integration-relay: ## Start the integration outbox relay towards the broker
+	@$(PHP) bin/console integration:outbox:relay -vv
 
 ## —— Production ————————————————————————————————————————————————————————————
 asset-prod:

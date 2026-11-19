@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Shared\Domain\Model\Integration\IntegrationPosition" table="integration_positions">
+        <id name="source" type="string" length="64" column="source">
+            <generator strategy="NONE" />
+        </id>
+        <id name="aggregateId" type="string" length="64" column="aggregate_id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="lastSequence" type="integer" column="last_sequence" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="false"/>
+    </entity>
+</doctrine-mapping>

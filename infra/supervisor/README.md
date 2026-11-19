@@ -48,6 +48,9 @@ El transporte es `doctrine://default` (tabla `messenger_messages`), con tres col
 | `async` | `medium` | 3 | `<GRUPO>-worker-medium` (×1) |
 | `async_low` | `low` | 2 | `<GRUPO>-worker-low` (×1) |
 | `failed` | `failed` | — | No (gestión manual, ver abajo) |
+| `integration_in` | RabbitMQ `integration.<plataforma>.inbox` | 0 (pasa a `integration_retry`) | `<GRUPO>-integration-consumer` (×1) |
+| `integration_retry` | `integration_retry` | 5 (pasa a `integration_failed`) | `<GRUPO>-integration-consumer` (×1) |
+| `integration_failed` | `integration_failed` | — | No (gestión manual, ver abajo) |
 
 Cada worker consume su cola en primer lugar y, si está vacía, ayuda con las de menor prioridad (`messenger:consume` procesa los transportes en el orden en que se pasan):
 
@@ -56,6 +59,15 @@ Cada worker consume su cola en primer lugar y, si está vacía, ayuda con las de
 - `<GRUPO>-worker-low` (1 proceso): `async_low`
 
 Así los mensajes `high` siempre tienen capacidad dedicada y ninguna cola queda sin consumidor (la cola `low` tiene su propio worker, por lo que no sufre inanición bajo carga sostenida de las colas superiores).
+
+Eventos de integración entre plataformas ([`infra/rabbitmq/README.md`](../rabbitmq/README.md)), dos programas más dentro del mismo grupo, un proceso cada uno:
+
+- `<GRUPO>-integration-consumer`: `messenger:consume integration_in integration_retry --limit=500`. Consume la cola de entrada de la plataforma en RabbitMQ y los reintentos.
+- `<GRUPO>-integration-relay`: `integration:outbox:relay`. Publica en RabbitMQ los mensajes pendientes de la tabla `integration_outbox`. Solo puede haber un relay activo (lock `flock`); `stopwaitsecs=60` le deja terminar el lote en curso.
+
+Con `INTEGRATION_EVENTS_ENABLED=false` los dos procesos arrancan y esperan sin trabajar hasta su `--time-limit`, así que pueden quedar instalados en todas las plataformas.
+
+**Requisito:** la extensión `ext-amqp` instalada en el PHP CLI y en el PHP-FPM de Plesk (`/opt/plesk/php/8.4/bin/php -m | grep amqp`). `symfony/amqp-messenger` la exige en `composer install`, aunque el flag esté apagado.
 
 Opciones clave de cada `command`:
 
@@ -305,4 +317,13 @@ Comprobar el reinicio automático: `kill -TERM <pid>` de un proceso y verificar 
 ```bash
 sudo -u <PROJECT_USER> /opt/plesk/php/8.4/bin/php <PROJECT_DIR>/bin/console messenger:failed:show --env=prod
 sudo -u <PROJECT_USER> /opt/plesk/php/8.4/bin/php <PROJECT_DIR>/bin/console messenger:failed:retry --env=prod
+```
+
+## Cola de fallidos de integración (`integration_failed`)
+
+Los mensajes de integración que agotan los reintentos de `integration_retry`, o que no se han podido decodificar, quedan en `integration_failed`. Tampoco tiene worker; se inspeccionan y reintentan a demanda:
+
+```bash
+sudo -u <PROJECT_USER> /opt/plesk/php/8.4/bin/php <PROJECT_DIR>/bin/console messenger:failed:show --transport=integration_failed --env=prod
+sudo -u <PROJECT_USER> /opt/plesk/php/8.4/bin/php <PROJECT_DIR>/bin/console messenger:failed:retry --transport=integration_failed --env=prod
 ```

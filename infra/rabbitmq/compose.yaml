@@ -1,0 +1,23 @@
+name: bioscore-broker
+
+services:
+  rabbitmq:
+    image: rabbitmq:4.1-management
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/conf.d/20-bioscore.conf:ro
+      - ./definitions.json:/etc/rabbitmq/definitions.json:ro
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      bioscore:
+        aliases:
+          - rabbitmq.local
+
+networks:
+  bioscore:
+    external: true
+
+volumes:
+  rabbitmq_data:

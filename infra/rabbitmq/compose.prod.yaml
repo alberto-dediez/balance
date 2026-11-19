@@ -1,0 +1,26 @@
+name: bioscore-broker
+
+services:
+  rabbitmq:
+    image: rabbitmq:4.1-management
+    hostname: rabbitmq
+    restart: unless-stopped
+    mem_limit: 1g
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    ports:
+      - "5671:5671"
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - ${RABBITMQ_DATA_DIR:-/opt/bioscore-broker/data}:/var/lib/rabbitmq
+      - ./rabbitmq.prod.conf:/etc/rabbitmq/conf.d/20-bioscore.conf:ro
+      - ${RABBITMQ_TLS_DIR:-/opt/bioscore-broker/tls}:/etc/rabbitmq/tls:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

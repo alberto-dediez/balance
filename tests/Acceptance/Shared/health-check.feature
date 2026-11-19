@@ -10,6 +10,7 @@ Feature:
             "checks": {
                 "database": "ok",
                 "queue": "ok",
+                "integration_outbox": "ok",
                 "in-memory": "ok"
             }
         }
@@ -26,6 +27,7 @@ Feature:
             "checks": {
                 "database": "ok",
                 "queue": "ok",
+                "integration_outbox": "ok",
                 "in-memory": "error"
             }
         }
