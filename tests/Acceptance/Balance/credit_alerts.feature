@@ -39,3 +39,32 @@ Feature:
         When the gateway notifies that the payment of contribution "C1" succeeded
         When the credit alerts are checked
         Then user "owner@dediez.software" should have 0 internal notifications
+
+    Scenario: The administrators are also warned once the consumption crosses the first threshold
+        Given contribution "C1" of account "666" for project "1111" with "8.5" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C1" succeeded
+        When the credit alerts are checked
+        Then user "payment" should have 1 internal notifications
+        Then the last internal notification of user "payment" should contain "MyCompany"
+
+    Scenario: Checking again does not warn the administrators twice
+        Given contribution "C1" of account "666" for project "1111" with "8.5" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C1" succeeded
+        When the credit alerts are checked
+        When the credit alerts are checked
+        Then user "payment" should have 1 internal notifications
+
+    Scenario: Consuming the rest of the credit sends a single additional alert to the administrators
+        Given contribution "C1" of account "666" for project "1111" with "8.5" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C1" succeeded
+        When the credit alerts are checked
+        Given contribution "C2" of account "666" for project "1111" with "1.5" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C2" succeeded
+        When the credit alerts are checked
+        Then user "payment" should have 2 internal notifications
+
+    Scenario: No alert is sent to the administrators below the first threshold
+        Given contribution "C1" of account "666" for project "1111" with "5" tonnes is pending until "+12 hours"
+        When the gateway notifies that the payment of contribution "C1" succeeded
+        When the credit alerts are checked
+        Then user "payment" should have 0 internal notifications

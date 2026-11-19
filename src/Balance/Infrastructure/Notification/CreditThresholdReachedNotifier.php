@@ -11,7 +11,6 @@ use App\Notifications\Application\Notification\Notify\SystemNotification;
 use App\Notifications\Application\Notification\Notify\SystemNotifier;
 use App\Notifications\Domain\Model\Notification\NotificationChannel;
 use App\Security\Domain\Model\Account\Account;
-use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
@@ -64,7 +63,10 @@ class CreditThresholdReachedNotifier implements DomainEventSubscriber
         $subject = $this->subjectFor($event->threshold());
         $subjectParams = ['{project}' => $projectName];
 
-        foreach ($this->owners($event->accountId()) as $owner) {
+        $account = $this->accountRepository->find($event->accountId());
+        $owners = $this->owners($account);
+
+        foreach ($owners as $owner) {
             $this->notifier->notify(new SystemNotification(
                 recipientId: $owner->id(),
                 channel: NotificationChannel::Internal,
@@ -85,6 +87,37 @@ class CreditThresholdReachedNotifier implements DomainEventSubscriber
                 subjectParams: $subjectParams,
             ));
         }
+
+        $accountName = $account?->name() ?? (string) $event->accountId();
+        $adminParams = [
+            ...$params,
+            'accountName' => $accountName,
+            'creditPurchaseId' => (string) $event->creditPurchaseId(),
+        ];
+        $adminSubject = $this->adminSubjectFor($event->threshold());
+        $adminSubjectParams = ['{account}' => $accountName, '{project}' => $projectName];
+
+        foreach ($this->administratorsExcluding($owners) as $admin) {
+            $this->notifier->notify(new SystemNotification(
+                recipientId: $admin->id(),
+                channel: NotificationChannel::Internal,
+                subject: $adminSubject,
+                template: '@balance/notification/credit-threshold-reached-admin.notification.html.twig',
+                params: $adminParams,
+                accountId: $admin->accountId(),
+                subjectParams: $adminSubjectParams,
+            ));
+
+            $this->notifier->notify(new SystemNotification(
+                recipientId: $admin->id(),
+                channel: NotificationChannel::Email,
+                subject: $adminSubject,
+                template: '@balance/notification/credit-threshold-reached-admin.email.html.twig',
+                params: $adminParams,
+                accountId: $admin->accountId(),
+                subjectParams: $adminSubjectParams,
+            ));
+        }
     }
 
     private function subjectFor(CreditAlertThreshold $threshold): string
@@ -96,11 +129,18 @@ class CreditThresholdReachedNotifier implements DomainEventSubscriber
         };
     }
 
-    /** @return list<User> */
-    private function owners(AccountId $accountId): array
+    private function adminSubjectFor(CreditAlertThreshold $threshold): string
     {
-        $account = $this->accountRepository->find($accountId);
+        return (string) match ($threshold) {
+            CreditAlertThreshold::Warning => new TranslatableMessage('A la cuenta {account} le queda poco crédito en el proyecto {project}'),
+            CreditAlertThreshold::High => new TranslatableMessage('El crédito de la cuenta {account} en el proyecto {project} está casi agotado'),
+            CreditAlertThreshold::Depleted => new TranslatableMessage('La cuenta {account} se ha quedado sin crédito en el proyecto {project}'),
+        };
+    }
 
+    /** @return list<User> */
+    private function owners(?Account $account): array
+    {
         if (!$account instanceof Account) {
             return [];
         }
@@ -108,6 +148,25 @@ class CreditThresholdReachedNotifier implements DomainEventSubscriber
         return $this->userRepository->findByFilter(
             new UserFilter(role: Role::Owner, account: $account, excludeRole: null, limit: 0),
         );
+    }
+
+    /**
+     * @param list<User> $excluded
+     *
+     * @return list<User>
+     */
+    private function administratorsExcluding(array $excluded): array
+    {
+        $excludedIds = array_map(static fn(User $user): string => (string) $user->id(), $excluded);
+
+        $administrators = $this->userRepository->findByFilter(
+            new UserFilter(role: Role::Admin, excludeRole: Role::SuperAdmin, limit: 0),
+        );
+
+        return array_values(array_filter(
+            $administrators,
+            static fn(User $admin): bool => !in_array((string) $admin->id(), $excludedIds, true),
+        ));
     }
 
     public function isSubscribedTo(DomainEvent $event): bool

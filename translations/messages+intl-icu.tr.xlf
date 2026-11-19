@@ -12429,6 +12429,34 @@
         <source>No se pueden modificar los alcances de una huella completada</source>
         <target>NEW_No se pueden modificar los alcances de una huella completada</target>
       </trans-unit>
+      <trans-unit id="odYyYty" resname="A la cuenta {account} le queda poco crédito en el proyecto {project}">
+        <source>A la cuenta {account} le queda poco crédito en el proyecto {project}</source>
+        <target>{account} hesabının {project} projesinde az kredisi kaldı</target>
+      </trans-unit>
+      <trans-unit id="TwK2fd3" resname="El crédito de la cuenta {account} en el proyecto {project} está casi agotado">
+        <source>El crédito de la cuenta {account} en el proyecto {project} está casi agotado</source>
+        <target>{account} hesabının {project} projesindeki kredisi neredeyse tükendi</target>
+      </trans-unit>
+      <trans-unit id="23FtFHk" resname="La cuenta {account} se ha quedado sin crédito en el proyecto {project}">
+        <source>La cuenta {account} se ha quedado sin crédito en el proyecto {project}</source>
+        <target>{account} hesabının {project} projesindeki kredisi tükendi</target>
+      </trans-unit>
+      <trans-unit id="JYd7mzB" resname="La cuenta {account} ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Sus nuevas compensaciones no podrán respaldarse hasta que disponga de más crédito.">
+        <source>La cuenta {account} ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Sus nuevas compensaciones no podrán respaldarse hasta que disponga de más crédito.</source>
+        <target>{account} hesabı {project} projesindeki son satın alımının kredisini tüketti: satın alınan {purchased} t tüketildi. Daha fazla kredisi olana kadar yeni dengelemeleri desteklenemeyecek.</target>
+      </trans-unit>
+      <trans-unit id="ZmhvV.V" resname="El crédito de la cuenta {account} en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.">
+        <source>El crédito de la cuenta {account} en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.</source>
+        <target>{account} hesabının {project} projesindeki kredisi neredeyse tükendi: satın alınan {purchased} t içinden {available} t kaldı.</target>
+      </trans-unit>
+      <trans-unit id="Ps6Jw2z" resname="A la cuenta {account} le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.">
+        <source>A la cuenta {account} le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.</source>
+        <target>{account} hesabının {project} projesinde az kredisi kaldı: satın alınan {purchased} t içinden {available} t kaldı.</target>
+      </trans-unit>
+      <trans-unit id="SYZIWMe" resname="Ver compra de crédito">
+        <source>Ver compra de crédito</source>
+        <target>Kredi satın alımını görüntüle</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

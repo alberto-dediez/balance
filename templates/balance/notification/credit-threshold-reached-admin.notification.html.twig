@@ -1,0 +1,34 @@
+<p>
+    {% if threshold >= 100 %}
+        {% trans with {
+            '{account}': accountName | e,
+            '{project}': projectName | e,
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            La cuenta {account} ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Sus nuevas compensaciones no podrán respaldarse hasta que disponga de más crédito.
+        {%- endtrans %}
+    {% elseif threshold >= 90 %}
+        {% trans with {
+            '{account}': accountName | e,
+            '{project}': projectName | e,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            El crédito de la cuenta {account} en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.
+        {%- endtrans %}
+    {% else %}
+        {% trans with {
+            '{account}': accountName | e,
+            '{project}': projectName | e,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            A la cuenta {account} le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.
+        {%- endtrans %}
+    {% endif %}
+</p>
+<p>
+    <a href="{{ path('admin_credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}">
+        {% trans -%}Ver compra de crédito{%- endtrans -%}
+    </a>
+</p>

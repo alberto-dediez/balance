@@ -12981,6 +12981,34 @@
         <source>Guía</source>
         <target>Guía</target>
       </trans-unit>
+      <trans-unit id="odYyYty" resname="A la cuenta {account} le queda poco crédito en el proyecto {project}">
+        <source>A la cuenta {account} le queda poco crédito en el proyecto {project}</source>
+        <target>A la cuenta {account} le queda poco crédito en el proyecto {project}</target>
+      </trans-unit>
+      <trans-unit id="TwK2fd3" resname="El crédito de la cuenta {account} en el proyecto {project} está casi agotado">
+        <source>El crédito de la cuenta {account} en el proyecto {project} está casi agotado</source>
+        <target>El crédito de la cuenta {account} en el proyecto {project} está casi agotado</target>
+      </trans-unit>
+      <trans-unit id="23FtFHk" resname="La cuenta {account} se ha quedado sin crédito en el proyecto {project}">
+        <source>La cuenta {account} se ha quedado sin crédito en el proyecto {project}</source>
+        <target>La cuenta {account} se ha quedado sin crédito en el proyecto {project}</target>
+      </trans-unit>
+      <trans-unit id="JYd7mzB" resname="La cuenta {account} ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Sus nuevas compensaciones no podrán respaldarse hasta que disponga de más crédito.">
+        <source>La cuenta {account} ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Sus nuevas compensaciones no podrán respaldarse hasta que disponga de más crédito.</source>
+        <target>La cuenta {account} ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Sus nuevas compensaciones no podrán respaldarse hasta que disponga de más crédito.</target>
+      </trans-unit>
+      <trans-unit id="ZmhvV.V" resname="El crédito de la cuenta {account} en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.">
+        <source>El crédito de la cuenta {account} en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.</source>
+        <target>El crédito de la cuenta {account} en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.</target>
+      </trans-unit>
+      <trans-unit id="Ps6Jw2z" resname="A la cuenta {account} le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.">
+        <source>A la cuenta {account} le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.</source>
+        <target>A la cuenta {account} le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.</target>
+      </trans-unit>
+      <trans-unit id="SYZIWMe" resname="Ver compra de crédito">
+        <source>Ver compra de crédito</source>
+        <target>Ver compra de crédito</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

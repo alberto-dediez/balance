@@ -1,0 +1,48 @@
+{% if threshold >= 100 %}
+    <h3>{% trans with {'{account}': accountName | e, '{project}': projectName | e} -%}La cuenta {account} se ha quedado sin crédito en el proyecto {project}{%- endtrans -%}</h3>
+    <p>
+        {% trans with {
+            '{account}': accountName | e,
+            '{project}': projectName | e,
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            La cuenta {account} ha agotado el crédito de su última compra en el proyecto {project}: ha consumido las {purchased} t compradas. Sus nuevas compensaciones no podrán respaldarse hasta que disponga de más crédito.
+        {%- endtrans %}
+    </p>
+{% elseif threshold >= 90 %}
+    <h3>{% trans with {'{account}': accountName | e, '{project}': projectName | e} -%}El crédito de la cuenta {account} en el proyecto {project} está casi agotado{%- endtrans -%}</h3>
+    <p>
+        {% trans with {
+            '{account}': accountName | e,
+            '{project}': projectName | e,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            El crédito de la cuenta {account} en el proyecto {project} está casi agotado: quedan {available} t de las {purchased} t compradas.
+        {%- endtrans %}
+    </p>
+{% else %}
+    <h3>{% trans with {'{account}': accountName | e, '{project}': projectName | e} -%}A la cuenta {account} le queda poco crédito en el proyecto {project}{%- endtrans -%}</h3>
+    <p>
+        {% trans with {
+            '{account}': accountName | e,
+            '{project}': projectName | e,
+            '{available}': availableTonnes | number_format(4, ',', '.'),
+            '{purchased}': purchasedTonnes | number_format(4, ',', '.')
+        } -%}
+            A la cuenta {account} le queda poco crédito en el proyecto {project}: quedan {available} t de las {purchased} t compradas.
+        {%- endtrans %}
+    </p>
+{% endif %}
+<p>
+    {% trans with {
+        '{reference}': purchaseReference,
+        '{consumed}': consumedTonnes | number_format(4, ',', '.'),
+        '{projectAvailable}': projectAvailableTonnes | number_format(4, ',', '.')
+    } -%}
+        Compra de referencia {reference}: {consumed} t consumidas. Saldo total disponible en el proyecto: {projectAvailable} t.
+    {%- endtrans %}
+</p>
+<a href="{{ url('admin_credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}" class="btn btn-primary">
+    {% trans -%}Ver compra de crédito{%- endtrans -%}
+</a>
