@@ -89,21 +89,13 @@ class ScheduledCommandTest extends TestCase
         ScheduledCommand::dailyAt('task', new FakeScheduledInnerCommand(), '2:00');
     }
 
-    public function testDailyAtWrapsCommandInDeferredWithExecuteAt(): void
+    public function testDailyAtWrapsCommandInDeferredWithoutDelay(): void
     {
-        $before = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         $sut = ScheduledCommand::dailyAt('task', new FakeScheduledInnerCommand(), '02:00');
 
         $deferred = $sut->command();
         $this->assertInstanceOf(DeferredCommand::class, $deferred);
-
-        /** @var DeferredCommand $deferred */
-        $executeAt = $deferred->executeAt();
-        $this->assertNotNull($executeAt);
-        $this->assertGreaterThan($before, $executeAt);
-
-        $executeAtUtc = $executeAt->setTimezone(new \DateTimeZone('UTC'));
-        $this->assertSame('02:00', $executeAtUtc->format('H:i'));
+        $this->assertNull($deferred->executeAt());
     }
 
     public function testDailyAtAcceptsAnyValidTimeRegardlessOfTickAlignment(): void
@@ -168,23 +160,104 @@ class ScheduledCommandTest extends TestCase
         $this->assertFalse($sut->isDue($now, $now));
     }
 
-    public function testDailyAtIsDueAfter24Hours(): void
+    /**
+     * @return iterable<string, array{?string, string, bool}>
+     */
+    public static function dailyAtCases(): iterable
     {
-        $sut = ScheduledCommand::dailyAt('task', new FakeScheduledInnerCommand(), '02:00');
-
-        $lastRunAt = new \DateTimeImmutable('2026-06-13T00:00:00+00:00');
-        $now = new \DateTimeImmutable('2026-06-14T00:00:00+00:00');
-
-        $this->assertTrue($sut->isDue($now, $lastRunAt));
+        yield 'before today occurrence' => ['2026-11-18T03:20:05+00:00', '2026-11-19T03:19:00+00:00', false];
+        yield 'at today occurrence' => ['2026-11-18T03:20:05+00:00', '2026-11-19T03:20:00+00:00', true];
+        yield 'already ran today' => ['2026-11-19T03:20:05+00:00', '2026-11-19T03:21:00+00:00', false];
+        yield 'ran exactly at the occurrence' => ['2026-11-19T03:20:00+00:00', '2026-11-19T03:21:00+00:00', false];
+        yield 'missed ticks' => ['2026-11-18T03:20:05+00:00', '2026-11-19T05:00:00+00:00', true];
+        yield 'never ran' => [null, '2026-11-19T10:00:00+00:00', false];
     }
 
-    public function testDailyAtIsNotDueBefore24Hours(): void
+    /**
+     * @dataProvider dailyAtCases
+     */
+    public function testDailyAtIsDue(?string $lastRunAt, string $now, bool $expected): void
     {
-        $sut = ScheduledCommand::dailyAt('task', new FakeScheduledInnerCommand(), '02:00');
+        $sut = ScheduledCommand::dailyAt('task', new FakeScheduledInnerCommand(), '03:20');
 
-        $lastRunAt = new \DateTimeImmutable('2026-06-13T00:00:00+00:00');
-        $now = new \DateTimeImmutable('2026-06-13T23:59:00+00:00');
+        $this->assertSame($expected, $sut->isDue(new \DateTimeImmutable($now), null === $lastRunAt ? null : new \DateTimeImmutable($lastRunAt)));
+    }
 
-        $this->assertFalse($sut->isDue($now, $lastRunAt));
+    public function testDailyAtIsDueUsesUtc(): void
+    {
+        $sut = ScheduledCommand::dailyAt('task', new FakeScheduledInnerCommand(), '03:20');
+        $madrid = new \DateTimeZone('Europe/Madrid');
+
+        $lastRunAt = new \DateTimeImmutable('2026-11-18T03:20:05+00:00');
+
+        $this->assertFalse($sut->isDue((new \DateTimeImmutable('2026-11-19T03:19:00+00:00'))->setTimezone($madrid), $lastRunAt->setTimezone($madrid)));
+        $this->assertTrue($sut->isDue((new \DateTimeImmutable('2026-11-19T03:20:00+00:00'))->setTimezone($madrid), $lastRunAt->setTimezone($madrid)));
+    }
+
+    // --- weeklyOn ---
+
+    public function testWeeklyOnWrapsCommandInDeferredWithoutDelay(): void
+    {
+        $sut = ScheduledCommand::weeklyOn('task', new FakeScheduledInnerCommand(), 'sunday', '21:00');
+
+        $deferred = $sut->command();
+        $this->assertInstanceOf(DeferredCommand::class, $deferred);
+        $this->assertNull($deferred->executeAt());
+    }
+
+    public function testWeeklyOnHasWeeklyInterval(): void
+    {
+        $sut = ScheduledCommand::weeklyOn('task', new FakeScheduledInnerCommand(), 'sunday', '21:00');
+
+        $this->assertSame(7 * 24 * 60, $sut->intervalInMinutes());
+    }
+
+    public function testWeeklyOnDescribe(): void
+    {
+        $this->assertSame('weekly on sunday 21:00 UTC', ScheduledCommand::weeklyOn('task', new FakeScheduledInnerCommand(), 'sunday', '21:00')->describe());
+    }
+
+    public function testWeeklyOnRejectsInvalidDay(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        ScheduledCommand::weeklyOn('task', new FakeScheduledInnerCommand(), 'funday', '21:00');
+    }
+
+    public function testWeeklyOnRejectsInvalidTime(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        ScheduledCommand::weeklyOn('task', new FakeScheduledInnerCommand(), 'sunday', '25:00');
+    }
+
+    /**
+     * @return iterable<string, array{string, string, bool}>
+     */
+    public static function weeklyOnCases(): iterable
+    {
+        yield 'saturday before the occurrence' => ['2026-11-15T21:00:05+00:00', '2026-11-21T23:00:00+00:00', false];
+        yield 'sunday at the occurrence' => ['2026-11-15T21:00:05+00:00', '2026-11-22T21:00:00+00:00', true];
+        yield 'monday after running on sunday' => ['2026-11-22T21:00:05+00:00', '2026-11-23T09:00:00+00:00', false];
+    }
+
+    /**
+     * @dataProvider weeklyOnCases
+     */
+    public function testWeeklyOnIsDue(string $lastRunAt, string $now, bool $expected): void
+    {
+        $sut = ScheduledCommand::weeklyOn('task', new FakeScheduledInnerCommand(), 'sunday', '21:00');
+
+        $this->assertSame($expected, $sut->isDue(new \DateTimeImmutable($now), new \DateTimeImmutable($lastRunAt)));
+    }
+
+    public function testWaitsForItsTime(): void
+    {
+        $command = new FakeScheduledInnerCommand();
+
+        $this->assertTrue(ScheduledCommand::dailyAt('task', $command, '02:00')->waitsForItsTime());
+        $this->assertTrue(ScheduledCommand::weeklyOn('task', $command, 'sunday', '21:00')->waitsForItsTime());
+        $this->assertFalse(ScheduledCommand::everyMinutes('task', $command, 5)->waitsForItsTime());
+        $this->assertFalse(ScheduledCommand::everyHours('task', $command, 1)->waitsForItsTime());
     }
 }

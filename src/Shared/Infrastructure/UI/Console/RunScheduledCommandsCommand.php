@@ -71,6 +71,18 @@ class RunScheduledCommandsCommand extends Command
             $label = $this->commandLabel($scheduledCommand->command());
             $record = $this->records->findByCommandId($scheduledCommand->id());
 
+            if (null === $record && $scheduledCommand->waitsForItsTime()) {
+                $this->records->save(new ScheduledCommandRecord($scheduledCommand->id(), $now));
+
+                $this->schedulerLogger->debug('Scheduled command registered', [
+                    'id' => $scheduledCommand->id(),
+                    'command' => $label,
+                    'schedule' => $scheduledCommand->describe(),
+                ]);
+
+                continue;
+            }
+
             if (!$scheduledCommand->isDue($now, $record?->lastRunAt())) {
                 $this->schedulerLogger->debug('Scheduled command skipped', [
                     'id' => $scheduledCommand->id(),
