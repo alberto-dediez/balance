@@ -7,11 +7,11 @@
     <body>
       <trans-unit id="xISlxBr" resname="calculate">
         <source>calculate</source>
-        <target>NEW_calculate</target>
+        <target>Hesapla</target>
       </trans-unit>
       <trans-unit id="4UmHlHp" resname="omit">
         <source>omit</source>
-        <target>NEW_omit</target>
+        <target>Atla</target>
       </trans-unit>
     </body>
   </file>

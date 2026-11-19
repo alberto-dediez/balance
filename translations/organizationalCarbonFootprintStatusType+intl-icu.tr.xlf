@@ -35,7 +35,7 @@
       </trans-unit>
       <trans-unit id="AjiDGwA" resname="materiality_answered">
         <source>materiality_answered</source>
-        <target>NEW_materiality_answered</target>
+        <target>Önemlilik yanıtlandı</target>
       </trans-unit>
     </body>
   </file>

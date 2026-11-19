@@ -7,23 +7,23 @@
     <body>
       <trans-unit id="8aZtDG4" resname="account_trip_calculator">
         <source>account_trip_calculator</source>
-        <target>NEW_account_trip_calculator</target>
+        <target>Hesabın seyahat hesaplayıcısı</target>
       </trans-unit>
       <trans-unit id="3Z4_EKe" resname="property_trip_calculators">
         <source>property_trip_calculators</source>
-        <target>NEW_property_trip_calculators</target>
+        <target>Mülklerin seyahat hesaplayıcıları</target>
       </trans-unit>
       <trans-unit id="c1eQ_Oc" resname="events">
         <source>events</source>
-        <target>NEW_events</target>
+        <target>Etkinlikler</target>
       </trans-unit>
       <trans-unit id="fr5RSAR" resname="compensation">
         <source>compensation</source>
-        <target>NEW_compensation</target>
+        <target>Telafi</target>
       </trans-unit>
       <trans-unit id="l6eJ8bF" resname="organizational_carbon_footprint">
         <source>organizational_carbon_footprint</source>
-        <target>NEW_organizational_carbon_footprint</target>
+        <target>Mülklerin ve şirketlerin karbon ayak izi</target>
       </trans-unit>
     </body>
   </file>

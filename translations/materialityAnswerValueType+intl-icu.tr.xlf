@@ -7,23 +7,23 @@
     <body>
       <trans-unit id="qlGpeak" resname="level_1">
         <source>level_1</source>
-        <target>NEW_level_1</target>
+        <target>Düşük</target>
       </trans-unit>
       <trans-unit id="w3knLAa" resname="level_2">
         <source>level_2</source>
-        <target>NEW_level_2</target>
+        <target>Orta</target>
       </trans-unit>
       <trans-unit id="bEHK6VZ" resname="level_3">
         <source>level_3</source>
-        <target>NEW_level_3</target>
+        <target>Yüksek</target>
       </trans-unit>
       <trans-unit id="RAhzjh_" resname="yes_no_1">
         <source>yes_no_1</source>
-        <target>NEW_yes_no_1</target>
+        <target>Hayır</target>
       </trans-unit>
       <trans-unit id="o6NrVdl" resname="yes_no_3">
         <source>yes_no_3</source>
-        <target>NEW_yes_no_3</target>
+        <target>Evet</target>
       </trans-unit>
     </body>
   </file>

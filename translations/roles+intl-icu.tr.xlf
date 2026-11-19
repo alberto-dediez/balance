@@ -21,6 +21,10 @@
         <source>ROLE_SUPER_ADMIN</source>
         <target>Süper yönetici</target>
       </trans-unit>
+      <trans-unit id="eVm9qZg" resname="ROLE_PROVIDER">
+        <source>ROLE_PROVIDER</source>
+        <target>Tedarikçi</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

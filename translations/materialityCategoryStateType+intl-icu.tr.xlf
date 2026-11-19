@@ -7,43 +7,43 @@
     <body>
       <trans-unit id="mBGOj6s" resname="without_score">
         <source>without_score</source>
-        <target>NEW_without_score</target>
+        <target>Puan yok</target>
       </trans-unit>
       <trans-unit id="e0OR3CU" resname="without_source">
         <source>without_source</source>
-        <target>NEW_without_source</target>
+        <target>Hesaplama kaynağı yok</target>
       </trans-unit>
       <trans-unit id="qU.AcWZ" resname="not_applicable_to_subject">
         <source>not_applicable_to_subject</source>
-        <target>NEW_not_applicable_to_subject</target>
+        <target>Bu ayak izi için geçerli değil</target>
       </trans-unit>
       <trans-unit id="2GxuqJW" resname="stage_excluded">
         <source>stage_excluded</source>
-        <target>NEW_stage_excluded</target>
+        <target>Kapsam 3 hariç tutuldu</target>
       </trans-unit>
       <trans-unit id="iwnmvNb" resname="excluded_recommended">
         <source>excluded_recommended</source>
-        <target>NEW_excluded_recommended</target>
+        <target>Hariç tutuldu (öneri)</target>
       </trans-unit>
       <trans-unit id="dtOd8PK" resname="active">
         <source>active</source>
-        <target>NEW_active</target>
+        <target>Etkin</target>
       </trans-unit>
       <trans-unit id="8qZ7EwE" resname="active_overridden">
         <source>active_overridden</source>
-        <target>NEW_active_overridden</target>
+        <target>Etkin (geçersiz kılma)</target>
       </trans-unit>
       <trans-unit id="d5TIPdi" resname="excluded_overridden">
         <source>excluded_overridden</source>
-        <target>NEW_excluded_overridden</target>
+        <target>Hariç tutuldu (geçersiz kılma)</target>
       </trans-unit>
       <trans-unit id="TVWcGVC" resname="pending_review">
         <source>pending_review</source>
-        <target>NEW_pending_review</target>
+        <target>İnceleme bekliyor</target>
       </trans-unit>
       <trans-unit id="qsekUKt" resname="not_evaluated">
         <source>not_evaluated</source>
-        <target>NEW_not_evaluated</target>
+        <target>Değerlendirilmedi</target>
       </trans-unit>
     </body>
   </file>

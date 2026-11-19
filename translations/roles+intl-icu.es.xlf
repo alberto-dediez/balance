@@ -21,6 +21,10 @@
         <source>ROLE_OWNER</source>
         <target>Propietario</target>
       </trans-unit>
+      <trans-unit id="eVm9qZg" resname="ROLE_PROVIDER">
+        <source>ROLE_PROVIDER</source>
+        <target>Proveedor</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

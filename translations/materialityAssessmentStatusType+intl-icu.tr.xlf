@@ -7,11 +7,11 @@
     <body>
       <trans-unit id="dgdAkJu" resname="draft">
         <source>draft</source>
-        <target>NEW_draft</target>
+        <target>Taslak</target>
       </trans-unit>
       <trans-unit id="pyrb6oL" resname="completed">
         <source>completed</source>
-        <target>NEW_completed</target>
+        <target>Tamamlandı</target>
       </trans-unit>
     </body>
   </file>

@@ -7,59 +7,59 @@
     <body>
       <trans-unit id="nzIoUX." resname="per_occupied_room">
         <source>per_occupied_room</source>
-        <target>NEW_per_occupied_room</target>
+        <target>Dolu oda başına</target>
       </trans-unit>
       <trans-unit id="y1JRqOH" resname="per_stay">
         <source>per_stay</source>
-        <target>NEW_per_stay</target>
+        <target>Konaklama başına</target>
       </trans-unit>
       <trans-unit id="g_iKDg1" resname="per_square_meter">
         <source>per_square_meter</source>
-        <target>NEW_per_square_meter</target>
+        <target>İnşa edilmiş m² başına</target>
       </trans-unit>
       <trans-unit id="xA4.YC0" resname="per_cover">
         <source>per_cover</source>
-        <target>NEW_per_cover</target>
+        <target>Servis edilen kuver başına</target>
       </trans-unit>
       <trans-unit id="U9fcmHL" resname="per_employee">
         <source>per_employee</source>
-        <target>NEW_per_employee</target>
+        <target>Çalışan başına</target>
       </trans-unit>
       <trans-unit id="7KxEi51" resname="per_million_euro_revenue">
         <source>per_million_euro_revenue</source>
-        <target>NEW_per_million_euro_revenue</target>
+        <target>Milyon avro ciro başına</target>
       </trans-unit>
       <trans-unit id="qEl8qyg" resname="per_customer">
         <source>per_customer</source>
-        <target>NEW_per_customer</target>
+        <target>Hizmet verilen müşteri başına</target>
       </trans-unit>
       <trans-unit id="UgUGMuh" resname="per_occupied_room_unit">
         <source>per_occupied_room_unit</source>
-        <target>NEW_per_occupied_room_unit</target>
+        <target>dolu oda</target>
       </trans-unit>
       <trans-unit id="WMVCTTc" resname="per_stay_unit">
         <source>per_stay_unit</source>
-        <target>NEW_per_stay_unit</target>
+        <target>konaklama</target>
       </trans-unit>
       <trans-unit id="JAedPdT" resname="per_square_meter_unit">
         <source>per_square_meter_unit</source>
-        <target>NEW_per_square_meter_unit</target>
+        <target>m²</target>
       </trans-unit>
       <trans-unit id="PCmssRd" resname="per_cover_unit">
         <source>per_cover_unit</source>
-        <target>NEW_per_cover_unit</target>
+        <target>kuver</target>
       </trans-unit>
       <trans-unit id="ZRn9hgG" resname="per_employee_unit">
         <source>per_employee_unit</source>
-        <target>NEW_per_employee_unit</target>
+        <target>çalışan</target>
       </trans-unit>
       <trans-unit id="jGnPSzn" resname="per_million_euro_revenue_unit">
         <source>per_million_euro_revenue_unit</source>
-        <target>NEW_per_million_euro_revenue_unit</target>
+        <target>M€</target>
       </trans-unit>
       <trans-unit id="C.YWKyB" resname="per_customer_unit">
         <source>per_customer_unit</source>
-        <target>NEW_per_customer_unit</target>
+        <target>müşteri</target>
       </trans-unit>
     </body>
   </file>

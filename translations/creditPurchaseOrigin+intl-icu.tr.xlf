@@ -7,15 +7,15 @@
     <body>
       <trans-unit id="MIMhV6q" resname="requested">
         <source>requested</source>
-        <target>NEW_requested</target>
+        <target>Talep edildi</target>
       </trans-unit>
       <trans-unit id="DbIYOch" resname="assigned">
         <source>assigned</source>
-        <target>NEW_assigned</target>
+        <target>Yönetici tarafından atandı</target>
       </trans-unit>
       <trans-unit id="TWRt04I" resname="received">
         <source>received</source>
-        <target>NEW_received</target>
+        <target>Aktarımla alındı</target>
       </trans-unit>
     </body>
   </file>

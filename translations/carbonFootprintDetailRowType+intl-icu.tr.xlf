@@ -7,19 +7,19 @@
     <body>
       <trans-unit id="Jg3DfKT" resname="activity">
         <source>activity</source>
-        <target>NEW_activity</target>
+        <target>Faaliyet</target>
       </trans-unit>
       <trans-unit id="XK0Pwpe" resname="derived_fuel_and_energy">
         <source>derived_fuel_and_energy</source>
-        <target>NEW_derived_fuel_and_energy</target>
+        <target>Yakıtlar ve enerji (WTT)</target>
       </trans-unit>
       <trans-unit id="FQ2NPNk" resname="non_consolidated_property">
         <source>non_consolidated_property</source>
-        <target>NEW_non_consolidated_property</target>
+        <target>Konsolide edilmeyen mülk</target>
       </trans-unit>
       <trans-unit id="Ziu3rRe" resname="exclusion">
         <source>exclusion</source>
-        <target>NEW_exclusion</target>
+        <target>Hariç tutma</target>
       </trans-unit>
     </body>
   </file>
