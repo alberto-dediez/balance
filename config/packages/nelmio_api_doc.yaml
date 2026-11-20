@@ -2,7 +2,7 @@ nelmio_api_doc:
     documentation:
         info:
             title: Hydra app
-            description: This is an awesome app!
+            description: 'This is an awesome app! En las rutas con `{_locale}`, el idioma es opcional: si se omite el segmento (`/api/properties` en lugar de `/api/es/properties`) se asume el idioma por defecto.'
             version: 1.0.0
         tags:
             - name: 'Health Check'
@@ -57,12 +57,18 @@ nelmio_api_doc:
         default:
             path_patterns:
                 - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            name_patterns:
+                - ^(?!default_locale_)
             with_attribute: true
         mobile:
             path_patterns:
                 - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            name_patterns:
+                - ^(?!default_locale_)
             with_attribute: true
         admin:
             path_patterns:
                 - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            name_patterns:
+                - ^(?!default_locale_)
             with_attribute: true

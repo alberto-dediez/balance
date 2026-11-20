@@ -73,6 +73,17 @@ property-api:
     defaults:
         _locale: '%app.locale_default%'
 
+property-api-default-locale:
+    resource:
+        path: ../src/Property/Infrastructure/UI/Api/
+        namespace: App\Property\Infrastructure\UI\Api
+    type: attribute
+    prefix: /api
+    name_prefix: default_locale_
+    condition: "env('bool:PROPERTIES_ENABLED')"
+    defaults:
+        _locale: '%app.locale_default%'
+
 property-web:
     resource:
         path: ../src/Property/Infrastructure/UI/Web/
