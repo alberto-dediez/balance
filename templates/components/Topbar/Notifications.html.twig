@@ -1,5 +1,6 @@
 {% if this.enabled %}
 <li class="nav-item nav-icon-hover dropdown"
+    data-notifications-widget
     {% if this.liveEnabled %}
         data-controller="notifications-live"
         data-notifications-live-url-value="{{ path('notifications_widget') }}"
@@ -9,8 +10,7 @@
     <a class="nav-link position-relative" href="javascript:void(0)" id="drop-notifications" aria-expanded="false" data-bs-toggle="dropdown"
        data-notifications-live-target="toggle">
         <twig:Icon name="solar:bell-line-duotone" />
-        <span class="badge rounded-pill bg-danger position-absolute top-0 end-0 fs-1 py-1 px-2 {{ this.count > 0 ? '' : 'd-none' }}"
-              style="margin-top: 10px;"
+        <span class="badge rounded-pill bg-danger position-absolute top-0 end-0 fs-1 py-1 px-2 topbar-notifications__badge {{ this.count > 0 ? '' : 'd-none' }}"
               data-notifications-badge
               data-notifications-count="{{ this.count }}">
             {{ this.count > 99 ? '99+' : this.count }}
@@ -18,8 +18,7 @@
         </span>
     </a>
     <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop-notifications"
-         data-notifications-menu
-         data-notifications-live-target="menu">
+         data-notifications-menu>
         <div class="d-flex align-items-center justify-content-between py-3 px-7">
             <h5 class="mb-0 fs-5 fw-semibold">{% trans -%}Notificaciones{%- endtrans %}</h5>
             <span class="badge text-bg-primary rounded-pill {{ this.count > 0 ? '' : 'd-none' }}" data-notifications-pill>
@@ -30,16 +29,27 @@
         <div class="message-body">
             <div data-notifications-list>
                 {% for notification in this.latest %}
-                    <a href="{{ path('notification_show', {'id': notification.id}) }}" class="py-3 px-7 d-flex align-items-center border-top">
-                        <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round">
-                            <twig:Icon name="solar:bell-bing-line-duotone" />
-                        </span>
-                        <div class="ps-3">
-                            <h6 class="mb-1 fw-semibold">{{ notification.subject }}</h6>
-                            <span class="fs-2 d-block text-body-secondary text-truncate" style="max-width: 220px;">{{ notification.body | striptags }}</span>
-                            <span class="fs-1 d-block text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</span>
-                        </div>
-                    </a>
+                    <div class="d-flex align-items-center border-top">
+                        <a href="{{ path('notification_show', {'id': notification.id}) }}" class="py-3 ps-7 pe-2 d-flex align-items-center flex-grow-1 text-reset text-decoration-none topbar-notifications__link">
+                            <span class="d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded round">
+                                <twig:Icon name="solar:bell-bing-line-duotone" />
+                            </span>
+                            <div class="ps-3">
+                                <h6 class="mb-1 fw-semibold">{{ notification.subject }}</h6>
+                                <span class="fs-2 d-block text-body-secondary text-truncate topbar-notifications__body">{{ notification.body | striptags }}</span>
+                                <span class="fs-1 d-block text-body-secondary">{{ notification.createdAt | date('d/m/Y H:i') }}</span>
+                            </div>
+                        </a>
+                        <a href="{{ path('notification_mark_read', {'id': notification.id, '_token': csrf_token('mark_as_read')}) }}"
+                           class="p-2 me-5 text-body-secondary"
+                           title="{{ 'Marcar como leída' | trans }}"
+                           data-controller="notification-mark-read"
+                           data-action="notification-mark-read#mark"
+                           data-notification-mark-read-id-value="{{ notification.id }}"
+                           data-notification-mark-read-widget-url-value="{{ path('notifications_widget') }}">
+                            <twig:Icon name="solar:check-read-line-duotone" size="lg" />
+                        </a>
+                    </div>
                 {% endfor %}
             </div>
 
