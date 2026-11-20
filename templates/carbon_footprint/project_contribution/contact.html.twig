@@ -1,0 +1,55 @@
+{% extends theme_template(routes.layout) %}
+
+{% set page_title = 'Compensa tu huella' | trans %}
+
+{% block card_body %}
+    <twig:Alert:Alert type="info">
+        <p class="fw-bold mb-2">{{ '¡Gracias por tu compromiso!' | trans }}</p>
+        <p class="mb-2">{{ 'Debido a una alta demanda, el proyecto seleccionado tiene una disponibilidad inferior a la cantidad que deseas adquirir. Déjanos tus datos y te contactaremos muy pronto para completar tu contribución.' | trans }}</p>
+        <p class="mb-0">{{ 'Un saludo,' | trans }}</p>
+        <p class="mb-0">{{ 'Equipo Supply Bioscore' | trans }}</p>
+    </twig:Alert:Alert>
+
+    <p class="text-muted small mb-4">
+        {{ 'Tu huella es de {kg} kg CO₂eq.' | trans({'{kg}': co2eqKg | number_format(2, ',', '.')}) }}
+    </p>
+
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.phone) }}
+        {{ form_row(form.country) }}
+        {{ form_row(form.isCompany) }}
+        {{ form_row(form.companyName, {row_attr: {class: 'mb-3 contact-company-field'}}) }}
+        {{ form_row(form.vatNumber, {row_attr: {class: 'mb-3 contact-company-field'}}) }}
+        {{ form_row(form.comment) }}
+
+        {% include '@shared/form/_privacy_notice.html.twig' %}
+
+        <div class="mt-3">
+            {{ form_widget(form.send, {attr: {class: 'btn btn-primary'}}) }}
+        </div>
+    {{ form_end(form) }}
+
+    <script>
+        (function () {
+            var isCompany = document.getElementById('{{ form.isCompany.vars.id }}');
+            var companyFields = document.querySelectorAll('.contact-company-field');
+
+            function toggle() {
+                companyFields.forEach(function (field) {
+                    field.style.display = isCompany.checked ? '' : 'none';
+                });
+            }
+
+            isCompany.addEventListener('change', toggle);
+            toggle();
+        })();
+    </script>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted" href="{{ path(routes.result, routes.resultRouteParams) }}">
+            {{ 'Volver al resultado' | trans }}
+        </a>
+    </div>
+{% endblock %}

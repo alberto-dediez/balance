@@ -1,0 +1,19 @@
+{% extends theme_template(routes.layout) %}
+
+{% set page_title = '¡Gracias!' | trans %}
+
+{% block card_body %}
+    <div class="text-center">
+        <twig:Icon name="solar:hand-heart-bold" size="xl" class="text-success mb-3" />
+        <h5 class="mb-2">{{ '¡Gracias por tu interés!' | trans }}</h5>
+        <p class="text-muted mb-0">
+            {{ 'Hemos recibido tus datos. En breve nos pondremos en contacto contigo para completar tu contribución.' | trans }}
+        </p>
+    </div>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted" href="{{ path(routes.result, routes.resultRouteParams) }}">
+            {{ 'Volver al resultado' | trans }}
+        </a>
+    </div>
+{% endblock %}

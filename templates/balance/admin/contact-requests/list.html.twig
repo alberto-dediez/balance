@@ -1,0 +1,57 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Solicitudes de contacto' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Cuenta' | trans,
+            'sortable': false
+        }, {
+            'label': 'Nombre' | trans,
+            'sortable': false
+        }, {
+            'label': 'Email' | trans,
+            'sortable': false
+        }, {
+            'label': 'Origen' | trans,
+            'sortable': false
+        }, {
+            'label': 'Huella (kg CO₂eq)' | trans,
+            'sortable': false
+        }, {
+            'label': 'Estado' | trans,
+            'sortable': false
+        }, {
+            'label': 'Fecha' | trans,
+            'sortable': true,
+            'sortableBy': 'requestedAt'
+        }, {
+            'label': ''
+        },
+    ] %}
+
+    {% if contactRequests is empty %}
+        <p class="mb-0">{{ 'Todavía no hay solicitudes de contacto.' | trans }}</p>
+    {% endif %}
+
+    <twig:List:Table :columns="columns" :elements="contactRequests">
+        <td>{{ element.accountId | account_name }}</td>
+        <td>{{ element.contactName }}</td>
+        <td>{{ element.contactEmail }}</td>
+        <td>
+            {{ element.origin.value | trans({}, 'projectContributionOrigin') }}
+            <br><small class="text-muted">{{ element.originName ?? '---' }}</small>
+        </td>
+        <td>{{ element.co2eqKg | number_format(2, ',', '.') }}</td>
+        <td><span class="badge {{ element.status.style }}">{{ element.status.value | trans({}, 'contactRequestStatus') }}</span></td>
+        <td>{{ element.requestedAt | date('d/m/Y H:i') }}</td>
+        <td>
+            <twig:List:Action:View path="{{ path('admin_contact_requests_view', {'contactRequestId': element.id}) }}" />
+            {% if element.isPending %}
+                <twig:List:Action:MarkAsManaged path="{{ path('admin_contact_requests_manage', {'contactRequestId': element.id}) }}" />
+                <twig:List:Action:Discard path="{{ path('admin_contact_requests_discard', {'contactRequestId': element.id}) }}" />
+            {% endif %}
+        </td>
+    </twig:List:Table>
+{% endblock %}

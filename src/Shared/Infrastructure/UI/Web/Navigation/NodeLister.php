@@ -446,6 +446,11 @@ class NodeLister
                     icon: 'solar:hand-money-line-duotone',
                     target: $this->router->generate('admin_project_contributions'),
                 ),
+                new Node(
+                    label: new TranslatableMessage('Solicitudes de contacto'),
+                    icon: 'solar:letter-line-duotone',
+                    target: $this->router->generate('admin_contact_requests'),
+                ),
             ],
         );
 

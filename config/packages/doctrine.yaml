@@ -128,6 +128,7 @@ doctrine:
             project_contribution_credit_allocation_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ProjectContributionCreditAllocationIdType
             contribution_certificate_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ContributionCertificateIdType
             ledger_entry_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\LedgerEntryIdType
+            contact_request_id: App\Balance\Infrastructure\Persistence\Doctrine\Type\ContactRequestIdType
             payee_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PayeeIdType
             payment_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PaymentIdType
             payout_id: App\Payments\Infrastructure\Persistence\Doctrine\Type\PayoutIdType

@@ -19,8 +19,6 @@ use App\Balance\Domain\Model\ProjectContribution\InsufficientProjectCreditExcept
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectNotContributableException;
 use App\Payments\Domain\Model\Payment\PaymentGatewayException;
-use App\Property\Domain\Model\Country\CountryFilter;
-use App\Property\Domain\Model\Country\CountryRepository;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -33,7 +31,7 @@ final class ContributionCheckoutHandler
         private QuoteContributionService $quoteContribution,
         private RegisterProjectContributionService $registerProjectContribution,
         private ListContributionOptionsService $listContributionOptions,
-        private CountryRepository $countryRepository,
+        private ContributionCountries $contributionCountries,
         private UrlGeneratorInterface $urlGenerator,
     ) {}
 
@@ -46,7 +44,7 @@ final class ContributionCheckoutHandler
         array $defaults = [],
     ): ContributionCheckoutResult {
         $contribution = $request->isMethod('POST') ? $request->request->all('contribution') : $defaults;
-        $countries = $this->countries();
+        $countries = $this->contributionCountries->countries();
         $country = $this->country($contribution, $countries);
         $freeAmount = $this->freeAmount($contribution);
 
@@ -122,26 +120,6 @@ final class ContributionCheckoutHandler
             allowSharedCredit: $context->allowSharedCredit,
             propertyId: $context->propertyId,
         ))->find($projectId);
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function countries(): array
-    {
-        $countries = [];
-
-        foreach ($this->countryRepository->findByFilter(new CountryFilter(limit: 0)) as $country) {
-            $iso = strtoupper(trim((string) $country->iso()));
-
-            if ('' !== $iso) {
-                $countries[$iso] = $country->name();
-            }
-        }
-
-        asort($countries);
-
-        return $countries;
     }
 
     /**

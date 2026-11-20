@@ -1,0 +1,20 @@
+<h3>{% trans -%}Nueva solicitud de contacto para compensar{%- endtrans -%}</h3>
+<p>
+    {% trans with {
+        '{name}': contactName | e,
+        '{email}': contactEmail | e,
+        '{account}': accountName | e,
+        '{kg}': co2eqKg | number_format(2, ',', '.')
+    } -%}
+        {name} ({email}) quiere compensar {kg} kg CO₂eq de la cuenta {account}, pero no hay crédito disponible.
+    {%- endtrans %}
+</p>
+{% if contactPhone %}
+    <p>{% trans with {'{phone}': contactPhone | e} -%}Teléfono: {phone}{%- endtrans %}</p>
+{% endif %}
+{% if originName %}
+    <p>{% trans with {'{origin}': originName | e} -%}Cálculo: {origin}{%- endtrans %}</p>
+{% endif %}
+<a href="{{ url('admin_contact_requests_view', {'contactRequestId': contactRequestId}) }}" class="btn btn-primary">
+    {% trans -%}Ver solicitud{%- endtrans -%}
+</a>

@@ -1,0 +1,15 @@
+<p>
+    {% trans with {
+        '{name}': contactName | e,
+        '{email}': contactEmail | e,
+        '{account}': accountName | e,
+        '{kg}': co2eqKg | number_format(2, ',', '.')
+    } -%}
+        {name} ({email}) quiere compensar {kg} kg CO₂eq de la cuenta {account}, pero no hay crédito disponible.
+    {%- endtrans %}
+</p>
+<p>
+    <a href="{{ path('admin_contact_requests_view', {'contactRequestId': contactRequestId}) }}">
+        {% trans -%}Ver solicitud{%- endtrans -%}
+    </a>
+</p>

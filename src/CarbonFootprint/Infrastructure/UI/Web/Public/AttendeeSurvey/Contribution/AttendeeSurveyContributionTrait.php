@@ -72,6 +72,8 @@ trait AttendeeSurveyContributionTrait
             resultRouteParams: ['token' => $token, 'responseId' => $responseId],
             layout: '@carbon_footprint/public/attendee_survey/layout.html.twig',
             csrfTokenId: 'attendee_survey_contribution_' . $token,
+            contact: 'public_carbon_footprint_attendee_survey_contribution_contact',
+            contactThanks: 'public_carbon_footprint_attendee_survey_contribution_contact_thanks',
         );
     }
 }

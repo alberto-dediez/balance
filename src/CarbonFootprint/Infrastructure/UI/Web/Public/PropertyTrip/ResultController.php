@@ -68,6 +68,7 @@ class ResultController extends AbstractController
 
         $accountId = $response->tripCalculationLink->accountId() ?? $response->property?->accountId();
         $hasContributionOptions = false;
+        $offersContact = false;
 
         if ($accountId instanceof AccountId) {
             $options = $listContributionOptions(new ListContributionOptionsRequest(
@@ -78,6 +79,7 @@ class ResultController extends AbstractController
             ));
 
             $hasContributionOptions = !$options->isEmpty();
+            $offersContact = $options->offersContact();
         }
 
         return $this->render('@carbon_footprint/public/property_trip/result.html.twig', [
@@ -89,6 +91,7 @@ class ResultController extends AbstractController
             'emissionsPerPerson' => $perPersonTripEmissionsCalculator->forTripCalculations([$tripCalculation]),
             'mobilityNames' => $mobilityNames,
             'hasContributionOptions' => $hasContributionOptions,
+            'offersContact' => $offersContact,
             'scope' => $response->tripCalculationLink->scope(),
         ]);
     }

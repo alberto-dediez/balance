@@ -63,6 +63,12 @@ class ChooseController extends AbstractController
             allowSharedCredit: true,
         ));
 
+        $routes = $this->contributionRoutes($token, $responseId);
+
+        if ($options->offersContact()) {
+            return $this->redirectToRoute((string) $routes->contact, $routes->routeParams);
+        }
+
         $covers = [];
 
         foreach ($options->options as $option) {
@@ -74,7 +80,7 @@ class ChooseController extends AbstractController
             'token' => $token,
             'event' => $survey->event,
             'co2eqKg' => (float) $response->emissions()->co2eq(),
-            'routes' => $this->contributionRoutes($token, $responseId),
+            'routes' => $routes,
             'options' => $options->options,
             'covers' => $covers,
         ]);

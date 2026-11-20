@@ -25,6 +25,8 @@ final readonly class ContributionRoutes
         public array $resultRouteParams,
         public string $layout,
         public string $csrfTokenId,
+        public ?string $contact = null,
+        public ?string $contactThanks = null,
     ) {}
 
     /** @return array<string, string> */

@@ -13009,6 +13009,110 @@
         <source>Ver compra de crédito</source>
         <target>View credit purchase</target>
       </trans-unit>
+      <trans-unit id="rKPtNZ_" resname="Solicitud marcada como gestionada">
+        <source>Solicitud marcada como gestionada</source>
+        <target>Request marked as handled</target>
+      </trans-unit>
+      <trans-unit id="LiDrGPr" resname="La solicitud ya estaba resuelta">
+        <source>La solicitud ya estaba resuelta</source>
+        <target>The request had already been resolved</target>
+      </trans-unit>
+      <trans-unit id="wJFQ9xB" resname="Solicitud descartada">
+        <source>Solicitud descartada</source>
+        <target>Request discarded</target>
+      </trans-unit>
+      <trans-unit id="QKrcLY9" resname="Comentarios">
+        <source>Comentarios</source>
+        <target>Comments</target>
+      </trans-unit>
+      <trans-unit id="ieqrjKx" resname="Terminada">
+        <source>Terminada</source>
+        <target>Finished</target>
+      </trans-unit>
+      <trans-unit id="BwyY.Np" resname="Nombre o email">
+        <source>Nombre o email</source>
+        <target>Name or email</target>
+      </trans-unit>
+      <trans-unit id="c4bqKmm" resname="Nueva solicitud de contacto para compensar de la cuenta {account}">
+        <source>Nueva solicitud de contacto para compensar de la cuenta {account}</source>
+        <target>New contact request to offset from account {account}</target>
+      </trans-unit>
+      <trans-unit id="O7Zky2m" resname="Solicitudes de contacto">
+        <source>Solicitudes de contacto</source>
+        <target>Contact requests</target>
+      </trans-unit>
+      <trans-unit id="O2CQhYh" resname="Marcar como gestionada">
+        <source>Marcar como gestionada</source>
+        <target>Mark as handled</target>
+      </trans-unit>
+      <trans-unit id="yCaV_WM" resname="¿Seguro que quieres descartar esta solicitud?">
+        <source>¿Seguro que quieres descartar esta solicitud?</source>
+        <target>Are you sure you want to discard this request?</target>
+      </trans-unit>
+      <trans-unit id="TdDiCOX" resname="¡Gracias por tu compromiso!">
+        <source>¡Gracias por tu compromiso!</source>
+        <target>Thank you for your commitment!</target>
+      </trans-unit>
+      <trans-unit id="86gSw5u" resname="Debido a una alta demanda, el proyecto seleccionado tiene una disponibilidad inferior a la cantidad que deseas adquirir. Déjanos tus datos y te contactaremos muy pronto para completar tu contribución.">
+        <source>Debido a una alta demanda, el proyecto seleccionado tiene una disponibilidad inferior a la cantidad que deseas adquirir. Déjanos tus datos y te contactaremos muy pronto para completar tu contribución.</source>
+        <target>Due to high demand, the selected project has less availability than the amount you wish to purchase. Leave us your details and we will contact you very soon to complete your contribution.</target>
+      </trans-unit>
+      <trans-unit id="oGgRdnq" resname="Un saludo,">
+        <source>Un saludo,</source>
+        <target>Kind regards,</target>
+      </trans-unit>
+      <trans-unit id="MjSTvCa" resname="Equipo Supply Bioscore">
+        <source>Equipo Supply Bioscore</source>
+        <target>Equipo Supply Bioscore</target>
+      </trans-unit>
+      <trans-unit id="RU_nnaf" resname="¡Gracias!">
+        <source>¡Gracias!</source>
+        <target>Thank you!</target>
+      </trans-unit>
+      <trans-unit id="g7ogrrl" resname="¡Gracias por tu interés!">
+        <source>¡Gracias por tu interés!</source>
+        <target>Thank you for your interest!</target>
+      </trans-unit>
+      <trans-unit id="Xk1qT4W" resname="Hemos recibido tus datos. En breve nos pondremos en contacto contigo para completar tu contribución.">
+        <source>Hemos recibido tus datos. En breve nos pondremos en contacto contigo para completar tu contribución.</source>
+        <target>We have received your details. We will contact you shortly to complete your contribution.</target>
+      </trans-unit>
+      <trans-unit id="02jB7fs" resname="Nueva solicitud de contacto para compensar">
+        <source>Nueva solicitud de contacto para compensar</source>
+        <target>New contact request to offset</target>
+      </trans-unit>
+      <trans-unit id="qxQvTxy" resname="{name} ({email}) quiere compensar {kg} kg CO₂eq de la cuenta {account}, pero no hay crédito disponible.">
+        <source>{name} ({email}) quiere compensar {kg} kg CO₂eq de la cuenta {account}, pero no hay crédito disponible.</source>
+        <target>{name} ({email}) wants to offset {kg} kg CO₂eq from account {account}, but there is no credit available.</target>
+      </trans-unit>
+      <trans-unit id="8.41hXb" resname="Teléfono: {phone}">
+        <source>Teléfono: {phone}</source>
+        <target>Phone: {phone}</target>
+      </trans-unit>
+      <trans-unit id="Wgsvwy_" resname="Cálculo: {origin}">
+        <source>Cálculo: {origin}</source>
+        <target>Calculation: {origin}</target>
+      </trans-unit>
+      <trans-unit id="IkcN_7u" resname="Huella (kg CO₂eq)">
+        <source>Huella (kg CO₂eq)</source>
+        <target>Footprint (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="YG7k8DI" resname="Todavía no hay solicitudes de contacto.">
+        <source>Todavía no hay solicitudes de contacto.</source>
+        <target>There are no contact requests yet.</target>
+      </trans-unit>
+      <trans-unit id="aIyFF31" resname="Contacto">
+        <source>Contacto</source>
+        <target>Contact</target>
+      </trans-unit>
+      <trans-unit id="KCZh_IR" resname="Nombre del origen">
+        <source>Nombre del origen</source>
+        <target>Origin name</target>
+      </trans-unit>
+      <trans-unit id="u5FXfZ6" resname="Resuelta por">
+        <source>Resuelta por</source>
+        <target>Resolved by</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,11 +7,19 @@ namespace App\Balance\Application\ProjectContribution\Options;
 final class ListContributionOptionsResponse
 {
     /** @param array<int, ContributionOption> $options */
-    public function __construct(public readonly array $options = []) {}
+    public function __construct(
+        public readonly array $options = [],
+        public readonly bool $compensationEnabled = true,
+    ) {}
 
     public function isEmpty(): bool
     {
         return [] === $this->options;
+    }
+
+    public function offersContact(): bool
+    {
+        return $this->compensationEnabled && $this->isEmpty();
     }
 
     public function find(string $projectId): ?ContributionOption

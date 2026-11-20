@@ -12913,6 +12913,110 @@
         <source>Listar ficheros de la biblioteca</source>
         <target>Kütüphane dosyalarını listele</target>
       </trans-unit>
+      <trans-unit id="rKPtNZ_" resname="Solicitud marcada como gestionada">
+        <source>Solicitud marcada como gestionada</source>
+        <target>Talep işlendi olarak işaretlendi</target>
+      </trans-unit>
+      <trans-unit id="LiDrGPr" resname="La solicitud ya estaba resuelta">
+        <source>La solicitud ya estaba resuelta</source>
+        <target>Talep zaten sonuçlandırılmıştı</target>
+      </trans-unit>
+      <trans-unit id="wJFQ9xB" resname="Solicitud descartada">
+        <source>Solicitud descartada</source>
+        <target>Talep reddedildi</target>
+      </trans-unit>
+      <trans-unit id="QKrcLY9" resname="Comentarios">
+        <source>Comentarios</source>
+        <target>Yorumlar</target>
+      </trans-unit>
+      <trans-unit id="ieqrjKx" resname="Terminada">
+        <source>Terminada</source>
+        <target>Tamamlandı</target>
+      </trans-unit>
+      <trans-unit id="BwyY.Np" resname="Nombre o email">
+        <source>Nombre o email</source>
+        <target>Ad veya e-posta</target>
+      </trans-unit>
+      <trans-unit id="c4bqKmm" resname="Nueva solicitud de contacto para compensar de la cuenta {account}">
+        <source>Nueva solicitud de contacto para compensar de la cuenta {account}</source>
+        <target>{account} hesabından yeni dengeleme iletişim talebi</target>
+      </trans-unit>
+      <trans-unit id="O7Zky2m" resname="Solicitudes de contacto">
+        <source>Solicitudes de contacto</source>
+        <target>İletişim talepleri</target>
+      </trans-unit>
+      <trans-unit id="O2CQhYh" resname="Marcar como gestionada">
+        <source>Marcar como gestionada</source>
+        <target>İşlendi olarak işaretle</target>
+      </trans-unit>
+      <trans-unit id="yCaV_WM" resname="¿Seguro que quieres descartar esta solicitud?">
+        <source>¿Seguro que quieres descartar esta solicitud?</source>
+        <target>Bu talebi reddetmek istediğinizden emin misiniz?</target>
+      </trans-unit>
+      <trans-unit id="TdDiCOX" resname="¡Gracias por tu compromiso!">
+        <source>¡Gracias por tu compromiso!</source>
+        <target>Katkınız için teşekkür ederiz!</target>
+      </trans-unit>
+      <trans-unit id="86gSw5u" resname="Debido a una alta demanda, el proyecto seleccionado tiene una disponibilidad inferior a la cantidad que deseas adquirir. Déjanos tus datos y te contactaremos muy pronto para completar tu contribución.">
+        <source>Debido a una alta demanda, el proyecto seleccionado tiene una disponibilidad inferior a la cantidad que deseas adquirir. Déjanos tus datos y te contactaremos muy pronto para completar tu contribución.</source>
+        <target>Yoğun talep nedeniyle seçilen projenin uygunluğu satın almak istediğiniz miktarın altında. Bilgilerinizi bırakın, katkınızı tamamlamak için en kısa sürede sizinle iletişime geçelim.</target>
+      </trans-unit>
+      <trans-unit id="oGgRdnq" resname="Un saludo,">
+        <source>Un saludo,</source>
+        <target>Saygılarımızla,</target>
+      </trans-unit>
+      <trans-unit id="MjSTvCa" resname="Equipo Supply Bioscore">
+        <source>Equipo Supply Bioscore</source>
+        <target>Equipo Supply Bioscore</target>
+      </trans-unit>
+      <trans-unit id="RU_nnaf" resname="¡Gracias!">
+        <source>¡Gracias!</source>
+        <target>Teşekkürler!</target>
+      </trans-unit>
+      <trans-unit id="g7ogrrl" resname="¡Gracias por tu interés!">
+        <source>¡Gracias por tu interés!</source>
+        <target>İlginiz için teşekkürler!</target>
+      </trans-unit>
+      <trans-unit id="Xk1qT4W" resname="Hemos recibido tus datos. En breve nos pondremos en contacto contigo para completar tu contribución.">
+        <source>Hemos recibido tus datos. En breve nos pondremos en contacto contigo para completar tu contribución.</source>
+        <target>Bilgilerinizi aldık. Katkınızı tamamlamak için kısa süre içinde sizinle iletişime geçeceğiz.</target>
+      </trans-unit>
+      <trans-unit id="02jB7fs" resname="Nueva solicitud de contacto para compensar">
+        <source>Nueva solicitud de contacto para compensar</source>
+        <target>Yeni dengeleme iletişim talebi</target>
+      </trans-unit>
+      <trans-unit id="qxQvTxy" resname="{name} ({email}) quiere compensar {kg} kg CO₂eq de la cuenta {account}, pero no hay crédito disponible.">
+        <source>{name} ({email}) quiere compensar {kg} kg CO₂eq de la cuenta {account}, pero no hay crédito disponible.</source>
+        <target>{name} ({email}), {account} hesabından {kg} kg CO₂eq dengelemek istiyor ancak kullanılabilir kredi yok.</target>
+      </trans-unit>
+      <trans-unit id="8.41hXb" resname="Teléfono: {phone}">
+        <source>Teléfono: {phone}</source>
+        <target>Telefon: {phone}</target>
+      </trans-unit>
+      <trans-unit id="Wgsvwy_" resname="Cálculo: {origin}">
+        <source>Cálculo: {origin}</source>
+        <target>Hesaplama: {origin}</target>
+      </trans-unit>
+      <trans-unit id="IkcN_7u" resname="Huella (kg CO₂eq)">
+        <source>Huella (kg CO₂eq)</source>
+        <target>Ayak izi (kg CO₂eq)</target>
+      </trans-unit>
+      <trans-unit id="YG7k8DI" resname="Todavía no hay solicitudes de contacto.">
+        <source>Todavía no hay solicitudes de contacto.</source>
+        <target>Henüz iletişim talebi yok.</target>
+      </trans-unit>
+      <trans-unit id="aIyFF31" resname="Contacto">
+        <source>Contacto</source>
+        <target>İletişim</target>
+      </trans-unit>
+      <trans-unit id="KCZh_IR" resname="Nombre del origen">
+        <source>Nombre del origen</source>
+        <target>Kaynak adı</target>
+      </trans-unit>
+      <trans-unit id="u5FXfZ6" resname="Resuelta por">
+        <source>Resuelta por</source>
+        <target>Sonuçlandıran</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

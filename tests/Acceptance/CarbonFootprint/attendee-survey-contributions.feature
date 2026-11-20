@@ -138,7 +138,7 @@ Feature:
         Then the response status should be 200
         Then I see a text "Elige un proyecto"
 
-    Scenario: Without projects behind it the result screen does not offer compensating
+    Scenario: Without projects behind it the result screen offers contacting
         Given account "Otra" with id "999" exists
         Given attendee survey with id "AS2" and token "token-xyz" for event "333" of account "999" exists
         When I go to "/es/carbon-footprint/attendee-survey/token-xyz/intercity"
@@ -148,4 +148,7 @@ Feature:
         When I submit a form with "moved:no" and button "Enviar respuesta"
         Then I am redirected to route "public_carbon_footprint_attendee_survey_result"
         Then the response status should be 200
-        Then I do not see a text "Compensa tu huella"
+        Then I see a text "Compensa tu huella"
+        When I click on link "Compensar mi huella"
+        Then the current route should be "public_carbon_footprint_attendee_survey_contribution_contact"
+        Then I see a text "¡Gracias por tu compromiso!"

@@ -46,6 +46,8 @@ trait PropertyTripContributionTrait
             resultRouteParams: ['token' => $token, 'tripCalculationId' => $tripCalculationId],
             layout: '@carbon_footprint/public/property_trip/layout.html.twig',
             csrfTokenId: 'property_trip_' . $token,
+            contact: $routes->name('_contribution_contact'),
+            contactThanks: $routes->name('_contribution_contact_thanks'),
         );
     }
 

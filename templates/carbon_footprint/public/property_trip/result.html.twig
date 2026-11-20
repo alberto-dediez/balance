@@ -76,6 +76,10 @@
             token: token,
             tripCalculationId: tripCalculation.id,
         }),
+        contact_path: path(routePrefix ~ '_contribution_contact', {
+            token: token,
+            tripCalculationId: tripCalculation.id,
+        }),
         contribution_text: asksForDestination
             ? 'Puedes contribuir a uno de los proyectos ambientales y sociales disponibles.' | trans
             : 'Puedes contribuir a uno de los proyectos ambientales y sociales de este alojamiento.' | trans,

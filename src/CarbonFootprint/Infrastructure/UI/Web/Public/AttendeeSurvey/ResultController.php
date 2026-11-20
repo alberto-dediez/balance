@@ -66,6 +66,7 @@ class ResultController extends AbstractController
 
         $accountId = $response->attendeeSurvey->accountId();
         $hasContributionOptions = false;
+        $offersContact = false;
 
         if ($accountId instanceof AccountId) {
             $options = $listContributionOptions(new ListContributionOptionsRequest(
@@ -75,6 +76,7 @@ class ResultController extends AbstractController
             ));
 
             $hasContributionOptions = !$options->isEmpty();
+            $offersContact = $options->offersContact();
         }
 
         return $this->render('@carbon_footprint/public/attendee_survey/result.html.twig', [
@@ -84,6 +86,7 @@ class ResultController extends AbstractController
             'emissionsPerPerson' => $perPersonTripEmissionsCalculator->forAttendeeSurveyResponses([$attendeeSurveyResponse]),
             'mobilityNames' => $mobilityNames,
             'hasContributionOptions' => $hasContributionOptions,
+            'offersContact' => $offersContact,
         ]);
     }
 }

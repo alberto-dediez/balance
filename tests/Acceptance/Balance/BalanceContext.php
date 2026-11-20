@@ -13,6 +13,11 @@ use App\Balance\Domain\Model\AccountProject\AccountProject;
 use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectId;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
+use App\Balance\Domain\Model\ContactRequest\ContactRequest;
+use App\Balance\Domain\Model\ContactRequest\ContactRequestFilter;
+use App\Balance\Domain\Model\ContactRequest\ContactRequestId;
+use App\Balance\Domain\Model\ContactRequest\ContactRequestRepository;
+use App\Balance\Domain\Model\ContactRequest\ContactRequestStatus;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateRepository;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateStatus;
 use App\Balance\Domain\Model\ContributionCertificate\ContributionCertificateType;
@@ -51,10 +56,12 @@ use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Unit\Balance\Domain\Model\ContactRequest\ContactRequestMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
 use Behat\Step\Then;
@@ -69,10 +76,10 @@ final class BalanceContext implements Context
 {
     private const int MAX_QUEUE_ROUNDS = 10;
 
-    /** @var list<string> */
+    /** @var array<string, string> */
     private const array LEGACY_REDIRECTS_FILES = [
-        'tests/Acceptance/Balance/fixtures/legacy-balance/redirects.txt',
-        'tests/Acceptance/Balance/fixtures/legacy-greenhost/redirects.txt',
+        'legacy-import.feature' => 'tests/Acceptance/Balance/fixtures/legacy-balance/redirects.txt',
+        'legacy-import-greenhost.feature' => 'tests/Acceptance/Balance/fixtures/legacy-greenhost/redirects.txt',
     ];
 
     /** @var list<string> */
@@ -93,14 +100,18 @@ final class BalanceContext implements Context
     }
 
     #[AfterScenario('@legacy-import')]
-    public function removeLegacyRedirectsFile(): void
+    public function removeLegacyRedirectsFile(AfterScenarioScope $scope): void
     {
-        foreach (self::LEGACY_REDIRECTS_FILES as $file) {
-            $path = $this->projectPath($file);
+        $file = self::LEGACY_REDIRECTS_FILES[basename((string) $scope->getFeature()->getFile())] ?? null;
 
-            if (file_exists($path)) {
-                unlink($path);
-            }
+        if (null === $file) {
+            return;
+        }
+
+        $path = $this->projectPath($file);
+
+        if (file_exists($path)) {
+            unlink($path);
         }
     }
 
@@ -644,6 +655,88 @@ final class BalanceContext implements Context
     private function getNotificationRepository(): NotificationRepository
     {
         return $this->client->getContainer()->get(NotificationRepository::class);
+    }
+
+    #[Given('contact request with id :id of account :accountId exists')]
+    public function contactRequestOfAccountExists(string $id, string $accountId): void
+    {
+        $this->getContactRequestRepository()->add(ContactRequestMother::pending(
+            accountId: new AccountId($accountId),
+            id: new ContactRequestId($id),
+            contactName: sprintf('Solicitante %s', $id),
+            contactEmail: sprintf('%s@example.com', $id),
+        ));
+    }
+
+    #[Given('contact request :id is managed')]
+    public function contactRequestIsManaged(string $id): void
+    {
+        $contactRequest = $this->getContactRequestRepository()->find(new ContactRequestId($id));
+
+        Assert::assertNotNull($contactRequest);
+
+        $this->manage($contactRequest);
+    }
+
+    #[Given('the only contact request is managed')]
+    public function theOnlyContactRequestIsManaged(): void
+    {
+        $this->manage($this->theOnlyContactRequest());
+    }
+
+    #[Then('the only contact request should have email :email')]
+    public function theOnlyContactRequestShouldHaveEmail(string $email): void
+    {
+        Assert::assertSame($email, $this->theOnlyContactRequest()->contactEmail());
+    }
+
+    #[Then('there should be :count contact requests')]
+    public function thereShouldBeContactRequests(int $count): void
+    {
+        Assert::assertSame($count, $this->getContactRequestRepository()->totalResultsByFilter(new ContactRequestFilter()));
+    }
+
+    #[Then('the only contact request should be :status')]
+    public function theOnlyContactRequestShouldBe(string $status): void
+    {
+        Assert::assertSame(ContactRequestStatus::from($status), $this->theOnlyContactRequest()->status());
+    }
+
+    #[When('I filter the admin contact requests list by finished :choice')]
+    public function iFilterTheAdminContactRequestsListByFinished(string $choice): void
+    {
+        $value = match ($choice) {
+            'yes' => '1',
+            'no' => '0',
+            'all' => '',
+            default => throw new \InvalidArgumentException(sprintf('Unknown finished choice "%s".', $choice)),
+        };
+
+        $form = $this->client->getCrawler()->filter('#right-bar form')->selectButton('Filtrar')->form();
+        $form->setValues([sprintf('%s[resolved]', $form->getNode()->getAttribute('name')) => $value]);
+
+        $this->client->submit($form);
+    }
+
+    private function theOnlyContactRequest(): ContactRequest
+    {
+        $contactRequests = $this->getContactRequestRepository()->findByFilter(new ContactRequestFilter(limit: 0));
+
+        Assert::assertCount(1, $contactRequests);
+
+        return $contactRequests[0];
+    }
+
+    private function manage(ContactRequest $contactRequest): void
+    {
+        $contactRequest->markAsManaged(UserMother::systemUser()->id(), new \DateTimeImmutable('NOW'));
+
+        $this->getContactRequestRepository()->add($contactRequest);
+    }
+
+    private function getContactRequestRepository(): ContactRequestRepository
+    {
+        return $this->client->getContainer()->get(ContactRequestRepository::class);
     }
 
     #[When('the pending contributions are expired')]

@@ -30,7 +30,7 @@ final class ListContributionOptionsService
     public function __invoke(ListContributionOptionsRequest $request): ListContributionOptionsResponse
     {
         if (!$this->accountFeaturesPolicy->isEnabled(AccountFeature::Compensation, $request->accountId)) {
-            return new ListContributionOptionsResponse([]);
+            return new ListContributionOptionsResponse([], compensationEnabled: false);
         }
 
         $now = $request->now ?? new \DateTimeImmutable('NOW');

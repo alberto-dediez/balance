@@ -58,6 +58,10 @@
             token: token,
             responseId: attendeeSurveyResponse.id,
         }),
+        contact_path: path('public_carbon_footprint_attendee_survey_contribution_contact', {
+            token: token,
+            responseId: attendeeSurveyResponse.id,
+        }),
         contribution_text: 'Puedes contribuir a uno de los proyectos ambientales y sociales de este evento.' | trans,
     }) }}
 {% endblock %}

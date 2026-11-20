@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Balance\Domain\Model\ContactRequest\ContactRequest" table="contact_requests">
+        <indexes>
+            <index columns="status,requested_at" name="idx_contact_request_status"/>
+            <index columns="account_id" name="idx_contact_request_account"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="origin,origin_id" name="uq_contact_request_origin"/>
+        </unique-constraints>
+
+        <id name="id" type="contact_request_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false"/>
+        <field name="propertyId" type="property_id" column="property_id" nullable="true"/>
+        <field name="origin" type="string" column="origin" length="40" enum-type="App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin" nullable="false"/>
+        <field name="originId" type="string" column="origin_id" length="36" nullable="false"/>
+        <field name="originName" type="string" column="origin_name" length="255" nullable="true"/>
+        <field name="co2eqKg" type="float" column="co2eq_kg" nullable="false"/>
+        <field name="contactName" type="string" column="contact_name" length="255" nullable="false"/>
+        <field name="contactEmail" type="string" column="contact_email" length="255" nullable="false"/>
+        <field name="contactPhone" type="string" column="contact_phone" length="40" nullable="true"/>
+        <field name="contactCountry" type="string" column="contact_country" length="3" nullable="false"/>
+        <field name="contactIsCompany" type="boolean" column="contact_is_company" nullable="false"/>
+        <field name="contactCompanyName" type="string" column="contact_company_name" length="255" nullable="true"/>
+        <field name="contactVatNumber" type="string" column="contact_vat_number" length="40" nullable="true"/>
+        <field name="comment" type="text" column="comment" nullable="true"/>
+        <field name="locale" type="string" column="locale" length="5" enum-type="App\Shared\Domain\Model\Locale\Locale" nullable="false"/>
+        <field name="status" type="string" column="status" length="20" enum-type="App\Balance\Domain\Model\ContactRequest\ContactRequestStatus" nullable="false"/>
+        <field name="requestedAt" type="datetime_immutable" column="requested_at" nullable="false"/>
+        <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true"/>
+        <field name="resolvedBy" type="user_id" column="resolved_by" nullable="true"/>
+    </entity>
+</doctrine-mapping>

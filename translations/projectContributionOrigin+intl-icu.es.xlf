@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="es" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="J7p_I9B" resname="property_trip_calculation">
+        <source>property_trip_calculation</source>
+        <target>Calculadora de propiedad</target>
+      </trans-unit>
+      <trans-unit id="TsXwxvd" resname="attendee_survey_response">
+        <source>attendee_survey_response</source>
+        <target>Encuesta de asistentes</target>
+      </trans-unit>
+      <trans-unit id="Eq9Hjpe" resname="event_carbon_footprint">
+        <source>event_carbon_footprint</source>
+        <target>Huella de evento</target>
+      </trans-unit>
+      <trans-unit id="t.E7SN7" resname="property">
+        <source>property</source>
+        <target>Propiedad</target>
+      </trans-unit>
+      <trans-unit id="rkigSqF" resname="account">
+        <source>account</source>
+        <target>Cuenta</target>
+      </trans-unit>
+      <trans-unit id="2Q6fzuo" resname="trip_calculation">
+        <source>trip_calculation</source>
+        <target>Calculadora de viajes</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

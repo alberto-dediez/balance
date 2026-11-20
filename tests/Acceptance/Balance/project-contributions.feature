@@ -167,7 +167,7 @@ Feature:
         Then I do not see a text "Desglose"
         Then there should be 0 contributions
 
-    Scenario: An offsetting project without enough credit is not offered
+    Scenario: An offsetting project without enough credit leads to the contact page
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
         Given project "1111" is adhered to account "666"
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
@@ -175,9 +175,12 @@ Feature:
         When I submit a form with "cameFromAnotherCity:yes|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
-        Then I do not see a text "Compensa tu huella"
+        Then I see a text "Compensa tu huella"
+        When I click on link "Compensar mi huella"
+        Then the current route should be "public_carbon_footprint_property_trip_contribution_contact"
+        Then I see a text "¡Gracias por tu compromiso!"
 
-    Scenario: A project without a price per tonne is not offered
+    Scenario: A project without a price per tonne leads to the contact page
         Given project "Reforestación" with id "1111" exists
         Given project "1111" is adhered to account "666"
         Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes exists
@@ -186,7 +189,10 @@ Feature:
         When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
-        Then I do not see a text "Compensa tu huella"
+        Then I see a text "Compensa tu huella"
+        When I click on link "Compensar mi huella"
+        Then the current route should be "public_carbon_footprint_property_trip_contribution_contact"
+        Then I see a text "¡Gracias por tu compromiso!"
 
     Scenario: A social project is offered without any credit behind it
         Given social project "Escuela rural" with id "3333" and price per tonne "20" exists

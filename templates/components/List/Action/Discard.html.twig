@@ -1,0 +1,13 @@
+{% props path %}
+
+{% set separator = '?' in path ? '&' : '?' %}
+
+<twig:List:Action path="{{ path ~ separator ~ '_token=' ~ csrf_token('contact_request_discard') | url_encode }}"
+    title="{{ 'Descartar' | trans }}"
+    data-controller="confirm"
+    data-confirm-text-param="{{ '¿Seguro que quieres descartar esta solicitud?' | trans }}"
+    data-action="confirm#link:prevent"
+    :attributes="attributes"
+>
+    <twig:Icon name="solar:eye-closed-line-duotone" size="lg" />
+</twig:List:Action>

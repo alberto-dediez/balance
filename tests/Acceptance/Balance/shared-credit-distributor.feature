@@ -80,7 +80,7 @@ Feature:
         Then account "1111" should have "3.347" available tonnes in project "9999"
         Then account "555" should have "10" available tonnes in project "9999"
 
-    Scenario: The lots the distributor paid itself are not shared
+    Scenario: The lots the distributor paid itself are not shared and the contact page is offered
         Given distributor "555" is assigned to account "1111"
         Given credit purchase "2222" for account "555" and project "9999" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1" paid by "paid_by_client"
@@ -88,9 +88,12 @@ Feature:
         When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
-        Then I do not see a text "Compensa tu huella"
+        Then I see a text "Compensa tu huella"
+        When I click on link "Compensar mi huella"
+        Then the current route should be "public_carbon_footprint_property_trip_contribution_contact"
+        Then I see a text "¡Gracias por tu compromiso!"
 
-    Scenario: A property assignment does not cover the trip calculator of the account
+    Scenario: A property assignment does not cover the trip calculator of the account, which offers the contact page
         Given distributor "555" is assigned to property "11"
         Given credit purchase "2222" for account "555" and project "9999" requesting "10" tonnes exists
         Given credit purchase "2222" is validated with "10" tonnes and reference "REF-1" paid by "paid_by_bioscore"
@@ -105,7 +108,10 @@ Feature:
         When I tick the checkbox "consent_accepted"
         When I submit a form with "destinationPlaceReference:valencia|cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_trip_result"
-        Then I do not see a text "Compensa tu huella"
+        Then I see a text "Compensa tu huella"
+        When I click on link "Compensar mi huella"
+        Then the current route should be "public_carbon_footprint_trip_contribution_contact"
+        Then I see a text "¡Gracias por tu compromiso!"
 
     Scenario: A client of the trip calculator of a distributed account compensates with the credit of the distributor
         Given distributor "555" is assigned to account "1111"
@@ -137,7 +143,7 @@ Feature:
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then I do not see a text "Compensa tu huella"
 
-    Scenario: Without compensation in the distributor its credit is not offered
+    Scenario: Without compensation in the distributor its credit is not offered and the contact page is
         Given distributor "555" is assigned to account "1111"
         Given account "555" has feature "compensation" disabled
         Given credit purchase "2222" for account "555" and project "9999" requesting "10" tonnes exists
@@ -146,7 +152,10 @@ Feature:
         When I tick the checkbox "consent_accepted"
         When I submit a form with "cameFromAnotherCity:no|overnight:no" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
-        Then I do not see a text "Compensa tu huella"
+        Then I see a text "Compensa tu huella"
+        When I click on link "Compensar mi huella"
+        Then the current route should be "public_carbon_footprint_property_trip_contribution_contact"
+        Then I see a text "¡Gracias por tu compromiso!"
 
     Scenario: An attendee of an event of a distributed account compensates with the credit of the distributor
         Given distributor "555" is assigned to account "1111"

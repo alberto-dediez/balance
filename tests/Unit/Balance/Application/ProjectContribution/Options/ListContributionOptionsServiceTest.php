@@ -237,6 +237,33 @@ class ListContributionOptionsServiceTest extends TestCase
         $this->assertTrue($response->isEmpty());
     }
 
+    public function testWithoutCompensationContactIsNotOffered(): void
+    {
+        $response = $this->createSUT(new AccountFeatures(compensation: false))(new ListContributionOptionsRequest($this->accountId));
+
+        $this->assertFalse($response->compensationEnabled);
+        $this->assertFalse($response->offersContact());
+    }
+
+    public function testWithCompensationAndNoOptionsContactIsOffered(): void
+    {
+        $this->adheredProject(purchasedTonnes: 1.0);
+
+        $response = $this->createSUT()(new ListContributionOptionsRequest($this->accountId, co2eqKg: 2000.0));
+
+        $this->assertTrue($response->compensationEnabled);
+        $this->assertTrue($response->offersContact());
+    }
+
+    public function testWithOptionsContactIsNotOffered(): void
+    {
+        $this->adheredProject(purchasedTonnes: 10.0);
+
+        $response = $this->createSUT()(new ListContributionOptionsRequest($this->accountId));
+
+        $this->assertFalse($response->offersContact());
+    }
+
     public function testOffersTheDistributorProjectToADistributedAccountNotAdheredToIt(): void
     {
         $this->distributeAccount();

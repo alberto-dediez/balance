@@ -1,0 +1,59 @@
+{% extends '@shared/layout/action.html.twig' %}
+
+{% set page_title = ('Solicitudes de contacto' | trans) ~ ' > ' ~ contactRequest.contactName %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('admin_contact_requests') }}" />
+    {% if contactRequest.isPending %}
+        <twig:TopAction path="{{ path('admin_contact_requests_manage', {'contactRequestId': contactRequest.id, '_token': csrf_token('contact_request_manage')}) }}">
+            <twig:Icon name="solar:check-circle-line-duotone" size="lg" class="me-2" />
+            {{ 'Marcar como gestionada' | trans }}
+        </twig:TopAction>
+        <twig:TopAction
+            path="{{ path('admin_contact_requests_discard', {'contactRequestId': contactRequest.id, '_token': csrf_token('contact_request_discard')}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ '¿Seguro que quieres descartar esta solicitud?' | trans }}"
+            data-action="confirm#link:prevent"
+        >
+            <twig:Icon name="solar:eye-closed-line-duotone" size="lg" class="me-2" />
+            {{ 'Descartar' | trans }}
+        </twig:TopAction>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <h6 class="fw-semibold mb-3">{{ 'Contacto' | trans }}</h6>
+                <twig:View:Field label="{{ 'Nombre y apellidos' | trans }}">{{ contactRequest.contactName }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Email' | trans }}">{{ contactRequest.contactEmail }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Teléfono' | trans }}">{{ contactRequest.contactPhone ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'País' | trans }}">{{ countryName }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Aporto como empresa' | trans }}">{{ contactRequest.contactIsCompany | show_field_value | trans }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Razón social' | trans }}">{{ contactRequest.contactCompanyName ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'NIF / NIF-IVA' | trans }}">{{ contactRequest.contactVatNumber ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Comentarios' | trans }}">{{ contactRequest.comment ?? '---' }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <h6 class="fw-semibold mb-3">{{ 'Solicitud' | trans }}</h6>
+                <twig:View:Field label="{{ 'Estado' | trans }}">
+                    <span class="badge {{ contactRequest.status.style }}">
+                        {{ contactRequest.status.value | trans({}, 'contactRequestStatus') }}
+                    </span>
+                </twig:View:Field>
+                <twig:View:Field label="{{ 'Cuenta' | trans }}">{{ contactRequest.accountId | account_name }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Propiedad' | trans }}">{{ contactRequest.propertyId ? contactRequest.propertyId | property_name : '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Origen' | trans }}">{{ contactRequest.origin.value | trans({}, 'projectContributionOrigin') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Nombre del origen' | trans }}">{{ contactRequest.originName ?? '---' }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Huella (kg CO₂eq)' | trans }}">{{ contactRequest.co2eqKg | number_format(2, ',', '.') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Idioma' | trans }}">{{ contactRequest.locale.value | language_name }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Fecha de solicitud' | trans }}">{{ contactRequest.requestedAt | date('d/m/Y H:i') }}</twig:View:Field>
+                {% if not contactRequest.isPending %}
+                    <twig:View:Field label="{{ 'Fecha de resolución' | trans }}">{{ contactRequest.resolvedAt ? contactRequest.resolvedAt | date('d/m/Y H:i') : '---' }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Resuelta por' | trans }}">{{ contactRequest.resolvedBy ? contactRequest.resolvedBy | user_name : '---' }}</twig:View:Field>
+                {% endif %}
+            </div>
+        </div>
+    </twig:Card>
+{% endblock %}

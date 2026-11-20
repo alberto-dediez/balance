@@ -69,6 +69,12 @@ class ChooseController extends AbstractController
             propertyId: $link->property?->id(),
         ));
 
+        $routes = $this->contributionRoutes($link->tripCalculationLink, $token, $tripCalculationId);
+
+        if ($options->offersContact()) {
+            return $this->redirectToRoute((string) $routes->contact, $routes->routeParams);
+        }
+
         $covers = [];
 
         foreach ($options->options as $option) {
@@ -81,7 +87,7 @@ class ChooseController extends AbstractController
             'property' => $link->property,
             'ownerName' => $link->ownerName,
             'co2eqKg' => (float) $tripCalculation->emissions()->co2eq(),
-            'routes' => $this->contributionRoutes($link->tripCalculationLink, $token, $tripCalculationId),
+            'routes' => $routes,
             'options' => $options->options,
             'covers' => $covers,
         ]);
