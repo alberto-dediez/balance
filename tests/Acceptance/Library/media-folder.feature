@@ -29,7 +29,7 @@ Feature:
         Then I see a text "signed.png"
         Then I do not see a text "invoice.png"
         Then I do not see a text "logo.png"
-        Then I see a text "<td>Contratos</td>"
+        Then I see a text "Contratos</td>"
         Then the active filters show "Carpeta: Contratos"
 
     Scenario: Filtering by all the folders lists the files with and without folder
@@ -45,7 +45,7 @@ Feature:
         Then I see a text "signed.png"
         Then I see a text "logo.png"
         Then the active filters show "Carpeta: Todas las carpetas"
-        Then I see a text "<td>Contratos</td>"
+        Then I see a text "Contratos</td>"
 
     Scenario: Searching by name with all the folders finds the files of any folder
         Given account "Minotour" with id "1111" exists

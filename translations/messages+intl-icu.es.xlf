@@ -2929,6 +2929,14 @@
         <source>Subido el archivo {name}</source>
         <target>Subido el archivo {name}</target>
       </trans-unit>
+      <trans-unit id="ANIi1t0" resname="Editar carpeta">
+        <source>Editar carpeta</source>
+        <target>Editar carpeta</target>
+      </trans-unit>
+      <trans-unit id="n.VJKOP" resname="Todavía no hay carpetas">
+        <source>Todavía no hay carpetas</source>
+        <target>Todavía no hay carpetas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

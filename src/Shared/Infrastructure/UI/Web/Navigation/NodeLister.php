@@ -191,11 +191,6 @@ class NodeLister
                     target: $this->router->generate('library_media'),
                 ),
                 new Node(
-                    label: new TranslatableMessage('Carpetas'),
-                    icon: 'solar:folder-line-duotone',
-                    target: $this->router->generate('library_folders'),
-                ),
-                new Node(
                     label: new TranslatableMessage('Subir archivo'),
                     icon: 'solar:upload-square-line-duotone',
                     target: $this->router->generate('library_media_upload'),

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\UI\Web\Media;
 
+use App\Library\Application\Folder\CurrentAccountFolders;
 use App\Library\Application\Media\MediaAuthorizer;
 use App\Library\Application\Media\Upload\UploadMediaRequest;
 use App\Library\Application\Media\Upload\UploadMediaResponse;
 use App\Library\Application\Media\Upload\UploadMediaService;
+use App\Library\Domain\Model\Folder\Folder;
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Infrastructure\Symfony\Form\UploadMediaType;
@@ -35,6 +38,7 @@ class UploadController extends AbstractController
         UploadMediaService $uploadMedia,
         MediaAuthorizer $authorizer,
         UploadedFileMapper $uploadedFileMapper,
+        CurrentAccountFolders $folders,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         Request $request,
@@ -44,7 +48,12 @@ class UploadController extends AbstractController
 
         $media = new Media(MediaId::generate(), $account?->id());
 
-        $form = $this->createForm(UploadMediaType::class, options: [
+        $folderId = $request->query->getString('folder');
+        $folder = '' !== $folderId ? $folders->find(new FolderId($folderId)) : null;
+
+        $initialRequest = $folder instanceof Folder ? new UploadMediaRequest(folderId: $folder->id()) : new UploadMediaRequest();
+
+        $form = $this->createForm(UploadMediaType::class, $initialRequest, [
             'shareable' => $authorizer->canDoThat($media, Action::Admin, $user),
         ]);
 

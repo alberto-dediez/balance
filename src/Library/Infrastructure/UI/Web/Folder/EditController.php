@@ -68,7 +68,7 @@ class EditController extends AbstractController
             });
 
             if ($needsRedirect && !$failed) {
-                return $this->redirectToRoute('library_folders');
+                return $this->redirectToRoute('library_media');
             }
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());

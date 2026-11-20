@@ -184,6 +184,45 @@ final class LibraryContext implements Context
         Assert::assertContains($text, $filters);
     }
 
+    #[Then('I see the folder tiles :labels')]
+    public function iSeeTheFolderTiles(string $labels): void
+    {
+        $expected = array_map(trim(...), explode(',', $labels));
+
+        $tiles = $this->client->getCrawler()->filter('.folder-tile__open');
+
+        Assert::assertSame($expected, $tiles->each(static fn(Crawler $tile): string => trim($tile->text())));
+
+        $folderField = $this->client->getCrawler()->filter('select[name$="[folder]"]');
+
+        Assert::assertGreaterThan(0, $folderField->count(), 'There is no folder filter field');
+
+        $tiles->each(function (Crawler $tile) use ($folderField): void {
+            $label = trim($tile->text());
+
+            Assert::assertSame('#' . $folderField->attr('id'), $tile->attr('data-filter-field-param'), sprintf('The folder tile "%s" does not point to the folder filter', $label));
+            Assert::assertSame($this->folderTileValue($label), $tile->attr('data-filter-value-param'), sprintf('The folder tile "%s" has a wrong value', $label));
+        });
+    }
+
+    #[Then('the folder tile :label is active')]
+    public function theFolderTileIsActive(string $label): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $active = $crawler->filter('.folder-tile__open[aria-current="true"]')->each(
+            static fn(Crawler $tile): string => trim($tile->text()),
+        );
+
+        Assert::assertSame([$label], $active);
+
+        $highlighted = $crawler->filter('.folder-tile--active .folder-tile__open')->each(
+            static fn(Crawler $tile): string => trim($tile->text()),
+        );
+
+        Assert::assertSame([$label], $highlighted);
+    }
+
     #[Then('the media :id is in the folder :folder')]
     public function theMediaIsInTheFolder(string $id, string $folder): void
     {
@@ -266,6 +305,18 @@ final class LibraryContext implements Context
         $fileValues['upload_media']['file'] = $files;
 
         $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $values, $fileValues);
+    }
+
+    #[Then('the upload form has the folder :name selected')]
+    public function theUploadFormHasTheFolderSelected(string $name): void
+    {
+        Assert::assertSame([$name], $this->selectedUploadFolders());
+    }
+
+    #[Then('the upload form has no folder selected')]
+    public function theUploadFormHasNoFolderSelected(): void
+    {
+        Assert::assertSame([], $this->selectedUploadFolders());
     }
 
     #[When('I send the media :id to the folder :folder through a forged edit form')]
@@ -511,6 +562,15 @@ final class LibraryContext implements Context
         $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $values);
     }
 
+    private function folderTileValue(string $label): string
+    {
+        return match ($label) {
+            'Sin carpeta' => '',
+            'Todas las carpetas' => 'all',
+            default => $this->optionValue('select[name$="[folder]"]', $label),
+        };
+    }
+
     private function optionValue(string $selector, string $label): string
     {
         $options = $this->client->getCrawler()->filter($selector . ' option')->reduce(
@@ -520,6 +580,20 @@ final class LibraryContext implements Context
         Assert::assertGreaterThan(0, $options->count(), sprintf('There is no option "%s"', $label));
 
         return (string) $options->first()->attr('value');
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function selectedUploadFolders(): array
+    {
+        $crawler = $this->client->getCrawler();
+
+        Assert::assertGreaterThan(0, $crawler->filter('select[name$="[folderId]"]')->count(), 'There is no folder field');
+
+        return $crawler->filter('select[name$="[folderId]"] option[selected]')
+            ->reduce(static fn(Crawler $option): bool => '' !== (string) $option->attr('value'))
+            ->each(static fn(Crawler $option): string => trim($option->text()));
     }
 
     /**

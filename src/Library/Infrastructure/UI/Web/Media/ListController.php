@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Library\Infrastructure\UI\Web\Media;
 
 use App\Library\Application\Folder\CurrentAccountFolders;
+use App\Library\Application\Folder\FolderAuthorizer;
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Application\Media\List\ListMediaService;
 use App\Library\Domain\Model\Folder\Folder;
@@ -14,6 +15,7 @@ use App\Library\Infrastructure\Symfony\Form\ListMediaType;
 use App\Library\Infrastructure\UI\Web\Media\Bulk\BulkMediaRequest;
 use App\Library\Infrastructure\UI\Web\Media\Bulk\MoveMedia;
 use App\Library\Infrastructure\UI\Web\Media\Bulk\RemoveMedia;
+use App\Security\Application\Action;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Security\LoggedAccount;
@@ -36,6 +38,7 @@ class ListController extends AbstractController
     public function __invoke(
         ListMediaService $listMedia,
         CurrentAccountFolders $folders,
+        FolderAuthorizer $folderAuthorizer,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         Request $request,
@@ -53,6 +56,18 @@ class ListController extends AbstractController
         ) {
             $filter->folder = null;
         }
+
+        $accountFolders = $folders->all();
+
+        $currentFolder = null;
+
+        foreach ($accountFolders as $folder) {
+            if (null !== $filter->folder && $folder->id()->equals(new FolderId($filter->folder))) {
+                $currentFolder = $folder;
+            }
+        }
+
+        $folderChoice = $filter->folder;
 
         $filter->applyFolderChoice();
 
@@ -78,9 +93,11 @@ class ListController extends AbstractController
 
         $folderNames = [];
 
-        foreach ($folders->all() as $folder) {
+        foreach ($accountFolders as $folder) {
             $folderNames[(string) $folder->id()] = $folder->name();
         }
+
+        $canManageFolders = $folderAuthorizer->canDoThat(new Folder(id: FolderId::generate(), accountId: $accountId), Action::Register, $loggedUser());
 
         return $this->render('@library/media/list.html.twig', [
             'bulkForm' => $bulkForm,
@@ -88,6 +105,10 @@ class ListController extends AbstractController
             'media' => $response->media,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
+            'folders' => $accountFolders,
+            'currentFolder' => $currentFolder,
+            'folderChoice' => $folderChoice,
+            'canManageFolders' => $canManageFolders,
         ]);
     }
 }

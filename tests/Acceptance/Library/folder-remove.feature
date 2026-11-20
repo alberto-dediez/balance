@@ -7,6 +7,7 @@ Feature:
         Given folder "Contratos" with id "f-1" of account "1111" exists
         When I am logged as "owner@dediez.software"
         When I go to "/es/library/folders/remove/f-1" with csrf token "remove"
+        Then the response redirects to "/es/library/media"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Se ha eliminado la carpeta Contratos"

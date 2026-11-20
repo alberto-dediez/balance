@@ -1,14 +1,12 @@
 {% extends '@shared/layout/edit.html.twig' %}
 
 {% block top_actions %}
-    <twig:TopAction:Return path="{{ path('library_folders') }}" />
+    <twig:TopAction:Return path="{{ path('library_media') }}" />
 {% endblock %}
 
 {% set page_title = ('Biblioteca' | trans)
     ~ ' > '
-    ~ ('Carpetas' | trans)
-    ~ ' > '
-    ~ ('Editar' | trans)
+    ~ ('Editar carpeta' | trans)
     ~ ' > '
     ~ folder.name %}
 

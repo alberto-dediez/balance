@@ -2,10 +2,8 @@
 
 {% set page_title = ('Biblioteca' | trans)
     ~ ' > '
-    ~ ('Carpetas' | trans)
-    ~ ' > '
     ~ ('Nueva carpeta' | trans) %}
 
 {% block top_actions %}
-    <twig:TopAction:Return path="{{ path('library_folders') }}" />
+    <twig:TopAction:Return path="{{ path('library_media') }}" />
 {% endblock %}

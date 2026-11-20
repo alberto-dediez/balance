@@ -9,6 +9,7 @@ Feature:
         When I go to "/es/library/folders/edit/f-1"
         Then the response status should be 200
         When I submit a form with "name:Contratos firmados" and button "Guardar y salir"
+        Then the response redirects to "/es/library/media"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Carpeta actualizada con éxito"

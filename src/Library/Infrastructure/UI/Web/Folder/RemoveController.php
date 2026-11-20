@@ -41,6 +41,6 @@ class RemoveController extends AbstractController
             $this->addFlash('danger', new TranslatableMessage('No se ha podido eliminar la carpeta {folder}', ['{folder}' => $folder->name()]));
         }
 
-        return $this->redirectToRoute('library_folders');
+        return $this->redirectToRoute('library_media');
     }
 }
