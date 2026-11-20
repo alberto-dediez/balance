@@ -6,6 +6,7 @@ namespace App\Library\Infrastructure\Symfony\Form;
 
 use App\Library\Application\Media\Update\UpdateMediaRequest;
 use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Infrastructure\Symfony\Form\Type\FolderChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -38,6 +39,7 @@ class UpdateMediaType extends AbstractType
                 'required' => false,
                 'empty_data' => null,
             ])
+            ->add('folderId', FolderChoiceType::class)
             ->add('visibility', EnumType::class, [
                 'class' => MediaVisibility::class,
                 'label' => new TranslatableMessage('Visibilidad'),

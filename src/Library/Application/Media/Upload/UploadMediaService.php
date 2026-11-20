@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Library\Application\Media\Upload;
 
 use App\Library\Application\Media\MediaAuthorizer;
+use App\Library\Application\Media\MediaFolderGuard;
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
@@ -25,6 +27,7 @@ class UploadMediaService implements CommandHandler
         private readonly MediaRepository $repository,
         private readonly MediaStorage $storage,
         private readonly MediaAuthorizer $authorizer,
+        private readonly MediaFolderGuard $folderGuard,
     ) {}
 
     public function __invoke(UploadMediaRequest $request, User $user): UploadMediaResponse
@@ -38,6 +41,8 @@ class UploadMediaService implements CommandHandler
         if ($request->shared) {
             $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
         }
+
+        $this->folderGuard->assertAssignable($media, $request->folderId, $user);
 
         $path = $this->storage->store($id, $request->accountId, $request->extension, $request->localPath);
 
@@ -55,6 +60,10 @@ class UploadMediaService implements CommandHandler
             visibility: $request->visibility,
             shared: $request->shared,
         );
+
+        if ($request->folderId instanceof FolderId) {
+            $media->moveToFolder($request->folderId);
+        }
 
         $this->repository->add($media);
 

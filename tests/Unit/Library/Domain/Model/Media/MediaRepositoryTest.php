@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Domain\Model\Media;
 
+use App\Library\Domain\Model\Folder\FolderId;
+use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaType;
@@ -208,6 +210,164 @@ abstract class MediaRepositoryTest extends KernelTestCase
 
         $this->assertCount(2, $repository->findByFilter($filter));
         $this->assertEquals(3, $repository->totalResultsByFilter($filter));
+    }
+
+    public function testFindRecoversAMediaInAFolder(): void
+    {
+        $repository = $this->createSUT();
+
+        $folderId = FolderId::generate();
+
+        $media = MediaMother::inFolder('logo.png', $folderId);
+
+        $repository->add($media);
+
+        $recovered = $repository->find($media->id());
+
+        $this->assertNotNull($recovered);
+        $this->assertNotNull($recovered->folderId());
+        $this->assertTrue($recovered->folderId()->equals($folderId));
+    }
+
+    public function testFindByFilterWithoutFolderCriteriaRecoversEveryMedia(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(MediaMother::inFolder('contract.png', FolderId::generate()));
+        $repository->add(MediaMother::fromName('logo.png'));
+
+        $this->assertCount(2, $repository->findByFilter(new MediaFilter()));
+    }
+
+    public function testFindByFilterByFoldersOnlyRecoversTheMediaOfThoseFolders(): void
+    {
+        $repository = $this->createSUT();
+
+        $contracts = FolderId::generate();
+        $invoices = FolderId::generate();
+
+        $repository->add(MediaMother::inFolder('contract.png', $contracts));
+        $repository->add(MediaMother::inFolder('invoice.png', $invoices));
+        $repository->add(MediaMother::inFolder('other.png', FolderId::generate()));
+        $repository->add(MediaMother::fromName('logo.png'));
+
+        $this->assertSame(['contract.png'], $this->namesOf($repository->findByFilter(new MediaFilter(folderIds: [$contracts]))));
+
+        $names = $this->namesOf($repository->findByFilter(new MediaFilter(folderIds: [$contracts, $invoices])));
+
+        sort($names);
+
+        $this->assertSame(['contract.png', 'invoice.png'], $names);
+    }
+
+    public function testFindByFilterWithoutFolderInTheAccountExcludesTheMediaInFolders(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $repository->add(MediaMother::inFolder('contract.png', FolderId::generate(), $accountId));
+        $repository->add(MediaMother::fromNameAndAccount('logo.png', $accountId));
+        $repository->add(MediaMother::fromNameAndAccount('foreign.png', AccountId::generate()));
+
+        $result = $repository->findByFilter(new MediaFilter(accountId: $accountId, withoutFolder: true));
+
+        $this->assertSame(['logo.png'], $this->namesOf($result));
+    }
+
+    public function testFindByFilterWithoutFolderIncludingTheSharedMedia(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+        $anotherAccountId = AccountId::generate();
+
+        $foreignShared = MediaMother::sharedMedia('manual.png', $anotherAccountId);
+        $foreignShared->moveToFolder(FolderId::generate());
+
+        $ownShared = MediaMother::sharedMedia('own-shared.png', $accountId);
+        $ownShared->moveToFolder(FolderId::generate());
+
+        $repository->add($foreignShared);
+        $repository->add($ownShared);
+        $repository->add(MediaMother::fromNameAndAccount('logo.png', $accountId));
+        $repository->add(MediaMother::inFolder('contract.png', FolderId::generate(), $accountId));
+
+        $names = $this->namesOf($repository->findByFilter(new MediaFilter(accountId: $accountId, includeShared: true, withoutFolder: true)));
+
+        sort($names);
+
+        $this->assertSame(['logo.png', 'manual.png'], $names);
+    }
+
+    public function testFindByFilterWithoutFolderAndWithoutAccount(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(MediaMother::inFolder('contract.png', FolderId::generate()));
+        $repository->add(MediaMother::fromName('logo.png'));
+        $repository->add(MediaMother::fromNameAndAccount('foreign.png', AccountId::generate()));
+
+        $result = $repository->findByFilter(new MediaFilter(withoutAccount: true, withoutFolder: true));
+
+        $this->assertSame(['logo.png'], $this->namesOf($result));
+    }
+
+    public function testFindByFilterWithoutFolderAndWithoutAccountScope(): void
+    {
+        $repository = $this->createSUT();
+
+        $repository->add(MediaMother::inFolder('contract.png', FolderId::generate(), AccountId::generate()));
+        $repository->add(MediaMother::inFolder('invoice.png', FolderId::generate()));
+        $repository->add(MediaMother::fromNameAndAccount('logo.png', AccountId::generate()));
+        $repository->add(MediaMother::fromName('banner.png'));
+
+        $names = $this->namesOf($repository->findByFilter(new MediaFilter(withoutFolder: true)));
+
+        sort($names);
+
+        $this->assertSame(['banner.png', 'logo.png'], $names);
+    }
+
+    public function testFindByFilterByNameAlsoRecoversTheMediaOfTheMatchingFolders(): void
+    {
+        $repository = $this->createSUT();
+
+        $contracts = FolderId::generate();
+
+        $repository->add(MediaMother::inFolder('signed.png', $contracts));
+        $repository->add(MediaMother::fromName('contract-template.png'));
+        $repository->add(MediaMother::inFolder('other.png', FolderId::generate()));
+
+        $names = $this->namesOf($repository->findByFilter(new MediaFilter(name: 'contr', nameFolderIds: [$contracts])));
+
+        sort($names);
+
+        $this->assertSame(['contract-template.png', 'signed.png'], $names);
+
+        $this->assertSame(['contract-template.png'], $this->namesOf($repository->findByFilter(new MediaFilter(name: 'contr'))));
+    }
+
+    public function testNameFolderIdsWithoutNameDoNotRestrictTheResults(): void
+    {
+        $repository = $this->createSUT();
+
+        $contracts = FolderId::generate();
+
+        $repository->add(MediaMother::inFolder('signed.png', $contracts));
+        $repository->add(MediaMother::fromName('logo.png'));
+
+        $this->assertCount(2, $repository->findByFilter(new MediaFilter(nameFolderIds: [$contracts])));
+    }
+
+    /**
+     * @param list<Media> $media
+     *
+     * @return list<string>
+     */
+    private function namesOf(array $media): array
+    {
+        return array_map(static fn(Media $element): string => $element->name(), $media);
     }
 
     abstract protected function createSUT(): MediaRepository;

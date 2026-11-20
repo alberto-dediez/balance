@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Library\Application\Media\Update;
 
 use App\Library\Application\Media\MediaAuthorizer;
+use App\Library\Application\Media\MediaFolderGuard;
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\MediaNotFoundException;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Security\Application\Action;
@@ -22,6 +24,7 @@ class UpdateMediaService implements CommandHandler
     public function __construct(
         private readonly MediaRepository $repository,
         private readonly MediaAuthorizer $authorizer,
+        private readonly MediaFolderGuard $folderGuard,
     ) {}
 
     public function __invoke(UpdateMediaRequest $request, User $user): UpdateMediaResponse
@@ -33,6 +36,18 @@ class UpdateMediaService implements CommandHandler
         }
 
         $this->authorizer->denyUnlessCanDoThat($media, Action::Edit, $user);
+
+        $folderChanged = !self::sameFolder($media->folderId(), $request->folderId);
+
+        if ($folderChanged) {
+            $this->folderGuard->assertAssignable($media, $request->folderId, $user);
+        }
+
+        $sharingChanged = $request->shared !== $media->isShared();
+
+        if ($sharingChanged) {
+            $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
+        }
 
         if (
             $request->name !== $media->name()
@@ -46,10 +61,12 @@ class UpdateMediaService implements CommandHandler
             $media->changeVisibility($request->visibility);
         }
 
-        if ($request->shared !== $media->isShared()) {
-            $this->authorizer->denyUnlessCanDoThat($media, Action::Admin, $user);
-
+        if ($sharingChanged) {
             $media->changeSharing($request->shared);
+        }
+
+        if ($folderChanged) {
+            $media->moveToFolder($request->folderId);
         }
 
         $this->repository->add($media);
@@ -61,11 +78,21 @@ class UpdateMediaService implements CommandHandler
             alternativeText: $media->alternativeText(),
             visibility: $media->visibility(),
             shared: $media->isShared(),
+            folderId: $media->folderId(),
         );
     }
 
     public function isHandled(Command $command): bool
     {
         return $command instanceof UpdateMediaRequest;
+    }
+
+    private static function sameFolder(?FolderId $current, ?FolderId $requested): bool
+    {
+        if (!$current instanceof FolderId || !$requested instanceof FolderId) {
+            return !$current instanceof FolderId && !$requested instanceof FolderId;
+        }
+
+        return $current->equals($requested);
     }
 }

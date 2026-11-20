@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaId;
@@ -65,13 +66,19 @@ class DoctrineMediaRepository implements MediaRepository
         ;
 
         if (!in_array($filter->name, [null, '', '0'], true)) {
+            $nameCriteria = $qb->expr()->orX(
+                $qb->expr()->like('m.name', ':name'),
+                $qb->expr()->like('m.fileName', ':name'),
+            );
+
+            if ([] !== $filter->nameFolderIds) {
+                $nameCriteria->add($qb->expr()->in('m.folderId', ':nameFolderIds'));
+
+                $qb->setParameter('nameFolderIds', self::folderIdValues($filter->nameFolderIds));
+            }
+
             $qb
-                ->andWhere(
-                    $qb->expr()->orX(
-                        $qb->expr()->like('m.name', ':name'),
-                        $qb->expr()->like('m.fileName', ':name'),
-                    ),
-                )
+                ->andWhere($nameCriteria)
                 ->setParameter('name', "%{$filter->name}%")
             ;
         }
@@ -137,6 +144,34 @@ class DoctrineMediaRepository implements MediaRepository
             }
         }
 
+        if ([] !== $filter->folderIds) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->in('m.folderId', ':folderIds'),
+                )
+                ->setParameter('folderIds', self::folderIdValues($filter->folderIds))
+            ;
+        } elseif (true === $filter->withoutFolder) {
+            if (0 === $accountScope->count()) {
+                $qb->andWhere($qb->expr()->isNull('m.folderId'));
+            } elseif ($filter->accountId instanceof AccountId) {
+                $qb->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->isNull('m.folderId'),
+                        $qb->expr()->isNull('m.accountId'),
+                        $qb->expr()->neq('m.accountId', ':accountId'),
+                    ),
+                );
+            } else {
+                $qb->andWhere(
+                    $qb->expr()->orX(
+                        $qb->expr()->isNull('m.folderId'),
+                        $qb->expr()->isNotNull('m.accountId'),
+                    ),
+                );
+            }
+        }
+
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';
 
         match ($filter->orderBy) {
@@ -146,6 +181,16 @@ class DoctrineMediaRepository implements MediaRepository
         };
 
         return $qb;
+    }
+
+    /**
+     * @param list<FolderId> $folderIds
+     *
+     * @return list<string>
+     */
+    private static function folderIdValues(array $folderIds): array
+    {
+        return array_map(static fn(FolderId $folderId): string => (string) $folderId, $folderIds);
     }
 
     /**

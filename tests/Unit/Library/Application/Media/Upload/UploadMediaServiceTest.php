@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Application\Media\Upload;
 
+use App\Library\Application\Media\MediaFolderGuard;
 use App\Library\Application\Media\Upload\UploadMediaRequest;
 use App\Library\Application\Media\Upload\UploadMediaService;
+use App\Library\Domain\Model\Folder\FolderNotFoundException;
+use App\Library\Domain\Model\Media\MediaFilter;
+use App\Library\Domain\Model\Media\MediaMoved;
 use App\Library\Domain\Model\Media\MediaType;
 use App\Library\Domain\Model\Media\MediaUploaded;
 use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryFolderRepository;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
 use App\Security\Application\UnauthorizedActionException;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Library\Application\Folder\FolderAuthorizerMother;
 use App\Tests\Unit\Library\Application\Media\MediaAuthorizerMother;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderMother;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderRepositoryMother;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaStorageMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -178,8 +187,85 @@ class UploadMediaServiceTest extends TestCase
         );
     }
 
-    private function createSUT(InMemoryMediaRepository $repository, InMemoryMediaStorage $storage): UploadMediaService
+    public function testTheFileIsUploadedIntoTheChosenFolder(): void
     {
-        return new UploadMediaService($repository, $storage, MediaAuthorizerMother::create());
+        $repository = new InMemoryMediaRepository();
+        $folders = FolderRepositoryMother::inMemory();
+
+        $accountId = AccountId::generate();
+
+        $folder = FolderMother::fromNameAndAccount('Contratos', $accountId);
+        $folders->add($folder);
+
+        $sut = $this->createSUT($repository, MediaStorageMother::inMemory(), $folders);
+
+        $request = $this->createRequest();
+        $request->accountId = $accountId;
+        $request->folderId = $folder->id();
+
+        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId));
+
+        $media = $repository->find($result->mediaId);
+
+        $this->assertNotNull($media);
+        $this->assertNotNull($media->folderId());
+        $this->assertTrue($media->folderId()->equals($folder->id()));
+
+        $events = $this->spySubscriber->events();
+
+        $this->assertTrue($events[count($events) - 2] instanceof MediaUploaded);
+        $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaMoved);
+    }
+
+    public function testAnInvalidFolderStoresNothing(): void
+    {
+        $repository = new InMemoryMediaRepository();
+        $storage = MediaStorageMother::inMemory();
+        $folders = FolderRepositoryMother::inMemory();
+
+        $accountId = AccountId::generate();
+
+        $foreign = FolderMother::fromNameAndAccount('Ajena', AccountId::generate());
+        $folders->add($foreign);
+
+        $sut = $this->createSUT($repository, $storage, $folders);
+
+        $storage->markUnavailable();
+
+        $request = $this->createRequest();
+        $request->accountId = $accountId;
+        $request->folderId = $foreign->id();
+
+        try {
+            $sut($request, UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId));
+
+            $this->fail('A folder of another account should be rejected');
+        } catch (FolderNotFoundException) {
+        }
+
+        $this->assertSame(0, $repository->totalResultsByFilter(new MediaFilter(limit: 0)));
+        $this->assertNotInstanceOf(MediaUploaded::class, $this->spySubscriber->lastEvent());
+    }
+
+    public function testWithoutFolderTheFileStaysOutOfAnyFolder(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $sut = $this->createSUT($repository, MediaStorageMother::inMemory());
+
+        $result = $sut($this->createRequest(), UserMother::adminUser());
+
+        $this->assertNull($repository->find($result->mediaId)?->folderId());
+        $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaUploaded);
+    }
+
+    private function createSUT(InMemoryMediaRepository $repository, InMemoryMediaStorage $storage, ?InMemoryFolderRepository $folders = null): UploadMediaService
+    {
+        return new UploadMediaService(
+            $repository,
+            $storage,
+            MediaAuthorizerMother::create(),
+            new MediaFolderGuard($folders ?? FolderRepositoryMother::inMemory(), FolderAuthorizerMother::create()),
+        );
     }
 }

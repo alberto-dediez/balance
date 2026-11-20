@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Library\Application\Media\Upload;
 
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
@@ -24,5 +25,6 @@ class UploadMediaRequest implements Command
         public bool $shared = false,
         public ?AccountId $accountId = null,
         public ?UserId $uploadedBy = null,
+        public ?FolderId $folderId = null,
     ) {}
 }
