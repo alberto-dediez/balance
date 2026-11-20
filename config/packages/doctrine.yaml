@@ -22,6 +22,7 @@ doctrine:
             two_factor_method: App\Security\Infrastructure\Persistence\Doctrine\Type\TwoFactorMethodType
             notification_id: App\Notifications\Infrastructure\Persistence\Doctrine\Type\NotificationIdType
             media_id: App\Library\Infrastructure\Persistence\Doctrine\Type\MediaIdType
+            folder_id: App\Library\Infrastructure\Persistence\Doctrine\Type\FolderIdType
             announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
             youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
             assistant_conversation_id: App\Assistant\Infrastructure\Persistence\Doctrine\Type\ConversationIdType

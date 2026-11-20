@@ -6,6 +6,10 @@
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity name="App\Library\Domain\Model\Media\Media" table="media">
+        <indexes>
+            <index name="idx_media_folder" columns="folder_id"/>
+        </indexes>
+
         <id name="id" type="media_id" column="id">
             <generator strategy="NONE" />
         </id>
@@ -26,6 +30,7 @@
         <field name="removed" type="boolean" nullable="false"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
         <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true"/>
+        <field name="folderId" type="folder_id" column="folder_id" nullable="true"/>
     </entity>
 
 </doctrine-mapping>

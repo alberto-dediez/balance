@@ -6,6 +6,7 @@ namespace App\Library\Infrastructure\Symfony\Form;
 
 use App\Library\Application\Media\Upload\UploadMediaRequest;
 use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Infrastructure\Symfony\Form\Type\FolderChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -48,6 +49,9 @@ class UploadMediaType extends AbstractType
                 'help' => new TranslatableMessage('Solo aplica si se sube un único archivo'),
                 'required' => false,
                 'empty_data' => null,
+            ])
+            ->add('folderId', FolderChoiceType::class, [
+                'help' => new TranslatableMessage('Los archivos subidos se guardarán en esta carpeta'),
             ])
             ->add('visibility', EnumType::class, [
                 'class' => MediaVisibility::class,

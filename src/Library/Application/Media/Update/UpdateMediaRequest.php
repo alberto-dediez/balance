@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Library\Application\Media\Update;
 
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Shared\Application\CommandBus\Command;
@@ -17,5 +18,6 @@ class UpdateMediaRequest implements Command
         public ?string $alternativeText = null,
         public MediaVisibility $visibility = MediaVisibility::Account,
         public bool $shared = false,
+        public ?FolderId $folderId = null,
     ) {}
 }

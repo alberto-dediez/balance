@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Infrastructure\Symfony\Form\Type;
 
+use App\Library\Domain\Model\Folder\FolderRepository;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaType;
@@ -11,6 +12,7 @@ use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Infrastructure\Symfony\Form\Type\MediaPickerType;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderMother;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -226,6 +228,31 @@ class MediaPickerTypeTest extends KernelTestCase
         $this->assertMatchesRegularExpression('/class="[^"]*d-none[^"]*"\s+data-media-picker-target="clear"/', $empty);
         $this->assertMatchesRegularExpression('/class="[^"]*"\s+data-media-picker-target="clear"/', $selected);
         $this->assertDoesNotMatchRegularExpression('/class="[^"]*d-none[^"]*"\s+data-media-picker-target="clear"/', $selected);
+    }
+
+    public function testTheModalOffersTheFoldersOfTheAccount(): void
+    {
+        $this->logUser();
+
+        $folder = FolderMother::fromName('Contratos');
+
+        self::getContainer()->get(FolderRepository::class)->add($folder);
+
+        $html = $this->renderWidget($this->createForm()->createView());
+
+        $this->assertStringContainsString('data-media-picker-target="folder"', $html);
+        $this->assertStringContainsString(sprintf('<option value="%s">Contratos</option>', (string) $folder->id()), $html);
+        $this->assertStringContainsString('<option value="none">', $html);
+    }
+
+    public function testTheModalHasNoFolderSelectorWithoutFolders(): void
+    {
+        $this->logUser();
+
+        $html = $this->renderWidget($this->createForm()->createView());
+
+        $this->assertStringNotContainsString('data-media-picker-target="folder"', $html);
+        $this->assertStringContainsString('data-slot="folder"', $html);
     }
 
     public function testTheSubmittedValueBecomesAMediaId(): void

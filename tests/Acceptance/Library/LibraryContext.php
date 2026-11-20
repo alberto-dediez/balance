@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Library;
 
+use App\Library\Domain\Model\Folder\Folder;
+use App\Library\Domain\Model\Folder\FolderFilter;
+use App\Library\Domain\Model\Folder\FolderId;
+use App\Library\Domain\Model\Folder\FolderRepository;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaId;
@@ -15,6 +19,7 @@ use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
 use App\Library\Infrastructure\Storage\MediaStorageRegistry;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderMother;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaMother;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
@@ -24,6 +29,7 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -51,6 +57,11 @@ final class LibraryContext implements Context
     private function getMediaRepository(): MediaRepository
     {
         return $this->client->getContainer()->get(MediaRepository::class);
+    }
+
+    private function getFolderRepository(): FolderRepository
+    {
+        return $this->client->getContainer()->get(FolderRepository::class);
     }
 
     private function getMediaStorage(): MediaStorage
@@ -100,6 +111,106 @@ final class LibraryContext implements Context
         $this->addMedia(MediaMother::from(new MediaId($id), $name, 'image/png', new AccountId($account), null, MediaVisibility::System, true));
     }
 
+    #[Given('folder :name with id :id exists')]
+    public function folderWithIdExists(string $name, string $id): void
+    {
+        $this->getFolderRepository()->add(FolderMother::fromNameAndId($name, $id));
+    }
+
+    #[Given('folder :name with id :id of account :account exists')]
+    public function folderWithIdOfAccountExists(string $name, string $id, string $account): void
+    {
+        $this->getFolderRepository()->add(FolderMother::from(new FolderId($id), $name, new AccountId($account)));
+    }
+
+    #[Given('media :name with id :id in folder :folder exists')]
+    public function mediaWithIdInFolderExists(string $name, string $id, string $folder): void
+    {
+        $media = MediaMother::fromNameAndId($name, $id);
+        $media->moveToFolder(new FolderId($folder));
+
+        $this->addMedia($media);
+    }
+
+    #[Given('media :name with id :id in folder :folder of account :account exists')]
+    public function mediaWithIdInFolderOfAccountExists(string $name, string $id, string $folder, string $account): void
+    {
+        $media = MediaMother::from(new MediaId($id), $name, 'image/png', new AccountId($account));
+        $media->moveToFolder(new FolderId($folder));
+
+        $this->addMedia($media);
+    }
+
+    #[Given('media :name with id :id shared in the library of account :account in folder :folder exists')]
+    public function mediaSharedInTheLibraryOfAccountInFolderExists(string $name, string $id, string $account, string $folder): void
+    {
+        $media = MediaMother::from(new MediaId($id), $name, 'image/png', new AccountId($account), null, MediaVisibility::System, true);
+        $media->moveToFolder(new FolderId($folder));
+
+        $this->addMedia($media);
+    }
+
+    #[When('I filter the library by the folder :name')]
+    public function iFilterTheLibraryByTheFolder(string $name): void
+    {
+        $this->filterTheLibraryByFolder(fn(ChoiceFormField $field): string => $this->optionValue('select[name$="[folder]"]', $name));
+    }
+
+    #[When('I filter the library by all the folders')]
+    public function iFilterTheLibraryByAllTheFolders(): void
+    {
+        $this->filterTheLibraryByFolder(static fn(ChoiceFormField $field): string => 'all');
+    }
+
+    #[When('I move the media :ids to the folder :name')]
+    public function iMoveTheMediaToTheFolder(string $ids, string $name): void
+    {
+        $this->moveTheMedia($ids, $this->optionValue('select[name$="[folderId]"]', $name));
+    }
+
+    #[When('I move the media :ids out of their folder')]
+    public function iMoveTheMediaOutOfTheirFolder(string $ids): void
+    {
+        $this->moveTheMedia($ids, '');
+    }
+
+    #[Then('the active filters show :text')]
+    public function theActiveFiltersShow(string $text): void
+    {
+        $filters = $this->client->getCrawler()->filter('.filter-show')->each(
+            static fn(Crawler $node): string => (string) preg_replace('/\s+/', ' ', trim($node->text())),
+        );
+
+        Assert::assertContains($text, $filters);
+    }
+
+    #[Then('the media :id is in the folder :folder')]
+    public function theMediaIsInTheFolder(string $id, string $folder): void
+    {
+        $folderId = $this->getMedia($id)->folderId();
+
+        Assert::assertNotNull($folderId);
+        Assert::assertTrue($folderId->equals(new FolderId($folder)));
+    }
+
+    #[Then('the media :id is not in any folder')]
+    public function theMediaIsNotInAnyFolder(string $id): void
+    {
+        Assert::assertNull($this->getMedia($id)->folderId());
+    }
+
+    #[Then('the folder :name exists')]
+    public function theFolderExists(string $name): void
+    {
+        Assert::assertContains($name, $this->folderNames());
+    }
+
+    #[Then('the folder :name does not exist')]
+    public function theFolderDoesNotExist(string $name): void
+    {
+        Assert::assertNotContains($name, $this->folderNames());
+    }
+
     #[When('I submit the upload form with file :fileName')]
     public function iSubmitTheUploadFormWithFile(string $fileName): void
     {
@@ -134,6 +245,53 @@ final class LibraryContext implements Context
         $fileValues['upload_media']['file'] = $files;
 
         $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $form->getPhpValues(), $fileValues);
+    }
+
+    #[When('I submit the upload form with files :fileNames into the folder :name')]
+    public function iSubmitTheUploadFormWithFilesIntoTheFolder(string $fileNames, string $name): void
+    {
+        $folderId = $this->optionValue('select[name$="[folderId]"]', $name);
+
+        $form = $this->client->getCrawler()->selectButton('Subir')->form();
+
+        $files = array_map(
+            fn(string $fileName): UploadedFile => new UploadedFile($this->createLocalFile(trim($fileName)), trim($fileName), null, null, true),
+            explode(',', $fileNames),
+        );
+
+        $values = $form->getPhpValues();
+        $values['upload_media']['folderId'] = $folderId;
+
+        $fileValues = $form->getPhpFiles();
+        $fileValues['upload_media']['file'] = $files;
+
+        $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $values, $fileValues);
+    }
+
+    #[When('I send the media :id to the folder :folder through a forged edit form')]
+    public function iSendTheMediaToTheFolderThroughAForgedEditForm(string $id, string $folder): void
+    {
+        $form = $this->client->getCrawler()->selectButton('Guardar y salir')->form();
+
+        $formName = (string) $form->getFormNode()->getAttribute('name');
+
+        $values = $form->getPhpValues();
+        $values[$formName]['folderId'] = $folder;
+
+        $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $values);
+    }
+
+    #[Then('every file of the library is in the folder :folder')]
+    public function everyFileOfTheLibraryIsInTheFolder(string $folder): void
+    {
+        $media = $this->getMediaRepository()->findByFilter(new MediaFilter(limit: 0));
+
+        Assert::assertNotEmpty($media);
+
+        foreach ($media as $element) {
+            Assert::assertNotNull($element->folderId());
+            Assert::assertTrue($element->folderId()->equals(new FolderId($folder)));
+        }
     }
 
     #[When('I upload the file :fileName through the media picker of :path')]
@@ -318,6 +476,61 @@ final class LibraryContext implements Context
 
         Assert::assertInstanceOf(InMemoryStorageSyncTaskRepository::class, $tasks);
         Assert::assertSame($count, $tasks->countPending());
+    }
+
+    /**
+     * @param \Closure(ChoiceFormField): string $value
+     */
+    private function filterTheLibraryByFolder(\Closure $value): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $form = $crawler->filter('[name$="[filter]"]')->form();
+
+        $field = $form[(string) $crawler->filter('select[name$="[folder]"]')->attr('name')];
+
+        assert($field instanceof ChoiceFormField);
+
+        $field->select($value($field));
+
+        $this->client->submit($form);
+    }
+
+    private function moveTheMedia(string $ids, string $folderId): void
+    {
+        $form = $this->client->getCrawler()->selectButton('Realizar')->form();
+
+        $formName = (string) $form->getFormNode()->getAttribute('name');
+
+        $values = $form->getPhpValues();
+
+        $values[$formName]['elements'] = array_map('trim', explode(',', $ids));
+        $values[$formName]['action'] = 'move';
+        $values[$formName]['folderId'] = $folderId;
+
+        $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $values);
+    }
+
+    private function optionValue(string $selector, string $label): string
+    {
+        $options = $this->client->getCrawler()->filter($selector . ' option')->reduce(
+            static fn($option): bool => trim($option->text()) === $label,
+        );
+
+        Assert::assertGreaterThan(0, $options->count(), sprintf('There is no option "%s"', $label));
+
+        return (string) $options->first()->attr('value');
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function folderNames(): array
+    {
+        return array_map(
+            static fn(Folder $folder): string => $folder->name(),
+            $this->getFolderRepository()->findByFilter(new FolderFilter(limit: 0)),
+        );
     }
 
     private function getStorage(string $driver): MediaStorage

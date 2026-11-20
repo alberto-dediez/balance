@@ -2809,6 +2809,126 @@
         <source>Guía</source>
         <target>Guía</target>
       </trans-unit>
+      <trans-unit id="687AV4j" resname="La carpeta elegida ya no existe">
+        <source>La carpeta elegida ya no existe</source>
+        <target>La carpeta elegida ya no existe</target>
+      </trans-unit>
+      <trans-unit id="XWsXyf2" resname="Mover a carpeta">
+        <source>Mover a carpeta</source>
+        <target>Mover a carpeta</target>
+      </trans-unit>
+      <trans-unit id="Y1P.FhF" resname="Se ha movido el archivo {id}">
+        <source>Se ha movido el archivo {id}</source>
+        <target>Se ha movido el archivo {id}</target>
+      </trans-unit>
+      <trans-unit id="gFNL3zQ" resname="No se ha podido mover el archivo {id}">
+        <source>No se ha podido mover el archivo {id}</source>
+        <target>No se ha podido mover el archivo {id}</target>
+      </trans-unit>
+      <trans-unit id="VNflF2V" resname="Ya existe una carpeta con ese nombre">
+        <source>Ya existe una carpeta con ese nombre</source>
+        <target>Ya existe una carpeta con ese nombre</target>
+      </trans-unit>
+      <trans-unit id="M248cIQ" resname="Carpeta creada con éxito">
+        <source>Carpeta creada con éxito</source>
+        <target>Carpeta creada con éxito</target>
+      </trans-unit>
+      <trans-unit id="5rijHPT" resname="Carpeta actualizada con éxito">
+        <source>Carpeta actualizada con éxito</source>
+        <target>Carpeta actualizada con éxito</target>
+      </trans-unit>
+      <trans-unit id="qdF4E_0" resname="Se ha eliminado la carpeta {folder}">
+        <source>Se ha eliminado la carpeta {folder}</source>
+        <target>Se ha eliminado la carpeta {folder}</target>
+      </trans-unit>
+      <trans-unit id="kTmyTjx" resname="No se ha podido eliminar la carpeta {folder}">
+        <source>No se ha podido eliminar la carpeta {folder}</source>
+        <target>No se ha podido eliminar la carpeta {folder}</target>
+      </trans-unit>
+      <trans-unit id="s.rYi7K" resname="Se ha eliminado la carpeta {id}">
+        <source>Se ha eliminado la carpeta {id}</source>
+        <target>Se ha eliminado la carpeta {id}</target>
+      </trans-unit>
+      <trans-unit id="dlOo5Ov" resname="No se ha podido eliminar la carpeta {id}">
+        <source>No se ha podido eliminar la carpeta {id}</source>
+        <target>No se ha podido eliminar la carpeta {id}</target>
+      </trans-unit>
+      <trans-unit id="s5a3dBs" resname="Crear">
+        <source>Crear</source>
+        <target>Crear</target>
+      </trans-unit>
+      <trans-unit id="jGKQKAG" resname="Los archivos subidos se guardarán en esta carpeta">
+        <source>Los archivos subidos se guardarán en esta carpeta</source>
+        <target>Los archivos subidos se guardarán en esta carpeta</target>
+      </trans-unit>
+      <trans-unit id="jYpOG1P" resname="Sin carpeta">
+        <source>Sin carpeta</source>
+        <target>Sin carpeta</target>
+      </trans-unit>
+      <trans-unit id="CaeryFa" resname="Carpeta">
+        <source>Carpeta</source>
+        <target>Carpeta</target>
+      </trans-unit>
+      <trans-unit id="LzHODVk" resname="Todas las carpetas">
+        <source>Todas las carpetas</source>
+        <target>Todas las carpetas</target>
+      </trans-unit>
+      <trans-unit id="0L1wK4p" resname="Carpetas">
+        <source>Carpetas</source>
+        <target>Carpetas</target>
+      </trans-unit>
+      <trans-unit id=".QYUjWT" resname="Buscar archivos o carpetas">
+        <source>Buscar archivos o carpetas</source>
+        <target>Buscar archivos o carpetas</target>
+      </trans-unit>
+      <trans-unit id="0g.tD08" resname="Nueva carpeta">
+        <source>Nueva carpeta</source>
+        <target>Nueva carpeta</target>
+      </trans-unit>
+      <trans-unit id="VxnXZjp" resname="Movido el archivo a una carpeta">
+        <source>Movido el archivo a una carpeta</source>
+        <target>Movido el archivo a una carpeta</target>
+      </trans-unit>
+      <trans-unit id="S5a30YW" resname="Sacado el archivo de su carpeta">
+        <source>Sacado el archivo de su carpeta</source>
+        <target>Sacado el archivo de su carpeta</target>
+      </trans-unit>
+      <trans-unit id="HNiQ1eS" resname="Creada la carpeta {name}">
+        <source>Creada la carpeta {name}</source>
+        <target>Creada la carpeta {name}</target>
+      </trans-unit>
+      <trans-unit id="vYi_vbJ" resname="Eliminada la carpeta {name}">
+        <source>Eliminada la carpeta {name}</source>
+        <target>Eliminada la carpeta {name}</target>
+      </trans-unit>
+      <trans-unit id="YjX6qZE" resname="Cambiada la visibilidad del archivo a &quot;{visibility}&quot;">
+        <source>Cambiada la visibilidad del archivo a "{visibility}"</source>
+        <target>Cambiada la visibilidad del archivo a "{visibility}"</target>
+      </trans-unit>
+      <trans-unit id="6Yt8Z6B" resname="Compartido el archivo con las demás cuentas">
+        <source>Compartido el archivo con las demás cuentas</source>
+        <target>Compartido el archivo con las demás cuentas</target>
+      </trans-unit>
+      <trans-unit id="GfPDoX3" resname="Dejado de compartir el archivo con las demás cuentas">
+        <source>Dejado de compartir el archivo con las demás cuentas</source>
+        <target>Dejado de compartir el archivo con las demás cuentas</target>
+      </trans-unit>
+      <trans-unit id="YGZdhC5" resname="Renombrada la carpeta a {name}">
+        <source>Renombrada la carpeta a {name}</source>
+        <target>Renombrada la carpeta a {name}</target>
+      </trans-unit>
+      <trans-unit id="r1h5l3L" resname="Eliminado el archivo">
+        <source>Eliminado el archivo</source>
+        <target>Eliminado el archivo</target>
+      </trans-unit>
+      <trans-unit id="x6DWTVV" resname="Actualizados los datos del archivo {name}">
+        <source>Actualizados los datos del archivo {name}</source>
+        <target>Actualizados los datos del archivo {name}</target>
+      </trans-unit>
+      <trans-unit id="bYR1l3K" resname="Subido el archivo {name}">
+        <source>Subido el archivo {name}</source>
+        <target>Subido el archivo {name}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

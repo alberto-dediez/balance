@@ -12,7 +12,7 @@ trait MediaJsonResponseTrait
     /**
      * @return array<string,mixed>
      */
-    private function toJsonElement(Media $media, UrlGeneratorInterface $urlGenerator): array
+    private function toJsonElement(Media $media, UrlGeneratorInterface $urlGenerator, ?string $folderName = null): array
     {
         return [
             'id' => (string) $media->id(),
@@ -23,6 +23,7 @@ trait MediaJsonResponseTrait
             'mimeType' => $media->mimeType(),
             'size' => $media->size(),
             'url' => $urlGenerator->generate('library_media_show', ['mediaId' => (string) $media->id()]),
+            'folder' => $folderName,
         ];
     }
 }
