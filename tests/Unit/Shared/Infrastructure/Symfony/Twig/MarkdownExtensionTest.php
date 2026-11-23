@@ -23,6 +23,45 @@ class MarkdownExtensionTest extends TestCase
         $this->assertStringNotContainsString('<script>', $sut->mdToHtml('<script>alert(1)</script>'));
     }
 
+    public function testItRendersLineBreaksBetweenLines(): void
+    {
+        $sut = new MarkdownExtension();
+
+        $html = $sut->mdToHtml("*NIVEL 1* Sin evidencias\n*NIVEL 2* Con evidencias");
+
+        $this->assertStringContainsString('<em>NIVEL 1</em> Sin evidencias<br>', $html);
+    }
+
+    public function testItRendersTheHtmlTagsWrittenByTheEditor(): void
+    {
+        $sut = new MarkdownExtension();
+
+        $html = $sut->mdToHtml('<strong>EVIDENCIA:</strong>informe<br><em>fechado</em> <b>hoy</b> <br />fin');
+
+        $this->assertSame("<p><strong>EVIDENCIA:</strong>informe<br><em>fechado</em> <b>hoy</b> <br>fin</p>\n", $html);
+    }
+
+    public function testItParsesTheMarkdownFollowingAnEmptyLineWrittenByTheEditor(): void
+    {
+        $sut = new MarkdownExtension();
+
+        $html = $sut->mdToHtml("Primero\n\n<br>\n**Segundo**");
+
+        $this->assertStringContainsString('<br>', $html);
+        $this->assertStringContainsString('<strong>Segundo</strong>', $html);
+        $this->assertStringNotContainsString('&lt;br&gt;', $html);
+    }
+
+    public function testItEscapesAllowedTagsCarryingAttributes(): void
+    {
+        $sut = new MarkdownExtension();
+
+        $html = $sut->mdToHtml('<strong onclick="alert(1)">texto</strong> <img src=x onerror=alert(1)>');
+
+        $this->assertStringNotContainsString('<strong onclick', $html);
+        $this->assertStringNotContainsString('<img', $html);
+    }
+
     public function testItDoesNotProduceAnExecutableJavascriptLink(): void
     {
         $sut = new MarkdownExtension();

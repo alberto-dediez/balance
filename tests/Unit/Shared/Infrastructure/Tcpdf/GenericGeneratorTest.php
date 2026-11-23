@@ -16,7 +16,7 @@ final class GenericGeneratorTest extends TestCase
         $this->assertStringNotContainsString('<img', $html);
         $this->assertStringNotContainsString('<b>', $html);
         $this->assertStringContainsString('&lt;img src="http://169.254.169.254/x.png"&gt;', $html);
-        $this->assertStringContainsString('&lt;b&gt;negrita&lt;/b&gt;', $html);
+        $this->assertStringContainsString('negrita</font></strong>', $html);
         $this->assertStringContainsString('&lt;img src="/etc/logo.png"&gt;', $html);
     }
 

@@ -1,0 +1,33 @@
+.folder-tile {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    background: var(--bs-body-bg);
+}
+
+.folder-tile__open {
+    display: inline-flex;
+    align-items: center;
+    max-width: 16rem;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    background: none;
+    color: var(--bs-body-color);
+}
+
+.folder-tile__name {
+    min-width: 0;
+}
+
+.folder-tile--active {
+    border-color: var(--bs-primary);
+    background: var(--bs-primary-bg-subtle);
+}
+
+.folder-tile__actions {
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+    padding-right: 0.5rem;
+}

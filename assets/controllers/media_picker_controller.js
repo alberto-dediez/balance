@@ -3,7 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 import { Modal } from 'bootstrap';
 
 export default class extends Controller {
-    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared', 'folder', 'dropzone', 'uploadToggle', 'clear', 'itemTemplate', 'resultTemplate', 'emptyResults', 'loadMore'];
+    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared', 'folder', 'subfolder', 'dropzone', 'uploadToggle', 'clear', 'itemTemplate', 'resultTemplate', 'emptyResults', 'loadMore'];
 
     static values = {
         searchPath: String,
@@ -138,6 +138,15 @@ export default class extends Controller {
         this.inputsTarget.querySelectorAll('input').forEach(input => input.value = '');
     }
 
+    changeFolder() {
+        this.subfolderTargets.forEach(target => {
+            target.value = '';
+            target.hidden = target.dataset.folder !== this.folderTarget.value;
+        });
+
+        this.search();
+    }
+
     search(append = false) {
         if (true !== append) {
             this.page = 0;
@@ -149,7 +158,10 @@ export default class extends Controller {
 
         const folder = this.hasFolderTarget ? this.folderTarget.value : '';
 
-        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}&includeShared=${includeShared}&folder=${encodeURIComponent(folder)}&page=${this.page}&limit=${this.limit}`;
+        const subfolderSelect = this.subfolderTargets.find(target => !target.hidden);
+        const subfolder = subfolderSelect ? subfolderSelect.value : '';
+
+        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}&includeShared=${includeShared}&folder=${encodeURIComponent(folder)}&subfolder=${encodeURIComponent(subfolder)}&page=${this.page}&limit=${this.limit}`;
 
         fetch(url, { headers: { 'Accept': 'application/json' } })
             .then(response => response.json())

@@ -6,6 +6,7 @@ namespace App\Library\Infrastructure\UI\Web\Folder;
 
 use App\Library\Application\Folder\Remove\RemoveFolderRequest;
 use App\Library\Application\Folder\Remove\RemoveFolderService;
+use App\Library\Domain\Model\Folder\FolderNotRemovedException;
 use App\Library\Domain\Model\Folder\FolderRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
@@ -37,10 +38,12 @@ class RemoveController extends AbstractController
             $this->addFlash('success', new TranslatableMessage('Se ha eliminado la carpeta {folder}', ['{folder}' => $folder->name()]));
         } catch (UnauthorizedActionException $e) {
             throw $this->createAccessDeniedException($e->getMessage());
+        } catch (FolderNotRemovedException) {
+            $this->addFlash('danger', new TranslatableMessage('No se ha podido eliminar la carpeta {folder} porque alguno de sus archivos no se ha podido eliminar', ['{folder}' => $folder->name()]));
         } catch (\Exception) {
             $this->addFlash('danger', new TranslatableMessage('No se ha podido eliminar la carpeta {folder}', ['{folder}' => $folder->name()]));
         }
 
-        return $this->redirectToRoute('library_folders');
+        return $this->redirectToRoute('library_media');
     }
 }

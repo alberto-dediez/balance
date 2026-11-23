@@ -8,6 +8,7 @@ Feature:
         When I go to "/es/library/folders/register"
         Then the response status should be 200
         When I submit a form with "name:Contratos" and button "Crear"
+        Then the response redirects to "/es/library/media"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Carpeta creada con éxito"
@@ -19,6 +20,7 @@ Feature:
         When I am logged as "admin@dediez.software"
         When I go to "/es/library/folders/register"
         When I submit a form with "name:Plantillas" and button "Crear"
+        Then the response redirects to "/es/library/media"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Plantillas"
@@ -42,6 +44,7 @@ Feature:
         When I am logged as "owner@dediez.software"
         When I go to "/es/library/folders/register"
         When I submit a form with "name:Contratos" and button "Crear"
+        Then the response redirects to "/es/library/media"
         When I follow redirect
         Then I see a text "Carpeta creada con éxito"
 

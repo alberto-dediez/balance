@@ -1,6 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 import { showToast } from 'toast';
+import { applyNotificationsWidget } from 'notifications-widget';
 
 export default class extends Controller {
     static values = {
@@ -9,7 +10,7 @@ export default class extends Controller {
         newMessage: String
     }
 
-    static targets = ['toggle', 'menu']
+    static targets = ['toggle']
 
     connect() {
         this.pending = false;
@@ -98,22 +99,9 @@ export default class extends Controller {
             return;
         }
 
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const freshBadge = doc.querySelector('[data-notifications-badge]');
-        const freshMenu = doc.querySelector('[data-notifications-menu]');
+        const counts = applyNotificationsWidget(this.element, html);
 
-        if (!freshBadge || !freshMenu) {
-            return;
-        }
-
-        const currentBadge = this.element.querySelector('[data-notifications-badge]');
-        const previous = Number(currentBadge.dataset.notificationsCount);
-        const next = Number(freshBadge.dataset.notificationsCount);
-
-        currentBadge.replaceWith(freshBadge);
-        this.menuTarget.innerHTML = freshMenu.innerHTML;
-
-        if (next > previous) {
+        if (counts && counts.next > counts.previous) {
             showToast(this.newMessageValue, 'primary');
         }
     }

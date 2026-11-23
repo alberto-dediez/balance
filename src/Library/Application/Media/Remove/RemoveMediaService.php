@@ -38,11 +38,11 @@ class RemoveMediaService implements CommandHandler
 
         $path = $media->path();
 
+        $this->storage->delete($path);
+
         $media->remove();
 
         $this->repository->add($media);
-
-        $this->storage->delete($path);
 
         return new RemoveMediaResponse(
             mediaId: $media->id(),

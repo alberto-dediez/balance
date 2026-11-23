@@ -38,7 +38,7 @@
         {% endif %}
 
         <div class="changelog-body">
-            {{ announcement.body | changelog_markdown | raw }}
+            {{ announcement.body | md_to_html }}
         </div>
     </twig:Card>
 {% endblock %}

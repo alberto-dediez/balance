@@ -147,6 +147,18 @@ final class WebContext implements Context
         $this->client->request('GET', $path . $separator . $parameter . '=' . urlencode($token), ['HTTP_SEC_FETCH_SITE' => 'same-origin']);
     }
 
+    #[When('I request :path by ajax with csrf token :tokenId')]
+    public function iRequestByAjaxWithCsrfToken(string $path, string $tokenId): void
+    {
+        $token = $this->csrfToken($tokenId);
+        $separator = str_contains($path, '?') ? '&' : '?';
+
+        $this->client->request('GET', $path . $separator . '_token=' . urlencode($token), [
+            'HTTP_SEC_FETCH_SITE' => 'same-origin',
+            'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest',
+        ]);
+    }
+
     private function csrfToken(string $tokenId): string
     {
         $tokenManager = $this->client->getContainer()->get(CsrfTokenManagerInterface::class);
@@ -581,6 +593,12 @@ final class WebContext implements Context
     public function iSeeALinkWithTitle(string $title): void
     {
         Assert::assertCount(1, $this->client->getCrawler()->filterXPath($this->visibleLinkWithTitleXPath($title)));
+    }
+
+    #[Then('I see :count links with title :title')]
+    public function iSeeLinksWithTitle(int $count, string $title): void
+    {
+        Assert::assertCount($count, $this->client->getCrawler()->filterXPath($this->visibleLinkWithTitleXPath($title)));
     }
 
     #[Then('I do not see a link with title :title')]

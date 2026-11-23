@@ -17,6 +17,7 @@ final class FolderRegistered extends DomainEvent
         private readonly FolderId $folderId,
         private readonly string $name,
         private readonly ?AccountId $accountId = null,
+        private readonly ?FolderId $parentId = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -38,6 +39,11 @@ final class FolderRegistered extends DomainEvent
         return $this->accountId;
     }
 
+    public function parentId(): ?FolderId
+    {
+        return $this->parentId;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->folderId;
@@ -49,6 +55,7 @@ final class FolderRegistered extends DomainEvent
             'folderId' => (string) $this->folderId,
             'name' => $this->name,
             'accountId' => $this->accountId instanceof AccountId ? (string) $this->accountId : null,
+            'parentId' => $this->parentId instanceof FolderId ? (string) $this->parentId : null,
         ];
     }
 
@@ -61,6 +68,7 @@ final class FolderRegistered extends DomainEvent
             folderId: new FolderId($payload['folderId']),
             name: $payload['name'],
             accountId: null === $payload['accountId'] ? null : new AccountId($payload['accountId']),
+            parentId: isset($payload['parentId']) ? new FolderId($payload['parentId']) : null,
             id: $id,
             occurredOn: $occurredOn,
         );

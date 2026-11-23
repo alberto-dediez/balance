@@ -30,6 +30,9 @@ return [
     'toast' => [
         'path' => './assets/js/toast.js',
     ],
+    'notifications-widget' => [
+        'path' => './assets/js/notifications_widget.js',
+    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],

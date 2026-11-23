@@ -1,0 +1,13 @@
+{% props label, value, field, icon = 'solar:folder-line-duotone', active = false %}
+
+<div class="folder-tile{{ active ? ' folder-tile--active' }}">
+    <button type="button" class="folder-tile__open" data-action="filter#setField" data-filter-field-param="{{ field }}" data-filter-value-param="{{ value }}" {{ active ? 'aria-current="true"' }}>
+        <twig:Icon name="{{ icon }}" size="lg" class="me-2" />
+
+        <span class="folder-tile__name text-truncate">{{ label }}</span>
+    </button>
+
+    <div class="folder-tile__actions">
+        {% block content %}{% endblock %}
+    </div>
+</div>

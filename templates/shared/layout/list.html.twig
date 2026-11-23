@@ -13,6 +13,8 @@
         <twig:List:FilterBar :form="form"></twig:List:FilterBar>
     </twig:Card>
 
+    {% block list_top %}{% endblock %}
+
     <div class="card">
         <div class="card-body">
             {% block table %}{% endblock %}

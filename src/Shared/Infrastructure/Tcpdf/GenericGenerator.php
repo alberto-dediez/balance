@@ -428,7 +428,7 @@ trait GenericGenerator
     private function markdownToStyledHtml(string $markdown): string
     {
         $html = (new MarkdownExtension())->mdToHtml($markdown);
-        $html = preg_replace('#&lt;br\s*/?&gt;#i', '<br />', $html) ?? $html;
+        $html = preg_replace('#(?:&lt;|<)br\s*/?(?:&gt;|>)#i', '<br />', $html) ?? $html;
         $html = preg_replace('#<(/?)b>#', '<$1strong>', $html) ?? $html;
 
         $html = preg_replace_callback(

@@ -21,6 +21,7 @@ class Folder implements \Stringable
         protected string $name = '',
         array $events = [],
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
+        protected ?FolderId $parentId = null,
     ) {
         $this->events = $events;
     }
@@ -45,13 +46,24 @@ class Folder implements \Stringable
         return $this->registeredAt;
     }
 
-    public function register(string $name, ?AccountId $accountId = null): void
+    public function parentId(): ?FolderId
+    {
+        return $this->parentId;
+    }
+
+    public function isSubfolder(): bool
+    {
+        return $this->parentId instanceof FolderId;
+    }
+
+    public function register(string $name, ?AccountId $accountId = null, ?FolderId $parentId = null): void
     {
         $this->recordApplyAndPublish(
             new FolderRegistered(
                 folderId: $this->id(),
                 name: $name,
                 accountId: $accountId,
+                parentId: $parentId,
             ),
         );
     }
@@ -80,6 +92,7 @@ class Folder implements \Stringable
     {
         $this->name = $event->name();
         $this->accountId = $event->accountId();
+        $this->parentId = $event->parentId();
         $this->registeredAt = $event->occurredOn();
     }
 

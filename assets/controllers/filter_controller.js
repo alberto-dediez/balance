@@ -23,6 +23,15 @@ export default class extends Controller {
         field.closest('form').submit();
     }
 
+    setField(event) {
+        let field = document.querySelector(event.params.field);
+
+        field.value = event.params.value;
+        field.dispatchEvent(new Event("change"));
+
+        field.closest('form').submit();
+    }
+
     sort(event) {
         let orderBy = document.querySelector('input[name*="orderBy"]');
         let orderWay = document.querySelector('input[name*="orderWay"]');
