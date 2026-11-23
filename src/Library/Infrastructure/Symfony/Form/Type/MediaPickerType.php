@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\Symfony\Form\Type;
 
+use App\Library\Application\Folder\CurrentAccountFolders;
 use App\Library\Application\Media\Share\ShareMediaRequest;
 use App\Library\Application\Media\Share\ShareMediaService;
+use App\Library\Domain\Model\Folder\Folder;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaNotFoundException;
@@ -51,6 +53,7 @@ class MediaPickerType extends AbstractType
         private readonly LoggedUser $loggedUser,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly CurrentAccountFolders $folders,
     ) {}
 
     /**
@@ -135,6 +138,10 @@ class MediaPickerType extends AbstractType
         $view->vars['visibility'] = $visibility;
         $view->vars['selected'] = $this->selectedMedia($form->getData());
         $view->vars['preview'] = $options['preview'];
+        $view->vars['folders'] = array_map(
+            static fn(Folder $folder): array => ['id' => (string) $folder->id(), 'name' => $folder->name()],
+            $this->folders->all(),
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

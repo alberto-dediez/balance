@@ -14,6 +14,8 @@
             'sortable': true,
             'sortableBy': 'name'
         }, {
+            'label': 'Carpeta' | trans
+        }, {
             'label': 'Tipo' | trans
         }, {
             'label': 'Visibilidad' | trans,
@@ -45,6 +47,7 @@
                 {{ element.fileName }}
             </div>
         </td>
+        <td>{{ element.folderId ? folderNames[element.folderId ~ ''] | default('') : '' }}</td>
         <td>
             <span class="badge bg-{{ type_colors[element.type.value] }}-subtle text-{{ type_colors[element.type.value] }}">{{ element.type.value | trans({}, 'mediaType') }}</span>
         </td>

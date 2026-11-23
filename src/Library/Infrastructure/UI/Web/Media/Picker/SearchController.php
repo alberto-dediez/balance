@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\UI\Web\Media\Picker;
 
+use App\Library\Application\Folder\CurrentAccountFolders;
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Application\Media\List\ListMediaService;
+use App\Library\Domain\Model\Folder\Folder;
+use App\Library\Domain\Model\Folder\FolderId;
+use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaType;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Security\Application\UnauthorizedActionException;
@@ -27,6 +31,7 @@ class SearchController extends AbstractController
 
     public function __invoke(
         ListMediaService $listMedia,
+        CurrentAccountFolders $folders,
         LoggedUser $loggedUser,
         LoggedAccount $loggedAccount,
         UrlGeneratorInterface $urlGenerator,
@@ -45,6 +50,19 @@ class SearchController extends AbstractController
         );
 
         $filter->page = max(0, $request->query->getInt('page'));
+        $filter->searchInFolderNames = true;
+
+        $folder = $request->query->getString('folder');
+
+        if ('none' === $folder) {
+            $filter->withoutFolder = true;
+        } elseif ('' !== $folder) {
+            $chosen = $folders->find(new FolderId($folder));
+
+            if ($chosen instanceof Folder) {
+                $filter->folderIds = [$chosen->id()];
+            }
+        }
 
         try {
             $response = $listMedia($filter, $loggedUser());
@@ -52,8 +70,21 @@ class SearchController extends AbstractController
             throw $this->createAccessDeniedException($exception->getMessage());
         }
 
+        $folderNames = [];
+
+        foreach ($folders->all() as $candidate) {
+            $folderNames[(string) $candidate->id()] = $candidate->name();
+        }
+
         return $this->json([
-            'elements' => array_map(fn($media): array => $this->toJsonElement($media, $urlGenerator), $response->media),
+            'elements' => array_map(
+                fn(Media $media): array => $this->toJsonElement(
+                    $media,
+                    $urlGenerator,
+                    $media->folderId() instanceof FolderId ? ($folderNames[(string) $media->folderId()] ?? null) : null,
+                ),
+                $response->media,
+            ),
             'totalResults' => $response->totalResults,
             'page' => $filter->page,
             'limit' => $filter->limit,

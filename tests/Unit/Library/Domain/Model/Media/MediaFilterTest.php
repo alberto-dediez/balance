@@ -26,6 +26,15 @@ class MediaFilterTest extends TestCase
         $this->assertEquals(5, $filter->limit);
     }
 
+    public function testItHasNoFolderRestrictionByDefault(): void
+    {
+        $filter = new MediaFilter();
+
+        $this->assertSame([], $filter->folderIds);
+        $this->assertSame([], $filter->nameFolderIds);
+        $this->assertNull($filter->withoutFolder);
+    }
+
     /**
      * @dataProvider filterClasses
      *
@@ -36,6 +45,7 @@ class MediaFilterTest extends TestCase
         $filter = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
 
         $this->assertNull($filter->withoutAccount);
+        $this->assertNull($filter->withoutFolder);
     }
 
     /**

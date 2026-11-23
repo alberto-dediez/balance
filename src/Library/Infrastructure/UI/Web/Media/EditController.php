@@ -7,6 +7,7 @@ namespace App\Library\Infrastructure\UI\Web\Media;
 use App\Library\Application\Media\MediaAuthorizer;
 use App\Library\Application\Media\Update\UpdateMediaRequest;
 use App\Library\Application\Media\Update\UpdateMediaService;
+use App\Library\Domain\Model\Folder\FolderNotFoundException;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Infrastructure\Symfony\Form\UpdateMediaType;
 use App\Security\Application\Action;
@@ -46,22 +47,33 @@ class EditController extends AbstractController
             alternativeText: $media->alternativeText(),
             visibility: $media->visibility(),
             shared: $media->isShared(),
+            folderId: $media->folderId(),
         );
 
         $form = $this->createForm(UpdateMediaType::class, $updateRequest, [
             'shareable' => $authorizer->canDoThat($media, Action::Admin, $user),
         ]);
 
+        $failed = false;
+
         try {
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMedia, $user): void {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateMedia, $user, &$failed): void {
                 $mediaRequest = $form->getData();
 
-                $updateMedia($mediaRequest, $user);
+                try {
+                    $updateMedia($mediaRequest, $user);
+                } catch (FolderNotFoundException) {
+                    $this->addFlash('danger', new TranslatableMessage('La carpeta elegida ya no existe'));
+
+                    $failed = true;
+
+                    return;
+                }
 
                 $this->addFlash('success', new TranslatableMessage('Archivo actualizado con éxito'));
             });
 
-            if ($needsRedirect) {
+            if ($needsRedirect && !$failed) {
                 return $this->redirectToRoute('library_media');
             }
         } catch (UnauthorizedActionException $e) {

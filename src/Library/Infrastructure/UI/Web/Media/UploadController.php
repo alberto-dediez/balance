@@ -70,6 +70,7 @@ class UploadController extends AbstractController
                         alternativeText: $keepMetadata ? $formRequest->alternativeText : null,
                         visibility: $formRequest->visibility,
                         shared: $formRequest->shared,
+                        folderId: $formRequest->folderId,
                     );
 
                     $uploadRequest = $uploadedFileMapper($uploadedFile, $account?->id(), $user->id(), $uploadRequest);

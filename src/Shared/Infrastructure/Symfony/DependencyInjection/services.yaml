@@ -49,6 +49,12 @@ parameters:
     app.anthropic_model_low: '%env(ANTHROPIC_MODEL_LOW)%'
     app.anthropic_model_medium: '%env(ANTHROPIC_MODEL_MEDIUM)%'
     app.anthropic_model_high: '%env(ANTHROPIC_MODEL_HIGH)%'
+    shared.integration.enabled: '%env(bool:INTEGRATION_EVENTS_ENABLED)%'
+    shared.integration.platform: '%env(INTEGRATION_PLATFORM)%'
+    shared.integration.max_hops: '%env(int:INTEGRATION_MAX_HOPS)%'
+    shared.integration.username: '%env(INTEGRATION_USERNAME)%'
+    shared.integration.retention_days: '%env(int:INTEGRATION_RETENTION_DAYS)%'
+    shared.integration.outbox_max_wait_minutes: '%env(int:INTEGRATION_OUTBOX_MAX_WAIT_MINUTES)%'
 
 services:
     _defaults:
@@ -237,6 +243,27 @@ services:
     App\Shared\Infrastructure\Symfony\Twig\LiveExtension:
         arguments:
             $enabled: '%shared.live_updates_enabled%'
+
+    App\Shared\Infrastructure\Integration\IntegrationSettings:
+        arguments:
+            $enabled: '%shared.integration.enabled%'
+            $platform: '%shared.integration.platform%'
+            $maxHops: '%shared.integration.max_hops%'
+
+    App\Shared\Infrastructure\Integration\IntegrationUserProvider:
+        arguments:
+            $username: '%shared.integration.username%'
+
+    App\Shared\Application\Integration\Purge\PurgeIntegrationMessagesService:
+        arguments:
+            $retentionDays: '%shared.integration.retention_days%'
+
+    App\Shared\Infrastructure\Integration\IntegrationOutboxHealthIndicator:
+        arguments:
+            $maxWaitMinutes: '%shared.integration.outbox_max_wait_minutes%'
+        tags: [{ name: shared.health_indicator, priority: 5 }]
+
+    App\Shared\Application\Integration\IntegrationEventPublisher: '@App\Shared\Infrastructure\Integration\BufferedIntegrationEventPublisher'
 
 when@dev:
     services:

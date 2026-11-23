@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Library\Domain\Model\Media;
 
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEvent;
@@ -35,6 +36,7 @@ class Media implements \Stringable
         array $events = [],
         protected \DateTimeImmutable $registeredAt = new \DateTimeImmutable('NOW'),
         protected ?\DateTimeImmutable $removedAt = null,
+        protected ?FolderId $folderId = null,
     ) {
         $this->events = $events;
     }
@@ -139,6 +141,11 @@ class Media implements \Stringable
         return $this->removedAt;
     }
 
+    public function folderId(): ?FolderId
+    {
+        return $this->folderId;
+    }
+
     public function upload(
         string $name,
         string $fileName,
@@ -213,6 +220,16 @@ class Media implements \Stringable
         );
     }
 
+    public function moveToFolder(?FolderId $folderId): void
+    {
+        $this->recordApplyAndPublish(
+            new MediaMoved(
+                mediaId: $this->id(),
+                folderId: $folderId,
+            ),
+        );
+    }
+
     public function remove(): void
     {
         $this->recordApplyAndPublish(
@@ -257,6 +274,11 @@ class Media implements \Stringable
     public function applyMediaSharingChanged(MediaSharingChanged $event): void
     {
         $this->shared = $event->isShared();
+    }
+
+    public function applyMediaMoved(MediaMoved $event): void
+    {
+        $this->folderId = $event->folderId();
     }
 
     public function applyMediaRemoved(MediaRemoved $event): void

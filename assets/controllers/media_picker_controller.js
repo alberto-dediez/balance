@@ -3,7 +3,7 @@ import { Controller } from '@hotwired/stimulus';
 import { Modal } from 'bootstrap';
 
 export default class extends Controller {
-    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared', 'dropzone', 'uploadToggle', 'clear', 'itemTemplate', 'resultTemplate', 'emptyResults', 'loadMore'];
+    static targets = ['selection', 'inputs', 'file', 'modal', 'results', 'query', 'feedback', 'includeShared', 'folder', 'dropzone', 'uploadToggle', 'clear', 'itemTemplate', 'resultTemplate', 'emptyResults', 'loadMore'];
 
     static values = {
         searchPath: String,
@@ -147,7 +147,9 @@ export default class extends Controller {
 
         const includeShared = this.hasIncludeSharedTarget && this.includeSharedTarget.checked ? '1' : '';
 
-        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}&includeShared=${includeShared}&page=${this.page}&limit=${this.limit}`;
+        const folder = this.hasFolderTarget ? this.folderTarget.value : '';
+
+        const url = `${this.searchPathValue}?query=${encodeURIComponent(query)}&types=${encodeURIComponent(this.typesValue)}&visibility=${encodeURIComponent(this.visibilityValue)}&includeShared=${includeShared}&folder=${encodeURIComponent(folder)}&page=${this.page}&limit=${this.limit}`;
 
         fetch(url, { headers: { 'Accept': 'application/json' } })
             .then(response => response.json())
@@ -182,6 +184,13 @@ export default class extends Controller {
 
         if (name) {
             name.textContent = element.name;
+        }
+
+        const folder = node.querySelector('[data-slot="folder"]');
+
+        if (folder && element.folder) {
+            folder.textContent = element.folder;
+            folder.hidden = false;
         }
 
         const badges = Array.from(node.querySelectorAll('[data-slot="type"]'));

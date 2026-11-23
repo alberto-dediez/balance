@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Application\Media\Update;
 
+use App\Library\Application\Media\MediaFolderGuard;
 use App\Library\Application\Media\Update\UpdateMediaRequest;
 use App\Library\Application\Media\Update\UpdateMediaService;
+use App\Library\Domain\Model\Folder\FolderNotFoundException;
 use App\Library\Domain\Model\Media\MediaDetailsChanged;
 use App\Library\Domain\Model\Media\MediaId;
+use App\Library\Domain\Model\Media\MediaMoved;
 use App\Library\Domain\Model\Media\MediaNotFoundException;
 use App\Library\Domain\Model\Media\MediaVisibility;
 use App\Library\Domain\Model\Media\MediaVisibilityChanged;
+use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryFolderRepository;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Security\Application\UnauthorizedActionException;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Library\Application\Folder\FolderAuthorizerMother;
 use App\Tests\Unit\Library\Application\Media\MediaAuthorizerMother;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderMother;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderRepositoryMother;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
@@ -210,8 +217,146 @@ class UpdateMediaServiceTest extends TestCase
         $this->assertTrue($sut->isHandled(new UpdateMediaRequest(mediaId: MediaId::generate(), name: 'Whatever')));
     }
 
-    private function createSUT(InMemoryMediaRepository $repository): UpdateMediaService
+    public function testChangingTheFolderMovesTheMedia(): void
     {
-        return new UpdateMediaService($repository, MediaAuthorizerMother::create());
+        $repository = new InMemoryMediaRepository();
+        $folders = FolderRepositoryMother::inMemory();
+
+        $accountId = AccountId::generate();
+
+        $folder = FolderMother::fromNameAndAccount('Contratos', $accountId);
+        $folders->add($folder);
+
+        $media = MediaMother::fromNameAndAccount('logo.png', $accountId);
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository, $folders);
+
+        $result = $sut(
+            new UpdateMediaRequest(mediaId: $media->id(), name: $media->name(), folderId: $folder->id()),
+            UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId),
+        );
+
+        $this->assertNotNull($result->folderId);
+        $this->assertTrue($result->folderId->equals($folder->id()));
+        $this->assertTrue($this->spySubscriber->lastEvent() instanceof MediaMoved);
+    }
+
+    public function testKeepingTheFolderDoesNotMoveTheMedia(): void
+    {
+        $repository = new InMemoryMediaRepository();
+        $folders = FolderRepositoryMother::inMemory();
+
+        $accountId = AccountId::generate();
+
+        $folder = FolderMother::fromNameAndAccount('Contratos', $accountId);
+        $folders->add($folder);
+
+        $media = MediaMother::inFolder('logo.png', $folder->id(), $accountId);
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository, $folders);
+
+        $sut(
+            new UpdateMediaRequest(mediaId: $media->id(), name: $media->name(), folderId: $folder->id()),
+            UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId),
+        );
+
+        $moved = array_filter($this->spySubscriber->events(), static fn($event): bool => $event instanceof MediaMoved);
+
+        $this->assertCount(1, $moved);
+    }
+
+    public function testAFolderOfAnotherAccountIsRejected(): void
+    {
+        $repository = new InMemoryMediaRepository();
+        $folders = FolderRepositoryMother::inMemory();
+
+        $accountId = AccountId::generate();
+
+        $foreign = FolderMother::fromNameAndAccount('Ajena', AccountId::generate());
+        $folders->add($foreign);
+
+        $media = MediaMother::fromNameAndAccount('logo.png', $accountId);
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository, $folders);
+
+        $this->expectException(FolderNotFoundException::class);
+
+        $sut(
+            new UpdateMediaRequest(mediaId: $media->id(), name: $media->name(), folderId: $foreign->id()),
+            UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId),
+        );
+    }
+
+    public function testAnInvalidFolderLeavesTheMediaUntouched(): void
+    {
+        $repository = new InMemoryMediaRepository();
+        $folders = FolderRepositoryMother::inMemory();
+
+        $accountId = AccountId::generate();
+
+        $foreign = FolderMother::fromNameAndAccount('Ajena', AccountId::generate());
+        $folders->add($foreign);
+
+        $media = MediaMother::fromNameAndAccount('logo.png', $accountId);
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository, $folders);
+
+        $eventsBefore = count($this->spySubscriber->events());
+        $exception = null;
+
+        try {
+            $sut(
+                new UpdateMediaRequest(mediaId: $media->id(), name: 'Nuevo nombre', folderId: $foreign->id()),
+                UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId),
+            );
+        } catch (FolderNotFoundException $folderNotFound) {
+            $exception = $folderNotFound;
+        }
+
+        $this->assertInstanceOf(FolderNotFoundException::class, $exception);
+        $this->assertSame('logo.png', $media->name());
+        $this->assertCount($eventsBefore, $this->spySubscriber->events());
+    }
+
+    public function testAnUnauthorizedSharingLeavesTheMediaUntouched(): void
+    {
+        $repository = new InMemoryMediaRepository();
+
+        $accountId = AccountId::generate();
+
+        $media = MediaMother::fromNameAndAccount('logo.png', $accountId);
+        $repository->add($media);
+
+        $sut = $this->createSUT($repository);
+
+        $eventsBefore = count($this->spySubscriber->events());
+        $exception = null;
+
+        try {
+            $sut(
+                new UpdateMediaRequest(mediaId: $media->id(), name: 'Nuevo nombre', shared: true),
+                UserMother::fromUsernameAndRoleAndAccount('owner@dediez.software', Role::Owner, $accountId),
+            );
+        } catch (UnauthorizedActionException $unauthorized) {
+            $exception = $unauthorized;
+        }
+
+        $this->assertInstanceOf(UnauthorizedActionException::class, $exception);
+        $this->assertSame('logo.png', $media->name());
+        $this->assertFalse($media->isShared());
+        $this->assertCount($eventsBefore, $this->spySubscriber->events());
+    }
+
+    private function createSUT(InMemoryMediaRepository $repository, ?InMemoryFolderRepository $folders = null): UpdateMediaService
+    {
+        return new UpdateMediaService(
+            $repository,
+            MediaAuthorizerMother::create(),
+            new MediaFolderGuard($folders ?? FolderRepositoryMother::inMemory(), FolderAuthorizerMother::create()),
+        );
     }
 }

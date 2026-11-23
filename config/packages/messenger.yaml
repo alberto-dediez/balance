@@ -29,6 +29,40 @@ framework:
                     multiplier: 2
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
+            integration_out:
+                dsn: '%env(INTEGRATION_TRANSPORT_DSN)%'
+                serializer: App\Shared\Infrastructure\Integration\Messenger\IntegrationMessageSerializer
+                options:
+                    auto_setup: false
+                    confirm_timeout: 5
+                    exchange:
+                        name: 'integration.%env(INTEGRATION_PLATFORM)%'
+                        type: topic
+                    queues: []
+            integration_in:
+                dsn: '%env(INTEGRATION_TRANSPORT_DSN)%'
+                serializer: App\Shared\Infrastructure\Integration\Messenger\IntegrationMessageSerializer
+                options:
+                    auto_setup: false
+                    exchange:
+                        name: 'integration.%env(INTEGRATION_PLATFORM)%'
+                        type: topic
+                    queues:
+                        'integration.%env(INTEGRATION_PLATFORM)%.inbox': ~
+                retry_strategy:
+                    max_retries: 0
+                failure_transport: integration_retry
+            integration_retry:
+                dsn: 'doctrine://default?queue_name=integration_retry&auto_setup=0'
+                retry_strategy:
+                    max_retries: 5
+                    delay: 2000
+                    multiplier: 3
+                failure_transport: integration_failed
+            integration_failed: 'doctrine://default?queue_name=integration_failed&auto_setup=0'
+
+        routing:
+            App\Shared\Infrastructure\Integration\Messenger\OutgoingIntegrationMessage: integration_out
 
 
 when@test:
@@ -38,3 +72,7 @@ when@test:
                 async_high: 'in-memory://'
                 async: 'in-memory://'
                 async_low: 'in-memory://'
+                integration_out: 'in-memory://'
+                integration_in: 'in-memory://'
+                integration_retry: 'in-memory://'
+                integration_failed: 'in-memory://'

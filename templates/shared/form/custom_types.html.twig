@@ -104,6 +104,8 @@
 
                     <div class="media-picker__name text-truncate" data-slot="name"></div>
 
+                    <div class="media-picker__folder text-muted fs-2 text-truncate" data-slot="folder" hidden></div>
+
                     {% for badge_type in ['Image', 'Document', 'Video', 'Audio', 'Other'] %}
                         <span class="badge bg-secondary-subtle text-secondary" data-slot="type" data-type="{{ badge_type }}" hidden>{{ badge_type | trans({}, 'mediaType') }}</span>
                     {% endfor %}
@@ -207,10 +209,20 @@
 
                                 <input type="search"
                                        class="form-control"
-                                       placeholder="{{ 'Buscar archivos' | trans }}"
+                                       placeholder="{{ 'Buscar archivos o carpetas' | trans }}"
                                        data-media-picker-target="query"
                                        data-action="input->media-picker#search">
                             </div>
+
+                            {% if folders is not empty %}
+                                <select class="form-select w-auto" data-media-picker-target="folder" data-action="change->media-picker#search" aria-label="{{ 'Carpeta' | trans }}">
+                                    <option value="" selected>{{ 'Todas las carpetas' | trans }}</option>
+                                    <option value="none">{{ 'Sin carpeta' | trans }}</option>
+                                    {% for folder in folders %}
+                                        <option value="{{ folder.id }}">{{ folder.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
 
                             <div class="form-check form-switch mb-0">
                                 <input type="checkbox"

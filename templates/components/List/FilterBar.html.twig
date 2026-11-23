@@ -36,6 +36,8 @@
                             {% set value = value | materiality_topic_name %}
                         {% elseif field == 'sectorId' %}
                             {% set value = value | materiality_sector_name %}
+                        {% elseif field == 'folder' %}
+                            {% set value = value == 'all' ? 'Todas las carpetas' | trans : value | folder_name %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
                         {% elseif field == 'status' or field == 'subjectType' %}

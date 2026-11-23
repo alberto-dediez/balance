@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Application\Media\List;
 
+use App\Library\Application\Folder\CurrentAccountFolders;
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Application\Media\List\ListMediaService;
 use App\Library\Domain\Model\Media\MediaType;
 use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryFolderRepository;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Tests\Unit\Library\Application\Media\MediaAuthorizerMother;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderMother;
+use App\Tests\Unit\Library\Domain\Model\Folder\FolderRepositoryMother;
 use App\Tests\Unit\Library\Domain\Model\Media\MediaMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
+use App\Tests\Unit\Shared\Application\CurrentAccount\StubCurrentAccountIdProvider;
 use PHPUnit\Framework\TestCase;
 
 class ListMediaServiceTest extends TestCase
@@ -149,8 +154,66 @@ class ListMediaServiceTest extends TestCase
         $this->assertNotContains('avatar.png', $names);
     }
 
-    private function createSUT(InMemoryMediaRepository $repository): ListMediaService
+    public function testItFindsTheMediaByTheNameOfItsFolderWhenAskedFor(): void
     {
-        return new ListMediaService($repository, MediaAuthorizerMother::create());
+        $accountId = AccountId::generate();
+
+        $folders = FolderRepositoryMother::inMemory();
+        $contracts = FolderMother::fromNameAndAccount('Contratos', $accountId);
+        $folders->add($contracts);
+
+        $repository = new InMemoryMediaRepository();
+        $repository->add(MediaMother::inFolder('signed.png', $contracts->id(), $accountId));
+        $repository->add(MediaMother::fromNameAndAccount('logo.png', $accountId));
+
+        $sut = $this->createSUT($repository, $folders, $accountId);
+
+        $user = UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId);
+
+        $request = new ListMediaRequest(name: 'contr', accountId: $accountId);
+        $request->searchInFolderNames = true;
+
+        $result = $sut($request, $user);
+
+        $this->assertCount(1, $result->media);
+        $this->assertEquals('signed.png', $result->media[0]->name());
+
+        $withoutFolderNames = $sut(new ListMediaRequest(name: 'contr', accountId: $accountId), $user);
+
+        $this->assertCount(0, $withoutFolderNames->media);
+    }
+
+    public function testTheFoldersOfAnotherAccountAreNotUsedToSearch(): void
+    {
+        $accountId = AccountId::generate();
+        $foreignAccountId = AccountId::generate();
+
+        $folders = FolderRepositoryMother::inMemory();
+        $foreign = FolderMother::fromNameAndAccount('Contratos', $foreignAccountId);
+        $folders->add($foreign);
+
+        $repository = new InMemoryMediaRepository();
+        $repository->add(MediaMother::sharedMedia('signed.png', $foreignAccountId));
+
+        $media = $repository->findByFilter(new ListMediaRequest(limit: 0));
+        $media[0]->moveToFolder($foreign->id());
+
+        $sut = $this->createSUT($repository, $folders, $accountId);
+
+        $request = new ListMediaRequest(name: 'contr', accountId: $accountId, includeShared: true);
+        $request->searchInFolderNames = true;
+
+        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId));
+
+        $this->assertCount(0, $result->media);
+    }
+
+    private function createSUT(InMemoryMediaRepository $repository, ?InMemoryFolderRepository $folders = null, ?AccountId $accountId = null): ListMediaService
+    {
+        return new ListMediaService(
+            $repository,
+            MediaAuthorizerMother::create(),
+            new CurrentAccountFolders($folders ?? FolderRepositoryMother::inMemory(), new StubCurrentAccountIdProvider($accountId)),
+        );
     }
 }

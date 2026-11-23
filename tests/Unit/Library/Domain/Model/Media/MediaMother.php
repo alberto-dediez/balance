@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Library\Domain\Model\Media;
 
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaVisibility;
@@ -45,6 +46,15 @@ class MediaMother
     public static function sharedMedia(string $name = 'logo.png', ?AccountId $accountId = null): Media
     {
         return self::from(MediaId::generate(), $name, 'image/png', $accountId, null, MediaVisibility::System, true);
+    }
+
+    public static function inFolder(string $name, FolderId $folderId, ?AccountId $accountId = null, ?UserId $uploadedBy = null): Media
+    {
+        $media = self::from(MediaId::generate(), $name, 'image/png', $accountId, $uploadedBy);
+
+        $media->moveToFolder($folderId);
+
+        return $media;
     }
 
     public static function document(): Media

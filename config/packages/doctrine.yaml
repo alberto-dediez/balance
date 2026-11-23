@@ -37,6 +37,7 @@ doctrine:
             job_progress_id: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressIdType
             job_progress_key: App\Shared\Infrastructure\Persistence\Doctrine\Type\JobProgressKeyType
             employee_id: App\HumanResources\Infrastructure\Persistence\Doctrine\Type\EmployeeIdType
+            folder_id: App\Library\Infrastructure\Persistence\Doctrine\Type\FolderIdType
             announcement_id: App\Changelog\Infrastructure\Persistence\Doctrine\Type\AnnouncementIdType
             youtube_video: App\Changelog\Infrastructure\Persistence\Doctrine\Type\YouTubeVideoType
             material_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\MaterialIdType

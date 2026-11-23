@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Library\Application\Media\Assistant;
 
+use App\Library\Application\Folder\CurrentAccountFolders;
 use App\Library\Application\Media\List\ListMediaRequest;
 use App\Library\Application\Media\List\ListMediaService;
 use App\Library\Application\Media\MediaAuthorizer;
+use App\Library\Domain\Model\Folder\Folder;
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaType;
@@ -29,6 +32,7 @@ class ListMediaTool implements AssistantTool
         private readonly ListMediaService $listMedia,
         private readonly MediaAuthorizer $authorizer,
         private readonly CurrentAccountIdProvider $currentAccount,
+        private readonly CurrentAccountFolders $folders,
     ) {}
 
     public function name(): string
@@ -43,7 +47,7 @@ class ListMediaTool implements AssistantTool
 
     public function description(): string
     {
-        return 'Lista los ficheros de la biblioteca de medios por nombre y tipo, del más reciente al más antiguo. Después se abren con read_media.';
+        return 'Lista los ficheros de la biblioteca de medios por nombre y tipo, del más reciente al más antiguo. El nombre también encuentra los ficheros por el nombre de su carpeta y folder acota a las carpetas cuyo nombre lo contiene. Después se abren con read_media.';
     }
 
     public function mode(): ToolMode
@@ -55,6 +59,7 @@ class ListMediaTool implements AssistantTool
     {
         return [
             ToolParameter::string('name', 'Nombre', 'Parte del nombre del fichero.'),
+            ToolParameter::string('folder', 'Carpeta', 'Parte del nombre de la carpeta en la que buscar. Sin él se listan los ficheros de todas las carpetas.'),
             ToolParameter::enum('type', 'Tipo', 'Tipo de fichero.', array_column(MediaType::cases(), 'value')),
             ToolParameter::limit(),
         ];
@@ -69,17 +74,42 @@ class ListMediaTool implements AssistantTool
     {
         $type = $arguments->string('type');
         $accountId = $this->currentAccount->currentAccountId();
+        $folder = $arguments->string('folder');
 
-        $response = ($this->listMedia)(
-            new ListMediaRequest(
-                name: $arguments->string('name'),
-                type: null === $type ? null : MediaType::from($type),
-                accountId: $accountId,
-                withoutAccount: !$accountId instanceof AccountId,
-                limit: $arguments->limit(),
-            ),
-            $user,
+        $folderIds = [];
+
+        if (null !== $folder && '' !== $folder) {
+            $folderIds = array_map(static fn(Folder $candidate): FolderId => $candidate->id(), $this->folders->matchingName($folder));
+
+            if ([] === $folderIds) {
+                return new ToolResult(
+                    summary: 'No hay ninguna carpeta con ese nombre',
+                    data: [
+                        'media' => [],
+                        'total' => 0,
+                    ],
+                );
+            }
+        }
+
+        $request = new ListMediaRequest(
+            name: $arguments->string('name'),
+            type: null === $type ? null : MediaType::from($type),
+            accountId: $accountId,
+            withoutAccount: !$accountId instanceof AccountId,
+            limit: $arguments->limit(),
+            folderIds: $folderIds,
         );
+
+        $request->searchInFolderNames = true;
+
+        $response = ($this->listMedia)($request, $user);
+
+        $folderNames = [];
+
+        foreach ($this->folders->all() as $candidate) {
+            $folderNames[(string) $candidate->id()] = $candidate->name();
+        }
 
         return new ToolResult(
             summary: sprintf('%d ficheros encontrados', $response->totalResults),
@@ -95,6 +125,7 @@ class ListMediaTool implements AssistantTool
                         'size' => $media->size(),
                         'registeredAt' => $context->dateTime($media->registeredAt()),
                         'readable' => ToolDocument::isReadable($media->mimeType()),
+                        'folder' => $media->folderId() instanceof FolderId ? ($folderNames[(string) $media->folderId()] ?? null) : null,
                     ],
                     $response->media,
                 ),

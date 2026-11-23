@@ -117,3 +117,59 @@ Feature:
         Then I see a text "Biblioteca"
         Then I see a text "Arrastra aquí el archivo o pulsa para elegirlo"
         Then I do not see a text "Seleccionar de la biblioteca"
+
+    Scenario: The search lists the files of every folder and tells their folder
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given folder "Contratos" with id "f-1" exists
+        Given media "signed.png" with id "1111" in folder "f-1" exists
+        Given media "logo.png" with id "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search"
+        Then the response status should be 200
+        Then I see a text "signed.png"
+        Then I see a text "logo.png"
+        Then I see a text '"folder":"Contratos"'
+
+    Scenario: The search can be restricted to a folder
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given folder "Contratos" with id "f-1" exists
+        Given media "signed.png" with id "1111" in folder "f-1" exists
+        Given media "logo.png" with id "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?folder=f-1"
+        Then the response status should be 200
+        Then I see a text "signed.png"
+        Then I do not see a text "logo.png"
+
+    Scenario: The search can be restricted to the files without folder
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given folder "Contratos" with id "f-1" exists
+        Given media "signed.png" with id "1111" in folder "f-1" exists
+        Given media "logo.png" with id "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?folder=none"
+        Then the response status should be 200
+        Then I see a text "logo.png"
+        Then I do not see a text "signed.png"
+
+    Scenario: A folder of another account is ignored by the search
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "user1@dediez.software" with role "ROLE_USER" of account "1111" exists
+        Given folder "Ajena" with id "f-3" of account "2222" exists
+        Given media "own.png" with id "m-1" of account "1111" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?folder=f-3"
+        Then the response status should be 200
+        Then I see a text "own.png"
+
+    Scenario: The search finds the files by the name of their folder
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given folder "Contratos" with id "f-1" exists
+        Given media "signed.png" with id "1111" in folder "f-1" exists
+        Given media "logo.png" with id "2222" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?query=contr"
+        Then the response status should be 200
+        Then I see a text "signed.png"
+        Then I do not see a text "logo.png"

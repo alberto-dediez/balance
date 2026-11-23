@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\Persistence\InMemory\Repository;
 
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Media\Media;
 use App\Library\Domain\Model\Media\MediaFilter;
 use App\Library\Domain\Model\Media\MediaId;
@@ -95,6 +96,7 @@ class InMemoryMediaRepository implements MediaRepository
             !in_array($filter->name, [null, '', '0'], true)
             && !str_contains(strtolower($media->name()), strtolower($filter->name))
             && !str_contains(strtolower($media->fileName()), strtolower($filter->name))
+            && !$this->isInAnyFolder($media, $filter->nameFolderIds)
         ) {
             return false;
         }
@@ -111,7 +113,54 @@ class InMemoryMediaRepository implements MediaRepository
             return false;
         }
 
+        if ([] !== $filter->folderIds && !$this->isInAnyFolder($media, $filter->folderIds)) {
+            return false;
+        }
+
+        if (
+            [] === $filter->folderIds
+            && true === $filter->withoutFolder
+            && $media->folderId() instanceof FolderId
+            && (!$this->hasAccountScope($filter) || $this->belongsToFilterAccount($media, $filter))
+        ) {
+            return false;
+        }
+
         return $this->matchesAccountScope($media, $filter);
+    }
+
+    /**
+     * @param list<FolderId> $folderIds
+     */
+    private function isInAnyFolder(Media $media, array $folderIds): bool
+    {
+        $folderId = $media->folderId();
+
+        if (!$folderId instanceof FolderId) {
+            return false;
+        }
+
+        foreach ($folderIds as $candidate) {
+            if ($candidate->equals($folderId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasAccountScope(MediaFilter $filter): bool
+    {
+        return $filter->accountId instanceof AccountId || true === $filter->withoutAccount;
+    }
+
+    private function belongsToFilterAccount(Media $media, MediaFilter $filter): bool
+    {
+        if ($filter->accountId instanceof AccountId) {
+            return $media->accountId() instanceof AccountId && $media->accountId()->equals($filter->accountId);
+        }
+
+        return true === $filter->withoutAccount && !$media->accountId() instanceof AccountId;
     }
 
     private function matchesAccountScope(Media $media, MediaFilter $filter): bool
