@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Tcpdf;
 
 use App\Shared\Domain\Model\Branding\PdfBranding;
-use League\CommonMark\GithubFlavoredMarkdownConverter;
+use App\Shared\Infrastructure\Symfony\Twig\MarkdownExtension;
 
 trait GenericGenerator
 {
@@ -427,12 +427,9 @@ trait GenericGenerator
 
     private function markdownToStyledHtml(string $markdown): string
     {
-        $converter = new GithubFlavoredMarkdownConverter([
-            'html_input' => 'escape',
-            'allow_unsafe_links' => false,
-        ]);
-        $html = (string) $converter->convert($markdown);
+        $html = (new MarkdownExtension())->mdToHtml($markdown);
         $html = preg_replace('#&lt;br\s*/?&gt;#i', '<br />', $html) ?? $html;
+        $html = preg_replace('#<(/?)b>#', '<$1strong>', $html) ?? $html;
 
         $html = preg_replace_callback(
             '/<h1>(.*?)<\/h1>/s',
