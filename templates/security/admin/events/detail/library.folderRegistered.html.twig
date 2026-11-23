@@ -1,3 +1,9 @@
-{% trans with {
-    '{name}': event.name
-} %}Creada la carpeta {name}{% endtrans %}
+{% if event.parentId %}
+    {% trans with {
+        '{name}': event.name
+    } %}Creada la subcarpeta {name}{% endtrans %}
+{% else %}
+    {% trans with {
+        '{name}': event.name
+    } %}Creada la carpeta {name}{% endtrans %}
+{% endif %}

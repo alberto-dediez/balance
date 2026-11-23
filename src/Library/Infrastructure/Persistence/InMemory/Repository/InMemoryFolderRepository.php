@@ -38,10 +38,14 @@ class InMemoryFolderRepository implements FolderRepository
         return $this->folders[(string) $folderId] ?? null;
     }
 
-    public function findOneByAccountAndName(?AccountId $accountId, string $name): ?Folder
+    public function findOneByAccountAndName(?AccountId $accountId, string $name, ?FolderId $parentId = null): ?Folder
     {
         foreach ($this->folders as $folder) {
-            if (mb_strtolower($folder->name()) === mb_strtolower($name) && $this->belongsTo($folder, $accountId)) {
+            if (
+                mb_strtolower($folder->name()) === mb_strtolower($name)
+                && $this->belongsTo($folder, $accountId)
+                && $this->hasParent($folder, $parentId)
+            ) {
                 return $folder;
             }
         }
@@ -69,6 +73,10 @@ class InMemoryFolderRepository implements FolderRepository
             }
 
             if (true === $filter->withoutAccount && $folder->accountId() instanceof AccountId) {
+                continue;
+            }
+
+            if ($filter->parentId instanceof FolderId && !$this->hasParent($folder, $filter->parentId)) {
                 continue;
             }
 
@@ -105,5 +113,14 @@ class InMemoryFolderRepository implements FolderRepository
         }
 
         return $folder->accountId() instanceof AccountId && $folder->accountId()->equals($accountId);
+    }
+
+    private function hasParent(Folder $folder, ?FolderId $parentId): bool
+    {
+        if (!$parentId instanceof FolderId) {
+            return !$folder->parentId() instanceof FolderId;
+        }
+
+        return $folder->parentId() instanceof FolderId && $folder->parentId()->equals($parentId);
     }
 }

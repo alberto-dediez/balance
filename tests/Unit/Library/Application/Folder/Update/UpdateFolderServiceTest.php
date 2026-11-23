@@ -79,6 +79,40 @@ class UpdateFolderServiceTest extends TestCase
         ($this->sut)(new UpdateFolderRequest(folderId: $folder->id(), name: 'Facturas'), $this->owner());
     }
 
+    public function testASubfolderCannotTakeTheNameOfASibling(): void
+    {
+        $contracts = FolderMother::fromNameAndAccount('Contratos', $this->accountId);
+        $subfolder = FolderMother::subfolderOf($contracts, '2024');
+
+        $this->repository->add($contracts);
+        $this->repository->add($subfolder);
+        $this->repository->add(FolderMother::subfolderOf($contracts, '2025'));
+
+        $this->expectException(FolderAlreadyExistsException::class);
+
+        ($this->sut)(new UpdateFolderRequest(folderId: $subfolder->id(), name: '2025'), $this->owner());
+    }
+
+    public function testASubfolderCanTakeTheNameOfAFolderOrOfASubfolderOfAnotherFolder(): void
+    {
+        $contracts = FolderMother::fromNameAndAccount('Contratos', $this->accountId);
+        $invoices = FolderMother::fromNameAndAccount('Facturas', $this->accountId);
+        $subfolder = FolderMother::subfolderOf($contracts, '2024');
+
+        $this->repository->add($contracts);
+        $this->repository->add($invoices);
+        $this->repository->add($subfolder);
+        $this->repository->add(FolderMother::subfolderOf($invoices, '2025'));
+
+        $result = ($this->sut)(new UpdateFolderRequest(folderId: $subfolder->id(), name: '2025'), $this->owner());
+
+        $this->assertEquals('2025', $result->name);
+
+        $result = ($this->sut)(new UpdateFolderRequest(folderId: $subfolder->id(), name: 'Facturas'), $this->owner());
+
+        $this->assertEquals('Facturas', $result->name);
+    }
+
     public function testUnknownFolder(): void
     {
         $this->expectException(FolderNotFoundException::class);

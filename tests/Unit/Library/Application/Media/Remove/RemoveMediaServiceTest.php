@@ -9,6 +9,7 @@ use App\Library\Application\Media\Remove\RemoveMediaService;
 use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaNotFoundException;
 use App\Library\Domain\Model\Media\MediaRemoved;
+use App\Library\Domain\Model\Media\NotStoredMediaException;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaRepository;
 use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
 use App\Security\Application\UnauthorizedActionException;
@@ -57,6 +58,35 @@ class RemoveMediaServiceTest extends TestCase
         $lastEvent = $this->spySubscriber->lastEvent();
 
         $this->assertTrue($lastEvent instanceof MediaRemoved);
+    }
+
+    public function testTheMediaIsKeptWhenTheStorageFails(): void
+    {
+        $repository = new InMemoryMediaRepository();
+        $storage = MediaStorageMother::inMemory();
+
+        $media = MediaMother::uploadedMedia();
+
+        $storage->store($media->id(), null, 'png', MediaStorageMother::localFile());
+
+        $repository->add($media);
+
+        $storage->markUnavailable();
+
+        $sut = $this->createSUT($repository, $storage);
+
+        try {
+            $sut(new RemoveMediaRequest($media->id()), UserMother::adminUser());
+
+            $this->fail('NotStoredMediaException was expected');
+        } catch (NotStoredMediaException) {
+        }
+
+        $recovered = $repository->find($media->id());
+
+        $this->assertNotNull($recovered);
+        $this->assertNull($recovered->removedAt());
+        $this->assertFalse($this->spySubscriber->lastEvent() instanceof MediaRemoved);
     }
 
     public function testUnknownMedia(): void

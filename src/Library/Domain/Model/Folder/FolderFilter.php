@@ -18,6 +18,7 @@ class FolderFilter
         public ?AccountId $accountId = null,
         ?bool $withoutAccount = null,
         int $limit = 10,
+        public ?FolderId $parentId = null,
     ) {
         $this->withoutAccount = $withoutAccount;
         $this->limit = $limit;

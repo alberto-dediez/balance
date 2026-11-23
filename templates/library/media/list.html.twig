@@ -2,6 +2,94 @@
 
 {% set page_title = 'Biblioteca' | trans %}
 
+{% if currentFolder and activeFolder %}
+    {% set page_title = page_title ~ ' > ' ~ activeFolder.name %}
+
+    {% if currentFolder.isSubfolder %}
+        {% set page_title = page_title ~ ' > ' ~ currentFolder.name %}
+    {% elseif includesSubfolders %}
+        {% set page_title = page_title ~ ' > ' ~ 'Todas las subcarpetas' | trans %}
+    {% endif %}
+{% elseif folderChoice == 'all' %}
+    {% set page_title = page_title ~ ' > ' ~ 'Todas las carpetas' | trans %}
+{% endif %}
+
+{% block list_top %}
+    {% if folders is not empty or canManageFolders %}
+        <twig:Card title="{{ 'Carpetas' | trans }}" icon="solar:folder-line-duotone">
+            <twig:block name="actions">
+                {% if canManageFolders %}
+                    <twig:Link path="{{ path('library_folders_register') }}" color="primarySubtle">
+                        <twig:Icon name="solar:add-square-line-duotone" size="lg" class="me-2" />
+
+                        {% trans %}Nueva carpeta{% endtrans %}
+                    </twig:Link>
+                {% endif %}
+            </twig:block>
+
+            {% if folders is not empty %}
+                <div class="d-flex flex-wrap gap-2" data-controller="filter" data-folder-strip="folders">
+                    <twig:Library:FolderTile label="{{ 'Sin carpeta' | trans }}" value="" icon="solar:gallery-wide-line-duotone" :active="folderChoice is null" field="#{{ form.folder.vars.id }}" />
+
+                    {% for folder in folders %}
+                        <twig:Library:FolderTile :label="folder.name" value="{{ folder.id }}" :active="activeFolder and activeFolder.id.equals(folder.id)" field="#{{ form.folder.vars.id }}">
+                            {% if folder | is_authorized('edit') %}
+                                <twig:List:Action:Edit path="{{ path('library_folders_edit', {'folderId': folder.id}) }}" />
+                            {% endif %}
+
+                            {% if folder | is_authorized('remove') %}
+                                <twig:List:Action:Delete path="{{ path('library_folders_remove', {'folderId': folder.id}) }}" confirm="{{ '¿Está seguro de que desea eliminar esta carpeta? Se eliminarán también sus subcarpetas y todos los archivos que contiene. Esta acción no se puede deshacer' | trans }}" />
+                            {% endif %}
+                        </twig:Library:FolderTile>
+                    {% endfor %}
+
+                    <twig:Library:FolderTile label="{{ 'Todas las carpetas' | trans }}" value="all" icon="solar:folder-with-files-line-duotone" :active="folderChoice == 'all'" field="#{{ form.folder.vars.id }}" />
+                </div>
+
+                {% if activeFolder and (subfolders is not empty or canManageFolders) %}
+                    <div class="border-top mt-3 pt-3">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="text-muted">{{ 'Subcarpetas de {folder}' | trans({'{folder}': activeFolder.name}) }}</span>
+
+                            {% if canManageFolders %}
+                                <twig:Link path="{{ path('library_folders_register', {'parent': activeFolder.id}) }}" color="primarySubtle">
+                                    <twig:Icon name="solar:add-square-line-duotone" size="lg" class="me-2" />
+
+                                    {% trans %}Nueva subcarpeta{% endtrans %}
+                                </twig:Link>
+                            {% endif %}
+                        </div>
+
+                        {% if subfolders is not empty %}
+                            <div class="d-flex flex-wrap gap-2" data-controller="filter" data-folder-strip="subfolders">
+                                <twig:Library:FolderTile label="{{ 'Sin subcarpeta' | trans }}" value="{{ activeFolder.id }}" icon="solar:gallery-wide-line-duotone" :active="folderChoice == activeFolder.id ~ ''" field="#{{ form.folder.vars.id }}" />
+
+                                {% for subfolder in subfolders %}
+                                    <twig:Library:FolderTile :label="subfolder.name" value="{{ subfolder.id }}" :active="currentFolder.id.equals(subfolder.id)" field="#{{ form.folder.vars.id }}">
+                                        {% if subfolder | is_authorized('edit') %}
+                                            <twig:List:Action:Edit path="{{ path('library_folders_edit', {'folderId': subfolder.id}) }}" />
+                                        {% endif %}
+
+                                        {% if subfolder | is_authorized('remove') %}
+                                            <twig:List:Action:Delete path="{{ path('library_folders_remove', {'folderId': subfolder.id}) }}" confirm="{{ '¿Está seguro de que desea eliminar esta subcarpeta? Se eliminarán también todos los archivos que contiene. Esta acción no se puede deshacer' | trans }}" />
+                                        {% endif %}
+                                    </twig:Library:FolderTile>
+                                {% endfor %}
+
+                                <twig:Library:FolderTile label="{{ 'Todas las subcarpetas' | trans }}" value="all:{{ activeFolder.id }}" icon="solar:folder-with-files-line-duotone" :active="includesSubfolders" field="#{{ form.folder.vars.id }}" />
+                            </div>
+                        {% else %}
+                            <p class="text-muted mb-0">{% trans %}Esta carpeta todavía no tiene subcarpetas{% endtrans %}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-muted mb-0">{% trans %}Todavía no hay carpetas{% endtrans %}</p>
+            {% endif %}
+        </twig:Card>
+    {% endif %}
+{% endblock %}
+
 {% block table %}
     {% set type_colors = {'Image': 'primary', 'Document': 'info', 'Video': 'warning', 'Audio': 'success', 'Other': 'secondary'} %}
     {% set visibility_colors = {'Account': 'secondary', 'System': 'info', 'Public': 'warning'} %}
@@ -36,47 +124,49 @@
     }
     ]) %}
 
-    <twig:List:Table :columns="columns" :elements="media" :bulkForm="bulkForm">
-        <td>
-            <twig:Library:Thumbnail size="sm" :name="element.alternativeText | default(element.name)" :type="element.type.value" :isImage="element.image" :url="element.image ? path('library_media_show', {'mediaId': element.id}) : null" />
-        </td>
-        <td>
-            {{ element.name }}
+    <div class="table-responsive">
+        <twig:List:Table :columns="columns" :elements="media" :bulkForm="bulkForm">
+            <td>
+                <twig:Library:Thumbnail size="sm" :name="element.alternativeText | default(element.name)" :type="element.type.value" :isImage="element.image" :url="element.image ? path('library_media_show', {'mediaId': element.id}) : null" />
+            </td>
+            <td class="text-break">
+                {{ element.name }}
 
-            <div class="text-muted fs-2">
-                {{ element.fileName }}
-            </div>
-        </td>
-        <td>{{ element.folderId ? folderNames[element.folderId ~ ''] | default('') : '' }}</td>
-        <td>
-            <span class="badge bg-{{ type_colors[element.type.value] }}-subtle text-{{ type_colors[element.type.value] }}">{{ element.type.value | trans({}, 'mediaType') }}</span>
-        </td>
+                <div class="text-muted fs-2">
+                    {{ element.fileName }}
+                </div>
+            </td>
+            <td class="text-break">{{ element.folderId ? folderNames[element.folderId ~ ''] | default('') : '' }}</td>
+            <td>
+                <span class="badge bg-{{ type_colors[element.type.value] }}-subtle text-{{ type_colors[element.type.value] }}">{{ element.type.value | trans({}, 'mediaType') }}</span>
+            </td>
 
-        <td>
-            <span class="badge bg-{{ visibility_colors[element.visibility.value] }}-subtle text-{{ visibility_colors[element.visibility.value] }}">{{ element.visibility.value | trans({}, 'mediaVisibility') }}</span>
+            <td>
+                <span class="badge bg-{{ visibility_colors[element.visibility.value] }}-subtle text-{{ visibility_colors[element.visibility.value] }}">{{ element.visibility.value | trans({}, 'mediaVisibility') }}</span>
 
-            {% if element.shared %}
-                <span class="badge bg-success-subtle text-success">{{ 'Compartido' | trans }}</span>
-            {% endif %}
-        </td>
-        <td>{{ element.size | file_size }}</td>
-        <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
-        <td>
-            <twig:List:Action:Download path="{{ path('library_media_show', {'mediaId': element.id, 'download': 1}) }}" />
+                {% if element.shared %}
+                    <span class="badge bg-success-subtle text-success">{{ 'Compartido' | trans }}</span>
+                {% endif %}
+            </td>
+            <td>{{ element.size | file_size }}</td>
+            <td>{{ element.registeredAt | date('d/m/Y H:i') }}</td>
+            <td class="text-nowrap">
+                <twig:List:Action:Download path="{{ path('library_media_show', {'mediaId': element.id, 'download': 1}) }}" />
 
-            {% if element | is_authorized('edit') %}
-                <twig:List:Action:Edit path="{{ path('library_media_edit', {'mediaId': element.id}) }}" />
-            {% endif %}
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('library_media_edit', {'mediaId': element.id}) }}" />
+                {% endif %}
 
-            {% if element | is_authorized('remove') %}
-                <twig:List:Action:Delete path="{{ path('library_media_remove', {'mediaId': element.id}) }}" />
-            {% endif %}
-        </td>
-    </twig:List:Table>
+                {% if element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('library_media_remove', {'mediaId': element.id}) }}" />
+                {% endif %}
+            </td>
+        </twig:List:Table>
+    </div>
 {% endblock %}
 
 {% block list_actions %}
-    <twig:Link path="{{ path('library_media_upload') }}" color="primary">
+    <twig:Link path="{{ path('library_media_upload', currentFolder ? {'folder': currentFolder.id} : {}) }}" color="primary">
         <twig:Icon name="solar:upload-square-line-duotone" size="lg" class="me-2" />
 
         {% trans %}Subir archivo{% endtrans %}

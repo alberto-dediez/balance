@@ -29,7 +29,13 @@
                         {% elseif field == 'companyId' %}
                             {% set value = value | company_name %}
                         {% elseif field == 'folder' %}
-                            {% set value = value == 'all' ? 'Todas las carpetas' | trans : value | folder_name %}
+                            {% if value == 'all' %}
+                                {% set value = 'Todas las carpetas' | trans %}
+                            {% elseif value starts with 'all:' %}
+                                {% set value = (value | slice(4) | folder_name) ~ ' / ' ~ ('Todas las subcarpetas' | trans) %}
+                            {% else %}
+                                {% set value = value | folder_name %}
+                            {% endif %}
                         {% elseif formField.vars.choice_translation_domain is defined and formField.vars.choice_translation_domain and value is not iterable %}
                             {% set value = (value | show_field_value) | trans({}, formField.vars.choice_translation_domain) %}
                         {% elseif field == 'signatureStatus' %}

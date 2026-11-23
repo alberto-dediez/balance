@@ -71,7 +71,7 @@ Feature:
         When I am logged as "user1@dediez.software"
         When I go to "/es/notifications"
         Then I see a link with title "Marcar como no leída"
-        Then I see a link with title "Marcar como leída"
+        Then I see 2 links with title "Marcar como leída"
 
     Scenario: The list does not show the mark-as-unread action for unread notifications
         Given user "user1@dediez.software" with role "ROLE_USER" exists

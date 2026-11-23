@@ -12,5 +12,6 @@ class RegisterFolderResponse implements CommandResponse
     public function __construct(
         public FolderId $folderId,
         public string $name,
+        public ?FolderId $parentId = null,
     ) {}
 }

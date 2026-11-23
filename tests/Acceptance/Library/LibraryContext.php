@@ -123,6 +123,18 @@ final class LibraryContext implements Context
         $this->getFolderRepository()->add(FolderMother::from(new FolderId($id), $name, new AccountId($account)));
     }
 
+    #[Given('subfolder :name with id :id in folder :parent exists')]
+    public function subfolderWithIdInFolderExists(string $name, string $id, string $parent): void
+    {
+        $this->getFolderRepository()->add(FolderMother::from(new FolderId($id), $name, null, new FolderId($parent)));
+    }
+
+    #[Given('subfolder :name with id :id in folder :parent of account :account exists')]
+    public function subfolderWithIdInFolderOfAccountExists(string $name, string $id, string $parent, string $account): void
+    {
+        $this->getFolderRepository()->add(FolderMother::from(new FolderId($id), $name, new AccountId($account), new FolderId($parent)));
+    }
+
     #[Given('media :name with id :id in folder :folder exists')]
     public function mediaWithIdInFolderExists(string $name, string $id, string $folder): void
     {
@@ -162,6 +174,18 @@ final class LibraryContext implements Context
         $this->filterTheLibraryByFolder(static fn(ChoiceFormField $field): string => 'all');
     }
 
+    #[When('I filter the library by the subfolder :path')]
+    public function iFilterTheLibraryByTheSubfolder(string $path): void
+    {
+        $this->filterTheLibraryByFolder(fn(ChoiceFormField $field): string => $this->optionValue('select[name$="[folder]"]', $path));
+    }
+
+    #[When('I filter the library by all the subfolders of :folder')]
+    public function iFilterTheLibraryByAllTheSubfoldersOf(string $folder): void
+    {
+        $this->filterTheLibraryByFolder(fn(ChoiceFormField $field): string => 'all:' . $this->optionValue('select[name$="[folder]"]', $folder));
+    }
+
     #[When('I move the media :ids to the folder :name')]
     public function iMoveTheMediaToTheFolder(string $ids, string $name): void
     {
@@ -182,6 +206,42 @@ final class LibraryContext implements Context
         );
 
         Assert::assertContains($text, $filters);
+    }
+
+    #[Then('I see the folder tiles :labels')]
+    public function iSeeTheFolderTiles(string $labels): void
+    {
+        $this->assertTiles('folders', $labels, fn(string $label): string => $this->folderTileValue($label));
+    }
+
+    #[Then('the folder tile :label is active')]
+    public function theFolderTileIsActive(string $label): void
+    {
+        $this->assertActiveTile('folders', $label);
+    }
+
+    #[Then('I see the subfolder tiles :labels of the folder :folder')]
+    public function iSeeTheSubfolderTilesOfTheFolder(string $labels, string $folder): void
+    {
+        $this->assertTiles('subfolders', $labels, fn(string $label): string => $this->subfolderTileValue($folder, $label));
+    }
+
+    #[Then('the subfolder tile :label is active')]
+    public function theSubfolderTileIsActive(string $label): void
+    {
+        $this->assertActiveTile('subfolders', $label);
+    }
+
+    #[Then('the media :id is removed')]
+    public function theMediaIsRemoved(string $id): void
+    {
+        Assert::assertNull($this->getMediaRepository()->find(new MediaId($id)));
+    }
+
+    #[Then('the media :id is not removed')]
+    public function theMediaIsNotRemoved(string $id): void
+    {
+        Assert::assertNull($this->getMedia($id)->removedAt());
     }
 
     #[Then('the media :id is in the folder :folder')]
@@ -266,6 +326,18 @@ final class LibraryContext implements Context
         $fileValues['upload_media']['file'] = $files;
 
         $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $values, $fileValues);
+    }
+
+    #[Then('the upload form has the folder :name selected')]
+    public function theUploadFormHasTheFolderSelected(string $name): void
+    {
+        Assert::assertSame([$name], $this->selectedUploadFolders());
+    }
+
+    #[Then('the upload form has no folder selected')]
+    public function theUploadFormHasNoFolderSelected(): void
+    {
+        Assert::assertSame([], $this->selectedUploadFolders());
     }
 
     #[When('I send the media :id to the folder :folder through a forged edit form')]
@@ -511,6 +583,66 @@ final class LibraryContext implements Context
         $this->client->requestWithFiles($form->getMethod(), $form->getUri(), $values);
     }
 
+    /**
+     * @param \Closure(string): string $expectedValue
+     */
+    private function assertTiles(string $strip, string $labels, \Closure $expectedValue): void
+    {
+        $expected = array_map(trim(...), explode(',', $labels));
+
+        $tiles = $this->client->getCrawler()->filter(sprintf('[data-folder-strip="%s"] .folder-tile__open', $strip));
+
+        Assert::assertSame($expected, $tiles->each(static fn(Crawler $tile): string => trim($tile->text())));
+
+        $folderField = $this->client->getCrawler()->filter('select[name$="[folder]"]');
+
+        Assert::assertGreaterThan(0, $folderField->count(), 'There is no folder filter field');
+
+        $tiles->each(function (Crawler $tile) use ($folderField, $expectedValue): void {
+            $label = trim($tile->text());
+
+            Assert::assertSame('#' . $folderField->attr('id'), $tile->attr('data-filter-field-param'), sprintf('The folder tile "%s" does not point to the folder filter', $label));
+            Assert::assertSame($expectedValue($label), $tile->attr('data-filter-value-param'), sprintf('The folder tile "%s" has a wrong value', $label));
+        });
+    }
+
+    private function assertActiveTile(string $strip, string $label): void
+    {
+        $crawler = $this->client->getCrawler();
+
+        $active = $crawler->filter(sprintf('[data-folder-strip="%s"] .folder-tile__open[aria-current="true"]', $strip))->each(
+            static fn(Crawler $tile): string => trim($tile->text()),
+        );
+
+        Assert::assertSame([$label], $active);
+
+        $highlighted = $crawler->filter(sprintf('[data-folder-strip="%s"] .folder-tile--active .folder-tile__open', $strip))->each(
+            static fn(Crawler $tile): string => trim($tile->text()),
+        );
+
+        Assert::assertSame([$label], $highlighted);
+    }
+
+    private function subfolderTileValue(string $folder, string $label): string
+    {
+        $folderId = $this->optionValue('select[name$="[folder]"]', $folder);
+
+        return match ($label) {
+            'Sin subcarpeta' => $folderId,
+            'Todas las subcarpetas' => 'all:' . $folderId,
+            default => $this->optionValue('select[name$="[folder]"]', $folder . ' / ' . $label),
+        };
+    }
+
+    private function folderTileValue(string $label): string
+    {
+        return match ($label) {
+            'Sin carpeta' => '',
+            'Todas las carpetas' => 'all',
+            default => $this->optionValue('select[name$="[folder]"]', $label),
+        };
+    }
+
     private function optionValue(string $selector, string $label): string
     {
         $options = $this->client->getCrawler()->filter($selector . ' option')->reduce(
@@ -520,6 +652,20 @@ final class LibraryContext implements Context
         Assert::assertGreaterThan(0, $options->count(), sprintf('There is no option "%s"', $label));
 
         return (string) $options->first()->attr('value');
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function selectedUploadFolders(): array
+    {
+        $crawler = $this->client->getCrawler();
+
+        Assert::assertGreaterThan(0, $crawler->filter('select[name$="[folderId]"]')->count(), 'There is no folder field');
+
+        return $crawler->filter('select[name$="[folderId]"] option[selected]')
+            ->reduce(static fn(Crawler $option): bool => '' !== (string) $option->attr('value'))
+            ->each(static fn(Crawler $option): string => trim($option->text()));
     }
 
     /**

@@ -11,6 +11,7 @@ class RemoveFolderResponse implements CommandResponse
 {
     public function __construct(
         public FolderId $folderId,
-        public int $releasedMedia = 0,
+        public int $removedMedia = 0,
+        public int $removedSubfolders = 0,
     ) {}
 }

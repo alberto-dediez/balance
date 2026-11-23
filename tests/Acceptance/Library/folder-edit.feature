@@ -9,6 +9,7 @@ Feature:
         When I go to "/es/library/folders/edit/f-1"
         Then the response status should be 200
         When I submit a form with "name:Contratos firmados" and button "Guardar y salir"
+        Then the response redirects to "/es/library/media"
         When I follow redirect
         Then the response status should be 200
         Then I see a text "Carpeta actualizada con éxito"
@@ -24,6 +25,34 @@ Feature:
         When I submit a form with "name:Facturas" and button "Guardar y salir"
         Then the response status should be 200
         Then I see a text "Ya existe una carpeta con ese nombre"
+        Then I do not see a text "Carpeta actualizada con éxito"
+
+    Scenario: As an owner I can rename a subfolder
+        Given account "Minotour" with id "1111" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "1111" exists
+        Given folder "Contratos" with id "f-1" of account "1111" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" of account "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/library/folders/edit/s-1"
+        Then the response status should be 200
+        Then I see a text "Biblioteca &gt; Contratos &gt; Editar subcarpeta &gt; 2024"
+        When I submit a form with "name:2024 firmados" and button "Guardar y salir"
+        Then the response redirects to "/es/library/media"
+        When I follow redirect
+        Then I see a text "Carpeta actualizada con éxito"
+        Then the folder "2024 firmados" exists
+
+    Scenario: A subfolder cannot take the name of a sibling
+        Given account "Minotour" with id "1111" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "1111" exists
+        Given folder "Contratos" with id "f-1" of account "1111" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" of account "1111" exists
+        Given subfolder "2025" with id "s-2" in folder "f-1" of account "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/library/folders/edit/s-1"
+        When I submit a form with "name:2025" and button "Guardar y salir"
+        Then the response status should be 200
+        Then I see a text "Ya existe una subcarpeta con ese nombre en esta carpeta"
         Then I do not see a text "Carpeta actualizada con éxito"
 
     Scenario: As a user I cannot rename folders

@@ -11,6 +11,7 @@ use App\Security\Application\UnauthorizedActionException;
 use App\Security\Infrastructure\Symfony\Security\LoggedUser;
 use App\Shared\Infrastructure\UI\Web\CsrfProtected;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -27,6 +28,7 @@ class MarkAsReadController extends AbstractController
         string $id,
         MarkNotificationAsReadService $markAsRead,
         LoggedUser $loggedUser,
+        Request $request,
     ): Response {
         if (!$this->internalNotificationsEnabled) {
             throw $this->createNotFoundException();
@@ -38,6 +40,10 @@ class MarkAsReadController extends AbstractController
             throw $this->createAccessDeniedException($e->getMessage());
         } catch (NotificationNotFoundException) {
             throw $this->createNotFoundException();
+        }
+
+        if ($request->isXmlHttpRequest()) {
+            return new Response(null, Response::HTTP_NO_CONTENT);
         }
 
         $this->addFlash('success', new TranslatableMessage('La notificación se ha marcado como leída'));

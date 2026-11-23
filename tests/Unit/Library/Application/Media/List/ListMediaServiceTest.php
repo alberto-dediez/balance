@@ -183,6 +183,35 @@ class ListMediaServiceTest extends TestCase
         $this->assertCount(0, $withoutFolderNames->media);
     }
 
+    public function testTheNameOfAFolderAlsoFindsTheMediaOfItsSubfolders(): void
+    {
+        $accountId = AccountId::generate();
+
+        $folders = FolderRepositoryMother::inMemory();
+        $contracts = FolderMother::fromNameAndAccount('Contratos', $accountId);
+        $subfolder = FolderMother::subfolderOf($contracts, '2024');
+        $folders->add($contracts);
+        $folders->add($subfolder);
+
+        $repository = new InMemoryMediaRepository();
+        $repository->add(MediaMother::inFolder('signed.png', $contracts->id(), $accountId));
+        $repository->add(MediaMother::inFolder('2024.png', $subfolder->id(), $accountId));
+        $repository->add(MediaMother::fromNameAndAccount('logo.png', $accountId));
+
+        $sut = $this->createSUT($repository, $folders, $accountId);
+
+        $request = new ListMediaRequest(name: 'contr', accountId: $accountId);
+        $request->searchInFolderNames = true;
+
+        $result = $sut($request, UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $accountId));
+
+        $names = array_map(static fn($media): string => $media->name(), $result->media);
+
+        sort($names);
+
+        $this->assertSame(['2024.png', 'signed.png'], $names);
+    }
+
     public function testTheFoldersOfAnotherAccountAreNotUsedToSearch(): void
     {
         $accountId = AccountId::generate();
