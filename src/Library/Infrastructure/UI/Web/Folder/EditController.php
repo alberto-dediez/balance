@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Library\Infrastructure\UI\Web\Folder;
 
+use App\Library\Application\Folder\CurrentAccountFolders;
 use App\Library\Application\Folder\FolderAuthorizer;
 use App\Library\Application\Folder\Update\UpdateFolderRequest;
 use App\Library\Application\Folder\Update\UpdateFolderService;
 use App\Library\Domain\Model\Folder\FolderAlreadyExistsException;
+use App\Library\Domain\Model\Folder\FolderId;
 use App\Library\Domain\Model\Folder\FolderRepository;
 use App\Library\Infrastructure\Symfony\Form\UpdateFolderType;
 use App\Security\Application\Action;
@@ -34,6 +36,7 @@ class EditController extends AbstractController
         string $folderId,
         FolderRepository $folderRepository,
         FolderAuthorizer $authorizer,
+        CurrentAccountFolders $folders,
         UpdateFolderService $updateFolder,
         LoggedUser $loggedUser,
         TranslatorInterface $translator,
@@ -42,6 +45,8 @@ class EditController extends AbstractController
         $user = $loggedUser();
 
         $folder = $this->getFolderFromId($folderId, $folderRepository);
+
+        $parent = $folder->isSubfolder() && $folder->parentId() instanceof FolderId ? $folders->find($folder->parentId()) : null;
 
         $form = $this->createForm(UpdateFolderType::class, new UpdateFolderRequest(
             folderId: $folder->id(),
@@ -53,11 +58,13 @@ class EditController extends AbstractController
         try {
             $authorizer->denyUnlessCanDoThat($folder, Action::Edit, $user);
 
-            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateFolder, $user, $translator, &$failed): void {
+            $needsRedirect = $this->edit($request, $form, function ($form) use ($updateFolder, $user, $translator, $folder, &$failed): void {
                 try {
                     $updateFolder($form->getData(), $user);
                 } catch (FolderAlreadyExistsException) {
-                    $form->get('name')->addError(new FormError($translator->trans('Ya existe una carpeta con ese nombre')));
+                    $form->get('name')->addError(new FormError($folder->isSubfolder()
+                        ? $translator->trans('Ya existe una subcarpeta con ese nombre en esta carpeta')
+                        : $translator->trans('Ya existe una carpeta con ese nombre')));
 
                     $failed = true;
 
@@ -76,6 +83,7 @@ class EditController extends AbstractController
 
         return $this->render('@library/folder/edit.html.twig', [
             'folder' => $folder,
+            'parent' => $parent,
             'form' => $form->createView(),
         ]);
     }

@@ -8,8 +8,11 @@ use App\Library\Application\Folder\FolderAuthorizer;
 use App\Library\Domain\Model\Folder\Folder;
 use App\Library\Domain\Model\Folder\FolderAlreadyExistsException;
 use App\Library\Domain\Model\Folder\FolderId;
+use App\Library\Domain\Model\Folder\FolderNestingNotAllowedException;
+use App\Library\Domain\Model\Folder\FolderNotFoundException;
 use App\Library\Domain\Model\Folder\FolderRepository;
 use App\Security\Application\Action;
+use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\User;
 use App\Shared\Application\CommandBus\Command;
 use App\Shared\Application\CommandBus\CommandHandler;
@@ -34,18 +37,45 @@ class RegisterFolderService implements CommandHandler
 
         $name = trim($request->name);
 
-        if ($this->repository->findOneByAccountAndName($request->accountId, $name) instanceof Folder) {
+        if ($request->parentId instanceof FolderId) {
+            $this->assertValidParent($request->parentId, $request->accountId);
+        }
+
+        if ($this->repository->findOneByAccountAndName($request->accountId, $name, $request->parentId) instanceof Folder) {
             throw new FolderAlreadyExistsException($name);
         }
 
-        $folder->register($name, $request->accountId);
+        $folder->register($name, $request->accountId, $request->parentId);
 
         $this->repository->add($folder);
 
         return new RegisterFolderResponse(
             folderId: $folder->id(),
             name: $folder->name(),
+            parentId: $folder->parentId(),
         );
+    }
+
+    private function assertValidParent(FolderId $parentId, ?AccountId $accountId): void
+    {
+        $parent = $this->repository->find($parentId);
+
+        if (!$parent instanceof Folder || !$this->sameAccount($parent->accountId(), $accountId)) {
+            throw new FolderNotFoundException($parentId);
+        }
+
+        if ($parent->isSubfolder()) {
+            throw new FolderNestingNotAllowedException($parentId);
+        }
+    }
+
+    private function sameAccount(?AccountId $parentAccountId, ?AccountId $accountId): bool
+    {
+        if (!$parentAccountId instanceof AccountId || !$accountId instanceof AccountId) {
+            return !$parentAccountId instanceof AccountId && !$accountId instanceof AccountId;
+        }
+
+        return $parentAccountId->equals($accountId);
     }
 
     public function isHandled(Command $command): bool

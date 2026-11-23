@@ -134,6 +134,44 @@ class ListMediaToolTest extends TestCase
         $this->assertSame('firmado.pdf', $result->data['media'][0]['name']);
     }
 
+    public function testTheFolderOfAMediaInASubfolderIsItsPath(): void
+    {
+        $contracts = FolderMother::fromNameAndAccount('Contratos', $this->accountId);
+        $subfolder = FolderMother::subfolderOf($contracts, '2024');
+        $this->folders->add($contracts);
+        $this->folders->add($subfolder);
+
+        $this->repository->add(MediaMother::inFolder('firmado.pdf', $subfolder->id(), $this->accountId));
+
+        $result = $this->sut->execute($this->arguments([]), $this->admin(), $this->context());
+
+        $this->assertSame('Contratos / 2024', $result->data['media'][0]['folder']);
+    }
+
+    public function testTheFolderArgumentIncludesTheSubfoldersOfTheMatchingFolders(): void
+    {
+        $contracts = FolderMother::fromNameAndAccount('Contratos', $this->accountId);
+        $subfolder = FolderMother::subfolderOf($contracts, '2024');
+        $invoices = FolderMother::fromNameAndAccount('Facturas', $this->accountId);
+        $this->folders->add($contracts);
+        $this->folders->add($subfolder);
+        $this->folders->add($invoices);
+
+        $this->repository->add(MediaMother::inFolder('firmado.pdf', $contracts->id(), $this->accountId));
+        $this->repository->add(MediaMother::inFolder('2024.pdf', $subfolder->id(), $this->accountId));
+        $this->repository->add(MediaMother::inFolder('factura.pdf', $invoices->id(), $this->accountId));
+
+        $result = $this->sut->execute($this->arguments(['folder' => 'contr']), $this->admin(), $this->context());
+
+        $this->assertSame(2, $result->data['total']);
+
+        $names = array_column($result->data['media'], 'name');
+
+        sort($names);
+
+        $this->assertSame(['2024.pdf', 'firmado.pdf'], $names);
+    }
+
     public function testAFolderArgumentWithoutMatchesListsNothing(): void
     {
         $this->repository->add(MediaMother::fromNameAndAccount('logo.png', $this->accountId));

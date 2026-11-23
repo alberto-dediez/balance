@@ -215,13 +215,23 @@
                             </div>
 
                             {% if folders is not empty %}
-                                <select class="form-select w-auto" data-media-picker-target="folder" data-action="change->media-picker#search" aria-label="{{ 'Carpeta' | trans }}">
+                                <select class="form-select w-auto" data-media-picker-target="folder" data-action="change->media-picker#changeFolder" aria-label="{{ 'Carpeta' | trans }}">
                                     <option value="" selected>{{ 'Todas las carpetas' | trans }}</option>
                                     <option value="none">{{ 'Sin carpeta' | trans }}</option>
                                     {% for folder in folders %}
                                         <option value="{{ folder.id }}">{{ folder.name }}</option>
                                     {% endfor %}
                                 </select>
+
+                                {% for folder in folders | filter(folder => folder.subfolders is not empty) %}
+                                    <select class="form-select w-auto" data-media-picker-target="subfolder" data-folder="{{ folder.id }}" data-action="change->media-picker#search" aria-label="{{ 'Subcarpeta' | trans }}" hidden>
+                                        <option value="" selected>{{ 'Sin subcarpeta' | trans }}</option>
+                                        {% for subfolder in folder.subfolders %}
+                                            <option value="{{ subfolder.id }}">{{ subfolder.name }}</option>
+                                        {% endfor %}
+                                        <option value="all">{{ 'Todas las subcarpetas' | trans }}</option>
+                                    </select>
+                                {% endfor %}
                             {% endif %}
 
                             <div class="form-check form-switch mb-0">

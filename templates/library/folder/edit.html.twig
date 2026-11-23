@@ -4,11 +4,21 @@
     <twig:TopAction:Return path="{{ path('library_media') }}" />
 {% endblock %}
 
-{% set page_title = ('Biblioteca' | trans)
-    ~ ' > '
-    ~ ('Editar carpeta' | trans)
-    ~ ' > '
-    ~ folder.name %}
+{% if parent %}
+    {% set page_title = ('Biblioteca' | trans)
+        ~ ' > '
+        ~ parent.name
+        ~ ' > '
+        ~ ('Editar subcarpeta' | trans)
+        ~ ' > '
+        ~ folder.name %}
+{% else %}
+    {% set page_title = ('Biblioteca' | trans)
+        ~ ' > '
+        ~ ('Editar carpeta' | trans)
+        ~ ' > '
+        ~ folder.name %}
+{% endif %}
 
 {% block content %}
     {{ form_start(form) }}

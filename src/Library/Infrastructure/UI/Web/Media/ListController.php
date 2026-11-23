@@ -49,27 +49,33 @@ class ListController extends AbstractController
             return new ListMediaRequest(accountId: $accountId, withoutAccount: !$accountId instanceof AccountId);
         }, ListMediaType::class);
 
-        if (
-            null !== $filter->folder
-            && ListMediaRequest::ALL_FOLDERS !== $filter->folder
-            && !$folders->find(new FolderId($filter->folder)) instanceof Folder
-        ) {
+        $chosenFolderId = $filter->chosenFolderId();
+        $chosen = $chosenFolderId instanceof FolderId ? $folders->find($chosenFolderId) : null;
+
+        if ($chosenFolderId instanceof FolderId && !$chosen instanceof Folder) {
             $filter->folder = null;
         }
 
-        $accountFolders = $folders->all();
-
-        $currentFolder = null;
-
-        foreach ($accountFolders as $folder) {
-            if (null !== $filter->folder && $folder->id()->equals(new FolderId($filter->folder))) {
-                $currentFolder = $folder;
-            }
+        if (
+            $chosen instanceof Folder
+            && $filter->includesSubfolders()
+            && ($chosen->isSubfolder() || [] === $folders->subfoldersOf($chosen->id()))
+        ) {
+            $filter->folder = (string) $chosen->id();
         }
+
+        $currentFolder = $chosen;
+        $activeFolder = $chosen instanceof Folder && $chosen->isSubfolder() && $chosen->parentId() instanceof FolderId
+            ? $folders->find($chosen->parentId())
+            : $chosen;
+        $subfolders = $activeFolder instanceof Folder ? $folders->subfoldersOf($activeFolder->id()) : [];
+        $includesSubfolders = $filter->includesSubfolders();
 
         $folderChoice = $filter->folder;
 
-        $filter->applyFolderChoice();
+        $filter->applyFolderChoice(
+            $includesSubfolders && $chosen instanceof Folder ? array_slice($folders->idsWithSubfolders($chosen->id()), 1) : [],
+        );
 
         try {
             $response = $listMedia($filter, $loggedUser());
@@ -91,11 +97,7 @@ class ListController extends AbstractController
             return $this->redirect($request->getRequestUri());
         }
 
-        $folderNames = [];
-
-        foreach ($accountFolders as $folder) {
-            $folderNames[(string) $folder->id()] = $folder->name();
-        }
+        $folderNames = $folders->paths();
 
         $canManageFolders = $folderAuthorizer->canDoThat(new Folder(id: FolderId::generate(), accountId: $accountId), Action::Register, $loggedUser());
 
@@ -105,8 +107,11 @@ class ListController extends AbstractController
             'media' => $response->media,
             'totalResults' => $response->totalResults,
             'form' => $form->createView(),
-            'folders' => $accountFolders,
+            'folders' => $folders->roots(),
             'currentFolder' => $currentFolder,
+            'activeFolder' => $activeFolder,
+            'subfolders' => $subfolders,
+            'includesSubfolders' => $includesSubfolders,
             'folderChoice' => $folderChoice,
             'canManageFolders' => $canManageFolders,
         ]);

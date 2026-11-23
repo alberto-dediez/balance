@@ -60,7 +60,7 @@ class SearchController extends AbstractController
             $chosen = $folders->find(new FolderId($folder));
 
             if ($chosen instanceof Folder) {
-                $filter->folderIds = [$chosen->id()];
+                $filter->folderIds = $this->chosenFolderIds($chosen, $request->query->getString('subfolder'), $folders);
             }
         }
 
@@ -70,11 +70,7 @@ class SearchController extends AbstractController
             throw $this->createAccessDeniedException($exception->getMessage());
         }
 
-        $folderNames = [];
-
-        foreach ($folders->all() as $candidate) {
-            $folderNames[(string) $candidate->id()] = $candidate->name();
-        }
+        $folderNames = $folders->paths();
 
         return $this->json([
             'elements' => array_map(
@@ -89,6 +85,26 @@ class SearchController extends AbstractController
             'page' => $filter->page,
             'limit' => $filter->limit,
         ]);
+    }
+
+    /**
+     * @return list<FolderId>
+     */
+    private function chosenFolderIds(Folder $chosen, string $subfolder, CurrentAccountFolders $folders): array
+    {
+        if ('all' === $subfolder) {
+            return $folders->idsWithSubfolders($chosen->id());
+        }
+
+        if ('' !== $subfolder) {
+            $candidate = $folders->find(new FolderId($subfolder));
+
+            if ($candidate instanceof Folder && $candidate->parentId()?->equals($chosen->id())) {
+                return [$candidate->id()];
+            }
+        }
+
+        return [$chosen->id()];
     }
 
     /**

@@ -39,7 +39,7 @@ class UpdateFolderService implements CommandHandler
         $name = trim($request->name);
 
         if ($name !== $folder->name()) {
-            $existing = $this->repository->findOneByAccountAndName($folder->accountId(), $name);
+            $existing = $this->repository->findOneByAccountAndName($folder->accountId(), $name, $folder->parentId());
 
             if ($existing instanceof Folder && !$existing->id()->equals($folder->id())) {
                 throw new FolderAlreadyExistsException($name);

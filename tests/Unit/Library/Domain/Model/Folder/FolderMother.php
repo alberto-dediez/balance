@@ -25,11 +25,25 @@ class FolderMother
         return self::from(FolderId::generate(), $name, $accountId);
     }
 
-    public static function from(FolderId $folderId, string $name = 'Contratos', ?AccountId $accountId = null): Folder
+    public static function subfolderOf(Folder $parent, string $name, ?string $id = null): Folder
     {
+        return self::from(
+            null === $id ? FolderId::generate() : new FolderId($id),
+            $name,
+            $parent->accountId(),
+            $parent->id(),
+        );
+    }
+
+    public static function from(
+        FolderId $folderId,
+        string $name = 'Contratos',
+        ?AccountId $accountId = null,
+        ?FolderId $parentId = null,
+    ): Folder {
         $folder = new Folder(id: $folderId);
 
-        $folder->register($name, $accountId);
+        $folder->register($name, $accountId, $parentId);
 
         return $folder;
     }

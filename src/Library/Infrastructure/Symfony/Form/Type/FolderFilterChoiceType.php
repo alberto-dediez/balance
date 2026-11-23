@@ -12,42 +12,64 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @extends AbstractType<mixed>
  */
 class FolderFilterChoiceType extends AbstractType
 {
-    public function __construct(private readonly CurrentAccountFolders $folders) {}
+    public function __construct(
+        private readonly CurrentAccountFolders $folders,
+        private readonly TranslatorInterface $translator,
+    ) {}
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'folder_names' => function (Options $options): array {
-                $names = [];
-
-                foreach ($this->folders->all() as $folder) {
-                    $names[(string) $folder->id()] = $folder->name();
-                }
-
-                return $names;
-            },
+            'folder_names' => fn(Options $options): array => $this->folders->paths(),
+            'folders_with_subfolders' => fn(Options $options): array => array_values(array_map(
+                static fn(array $branch): string => (string) $branch['folder']->id(),
+                array_filter(
+                    $this->folders->tree(),
+                    static fn(array $branch): bool => [] !== $branch['subfolders'],
+                ),
+            )),
             'choice_loader' => static function (Options $options): CallbackChoiceLoader {
                 /** @var array<string, string> $names */
                 $names = $options['folder_names'];
 
-                return new CallbackChoiceLoader(static fn(): array => [
-                    ListMediaRequest::ALL_FOLDERS,
-                    ...array_map('strval', array_keys($names)),
-                ]);
+                /** @var list<string> $withSubfolders */
+                $withSubfolders = $options['folders_with_subfolders'];
+
+                return new CallbackChoiceLoader(static function () use ($names, $withSubfolders): array {
+                    $choices = [ListMediaRequest::ALL_FOLDERS];
+
+                    foreach (array_map('strval', array_keys($names)) as $id) {
+                        $choices[] = $id;
+
+                        if (in_array($id, $withSubfolders, true)) {
+                            $choices[] = ListMediaRequest::WITH_SUBFOLDERS_PREFIX . $id;
+                        }
+                    }
+
+                    return $choices;
+                });
             },
-            'choice_label' => static function (Options $options): \Closure {
+            'choice_label' => function (Options $options): \Closure {
                 /** @var array<string, string> $names */
                 $names = $options['folder_names'];
+                $translator = $this->translator;
 
-                return static function (?string $choice) use ($names): string|TranslatableMessage {
+                return static function (?string $choice) use ($names, $translator): string {
                     if (ListMediaRequest::ALL_FOLDERS === $choice) {
-                        return new TranslatableMessage('Todas las carpetas');
+                        return $translator->trans('Todas las carpetas');
+                    }
+
+                    if (null !== $choice && str_starts_with($choice, ListMediaRequest::WITH_SUBFOLDERS_PREFIX)) {
+                        $id = substr($choice, strlen(ListMediaRequest::WITH_SUBFOLDERS_PREFIX));
+
+                        return $translator->trans('{folder} / Todas las subcarpetas', ['{folder}' => $names[$id] ?? '']);
                     }
 
                     return null === $choice ? '' : ($names[$choice] ?? '');
@@ -60,6 +82,7 @@ class FolderFilterChoiceType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes('folder_names', 'array');
+        $resolver->setAllowedTypes('folders_with_subfolders', 'array');
     }
 
     public function getParent(): string

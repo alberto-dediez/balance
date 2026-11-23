@@ -23,15 +23,7 @@ class FolderChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'folder_names' => function (Options $options): array {
-                $names = [];
-
-                foreach ($this->folders->all() as $folder) {
-                    $names[(string) $folder->id()] = $folder->name();
-                }
-
-                return $names;
-            },
+            'folder_names' => fn(Options $options): array => $this->folders->paths(),
             'choice_loader' => static function (Options $options): CallbackChoiceLoader {
                 /** @var array<string, string> $names */
                 $names = $options['folder_names'];

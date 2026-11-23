@@ -245,6 +245,36 @@ class MediaPickerTypeTest extends KernelTestCase
         $this->assertStringContainsString('<option value="none">', $html);
     }
 
+    public function testTheFoldersCarryTheirSubfoldersAndOnlyRootsAreListed(): void
+    {
+        $this->logUser();
+
+        $contracts = FolderMother::fromName('Contratos');
+        $subfolder = FolderMother::subfolderOf($contracts, '2024');
+        $invoices = FolderMother::fromName('Facturas');
+
+        $repository = self::getContainer()->get(FolderRepository::class);
+        $repository->add($contracts);
+        $repository->add($subfolder);
+        $repository->add($invoices);
+
+        $view = $this->createForm()->createView();
+
+        $this->assertSame(
+            [
+                ['id' => (string) $contracts->id(), 'name' => 'Contratos', 'subfolders' => [['id' => (string) $subfolder->id(), 'name' => '2024']]],
+                ['id' => (string) $invoices->id(), 'name' => 'Facturas', 'subfolders' => []],
+            ],
+            $view->children['picture']->vars['folders'],
+        );
+
+        $html = $this->renderWidget($view);
+
+        $this->assertStringContainsString(sprintf('data-folder="%s"', (string) $contracts->id()), $html);
+        $this->assertStringNotContainsString(sprintf('data-folder="%s"', (string) $invoices->id()), $html);
+        $this->assertStringContainsString(sprintf('<option value="%s">2024</option>', (string) $subfolder->id()), $html);
+    }
+
     public function testTheModalHasNoFolderSelectorWithoutFolders(): void
     {
         $this->logUser();

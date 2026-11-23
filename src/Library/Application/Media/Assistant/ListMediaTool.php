@@ -59,7 +59,7 @@ class ListMediaTool implements AssistantTool
     {
         return [
             ToolParameter::string('name', 'Nombre', 'Parte del nombre del fichero.'),
-            ToolParameter::string('folder', 'Carpeta', 'Parte del nombre de la carpeta en la que buscar. Sin él se listan los ficheros de todas las carpetas.'),
+            ToolParameter::string('folder', 'Carpeta', 'Parte del nombre de la carpeta en la que buscar. Incluye sus subcarpetas. Sin él se listan los ficheros de todas las carpetas.'),
             ToolParameter::enum('type', 'Tipo', 'Tipo de fichero.', array_column(MediaType::cases(), 'value')),
             ToolParameter::limit(),
         ];
@@ -105,11 +105,7 @@ class ListMediaTool implements AssistantTool
 
         $response = ($this->listMedia)($request, $user);
 
-        $folderNames = [];
-
-        foreach ($this->folders->all() as $candidate) {
-            $folderNames[(string) $candidate->id()] = $candidate->name();
-        }
+        $folderNames = $this->folders->paths();
 
         return new ToolResult(
             summary: sprintf('%d ficheros encontrados', $response->totalResults),

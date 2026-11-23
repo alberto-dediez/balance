@@ -121,6 +121,44 @@ Feature:
         When I submit a form with "name:signed.png|folderId:" and button "Guardar y salir"
         Then the media "m-1" is not in any folder
 
+    Scenario: I can move several files to a subfolder and its path is shown
+        Given account "Minotour" with id "1111" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "1111" exists
+        Given folder "Contratos" with id "f-1" of account "1111" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" of account "1111" exists
+        Given media "logo.png" with id "m-1" of account "1111" exists
+        Given media "banner.png" with id "m-2" of account "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/library/media"
+        When I move the media "m-1,m-2" to the folder "Contratos / 2024"
+        Then the media "m-1" is in the folder "s-1"
+        Then the media "m-2" is in the folder "s-1"
+        When I go to "/es/library/media"
+        When I filter the library by all the folders
+        Then I see a text "Contratos / 2024</td>"
+
+    Scenario: I can move a file to a subfolder while editing it
+        Given account "Minotour" with id "1111" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "1111" exists
+        Given folder "Contratos" with id "f-1" of account "1111" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" of account "1111" exists
+        Given media "signed.png" with id "m-1" in folder "f-1" of account "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/library/media/edit/m-1"
+        Then I see a text "Contratos / 2024"
+        When I submit a form with "name:signed.png|folderId:s-1" and button "Guardar y salir"
+        Then the media "m-1" is in the folder "s-1"
+
+    Scenario: Uploading from a subfolder preselects it
+        Given account "Minotour" with id "1111" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "1111" exists
+        Given folder "Contratos" with id "f-1" of account "1111" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" of account "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/library/media/upload?folder=s-1"
+        Then the response status should be 200
+        Then the upload form has the folder "Contratos / 2024" selected
+
     Scenario: I can upload files into a folder
         Given account "Minotour" with id "1111" exists
         Given user "owner@dediez.software" with role "ROLE_OWNER" of account "1111" exists
@@ -158,6 +196,20 @@ Feature:
         When I go to "/es/library/media/edit/m-1"
         Then I see a text "Contratos"
         Then I do not see a text "Ajena"
+
+    Scenario: The folder selectors do not offer the subfolders of another account
+        Given account "Minotour" with id "1111" exists
+        Given account "Bioscore" with id "2222" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "1111" exists
+        Given folder "Contratos" with id "f-1" of account "1111" exists
+        Given folder "Ajena" with id "f-3" of account "2222" exists
+        Given subfolder "Subajena" with id "s-3" in folder "f-3" of account "2222" exists
+        Given media "logo.png" with id "m-1" of account "1111" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/library/media"
+        Then I do not see a text "Subajena"
+        When I go to "/es/library/media/edit/m-1"
+        Then I do not see a text "Subajena"
 
     Scenario: Moving a file to a folder of another account fails without changes
         Given account "Minotour" with id "1111" exists

@@ -80,6 +80,19 @@ class MediaFolderGuardTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
+    public function testASubfolderOfTheSameAccountIsAssignable(): void
+    {
+        $folder = FolderMother::fromNameAndAccount('Contratos', $this->accountId);
+        $subfolder = FolderMother::subfolderOf($folder, '2024');
+
+        $this->repository->add($folder);
+        $this->repository->add($subfolder);
+
+        $this->sut->assertAssignable(MediaMother::fromNameAndAccount('logo.png', $this->accountId), $subfolder->id(), $this->user());
+
+        $this->addToAssertionCount(1);
+    }
+
     private function user(): User
     {
         return UserMother::fromUsernameAndRoleAndAccount('user@dediez.software', Role::User, $this->accountId);

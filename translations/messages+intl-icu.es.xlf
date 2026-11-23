@@ -2937,6 +2937,62 @@
         <source>Todavía no hay carpetas</source>
         <target>Todavía no hay carpetas</target>
       </trans-unit>
+      <trans-unit id="xUBIshr" resname="Ya existe una subcarpeta con ese nombre en esta carpeta">
+        <source>Ya existe una subcarpeta con ese nombre en esta carpeta</source>
+        <target>Ya existe una subcarpeta con ese nombre en esta carpeta</target>
+      </trans-unit>
+      <trans-unit id="V4SzDMC" resname="Subcarpeta creada con éxito">
+        <source>Subcarpeta creada con éxito</source>
+        <target>Subcarpeta creada con éxito</target>
+      </trans-unit>
+      <trans-unit id="PJ1jnNL" resname="No se ha podido eliminar la carpeta {folder} porque alguno de sus archivos no se ha podido eliminar">
+        <source>No se ha podido eliminar la carpeta {folder} porque alguno de sus archivos no se ha podido eliminar</source>
+        <target>No se ha podido eliminar la carpeta {folder} porque alguno de sus archivos no se ha podido eliminar</target>
+      </trans-unit>
+      <trans-unit id=".t7Sr8m" resname="{folder} / Todas las subcarpetas">
+        <source>{folder} / Todas las subcarpetas</source>
+        <target>{folder} / Todas las subcarpetas</target>
+      </trans-unit>
+      <trans-unit id="aGsOc4S" resname="Todas las subcarpetas">
+        <source>Todas las subcarpetas</source>
+        <target>Todas las subcarpetas</target>
+      </trans-unit>
+      <trans-unit id="OoVo3Xa" resname="Creada la subcarpeta {name}">
+        <source>Creada la subcarpeta {name}</source>
+        <target>Creada la subcarpeta {name}</target>
+      </trans-unit>
+      <trans-unit id="VVGQVjP" resname="Subcarpeta">
+        <source>Subcarpeta</source>
+        <target>Subcarpeta</target>
+      </trans-unit>
+      <trans-unit id="kV0QyU9" resname="Sin subcarpeta">
+        <source>Sin subcarpeta</source>
+        <target>Sin subcarpeta</target>
+      </trans-unit>
+      <trans-unit id="FACPjWl" resname="Editar subcarpeta">
+        <source>Editar subcarpeta</source>
+        <target>Editar subcarpeta</target>
+      </trans-unit>
+      <trans-unit id="9vtYUJZ" resname="Nueva subcarpeta">
+        <source>Nueva subcarpeta</source>
+        <target>Nueva subcarpeta</target>
+      </trans-unit>
+      <trans-unit id="J9vJtbs" resname="¿Está seguro de que desea eliminar esta carpeta? Se eliminarán también sus subcarpetas y todos los archivos que contiene. Esta acción no se puede deshacer">
+        <source>¿Está seguro de que desea eliminar esta carpeta? Se eliminarán también sus subcarpetas y todos los archivos que contiene. Esta acción no se puede deshacer</source>
+        <target>¿Está seguro de que desea eliminar esta carpeta? Se eliminarán también sus subcarpetas y todos los archivos que contiene. Esta acción no se puede deshacer</target>
+      </trans-unit>
+      <trans-unit id="8VH9dmn" resname="¿Está seguro de que desea eliminar esta subcarpeta? Se eliminarán también todos los archivos que contiene. Esta acción no se puede deshacer">
+        <source>¿Está seguro de que desea eliminar esta subcarpeta? Se eliminarán también todos los archivos que contiene. Esta acción no se puede deshacer</source>
+        <target>¿Está seguro de que desea eliminar esta subcarpeta? Se eliminarán también todos los archivos que contiene. Esta acción no se puede deshacer</target>
+      </trans-unit>
+      <trans-unit id="YuSdwQ9" resname="Subcarpetas de {folder}">
+        <source>Subcarpetas de {folder}</source>
+        <target>Subcarpetas de {folder}</target>
+      </trans-unit>
+      <trans-unit id="NxstEct" resname="Esta carpeta todavía no tiene subcarpetas">
+        <source>Esta carpeta todavía no tiene subcarpetas</source>
+        <target>Esta carpeta todavía no tiene subcarpetas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -9,6 +9,7 @@ use App\Library\Domain\Model\Folder\FolderRegistered;
 use App\Library\Domain\Model\Folder\FolderRemoved;
 use App\Library\Domain\Model\Folder\FolderRenamed;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -58,6 +59,56 @@ class FolderTest extends TestCase
         $rebuilt = FolderRegistered::rebuildFromPayload($event->id(), $event->occurredOn(), $event->payload());
 
         $this->assertNull($rebuilt->accountId());
+    }
+
+    public function testRegisterWithoutParentIsNotASubfolder(): void
+    {
+        $folder = FolderMother::fromName('Contratos');
+
+        $this->assertNull($folder->parentId());
+        $this->assertFalse($folder->isSubfolder());
+
+        $event = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(FolderRegistered::class, $event);
+
+        $rebuilt = FolderRegistered::rebuildFromPayload($event->id(), $event->occurredOn(), $event->payload());
+
+        $this->assertNull($rebuilt->parentId());
+    }
+
+    public function testRegisterWithParentKeepsTheParent(): void
+    {
+        $parent = FolderMother::fromName('Contratos');
+
+        $subfolder = FolderMother::subfolderOf($parent, '2024');
+
+        $this->assertTrue($subfolder->isSubfolder());
+        $this->assertNotNull($subfolder->parentId());
+        $this->assertTrue($subfolder->parentId()->equals($parent->id()));
+
+        $event = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(FolderRegistered::class, $event);
+
+        $rebuilt = FolderRegistered::rebuildFromPayload($event->id(), $event->occurredOn(), $event->payload());
+
+        $this->assertNotNull($rebuilt->parentId());
+        $this->assertTrue($rebuilt->parentId()->equals($parent->id()));
+    }
+
+    public function testRebuildFromAPayloadWithoutParentKeepsTheParentEmpty(): void
+    {
+        $folderId = FolderId::generate();
+
+        $rebuilt = FolderRegistered::rebuildFromPayload(
+            DomainEventId::generate(),
+            new \DateTimeImmutable(),
+            ['folderId' => (string) $folderId, 'name' => 'Contratos', 'accountId' => null],
+        );
+
+        $this->assertTrue($rebuilt->folderId()->equals($folderId));
+        $this->assertNull($rebuilt->parentId());
     }
 
     public function testRenamePublishesTheEvent(): void

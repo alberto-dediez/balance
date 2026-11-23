@@ -139,8 +139,15 @@ class MediaPickerType extends AbstractType
         $view->vars['selected'] = $this->selectedMedia($form->getData());
         $view->vars['preview'] = $options['preview'];
         $view->vars['folders'] = array_map(
-            static fn(Folder $folder): array => ['id' => (string) $folder->id(), 'name' => $folder->name()],
-            $this->folders->all(),
+            static fn(array $branch): array => [
+                'id' => (string) $branch['folder']->id(),
+                'name' => $branch['folder']->name(),
+                'subfolders' => array_map(
+                    static fn(Folder $subfolder): array => ['id' => (string) $subfolder->id(), 'name' => $subfolder->name()],
+                    $branch['subfolders'],
+                ),
+            ],
+            $this->folders->tree(),
         );
     }
 

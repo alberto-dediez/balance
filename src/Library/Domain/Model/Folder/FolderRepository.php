@@ -14,7 +14,7 @@ interface FolderRepository
 
     public function find(FolderId $folderId): ?Folder;
 
-    public function findOneByAccountAndName(?AccountId $accountId, string $name): ?Folder;
+    public function findOneByAccountAndName(?AccountId $accountId, string $name, ?FolderId $parentId = null): ?Folder;
 
     /** @return list<Folder> */
     public function findByFilter(FolderFilter $filter): array;

@@ -8,6 +8,7 @@
     <entity name="App\Library\Domain\Model\Folder\Folder" table="media_folders">
         <indexes>
             <index name="idx_media_folder_account" columns="account_id"/>
+            <index name="idx_media_folder_parent" columns="parent_id"/>
         </indexes>
 
         <id name="id" type="folder_id" column="id">
@@ -16,6 +17,7 @@
 
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="accountId" type="account_id" column="account_id" nullable="true"/>
+        <field name="parentId" type="folder_id" column="parent_id" nullable="true"/>
         <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false"/>
     </entity>
 

@@ -1,8 +1,16 @@
 {% extends '@shared/layout/register.html.twig' %}
 
-{% set page_title = ('Biblioteca' | trans)
-    ~ ' > '
-    ~ ('Nueva carpeta' | trans) %}
+{% if parent %}
+    {% set page_title = ('Biblioteca' | trans)
+        ~ ' > '
+        ~ parent.name
+        ~ ' > '
+        ~ ('Nueva subcarpeta' | trans) %}
+{% else %}
+    {% set page_title = ('Biblioteca' | trans)
+        ~ ' > '
+        ~ ('Nueva carpeta' | trans) %}
+{% endif %}
 
 {% block top_actions %}
     <twig:TopAction:Return path="{{ path('library_media') }}" />

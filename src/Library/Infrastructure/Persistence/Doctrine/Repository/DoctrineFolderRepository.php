@@ -47,7 +47,7 @@ class DoctrineFolderRepository implements FolderRepository
         ;
     }
 
-    public function findOneByAccountAndName(?AccountId $accountId, string $name): ?Folder
+    public function findOneByAccountAndName(?AccountId $accountId, string $name, ?FolderId $parentId = null): ?Folder
     {
         $qb = $this->createQueryBuilderFromFilter(new FolderFilter());
 
@@ -68,6 +68,19 @@ class DoctrineFolderRepository implements FolderRepository
         } else {
             $qb->andWhere(
                 $qb->expr()->isNull('f.accountId'),
+            );
+        }
+
+        if ($parentId instanceof FolderId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('f.parentId', ':parentId'),
+                )
+                ->setParameter('parentId', $parentId)
+            ;
+        } else {
+            $qb->andWhere(
+                $qb->expr()->isNull('f.parentId'),
             );
         }
 
@@ -108,6 +121,15 @@ class DoctrineFolderRepository implements FolderRepository
             $qb->andWhere(
                 $qb->expr()->isNull('f.accountId'),
             );
+        }
+
+        if ($filter->parentId instanceof FolderId) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('f.parentId', ':parentId'),
+                )
+                ->setParameter('parentId', $filter->parentId)
+            ;
         }
 
         $way = 'ASC' === $filter->orderWay ? 'ASC' : 'DESC';

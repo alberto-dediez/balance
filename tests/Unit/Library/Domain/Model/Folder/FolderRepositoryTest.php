@@ -173,6 +173,48 @@ abstract class FolderRepositoryTest extends KernelTestCase
         $this->assertTrue($found->id()->equals($folder->id()));
     }
 
+    public function testFindByFilterByParent(): void
+    {
+        $repository = $this->createSUT();
+
+        $contracts = FolderMother::fromName('Contratos');
+        $invoices = FolderMother::fromName('Facturas');
+
+        $repository->add($contracts);
+        $repository->add($invoices);
+        $repository->add(FolderMother::subfolderOf($contracts, '2025'));
+        $repository->add(FolderMother::subfolderOf($contracts, '2024'));
+        $repository->add(FolderMother::subfolderOf($invoices, '2023'));
+
+        $result = $repository->findByFilter(new FolderFilter(limit: 0, parentId: $contracts->id()));
+
+        $this->assertSame(['2024', '2025'], $this->namesOf($result));
+    }
+
+    public function testFindOneByAccountAndNameLooksOnlyAmongTheFoldersOfTheSameParent(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $contracts = FolderMother::fromNameAndAccount('Contratos', $accountId);
+        $invoices = FolderMother::fromNameAndAccount('Facturas', $accountId);
+        $subfolder = FolderMother::subfolderOf($contracts, '2024');
+
+        $repository->add($contracts);
+        $repository->add($invoices);
+        $repository->add($subfolder);
+
+        $this->assertNull($repository->findOneByAccountAndName($accountId, '2024'));
+        $this->assertNull($repository->findOneByAccountAndName($accountId, '2024', $invoices->id()));
+        $this->assertNull($repository->findOneByAccountAndName($accountId, 'Contratos', $contracts->id()));
+
+        $found = $repository->findOneByAccountAndName($accountId, '2024', $contracts->id());
+
+        $this->assertNotNull($found);
+        $this->assertTrue($found->id()->equals($subfolder->id()));
+    }
+
     /**
      * @param list<Folder> $folders
      *

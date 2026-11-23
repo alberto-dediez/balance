@@ -141,6 +141,54 @@ Feature:
         Then I see a text "signed.png"
         Then I do not see a text "logo.png"
 
+    Scenario: The search can include the subfolders of a folder
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given folder "Contratos" with id "f-1" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" exists
+        Given media "signed.png" with id "1111" in folder "f-1" exists
+        Given media "contract-2024.png" with id "2222" in folder "s-1" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?folder=f-1"
+        Then the response status should be 200
+        Then I see a text "signed.png"
+        Then I do not see a text "contract-2024.png"
+        When I go to "/es/library/media/search?folder=f-1&subfolder=all"
+        Then the response status should be 200
+        Then I see a text "signed.png"
+        Then I see a text "contract-2024.png"
+        Then I see a text '"folder":"Contratos \/ 2024"'
+
+    Scenario: The search can be restricted to a subfolder of a folder
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given folder "Contratos" with id "f-1" exists
+        Given folder "Facturas" with id "f-2" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" exists
+        Given subfolder "Abril" with id "s-3" in folder "f-2" exists
+        Given media "signed.png" with id "1111" in folder "f-1" exists
+        Given media "contract-2024.png" with id "2222" in folder "s-1" exists
+        Given media "invoice-april.png" with id "3333" in folder "s-3" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/library/media/search?folder=f-1&subfolder=s-1"
+        Then the response status should be 200
+        Then I see a text "contract-2024.png"
+        Then I do not see a text "signed.png"
+        When I go to "/es/library/media/search?folder=f-1&subfolder=s-3"
+        Then the response status should be 200
+        Then I see a text "signed.png"
+        Then I do not see a text "contract-2024.png"
+        Then I do not see a text "invoice-april.png"
+
+    Scenario: The picker offers the subfolders of the folders that have them
+        Given user "user1@dediez.software" with role "ROLE_USER" exists
+        Given folder "Contratos" with id "f-1" exists
+        Given folder "Facturas" with id "f-2" exists
+        Given subfolder "2024" with id "s-1" in folder "f-1" exists
+        When I am logged as "user1@dediez.software"
+        When I go to "/es/profile"
+        Then the response status should be 200
+        Then I see a text 'data-folder="f-1"'
+        Then I do not see a text 'data-folder="f-2"'
+
     Scenario: The search can be restricted to the files without folder
         Given user "user1@dediez.software" with role "ROLE_USER" exists
         Given folder "Contratos" with id "f-1" exists
