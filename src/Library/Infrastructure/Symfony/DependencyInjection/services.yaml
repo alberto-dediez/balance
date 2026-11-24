@@ -2,6 +2,13 @@ parameters:
     app.media_dir: '%app.uploads_dir%/library'
     app.media_storage: '%env(MEDIA_STORAGE)%'
     app.media_storage_fallback_enabled: '%env(bool:MEDIA_STORAGE_FALLBACK_ENABLED)%'
+    app.media_backup_enabled: '%env(bool:MEDIA_BACKUP_ENABLED)%'
+    app.media_backup_storage: '%env(MEDIA_BACKUP_STORAGE)%'
+    app.media_backup_retention_days: '%env(int:MEDIA_BACKUP_RETENTION_DAYS)%'
+    app.media_backup_default_dir: '%kernel.project_dir%/var/backups/library'
+    app.media_backup_dir: '%env(default:app.media_backup_default_dir:MEDIA_BACKUP_DIR)%'
+    app.media_backup_ovh_bucket: '%env(default:ovh.s3.bucket:MEDIA_BACKUP_OVH_BUCKET)%'
+    app.media_backup_ovh_prefix: '%env(MEDIA_BACKUP_OVH_PREFIX)%'
 
 services:
     _defaults:
@@ -55,6 +62,59 @@ services:
             $primary: '@library.media_storage.primary'
             $fallback: '@App\Library\Infrastructure\Storage\LocalMediaStorage'
 
+    library.media_storage.backup_local:
+        class: App\Library\Infrastructure\Storage\LocalMediaStorage
+        arguments:
+            $basePath: '%app.media_backup_dir%'
+
+    library.media_storage.backup_ovh:
+        class: App\Library\Infrastructure\Storage\OvhMediaStorage
+        arguments:
+            $bucket: '%app.media_backup_ovh_bucket%'
+            $prefix: '%app.media_backup_ovh_prefix%'
+
+    library.media_backup_storage.registry:
+        class: App\Library\Infrastructure\Storage\MediaStorageRegistry
+        arguments:
+            $storages:
+                local: '@library.media_storage.backup_local'
+                ovh: '@library.media_storage.backup_ovh'
+            $defaultDriver: '%app.media_backup_storage%'
+
+    App\Library\Infrastructure\Storage\MediaBackupStorageFactory:
+        arguments:
+            $registry: '@library.media_backup_storage.registry'
+            $primaryDriver: '%app.media_storage%'
+            $backupDriver: '%app.media_backup_storage%'
+            $primaryLocations:
+                local: '%app.media_dir%'
+                ovh: '%ovh.s3.bucket%/%ovh.s3.prefix%'
+            $backupLocations:
+                local: '%app.media_backup_dir%'
+                ovh: '%app.media_backup_ovh_bucket%/%app.media_backup_ovh_prefix%'
+            $fallbackDir: '%app.media_dir%'
+
+    library.media_storage.backup:
+        class: App\Library\Domain\Model\Media\MediaStorage
+        factory: ['@App\Library\Infrastructure\Storage\MediaBackupStorageFactory', 'create']
+        lazy: true
+
+    App\Library\Application\Media\RunBackup\RunMediaBackupService:
+        arguments:
+            $source: '@App\Library\Domain\Model\Media\MediaStorage'
+            $backup: '@library.media_storage.backup'
+            $enabled: '%app.media_backup_enabled%'
+            $retentionDays: '%app.media_backup_retention_days%'
+
+    App\Library\Application\Media\RestoreBackup\RestoreMediaBackupService:
+        arguments:
+            $primary: '@library.media_storage.primary'
+            $backup: '@library.media_storage.backup'
+
+    App\Library\Application\Media\ExtractBackup\ExtractMediaBackupService:
+        arguments:
+            $backup: '@library.media_storage.backup'
+
 when@test:
     services:
         _defaults:
@@ -99,4 +159,31 @@ when@test:
                 $fallback: '@library.media_storage.fallback_in_memory'
 
         App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryStorageSyncTaskRepository:
+            public: true
+
+        library.media_storage.backup_in_memory:
+            class: App\Library\Infrastructure\Storage\InMemoryMediaStorage
+            public: true
+
+        library.media_storage.backup:
+            alias: library.media_storage.backup_in_memory
+            public: true
+
+        App\Library\Application\Media\RunBackup\RunMediaBackupService:
+            arguments:
+                $source: '@App\Library\Domain\Model\Media\MediaStorage'
+                $backup: '@library.media_storage.backup'
+                $enabled: true
+                $retentionDays: 30
+
+        App\Library\Application\Media\RestoreBackup\RestoreMediaBackupService:
+            arguments:
+                $primary: '@library.media_storage.primary'
+                $backup: '@library.media_storage.backup'
+
+        App\Library\Application\Media\ExtractBackup\ExtractMediaBackupService:
+            arguments:
+                $backup: '@library.media_storage.backup'
+
+        App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaBackupRepository:
             public: true

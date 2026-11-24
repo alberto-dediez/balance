@@ -170,6 +170,8 @@ services:
     App\Shared\Infrastructure\Persistence\Doctrine\DatabaseHealthIndicator:
         tags: [{ name: shared.health_indicator, priority: 20 }]
 
+    App\Shared\Application\Persistence\UnitOfWorkReleaser: '@App\Shared\Infrastructure\Persistence\Doctrine\DoctrineUnitOfWorkReleaser'
+
     App\Shared\Infrastructure\Symfony\Messenger\QueueHealthIndicator:
         arguments:
             $transportNames: '%shared.health_check.queue_transports%'
@@ -278,6 +280,8 @@ when@test:
         App\Shared\Infrastructure\Health\InMemoryHealthIndicator:
             public: true
             tags: [{ name: shared.health_indicator, priority: 0 }]
+
+        App\Shared\Application\Persistence\UnitOfWorkReleaser: '@App\Shared\Infrastructure\Persistence\InMemory\NullUnitOfWorkReleaser'
 
         App\Shared\Infrastructure\Ai\InMemoryAiClient:
             public: true

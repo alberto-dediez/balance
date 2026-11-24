@@ -212,6 +212,35 @@ abstract class MediaRepositoryTest extends KernelTestCase
         $this->assertEquals(3, $repository->totalResultsByFilter($filter));
     }
 
+    public function testPaginatingOneByOneRecoversEveryMediaRegisteredAtTheSameTime(): void
+    {
+        $repository = $this->createSUT();
+
+        $expected = [];
+
+        for ($i = 0; $i < 5; ++$i) {
+            $media = MediaMother::random();
+            $repository->add($media);
+            $expected[] = (string) $media->id();
+        }
+
+        $recovered = [];
+        $filter = new MediaFilter(limit: 1);
+
+        for ($page = 0; $page < 5; ++$page) {
+            $filter->page = $page;
+
+            foreach ($repository->findByFilter($filter) as $media) {
+                $recovered[] = (string) $media->id();
+            }
+        }
+
+        sort($expected);
+        sort($recovered);
+
+        $this->assertSame($expected, $recovered);
+    }
+
     public function testFindRecoversAMediaInAFolder(): void
     {
         $repository = $this->createSUT();
