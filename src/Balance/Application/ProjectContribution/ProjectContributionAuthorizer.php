@@ -93,6 +93,15 @@ final class ProjectContributionAuthorizer extends AbstractAuthorizer
         return false;
     }
 
+    protected function canExport(mixed $subject, User $user): bool
+    {
+        if ($this->userHasRole($user, Role::SuperAdmin) || $this->userHasRole($user, Role::Admin)) {
+            return true;
+        }
+
+        return $this->userHasRole($user, Role::Owner) && $this->canList($subject, $user);
+    }
+
     public function supports(mixed $subject): bool
     {
         return $subject instanceof ProjectContribution;

@@ -13297,6 +13297,10 @@
         <source>Esta carpeta todavía no tiene subcarpetas</source>
         <target>Esta carpeta todavía no tiene subcarpetas</target>
       </trans-unit>
+      <trans-unit id="8HjWYNw" resname="Detalle del origen">
+        <source>Detalle del origen</source>
+        <target>Detalle del origen</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

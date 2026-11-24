@@ -13017,6 +13017,10 @@
         <source>Resuelta por</source>
         <target>Sonuçlandıran</target>
       </trans-unit>
+      <trans-unit id="8HjWYNw" resname="Detalle del origen">
+        <source>Detalle del origen</source>
+        <target>Kaynak ayrıntısı</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

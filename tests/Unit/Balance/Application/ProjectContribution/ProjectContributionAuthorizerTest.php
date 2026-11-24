@@ -88,6 +88,16 @@ class ProjectContributionAuthorizerTest extends TestCase
         $this->assertFalse($this->createSUT()->canDoThat($this->subject(null), Action::List, $user));
     }
 
+    public function testOnlyOwnersOfTheAccountAndAdminsCanExport(): void
+    {
+        $accountId = AccountId::generate();
+
+        $this->assertTrue($this->createSUT()->canDoThat($this->subject($accountId), Action::Export, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId)));
+        $this->assertFalse($this->createSUT()->canDoThat($this->subject($accountId), Action::Export, UserMother::fromUsernameAndRoleAndAccount('user', Role::User, $accountId)));
+        $this->assertFalse($this->createSUT()->canDoThat($this->subject(AccountId::generate()), Action::Export, UserMother::fromUsernameAndRoleAndAccount('owner', Role::Owner, $accountId)));
+        $this->assertTrue($this->createSUT()->canDoThat($this->subject(null), Action::Export, UserMother::adminUser()));
+    }
+
     public function testUserWithoutAccountIsDenied(): void
     {
         $user = UserMother::fromUsernameAndRole('user', Role::User);

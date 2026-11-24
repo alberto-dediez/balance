@@ -8,6 +8,12 @@
     {% endif %}
 {% endblock %}
 
+{% block list_actions %}
+    {% if is_granted('ROLE_OWNER') %}
+        <twig:Link:Export path="{{ path('export', {'code': 'project_contributions'}) }}" />
+    {% endif %}
+{% endblock list_actions %}
+
 {% block table %}
     {% set columns = [
         {
