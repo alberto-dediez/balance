@@ -41,6 +41,11 @@
       "name": "integration-compliance",
       "password": "integration-compliance",
       "tags": []
+    },
+    {
+      "name": "integration-bioscore-erp",
+      "password": "integration-bioscore-erp",
+      "tags": []
     }
   ],
   "vhosts": [
@@ -104,6 +109,13 @@
       "configure": "^$",
       "write": "^integration\\.compliance$",
       "read": "^integration\\.compliance\\.inbox$"
+    },
+    {
+      "user": "integration-bioscore-erp",
+      "vhost": "bioscore",
+      "configure": "^$",
+      "write": "^integration\\.bioscore-erp$",
+      "read": "^integration\\.bioscore-erp\\.inbox$"
     }
   ],
   "exchanges": [
@@ -163,6 +175,15 @@
     },
     {
       "name": "integration.compliance",
+      "vhost": "bioscore",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "integration.bioscore-erp",
       "vhost": "bioscore",
       "type": "topic",
       "durable": true,
@@ -248,6 +269,15 @@
       "arguments": {
         "x-queue-type": "quorum"
       }
+    },
+    {
+      "name": "integration.bioscore-erp.inbox",
+      "vhost": "bioscore",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum"
+      }
     }
   ],
   "bindings": [
@@ -300,6 +330,14 @@
       "arguments": {}
     },
     {
+      "source": "integration.bioscore-erp",
+      "vhost": "bioscore",
+      "destination": "integration.biohydra.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
       "source": "integration.biohydra",
       "vhost": "bioscore",
       "destination": "integration.data-platform.inbox",
@@ -341,6 +379,14 @@
     },
     {
       "source": "integration.compliance",
+      "vhost": "bioscore",
+      "destination": "integration.data-platform.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.bioscore-erp",
       "vhost": "bioscore",
       "destination": "integration.data-platform.inbox",
       "destination_type": "queue",
@@ -396,6 +442,14 @@
       "arguments": {}
     },
     {
+      "source": "integration.bioscore-erp",
+      "vhost": "bioscore",
+      "destination": "integration.balance.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
       "source": "integration.biohydra",
       "vhost": "bioscore",
       "destination": "integration.waste.inbox",
@@ -437,6 +491,14 @@
     },
     {
       "source": "integration.compliance",
+      "vhost": "bioscore",
+      "destination": "integration.waste.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.bioscore-erp",
       "vhost": "bioscore",
       "destination": "integration.waste.inbox",
       "destination_type": "queue",
@@ -492,6 +554,14 @@
       "arguments": {}
     },
     {
+      "source": "integration.bioscore-erp",
+      "vhost": "bioscore",
+      "destination": "integration.dont-waste-food.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
       "source": "integration.biohydra",
       "vhost": "bioscore",
       "destination": "integration.reporting.inbox",
@@ -533,6 +603,14 @@
     },
     {
       "source": "integration.compliance",
+      "vhost": "bioscore",
+      "destination": "integration.reporting.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.bioscore-erp",
       "vhost": "bioscore",
       "destination": "integration.reporting.inbox",
       "destination_type": "queue",
@@ -583,6 +661,70 @@
       "source": "integration.reporting",
       "vhost": "bioscore",
       "destination": "integration.compliance.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.bioscore-erp",
+      "vhost": "bioscore",
+      "destination": "integration.compliance.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.biohydra",
+      "vhost": "bioscore",
+      "destination": "integration.bioscore-erp.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.data-platform",
+      "vhost": "bioscore",
+      "destination": "integration.bioscore-erp.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.balance",
+      "vhost": "bioscore",
+      "destination": "integration.bioscore-erp.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.waste",
+      "vhost": "bioscore",
+      "destination": "integration.bioscore-erp.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.dont-waste-food",
+      "vhost": "bioscore",
+      "destination": "integration.bioscore-erp.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.reporting",
+      "vhost": "bioscore",
+      "destination": "integration.bioscore-erp.inbox",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "integration.compliance",
+      "vhost": "bioscore",
+      "destination": "integration.bioscore-erp.inbox",
       "destination_type": "queue",
       "routing_key": "#",
       "arguments": {}
