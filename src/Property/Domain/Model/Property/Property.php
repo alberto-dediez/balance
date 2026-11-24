@@ -142,7 +142,7 @@ class Property implements \Stringable
 
     public function releaseAccount(): void
     {
-        if (!$this->accountId instanceof AccountId) {
+        if (!$this->accountId instanceof AccountId && !$this->companyId instanceof CompanyId) {
             return;
         }
 
@@ -190,6 +190,9 @@ class Property implements \Stringable
                     info: $this->info()->combine($eventInfo),
                     externalId: $this->externalId()->combine($eventExternalId),
                     accountId: $this->accountId(),
+                    companyId: $this->companyId(),
+                    numberOfEmployees: $this->numberOfEmployees(),
+                    dailyClients: $this->dailyClients(),
                 ),
             );
         }
@@ -211,6 +214,7 @@ class Property implements \Stringable
     public function applyPropertyAccountReleased(PropertyAccountReleased $event): void
     {
         $this->accountId = null;
+        $this->companyId = null;
     }
 
     public function applyPropertyRemoved(PropertyRemoved $event): void

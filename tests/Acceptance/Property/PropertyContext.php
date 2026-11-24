@@ -169,7 +169,50 @@ final readonly class PropertyContext implements Context
             info: $property->info(),
             externalId: $property->externalId(),
             companyId: $company->id(),
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
         );
+
+        $this->getPropertyRepository()->add($property);
+    }
+
+    #[Given('property :property has :employees employees and :clients daily clients')]
+    public function propertyHasEmployeesAndDailyClients(string $property, string $employees, string $clients): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($property));
+
+        assert(null !== $property);
+
+        $property->update(
+            name: $property->name(),
+            accountId: $property->accountId(),
+            info: $property->info(),
+            externalId: $property->externalId(),
+            companyId: $property->companyId(),
+            numberOfEmployees: (int) $employees,
+            dailyClients: (int) $clients,
+        );
+
+        $this->getPropertyRepository()->add($property);
+    }
+
+    #[Then('property :id should have :employees employees and :clients daily clients')]
+    public function propertyShouldHaveEmployeesAndDailyClients(string $id, string $employees, string $clients): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($id));
+
+        Assert::assertNotNull($property);
+        Assert::assertSame((int) $employees, $property->numberOfEmployees());
+        Assert::assertSame((int) $clients, $property->dailyClients());
+    }
+
+    #[Then('property :id should not have a company')]
+    public function propertyShouldNotHaveACompany(string $id): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($id));
+
+        Assert::assertNotNull($property);
+        Assert::assertNull($property->companyId());
     }
 
     #[Then('property :id has place location :label at :latitude, :longitude')]

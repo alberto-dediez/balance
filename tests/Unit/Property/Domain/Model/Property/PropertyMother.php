@@ -61,7 +61,7 @@ class PropertyMother
         );
     }
 
-    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null): Property
+    public static function from(PropertyId $propertyId, string $name = 'name', ?AccountId $accountId = null, ?PropertyInfo $info = null, ?ExternalId $externalId = null, ?CompanyId $companyId = null, ?int $numberOfEmployees = null, ?int $dailyClients = null): Property
     {
         $property = new Property(
             id: $propertyId,
@@ -73,6 +73,8 @@ class PropertyMother
             info: $info,
             externalId: $externalId,
             companyId: $companyId,
+            numberOfEmployees: $numberOfEmployees,
+            dailyClients: $dailyClients,
         );
 
         return $property;

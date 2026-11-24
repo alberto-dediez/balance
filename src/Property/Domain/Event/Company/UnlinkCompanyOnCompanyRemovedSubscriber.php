@@ -37,6 +37,8 @@ final readonly class UnlinkCompanyOnCompanyRemovedSubscriber implements DomainEv
                 info: $property->info(),
                 externalId: $property->externalId(),
                 companyId: null,
+                numberOfEmployees: $property->numberOfEmployees(),
+                dailyClients: $property->dailyClients(),
             );
 
             $this->propertyRepository->add($property);

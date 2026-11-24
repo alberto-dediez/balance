@@ -8,11 +8,15 @@ use App\Property\Application\Property\PropertyAuthorizer;
 use App\Property\Application\Property\PropertyPlaceLocationSetter;
 use App\Property\Application\Property\Update\UpdatePropertyRequest;
 use App\Property\Application\Property\Update\UpdatePropertyService;
+use App\Property\Domain\Model\Company\CompanyId;
+use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyUpdated;
+use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCompanyRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\Role;
 use App\Shared\Domain\Event\DomainEventPublisher;
+use App\Tests\Unit\Property\Domain\Model\Company\CompanyMother;
 use App\Tests\Unit\Property\Domain\Model\Company\CompanyRepositoryMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyMother;
 use App\Tests\Unit\Property\Domain\Model\Property\PropertyRepositoryMother;
@@ -65,6 +69,77 @@ class UpdatePropertyServiceTest extends TestCase
         $this->assertTrue($propertyPersisted->id()->equals($lastEvent->propertyId()));
     }
 
+    public function testReleasingAccountOfPropertyWithoutAccountButWithCompanyDropsTheCompany(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel', accountId: null, companyId: CompanyId::generate(), numberOfEmployees: 25, dailyClients: 300);
+
+        $repository->add($property);
+
+        $sut = $this->createSUT($repository);
+
+        $request = new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: $property->name(),
+            accountId: null,
+            info: $property->info(),
+            externalId: $property->externalId(),
+            companyId: null,
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
+        );
+
+        $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $propertyPersisted = $repository->find($property->id());
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertNull($propertyPersisted->accountId());
+        $this->assertNull($propertyPersisted->companyId());
+        $this->assertSame(25, $propertyPersisted->numberOfEmployees());
+        $this->assertSame(300, $propertyPersisted->dailyClients());
+    }
+
+    public function testSameAccountKeepsCompanyEmployeesAndDailyClients(): void
+    {
+        $repository = PropertyRepositoryMother::inMemory();
+        $companyRepository = CompanyRepositoryMother::inMemory();
+
+        $company = CompanyMother::fromNameAndAccountAndId('Company', 'account-a', 'company-a');
+
+        $companyRepository->add($company);
+
+        $property = PropertyMother::from(PropertyId::generate(), 'Hotel', accountId: new AccountId('account-a'), companyId: $company->id(), numberOfEmployees: 25, dailyClients: 300);
+
+        $repository->add($property);
+
+        $sut = $this->createSUT($repository, $companyRepository);
+
+        $request = new UpdatePropertyRequest(
+            propertyId: $property->id(),
+            name: $property->name(),
+            accountId: new AccountId('account-a'),
+            info: $property->info(),
+            externalId: $property->externalId(),
+            companyId: $property->companyId(),
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
+        );
+
+        $sut($request, UserMother::fromUsernameAndRole('admin', Role::Admin));
+
+        $propertyPersisted = $repository->find($property->id());
+
+        $this->assertNotNull($propertyPersisted);
+        $this->assertNotNull($propertyPersisted->accountId());
+        $this->assertTrue($propertyPersisted->accountId()->equals(new AccountId('account-a')));
+        $this->assertNotNull($propertyPersisted->companyId());
+        $this->assertTrue($propertyPersisted->companyId()->equals($company->id()));
+        $this->assertSame(25, $propertyPersisted->numberOfEmployees());
+        $this->assertSame(300, $propertyPersisted->dailyClients());
+    }
+
     public function testIsHandle(): void
     {
         $repository = PropertyRepositoryMother::inMemory();
@@ -82,8 +157,8 @@ class UpdatePropertyServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    private function createSUT(InMemoryPropertyRepository $repository): UpdatePropertyService
+    private function createSUT(InMemoryPropertyRepository $repository, ?InMemoryCompanyRepository $companyRepository = null): UpdatePropertyService
     {
-        return new UpdatePropertyService($repository, CompanyRepositoryMother::inMemory(), new PropertyAuthorizer(), new PropertyPlaceLocationSetter(new InMemoryPlaceFinder()));
+        return new UpdatePropertyService($repository, $companyRepository ?? CompanyRepositoryMother::inMemory(), new PropertyAuthorizer(), new PropertyPlaceLocationSetter(new InMemoryPlaceFinder()));
     }
 }

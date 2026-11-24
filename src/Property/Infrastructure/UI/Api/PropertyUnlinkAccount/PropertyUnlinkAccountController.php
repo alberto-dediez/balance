@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Property\Infrastructure\UI\Api\PropertyUnlinkAccount;
 
-use App\Property\Application\Property\Update\UpdatePropertyRequest;
-use App\Property\Application\Property\Update\UpdatePropertyService;
+use App\Property\Application\Property\ReleaseAccount\ReleasePropertyAccountRequest;
+use App\Property\Application\Property\ReleaseAccount\ReleasePropertyAccountService;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -32,7 +32,7 @@ class PropertyUnlinkAccountController extends AbstractController
     public function __invoke(
         string $propertyId,
         PropertyRepository $propertyRepository,
-        UpdatePropertyService $updateProperty,
+        ReleasePropertyAccountService $releasePropertyAccount,
         PropertyResponseGenerator $propertyGenerator,
     ): JsonResponse {
         /** @var SecurityUser $user */
@@ -44,14 +44,8 @@ class PropertyUnlinkAccountController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $response = $updateProperty(
-            new UpdatePropertyRequest(
-                propertyId: $property->id(),
-                name: $property->name(),
-                accountId: null,
-                info: $property->info(),
-                externalId: $property->externalId(),
-            ),
+        $response = $releasePropertyAccount(
+            new ReleasePropertyAccountRequest(propertyId: $property->id()),
             $user,
         );
 
