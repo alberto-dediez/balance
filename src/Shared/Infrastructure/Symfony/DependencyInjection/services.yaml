@@ -21,6 +21,8 @@ parameters:
     ovh.s3.access_key: '%env(OVH_S3_ACCESS_KEY)%'
     ovh.s3.secret_key: '%env(OVH_S3_SECRET_KEY)%'
     ovh.s3.prefix: '%env(OVH_S3_PREFIX)%'
+    google_drive.credentials_file: '%env(GOOGLE_DRIVE_CREDENTIALS_FILE)%'
+    google_drive.folder_id: '%env(GOOGLE_DRIVE_FOLDER_ID)%'
     shared.health_check.queue_max_wait_minutes: '%env(int:HEALTH_CHECK_QUEUE_MAX_WAIT_MINUTES)%'
     shared.health_check.queue_transports:
         async_high: high
@@ -166,6 +168,10 @@ services:
     AsyncAws\S3\S3Client:
         factory: ['@App\Shared\Infrastructure\Storage\Ovh\OvhS3ClientFactory', 'create']
         lazy: true
+
+    App\Shared\Infrastructure\Storage\GoogleDrive\GoogleDriveAccessTokenProvider:
+        arguments:
+            $credentialsFile: '%google_drive.credentials_file%'
 
     App\Shared\Infrastructure\Persistence\Doctrine\DatabaseHealthIndicator:
         tags: [{ name: shared.health_indicator, priority: 20 }]

@@ -14,12 +14,14 @@ class MediaStorageRegistryTest extends TestCase
     {
         $local = MediaStorageMother::inMemory();
         $ovh = MediaStorageMother::inMemory();
+        $googleDrive = MediaStorageMother::inMemory();
 
-        $sut = new MediaStorageRegistry(['local' => $local, 'ovh' => $ovh], 'local');
+        $sut = new MediaStorageRegistry(['local' => $local, 'ovh' => $ovh, 'google_drive' => $googleDrive], 'local');
 
         $this->assertSame($local, $sut->get('local'));
         $this->assertSame($ovh, $sut->get('ovh'));
-        $this->assertSame(['local', 'ovh'], $sut->drivers());
+        $this->assertSame($googleDrive, $sut->get('google_drive'));
+        $this->assertSame(['local', 'ovh', 'google_drive'], $sut->drivers());
     }
 
     public function testDefault(): void

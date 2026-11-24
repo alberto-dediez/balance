@@ -16,13 +16,16 @@ class MediaBackupStorageFactoryTest extends TestCase
 
     private InMemoryMediaStorage $ovh;
 
+    private InMemoryMediaStorage $googleDrive;
+
     private MediaStorageRegistry $registry;
 
     protected function setUp(): void
     {
         $this->local = MediaStorageMother::inMemory();
         $this->ovh = MediaStorageMother::inMemory();
-        $this->registry = new MediaStorageRegistry(['local' => $this->local, 'ovh' => $this->ovh], 'local');
+        $this->googleDrive = MediaStorageMother::inMemory();
+        $this->registry = new MediaStorageRegistry(['local' => $this->local, 'ovh' => $this->ovh, 'google_drive' => $this->googleDrive], 'local');
     }
 
     public function testReturnsTheLocalBackupWithAnOvhMainStorage(): void
@@ -134,27 +137,68 @@ class MediaBackupStorageFactoryTest extends TestCase
         $this->assertSame($this->local, $sut->create());
     }
 
+    public function testReturnsTheGoogleDriveBackupWithALocalMainStorage(): void
+    {
+        $sut = $this->createSUT('local', 'google_drive');
+
+        $this->assertSame($this->googleDrive, $sut->create());
+    }
+
+    public function testGoogleDriveMainAndBackupWithAnotherFolder(): void
+    {
+        $sut = $this->createSUT('google_drive', 'google_drive');
+
+        $this->assertSame($this->googleDrive, $sut->create());
+    }
+
+    public function testGoogleDriveMainAndBackupInTheSameFolder(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The backup storage must not use the same location as the main storage');
+
+        $sut = $this->createSUT('google_drive', 'google_drive', backupLocations: ['local' => '/backup/library', 'ovh' => 'bucket/library-backup', 'google_drive' => 'drive-folder']);
+
+        $sut->create();
+    }
+
+    public function testGoogleDriveMainAndBackupWithoutFolders(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The backup storage must not use the same location as the main storage');
+
+        $sut = $this->createSUT(
+            'google_drive',
+            'google_drive',
+            primaryLocations: ['local' => '/app/var/uploads/library', 'ovh' => 'bucket/library', 'google_drive' => ''],
+            backupLocations: ['local' => '/backup/library', 'ovh' => 'bucket/library-backup', 'google_drive' => ''],
+        );
+
+        $sut->create();
+    }
+
     public function testUnknownBackupDriver(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown media storage "drive", expected one of: local, ovh');
+        $this->expectExceptionMessage('Unknown media storage "drive", expected one of: local, ovh, google_drive');
 
         $this->createSUT('local', 'drive')->create();
     }
 
     /**
      * @param array<string, string> $backupLocations
+     * @param array<string, string> $primaryLocations
      */
     private function createSUT(
         string $primaryDriver,
         string $backupDriver,
-        array $backupLocations = ['local' => '/backup/library', 'ovh' => 'bucket/library-backup'],
+        array $backupLocations = ['local' => '/backup/library', 'ovh' => 'bucket/library-backup', 'google_drive' => 'drive-backup-folder'],
+        array $primaryLocations = ['local' => '/app/var/uploads/library', 'ovh' => 'bucket/library', 'google_drive' => 'drive-folder'],
     ): MediaBackupStorageFactory {
         return new MediaBackupStorageFactory(
             $this->registry,
             $primaryDriver,
             $backupDriver,
-            ['local' => '/app/var/uploads/library', 'ovh' => 'bucket/library'],
+            $primaryLocations,
             $backupLocations,
             '/app/var/uploads/library',
         );

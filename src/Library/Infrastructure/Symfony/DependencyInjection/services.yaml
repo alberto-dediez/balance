@@ -9,6 +9,7 @@ parameters:
     app.media_backup_dir: '%env(default:app.media_backup_default_dir:MEDIA_BACKUP_DIR)%'
     app.media_backup_ovh_bucket: '%env(default:ovh.s3.bucket:MEDIA_BACKUP_OVH_BUCKET)%'
     app.media_backup_ovh_prefix: '%env(MEDIA_BACKUP_OVH_PREFIX)%'
+    app.media_backup_google_drive_folder_id: '%env(MEDIA_BACKUP_GOOGLE_DRIVE_FOLDER_ID)%'
 
 services:
     _defaults:
@@ -33,11 +34,16 @@ services:
             $bucket: '%ovh.s3.bucket%'
             $prefix: '%ovh.s3.prefix%'
 
+    App\Library\Infrastructure\Storage\GoogleDriveMediaStorage:
+        arguments:
+            $folderId: '%google_drive.folder_id%'
+
     App\Library\Infrastructure\Storage\MediaStorageRegistry:
         arguments:
             $storages:
                 local: '@App\Library\Infrastructure\Storage\LocalMediaStorage'
                 ovh: '@App\Library\Infrastructure\Storage\OvhMediaStorage'
+                google_drive: '@App\Library\Infrastructure\Storage\GoogleDriveMediaStorage'
             $defaultDriver: '%app.media_storage%'
 
     library.media_storage.primary:
@@ -73,12 +79,18 @@ services:
             $bucket: '%app.media_backup_ovh_bucket%'
             $prefix: '%app.media_backup_ovh_prefix%'
 
+    library.media_storage.backup_google_drive:
+        class: App\Library\Infrastructure\Storage\GoogleDriveMediaStorage
+        arguments:
+            $folderId: '%app.media_backup_google_drive_folder_id%'
+
     library.media_backup_storage.registry:
         class: App\Library\Infrastructure\Storage\MediaStorageRegistry
         arguments:
             $storages:
                 local: '@library.media_storage.backup_local'
                 ovh: '@library.media_storage.backup_ovh'
+                google_drive: '@library.media_storage.backup_google_drive'
             $defaultDriver: '%app.media_backup_storage%'
 
     App\Library\Infrastructure\Storage\MediaBackupStorageFactory:
@@ -89,9 +101,11 @@ services:
             $primaryLocations:
                 local: '%app.media_dir%'
                 ovh: '%ovh.s3.bucket%/%ovh.s3.prefix%'
+                google_drive: '%google_drive.folder_id%'
             $backupLocations:
                 local: '%app.media_backup_dir%'
                 ovh: '%app.media_backup_ovh_bucket%/%app.media_backup_ovh_prefix%'
+                google_drive: '%app.media_backup_google_drive_folder_id%'
             $fallbackDir: '%app.media_dir%'
 
     library.media_storage.backup:
@@ -132,11 +146,16 @@ when@test:
             class: App\Library\Infrastructure\Storage\InMemoryMediaStorage
             public: true
 
+        library.media_storage.google_drive_in_memory:
+            class: App\Library\Infrastructure\Storage\InMemoryMediaStorage
+            public: true
+
         App\Library\Infrastructure\Storage\MediaStorageRegistry:
             arguments:
                 $storages:
                     local: '@App\Library\Infrastructure\Storage\InMemoryMediaStorage'
                     ovh: '@library.media_storage.ovh_in_memory'
+                    google_drive: '@library.media_storage.google_drive_in_memory'
                 $defaultDriver: 'local'
             public: true
 
