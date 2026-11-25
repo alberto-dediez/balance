@@ -82,6 +82,17 @@ class SystemContext implements Context
         Assert::assertStringNotContainsString($text, $this->output);
     }
 
+    #[Then('the command output shows :count for :label')]
+    public function theCommandOutputShowsForLabel(int $count, string $label): void
+    {
+        Assert::assertNotEmpty($this->output);
+
+        Assert::assertMatchesRegularExpression(
+            sprintf('/^[\s|]*%s[\s|]+%d[\s|]*$/m', preg_quote($label, '/'), $count),
+            $this->output,
+        );
+    }
+
     #[When('command :name is executed with argument :argument')]
     public function commandIsExecutedWithArgument(string $name, string $argument): void
     {

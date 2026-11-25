@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\Library\Domain\Model\Backup\MediaBackup" table="media_backups">
+        <id name="path" type="string" length="512" column="path">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="mediaId" type="string" length="36" column="media_id" nullable="false" />
+        <field name="backedUpAt" type="datetime_immutable" column="backed_up_at" nullable="false" />
+        <field name="removedAt" type="datetime_immutable" column="removed_at" nullable="true" />
+
+        <indexes>
+            <index name="IDX_media_backups_media_id" columns="media_id" />
+            <index name="IDX_media_backups_removed_at" columns="removed_at" />
+        </indexes>
+    </entity>
+</doctrine-mapping>

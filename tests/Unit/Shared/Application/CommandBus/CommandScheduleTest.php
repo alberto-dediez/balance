@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Shared\Application\CommandBus;
 use App\Assistant\Application\Conversation\ExpireStale\ExpireStaleAssistantWorkRequest;
 use App\Assistant\Application\Conversation\Purge\PurgeConversationsRequest;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
+use App\Library\Application\Media\RunBackup\RunMediaBackupRequest;
 use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
 use App\Shared\Application\CommandBus\CommandSchedule;
 use App\Shared\Application\CommandBus\DeferredCommand;
@@ -46,6 +47,22 @@ class CommandScheduleTest extends TestCase
 
         $this->assertInstanceOf(DeferredCommand::class, $command);
         $this->assertInstanceOf(SyncMediaStorageRequest::class, $command->command());
+    }
+
+    public function testRunsTheMediaBackupDaily(): void
+    {
+        $scheduled = array_values(array_filter(
+            (new CommandSchedule())->commands(),
+            static fn(ScheduledCommand $command): bool => 'library:run-media-backup' === $command->id(),
+        ));
+
+        $this->assertCount(1, $scheduled);
+        $this->assertSame('daily at 04:00 UTC', $scheduled[0]->describe());
+
+        $command = $scheduled[0]->command();
+
+        $this->assertInstanceOf(DeferredCommand::class, $command);
+        $this->assertInstanceOf(RunMediaBackupRequest::class, $command->command());
     }
 
     public function testPurgesAssistantConversationsDaily(): void

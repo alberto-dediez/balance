@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f72356f549749c26b256cff81b99add6",
+    "content-hash": "08407c08b580f168350f317c04c70cab",
     "packages": [
         {
             "name": "async-aws/core",
@@ -13096,7 +13096,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-23T15:04:35+00:00"
+            "time": "2026-02-23T15:04:35+00:00",
+            "published-time": "2026-02-23T15:04:46+00:00"
         },
         {
             "name": "phpstan/phpstan-doctrine",
@@ -15754,7 +15755,8 @@
         "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "ext-openssl": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.11.0"

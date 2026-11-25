@@ -180,6 +180,8 @@ class DoctrineMediaRepository implements MediaRepository
             default => $qb->orderBy('m.registeredAt', $way),
         };
 
+        $qb->addOrderBy('m.id', $way);
+
         return $qb;
     }
 

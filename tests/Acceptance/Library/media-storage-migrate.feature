@@ -46,3 +46,25 @@ Feature:
         Given I am the system
         When command "library:storage:migrate" is executed with argument "--from:local --to:local"
         Then I expect status code 2
+
+    Scenario: Command library:storage:migrate copies the existing files to the Google Drive storage
+        Given I am the system
+        Given media "logo.png" with id "1111" exists
+        Given document "contract.pdf" with id "2222" exists
+        When command "library:storage:migrate" is executed with argument "--from:local --to:google_drive"
+        Then Is Executed Successfully
+        Then I want to see "migrados" in command output
+        Then media "1111" is stored in the "google_drive" storage
+        Then media "2222" is stored in the "google_drive" storage
+        Then media "1111" is stored in the "local" storage
+        Then media "2222" is stored in the "local" storage
+
+    Scenario: Command library:storage:migrate copies the files from the Google Drive storage back to the local storage
+        Given I am the system
+        Given media "logo.png" with id "1111" exists
+        When command "library:storage:migrate" is executed with argument "--from:local --to:google_drive --delete-source:1"
+        Then media "1111" is not stored in the "local" storage
+        When command "library:storage:migrate" is executed with argument "--from:google_drive --to:local"
+        Then Is Executed Successfully
+        Then media "1111" is stored in the "local" storage
+        Then media "1111" is stored in the "google_drive" storage

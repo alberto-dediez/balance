@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Acceptance\Library;
 
+use App\Library\Domain\Model\Backup\MediaBackup;
 use App\Library\Domain\Model\Folder\Folder;
 use App\Library\Domain\Model\Folder\FolderFilter;
 use App\Library\Domain\Model\Folder\FolderId;
@@ -14,6 +15,7 @@ use App\Library\Domain\Model\Media\MediaId;
 use App\Library\Domain\Model\Media\MediaRepository;
 use App\Library\Domain\Model\Media\MediaStorage;
 use App\Library\Domain\Model\Media\MediaVisibility;
+use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryMediaBackupRepository;
 use App\Library\Infrastructure\Persistence\InMemory\Repository\InMemoryStorageSyncTaskRepository;
 use App\Library\Infrastructure\Storage\InMemoryMediaStorage;
 use App\Library\Infrastructure\Storage\MediaStorageRegistry;
@@ -41,6 +43,12 @@ final class LibraryContext implements Context
 
     private ?string $lastRemovedMediaPath = null;
 
+    /** @var array<string, string> */
+    private array $backupPaths = [];
+
+    /** @var list<string> */
+    private array $extractedFiles = [];
+
     public function __construct(
         KernelBrowser $kernelBrowser,
     ) {
@@ -52,6 +60,13 @@ final class LibraryContext implements Context
     {
         $this->client->reset();
         $this->lastRemovedMediaPath = null;
+        $this->backupPaths = [];
+
+        foreach ($this->extractedFiles as $file) {
+            @unlink($file);
+        }
+
+        $this->extractedFiles = [];
     }
 
     private function getMediaRepository(): MediaRepository
@@ -550,6 +565,65 @@ final class LibraryContext implements Context
         Assert::assertSame($count, $tasks->countPending());
     }
 
+    #[Then('the backup storage contains media :id')]
+    public function mediaIsStoredInTheBackupStorage(string $id): void
+    {
+        Assert::assertTrue($this->getBackupStorage()->exists($this->getBackupPath($id)));
+    }
+
+    #[Then('the backup storage does not contain media :id')]
+    public function mediaIsNotStoredInTheBackupStorage(string $id): void
+    {
+        Assert::assertFalse($this->getBackupStorage()->exists($this->getBackupPath($id)));
+    }
+
+    #[Given('the backup media storage is unavailable')]
+    public function theBackupMediaStorageIsUnavailable(): void
+    {
+        $this->getBackupStorage()->markUnavailable();
+    }
+
+    #[Given('the backup of media :id was removed :days days ago')]
+    public function theBackupOfMediaWasRemovedDaysAgo(string $id, int $days): void
+    {
+        $backups = $this->getMediaBackupRepository();
+        $backup = $backups->findByMediaId($id);
+
+        Assert::assertNotNull($backup);
+
+        $this->backupPaths[$id] = $backup->path();
+
+        $backups->save(new MediaBackup(
+            $backup->path(),
+            $backup->mediaId(),
+            $backup->backedUpAt(),
+            new \DateTimeImmutable(sprintf('-%d days', $days)),
+        ));
+    }
+
+    #[Then('the backup of media :id is marked as removed')]
+    public function theBackupOfMediaIsMarkedAsRemoved(string $id): void
+    {
+        $backup = $this->getMediaBackupRepository()->findByMediaId($id);
+
+        Assert::assertNotNull($backup);
+        Assert::assertTrue($backup->isRemoved());
+    }
+
+    #[Then('the file :path exists with the contents of media :id')]
+    public function theFileExistsWithTheContentsOfMedia(string $path, string $id): void
+    {
+        $this->extractedFiles[] = $path;
+
+        Assert::assertFileExists($path);
+
+        $stream = $this->getBackupStorage()->read($this->getBackupPath($id));
+        $contents = (string) stream_get_contents($stream);
+        fclose($stream);
+
+        Assert::assertSame($contents, file_get_contents($path));
+    }
+
     /**
      * @param \Closure(ChoiceFormField): string $value
      */
@@ -701,6 +775,34 @@ final class LibraryContext implements Context
         Assert::assertInstanceOf(InMemoryMediaStorage::class, $storage);
 
         return $storage;
+    }
+
+    private function getBackupStorage(): InMemoryMediaStorage
+    {
+        return $this->getInMemoryStorage('library.media_storage.backup_in_memory');
+    }
+
+    private function getMediaBackupRepository(): InMemoryMediaBackupRepository
+    {
+        $backups = $this->client->getContainer()->get(InMemoryMediaBackupRepository::class);
+
+        Assert::assertInstanceOf(InMemoryMediaBackupRepository::class, $backups);
+
+        return $backups;
+    }
+
+    private function getBackupPath(string $id): string
+    {
+        if (isset($this->backupPaths[$id])) {
+            return $this->backupPaths[$id];
+        }
+
+        $media = $this->getMediaRepository()->find(new MediaId($id));
+        $path = $media?->path() ?? $this->getMediaBackupRepository()->findByMediaId($id)?->path();
+
+        Assert::assertNotNull($path);
+
+        return $this->backupPaths[$id] = $path;
     }
 
     private function getStorageByRole(string $storage): InMemoryMediaStorage
