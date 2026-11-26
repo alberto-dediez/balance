@@ -264,6 +264,22 @@ class InMemoryCreditPurchaseRepository implements CreditPurchaseRepository
         return array_pop($validated);
     }
 
+    public function latestWithBillingFor(AccountId $accountId): ?CreditPurchase
+    {
+        $withBilling = array_values(array_filter(
+            $this->creditPurchases,
+            static fn(CreditPurchase $creditPurchase): bool => true === $creditPurchase->accountId()?->equals($accountId)
+                && null !== $creditPurchase->billing(),
+        ));
+
+        usort(
+            $withBilling,
+            static fn(CreditPurchase $a, CreditPurchase $b): int => [$b->requestedAt(), (string) $b->id()] <=> [$a->requestedAt(), (string) $a->id()],
+        );
+
+        return $withBilling[0] ?? null;
+    }
+
     /** @return list<CreditPurchase> */
     public function latestValidatedPurchases(): array
     {

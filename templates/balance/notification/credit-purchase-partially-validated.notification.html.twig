@@ -3,7 +3,7 @@
         '{project}': projectName,
         '{requested}': requestedTonnes,
         '{purchased}': purchasedTonnes,
-        '{amount}': amount,
+        '{amount}': amount is same as('-') ? amount : amount | number_format(2, ',', '.'),
         '{reference}': reference
     } -%}
         No ha sido posible comprar la cantidad solicitada para el proyecto {project}. Solicitó {requested} toneladas y se han comprado {purchased} toneladas por un importe de {amount} € (identificador {reference}).
@@ -12,6 +12,9 @@
         {% trans with {'{mitecoId}': projectMitecoId} -%}(Registro Miteco {mitecoId}){%- endtrans %}
     {% endif %}
 </p>
+{% if vatAmount is defined and vatAmount is not null %}
+    <p>{% trans -%}(IVA incluido){%- endtrans %}</p>
+{% endif %}
 <p>
     <a href="{{ path('credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}">
         {% trans -%}Ver el detalle de la compra{%- endtrans -%}

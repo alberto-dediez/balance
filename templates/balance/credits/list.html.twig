@@ -62,7 +62,15 @@
                     <td>{{ element.requestedAt | date('d/m/Y') }}</td>
                     <td>{{ element.lotNumber > 1 or element.isAssigned ? '-' : (element.requestedTonnes | number_format(4, ',', '.')) }}</td>
                     <td>{{ element.purchasedTonnes is not null ? (element.purchasedTonnes | number_format(4, ',', '.')) : '-' }}</td>
-                    <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
+                    {% set purchasedQuote = element.purchasedQuote(project.costPerTonne) %}
+                    <td>
+                        {% if purchasedQuote %}
+                            {{ purchasedQuote.totalAmount | number_format(2, ',', '.') }} €
+                            <span class="text-muted small">{{ 'IVA incl.' | trans }}</span>
+                        {% else %}
+                            {{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}
+                        {% endif %}
+                    </td>
                     <td>{{ element.reference ?? '-' }}</td>
                     <td>
                         {{ element.status.value | trans({}, 'creditPurchaseStatus') }}

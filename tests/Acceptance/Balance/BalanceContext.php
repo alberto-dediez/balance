@@ -25,6 +25,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseFilter;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseQuote;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\LedgerEntry\LedgerBeneficiary;
 use App\Balance\Domain\Model\LedgerEntry\LedgerEntryFilter;
@@ -51,12 +52,15 @@ use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
+use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\User;
+use App\Security\Domain\Model\User\UserFilter;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
 use App\Shared\Domain\Model\Locale\Locale;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
 use App\Tests\Unit\Balance\Domain\Model\ContactRequest\ContactRequestMother;
+use App\Tests\Unit\Balance\Domain\Model\CreditPurchase\CreditPurchaseBillingMother;
 use App\Tests\Unit\Balance\Domain\Model\Project\ProjectMother;
 use App\Tests\Unit\Payments\Domain\Model\Payment\PaymentMother;
 use App\Tests\Unit\Security\Domain\Model\User\UserMother;
@@ -276,6 +280,35 @@ final class BalanceContext implements Context
 
         $creditPurchase = new CreditPurchase(id: new CreditPurchaseId($id));
         $creditPurchase->request(new AccountId($accountId), new ProjectId($projectId), $requester->id(), (float) $tonnes);
+
+        $this->getCreditPurchaseRepository()->add($creditPurchase);
+    }
+
+    #[Given('credit purchase :id for account :accountId and project :projectId requesting :tonnes tonnes billed to :legalName with vat :vatRate exists')]
+    public function creditPurchaseWithBillingExists(string $id, string $accountId, string $projectId, string $tonnes, string $legalName, string $vatRate): void
+    {
+        $project = $this->getProjectRepository()->find(new ProjectId($projectId));
+        $account = $this->getAccountRepository()->find(new AccountId($accountId));
+
+        assert(null !== $project);
+
+        $owners = $this->getUserRepository()->findByFilter(new UserFilter(role: Role::Owner, account: $account, limit: 1));
+        $taxableAmount = round((float) $tonnes * ($project->costPerTonne() ?? 0.0), 2);
+
+        $creditPurchase = new CreditPurchase(id: new CreditPurchaseId($id));
+        $creditPurchase->request(
+            new AccountId($accountId),
+            new ProjectId($projectId),
+            ($owners[0] ?? null)?->id() ?? UserId::generate(),
+            (float) $tonnes,
+            new CreditPurchaseQuote(
+                taxableAmount: $taxableAmount,
+                vatRate: (float) $vatRate,
+                vatAmount: round($taxableAmount * (float) $vatRate / 100, 2),
+                vatReason: VatExemptionReason::Standard,
+            ),
+            CreditPurchaseBillingMother::from(legalName: $legalName),
+        );
 
         $this->getCreditPurchaseRepository()->add($creditPurchase);
     }

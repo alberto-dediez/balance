@@ -285,6 +285,27 @@ class DoctrineCreditPurchaseRepository implements CreditPurchaseRepository
         return $purchases[0] ?? null;
     }
 
+    public function latestWithBillingFor(AccountId $accountId): ?CreditPurchase
+    {
+        $qb = $this->manager->createQueryBuilder();
+
+        /** @var list<CreditPurchase> $purchases */
+        $purchases = $qb
+            ->select('cp')
+            ->from(CreditPurchase::class, 'cp')
+            ->andWhere($qb->expr()->eq('cp.accountId', ':accountId'))
+            ->andWhere($qb->expr()->isNotNull('cp.billingLegalName'))
+            ->orderBy('cp.requestedAt', 'DESC')
+            ->addOrderBy('cp.id', 'DESC')
+            ->setMaxResults(1)
+            ->setParameter('accountId', (string) $accountId)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $purchases[0] ?? null;
+    }
+
     /** @return list<CreditPurchase> */
     public function latestValidatedPurchases(): array
     {

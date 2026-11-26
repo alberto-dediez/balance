@@ -745,6 +745,10 @@
         <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
         <target><![CDATA[El nombre de usuario no puede contener los caracteres < ni >]]></target>
       </trans-unit>
+      <trans-unit id="91by3u5" resname="Debe aceptar las condiciones para solicitar los créditos">
+        <source>Debe aceptar las condiciones para solicitar los créditos</source>
+        <target>Debe aceptar las condiciones para solicitar los créditos</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

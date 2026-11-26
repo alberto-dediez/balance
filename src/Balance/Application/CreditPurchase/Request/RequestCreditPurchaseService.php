@@ -10,7 +10,9 @@ use App\Balance\Application\CreditPurchase\CreditPurchaseAuthorizer;
 use App\Balance\Domain\Model\AccountProject\AccountProjectFilter;
 use App\Balance\Domain\Model\AccountProject\AccountProjectRepository;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseBilling;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseQuoteChangedException;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRepository;
 use App\Balance\Domain\Model\CreditPurchase\ProjectNotCompensableException;
 use App\Balance\Domain\Model\Project\ProjectRepository;
@@ -33,6 +35,7 @@ class RequestCreditPurchaseService implements CommandHandler
         private AccountProjectRepository $accountProjectRepository,
         private SelectProjectService $selectProjectService,
         private CreditPurchaseAuthorizer $authorizer,
+        private CreditPurchaseQuoter $quoter,
     ) {}
 
     public function __invoke(RequestCreditPurchaseRequest $request, User $user): RequestCreditPurchaseResponse
@@ -55,6 +58,29 @@ class RequestCreditPurchaseService implements CommandHandler
             throw new ProjectNotCompensableException($request->projectId);
         }
 
+        if (!$request->termsAccepted) {
+            throw new \InvalidArgumentException('Billing terms must be accepted.');
+        }
+
+        $billing = new CreditPurchaseBilling(
+            legalName: $request->legalName,
+            taxId: $request->taxId,
+            street: $request->street,
+            postalCode: $request->postalCode,
+            city: $request->city,
+            country: $request->country,
+            email: $request->email,
+        );
+
+        $quote = ($this->quoter)($project, $request->tonnes, $billing->country(), $billing->taxId());
+
+        if (
+            (null === $quote) !== (null === $request->acceptedTotal)
+            || (null !== $quote && null !== $request->acceptedTotal && !$quote->matchesTotal($request->acceptedTotal))
+        ) {
+            throw new CreditPurchaseQuoteChangedException($request->projectId);
+        }
+
         $existing = $this->accountProjectRepository->findByFilter(
             new AccountProjectFilter(accountId: $request->accountId, projectId: $request->projectId, limit: 1),
         );
@@ -67,7 +93,7 @@ class RequestCreditPurchaseService implements CommandHandler
         }
 
         $creditPurchase = new CreditPurchase(id: $id);
-        $creditPurchase->request($request->accountId, $request->projectId, $user->id(), $request->tonnes);
+        $creditPurchase->request($request->accountId, $request->projectId, $user->id(), $request->tonnes, $quote, $billing);
 
         $this->creditPurchaseRepository->add($creditPurchase);
 

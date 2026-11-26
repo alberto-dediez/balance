@@ -41,6 +41,22 @@
         {% endif %}
         <dd class="col-sm-8">{{ creditPurchase.requestedTonnes | number_format(4, ',', '.') }} t</dd>
 
+        {% set requestedQuote = creditPurchase.requestedQuote %}
+
+        {% if requestedQuote %}
+            <dt class="col-sm-4">{{ 'Base imponible' | trans }}</dt>
+            <dd class="col-sm-8">{{ requestedQuote.taxableAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-4">{{ 'IVA' | trans }} ({{ requestedQuote.vatRate | number_format(2, ',', '.') }} %)</dt>
+            <dd class="col-sm-8">
+                {{ requestedQuote.vatAmount | number_format(2, ',', '.') }} €
+                <span class="d-block text-muted small">{{ ('vat.reason.' ~ requestedQuote.vatReason.value) | trans }}</span>
+            </dd>
+
+            <dt class="col-sm-4 fw-semibold">{{ 'Total solicitado' | trans }}</dt>
+            <dd class="col-sm-8 fw-semibold">{{ requestedQuote.totalAmount | number_format(2, ',', '.') }} €</dd>
+        {% endif %}
+
         {% if isReceivedLot %}
             <dt class="col-sm-4">{{ 'Toneladas del serial' | trans }}</dt>
         {% else %}
@@ -67,6 +83,21 @@
             </dd>
         {% endif %}
 
+        {% set purchasedQuote = creditPurchase.purchasedQuote(project ? project.costPerTonne : null) %}
+
+        {% if purchasedQuote %}
+            <dt class="col-12 fw-semibold mt-2">{{ 'Importe de la compra' | trans }}</dt>
+
+            <dt class="col-sm-4">{{ 'Base imponible' | trans }}</dt>
+            <dd class="col-sm-8">{{ purchasedQuote.taxableAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-4">{{ 'IVA' | trans }} ({{ purchasedQuote.vatRate | number_format(2, ',', '.') }} %)</dt>
+            <dd class="col-sm-8">{{ purchasedQuote.vatAmount | number_format(2, ',', '.') }} €</dd>
+
+            <dt class="col-sm-4 fw-semibold">{{ 'Total' | trans }}</dt>
+            <dd class="col-sm-8 fw-semibold">{{ purchasedQuote.totalAmount | number_format(2, ',', '.') }} €</dd>
+        {% endif %}
+
         {% if creditPurchase.paymentType %}
             <dt class="col-sm-4">{{ 'Tipo de pago' | trans }}</dt>
             <dd class="col-sm-8">{{ creditPurchase.paymentType.value | trans({}, 'creditPurchasePaymentType') }}</dd>
@@ -91,6 +122,35 @@
         {% endif %}
     </dl>
 </twig:Card>
+
+{% set billing = creditPurchase.billing %}
+
+{% if billing %}
+    <twig:Card title="{{ 'Datos de facturación' | trans }}">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">{{ 'Razón social' | trans }}</dt>
+            <dd class="col-sm-8">{{ billing.legalName }}</dd>
+
+            <dt class="col-sm-4">{{ 'NIF / CIF' | trans }}</dt>
+            <dd class="col-sm-8">{{ billing.taxId }}</dd>
+
+            <dt class="col-sm-4">{{ 'Dirección' | trans }}</dt>
+            <dd class="col-sm-8">{{ billing.street }}</dd>
+
+            <dt class="col-sm-4">{{ 'Código postal' | trans }}</dt>
+            <dd class="col-sm-8">{{ billing.postalCode }}</dd>
+
+            <dt class="col-sm-4">{{ 'Ciudad' | trans }}</dt>
+            <dd class="col-sm-8">{{ billing.city }}</dd>
+
+            <dt class="col-sm-4">{{ 'País' | trans }}</dt>
+            <dd class="col-sm-8">{{ billing.country }}</dd>
+
+            <dt class="col-sm-4">{{ 'Email para recibir la factura' | trans }}</dt>
+            <dd class="col-sm-8">{{ billing.email }}</dd>
+        </dl>
+    </twig:Card>
+{% endif %}
 
 <twig:Card title="{{ 'Reparto del crédito' | trans }}">
     {% if purchasedTonnes <= 0 %}

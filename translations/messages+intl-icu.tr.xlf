@@ -13021,6 +13021,74 @@
         <source>Detalle del origen</source>
         <target>Kaynak ayrıntısı</target>
       </trans-unit>
+      <trans-unit id="GbSfezG" resname="El importe ha cambiado desde que lo consultaste. Revísalo y confirma de nuevo.">
+        <source>El importe ha cambiado desde que lo consultaste. Revísalo y confirma de nuevo.</source>
+        <target>Kontrol ettiğinizden bu yana tutar değişti. Lütfen gözden geçirip yeniden onaylayın.</target>
+      </trans-unit>
+      <trans-unit id="X8jiNjB" resname="Email para recibir la factura">
+        <source>Email para recibir la factura</source>
+        <target>Faturanın gönderileceği e-posta</target>
+      </trans-unit>
+      <trans-unit id="XYV1q0k" resname="Modificar datos">
+        <source>Modificar datos</source>
+        <target>Bilgileri düzenle</target>
+      </trans-unit>
+      <trans-unit id="DLcfZTf" resname="Hemos recibido su solicitud de créditos">
+        <source>Hemos recibido su solicitud de créditos</source>
+        <target>Kredi talebinizi aldık</target>
+      </trans-unit>
+      <trans-unit id="91by3u5" resname="Debe aceptar las condiciones para solicitar los créditos">
+        <source>Debe aceptar las condiciones para solicitar los créditos</source>
+        <target>Kredileri talep etmek için koşulları kabul etmelisiniz</target>
+      </trans-unit>
+      <trans-unit id="9bQtBwA" resname="Este proyecto no tiene un coste por tonelada configurado, por lo que no podemos darte un precio estimado a cobrar. Te comunicaremos el importe antes de emitir la factura.">
+        <source>Este proyecto no tiene un coste por tonelada configurado, por lo que no podemos darte un precio estimado a cobrar. Te comunicaremos el importe antes de emitir la factura.</source>
+        <target>Bu projede ton başına maliyet tanımlanmadığı için tahmini bir ücret veremiyoruz. Faturayı düzenlemeden önce tutarı size bildireceğiz.</target>
+      </trans-unit>
+      <trans-unit id="bgvu16S" resname="Resumen de la solicitud">
+        <source>Resumen de la solicitud</source>
+        <target>Talep özeti</target>
+      </trans-unit>
+      <trans-unit id="e2Es39M" resname="Datos de facturación">
+        <source>Datos de facturación</source>
+        <target>Fatura bilgileri</target>
+      </trans-unit>
+      <trans-unit id="morYx_0" resname="Confirmo que los datos de facturación son correctos, entiendo que se me cobrarán {amount} € por los créditos y autorizo el envío de la factura correspondiente por email.">
+        <source>Confirmo que los datos de facturación son correctos, entiendo que se me cobrarán {amount} € por los créditos y autorizo el envío de la factura correspondiente por email.</source>
+        <target>Fatura bilgilerinin doğru olduğunu onaylıyorum, krediler için {amount} € ücretlendirileceğimi anlıyorum ve ilgili faturanın e-posta ile gönderilmesine izin veriyorum.</target>
+      </trans-unit>
+      <trans-unit id="Sk0fNss" resname="Confirmo que los datos de facturación son correctos, entiendo que se me cobrará el importe de los créditos que se me comunicará y autorizo el envío de la factura correspondiente por email.">
+        <source>Confirmo que los datos de facturación son correctos, entiendo que se me cobrará el importe de los créditos que se me comunicará y autorizo el envío de la factura correspondiente por email.</source>
+        <target>Fatura bilgilerinin doğru olduğunu onaylıyorum, bana bildirilecek kredi tutarının ücretlendirileceğini anlıyorum ve ilgili faturanın e-posta ile gönderilmesine izin veriyorum.</target>
+      </trans-unit>
+      <trans-unit id="dB5.NaG" resname="IVA incl.">
+        <source>IVA incl.</source>
+        <target>KDV dahil</target>
+      </trans-unit>
+      <trans-unit id="QdO9KLo" resname="Total solicitado">
+        <source>Total solicitado</source>
+        <target>Talep edilen toplam</target>
+      </trans-unit>
+      <trans-unit id="f1g6G95" resname="Importe de la compra">
+        <source>Importe de la compra</source>
+        <target>Satın alma tutarı</target>
+      </trans-unit>
+      <trans-unit id="T12bkGc" resname="Importe aceptado por el solicitante: {amount} € (IVA incluido)">
+        <source>Importe aceptado por el solicitante: {amount} € (IVA incluido)</source>
+        <target>Talep eden tarafından kabul edilen tutar: {amount} € (KDV dahil)</target>
+      </trans-unit>
+      <trans-unit id="mNCmrbD" resname="(IVA incluido)">
+        <source>(IVA incluido)</source>
+        <target>(KDV dahil)</target>
+      </trans-unit>
+      <trans-unit id="6H_JB9d" resname="Hemos recibido su solicitud de {tonnes} toneladas de CO2 del proyecto {project}. La revisaremos y le avisaremos cuando esté validada.">
+        <source>Hemos recibido su solicitud de {tonnes} toneladas de CO2 del proyecto {project}. La revisaremos y le avisaremos cuando esté validada.</source>
+        <target>{project} projesinden {tonnes} ton CO2 talebinizi aldık. Talebi inceleyip onaylandığında size haber vereceğiz.</target>
+      </trans-unit>
+      <trans-unit id="mhQqRo7" resname="Recibirá la factura en {email}">
+        <source>Recibirá la factura en {email}</source>
+        <target>Faturayı {email} adresine alacaksınız</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

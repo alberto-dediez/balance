@@ -6,6 +6,7 @@ namespace App\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\DomainEvent;
 use App\Balance\Domain\Model\Project\ProjectId;
+use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Event\DomainEventId;
@@ -21,6 +22,8 @@ final class CreditPurchaseRequested extends DomainEvent
         private ProjectId $projectId,
         private UserId $requestedBy,
         private float $requestedTonnes,
+        private ?CreditPurchaseQuote $quote = null,
+        private ?CreditPurchaseBilling $billing = null,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -52,6 +55,16 @@ final class CreditPurchaseRequested extends DomainEvent
         return $this->requestedTonnes;
     }
 
+    public function quote(): ?CreditPurchaseQuote
+    {
+        return $this->quote;
+    }
+
+    public function billing(): ?CreditPurchaseBilling
+    {
+        return $this->billing;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->creditPurchaseId();
@@ -65,6 +78,17 @@ final class CreditPurchaseRequested extends DomainEvent
             'projectId' => (string) $this->projectId,
             'requestedBy' => (string) $this->requestedBy,
             'requestedTonnes' => $this->requestedTonnes,
+            'requestedAmount' => $this->quote?->taxableAmount(),
+            'requestedVatRate' => $this->quote?->vatRate(),
+            'requestedVatAmount' => $this->quote?->vatAmount(),
+            'requestedVatReason' => $this->quote?->vatReason()->value,
+            'billingLegalName' => $this->billing?->legalName(),
+            'billingTaxId' => $this->billing?->taxId(),
+            'billingStreet' => $this->billing?->street(),
+            'billingPostalCode' => $this->billing?->postalCode(),
+            'billingCity' => $this->billing?->city(),
+            'billingCountry' => $this->billing?->country(),
+            'billingEmail' => $this->billing?->email(),
         ];
     }
 
@@ -79,6 +103,25 @@ final class CreditPurchaseRequested extends DomainEvent
             projectId: new ProjectId($payload['projectId']),
             requestedBy: new UserId($payload['requestedBy']),
             requestedTonnes: (float) $payload['requestedTonnes'],
+            quote: isset($payload['requestedAmount'])
+                ? new CreditPurchaseQuote(
+                    taxableAmount: (float) $payload['requestedAmount'],
+                    vatRate: (float) ($payload['requestedVatRate'] ?? 0.0),
+                    vatAmount: (float) ($payload['requestedVatAmount'] ?? 0.0),
+                    vatReason: VatExemptionReason::tryFrom((string) ($payload['requestedVatReason'] ?? '')) ?? VatExemptionReason::Standard,
+                )
+                : null,
+            billing: isset($payload['billingLegalName'])
+                ? new CreditPurchaseBilling(
+                    legalName: (string) $payload['billingLegalName'],
+                    taxId: (string) ($payload['billingTaxId'] ?? ''),
+                    street: (string) ($payload['billingStreet'] ?? ''),
+                    postalCode: (string) ($payload['billingPostalCode'] ?? ''),
+                    city: (string) ($payload['billingCity'] ?? ''),
+                    country: (string) ($payload['billingCountry'] ?? ''),
+                    email: (string) ($payload['billingEmail'] ?? ''),
+                )
+                : null,
             id: $id,
             occurredOn: $occurredOn,
         );

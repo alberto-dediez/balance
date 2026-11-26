@@ -6,6 +6,7 @@ namespace App\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Library\Domain\Model\Media\MediaId;
+use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
 use App\Shared\Domain\Model\AggregateRoot;
@@ -38,6 +39,17 @@ class CreditPurchase
         private float $voidedTonnes = 0.0,
         private int $lotNumber = 1,
         private CreditPurchaseOrigin $origin = CreditPurchaseOrigin::Requested,
+        private ?float $requestedAmount = null,
+        private ?float $requestedVatRate = null,
+        private ?float $requestedVatAmount = null,
+        private ?VatExemptionReason $requestedVatReason = null,
+        private ?string $billingLegalName = null,
+        private ?string $billingTaxId = null,
+        private ?string $billingStreet = null,
+        private ?string $billingPostalCode = null,
+        private ?string $billingCity = null,
+        private ?string $billingCountry = null,
+        private ?string $billingEmail = null,
         array $events = [],
         private \DateTimeImmutable $requestedAt = new \DateTimeImmutable('NOW'),
         private ?\DateTimeImmutable $resolvedAt = null,
@@ -147,6 +159,57 @@ class CreditPurchase
         return null !== $this->certificate ? new MediaId($this->certificate) : null;
     }
 
+    public function requestedQuote(): ?CreditPurchaseQuote
+    {
+        if (null === $this->requestedAmount) {
+            return null;
+        }
+
+        return new CreditPurchaseQuote(
+            taxableAmount: $this->requestedAmount,
+            vatRate: $this->requestedVatRate ?? 0.0,
+            vatAmount: $this->requestedVatAmount ?? 0.0,
+            vatReason: $this->requestedVatReason ?? VatExemptionReason::Standard,
+        );
+    }
+
+    public function billing(): ?CreditPurchaseBilling
+    {
+        if (null === $this->billingLegalName) {
+            return null;
+        }
+
+        return new CreditPurchaseBilling(
+            legalName: $this->billingLegalName,
+            taxId: $this->billingTaxId ?? '',
+            street: $this->billingStreet ?? '',
+            postalCode: $this->billingPostalCode ?? '',
+            city: $this->billingCity ?? '',
+            country: $this->billingCountry ?? '',
+            email: $this->billingEmail ?? '',
+        );
+    }
+
+    public function purchasedQuote(?float $costPerTonne): ?CreditPurchaseQuote
+    {
+        if (null === $costPerTonne
+            || null === $this->purchasedTonnes
+            || null === $this->requestedVatRate
+            || null === $this->requestedVatReason
+        ) {
+            return null;
+        }
+
+        $taxableAmount = round($this->purchasedTonnes * $costPerTonne, 2);
+
+        return new CreditPurchaseQuote(
+            taxableAmount: $taxableAmount,
+            vatRate: $this->requestedVatRate,
+            vatAmount: round($taxableAmount * $this->requestedVatRate / 100, 2),
+            vatReason: $this->requestedVatReason,
+        );
+    }
+
     public function resolvedBy(): ?UserId
     {
         return $this->resolvedBy;
@@ -217,8 +280,14 @@ class CreditPurchase
         return ($this->purchasedTonnes ?? 0.0) - $this->upperOffsetTonnes - $this->voidedTonnes;
     }
 
-    public function request(AccountId $accountId, ProjectId $projectId, UserId $requestedBy, float $tonnes): void
-    {
+    public function request(
+        AccountId $accountId,
+        ProjectId $projectId,
+        UserId $requestedBy,
+        float $tonnes,
+        ?CreditPurchaseQuote $quote = null,
+        ?CreditPurchaseBilling $billing = null,
+    ): void {
         if ($tonnes <= 0.0) {
             throw new \InvalidArgumentException('Requested tonnes must be greater than zero.');
         }
@@ -230,6 +299,8 @@ class CreditPurchase
                 projectId: $projectId,
                 requestedBy: $requestedBy,
                 requestedTonnes: $tonnes,
+                quote: $quote,
+                billing: $billing,
             ),
         );
     }
@@ -539,6 +610,21 @@ class CreditPurchase
         $this->status = CreditPurchaseStatus::Pending;
         $this->origin = CreditPurchaseOrigin::Requested;
         $this->requestedAt = $event->occurredOn();
+
+        $quote = $event->quote();
+        $this->requestedAmount = $quote?->taxableAmount();
+        $this->requestedVatRate = $quote?->vatRate();
+        $this->requestedVatAmount = $quote?->vatAmount();
+        $this->requestedVatReason = $quote?->vatReason();
+
+        $billing = $event->billing();
+        $this->billingLegalName = $billing?->legalName();
+        $this->billingTaxId = $billing?->taxId();
+        $this->billingStreet = $billing?->street();
+        $this->billingPostalCode = $billing?->postalCode();
+        $this->billingCity = $billing?->city();
+        $this->billingCountry = $billing?->country();
+        $this->billingEmail = $billing?->email();
     }
 
     public function applyCreditPurchaseValidated(CreditPurchaseValidated $event): void

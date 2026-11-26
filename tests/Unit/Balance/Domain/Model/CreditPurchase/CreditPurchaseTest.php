@@ -12,6 +12,7 @@ use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseNotPendingException;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseOrigin;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseQuote;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRangeCorrected;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseReceived;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseRejected;
@@ -24,8 +25,10 @@ use App\Balance\Domain\Model\CreditPurchase\InsufficientTransferableCreditExcept
 use App\Balance\Domain\Model\CreditPurchase\NonTransferableCreditPurchaseException;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Library\Domain\Model\Media\MediaId;
+use App\Payments\Domain\Model\Vat\VatExemptionReason;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\User\UserId;
+use App\Shared\Domain\Event\DomainEventId;
 use App\Shared\Domain\Event\DomainEventPublisher;
 use App\Tests\Unit\Shared\Domain\Event\SpyDomainEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -744,5 +747,181 @@ class CreditPurchaseTest extends TestCase
         $creditPurchase->cancel();
 
         $this->assertFalse($creditPurchase->hasTonnesToManage(0.0));
+    }
+
+    public function testRequestWithQuoteAndBillingExposesThem(): void
+    {
+        $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
+        $creditPurchase->request(
+            AccountId::generate(),
+            ProjectId::generate(),
+            UserId::generate(),
+            10.0,
+            CreditPurchaseQuoteMother::standard(),
+            CreditPurchaseBillingMother::random(),
+        );
+
+        $quote = $creditPurchase->requestedQuote();
+        $billing = $creditPurchase->billing();
+
+        $this->assertNotNull($quote);
+        $this->assertSame(150.0, $quote->taxableAmount());
+        $this->assertSame(21.0, $quote->vatRate());
+        $this->assertSame(31.5, $quote->vatAmount());
+        $this->assertSame(VatExemptionReason::Standard, $quote->vatReason());
+        $this->assertSame(181.5, $quote->totalAmount());
+        $this->assertNotNull($billing);
+        $this->assertSame('Mi Empresa SL', $billing->legalName());
+        $this->assertSame('ESP', $billing->country());
+        $this->assertSame('facturas@example.com', $billing->email());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseRequested::class, $lastEvent);
+        $this->assertNotNull($lastEvent->quote());
+        $this->assertNotNull($lastEvent->billing());
+    }
+
+    public function testRequestWithFourArgumentsHasNeitherQuoteNorBilling(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pending();
+
+        $this->assertNull($creditPurchase->requestedQuote());
+        $this->assertNull($creditPurchase->billing());
+    }
+
+    public function testRequestWithBillingAndWithoutQuote(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pendingWithBilling(AccountId::generate());
+
+        $this->assertNull($creditPurchase->requestedQuote());
+        $this->assertNotNull($creditPurchase->billing());
+    }
+
+    public function testValidateDoesNotAlterTheRequestedQuoteNorTheBilling(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pendingWithBilling(
+            AccountId::generate(),
+            quote: CreditPurchaseQuoteMother::standard(),
+        );
+        $creditPurchase->validate(
+            purchasedTonnes: 6.0,
+            paymentType: CreditPurchasePaymentType::PaidByClient,
+            reference: 'REF-1',
+            certificate: null,
+            validatedBy: UserId::generate(),
+            amount: 80.0,
+        );
+
+        $this->assertSame(181.5, $creditPurchase->requestedQuote()?->totalAmount());
+        $this->assertSame('Mi Empresa SL', $creditPurchase->billing()?->legalName());
+    }
+
+    public function testRequestedPayloadKeepsTheQuoteAndTheBilling(): void
+    {
+        CreditPurchaseMother::pendingWithBilling(AccountId::generate(), quote: CreditPurchaseQuoteMother::standard());
+
+        $lastEvent = $this->spySubscriber->lastEvent();
+
+        $this->assertInstanceOf(CreditPurchaseRequested::class, $lastEvent);
+
+        $rebuilt = CreditPurchaseRequested::rebuildFromPayload($lastEvent->id(), $lastEvent->occurredOn(), $lastEvent->payload());
+
+        $this->assertSame(150.0, $rebuilt->quote()?->taxableAmount());
+        $this->assertSame(21.0, $rebuilt->quote()->vatRate());
+        $this->assertSame(31.5, $rebuilt->quote()->vatAmount());
+        $this->assertSame(VatExemptionReason::Standard, $rebuilt->quote()->vatReason());
+        $this->assertSame('Mi Empresa SL', $rebuilt->billing()?->legalName());
+        $this->assertSame('B12345678', $rebuilt->billing()->taxId());
+        $this->assertSame('Calle Mayor 1', $rebuilt->billing()->street());
+        $this->assertSame('28001', $rebuilt->billing()->postalCode());
+        $this->assertSame('Madrid', $rebuilt->billing()->city());
+        $this->assertSame('ESP', $rebuilt->billing()->country());
+        $this->assertSame('facturas@example.com', $rebuilt->billing()->email());
+    }
+
+    public function testRequestedLegacyPayloadIsRebuiltWithoutQuoteNorBilling(): void
+    {
+        $rebuilt = CreditPurchaseRequested::rebuildFromPayload(
+            DomainEventId::generate(),
+            new \DateTimeImmutable(),
+            [
+                'creditPurchaseId' => (string) CreditPurchaseId::generate(),
+                'accountId' => (string) AccountId::generate(),
+                'projectId' => (string) ProjectId::generate(),
+                'requestedBy' => (string) UserId::generate(),
+                'requestedTonnes' => 10.0,
+            ],
+        );
+
+        $this->assertNull($rebuilt->quote());
+        $this->assertNull($rebuilt->billing());
+    }
+
+    public function testPurchasedQuoteOfAFullyValidatedRequest(): void
+    {
+        $quote = $this->validatedWithQuote(10.0, CreditPurchaseQuoteMother::standard())->purchasedQuote(15.0);
+
+        $this->assertNotNull($quote);
+        $this->assertSame(150.0, $quote->taxableAmount());
+        $this->assertSame(31.5, $quote->vatAmount());
+        $this->assertSame(181.5, $quote->totalAmount());
+    }
+
+    public function testPurchasedQuoteOfAPartiallyValidatedRequest(): void
+    {
+        $quote = $this->validatedWithQuote(6.0, CreditPurchaseQuoteMother::standard())->purchasedQuote(15.0);
+
+        $this->assertNotNull($quote);
+        $this->assertSame(90.0, $quote->taxableAmount());
+        $this->assertSame(18.9, $quote->vatAmount());
+        $this->assertSame(21.0, $quote->vatRate());
+        $this->assertSame(108.9, $quote->totalAmount());
+    }
+
+    public function testPurchasedQuoteOfAReverseChargedRequestKeepsTheReason(): void
+    {
+        $quote = $this->validatedWithQuote(
+            10.0,
+            new CreditPurchaseQuote(150.0, 0.0, 0.0, VatExemptionReason::ReverseCharge),
+        )->purchasedQuote(15.0);
+
+        $this->assertNotNull($quote);
+        $this->assertSame(0.0, $quote->vatAmount());
+        $this->assertSame(150.0, $quote->totalAmount());
+        $this->assertSame(VatExemptionReason::ReverseCharge, $quote->vatReason());
+    }
+
+    public function testPurchasedQuoteIsNullUnlessValidated(): void
+    {
+        $creditPurchase = CreditPurchaseMother::pendingWithBilling(AccountId::generate(), quote: CreditPurchaseQuoteMother::standard());
+
+        $this->assertNull($creditPurchase->purchasedQuote(15.0));
+    }
+
+    public function testPurchasedQuoteIsNullWithoutCostPerTonne(): void
+    {
+        $this->assertNull($this->validatedWithQuote(10.0, CreditPurchaseQuoteMother::standard())->purchasedQuote(null));
+    }
+
+    public function testPurchasedQuoteIsNullWithoutAStoredVatRate(): void
+    {
+        $this->assertNull(CreditPurchaseMother::validated()->purchasedQuote(15.0));
+        $this->assertNull(CreditPurchaseMother::assigned()->purchasedQuote(15.0));
+        $this->assertNull(CreditPurchaseMother::receivedLot(reference: 'SERIAL-1')->purchasedQuote(15.0));
+    }
+
+    private function validatedWithQuote(float $purchasedTonnes, CreditPurchaseQuote $quote): CreditPurchase
+    {
+        $creditPurchase = CreditPurchaseMother::pendingWithBilling(AccountId::generate(), quote: $quote);
+        $creditPurchase->validate(
+            purchasedTonnes: $purchasedTonnes,
+            paymentType: CreditPurchasePaymentType::PaidByClient,
+            reference: 'REF-' . (string) $creditPurchase->id(),
+            certificate: null,
+            validatedBy: UserId::generate(),
+        );
+
+        return $creditPurchase;
     }
 }

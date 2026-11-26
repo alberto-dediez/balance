@@ -48,6 +48,7 @@ class CreditPurchaseRequestedNotifier implements DomainEventSubscriber
             'requestedTonnes' => $event->requestedTonnes(),
             'projectName' => $project?->name(),
             'projectMitecoId' => $project?->mitecoId(),
+            'requestedTotal' => $event->quote()?->totalAmount(),
         ];
 
         foreach ($this->administrators() as $admin) {
@@ -69,6 +70,45 @@ class CreditPurchaseRequestedNotifier implements DomainEventSubscriber
                 accountId: $admin->accountId(),
             ));
         }
+
+        $this->notifyRequester($event, $project?->name());
+    }
+
+    private function notifyRequester(CreditPurchaseRequested $event, ?string $projectName): void
+    {
+        $requester = $this->userRepository->find($event->requestedBy());
+
+        if (null === $requester) {
+            return;
+        }
+
+        $quote = $event->quote();
+        $billing = $event->billing();
+
+        $this->notifier->notify(new SystemNotification(
+            recipientId: $requester->id(),
+            channel: NotificationChannel::Email,
+            subject: (string) new TranslatableMessage('Hemos recibido su solicitud de créditos'),
+            template: '@balance/notification/credit-purchase-requested-requester.email.html.twig',
+            params: [
+                'creditPurchaseId' => (string) $event->creditPurchaseId(),
+                'projectName' => $projectName,
+                'requestedTonnes' => $event->requestedTonnes(),
+                'taxableAmount' => $quote?->taxableAmount(),
+                'vatRate' => $quote?->vatRate(),
+                'vatAmount' => $quote?->vatAmount(),
+                'vatReason' => $quote?->vatReason()->value,
+                'totalAmount' => $quote?->totalAmount(),
+                'billingLegalName' => $billing?->legalName(),
+                'billingTaxId' => $billing?->taxId(),
+                'billingStreet' => $billing?->street(),
+                'billingPostalCode' => $billing?->postalCode(),
+                'billingCity' => $billing?->city(),
+                'billingCountry' => $billing?->country(),
+                'billingEmail' => $billing?->email(),
+            ],
+            accountId: $requester->accountId(),
+        ));
     }
 
     /** @return list<\App\Security\Domain\Model\User\User> */

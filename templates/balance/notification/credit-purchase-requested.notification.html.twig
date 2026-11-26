@@ -9,6 +9,13 @@
         {% trans with {'{mitecoId}': projectMitecoId} -%}(Registro Miteco {mitecoId}){%- endtrans %}
     {% endif %}
 </p>
+{% if requestedTotal is defined and requestedTotal is not null %}
+    <p>
+        {% trans with {'{amount}': requestedTotal | number_format(2, ',', '.')} -%}
+            Importe aceptado por el solicitante: {amount} € (IVA incluido)
+        {%- endtrans %}
+    </p>
+{% endif %}
 <p>
     <a href="{{ path('admin_credit_purchases_validate', {'creditPurchaseId': creditPurchaseId}) }}">
         {% trans -%}Ver solicitud{%- endtrans -%}

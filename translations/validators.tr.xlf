@@ -745,6 +745,10 @@
         <source>El nombre de usuario no puede contener los caracteres &lt; ni &gt;</source>
         <target><![CDATA[Kullanıcı adı < veya > karakterlerini içeremez]]></target>
       </trans-unit>
+      <trans-unit id="91by3u5" resname="Debe aceptar las condiciones para solicitar los créditos">
+        <source>Debe aceptar las condiciones para solicitar los créditos</source>
+        <target>Kredileri talep etmek için koşulları kabul etmelisiniz</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

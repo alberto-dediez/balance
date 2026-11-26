@@ -14,5 +14,14 @@ class RequestCreditPurchaseRequest implements Command
         public AccountId $accountId,
         public ProjectId $projectId,
         public float $tonnes,
+        public string $legalName = '',
+        public string $taxId = '',
+        public string $street = '',
+        public string $postalCode = '',
+        public string $city = '',
+        public string $country = '',
+        public string $email = '',
+        public bool $termsAccepted = false,
+        public ?float $acceptedTotal = null,
     ) {}
 }

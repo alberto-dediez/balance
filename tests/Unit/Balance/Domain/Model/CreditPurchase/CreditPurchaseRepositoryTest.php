@@ -297,6 +297,45 @@ abstract class CreditPurchaseRepositoryTest extends KernelTestCase
         $this->assertNull($repository->latestValidatedFor($accountId, $projectId));
     }
 
+    public function testLatestWithBillingForReturnsTheMostRecentRequestWithBilling(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $repository->add(CreditPurchaseMother::pendingWithBilling(
+            $accountId,
+            billing: CreditPurchaseBillingMother::from(legalName: 'Antigua SL'),
+            requestedAt: new \DateTimeImmutable('-3 days'),
+        ));
+        $latest = CreditPurchaseMother::pendingWithBilling(
+            $accountId,
+            billing: CreditPurchaseBillingMother::from(legalName: 'Reciente SL'),
+            requestedAt: new \DateTimeImmutable('-1 day'),
+        );
+        $repository->add($latest);
+        $repository->add(CreditPurchaseMother::pendingRequestedAt(new \DateTimeImmutable('NOW'), $accountId));
+        $repository->add(CreditPurchaseMother::pendingWithBilling(AccountId::generate(), requestedAt: new \DateTimeImmutable('NOW')));
+
+        $found = $repository->latestWithBillingFor($accountId);
+
+        $this->assertNotNull($found);
+        $this->assertTrue($latest->id()->equals($found->id()));
+        $this->assertSame('Reciente SL', $found->billing()?->legalName());
+    }
+
+    public function testLatestWithBillingForWithoutRequestsWithBillingIsNull(): void
+    {
+        $repository = $this->createSUT();
+
+        $accountId = AccountId::generate();
+
+        $repository->add(CreditPurchaseMother::pending($accountId));
+        $repository->add(CreditPurchaseMother::pendingWithBilling(AccountId::generate()));
+
+        $this->assertNull($repository->latestWithBillingFor($accountId));
+    }
+
     public function testLatestValidatedPurchasesReturnsOnePurchasePerAccountAndProject(): void
     {
         $repository = $this->createSUT();

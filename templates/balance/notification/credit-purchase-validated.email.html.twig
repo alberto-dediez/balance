@@ -3,7 +3,7 @@
     {% trans with {
         '{project}': projectName,
         '{tonnes}': purchasedTonnes,
-        '{amount}': amount,
+        '{amount}': amount is same as('-') ? amount : amount | number_format(2, ',', '.'),
         '{reference}': reference
     } -%}
         Su compra de {tonnes} toneladas de CO2 del proyecto {project} ha sido validada por un importe de {amount} € (identificador {reference}).
@@ -12,6 +12,25 @@
         {% trans with {'{mitecoId}': projectMitecoId} -%}(Registro Miteco {mitecoId}){%- endtrans %}
     {% endif %}
 </p>
+{% if vatAmount is defined and vatAmount is not null %}
+    <table>
+        <tr>
+            <td>{% trans -%}Base imponible{%- endtrans %}</td>
+            <td>{{ taxableAmount | number_format(2, ',', '.') }} €</td>
+        </tr>
+        <tr>
+            <td>
+                {% trans -%}IVA{%- endtrans %} ({{ vatRate | number_format(2, ',', '.') }} %)
+                <br><small>{{ ('vat.reason.' ~ vatReason) | trans }}</small>
+            </td>
+            <td>{{ vatAmount | number_format(2, ',', '.') }} €</td>
+        </tr>
+        <tr>
+            <td><strong>{% trans -%}Total{%- endtrans %}</strong></td>
+            <td><strong>{{ amount | number_format(2, ',', '.') }} €</strong></td>
+        </tr>
+    </table>
+{% endif %}
 <a href="{{ url('credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}" class="btn btn-primary">
     {% trans -%}Ver el detalle de la compra{%- endtrans -%}
 </a>

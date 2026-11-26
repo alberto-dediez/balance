@@ -46,7 +46,15 @@
         <td>{{ project }}</td>
         <td>{{ element.lotNumber > 1 or element.isAssigned ? '-' : element.requestedTonnes }}</td>
         <td>{{ element.purchasedTonnes ?? '-' }}</td>
-        <td>{{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}</td>
+        {% set purchasedQuote = element.purchasedQuote(project ? project.costPerTonne : null) %}
+        <td>
+            {% if purchasedQuote %}
+                {{ purchasedQuote.totalAmount | number_format(2, ',', '.') }} €
+                <span class="text-muted small">{{ 'IVA incl.' | trans }}</span>
+            {% else %}
+                {{ element.purchasedTonnes is not null and project.costPerTonne is not null ? ((element.purchasedTonnes * project.costPerTonne) | number_format(2, ',', '.') ~ ' €') : '-' }}
+            {% endif %}
+        </td>
         <td>{{ element.paymentType ? (element.paymentType.value | trans({}, 'creditPurchasePaymentType')) : '-' }}</td>
         <td>
             {{ element.reference ?? '-' }}

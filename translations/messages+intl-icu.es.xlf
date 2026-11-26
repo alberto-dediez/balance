@@ -13301,6 +13301,74 @@
         <source>Detalle del origen</source>
         <target>Detalle del origen</target>
       </trans-unit>
+      <trans-unit id="GbSfezG" resname="El importe ha cambiado desde que lo consultaste. Revísalo y confirma de nuevo.">
+        <source>El importe ha cambiado desde que lo consultaste. Revísalo y confirma de nuevo.</source>
+        <target>El importe ha cambiado desde que lo consultaste. Revísalo y confirma de nuevo.</target>
+      </trans-unit>
+      <trans-unit id="X8jiNjB" resname="Email para recibir la factura">
+        <source>Email para recibir la factura</source>
+        <target>Email para recibir la factura</target>
+      </trans-unit>
+      <trans-unit id="XYV1q0k" resname="Modificar datos">
+        <source>Modificar datos</source>
+        <target>Modificar datos</target>
+      </trans-unit>
+      <trans-unit id="DLcfZTf" resname="Hemos recibido su solicitud de créditos">
+        <source>Hemos recibido su solicitud de créditos</source>
+        <target>Hemos recibido su solicitud de créditos</target>
+      </trans-unit>
+      <trans-unit id="91by3u5" resname="Debe aceptar las condiciones para solicitar los créditos">
+        <source>Debe aceptar las condiciones para solicitar los créditos</source>
+        <target>Debe aceptar las condiciones para solicitar los créditos</target>
+      </trans-unit>
+      <trans-unit id="9bQtBwA" resname="Este proyecto no tiene un coste por tonelada configurado, por lo que no podemos darte un precio estimado a cobrar. Te comunicaremos el importe antes de emitir la factura.">
+        <source>Este proyecto no tiene un coste por tonelada configurado, por lo que no podemos darte un precio estimado a cobrar. Te comunicaremos el importe antes de emitir la factura.</source>
+        <target>Este proyecto no tiene un coste por tonelada configurado, por lo que no podemos darte un precio estimado a cobrar. Te comunicaremos el importe antes de emitir la factura.</target>
+      </trans-unit>
+      <trans-unit id="bgvu16S" resname="Resumen de la solicitud">
+        <source>Resumen de la solicitud</source>
+        <target>Resumen de la solicitud</target>
+      </trans-unit>
+      <trans-unit id="e2Es39M" resname="Datos de facturación">
+        <source>Datos de facturación</source>
+        <target>Datos de facturación</target>
+      </trans-unit>
+      <trans-unit id="morYx_0" resname="Confirmo que los datos de facturación son correctos, entiendo que se me cobrarán {amount} € por los créditos y autorizo el envío de la factura correspondiente por email.">
+        <source>Confirmo que los datos de facturación son correctos, entiendo que se me cobrarán {amount} € por los créditos y autorizo el envío de la factura correspondiente por email.</source>
+        <target>Confirmo que los datos de facturación son correctos, entiendo que se me cobrarán {amount} € por los créditos y autorizo el envío de la factura correspondiente por email.</target>
+      </trans-unit>
+      <trans-unit id="Sk0fNss" resname="Confirmo que los datos de facturación son correctos, entiendo que se me cobrará el importe de los créditos que se me comunicará y autorizo el envío de la factura correspondiente por email.">
+        <source>Confirmo que los datos de facturación son correctos, entiendo que se me cobrará el importe de los créditos que se me comunicará y autorizo el envío de la factura correspondiente por email.</source>
+        <target>Confirmo que los datos de facturación son correctos, entiendo que se me cobrará el importe de los créditos que se me comunicará y autorizo el envío de la factura correspondiente por email.</target>
+      </trans-unit>
+      <trans-unit id="dB5.NaG" resname="IVA incl.">
+        <source>IVA incl.</source>
+        <target>IVA incl.</target>
+      </trans-unit>
+      <trans-unit id="QdO9KLo" resname="Total solicitado">
+        <source>Total solicitado</source>
+        <target>Total solicitado</target>
+      </trans-unit>
+      <trans-unit id="f1g6G95" resname="Importe de la compra">
+        <source>Importe de la compra</source>
+        <target>Importe de la compra</target>
+      </trans-unit>
+      <trans-unit id="T12bkGc" resname="Importe aceptado por el solicitante: {amount} € (IVA incluido)">
+        <source>Importe aceptado por el solicitante: {amount} € (IVA incluido)</source>
+        <target>Importe aceptado por el solicitante: {amount} € (IVA incluido)</target>
+      </trans-unit>
+      <trans-unit id="mNCmrbD" resname="(IVA incluido)">
+        <source>(IVA incluido)</source>
+        <target>(IVA incluido)</target>
+      </trans-unit>
+      <trans-unit id="6H_JB9d" resname="Hemos recibido su solicitud de {tonnes} toneladas de CO2 del proyecto {project}. La revisaremos y le avisaremos cuando esté validada.">
+        <source>Hemos recibido su solicitud de {tonnes} toneladas de CO2 del proyecto {project}. La revisaremos y le avisaremos cuando esté validada.</source>
+        <target>Hemos recibido su solicitud de {tonnes} toneladas de CO2 del proyecto {project}. La revisaremos y le avisaremos cuando esté validada.</target>
+      </trans-unit>
+      <trans-unit id="mhQqRo7" resname="Recibirá la factura en {email}">
+        <source>Recibirá la factura en {email}</source>
+        <target>Recibirá la factura en {email}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -6,8 +6,10 @@ namespace App\Tests\Unit\Balance\Domain\Model\CreditPurchase;
 
 use App\Balance\Domain\Model\CreditPurchase\CreditAlertThreshold;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchase;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseBilling;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseId;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchasePaymentType;
+use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseQuote;
 use App\Balance\Domain\Model\CreditPurchase\CreditPurchaseStatus;
 use App\Balance\Domain\Model\Project\ProjectId;
 use App\Security\Domain\Model\Account\AccountId;
@@ -26,6 +28,51 @@ class CreditPurchaseMother
         );
 
         return $creditPurchase;
+    }
+
+    public static function pendingWithBilling(
+        AccountId $accountId,
+        ?ProjectId $projectId = null,
+        float $tonnes = 10.0,
+        ?CreditPurchaseQuote $quote = null,
+        ?CreditPurchaseBilling $billing = null,
+        ?\DateTimeImmutable $requestedAt = null,
+    ): CreditPurchase {
+        $billing ??= CreditPurchaseBillingMother::random();
+
+        if (!$requestedAt instanceof \DateTimeImmutable) {
+            $creditPurchase = new CreditPurchase(id: CreditPurchaseId::generate());
+            $creditPurchase->request(
+                $accountId,
+                $projectId ?? ProjectId::generate(),
+                UserId::generate(),
+                $tonnes,
+                $quote,
+                $billing,
+            );
+
+            return $creditPurchase;
+        }
+
+        return new CreditPurchase(
+            id: CreditPurchaseId::generate(),
+            accountId: $accountId,
+            projectId: $projectId ?? ProjectId::generate(),
+            requestedBy: UserId::generate(),
+            requestedTonnes: $tonnes,
+            requestedAmount: $quote?->taxableAmount(),
+            requestedVatRate: $quote?->vatRate(),
+            requestedVatAmount: $quote?->vatAmount(),
+            requestedVatReason: $quote?->vatReason(),
+            billingLegalName: $billing->legalName(),
+            billingTaxId: $billing->taxId(),
+            billingStreet: $billing->street(),
+            billingPostalCode: $billing->postalCode(),
+            billingCity: $billing->city(),
+            billingCountry: $billing->country(),
+            billingEmail: $billing->email(),
+            requestedAt: $requestedAt,
+        );
     }
 
     public static function validated(

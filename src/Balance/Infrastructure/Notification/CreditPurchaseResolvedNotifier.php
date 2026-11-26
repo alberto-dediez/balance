@@ -48,14 +48,20 @@ class CreditPurchaseResolvedNotifier implements DomainEventSubscriber
 
     private function handleCreditPurchaseValidated(CreditPurchaseValidated $event): void
     {
+        $creditPurchase = $this->creditPurchaseRepository->find($event->creditPurchaseId());
         $project = $this->projectFor($event->creditPurchaseId());
         $costPerTonne = $project?->costPerTonne();
+        $quote = $creditPurchase?->purchasedQuote($costPerTonne);
 
         $params = [
             'creditPurchaseId' => (string) $event->creditPurchaseId(),
             'requestedTonnes' => $event->requestedTonnes(),
             'purchasedTonnes' => $event->purchasedTonnes(),
-            'amount' => null !== $costPerTonne ? round($event->purchasedTonnes() * $costPerTonne, 2) : '-',
+            'amount' => $quote?->totalAmount() ?? (null !== $costPerTonne ? round($event->purchasedTonnes() * $costPerTonne, 2) : '-'),
+            'taxableAmount' => $quote?->taxableAmount(),
+            'vatRate' => $quote?->vatRate(),
+            'vatAmount' => $quote?->vatAmount(),
+            'vatReason' => $quote?->vatReason()->value,
             'reference' => $event->reference(),
             'projectName' => $project?->name(),
             'projectMitecoId' => $project?->mitecoId(),

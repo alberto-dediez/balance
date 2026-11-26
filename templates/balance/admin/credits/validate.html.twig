@@ -29,8 +29,53 @@
                 <dt class="col-sm-3">{{ 'Coste por tonelada' | trans }}</dt>
                 <dd class="col-sm-9">{{ project.costPerTonne | number_format(2, ',', '.') }} €</dd>
             {% endif %}
+
+            {% set requestedQuote = creditPurchase.requestedQuote %}
+
+            {% if requestedQuote %}
+                <dt class="col-sm-3">{{ 'Base imponible' | trans }}</dt>
+                <dd class="col-sm-9">{{ requestedQuote.taxableAmount | number_format(2, ',', '.') }} €</dd>
+
+                <dt class="col-sm-3">{{ 'IVA' | trans }} ({{ requestedQuote.vatRate | number_format(2, ',', '.') }} %)</dt>
+                <dd class="col-sm-9">
+                    {{ requestedQuote.vatAmount | number_format(2, ',', '.') }} €
+                    <span class="d-block text-muted small">{{ ('vat.reason.' ~ requestedQuote.vatReason.value) | trans }}</span>
+                </dd>
+
+                <dt class="col-sm-3 fw-semibold">{{ 'Total solicitado' | trans }}</dt>
+                <dd class="col-sm-9 fw-semibold">{{ requestedQuote.totalAmount | number_format(2, ',', '.') }} €</dd>
+            {% endif %}
         </dl>
     </twig:Card>
+
+    {% set billing = creditPurchase.billing %}
+
+    {% if billing %}
+        <twig:Card title="{{ 'Datos de facturación' | trans }}">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">{{ 'Razón social' | trans }}</dt>
+                <dd class="col-sm-9">{{ billing.legalName }}</dd>
+
+                <dt class="col-sm-3">{{ 'NIF / CIF' | trans }}</dt>
+                <dd class="col-sm-9">{{ billing.taxId }}</dd>
+
+                <dt class="col-sm-3">{{ 'Dirección' | trans }}</dt>
+                <dd class="col-sm-9">{{ billing.street }}</dd>
+
+                <dt class="col-sm-3">{{ 'Código postal' | trans }}</dt>
+                <dd class="col-sm-9">{{ billing.postalCode }}</dd>
+
+                <dt class="col-sm-3">{{ 'Ciudad' | trans }}</dt>
+                <dd class="col-sm-9">{{ billing.city }}</dd>
+
+                <dt class="col-sm-3">{{ 'País' | trans }}</dt>
+                <dd class="col-sm-9">{{ billing.country }}</dd>
+
+                <dt class="col-sm-3">{{ 'Email para recibir la factura' | trans }}</dt>
+                <dd class="col-sm-9">{{ billing.email }}</dd>
+            </dl>
+        </twig:Card>
+    {% endif %}
 
     {{ form_start(form) }}
 

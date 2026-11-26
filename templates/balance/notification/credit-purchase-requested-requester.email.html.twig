@@ -1,0 +1,71 @@
+<h3>{% trans -%}Hemos recibido su solicitud de créditos{%- endtrans -%}</h3>
+<p>
+    {% trans with {
+        '{project}': projectName | e,
+        '{tonnes}': requestedTonnes | number_format(2, ',', '.')
+    } -%}
+        Hemos recibido su solicitud de {tonnes} toneladas de CO2 del proyecto {project}. La revisaremos y le avisaremos cuando esté validada.
+    {%- endtrans %}
+</p>
+{% if totalAmount is not null %}
+    <table>
+        <tr>
+            <td>{% trans -%}Base imponible{%- endtrans %}</td>
+            <td>{{ taxableAmount | number_format(2, ',', '.') }} €</td>
+        </tr>
+        <tr>
+            <td>
+                {% trans -%}IVA{%- endtrans %} ({{ vatRate | number_format(2, ',', '.') }} %)
+                <br><small>{{ ('vat.reason.' ~ vatReason) | trans }}</small>
+            </td>
+            <td>{{ vatAmount | number_format(2, ',', '.') }} €</td>
+        </tr>
+        <tr>
+            <td><strong>{% trans -%}Total{%- endtrans %}</strong></td>
+            <td><strong>{{ totalAmount | number_format(2, ',', '.') }} €</strong></td>
+        </tr>
+    </table>
+{% else %}
+    <p>
+        {% trans -%}
+            Este proyecto no tiene un coste por tonelada configurado, por lo que no podemos darte un precio estimado a cobrar. Te comunicaremos el importe antes de emitir la factura.
+        {%- endtrans %}
+    </p>
+{% endif %}
+{% if billingLegalName is not null %}
+    <h4>{% trans -%}Datos de facturación{%- endtrans -%}</h4>
+    <table>
+        <tr>
+            <td>{% trans -%}Razón social{%- endtrans %}</td>
+            <td>{{ billingLegalName }}</td>
+        </tr>
+        <tr>
+            <td>{% trans -%}NIF / CIF{%- endtrans %}</td>
+            <td>{{ billingTaxId }}</td>
+        </tr>
+        <tr>
+            <td>{% trans -%}Dirección{%- endtrans %}</td>
+            <td>{{ billingStreet }}</td>
+        </tr>
+        <tr>
+            <td>{% trans -%}Código postal{%- endtrans %}</td>
+            <td>{{ billingPostalCode }}</td>
+        </tr>
+        <tr>
+            <td>{% trans -%}Ciudad{%- endtrans %}</td>
+            <td>{{ billingCity }}</td>
+        </tr>
+        <tr>
+            <td>{% trans -%}País{%- endtrans %}</td>
+            <td>{{ billingCountry }}</td>
+        </tr>
+    </table>
+    <p>
+        {% trans with {'{email}': billingEmail | e} -%}
+            Recibirá la factura en {email}
+        {%- endtrans %}
+    </p>
+{% endif %}
+<a href="{{ url('credit_purchases_view', {'creditPurchaseId': creditPurchaseId}) }}" class="btn btn-primary">
+    {% trans -%}Ver el detalle de la compra{%- endtrans -%}
+</a>

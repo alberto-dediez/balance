@@ -31,6 +31,8 @@ interface CreditPurchaseRepository
 
     public function latestValidatedFor(AccountId $accountId, ProjectId $projectId): ?CreditPurchase;
 
+    public function latestWithBillingFor(AccountId $accountId): ?CreditPurchase;
+
     /** @return list<CreditPurchase> */
     public function latestValidatedPurchases(): array;
 }

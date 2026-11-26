@@ -1,4 +1,4 @@
-{% extends '@shared/layout/register.html.twig' %}
+{% extends '@shared/layout/edit.html.twig' %}
 
 {% set page_title = ('Créditos' | trans) ~ ' > ' ~ ('Solicitar créditos' | trans) ~ ' > ' ~ project.name %}
 
@@ -7,17 +7,136 @@
 {% endblock %}
 
 {% block content %}
+    {% set costPerTonne = project.costPerTonne is not null ? (project.costPerTonne | number_format(2, ',', '.') ~ ' €') : '---' %}
+
+    {% if project.costPerTonne is null %}
+        <twig:Alert:Alert type="warning">
+            {{ 'Este proyecto no tiene un coste por tonelada configurado, por lo que no podemos darte un precio estimado a cobrar. Te comunicaremos el importe antes de emitir la factura.' | trans }}
+        </twig:Alert:Alert>
+    {% endif %}
+
     {{ form_start(form) }}
 
-    <twig:Card title="{{ project.name }}">
-        {{ form_row(form.tonnes) }}
-    </twig:Card>
+    {% if step == 'confirm' %}
+        {% set billing = form.vars.value %}
 
-    <twig:Card>
-        <twig:ActionBar>
-            <twig:ActionBar:Button type="primary" :button="form.request" />
-        </twig:ActionBar>
-    </twig:Card>
+        <div class="d-none">
+            {{ form_row(form.tonnes) }}
+            {{ form_row(form.legalName) }}
+            {{ form_row(form.taxId) }}
+            {{ form_row(form.street) }}
+            {{ form_row(form.postalCode) }}
+            {{ form_row(form.city) }}
+            {{ form_row(form.country) }}
+            {{ form_row(form.email) }}
+        </div>
+
+        {% do form.calculate.setRendered %}
+
+        <twig:Card title="{{ 'Resumen de la solicitud' | trans }}">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">{{ 'Proyecto' | trans }}</dt>
+                <dd class="col-sm-8">{{ project.name }}</dd>
+
+                <dt class="col-sm-4">{{ 'Toneladas solicitadas' | trans }}</dt>
+                <dd class="col-sm-8">{{ billing.tonnes | number_format(2, ',', '.') }} t</dd>
+
+                <dt class="col-sm-4">{{ 'Coste / tonelada' | trans }}</dt>
+                <dd class="col-sm-8">{{ costPerTonne }}</dd>
+
+                {% if quote %}
+                    <dt class="col-sm-4">{{ 'Base imponible' | trans }}</dt>
+                    <dd class="col-sm-8">{{ quote.taxableAmount | number_format(2, ',', '.') }} €</dd>
+
+                    <dt class="col-sm-4">{{ 'IVA' | trans }} ({{ quote.vatRate | number_format(2, ',', '.') }} %)</dt>
+                    <dd class="col-sm-8">
+                        {{ quote.vatAmount | number_format(2, ',', '.') }} €
+                        <span class="d-block text-muted small">{{ ('vat.reason.' ~ quote.vatReason.value) | trans }}</span>
+                    </dd>
+
+                    <dt class="col-sm-4 fw-semibold">{{ 'Total' | trans }}</dt>
+                    <dd class="col-sm-8 fw-semibold">{{ quote.totalAmount | number_format(2, ',', '.') }} €</dd>
+                {% endif %}
+            </dl>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Datos de facturación' | trans }}">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">{{ 'Razón social' | trans }}</dt>
+                <dd class="col-sm-8">{{ billing.legalName }}</dd>
+
+                <dt class="col-sm-4">{{ 'NIF / CIF' | trans }}</dt>
+                <dd class="col-sm-8">{{ billing.taxId }}</dd>
+
+                <dt class="col-sm-4">{{ 'Dirección' | trans }}</dt>
+                <dd class="col-sm-8">{{ billing.street }}</dd>
+
+                <dt class="col-sm-4">{{ 'Código postal' | trans }}</dt>
+                <dd class="col-sm-8">{{ billing.postalCode }}</dd>
+
+                <dt class="col-sm-4">{{ 'Ciudad' | trans }}</dt>
+                <dd class="col-sm-8">{{ billing.city }}</dd>
+
+                <dt class="col-sm-4">{{ 'País' | trans }}</dt>
+                <dd class="col-sm-8">{{ countries[billing.country] ?? billing.country }}</dd>
+
+                <dt class="col-sm-4">{{ 'Email para recibir la factura' | trans }}</dt>
+                <dd class="col-sm-8">{{ billing.email }}</dd>
+            </dl>
+        </twig:Card>
+
+        {% if quote %}
+            {% set termsLabel = 'Confirmo que los datos de facturación son correctos, entiendo que se me cobrarán {amount} € por los créditos y autorizo el envío de la factura correspondiente por email.' | trans({'{amount}': quote.totalAmount | number_format(2, ',', '.')}) %}
+        {% else %}
+            {% set termsLabel = 'Confirmo que los datos de facturación son correctos, entiendo que se me cobrará el importe de los créditos que se me comunicará y autorizo el envío de la factura correspondiente por email.' | trans %}
+        {% endif %}
+
+        <twig:Card>
+            {{ form_row(form.termsAccepted, {'label': termsLabel, 'translation_domain': false}) }}
+
+            <input type="hidden" name="{{ field_name(form.acceptedTotal) }}" value="{{ quote ? quote.totalAmount : '' }}">
+            {% do form.acceptedTotal.setRendered %}
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.modify" />
+                <twig:ActionBar:Button type="primary" :button="form.request" />
+            </twig:ActionBar>
+        </twig:Card>
+    {% else %}
+        <twig:Card title="{{ project.name }}">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    {{ form_row(form.tonnes) }}
+                </div>
+                <div class="col-md-6">
+                    <twig:View:Field label="{{ 'Coste / tonelada' | trans }}">{{ costPerTonne }}</twig:View:Field>
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Datos de facturación' | trans }}">
+            <div class="row g-4">
+                <div class="col-md-6">{{ form_row(form.legalName) }}</div>
+                <div class="col-md-6">{{ form_row(form.taxId) }}</div>
+                <div class="col-md-6">{{ form_row(form.street) }}</div>
+                <div class="col-md-6">{{ form_row(form.postalCode) }}</div>
+                <div class="col-md-6">{{ form_row(form.city) }}</div>
+                <div class="col-md-6">{{ form_row(form.country) }}</div>
+                <div class="col-md-6">{{ form_row(form.email) }}</div>
+            </div>
+        </twig:Card>
+
+        {% do form.termsAccepted.setRendered %}
+        {% do form.acceptedTotal.setRendered %}
+        {% do form.request.setRendered %}
+        {% do form.modify.setRendered %}
+
+        <twig:Card>
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.calculate" />
+            </twig:ActionBar>
+        </twig:Card>
+    {% endif %}
 
     {{ form_end(form) }}
 {% endblock %}

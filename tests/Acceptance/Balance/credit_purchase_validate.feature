@@ -98,3 +98,22 @@ Feature:
         When I go to "/es/credits/purchases/2222"
         Then the response status should be 200
         Then I do not see a text "Coste del lote"
+
+    Scenario: Validating a request with VAT shows the total with VAT to the owner
+        Given account "MyCompany" with id "666" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "666" exists
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given project "Item 1" with id "1111" and price per tonne "20" and cost per tonne "15" exists
+        Given credit purchase "2222" for account "666" and project "1111" requesting "10" tonnes billed to "Mi Empresa SL" with vat "21" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/credits/2222/validate"
+        When I submit a form with "purchasedTonnes:6|paymentType:paid_by_client|reference:REF-VAT" and button "Validar compra"
+        When the queued messages are processed
+        Then the email with subject "Su compra de créditos ha sido validada parcialmente" contains "Base imponible"
+        Then the email with subject "Su compra de créditos ha sido validada parcialmente" contains "108,90 €"
+        Then the email with subject "Su compra de créditos ha sido validada parcialmente" contains "por un importe de 108,90 €"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/credits"
+        Then the response status should be 200
+        Then I see a text "108,90 €"
+        Then I see a text "IVA incl."
