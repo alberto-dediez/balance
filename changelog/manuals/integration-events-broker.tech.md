@@ -166,7 +166,7 @@ En `.env.test`: `INTEGRATION_EVENTS_ENABLED=true`, `INTEGRATION_PLATFORM=biohydr
 
 ### Topología RabbitMQ (`infra/rabbitmq/definitions.json`)
 
-- vhost `bioscore`; siete plataformas: `biohydra` (solo pruebas), `data-platform`, `balance`, `waste`, `dont-waste-food`, `reporting`, `compliance`.
+- vhost `bioscore`; ocho plataformas: `biohydra` (solo pruebas), `data-platform`, `balance`, `waste`, `dont-waste-food`, `reporting`, `compliance`, `bioscore-erp`.
 - Un exchange `topic` durable `integration.<p>` por plataforma y una cola quorum durable `integration.<p>.inbox`, enlazada con routing key `#` a los exchanges de todas las demás. Cada plataforma descarta como `skipped_unknown_type` lo que no maneja, así que empezar a consumir un tipo nuevo no exige tocar RabbitMQ.
 - Sin `x-single-active-consumer` (RabbitMQ no admite `basic.get` en colas quorum con esa opción y el receptor AMQP de Messenger lo usa). El orden lo garantizan un único consumidor por plataforma (`numprocs=1`), `integration_positions` y el inbox: **no arrancar más de un consumidor por plataforma**.
 - Policy `integration-inbox-retention`: 14 días de TTL y 512 MB por cola con `drop-head`, para que una plataforma sin consumidor no llene el disco del broker. Se pierden los mensajes que superen esos límites; los eventos con `aggregateId` llevan estado completo y el siguiente lo recupera.
@@ -184,39 +184,484 @@ php bin/console messenger:failed:retry --transport=integration_failed --env=prod
 
 `make queues` excluye los cuatro transportes de integración (`Makefile`).
 
-### Instalación de `ext-amqp` en producción
-
-`symfony/amqp-messenger` 7.4 exige `ext-amqp` en `composer install`, **aunque el flag esté apagado**. Debe estar instalada en el PHP CLI y en el FPM de todos los servidores de todas las plataformas antes del merge.
-
-1. Paquetes: `dnf install -y plesk-php84-devel gcc make librabbitmq-devel` (`librabbitmq-devel` desde EPEL).
-2. Compilar: `/opt/plesk/php/8.4/bin/pecl install amqp`.
-3. Activar: `echo "extension=amqp.so" > /opt/plesk/php/8.4/etc/php.d/40-amqp.ini` (vale para CLI y FPM).
-4. Reiniciar: `systemctl restart plesk-php84-fpm` y `supervisorctl restart all`.
-5. Comprobar: `/opt/plesk/php/8.4/bin/php -m | grep amqp`, y desde la web (`phpinfo` o el health check).
-6. Orden de despliegue: extensión en todos los servidores, merge con `INTEGRATION_EVENTS_ENABLED=false`, broker en producción, activación plataforma a plataforma.
-7. Vuelta atrás: poner `INTEGRATION_EVENTS_ENABLED=false` y reiniciar los programas de Supervisor; el outbox conserva lo pendiente. La extensión puede quedarse instalada. Recuérdese que los mensajes que lleguen a un consumidor con el flag apagado se confirman y se pierden.
-
-La imagen de desarrollo ya la instala (`Dockerfile`, `amqp` en `install-php-extensions`).
-
-### Instalación de RabbitMQ con Docker en el servidor Plesk
-
-1. **Requisitos:** sistema compatible con Docker Engine y con la extensión *Docker* de Plesk (`cat /etc/os-release`; Docker no publica paquetes para CentOS 7), 2 GB de RAM libres, espacio para el volumen e IPs públicas de los servidores de las plataformas.
-2. **Docker en Plesk:** instalar la extensión *Docker* desde *Extensiones*, `systemctl enable docker`, comprobar `docker version` y `docker compose version`.
-3. **Ficheros:** crear `/opt/bioscore-broker/` con `compose.prod.yaml` y `rabbitmq.prod.conf` copiados de `infra/rabbitmq/`, más `data/` (propietario UID/GID 999, el usuario `rabbitmq` de la imagen) y `tls/`. El directorio queda fuera de los despliegues de las plataformas. `compose.prod.yaml` fija `hostname: rabbitmq`, `mem_limit: 1g`, rotación de logs, el puerto `5671` y la UI en `127.0.0.1:15672`; el 5672 no se publica.
-4. **TLS:** subdominio de Plesk (p. ej. `mq.<dominio>`) con Let's Encrypt; script diario `/opt/bioscore-broker/renew-tls.sh` que copia certificado, clave y cadena a `tls/cert.pem`, `tls/key.pem` y `tls/chain.pem` (legibles por el UID 999) y ejecuta `docker exec bioscore-broker-rabbitmq-1 rabbitmqctl eval 'ssl:clear_pem_cache().'`, programado con cron o con el hook de renovación de Plesk. `rabbitmq.prod.conf` solo abre el listener TLS 5671 (`verify_none`, autenticación por usuario y contraseña).
-5. **Arranque:** desde *Docker → Stacks* con `compose.prod.yaml` o `docker compose -f /opt/bioscore-broker/compose.prod.yaml up -d`. Comprobar `docker ps` (estado `healthy`) y que el hostname es `rabbitmq`.
-6. **Cortafuegos:** Docker se salta el Firewall de Plesk y `firewalld`. Restringir el 5671 con reglas persistentes en `DOCKER-USER` (`iptables -I DOCKER-USER -p tcp --dport 5671 ! -s <ips> -j DROP`, o con `ipset`), persistirlas (servicio `iptables`/`nftables` o unidad `systemd` posterior a Docker) y verificar desde fuera que el 5671 solo responde a las IPs permitidas y que el 5672 y el 15672 no responden.
-7. **UI de management:** publicada solo en `127.0.0.1:15672`; acceso por un proxy de Plesk en el subdominio (`location / { proxy_pass http://127.0.0.1:15672; }`) con restricción por IP, o por túnel SSH.
-8. **Topología y usuarios:** `rabbitmq.prod.conf` no carga definiciones al arrancar, para que reiniciar el contenedor no sobrescriba las contraseñas. Copiar `definitions.json` a un fichero temporal, sustituir las contraseñas locales (también la de `admin`), `docker cp` al contenedor y `docker exec … rabbitmqctl import_definitions /tmp/definitions.json` (aditivo; incluye la policy). Verificar con `rabbitmqctl list_exchanges|list_queues|list_bindings|list_policies -p bioscore` y borrar las copias con contraseñas.
-9. **DSN** en el `.env.local` de cada plataforma: `INTEGRATION_TRANSPORT_DSN=amqps://integration-<p>:<pass>@mq.<dominio>:5671/bioscore`.
-10. **Operación:** copia diaria de las definiciones (`rabbitmqctl export_definitions -`) fuera del servidor; `/opt/bioscore-broker/data` en las copias de seguridad; logs con `docker logs`; comprobaciones con `rabbitmq-diagnostics status`, `check_local_alarms` y `check_port_connectivity`; alerta por cron si el contenedor no está `healthy`. Rotación de contraseña: `rabbitmqctl change_password integration-<p> '<nueva>'`, actualizar el DSN y reiniciar los dos programas de Supervisor de esa plataforma.
-11. **Actualizaciones:** cambiar la etiqueta de la imagen en `compose.prod.yaml` (dentro de 4.x, de una en una versión menor), `docker compose pull` y `up -d` en ventana de mantenimiento. Los outbox acumulan mientras el broker está parado. Vuelta atrás: la etiqueta anterior.
-12. **Si el broker cae:** las plataformas siguen funcionando, los eventos se acumulan en los outbox, `integration_outbox` sale `error` en el health check pasados `INTEGRATION_OUTBOX_MAX_WAIT_MINUTES` y todo se envía al volver.
-13. **Errores típicos:** contenedor recreado con otro hostname (parece vacío), volumen sin permisos para el UID 999, certificado no legible dentro del contenedor, 5671 abierto a Internet por no aplicar `DOCKER-USER`.
+La instalación en producción (`ext-amqp`, broker RabbitMQ en Docker sobre Plesk, cortafuegos, TLS, usuarios) y la configuración de cada plataforma están en las secciones *Guía de instalación en producción (servidor Plesk)* y *Configuración por plataforma*.
 
 ### Entorno local
 
 `make broker-up` / `make broker-down` / `make broker-logs` (compose `infra/rabbitmq/compose.yaml`, proyecto fijo `bioscore-broker`, red externa `bioscore` con alias `rabbitmq.local`, management en `http://localhost:15672`, `admin`/`admin`). Una sola instancia aunque la lancen varios checkouts; si difieren en `definitions.json`, gana el último. Prueba entre dos plataformas: `INTEGRATION_*` en el `.env.local` de cada una (DSN `amqp://integration-<p>:integration-<p>@rabbitmq.local:5672/bioscore`), `make integration-relay` y `make integration-consume` en ambas, `make sf c="integration:ping hola"` en una y `make sf c="integration:inbox:list"` en la otra.
+
+## Guía de instalación en producción (servidor Plesk)
+
+Guía paso a paso para poner en marcha el servicio de eventos: la extensión `ext-amqp` en todos los servidores, el broker RabbitMQ en Docker sobre un servidor Plesk y la activación de cada plataforma. Todo se hace como `root` salvo que se indique otra cosa. Las órdenes de `bin/console` se lanzan siempre con el usuario de la suscripción de Plesk (`sudo -u <PROJECT_USER> -H bash -c 'cd <PROJECT_DIR> && ...'`), nunca como `root`.
+
+### Marcadores
+
+| Marcador | Significado | Ejemplo |
+|----------|-------------|---------|
+| `<BROKER_HOST>` | Subdominio del broker, con certificado Let's Encrypt de Plesk | `mq.bioscore.info` |
+| `<p>` | Identificador de la plataforma (`INTEGRATION_PLATFORM`) | `balance` |
+| `<GRUPO>` | Grupo de Supervisor de la plataforma (ver `infra/supervisor/README.md`) | `balance` |
+| `<PROJECT_DIR>` | Raíz del proyecto en el servidor de la plataforma | `/var/www/vhosts/bioscore.info/balance.bioscore.info` |
+| `<PROJECT_USER>` | System user de la suscripción de Plesk | `bioscore.info_ab12cd34` |
+| `<IPS_PLATAFORMAS>` | IPs públicas de los servidores de las plataformas que se conectan al broker | `203.0.113.10 203.0.113.11` |
+| `<CA_BUNDLE>` | Almacén de CA del sistema en el servidor de la plataforma | `/etc/pki/tls/certs/ca-bundle.crt` (RHEL, CentOS, AlmaLinux) · `/etc/ssl/certs/ca-certificates.crt` (Debian, Ubuntu) |
+
+### Orden del despliegue
+
+1. **Fase 1 — `ext-amqp`** en el PHP CLI y en el PHP-FPM de **todos** los servidores de **todas** las plataformas.
+2. **Fase 2 — Código:** merge y despliegue de esta versión en cada plataforma con `INTEGRATION_EVENTS_ENABLED=false`. `bin/deploy` aplica la migración `Version20261119140835` (`integration_inbox`, `integration_outbox`, `integration_positions`). La plataforma funciona igual que antes.
+3. **Fase 3 — Broker** en el servidor elegido.
+4. **Fase 4 — Activación** plataforma a plataforma (sección *Configuración por plataforma*).
+5. **Fase 5 — Prueba de extremo a extremo** entre dos plataformas ya activadas.
+
+Las fases 1 y 2 no dependen del broker y no cambian nada visible. La 1 es obligatoria antes de la 2: sin la extensión, `composer install` falla y el despliegue se queda a medias (con la web en mantenimiento).
+
+### Fase 1 — `ext-amqp` en cada servidor de plataforma
+
+`symfony/amqp-messenger` exige la extensión en `composer install` aunque el flag esté apagado.
+
+```bash
+cat /etc/os-release                                         # familia del sistema
+dnf install -y epel-release                                 # yum en CentOS 7
+dnf install -y plesk-php84-devel gcc make librabbitmq-devel # librabbitmq-devel viene de EPEL
+printf "\n" | /opt/plesk/php/8.4/bin/pecl install amqp      # Intro = autodetectar librabbitmq
+echo "extension=amqp.so" > /opt/plesk/php/8.4/etc/php.d/40-amqp.ini
+systemctl restart plesk-php84-fpm
+supervisorctl restart all
+```
+
+En Debian/Ubuntu con Plesk los paquetes son `plesk-php84-dev`, `build-essential` y `librabbitmq-dev` (`apt-get install`).
+
+Comprobar:
+
+```bash
+/opt/plesk/php/8.4/bin/php -m | grep amqp                   # CLI: "amqp"
+/opt/plesk/php/8.4/bin/php --ri amqp | head -5              # versión de la extensión y de librabbitmq
+```
+
+y en el PHP-FPM del dominio con un `phpinfo()` temporal (borrarlo después), o simplemente desplegando: si `composer install` termina, la extensión está cargada en el CLI.
+
+- Si `pecl` falla por la versión de `librabbitmq` (repositorios antiguos), compilar `rabbitmq-c` desde su release con `cmake` e indicar su prefijo cuando `pecl` lo pida en lugar de pulsar Intro.
+- Si el dominio usa otra versión de PHP de Plesk, repetir con su ruta (`/opt/plesk/php/<versión>/`) y su servicio (`plesk-php<versión>-fpm`).
+- Vuelta atrás: borrar `40-amqp.ini` y reiniciar FPM; solo es posible mientras no se haya desplegado esta versión.
+
+### Fase 3 — Broker RabbitMQ en Docker sobre Plesk
+
+Un solo broker para todas las plataformas. Puede vivir en el servidor de una de ellas o en uno propio.
+
+#### 3.1. Requisitos
+
+- Sistema soportado por Docker Engine y por la extensión *Docker* de Plesk (AlmaLinux/Rocky 8 o 9, Debian, Ubuntu). **CentOS 7 no sirve**: Docker no publica paquetes para él.
+- 2 GB de RAM libres (el contenedor está limitado a 1 GB y RabbitMQ usa hasta el 60 %), 5 GB libres de disco como mínimo (RabbitMQ bloquea a los publicadores por debajo de 2 GB libres).
+- Un subdominio `<BROKER_HOST>` con registro DNS `A` (y `AAAA` si hay IPv6) apuntando al servidor.
+- Las IPs públicas de los servidores de las plataformas (`<IPS_PLATAFORMAS>`) y salida al puerto `5671` desde cada uno.
+
+#### 3.2. Docker
+
+1. En Plesk, *Extensiones → Docker → Instalar*.
+2. Comprobar:
+
+   ```bash
+   systemctl enable --now docker
+   docker version
+   docker compose version
+   ```
+
+#### 3.3. Directorio del broker
+
+`/opt/bioscore-broker/` queda fuera de los despliegues de las plataformas: un despliegue nunca lo toca. Los tres ficheros de `infra/rabbitmq/` se copian de un checkout con esta versión (`<PROJECT_DIR>/infra/rabbitmq/` en un servidor de plataforma, o por `scp`).
+
+```bash
+mkdir -p /opt/bioscore-broker/{data,tls}
+cp <checkout>/infra/rabbitmq/compose.prod.yaml  /opt/bioscore-broker/
+cp <checkout>/infra/rabbitmq/rabbitmq.prod.conf /opt/bioscore-broker/
+chown -R 999:999 /opt/bioscore-broker/data        # usuario rabbitmq de la imagen
+chmod 0750 /opt/bioscore-broker/data /opt/bioscore-broker/tls
+```
+
+`compose.prod.yaml` monta `./rabbitmq.prod.conf` con ruta relativa: `compose.prod.yaml` y `rabbitmq.prod.conf` tienen que estar en el mismo directorio y el stack se arranca siempre desde la línea de comandos con `-f /opt/bioscore-broker/compose.prod.yaml` (los *Stacks* de la extensión de Plesk guardan el compose en otra ruta y no encontrarían el `.conf`).
+
+#### 3.4. Certificado TLS
+
+1. En Plesk, crear el subdominio `<BROKER_HOST>` (*Sitios web y dominios → Añadir subdominio*) y emitir su certificado con *SSL/TLS Certificates → Let's Encrypt*.
+2. Localizar el fichero del certificado que usa nginx para ese subdominio:
+
+   ```bash
+   grep -E 'ssl_certificate\s' /var/www/vhosts/system/<BROKER_HOST>/conf/nginx.conf
+   ```
+
+   Plesk guarda en ese fichero (`/usr/local/psa/var/certificates/scf…`) la clave privada, el certificado y la cadena intermedia en un único PEM.
+
+3. Crear `/opt/bioscore-broker/renew-tls.sh`, que separa el PEM en los tres ficheros que espera `rabbitmq.prod.conf` y hace que RabbitMQ los relea sin reiniciar:
+
+   ```bash
+   #!/usr/bin/env bash
+   set -euo pipefail
+
+   DOMAIN=<BROKER_HOST>
+   TLS_DIR=/opt/bioscore-broker/tls
+   CONTAINER=bioscore-broker-rabbitmq-1
+
+   SRC=$(grep -oP 'ssl_certificate\s+\K[^;]+' "/var/www/vhosts/system/$DOMAIN/conf/nginx.conf" | head -1)
+   TMP=$(mktemp -d)
+   trap 'rm -rf "$TMP"' EXIT
+
+   openssl pkey -in "$SRC" -out "$TMP/key.pem"
+   awk -v d="$TMP" '/-----BEGIN CERTIFICATE-----/{n++} n{print > (n == 1 ? d "/cert.pem" : d "/chain.pem")}' "$SRC"
+   [ -s "$TMP/chain.pem" ] || { echo "Sin cadena intermedia en $SRC" >&2; exit 1; }
+
+   if ! cmp -s "$TMP/cert.pem" "$TLS_DIR/cert.pem"; then
+       install -o 999 -g 999 -m 0600 "$TMP/key.pem"   "$TLS_DIR/key.pem"
+       install -o 999 -g 999 -m 0644 "$TMP/cert.pem"  "$TLS_DIR/cert.pem"
+       install -o 999 -g 999 -m 0644 "$TMP/chain.pem" "$TLS_DIR/chain.pem"
+       docker exec "$CONTAINER" rabbitmqctl eval 'ssl:clear_pem_cache().' >/dev/null 2>&1 || true
+   fi
+   ```
+
+   ```bash
+   chmod 0700 /opt/bioscore-broker/renew-tls.sh
+   /opt/bioscore-broker/renew-tls.sh
+   ls -l /opt/bioscore-broker/tls                                      # cert.pem, chain.pem, key.pem de 999
+   openssl x509 -in /opt/bioscore-broker/tls/cert.pem -noout -subject -enddate
+   echo '17 4 * * * root /opt/bioscore-broker/renew-tls.sh' > /etc/cron.d/bioscore-broker-tls
+   ```
+
+   El cron diario recoge las renovaciones automáticas de Plesk (solo copia si el certificado ha cambiado). La primera ejecución tiene que ser **antes** del primer arranque: sin los tres ficheros RabbitMQ no abre el 5671.
+
+#### 3.5. Arranque
+
+```bash
+docker compose -f /opt/bioscore-broker/compose.prod.yaml up -d
+docker ps --filter name=bioscore-broker                              # STATUS "(healthy)" tras ~30 s
+docker exec bioscore-broker-rabbitmq-1 hostname                      # debe ser "rabbitmq"
+docker exec bioscore-broker-rabbitmq-1 rabbitmq-diagnostics listeners   # 5671 (amqp/ssl) y 15672 (http)
+```
+
+RabbitMQ guarda los datos por nombre de nodo (`rabbit@rabbitmq`): si el contenedor se recrea con otro hostname arranca vacío. No quitar `hostname: rabbitmq` del compose.
+
+#### 3.6. Cortafuegos
+
+Docker publica sus puertos con reglas propias de `iptables` que **se saltan el Firewall de Plesk y `firewalld`**. El 5671 se restringe en la cadena `DOCKER-USER`, que Docker evalúa antes que las suyas y no modifica.
+
+1. Script `/opt/bioscore-broker/firewall.sh` (las IPs, separadas por espacios):
+
+   ```bash
+   #!/usr/bin/env bash
+   set -euo pipefail
+
+   ALLOWED="<IPS_PLATAFORMAS>"
+
+   ipset create -exist bioscore-broker hash:ip
+   ipset flush bioscore-broker
+   for ip in $ALLOWED; do ipset add bioscore-broker "$ip"; done
+
+   iptables -D DOCKER-USER -p tcp -m conntrack --ctorigdstport 5671 --ctdir ORIGINAL -m set ! --match-set bioscore-broker src -j DROP 2>/dev/null || true
+   iptables -I DOCKER-USER -p tcp -m conntrack --ctorigdstport 5671 --ctdir ORIGINAL -m set ! --match-set bioscore-broker src -j DROP
+   ```
+
+2. Unidad `systemd` para reaplicarlo tras cada arranque de Docker, en `/etc/systemd/system/bioscore-broker-firewall.service`:
+
+   ```ini
+   [Unit]
+   Description=Restringe el puerto 5671 del broker RabbitMQ a las plataformas
+   After=docker.service
+   Requires=docker.service
+   PartOf=docker.service
+
+   [Service]
+   Type=oneshot
+   RemainAfterExit=yes
+   ExecStart=/opt/bioscore-broker/firewall.sh
+
+   [Install]
+   WantedBy=docker.service
+   ```
+
+   ```bash
+   dnf install -y ipset                      # apt-get install ipset en Debian/Ubuntu
+   chmod 0700 /opt/bioscore-broker/firewall.sh
+   systemctl daemon-reload
+   systemctl enable --now bioscore-broker-firewall
+   iptables -L DOCKER-USER -n --line-numbers  # la regla DROP aparece antes del RETURN
+   ```
+
+3. IPv6: si `ss -ltnp | grep 5671` muestra también `[::]:5671`, aplicar la misma regla con `ip6tables` y un `ipset` `hash:ip family inet6`, o desactivar IPv6 en Docker.
+4. Verificar **desde fuera** (desde una IP no permitida y desde un servidor de plataforma):
+
+   ```bash
+   nc -vz -w 5 <BROKER_HOST> 5671      # solo conecta desde las IPs permitidas
+   nc -vz -w 5 <BROKER_HOST> 5672      # nunca conecta (no se publica)
+   nc -vz -w 5 <BROKER_HOST> 15672     # nunca conecta (solo 127.0.0.1)
+   ```
+
+Para añadir una plataforma con IP nueva: editar `ALLOWED` y `systemctl restart bioscore-broker-firewall`.
+
+#### 3.7. Topología, usuarios y contraseñas
+
+`rabbitmq.prod.conf` **no** carga `definitions.json` al arrancar: así un reinicio no devuelve las contraseñas a las de desarrollo. La topología se importa a mano, una vez, con contraseñas generadas.
+
+```bash
+dnf install -y jq
+umask 077
+cp <checkout>/infra/rabbitmq/definitions.json /root/bioscore-definitions.json
+
+for u in admin integration-biohydra integration-data-platform integration-balance integration-waste \
+         integration-dont-waste-food integration-reporting integration-compliance integration-bioscore-erp; do
+    printf '%s %s\n' "$u" "$(openssl rand -hex 24)"
+done > /root/bioscore-broker-passwords.txt
+
+while read -r u p; do
+    jq --arg u "$u" --arg p "$p" '(.users[] | select(.name == $u) | .password) = $p' \
+        /root/bioscore-definitions.json > /root/bioscore-definitions.tmp
+    mv /root/bioscore-definitions.tmp /root/bioscore-definitions.json
+done < /root/bioscore-broker-passwords.txt
+
+jq -r '.users[] | select(.password == .name or .password == "admin") | .name' /root/bioscore-definitions.json   # vacío
+
+docker cp /root/bioscore-definitions.json bioscore-broker-rabbitmq-1:/tmp/definitions.json
+docker exec bioscore-broker-rabbitmq-1 rabbitmqctl import_definitions /tmp/definitions.json
+docker exec bioscore-broker-rabbitmq-1 rm /tmp/definitions.json
+docker exec bioscore-broker-rabbitmq-1 rabbitmqctl delete_user guest
+```
+
+Las contraseñas son hexadecimales para que vayan en el DSN sin codificar. Guardar `/root/bioscore-broker-passwords.txt` en el gestor de contraseñas del equipo y **borrar** las dos copias del servidor:
+
+```bash
+shred -u /root/bioscore-definitions.json /root/bioscore-broker-passwords.txt
+```
+
+Verificar:
+
+```bash
+R="docker exec bioscore-broker-rabbitmq-1 rabbitmqctl"
+$R list_users                                   # admin [administrator] y ocho integration-*; sin guest
+$R list_permissions -p bioscore
+$R list_exchanges -p bioscore name type | grep integration     # 8 exchanges topic
+$R list_queues -p bioscore name type messages                  # 8 colas quorum
+$R list_bindings -p bioscore source_name destination_name routing_key | grep -c integration   # 56 (8 × 7)
+$R list_policies -p bioscore                    # integration-inbox-retention
+```
+
+`import_definitions` es aditivo: volver a importar un `definitions.json` más nuevo (por ejemplo, con una plataforma añadida) crea lo que falta, pero **sobrescribe la contraseña** de todo usuario que aparezca en el fichero. Para añadir una plataforma más adelante, importar un fichero que contenga solo sus `users`, `permissions`, `exchanges`, `queues` y `bindings`, con su contraseña generada.
+
+#### 3.8. Interfaz de administración
+
+Publicada solo en `127.0.0.1:15672`. Dos accesos posibles:
+
+- **Túnel SSH** (recomendado): `ssh -L 15672:127.0.0.1:15672 root@<BROKER_HOST>` y abrir `http://localhost:15672` con el usuario `admin`.
+- **Proxy en Plesk:** en *`<BROKER_HOST>` → Configuración de Apache y nginx → Directivas adicionales de nginx*:
+
+  ```nginx
+  location / {
+      allow <IP_DE_LA_OFICINA>;
+      deny all;
+      proxy_pass http://127.0.0.1:15672;
+      proxy_set_header Host $host;
+  }
+  ```
+
+  Si Plesk avisa de `duplicate location "/"`, desactivar *Modo proxy* en esa misma pantalla. Comprobar después que la renovación de Let's Encrypt del subdominio sigue funcionando (Plesk atiende `/.well-known/acme-challenge/` con su propia `location`).
+
+#### 3.9. Operación del broker
+
+| Tarea | Cómo |
+|-------|------|
+| Estado | `docker exec bioscore-broker-rabbitmq-1 rabbitmq-diagnostics status`, `check_local_alarms`, `check_port_connectivity` |
+| Logs | `docker logs --tail 200 -f bioscore-broker-rabbitmq-1` (rotación de 5 × 20 MB en el compose) |
+| Alerta | `/etc/cron.d/bioscore-broker-health`: `*/5 * * * * root [ "$(docker inspect -f '{{.State.Health.Status}}' bioscore-broker-rabbitmq-1 2>/dev/null)" = healthy ] \|\| echo "bioscore-broker no está healthy"` (cron envía la salida a `MAILTO`) |
+| Copia de las definiciones | Diaria: `docker exec bioscore-broker-rabbitmq-1 rabbitmqctl export_definitions - > /root/backups/bioscore-definitions-$(date +\%F).json` con `chmod 600` (lleva los hashes de las contraseñas), copiada fuera del servidor |
+| Copia de los datos | `/opt/bioscore-broker/` completo en las copias de seguridad del servidor |
+| Colas | `rabbitmqctl list_queues -p bioscore name messages consumers`: cada cola de una plataforma activada debe tener `consumers = 1`; `messages` creciendo sin parar indica un consumidor caído |
+| Rotar la contraseña de `<p>` | `rabbitmqctl change_password integration-<p> "$(openssl rand -hex 24)"`, actualizar el DSN en el `.env.local` de la plataforma y `sudo supervisorctl restart '<GRUPO>:*'`; mientras tanto su outbox acumula |
+| Actualizar RabbitMQ | En ventana de mantenimiento: cambiar la etiqueta de la imagen en `compose.prod.yaml` (dentro de 4.x, de una versión menor en una menor), `docker compose -f /opt/bioscore-broker/compose.prod.yaml pull` y `up -d`. Vuelta atrás: la etiqueta anterior |
+
+Si el broker cae, las plataformas siguen funcionando: los eventos se acumulan en sus outbox, el health check marca `integration_outbox` como `error` pasados `INTEGRATION_OUTBOX_MAX_WAIT_MINUTES` y todo se envía al volver.
+
+## Configuración por plataforma
+
+### Datos de cada plataforma
+
+| Plataforma | `INTEGRATION_PLATFORM` | Usuario del broker | Publica en | Consume de | Base |
+|------------|------------------------|--------------------|------------|------------|------|
+| biohydra | `biohydra` | `integration-biohydra` | `integration.biohydra` | `integration.biohydra.inbox` | biohydra — **solo pruebas**, no activar en producción |
+| Bioscore (data platform) | `data-platform` | `integration-data-platform` | `integration.data-platform` | `integration.data-platform.inbox` | Propia, **no** biohydra |
+| Balance | `balance` | `integration-balance` | `integration.balance` | `integration.balance.inbox` | biohydra |
+| Waste | `waste` | `integration-waste` | `integration.waste` | `integration.waste.inbox` | biohydra |
+| Don't Waste Food | `dont-waste-food` | `integration-dont-waste-food` | `integration.dont-waste-food` | `integration.dont-waste-food.inbox` | biohydra |
+| Reporting | `reporting` | `integration-reporting` | `integration.reporting` | `integration.reporting.inbox` | biohydra |
+| Compliance | `compliance` | `integration-compliance` | `integration.compliance` | `integration.compliance.inbox` | biohydra |
+| Bioscore ERP | `bioscore-erp` | `integration-bioscore-erp` | `integration.bioscore-erp` | `integration.bioscore-erp.inbox` | biohydra |
+
+La cola de cada plataforma recibe **todo** lo que publican las otras siete; lo que no maneja se descarta como `skipped_unknown_type`. El identificador `INTEGRATION_PLATFORM` debe coincidir exactamente con la tabla: si no, el usuario del broker no tiene permiso sobre el exchange ni sobre la cola y el relay y el consumidor fallan con `ACCESS_REFUSED`.
+
+### Plataformas basadas en biohydra
+
+Para cada una de `balance`, `waste`, `dont-waste-food`, `reporting`, `compliance` y `bioscore-erp`, después de las fases 1 a 3:
+
+#### 1. Programas de Supervisor
+
+El merge desde biohydra trae los programas en la plantilla `infra/supervisor/hydra-workers.ini`, pero cada plataforma tiene su propio `infra/supervisor/<GRUPO>-workers.ini`. Añadir en él los dos programas, con los valores de la plataforma (los mismos `user`, `directory`, PHP y directorio de logs que sus `<GRUPO>-worker-*`):
+
+```ini
+[program:<GRUPO>-integration-consumer]
+command=/opt/plesk/php/8.4/bin/php -d memory_limit=256M <PROJECT_DIR>/bin/console messenger:consume integration_in integration_retry --time-limit=3600 --memory-limit=192M --limit=500 -vv --env=prod --no-interaction
+process_name=%(program_name)s_%(process_num)02d
+directory=<PROJECT_DIR>
+user=<PROJECT_USER>
+numprocs=1
+autostart=true
+autorestart=true
+startsecs=5
+startretries=3
+stopasgroup=true
+killasgroup=true
+stopwaitsecs=3600
+stopsignal=TERM
+redirect_stderr=true
+stdout_logfile=/var/log/supervisor/<GRUPO>/integration-consumer.log
+stdout_logfile_maxbytes=20MB
+stdout_logfile_backups=10
+environment=APP_ENV="prod",APP_DEBUG="0"
+
+[program:<GRUPO>-integration-relay]
+command=/opt/plesk/php/8.4/bin/php -d memory_limit=256M <PROJECT_DIR>/bin/console integration:outbox:relay --time-limit=3600 -vv --env=prod --no-interaction
+process_name=%(program_name)s_%(process_num)02d
+directory=<PROJECT_DIR>
+user=<PROJECT_USER>
+numprocs=1
+autostart=true
+autorestart=true
+startsecs=5
+startretries=3
+stopasgroup=true
+killasgroup=true
+stopwaitsecs=60
+stopsignal=TERM
+redirect_stderr=true
+stdout_logfile=/var/log/supervisor/<GRUPO>/integration-relay.log
+stdout_logfile_maxbytes=20MB
+stdout_logfile_backups=10
+environment=APP_ENV="prod",APP_DEBUG="0"
+```
+
+y añadirlos al grupo:
+
+```ini
+[group:<GRUPO>]
+programs=<GRUPO>-worker-high,<GRUPO>-worker-medium,<GRUPO>-worker-low,<GRUPO>-integration-consumer,<GRUPO>-integration-relay
+```
+
+`numprocs=1` es obligatorio en el consumidor: el orden de los eventos depende de que haya uno solo por plataforma. Este cambio puede ir en el mismo despliegue de la fase 2: con el flag apagado los dos programas arrancan y esperan sin trabajar. `bin/deploy` aplica el `.ini` (`reread` + `update <GRUPO>`) y el sudoers de la plataforma no cambia (ya autoriza `<GRUPO>:*`).
+
+Comprobar tras el despliegue:
+
+```bash
+supervisorctl status '<GRUPO>:*'     # también <GRUPO>-integration-consumer_00 y <GRUPO>-integration-relay_00 en RUNNING
+```
+
+#### 2. Usuario de integración
+
+Los cambios provocados por eventos entrantes se ejecutan y se registran en *Registro* a nombre de un usuario reservado. Crearlo en la plataforma desde la gestión de usuarios de administración, con rol **Administrador**, con un email propio (por ejemplo `integracion@<dominio de la plataforma>`) y una contraseña larga que nadie use para entrar. No debe ser el usuario de una persona: si se le quita el rol o se borra, los eventos dejan de aplicarse y quedan en `integration_failed`.
+
+#### 3. `.env.local` del servidor
+
+En `<PROJECT_DIR>/.env.local`, con la contraseña de `integration-<p>` del paso 3.7:
+
+```dotenv
+###> integration ###
+INTEGRATION_EVENTS_ENABLED=true
+INTEGRATION_PLATFORM=<p>
+INTEGRATION_TRANSPORT_DSN=amqps://integration-<p>:<contraseña>@<BROKER_HOST>:5671/bioscore?cacert=<CA_BUNDLE>
+INTEGRATION_USERNAME=<email del usuario de integración>
+###< integration ###
+```
+
+- `cacert` es **obligatorio** con `amqps://`: sin él Symfony lanza `No CA certificate has been provided`. Como el certificado es de Let's Encrypt, basta el almacén de CA del sistema. La verificación del certificado está activa, así que el host del DSN tiene que ser `<BROKER_HOST>` (el nombre del certificado), nunca la IP.
+- `INTEGRATION_MAX_HOPS`, `INTEGRATION_RETENTION_DAYS` e `INTEGRATION_OUTBOX_MAX_WAIT_MINUTES` se dejan con los valores de `.env` salvo motivo concreto.
+- El fichero pertenece a `<PROJECT_USER>` y no debe ser legible por otros (`chmod 0640`).
+
+Ejemplo para Balance:
+
+```dotenv
+INTEGRATION_EVENTS_ENABLED=true
+INTEGRATION_PLATFORM=balance
+INTEGRATION_TRANSPORT_DSN=amqps://integration-balance:3f9c…@mq.bioscore.info:5671/bioscore?cacert=/etc/pki/tls/certs/ca-bundle.crt
+INTEGRATION_USERNAME=integracion@balance.bioscore.info
+```
+
+#### 4. Aplicar y comprobar
+
+`.env.local` se lee en cada petición, pero los workers lo leen al arrancar:
+
+```bash
+sudo -u <PROJECT_USER> sudo -n /usr/bin/supervisorctl restart '<GRUPO>:*'
+tail -n 50 /var/log/supervisor/<GRUPO>/integration-consumer.log    # sin errores de conexión
+tail -n 50 /var/log/supervisor/<GRUPO>/integration-relay.log
+```
+
+En el broker, la cola de la plataforma debe tener ahora un consumidor:
+
+```bash
+docker exec bioscore-broker-rabbitmq-1 rabbitmqctl list_queues -p bioscore name messages consumers | grep '<p>'
+```
+
+Y el health check de la plataforma debe incluir `"integration_outbox": "ok"`:
+
+```bash
+curl -s https://<dominio de la plataforma>/api/health-check
+```
+
+#### 5. Vuelta atrás
+
+`INTEGRATION_EVENTS_ENABLED=false` en `.env.local` y `supervisorctl restart '<GRUPO>:*'`. Lo pendiente en el outbox se conserva y se envía al reactivar. Mientras esté apagada, **los mensajes que lleguen a su cola se confirman y se pierden**; si la desactivación va a ser larga, parar solo el consumidor (`supervisorctl stop <GRUPO>:<GRUPO>-integration-consumer_00`, como `root`) para que se queden en la cola del broker, que los conserva hasta 14 días o 512 MB.
+
+### Bioscore (data platform)
+
+No está construida sobre biohydra, así que no tiene `INTEGRATION_*`, ni outbox, ni Supervisor de esta guía. Desde el broker solo necesita:
+
+- el host `<BROKER_HOST>`, puerto `5671` con TLS, vhost `bioscore`;
+- el usuario `integration-data-platform` y su contraseña (paso 3.7);
+- la IP pública de su servidor en `ALLOWED` del cortafuegos (paso 3.6).
+
+Su implementación debe publicar en el exchange `integration.data-platform` y consumir de la cola `integration.data-platform.inbox` respetando el sobre, las cabeceras, la routing key y las reglas de la *Guía de contratos* de `infra/rabbitmq/README.md`. El usuario no puede declarar recursos (`configure ^$`): su cliente AMQP no debe declarar exchanges ni colas al conectar, solo usarlos.
+
+### biohydra
+
+Es la base común: su identificador existe en el broker para las pruebas entre plataformas en local. En producción no se activa; si hay un entorno de staging de biohydra, se configura como una plataforma basada en biohydra con `INTEGRATION_PLATFORM=biohydra`.
+
+### Fase 5 — Prueba de extremo a extremo
+
+Con dos plataformas activadas (por ejemplo, A = `balance` y B = `waste`), como el usuario de Plesk de cada una:
+
+```bash
+# A
+sudo -u <PROJECT_USER_A> -H bash -c 'cd <PROJECT_DIR_A> && /opt/plesk/php/8.4/bin/php bin/console integration:ping "prueba de instalación" --env=prod'
+sudo -u <PROJECT_USER_A> -H bash -c 'cd <PROJECT_DIR_A> && /opt/plesk/php/8.4/bin/php bin/console integration:outbox:list --env=prod'   # la fila con sentAt
+
+# B (en unos segundos)
+sudo -u <PROJECT_USER_B> -H bash -c 'cd <PROJECT_DIR_B> && /opt/plesk/php/8.4/bin/php bin/console integration:inbox:list --env=prod'    # platform.pinged, processed
+grep platform.pinged /var/log/supervisor/<GRUPO_B>/integration-consumer.log
+```
+
+Todas las demás plataformas activadas también lo reciben y lo marcan `processed`.
+
+### Problemas frecuentes
+
+| Síntoma | Causa | Solución |
+|---------|-------|----------|
+| `composer install` falla con `ext-amqp * is missing` | Fase 1 no aplicada en ese servidor | Instalar la extensión y relanzar `bin/deploy` |
+| `No CA certificate has been provided` en los logs del relay o del consumidor | DSN `amqps://` sin `cacert` | Añadir `?cacert=<CA_BUNDLE>` al DSN |
+| `SSL connection failed` / error de verificación del certificado | Host del DSN distinto del certificado, cadena intermedia ausente en `chain.pem` o certificado caducado | Usar `<BROKER_HOST>`; `openssl s_client -connect <BROKER_HOST>:5671 -servername <BROKER_HOST> -verify_return_error </dev/null` desde el servidor de la plataforma debe acabar en `Verify return code: 0 (ok)`; relanzar `renew-tls.sh` |
+| `ACCESS_REFUSED - Login was refused` | Contraseña errónea o con caracteres que hay que codificar en la URL | Revisar el DSN; regenerar con `rabbitmqctl change_password` y hexadecimal |
+| `ACCESS_REFUSED … access to exchange/queue … refused` | `INTEGRATION_PLATFORM` no coincide con el usuario del DSN | Igualarlos según la tabla de plataformas |
+| `NOT_FOUND - no exchange` / `no queue` | Topología no importada o plataforma ausente de `definitions.json` | Paso 3.7 |
+| Conexión que se queda colgada o `Connection timed out` | IP del servidor de la plataforma fuera de `ALLOWED`, o salida al 5671 bloqueada en ese servidor | Paso 3.6; `nc -vz <BROKER_HOST> 5671` desde la plataforma |
+| El broker arranca vacío tras recrear el contenedor | Hostname distinto de `rabbitmq` | Restaurar `hostname: rabbitmq` en el compose y `up -d` |
+| El contenedor reinicia en bucle con `eacces` | `data/` o `tls/` no legibles por el UID 999 | `chown -R 999:999 /opt/bioscore-broker/data` y relanzar `renew-tls.sh` |
+| El 5671 responde desde cualquier IP | Falta la regla de `DOCKER-USER` (o se perdió al reiniciar) | `systemctl status bioscore-broker-firewall`; paso 3.6 |
+| Los eventos entrantes acaban en `integration_failed` con `IntegrationUserNotAvailable` | `INTEGRATION_USERNAME` vacío, usuario inexistente o sin rol Administrador | Revisar el usuario de integración; `messenger:failed:retry --transport=integration_failed` |
+| `integration_outbox` en `error` en el health check | Relay parado o broker inaccesible | `supervisorctl status '<GRUPO>:*'`, log del relay y estado del broker |
+| La cola de una plataforma crece y tiene `consumers = 0` | Consumidor parado, en `FATAL` o flag apagado | `supervisorctl status`, log del consumidor |
 
 ## Cómo extenderlo
 

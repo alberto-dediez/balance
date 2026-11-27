@@ -96,6 +96,7 @@ class PropertyMatchController extends AbstractController
                             accountId: $accountId,
                             info: $property->info(),
                             externalId: $property->externalId(),
+                            companyId: $property->companyId(),
                             numberOfEmployees: $property->numberOfEmployees(),
                             dailyClients: $property->dailyClients(),
                             operatingRegime: $property->operatingRegime(),

@@ -57,3 +57,41 @@ Feature:
         When I am authenticated in API as "admin@dediez.software"
         And I send a "DELETE" request to "/api/es/properties/unknown/account"
         Then the status code should be 404
+
+    Scenario: As an admin, unlinking a property keeps its employees and daily clients and releases its company
+        Given account "MyCompany" with id "mycompany" exists
+        Given company "Grupo" with id "grupo" of account "mycompany" exists
+        Given property "Hotel" with id "333" of account "mycompany" exists
+        Given property "333" has company "grupo" assigned
+        Given property "333" has 25 employees and 300 daily clients
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am authenticated in API as "admin@dediez.software"
+        And I send a "DELETE" request to "/api/es/properties/333/account"
+        Then the status code should be 200
+        And the response JSON attribute "account_id" should be null
+        And property "333" should have 25 employees and 300 daily clients
+        And property "333" should not have a company
+
+    Scenario: As an owner, unlinking a property of my account keeps its employees and daily clients
+        Given account "MyCompany" with id "mycompany" exists
+        Given company "Grupo" with id "grupo" of account "mycompany" exists
+        Given property "Hotel" with id "333" of account "mycompany" exists
+        Given property "333" has company "grupo" assigned
+        Given property "333" has 25 employees and 300 daily clients
+        Given user "owner@dediez.software" with role "ROLE_OWNER" with id "owner" of account "mycompany" exists
+        When I am authenticated in API as "owner@dediez.software"
+        And I send a "DELETE" request to "/api/es/properties/333/account"
+        Then the status code should be 200
+        And the response JSON attribute "account_id" should be null
+        And property "333" should have 25 employees and 300 daily clients
+        And property "333" should not have a company
+
+    Scenario: As an admin, unlinking a property without account returns it unchanged
+        Given property "Hotel" with id "333" exists
+        Given property "333" has 25 employees and 300 daily clients
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        When I am authenticated in API as "admin@dediez.software"
+        And I send a "DELETE" request to "/api/es/properties/333/account"
+        Then the status code should be 200
+        And the response JSON attribute "account_id" should be null
+        And property "333" should have 25 employees and 300 daily clients

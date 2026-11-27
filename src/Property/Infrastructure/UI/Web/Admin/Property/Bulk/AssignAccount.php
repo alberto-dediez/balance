@@ -48,6 +48,7 @@ class AssignAccount implements BulkAction
                 accountId: $request->accountId,
                 info: $property->info(),
                 externalId: $property->externalId(),
+                companyId: $request->accountId instanceof AccountId ? $property->companyId() : null,
                 numberOfEmployees: $property->numberOfEmployees(),
                 dailyClients: $property->dailyClients(),
                 operatingRegime: $property->operatingRegime(),

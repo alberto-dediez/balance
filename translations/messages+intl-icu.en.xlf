@@ -13369,6 +13369,14 @@
         <source>Recibirá la factura en {email}</source>
         <target>You will receive the invoice at {email}</target>
       </trans-unit>
+      <trans-unit id="6jQJjpr" resname="La copia de seguridad de la biblioteca ha fallado">
+        <source>La copia de seguridad de la biblioteca ha fallado</source>
+        <target>The library backup has failed</target>
+      </trans-unit>
+      <trans-unit id="tAj0EJK" resname="La última copia de seguridad de la biblioteca terminó con {failed} archivos sin copiar. Revisa el resultado con el comando library:backup:run.">
+        <source>La última copia de seguridad de la biblioteca terminó con {failed} archivos sin copiar. Revisa el resultado con el comando library:backup:run.</source>
+        <target>The last library backup finished with {failed} files not copied. Check the result with the library:backup:run command.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

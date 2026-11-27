@@ -67,11 +67,13 @@ export default class extends Controller {
             }
         });
 
-        this.#setMinimized(localStorage.getItem(MINIMIZED_KEY) === '1');
+        const minimized = localStorage.getItem(MINIMIZED_KEY) === '1';
+
+        this.#setMinimized(minimized);
         this.element.classList.toggle('assistant-panel--wide', localStorage.getItem(WIDE_KEY) === '1');
 
         if (localStorage.getItem(OPEN_KEY) === '1') {
-            this.#show();
+            this.#show(minimized);
         }
     }
 
@@ -611,10 +613,10 @@ export default class extends Controller {
         await this.#refreshThread();
     }
 
-    #show() {
+    #show(minimized = false) {
         this.element.hidden = false;
         localStorage.setItem(OPEN_KEY, '1');
-        this.#setMinimized(false);
+        this.#setMinimized(minimized);
         this.#load();
     }
 

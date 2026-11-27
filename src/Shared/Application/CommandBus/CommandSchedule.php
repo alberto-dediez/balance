@@ -15,6 +15,7 @@ use App\CarbonFootprint\Application\ExchangeRate\Sync\SyncExchangeRatesRequest;
 use App\CarbonFootprint\Application\SectorBenchmark\Refresh\RefreshSectorBenchmarksRequest;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
 use App\DataExchange\Application\Exportation\Purge\PurgeExpiredExportationsRequest;
+use App\Library\Application\Media\RunBackup\RunMediaBackupRequest;
 use App\Library\Application\Media\SyncStorage\SyncMediaStorageRequest;
 use App\Security\Application\EmailLog\Purge\PurgeEmailLogsRequest;
 use App\Security\Application\SignatureRequest\PurgeExpired\PurgeExpiredSignatureRequestsRequest;
@@ -93,6 +94,11 @@ class CommandSchedule
                 id: 'shared:purge-integration-messages',
                 command: new PurgeIntegrationMessagesRequest(new \DateTimeImmutable('NOW')),
                 time: '03:40',
+            ),
+            ScheduledCommand::dailyAt(
+                id: 'library:run-media-backup',
+                command: new RunMediaBackupRequest(new \DateTimeImmutable('NOW')),
+                time: '04:00',
             ),
             ScheduledCommand::everyMinutes(
                 id: 'assistant:expire-stale-work',

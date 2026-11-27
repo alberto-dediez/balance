@@ -21,6 +21,31 @@ Feature:
     }
     """
 
+  Scenario: As an admin, matching a property without account with an account_id keeps its employees and daily clients
+    Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+    Given account "MyCompany" with id "mycompany" exists
+    Given property "Hotel Barcelo Renacimiento" with id "111" exists
+    Given property "111" has 25 employees and 300 daily clients
+    When I am authenticated in API as "admin@dediez.software"
+    And I send a POST request to "/api/es/properties/match" with body:
+    """
+    {
+        "name": "Hotel Barcelo Renacimiento",
+        "source": "hotelbeds",
+        "external_id": "12345",
+        "account_id": "mycompany"
+    }
+    """
+    Then the status code should be 200
+    And the response JSON should be equal to:
+    """
+    {
+        "property_id": "111",
+        "account_id": "mycompany"
+    }
+    """
+    And property "111" should have 25 employees and 300 daily clients
+
   Scenario: As an admin, I get null property_id when no match is found via API
     Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
     When I am authenticated in API as "admin@dediez.software"
