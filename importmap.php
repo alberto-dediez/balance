@@ -40,7 +40,7 @@ return [
         'path' => './vendor/symfony/ux-live-component/assets/dist/live_controller.js',
     ],
     'bootstrap' => [
-        'version' => '5.3.7',
+        'version' => '5.3.9',
     ],
     '@popperjs/core' => [
         'version' => '2.11.8',
@@ -62,7 +62,7 @@ return [
         'type' => 'css',
     ],
     'bootstrap/dist/css/bootstrap.min.css' => [
-        'version' => '5.3.7',
+        'version' => '5.3.9',
         'type' => 'css',
     ],
     'tom-select/dist/css/tom-select.bootstrap5.min.css' => [
@@ -73,47 +73,47 @@ return [
         'version' => '5.3.3',
     ],
     '@toast-ui/editor' => [
-        'version' => '3.2.2',
+        'version' => '3.2.3',
     ],
     'prosemirror-model' => [
-        'version' => '1.19.0',
+        'version' => '1.25.13',
     ],
     'prosemirror-view' => [
-        'version' => '1.30.1',
+        'version' => '1.44.0',
     ],
     'prosemirror-transform' => [
-        'version' => '1.12.0',
+        'version' => '1.12.7',
     ],
     'prosemirror-state' => [
-        'version' => '1.4.2',
+        'version' => '1.4.4',
     ],
     'prosemirror-keymap' => [
-        'version' => '1.2.1',
+        'version' => '1.2.3',
     ],
     'prosemirror-commands' => [
-        'version' => '1.5.0',
+        'version' => '1.7.2',
     ],
     'prosemirror-inputrules' => [
-        'version' => '1.2.0',
+        'version' => '1.7.0',
     ],
     'prosemirror-history' => [
-        'version' => '1.3.0',
+        'version' => '1.5.2',
     ],
     'orderedmap' => [
-        'version' => '2.1.0',
+        'version' => '2.1.1',
     ],
     'w3c-keyname' => [
-        'version' => '2.2.6',
+        'version' => '2.2.8',
     ],
     'rope-sequence' => [
-        'version' => '1.3.3',
+        'version' => '1.3.4',
     ],
     'prosemirror-view/style/prosemirror.min.css' => [
-        'version' => '1.30.1',
+        'version' => '1.44.0',
         'type' => 'css',
     ],
     '@toast-ui/editor/dist/toastui-editor.min.css' => [
-        'version' => '3.2.2',
+        'version' => '3.2.3',
         'type' => 'css',
     ],
     'simplebar' => [
@@ -127,10 +127,10 @@ return [
         'type' => 'css',
     ],
     'lodash-es/debounce.js' => [
-        'version' => '4.17.21',
+        'version' => '4.18.1',
     ],
     'lodash-es/throttle.js' => [
-        'version' => '4.17.21',
+        'version' => '4.18.1',
     ],
     'simplebar-core/dist/simplebar.min.css' => [
         'version' => '1.3.2',

@@ -73,8 +73,11 @@ class GoogleDriveAccessTokenProviderTest extends TestCase
 
         $sut = $this->createSUT();
 
-        $this->assertSame('token-1', $sut->token());
-        $this->assertSame('token-1', $sut->token());
+        $first = $sut->token();
+        $second = $sut->token();
+
+        $this->assertSame('token-1', $first);
+        $this->assertSame('token-1', $second);
         $this->assertCount(1, $this->requests);
     }
 

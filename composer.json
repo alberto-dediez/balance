@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
@@ -75,13 +75,7 @@
             "symfony/flex": true,
             "symfony/runtime": true
         },
-        "sort-packages": true,
-        "policy": {
-            "advisories": {
-                "ignore": ["symfony/twilio-notifier"],
-                "ignore-id": ["PKSA-fgw6-3k5j-cfkn"]
-            }
-        }
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
