@@ -47,6 +47,7 @@ parameters:
             message: '#Variable \$outputFile might not be defined\.#'
             identifier: variable.undefined
             path: src/Property/Infrastructure/UI/Console/Property/ImportCommand.php
+            reportUnmatched: false
         -
             message: '#^Method App\\Assistant\\Application\\Engine\\ConversationTranscript::messagesFor\(\) should return list<App\\Shared\\Application\\Ai\\Agent\\AiAgentMessage> but returns array<int<0, max>, App\\Shared\\Application\\Ai\\Agent\\AiAgentMessage>\.$#'
             identifier: return.type

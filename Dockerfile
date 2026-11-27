@@ -1,7 +1,7 @@
 #syntax=docker/dockerfile:1
 
 # Versions
-FROM dunglas/frankenphp:1.9-php8.4 AS frankenphp_upstream
+FROM dunglas/frankenphp:1.14-php8.4 AS frankenphp_upstream
 
 # The different stages of this Dockerfile are meant to be built into separate images
 # https://docs.docker.com/develop/develop-images/multistage-build/#stop-at-a-specific-build-stage
@@ -46,9 +46,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 ENV COMPOSER_ALLOW_SUPERUSER=1
-
-# Transport to use by Mercure (default to Bolt)
-ENV MERCURE_TRANSPORT_URL=bolt:///data/mercure.db
 
 ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/app.conf.d"
 
@@ -110,4 +107,4 @@ RUN set -eux; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; \
 	php bin/console sass:build; \
-	sync; 
+	sync;
