@@ -5,6 +5,7 @@ Feature:
         Given user "payment" with role "ROLE_ADMIN" exists
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists

@@ -53,6 +53,11 @@ class PropertyInfo implements \Stringable
         return $this->propertyType;
     }
 
+    public function isAccommodation(): bool
+    {
+        return $this->propertyType?->isAccommodation() ?? false;
+    }
+
     public function categoryId(): ?CategoryId
     {
         return $this->categoryId;

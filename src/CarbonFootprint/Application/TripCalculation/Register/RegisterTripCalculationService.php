@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\Trip\LegInput;
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Application\Trip\TripDestinationResolver;
 use App\CarbonFootprint\Application\Trip\TripEmissionsCalculator;
+use App\CarbonFootprint\Application\TripCalculationLink\OvernightStayAssumption;
 use App\CarbonFootprint\Domain\Model\EmissionFactorGroup\EmissionFactorGroupRepository;
 use App\CarbonFootprint\Domain\Model\Mobility\Mobility;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityId;
@@ -26,6 +27,7 @@ use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
+use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyRepository;
 use App\Shared\Domain\Model\Consent\ConsentProof;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
@@ -58,6 +60,7 @@ final class RegisterTripCalculationService
         }
 
         $scope = $tripCalculationLink->scope();
+        $property = $this->propertyOf($tripCalculationLink);
 
         $originPlaceReference = $scope->includesTransport() ? $request->originPlaceReference : null;
         $legInputs = $scope->includesTransport() ? $request->legs : [];
@@ -82,7 +85,10 @@ final class RegisterTripCalculationService
             throw new \InvalidArgumentException('Debes indicar cómo llegaste.');
         }
 
-        if (TripCalculationScope::OvernightStay === $scope && (null === $nights || $nights < 1)) {
+        $overnightStayRequired = TripCalculationScope::OvernightStay === $scope
+            || OvernightStayAssumption::appliesTo($tripCalculationLink, $property);
+
+        if ($overnightStayRequired && (null === $nights || $nights < 1)) {
             throw new \InvalidArgumentException('Debes indicar cuántas noches.');
         }
 
@@ -90,7 +96,7 @@ final class RegisterTripCalculationService
             throw new \InvalidArgumentException('Debes indicar cuántas personas se alojaron.');
         }
 
-        $destination = $this->destination($tripCalculationLink, $request->destinationPlaceReference);
+        $destination = $this->destination($tripCalculationLink, $property, $request->destinationPlaceReference);
 
         $origin = [] !== $legInputs ? $this->waypoint($originPlaceReference) : null;
         $legs = [];
@@ -196,14 +202,27 @@ final class RegisterTripCalculationService
         return $legs;
     }
 
-    private function destination(TripCalculationLink $tripCalculationLink, ?string $destinationPlaceReference): TripWaypoint
+    private function propertyOf(TripCalculationLink $tripCalculationLink): ?Property
     {
         if (!$tripCalculationLink->isForProperty()) {
-            return $this->tripDestinationResolver->resolve($tripCalculationLink, (string) $destinationPlaceReference);
+            return null;
         }
 
         $propertyId = $tripCalculationLink->propertyId();
         $property = null !== $propertyId ? $this->propertyRepository->find($propertyId) : null;
+
+        if (null === $property) {
+            throw new TripCalculationLinkTokenInvalidException();
+        }
+
+        return $property;
+    }
+
+    private function destination(TripCalculationLink $tripCalculationLink, ?Property $property, ?string $destinationPlaceReference): TripWaypoint
+    {
+        if (!$tripCalculationLink->isForProperty()) {
+            return $this->tripDestinationResolver->resolve($tripCalculationLink, (string) $destinationPlaceReference);
+        }
 
         if (null === $property) {
             throw new TripCalculationLinkTokenInvalidException();

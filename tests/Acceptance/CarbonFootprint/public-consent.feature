@@ -19,6 +19,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
         Given property "777" is located at "40.4680", "-3.6160"
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"

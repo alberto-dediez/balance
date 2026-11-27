@@ -67,7 +67,7 @@ class TripController extends AbstractController
                 $cameFromAnotherCity = $scope->includesTransport()
                     && (!$scope->asksForBoth() || 'yes' === ($trip['cameFromAnotherCity'] ?? null));
                 $overnight = $scope->includesOvernightStay()
-                    && (!$scope->asksForBoth() || 'yes' === ($trip['overnight'] ?? null));
+                    && (!$scope->asksForBoth() || $response->assumesOvernightStay || 'yes' === ($trip['overnight'] ?? null));
 
                 try {
                     $registered = $registerTripCalculation(new RegisterTripCalculationRequest(
@@ -110,6 +110,7 @@ class TripController extends AbstractController
             'geoEnabled' => $response->geoEnabled,
             'maxLegs' => $response->maxLegs,
             'scope' => $scope,
+            'assumesOvernightStay' => $response->assumesOvernightStay,
         ]);
     }
 }

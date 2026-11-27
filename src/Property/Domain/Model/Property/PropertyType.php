@@ -59,4 +59,24 @@ enum PropertyType: string
 
         return $propertyType;
     }
+
+    public function isAccommodation(): bool
+    {
+        return match ($this) {
+            self::Hotel,
+            self::Aparthotel,
+            self::VacationalHotel,
+            self::ResortHotel,
+            self::BusinessHotel,
+            self::SpaHotel,
+            self::RuralAccommodation,
+            self::Camping,
+            self::CityHotel,
+            self::Flat,
+            self::Hostel,
+            self::Apartment,
+            self::Motel => true,
+            self::Other => false,
+        };
+    }
 }

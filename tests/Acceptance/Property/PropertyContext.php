@@ -18,7 +18,9 @@ use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyFilter;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Property\Domain\Model\Property\PropertyType;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Tests\Acceptance\Shared\AcceptanceClient;
@@ -109,6 +111,45 @@ final readonly class PropertyContext implements Context
             name: $name,
             accountId: new AccountId($account),
             externalId: ExternalId::fromSourceAndId(ExternalSource::Bioscore, $bioscoreId),
+        );
+
+        $this->getPropertyRepository()->add($property);
+    }
+
+    #[Given('property :id has type :type')]
+    public function propertyHasType(string $id, string $type): void
+    {
+        $property = $this->getPropertyRepository()->find(new PropertyId($id));
+
+        Assert::assertNotNull($property);
+
+        $info = $property->info();
+
+        $property->update(
+            name: $property->name(),
+            accountId: $property->accountId(),
+            info: new PropertyInfo(
+                propertyType: PropertyType::from($type),
+                categoryId: $info->categoryId(),
+                brandId: $info->brandId(),
+                address: $info->address(),
+                postalCode: $info->postalCode(),
+                longitude: $info->longitude(),
+                latitude: $info->latitude(),
+                rooms: $info->rooms(),
+                zone: $info->zone(),
+                web: $info->web(),
+                destinationId: $info->destinationId(),
+                countryId: $info->countryId(),
+                placeReference: $info->placeReference(),
+                placeLabel: $info->placeLabel(),
+            ),
+            externalId: $property->externalId(),
+            companyId: $property->companyId(),
+            numberOfEmployees: $property->numberOfEmployees(),
+            dailyClients: $property->dailyClients(),
+            operatingRegime: $property->operatingRegime(),
+            operatorContact: $property->operatorContact(),
         );
 
         $this->getPropertyRepository()->add($property);

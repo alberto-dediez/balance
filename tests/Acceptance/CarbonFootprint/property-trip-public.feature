@@ -15,7 +15,7 @@ Feature:
         Then the response status should be 200
         Then I see a text "Calculadora de huella de tu viaje"
         When I tick the checkbox "consent_accepted"
-        When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|overnight:yes|nights:2" and button "Calcular mi huella"
+        When I submit a form with "cameFromAnotherCity:yes|originPlaceReference:sevilla|[legs][0][mobilityId]:M1|[legs][0][vehicleOccupants]:1|[legs][0][manualDistanceKm]:400|roundTrip:yes|trips:1|nights:2" and button "Calcular mi huella"
         Then I am redirected to route "public_carbon_footprint_property_trip_result"
         Then the response status should be 200
         Then I see a text "Tu huella de carbono"
@@ -27,6 +27,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given property "Museo A" with id "777" of account "666" exists
         Given property "777" is located at "40.4680", "-3.6160"
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given overnight stay "Hotel" with id "O1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
@@ -42,9 +43,42 @@ Feature:
         Then I see a text "Noches declaradas: 2 · Personas alojadas: 3"
         Then trip calculation link "TL1" should have 1 trip calculations
 
+    Scenario: An accommodation property does not ask about the overnight stay
+        Given account "MyCompany" with id "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" is located at "40.4680", "-3.6160"
+        Given overnight stay "Hotel" with id "O1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        Then the response status should be 200
+        Then I do not see a text "¿Dormiste alguna noche fuera de tu casa?"
+        Then I see a text "¿Te has desplazado desde otra ciudad?"
+        Then I see a text "Nº de noches"
+        Then I see a text "Nº de personas alojadas"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:no|nights:2|people:3" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_result"
+        Then the response status should be 200
+        Then I see a text "Noches declaradas: 2 · Personas alojadas: 3"
+        Then trip calculation link "TL1" should have 1 trip calculations
+
+    Scenario: An accommodation property requires the nights
+        Given account "MyCompany" with id "666" exists
+        Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" is located at "40.4680", "-3.6160"
+        Given overnight stay "Hotel" with id "O1" and emission factor for the current year exists
+        Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
+        When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
+        When I tick the checkbox "consent_accepted"
+        When I submit a form with "cameFromAnotherCity:no|nights:0|people:1" and button "Calcular mi huella"
+        Then I am redirected to route "public_carbon_footprint_property_trip_trip"
+        Then I see a text "Debes indicar cuántas noches."
+        Then trip calculation link "TL1" should have 0 trip calculations
+
     Scenario: Without a places provider the guest has to type the kilometres of every leg
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         Given the places provider is disabled
@@ -129,6 +163,7 @@ Feature:
         Given account "MyCompany" with id "666" exists
         Given account "666" has feature "compensation" disabled
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         Given project "Reforestación" with id "1111" and price per tonne "20" exists
@@ -148,6 +183,7 @@ Feature:
         Given user "payment" with role "ROLE_ADMIN" exists
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
@@ -174,6 +210,7 @@ Feature:
         Given user "payment" with role "ROLE_ADMIN" exists
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists
@@ -196,6 +233,7 @@ Feature:
         Given user "payment" with role "ROLE_ADMIN" exists
         Given account "MyCompany" with id "666" exists
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given mobility "Coche" with id "M1" and emission factor for the current year exists
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         Given european union country "España" with iso "ESP" and vat "21" and id "C-ES" exists

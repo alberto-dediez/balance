@@ -9,6 +9,7 @@ Feature:
 
     Scenario: Without projects a guest of a property leaves their contact details
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
         When I tick the checkbox "consent_accepted"
@@ -46,6 +47,7 @@ Feature:
     Scenario: Without compensation the result screen does not offer contacting
         Given account "666" has feature "compensation" disabled
         Given property "Hotel A" with id "777" of account "666" exists
+        Given property "777" has type "Other"
         Given trip calculation link with id "TL1" and token "token-abc" for property "777" of account "666" exists
         When I go to "/es/carbon-footprint/property-trip/token-abc/trip"
         When I tick the checkbox "consent_accepted"

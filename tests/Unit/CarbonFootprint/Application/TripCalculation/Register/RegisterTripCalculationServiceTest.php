@@ -39,6 +39,7 @@ use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryT
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Property\Domain\Model\Property\PropertyType;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryCountryRepository;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\AccountId;
@@ -466,6 +467,69 @@ class RegisterTripCalculationServiceTest extends TestCase
         $this->assertSame(-3.616, $stored->destinationLongitude());
     }
 
+    public function testAnAccommodationRequiresTheNights(): void
+    {
+        $link = $this->linkToLocatedAccommodation();
+
+        try {
+            ($this->sut)($this->request(token: $link->token(), nights: 0));
+            $this->fail('An accommodation calculator must require the nights.');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertSame('Debes indicar cuántas noches.', $e->getMessage());
+        }
+
+        $this->assertSame([], $this->tripCalculationRepository->findByLinkId($link->id()));
+    }
+
+    public function testAnAccommodationStoresTheNightsAndPeople(): void
+    {
+        $link = $this->linkToLocatedAccommodation();
+
+        $response = ($this->sut)($this->request(token: $link->token(), nights: 2, people: 3));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertSame(2, $stored->nights());
+        $this->assertSame(3, $stored->people());
+    }
+
+    public function testAnAccommodationRequiresThePeople(): void
+    {
+        $link = $this->linkToLocatedAccommodation();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Debes indicar cuántas personas se alojaron.');
+
+        ($this->sut)($this->request(token: $link->token(), nights: 2, people: null));
+    }
+
+    public function testAPropertyOfOtherTypeAcceptsNoNights(): void
+    {
+        $link = $this->linkToLocatedProperty();
+
+        $response = ($this->sut)($this->request(token: $link->token(), nights: 0));
+
+        $stored = $this->tripCalculationRepository->find($response->tripCalculationId);
+
+        $this->assertNotNull($stored);
+        $this->assertSame(0, $stored->nights());
+    }
+
+    public function testAnAccommodationWithTransportScopeAcceptsNoNights(): void
+    {
+        $link = $this->linkToLocatedAccommodation(TripCalculationScope::Transport);
+        $mobility = $this->mobilityWithFactor('Coche', '0.2');
+
+        $response = ($this->sut)($this->request(
+            token: $link->token(),
+            nights: 0,
+            legs: [new LegInput(mobilityId: (string) $mobility->id(), manualDistanceKm: 100.0)],
+        ));
+
+        $this->assertNotNull($this->tripCalculationRepository->find($response->tripCalculationId));
+    }
+
     /** @param list<LegInput> $legs */
     private function request(
         string $token,
@@ -499,12 +563,17 @@ class RegisterTripCalculationServiceTest extends TestCase
 
     private function linkToLocatedProperty(?TripCalculationScope $scope = null): TripCalculationLink
     {
-        return $this->link(new PropertyInfo(latitude: '40.4680', longitude: '-3.6160'), $scope);
+        return $this->link(new PropertyInfo(propertyType: PropertyType::Other, latitude: '40.4680', longitude: '-3.6160'), $scope);
     }
 
     private function linkToUnlocatedProperty(): TripCalculationLink
     {
-        return $this->link(new PropertyInfo());
+        return $this->link(new PropertyInfo(propertyType: PropertyType::Other));
+    }
+
+    private function linkToLocatedAccommodation(?TripCalculationScope $scope = null): TripCalculationLink
+    {
+        return $this->link(new PropertyInfo(latitude: '40.4680', longitude: '-3.6160'), $scope);
     }
 
     private function link(PropertyInfo $info, ?TripCalculationScope $scope = null): TripCalculationLink

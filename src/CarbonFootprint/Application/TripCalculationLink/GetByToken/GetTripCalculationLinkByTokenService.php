@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\CarbonFootprint\Application\TripCalculationLink\GetByToken;
 
 use App\CarbonFootprint\Application\Trip\PropertyLocator;
+use App\CarbonFootprint\Application\TripCalculationLink\OvernightStayAssumption;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityFilter;
 use App\CarbonFootprint\Domain\Model\Mobility\MobilityRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkRepository;
@@ -80,6 +81,7 @@ final class GetTripCalculationLinkByTokenService
             maxLegs: $this->maxLegs,
             ownerName: $property->name(),
             asksForDestination: false,
+            assumesOvernightStay: OvernightStayAssumption::appliesTo($tripCalculationLink, $property),
         );
     }
 }

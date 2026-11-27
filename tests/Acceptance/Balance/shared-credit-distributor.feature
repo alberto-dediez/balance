@@ -11,6 +11,7 @@ Feature:
         Given account "Hotel A" with id "1111" exists
         Given user "owner@hotel.test" with role "ROLE_OWNER" of account "1111" exists
         Given property "Hotel Playa" with id "11" of account "1111" exists
+        Given property "11" has type "Other"
         Given trip calculation link with id "TL1" and token "token-hotel" for property "11" of account "1111" exists
         Given project "Reforestación" with id "9999" and price per tonne "20" exists
         Given project "9999" is adhered to account "555"

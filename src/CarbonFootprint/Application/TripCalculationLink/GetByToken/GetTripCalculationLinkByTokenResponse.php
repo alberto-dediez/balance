@@ -19,5 +19,6 @@ final class GetTripCalculationLinkByTokenResponse
         public readonly int $maxLegs = 16,
         public readonly string $ownerName = '',
         public readonly bool $asksForDestination = false,
+        public readonly bool $assumesOvernightStay = false,
     ) {}
 }

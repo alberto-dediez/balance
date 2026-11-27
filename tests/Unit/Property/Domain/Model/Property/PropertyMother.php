@@ -11,6 +11,7 @@ use App\Property\Domain\Model\Property\OperatorContact;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
+use App\Property\Domain\Model\Property\PropertyType;
 use App\Security\Domain\Model\Account\AccountId;
 
 class PropertyMother
@@ -60,6 +61,16 @@ class PropertyMother
             propertyId: new PropertyId($id),
             name: $name,
             accountId: new AccountId($accountId),
+        );
+    }
+
+    public static function fromNameAndAccountAndIdAndType(string $name, string $accountId, string $id, ?PropertyType $propertyType): Property
+    {
+        return self::from(
+            propertyId: new PropertyId($id),
+            name: $name,
+            accountId: new AccountId($accountId),
+            info: new PropertyInfo(propertyType: $propertyType),
         );
     }
 

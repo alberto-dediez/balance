@@ -8,10 +8,13 @@ use App\CarbonFootprint\Application\Trip\PropertyLocator;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLink;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
+use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationScope;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryMobilityRepository;
 use App\CarbonFootprint\Infrastructure\Persistence\InMemory\Repository\InMemoryTripCalculationLinkRepository;
 use App\Property\Domain\Model\Property\PropertyId;
+use App\Property\Domain\Model\Property\PropertyType;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryPropertyRepository;
 use App\Security\Domain\Model\Account\Account;
 use App\Security\Domain\Model\Account\AccountFeatures;
@@ -47,6 +50,7 @@ class GetTripCalculationLinkByTokenServiceTest extends TestCase
 
         $this->assertSame($link, $response->tripCalculationLink);
         $this->assertSame('MyAccount', $response->ownerName);
+        $this->assertFalse($response->assumesOvernightStay);
     }
 
     public function testThrowsForTheAccountLinkWithoutAccountTripCalculator(): void
@@ -81,12 +85,47 @@ class GetTripCalculationLinkByTokenServiceTest extends TestCase
         $this->createSUT($account)(new GetTripCalculationLinkByTokenRequest($link->token()));
     }
 
-    private function linkToPropertyOfAccount(string $accountId): TripCalculationLink
+    public function testAssumesTheOvernightStayForAnAccommodation(): void
     {
-        $property = PropertyMother::fromNameAndAccountAndId('Hotel', $accountId, (string) PropertyId::generate());
+        $account = AccountMother::withFeatures('MyAccount', 'account-id', new AccountFeatures());
+        $link = $this->linkToPropertyOfAccount('account-id', PropertyType::Hotel);
+
+        $response = $this->createSUT($account)(new GetTripCalculationLinkByTokenRequest($link->token()));
+
+        $this->assertTrue($response->assumesOvernightStay);
+    }
+
+    public function testDoesNotAssumeTheOvernightStayForAPropertyOfOtherType(): void
+    {
+        $account = AccountMother::withFeatures('MyAccount', 'account-id', new AccountFeatures());
+        $link = $this->linkToPropertyOfAccount('account-id', PropertyType::Other);
+
+        $response = $this->createSUT($account)(new GetTripCalculationLinkByTokenRequest($link->token()));
+
+        $this->assertFalse($response->assumesOvernightStay);
+    }
+
+    public function testDoesNotAssumeTheOvernightStayWithOvernightStayScope(): void
+    {
+        $account = AccountMother::withFeatures('MyAccount', 'account-id', new AccountFeatures());
+        $link = $this->linkToPropertyOfAccount('account-id', PropertyType::Hotel, TripCalculationScope::OvernightStay);
+
+        $response = $this->createSUT($account)(new GetTripCalculationLinkByTokenRequest($link->token()));
+
+        $this->assertFalse($response->assumesOvernightStay);
+    }
+
+    private function linkToPropertyOfAccount(string $accountId, ?PropertyType $propertyType = PropertyType::Hotel, ?TripCalculationScope $scope = null): TripCalculationLink
+    {
+        $property = PropertyMother::fromNameAndAccountAndIdAndType('Hotel', $accountId, (string) PropertyId::generate(), $propertyType);
         $this->propertyRepository->add($property);
 
-        $link = TripCalculationLinkMother::fromPropertyIdAndAccount((string) $property->id(), $accountId);
+        $link = TripCalculationLinkMother::from(
+            propertyId: (string) $property->id(),
+            id: (string) TripCalculationLinkId::generate(),
+            accountId: $accountId,
+            scope: $scope,
+        );
         $this->tripCalculationLinkRepository->add($link);
 
         return $link;
