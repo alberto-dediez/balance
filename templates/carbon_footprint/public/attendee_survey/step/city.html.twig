@@ -4,6 +4,8 @@
 {% set survey_step = 2 %}
 
 {% block card_body %}
+    {{ include(theme_template('@carbon_footprint/public/contest/_notice.html.twig'), {contest_terms_path: path('public_carbon_footprint_attendee_survey_contest_terms', {token: token})}) }}
+
     <p class="text-muted">
         {{ 'Cuéntanos cómo te has movido dentro de la ciudad del evento.' | trans }}
     </p>

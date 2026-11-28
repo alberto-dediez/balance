@@ -74,6 +74,9 @@ trait AttendeeSurveyContributionTrait
             csrfTokenId: 'attendee_survey_contribution_' . $token,
             contact: 'public_carbon_footprint_attendee_survey_contribution_contact',
             contactThanks: 'public_carbon_footprint_attendee_survey_contribution_contact_thanks',
+            contest: 'public_carbon_footprint_attendee_survey_contest',
+            contestThanks: 'public_carbon_footprint_attendee_survey_contest_thanks',
+            contestTerms: 'public_carbon_footprint_attendee_survey_contest_terms',
         );
     }
 }

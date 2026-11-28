@@ -1,0 +1,13 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Concursos' | trans)
+    ~ ' > '
+    ~ ('Registrar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('contests') }}" />
+{% endblock %}
+
+{% block content %}
+    {{ include('@carbon_footprint/contests/_form.html.twig') }}
+{% endblock %}

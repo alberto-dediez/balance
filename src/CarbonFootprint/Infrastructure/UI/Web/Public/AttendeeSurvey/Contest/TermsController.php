@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\Contest;
+
+use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
+use App\CarbonFootprint\Infrastructure\UI\Web\Contest\ContestCountries;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\Contribution\AttendeeSurveyContributionTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route(
+    '/carbon-footprint/attendee-survey/{token}/contest/terms',
+    name: 'public_carbon_footprint_attendee_survey_contest_terms',
+    methods: ['GET'],
+)]
+class TermsController extends AbstractController
+{
+    use AttendeeSurveyPublicControllerTrait;
+    use AttendeeSurveyContributionTrait;
+
+    public function __construct(
+        private PublicFormRateLimiter $attendeeSurveyRateLimiter,
+    ) {}
+
+    public function __invoke(
+        string $token,
+        GetAttendeeSurveyByTokenService $getByToken,
+        ContestPublicHandler $contestHandler,
+        ContestCountries $countries,
+        Request $request,
+    ): Response {
+        if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
+            return $limited;
+        }
+
+        $survey = $this->resolveSurvey($token, $getByToken);
+
+        if (null === $survey) {
+            return $this->attendeeSurveyInvalidResponse($this->attendeeSurveyRateLimiter, $request);
+        }
+
+        $contest = $contestHandler->activeContest(ContestPublicHandler::hostForEvent($survey->event->id()));
+
+        if (null === $contest) {
+            return $this->redirectToRoute('public_carbon_footprint_attendee_survey', ['token' => $token]);
+        }
+
+        return $this->render('@carbon_footprint/public/contest/terms.html.twig', [
+            'token' => $token,
+            'event' => $survey->event,
+            'contest' => $contest,
+            'countries' => $countries->countries(),
+            'layout' => '@carbon_footprint/public/attendee_survey/layout.html.twig',
+        ]);
+    }
+}

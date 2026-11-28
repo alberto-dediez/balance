@@ -46,7 +46,7 @@
                             {% endif %}
                         {% elseif field == 'signatureStatus' %}
                             {% set value = value.value | trans({}, 'signatureRequestStatus') %}
-                        {% elseif field == 'status' or field == 'subjectType' %}
+                        {% elseif field == 'status' or field == 'subjectType' or field == 'participationMode' or field == 'awardMode' %}
                             {% set value = value.value | trans({}, value | enum_domain) %}
                         {% elseif field == 'size' %}
                             {% set value = value.value | trans({}, 'eventSizeType') %}

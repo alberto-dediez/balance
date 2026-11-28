@@ -83,6 +83,10 @@ class UpdateAccountType extends AbstractType
                 'label' => new TranslatableMessage('Huella de carbono de propiedades y empresas (alcances 1, 2, 3 y materialidad)'),
                 'required' => true,
             ])
+            ->add('featureContests', BooleanType::class, [
+                'label' => new TranslatableMessage('Concursos'),
+                'required' => true,
+            ])
             ->add('save', SubmitType::class, [
                 'label' => new TranslatableMessage('Guardar'),
             ])

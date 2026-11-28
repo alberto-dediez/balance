@@ -6,15 +6,18 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey;
 
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsRequest;
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsService;
+use App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenRequest;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
 use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseId;
 use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyResponseRepository;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionContext;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\Contribution\AttendeeSurveyContributionTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +27,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ResultController extends AbstractController
 {
     use AttendeeSurveyPublicControllerTrait;
-    use BrandedPublicControllerTrait;
+    use AttendeeSurveyContributionTrait;
 
     public function __construct(
         private PublicFormRateLimiter $attendeeSurveyRateLimiter,
@@ -37,6 +40,7 @@ class ResultController extends AbstractController
         AttendeeSurveyResponseRepository $attendeeSurveyResponseRepository,
         ListContributionOptionsService $listContributionOptions,
         PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
+        ContestPublicHandler $contestHandler,
         Request $request,
     ): Response {
         if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
@@ -79,6 +83,16 @@ class ResultController extends AbstractController
             $offersContact = $options->offersContact();
         }
 
+        $contest = $contestHandler->activeContest(ContestPublicHandler::hostForEvent($response->event->id()));
+        $contestEntry = null !== $contest && $accountId instanceof AccountId ? $contestHandler->entryFor($contest, new ContributionContext(
+            accountId: $accountId,
+            co2eqKg: (float) $attendeeSurveyResponse->emissions()->co2eq(),
+            origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+            originId: $responseId,
+            originName: $response->event->name(),
+            token: $token,
+        )) : null;
+
         return $this->render('@carbon_footprint/public/attendee_survey/result.html.twig', [
             'token' => $token,
             'event' => $response->event,
@@ -87,6 +101,6 @@ class ResultController extends AbstractController
             'mobilityNames' => $mobilityNames,
             'hasContributionOptions' => $hasContributionOptions,
             'offersContact' => $offersContact,
-        ]);
+        ] + $contestHandler->viewParameters($contest, $contestEntry, $this->contributionRoutes($token, $responseId)));
     }
 }

@@ -7,15 +7,18 @@ namespace App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip;
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsRequest;
 use App\Balance\Application\ProjectContribution\Options\ListContributionOptionsService;
 use App\CarbonFootprint\Application\Trip\PerPersonTripEmissionsCalculator;
+use App\CarbonFootprint\Application\Trip\TripCalculationContributionOrigin;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenRequest;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationId;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkId;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
+use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionContext;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\Contribution\PropertyTripContributionTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
-use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ResultController extends AbstractController
 {
     use PropertyTripPublicControllerTrait;
-    use BrandedPublicControllerTrait;
+    use PropertyTripContributionTrait;
 
     public function __construct(
         private PublicFormRateLimiter $propertyTripRateLimiter,
@@ -39,6 +42,7 @@ class ResultController extends AbstractController
         TripCalculationRepository $tripCalculationRepository,
         ListContributionOptionsService $listContributionOptions,
         PerPersonTripEmissionsCalculator $perPersonTripEmissionsCalculator,
+        ContestPublicHandler $contestHandler,
         Request $request,
     ): Response {
         if ($limited = $this->propertyTripRateLimiter->check($request)) {
@@ -82,6 +86,16 @@ class ResultController extends AbstractController
             $offersContact = $options->offersContact();
         }
 
+        $contest = $contestHandler->activeContest(ContestPublicHandler::hostForTripCalculationLink($response->tripCalculationLink));
+        $contestEntry = null !== $contest && $accountId instanceof AccountId ? $contestHandler->entryFor($contest, new ContributionContext(
+            accountId: $accountId,
+            co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
+            origin: TripCalculationContributionOrigin::for($response->tripCalculationLink),
+            originId: $tripCalculationId,
+            originName: $response->ownerName,
+            token: $token,
+        )) : null;
+
         return $this->render('@carbon_footprint/public/property_trip/result.html.twig', [
             'token' => $token,
             'ownerName' => $response->ownerName,
@@ -93,6 +107,6 @@ class ResultController extends AbstractController
             'hasContributionOptions' => $hasContributionOptions,
             'offersContact' => $offersContact,
             'scope' => $response->tripCalculationLink->scope(),
-        ]);
+        ] + $contestHandler->viewParameters($contest, $contestEntry, $this->contributionRoutes($response->tripCalculationLink, $token, $tripCalculationId)));
     }
 }

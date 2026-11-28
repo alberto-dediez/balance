@@ -210,6 +210,7 @@ class Account implements \Stringable
                 events: $features->events(),
                 compensation: $features->compensation(),
                 organizationalCarbonFootprint: $features->organizationalCarbonFootprint(),
+                contests: $features->contests(),
             ),
         );
     }
@@ -287,6 +288,7 @@ class Account implements \Stringable
             $event->events(),
             $event->compensation(),
             $event->organizationalCarbonFootprint(),
+            $event->contests(),
         );
     }
 

@@ -108,6 +108,10 @@
                     {{ 'Si aportas como empresa de otro país de la UE, indica tu NIF-IVA intracomunitario para que la aportación quede exenta.' | trans }}
                 </div>
             </div>
+
+            {% if contest ?? null %}
+                {{ include(theme_template('@carbon_footprint/public/contest/_checkout.html.twig')) }}
+            {% endif %}
         </fieldset>
 
         <div id="contribution_summary">

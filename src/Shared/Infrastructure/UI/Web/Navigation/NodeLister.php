@@ -814,6 +814,20 @@ class NodeLister
             );
         }
 
+        if ($this->featureEnabled(AccountFeature::Contests)) {
+            $nodes[] = new Node(
+                label: new TranslatableMessage('Concursos'),
+                icon: 'solar:cup-star-line-duotone',
+                items: [
+                    new Node(
+                        label: new TranslatableMessage('Concursos'),
+                        icon: 'solar:cup-star-line-duotone',
+                        target: $this->router->generate('contests'),
+                    ),
+                ],
+            );
+        }
+
         if ($this->featureEnabled(AccountFeature::Compensation)) {
             $nodes[] = new Node(
                 label: new TranslatableMessage('Proyectos'),

@@ -1,0 +1,44 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Concursos' | trans)
+    ~ ' > '
+    ~ ('Apuntados' | trans)
+    ~ ' > '
+    ~ contest.name
+    ~ ' > '
+    ~ ('Descalificar' | trans) %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('contests_entries', {contestId: contest.id}) }}" />
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+        <twig:Card>
+            {{ form_errors(form) }}
+
+            <div class="row">
+                <div class="col-12">
+                    <twig:View:Field label="{{ 'Nº' | trans }}">{{ entry.entryNumber ?? '---' }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Nombre' | trans }}">{{ entry.name }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Email' | trans }}">{{ entry.email ?? '---' }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Ganador' | trans }}">{{ entry.winner | show_field_value | trans }}</twig:View:Field>
+
+                    <twig:Alert:Alert type="warning">
+                        {{ 'La descalificación no se puede deshacer. La persona seguirá en el registro, pero no participará en el sorteo ni optará a premio.' | trans }}
+
+                        {% if entry.winner and contest.reassignsPrizes %}
+                            {{ 'Su premio pasará a otra persona apuntada.' | trans }}
+                        {% endif %}
+                    </twig:Alert:Alert>
+
+                    {{ form_row(form.reason) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-danger" :button="form.disqualify" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

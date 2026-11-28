@@ -1,0 +1,25 @@
+{% extends theme_template(layout) %}
+
+{% set page_title = 'Bases del concurso' | trans %}
+
+{% block card_body %}
+    <h5 class="mb-1">{{ contest.name }}</h5>
+    <p class="text-muted small mb-3">{{ 'Premio: {prize}' | trans({'{prize}': contest.prizeDescription}) }}</p>
+
+    {% if contest.description %}
+        <div class="mb-3">{{ contest.description | md_to_html }}</div>
+    {% endif %}
+
+    <p class="small mb-1">{{ 'Del {start} al {end}' | trans({'{start}': contest.startsAt | date('d/m/Y H:i'), '{end}': contest.endsAt | date('d/m/Y H:i')}) }}</p>
+    <p class="small mb-3">
+        {{ 'Países admitidos' | trans }}:
+        {{ contest.allowedCountryIsos is empty ? ('Cualquier país' | trans) : contest.allowedCountryIsos | map(iso => countries[iso] ?? iso) | join(', ') }}
+    </p>
+
+    <h6 class="fw-semibold">{{ 'Bases' | trans }}</h6>
+    <div class="mb-3">{{ contest.terms | md_to_html }}</div>
+
+    {{ include(theme_template('@carbon_footprint/public/contest/_organizer.html.twig')) }}
+
+    <p class="text-muted small mb-0">{{ '{platform} no organiza ni patrocina este concurso.' | trans({'{platform}': company_name}) }}</p>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% set contest = contest ?? null %}
+
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div data-controller="contest-form">
+        <twig:Card title="{{ 'Calculadoras' | trans }}">
+            <div class="row">
+                <div class="col-12">
+                    {% if form.accountTripCalculator is defined or form.eventIds is defined or form.propertyIds is defined %}
+                        {% if form.accountTripCalculator is defined %}{{ form_row(form.accountTripCalculator) }}{% endif %}
+                        {% if form.eventIds is defined %}{{ form_row(form.eventIds) }}{% endif %}
+                        {% if form.propertyIds is defined %}{{ form_row(form.propertyIds) }}{% endif %}
+                    {% else %}
+                        <twig:View:Field label="{{ 'Calculadoras' | trans }}">{{ (hostNames ?? []) is empty ? '---' : hostNames | map(name => name | trans) | join(', ') }}</twig:View:Field>
+                    {% endif %}
+                </div>
+            </div>
+        </twig:Card>
+
+        <twig:Card title="{{ 'Mecánica' | trans }}">
+            <div class="row g-4">
+                {% if form.participationMode is defined %}
+                    <div class="col-md-6">{{ form_row(form.participationMode) }}</div>
+                    <div class="col-md-6">{{ form_row(form.awardMode) }}</div>
+                    <div class="col-md-6">{{ form_row(form.winnersCount) }}</div>
+                    <div class="col-md-6">
+                        {{ form_row(form.platformDraw) }}
+                        {{ form_row(form.adultsOnly) }}
+                    </div>
+                    <div class="col-12">
+                        <div data-contest-form-target="warning" class="d-none">
+                            <twig:Alert:Alert type="warning">
+                                {{ 'Un sorteo en el que hay que pagar para participar puede requerir autorización administrativa. Consúltalo con tu asesor legal.' | trans }}
+                            </twig:Alert:Alert>
+                        </div>
+                    </div>
+                    <div class="col-12">{{ form_row(form.allowedCountries) }}</div>
+                {% else %}
+                    <div class="col-md-6">
+                        <twig:View:Field label="{{ 'Participación' | trans }}">{{ contest.participationMode.value | trans({}, 'contestParticipationMode') }}</twig:View:Field>
+                        <twig:View:Field label="{{ 'Premio' | trans }}">{{ contest.awardMode.value | trans({}, 'contestAwardMode') }}</twig:View:Field>
+                        <twig:View:Field label="{{ 'Número de premiados' | trans }}">{{ contest.winnersCount ?? '---' }}</twig:View:Field>
+                    </div>
+                    <div class="col-md-6">
+                        <twig:View:Field label="{{ 'Realizar el sorteo en la plataforma' | trans }}">{{ contest.platformDraw | show_field_value | trans }}</twig:View:Field>
+                        <twig:View:Field label="{{ 'Solo mayores de edad' | trans }}">{{ contest.adultsOnly | show_field_value | trans }}</twig:View:Field>
+                        <twig:View:Field label="{{ 'Países admitidos' | trans }}">{{ contest.allowedCountryIsos is empty ? ('Cualquier país' | trans) : contest.allowedCountryIsos | map(iso => countries[iso] ?? iso) | join(', ') }}</twig:View:Field>
+                    </div>
+                {% endif %}
+            </div>
+        </twig:Card>
+    </div>
+
+    <twig:Card title="{{ 'Fechas' | trans }}">
+        <div class="row g-4">
+            <div class="col-md-6">
+                {% if form.startsAt is defined %}
+                    {{ form_row(form.startsAt) }}
+                {% else %}
+                    <twig:View:Field label="{{ 'Inicio' | trans }}">{{ contest.startsAt | date('d/m/Y H:i') }}</twig:View:Field>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if form.endsAt is defined %}
+                    {{ form_row(form.endsAt) }}
+                {% else %}
+                    <twig:View:Field label="{{ 'Fin' | trans }}">{{ contest.endsAt | date('d/m/Y H:i') }}</twig:View:Field>
+                {% endif %}
+            </div>
+        </div>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Textos' | trans }}">
+        <div class="row">
+            <div class="col-12">
+                {% if form.name is defined %}
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.prizeDescription) }}
+                    {{ form_row(form.description) }}
+                    {{ form_row(form.terms) }}
+                {% else %}
+                    <twig:View:Field label="{{ 'Nombre' | trans }}">{{ contest.name }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Premio' | trans }}">{{ contest.prizeDescription }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Descripción' | trans }}">{{ contest.description | md_to_html }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Bases' | trans }}">{{ contest.terms | md_to_html }}</twig:View:Field>
+                {% endif %}
+            </div>
+        </div>
+    </twig:Card>
+
+    <twig:Card title="{{ 'Organizador' | trans }}">
+        <twig:Alert:Alert type="info">
+            {{ 'El concurso es responsabilidad exclusiva del organizador. {platform} solo proporciona la herramienta.' | trans({'{platform}': company_name}) }}
+        </twig:Alert:Alert>
+
+        <div class="row g-4">
+            {% if form.organizerName is defined %}
+                <div class="col-md-6">{{ form_row(form.organizerName) }}</div>
+                <div class="col-md-6">{{ form_row(form.organizerTaxId) }}</div>
+                <div class="col-md-6">{{ form_row(form.organizerContactEmail) }}</div>
+                <div class="col-md-6">{{ form_row(form.privacyPolicyUrl) }}</div>
+            {% else %}
+                <div class="col-md-6">
+                    <twig:View:Field label="{{ 'Nombre o razón social del organizador' | trans }}">{{ contest.organizerName }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'NIF del organizador' | trans }}">{{ contest.organizerTaxId }}</twig:View:Field>
+                </div>
+                <div class="col-md-6">
+                    <twig:View:Field label="{{ 'Email de contacto del organizador' | trans }}">{{ contest.organizerContactEmail }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Política de privacidad del organizador' | trans }}">{{ contest.privacyPolicyUrl ?? '---' }}</twig:View:Field>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if form.save is defined %}
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="outline-primary" :button="form.saveAndReturn" />
+                <twig:ActionBar:Button type="primary" :button="form.save" />
+            </twig:ActionBar>
+        {% endif %}
+    </twig:Card>
+{{ form_end(form) }}

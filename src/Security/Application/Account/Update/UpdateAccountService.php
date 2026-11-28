@@ -133,6 +133,7 @@ class UpdateAccountService implements CommandHandler
             events: $request->featureEvents,
             compensation: $request->featureCompensation,
             organizationalCarbonFootprint: $request->featureOrganizationalCarbonFootprint,
+            contests: $request->featureContests,
         );
 
         if ($features->equals($account->features())) {

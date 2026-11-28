@@ -56,6 +56,7 @@ class EditController extends AbstractController
             featureEvents: $account->features()->events(),
             featureCompensation: $account->features()->compensation(),
             featureOrganizationalCarbonFootprint: $account->features()->organizationalCarbonFootprint(),
+            featureContests: $account->features()->contests(),
             apiTokensEnabled: $account->allowsApiTokens(),
         );
 

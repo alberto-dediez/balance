@@ -12,6 +12,7 @@ use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\AttendeeSurvey\GetByToken\GetAttendeeSurveyByTokenService;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Payments\Domain\Model\Payment\PaymentId;
 use App\Payments\Domain\Model\Payment\PaymentRepository;
@@ -43,6 +44,7 @@ class ReturnController extends AbstractController
         PaymentRepository $paymentRepository,
         ContributionCertificateRepository $contributionCertificateRepository,
         ConfirmProjectContributionService $confirmProjectContribution,
+        ContestPublicHandler $contestHandler,
         Request $request,
     ): Response {
         if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
@@ -87,6 +89,6 @@ class ReturnController extends AbstractController
             'project' => null !== $projectId ? $projectRepository->find($projectId) : null,
             'payment' => $payment,
             'certificate' => $contributionCertificateRepository->findByProjectContributionId($projectContribution->id()),
-        ]);
+        ] + $contestHandler->confirmationParameters((string) $projectContribution->id()));
     }
 }

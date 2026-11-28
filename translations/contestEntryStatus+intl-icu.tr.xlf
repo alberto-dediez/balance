@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="tr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="fIW1EOm" resname="pending_payment">
+        <source>pending_payment</source>
+        <target>Ödeme bekleniyor</target>
+      </trans-unit>
+      <trans-unit id="74wP.dT" resname="confirmed">
+        <source>confirmed</source>
+        <target>Onaylandı</target>
+      </trans-unit>
+      <trans-unit id="BJa8Fve" resname="disqualified">
+        <source>disqualified</source>
+        <target>Diskalifiye</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

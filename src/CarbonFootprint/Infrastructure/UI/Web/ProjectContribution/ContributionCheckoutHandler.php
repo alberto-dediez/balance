@@ -18,6 +18,10 @@ use App\Balance\Domain\Model\ProjectContribution\ContributionCalculator;
 use App\Balance\Domain\Model\ProjectContribution\InsufficientProjectCreditException;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionId;
 use App\Balance\Domain\Model\ProjectContribution\ProjectNotContributableException;
+use App\CarbonFootprint\Domain\Model\Contest\Contest;
+use App\CarbonFootprint\Domain\Model\Contest\ContestHostReference;
+use App\CarbonFootprint\Domain\Model\ContestEntry\ContestEntry;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\Payments\Domain\Model\Payment\PaymentGatewayException;
 use App\Shared\Domain\Model\Locale\LocaleGetter;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +37,7 @@ final class ContributionCheckoutHandler
         private ListContributionOptionsService $listContributionOptions,
         private ContributionCountries $contributionCountries,
         private UrlGeneratorInterface $urlGenerator,
+        private ContestPublicHandler $contestHandler,
     ) {}
 
     /** @param array<string, mixed> $defaults */
@@ -42,7 +47,14 @@ final class ContributionCheckoutHandler
         string $projectId,
         Request $request,
         array $defaults = [],
+        ?Contest $contest = null,
+        ?ContestEntry $contestEntry = null,
+        ?ContestHostReference $contestHost = null,
     ): ContributionCheckoutResult {
+        $contest = $contest instanceof Contest && $contest->participationMode()->isCompensation() && !$contestEntry instanceof ContestEntry && $contestHost instanceof ContestHostReference
+            ? $contest
+            : null;
+
         $contribution = $request->isMethod('POST') ? $request->request->all('contribution') : $defaults;
         $countries = $this->contributionCountries->countries();
         $country = $this->country($contribution, $countries);
@@ -86,7 +98,7 @@ final class ContributionCheckoutHandler
         $belowMinimum = null !== $quote && $quote->amounts->totalAmount < ContributionCalculator::MIN_TOTAL_AMOUNT;
 
         if (null !== $quote && !$exceedsCredit && !$belowMinimum && $request->isMethod('POST') && isset($contribution['pay'])) {
-            $redirect = $this->register($context, $routes, $projectId, $freeAmount, $country, $contribution, $request);
+            $redirect = $this->register($context, $routes, $projectId, $freeAmount, $country, $contribution, $request, $contest, $contestHost);
 
             if (null !== $redirect) {
                 return ContributionCheckoutResult::redirect($redirect);
@@ -110,6 +122,11 @@ final class ContributionCheckoutHandler
             'maxAmount' => ContributionCalculator::MAX_FREE_AMOUNT,
             'minAmount' => ContributionCalculator::MIN_TOTAL_AMOUNT,
             'maxFreeAmount' => $this->maxFreeAmount($quote),
+            'contest' => $contest,
+            'contestEntry' => $contestEntry,
+            'contestConsentLabel' => null !== $contest ? $this->contestHandler->consentLabel($contest, $routes) : null,
+            'contestPrizesExhausted' => null !== $contest && $this->contestHandler->prizesExhausted($contest),
+            'contestCountries' => null !== $contest ? $this->contestHandler->allowedCountryNames($contest) : [],
         ]);
     }
 
@@ -153,6 +170,8 @@ final class ContributionCheckoutHandler
         ?string $country,
         array $contribution,
         Request $request,
+        ?Contest $contest = null,
+        ?ContestHostReference $contestHost = null,
     ): ?string {
         $name = trim((string) ($contribution['name'] ?? ''));
         $email = trim((string) ($contribution['email'] ?? ''));
@@ -161,6 +180,19 @@ final class ContributionCheckoutHandler
             $this->addFlash($request, 'danger', new TranslatableMessage('Necesitamos tu nombre, tu email y tu país para poder emitir el recibo.'));
 
             return null;
+        }
+
+        $joinsContest = $contest instanceof Contest && $contestHost instanceof ContestHostReference && isset($contribution['contest']);
+        $adultConfirmed = isset($contribution['contestAdult']);
+
+        if ($joinsContest) {
+            $contestError = $this->contestHandler->checkFromCheckout($contest, $contestHost, $context, $email, $country, $adultConfirmed);
+
+            if (null !== $contestError) {
+                $this->addFlash($request, 'danger', new TranslatableMessage($contestError));
+
+                return null;
+            }
         }
 
         $contributionId = ProjectContributionId::generate();
@@ -214,6 +246,10 @@ final class ContributionCheckoutHandler
             $this->addFlash($request, 'danger', new TranslatableMessage('No hemos podido conectar con la pasarela de pago. Inténtalo de nuevo en unos minutos.'));
 
             return null;
+        }
+
+        if ($joinsContest) {
+            $this->contestHandler->registerFromCheckout($contest, $contestHost, $context, (string) $contributionId, $name, $email, null, $country, $adultConfirmed, $request);
         }
 
         return $registered->redirectUrl;

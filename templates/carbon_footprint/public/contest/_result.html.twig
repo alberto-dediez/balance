@@ -1,0 +1,27 @@
+<div class="mb-4">
+    <h6 class="fw-semibold mb-1">{{ contest.name }}</h6>
+    <p class="text-muted small mb-1">{{ 'Premio: {prize}' | trans({'{prize}': contest.prizeDescription}) }}</p>
+    <p class="small mb-2">
+        <a href="{{ path(contestRoutes.contestTerms, contestRoutes.contributionRouteParams) }}" target="_blank" rel="noopener noreferrer">{{ 'Ver bases' | trans }}</a>
+    </p>
+
+    {% if contestEntry %}
+        {% if contestEntry.disqualified %}
+            <twig:Alert:Alert type="warning">{{ 'Tu inscripción ya no participa en este concurso.' | trans }}</twig:Alert:Alert>
+        {% else %}
+            <twig:Alert:Alert type="success">{{ 'Ya estás apuntado al concurso.' | trans }}</twig:Alert:Alert>
+        {% endif %}
+    {% else %}
+        {% if contestPrizesExhausted %}
+            <twig:Alert:Alert type="warning">{{ 'Los {n} premios de este concurso ya se han adjudicado. Puedes apuntarte, pero sin premio.' | trans({'{n}': contest.winnersCount}) }}</twig:Alert:Alert>
+        {% endif %}
+
+        {% if contest.participationMode.compensation %}
+            <p class="small mb-0">{{ 'Compensa tu huella para participar' | trans }}</p>
+
+            {% if contest.awardMode.firstEntrants and not contestPrizesExhausted %}
+                <p class="text-muted small mb-0">{{ 'Premio sujeto a disponibilidad al confirmarse la compensación.' | trans }}</p>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</div>

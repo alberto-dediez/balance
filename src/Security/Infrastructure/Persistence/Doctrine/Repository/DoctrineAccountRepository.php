@@ -180,6 +180,7 @@ class DoctrineAccountRepository implements AccountRepository
             AccountFeature::Events => 'events',
             AccountFeature::Compensation => 'compensation',
             AccountFeature::OrganizationalCarbonFootprint => 'organizationalCarbonFootprint',
+            AccountFeature::Contests => 'contests',
         };
     }
 }

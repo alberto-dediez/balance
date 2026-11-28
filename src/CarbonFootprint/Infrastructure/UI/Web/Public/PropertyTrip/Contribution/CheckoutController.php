@@ -9,6 +9,7 @@ use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalcul
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCheckoutHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionContext;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
@@ -43,6 +44,7 @@ class CheckoutController extends AbstractController
         GetTripCalculationLinkByTokenService $getByToken,
         TripCalculationRepository $tripCalculationRepository,
         ContributionCheckoutHandler $checkoutHandler,
+        ContestPublicHandler $contestHandler,
         Request $request,
     ): Response {
         if ($limited = $this->propertyTripRateLimiter->check($request)) {
@@ -66,20 +68,27 @@ class CheckoutController extends AbstractController
             throw $this->createAccessDeniedException('Token CSRF no válido');
         }
 
+        $context = new ContributionContext(
+            accountId: $accountId,
+            co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
+            origin: TripCalculationContributionOrigin::for($link->tripCalculationLink),
+            originId: $tripCalculationId,
+            originName: $link->property?->name() ?? ($tripCalculation->destinationLabel() ?? $link->ownerName),
+            token: $token,
+            allowSharedCredit: true,
+            propertyId: $link->property?->id(),
+        );
+        $contestHost = ContestPublicHandler::hostForTripCalculationLink($link->tripCalculationLink);
+        $contest = $contestHandler->activeContest($contestHost);
+
         $result = $checkoutHandler->handle(
-            new ContributionContext(
-                accountId: $accountId,
-                co2eqKg: (float) $tripCalculation->emissions()->co2eq(),
-                origin: TripCalculationContributionOrigin::for($link->tripCalculationLink),
-                originId: $tripCalculationId,
-                originName: $link->property?->name() ?? ($tripCalculation->destinationLabel() ?? $link->ownerName),
-                token: $token,
-                allowSharedCredit: true,
-                propertyId: $link->property?->id(),
-            ),
+            $context,
             $this->contributionRoutes($link->tripCalculationLink, $token, $tripCalculationId),
             $projectId,
             $request,
+            contest: $contest,
+            contestEntry: null !== $contest ? $contestHandler->entryFor($contest, $context) : null,
+            contestHost: $contestHost,
         );
 
         if ($result->invalid) {

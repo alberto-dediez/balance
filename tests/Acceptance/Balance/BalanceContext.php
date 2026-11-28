@@ -459,6 +459,24 @@ final class BalanceContext implements Context
         ]);
     }
 
+    #[When('the gateway notifies that the payment of the latest contribution :outcome')]
+    public function theGatewayNotifiesThePaymentOfTheLatestContribution(string $outcome): void
+    {
+        $contributions = $this->getProjectContributionRepository()->findByFilter(new ProjectContributionFilter(limit: 0));
+
+        Assert::assertNotEmpty($contributions);
+
+        usort($contributions, static fn(ProjectContribution $a, ProjectContribution $b): int => [$a->registeredAt(), (string) $a->id()] <=> [$b->registeredAt(), (string) $b->id()]);
+        $latest = (string) end($contributions)->id();
+
+        match ($outcome) {
+            'succeeded' => $this->theGatewayNotifiesThePaymentSucceeded($latest),
+            'expired' => $this->theGatewayNotifiesThePaymentExpired($latest),
+            'failed' => $this->theGatewayNotifiesThePaymentFailed($latest),
+            default => throw new \InvalidArgumentException(sprintf('Unknown payment outcome "%s"', $outcome)),
+        };
+    }
+
     #[Then('contribution :id should be :status')]
     public function contributionShouldBe(string $id, string $status): void
     {

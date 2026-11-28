@@ -48,6 +48,9 @@ trait PropertyTripContributionTrait
             csrfTokenId: 'property_trip_' . $token,
             contact: $routes->name('_contribution_contact'),
             contactThanks: $routes->name('_contribution_contact_thanks'),
+            contest: $routes->name('_contest'),
+            contestThanks: $routes->name('_contest_thanks'),
+            contestTerms: $routes->name('_contest_terms'),
         );
     }
 

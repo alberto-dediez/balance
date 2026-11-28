@@ -25,6 +25,13 @@
         {% endif %}
     </div>
 
+    {% if (contestEntry ?? null) and contribution.paid %}
+        <div class="text-center mb-4">
+            <h6 class="fw-semibold mb-2">{{ contest.name }}</h6>
+            {{ block('contest_message', theme_template('@carbon_footprint/public/contest/thanks.html.twig')) }}
+        </div>
+    {% endif %}
+
     {% if project %}
         <p class="text-center mb-4">
             <span class="text-muted">{{ 'Proyecto' | trans }}:</span> <strong>{{ project.name }}</strong>

@@ -19,6 +19,7 @@ final class AccountFeaturesChanged extends DomainEvent
         private readonly bool $events,
         private readonly bool $compensation,
         private readonly bool $organizationalCarbonFootprint,
+        private readonly bool $contests = false,
         ?DomainEventId $id = null,
         ?\DateTimeImmutable $occurredOn = null,
     ) {
@@ -55,6 +56,11 @@ final class AccountFeaturesChanged extends DomainEvent
         return $this->organizationalCarbonFootprint;
     }
 
+    public function contests(): bool
+    {
+        return $this->contests;
+    }
+
     public function aggregateRootId(): AggregateRootId
     {
         return $this->accountId;
@@ -69,6 +75,7 @@ final class AccountFeaturesChanged extends DomainEvent
             'events' => $this->events,
             'compensation' => $this->compensation,
             'organizationalCarbonFootprint' => $this->organizationalCarbonFootprint,
+            'contests' => $this->contests,
         ];
     }
 
@@ -83,6 +90,9 @@ final class AccountFeaturesChanged extends DomainEvent
         assert(is_bool($payload['compensation']));
         assert(is_bool($payload['organizationalCarbonFootprint']));
 
+        $contests = $payload['contests'] ?? false;
+        assert(is_bool($contests));
+
         return new self(
             accountId: new AccountId($payload['accountId']),
             accountTripCalculator: $payload['accountTripCalculator'],
@@ -90,6 +100,7 @@ final class AccountFeaturesChanged extends DomainEvent
             events: $payload['events'],
             compensation: $payload['compensation'],
             organizationalCarbonFootprint: $payload['organizationalCarbonFootprint'],
+            contests: $contests,
             id: $id,
             occurredOn: $occurredOn,
         );

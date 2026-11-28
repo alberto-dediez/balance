@@ -13377,6 +13377,550 @@
         <source>La última copia de seguridad de la biblioteca terminó con {failed} archivos sin copiar. Revisa el resultado con el comando library:backup:run.</source>
         <target>La última copia de seguridad de la biblioteca terminó con {failed} archivos sin copiar. Revisa el resultado con el comando library:backup:run.</target>
       </trans-unit>
+      <trans-unit id="wF6Ylpq" resname="Concursos">
+        <source>Concursos</source>
+        <target>Concursos</target>
+      </trans-unit>
+      <trans-unit id="nIrOt_." resname="Inscripción descalificada con éxito">
+        <source>Inscripción descalificada con éxito</source>
+        <target>Inscripción descalificada con éxito</target>
+      </trans-unit>
+      <trans-unit id="PDLQL0n" resname="Sorteo realizado con éxito">
+        <source>Sorteo realizado con éxito</source>
+        <target>Sorteo realizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="c9jpA.J" resname="No se ha podido realizar el sorteo">
+        <source>No se ha podido realizar el sorteo</source>
+        <target>No se ha podido realizar el sorteo</target>
+      </trans-unit>
+      <trans-unit id="1Y8qdzd" resname="Concurso registrado con éxito">
+        <source>Concurso registrado con éxito</source>
+        <target>Concurso registrado con éxito</target>
+      </trans-unit>
+      <trans-unit id="NhE2YUk" resname="Concurso actualizado con éxito">
+        <source>Concurso actualizado con éxito</source>
+        <target>Concurso actualizado con éxito</target>
+      </trans-unit>
+      <trans-unit id="tu2dVzM" resname="La calculadora «{name}» ya tiene otro concurso publicado.">
+        <source>La calculadora «{name}» ya tiene otro concurso publicado.</source>
+        <target>La calculadora «{name}» ya tiene otro concurso publicado.</target>
+      </trans-unit>
+      <trans-unit id="6XXvdoo" resname="Concurso eliminado con éxito">
+        <source>Concurso eliminado con éxito</source>
+        <target>Concurso eliminado con éxito</target>
+      </trans-unit>
+      <trans-unit id="l6CkNLb" resname="No se ha podido eliminar el concurso">
+        <source>No se ha podido eliminar el concurso</source>
+        <target>No se ha podido eliminar el concurso</target>
+      </trans-unit>
+      <trans-unit id="Aq00Gdp" resname="Inscripción eliminada con éxito">
+        <source>Inscripción eliminada con éxito</source>
+        <target>Inscripción eliminada con éxito</target>
+      </trans-unit>
+      <trans-unit id="mLQP1Ko" resname="No se ha podido eliminar la inscripción">
+        <source>No se ha podido eliminar la inscripción</source>
+        <target>No se ha podido eliminar la inscripción</target>
+      </trans-unit>
+      <trans-unit id="BP0YwsJ" resname="Datos personales purgados con éxito">
+        <source>Datos personales purgados con éxito</source>
+        <target>Datos personales purgados con éxito</target>
+      </trans-unit>
+      <trans-unit id="fOckbnh" resname="No se han podido purgar los datos personales">
+        <source>No se han podido purgar los datos personales</source>
+        <target>No se han podido purgar los datos personales</target>
+      </trans-unit>
+      <trans-unit id="faAD7L2" resname="Concurso cerrado con éxito">
+        <source>Concurso cerrado con éxito</source>
+        <target>Concurso cerrado con éxito</target>
+      </trans-unit>
+      <trans-unit id="Shp5.O9" resname="No se ha podido cerrar el concurso">
+        <source>No se ha podido cerrar el concurso</source>
+        <target>No se ha podido cerrar el concurso</target>
+      </trans-unit>
+      <trans-unit id="x6nnpkj" resname="Concurso publicado con éxito">
+        <source>Concurso publicado con éxito</source>
+        <target>Concurso publicado con éxito</target>
+      </trans-unit>
+      <trans-unit id="YxoLg7t" resname="Descalificar">
+        <source>Descalificar</source>
+        <target>Descalificar</target>
+      </trans-unit>
+      <trans-unit id="B2N.D1w" resname="Participación">
+        <source>Participación</source>
+        <target>Participación</target>
+      </trans-unit>
+      <trans-unit id="owkSarh" resname="Premio">
+        <source>Premio</source>
+        <target>Premio</target>
+      </trans-unit>
+      <trans-unit id="YWZ3ycQ" resname="Ganador">
+        <source>Ganador</source>
+        <target>Ganador</target>
+      </trans-unit>
+      <trans-unit id="UrFz4KZ" resname="Declaro que soy el organizador y único responsable de este concurso, que dispongo de bases legales y que cumplo la normativa aplicable de juego, consumo, fiscalidad y protección de datos.">
+        <source>Declaro que soy el organizador y único responsable de este concurso, que dispongo de bases legales y que cumplo la normativa aplicable de juego, consumo, fiscalidad y protección de datos.</source>
+        <target>Declaro que soy el organizador y único responsable de este concurso, que dispongo de bases legales y que cumplo la normativa aplicable de juego, consumo, fiscalidad y protección de datos.</target>
+      </trans-unit>
+      <trans-unit id="1YxeGWG" resname="Bases">
+        <source>Bases</source>
+        <target>Bases</target>
+      </trans-unit>
+      <trans-unit id="Tb41CIh" resname="Nombre o razón social del organizador">
+        <source>Nombre o razón social del organizador</source>
+        <target>Nombre o razón social del organizador</target>
+      </trans-unit>
+      <trans-unit id="nDjO6Zm" resname="NIF del organizador">
+        <source>NIF del organizador</source>
+        <target>NIF del organizador</target>
+      </trans-unit>
+      <trans-unit id="nQGLYhq" resname="Email de contacto del organizador">
+        <source>Email de contacto del organizador</source>
+        <target>Email de contacto del organizador</target>
+      </trans-unit>
+      <trans-unit id="33BLY5E" resname="Política de privacidad del organizador">
+        <source>Política de privacidad del organizador</source>
+        <target>Política de privacidad del organizador</target>
+      </trans-unit>
+      <trans-unit id="Sl87HpO" resname="Encuestas de asistentes de los eventos">
+        <source>Encuestas de asistentes de los eventos</source>
+        <target>Encuestas de asistentes de los eventos</target>
+      </trans-unit>
+      <trans-unit id="DUgksXL" resname="Calculadoras de las propiedades">
+        <source>Calculadoras de las propiedades</source>
+        <target>Calculadoras de las propiedades</target>
+      </trans-unit>
+      <trans-unit id="rOKgezv" resname="Número de premiados">
+        <source>Número de premiados</source>
+        <target>Número de premiados</target>
+      </trans-unit>
+      <trans-unit id="x6Ywew3" resname="Realizar el sorteo en la plataforma">
+        <source>Realizar el sorteo en la plataforma</source>
+        <target>Realizar el sorteo en la plataforma</target>
+      </trans-unit>
+      <trans-unit id="jn1kZQo" resname="Solo mayores de edad">
+        <source>Solo mayores de edad</source>
+        <target>Solo mayores de edad</target>
+      </trans-unit>
+      <trans-unit id="kI6U0i3" resname="Países admitidos">
+        <source>Países admitidos</source>
+        <target>Países admitidos</target>
+      </trans-unit>
+      <trans-unit id="ArYUET5" resname="Vacío = cualquier país">
+        <source>Vacío = cualquier país</source>
+        <target>Vacío = cualquier país</target>
+      </trans-unit>
+      <trans-unit id="uq5ErGx" resname="Calculadora retirada del concurso">
+        <source>Calculadora retirada del concurso</source>
+        <target>Calculadora retirada del concurso</target>
+      </trans-unit>
+      <trans-unit id=".juuF47" resname="Debes aceptar la declaración de responsabilidad para publicar el concurso.">
+        <source>Debes aceptar la declaración de responsabilidad para publicar el concurso.</source>
+        <target>Debes aceptar la declaración de responsabilidad para publicar el concurso.</target>
+      </trans-unit>
+      <trans-unit id="dnbiOpX" resname="Debes aceptar las bases y la cesión de datos para participar.">
+        <source>Debes aceptar las bases y la cesión de datos para participar.</source>
+        <target>Debes aceptar las bases y la cesión de datos para participar.</target>
+      </trans-unit>
+      <trans-unit id="LcjGBwz" resname="Debes confirmar que eres mayor de edad para participar.">
+        <source>Debes confirmar que eres mayor de edad para participar.</source>
+        <target>Debes confirmar que eres mayor de edad para participar.</target>
+      </trans-unit>
+      <trans-unit id="MCMqkR3" resname="El concurso debe estar asociado al menos a una calculadora.">
+        <source>El concurso debe estar asociado al menos a una calculadora.</source>
+        <target>El concurso debe estar asociado al menos a una calculadora.</target>
+      </trans-unit>
+      <trans-unit id="AV6ak1K" resname="El concurso debe tener nombre, NIF y email del organizador.">
+        <source>El concurso debe tener nombre, NIF y email del organizador.</source>
+        <target>El concurso debe tener nombre, NIF y email del organizador.</target>
+      </trans-unit>
+      <trans-unit id="gvsvop8" resname="El concurso debe tener nombre, premio y bases.">
+        <source>El concurso debe tener nombre, premio y bases.</source>
+        <target>El concurso debe tener nombre, premio y bases.</target>
+      </trans-unit>
+      <trans-unit id="t_shEUy" resname="El concurso no admite inscripciones.">
+        <source>El concurso no admite inscripciones.</source>
+        <target>El concurso no admite inscripciones.</target>
+      </trans-unit>
+      <trans-unit id="zaoJv53" resname="El concurso no se puede modificar en su estado actual.">
+        <source>El concurso no se puede modificar en su estado actual.</source>
+        <target>El concurso no se puede modificar en su estado actual.</target>
+      </trans-unit>
+      <trans-unit id="eo2Ql_C" resname="El concurso ya está resuelto.">
+        <source>El concurso ya está resuelto.</source>
+        <target>El concurso ya está resuelto.</target>
+      </trans-unit>
+      <trans-unit id=".Bxx_U7" resname="El email del participante es obligatorio.">
+        <source>El email del participante es obligatorio.</source>
+        <target>El email del participante es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="_8rq8ut" resname="El email del participante no es válido.">
+        <source>El email del participante no es válido.</source>
+        <target>El email del participante no es válido.</target>
+      </trans-unit>
+      <trans-unit id="RYgdkxC" resname="El motivo de la descalificación es obligatorio.">
+        <source>El motivo de la descalificación es obligatorio.</source>
+        <target>El motivo de la descalificación es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="_vFOLmB" resname="El nombre del concurso es obligatorio.">
+        <source>El nombre del concurso es obligatorio.</source>
+        <target>El nombre del concurso es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="Zkbpisn" resname="El nombre del participante es obligatorio.">
+        <source>El nombre del participante es obligatorio.</source>
+        <target>El nombre del participante es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="9VSqoSR" resname="El número de premiados debe ser al menos 1.">
+        <source>El número de premiados debe ser al menos 1.</source>
+        <target>El número de premiados debe ser al menos 1.</target>
+      </trans-unit>
+      <trans-unit id=".Nl1Xvk" resname="El país del participante es obligatorio.">
+        <source>El país del participante es obligatorio.</source>
+        <target>El país del participante es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="FXNeRV9" resname="El sorteo de la plataforma solo está disponible en los concursos por sorteo.">
+        <source>El sorteo de la plataforma solo está disponible en los concursos por sorteo.</source>
+        <target>El sorteo de la plataforma solo está disponible en los concursos por sorteo.</target>
+      </trans-unit>
+      <trans-unit id="x2QqkU0" resname="En un concurso publicado solo se pueden cambiar los textos, la fecha de fin, el organizador y las calculadoras.">
+        <source>En un concurso publicado solo se pueden cambiar los textos, la fecha de fin, el organizador y las calculadoras.</source>
+        <target>En un concurso publicado solo se pueden cambiar los textos, la fecha de fin, el organizador y las calculadoras.</target>
+      </trans-unit>
+      <trans-unit id="kVtneoI" resname="Este concurso no se sortea en la plataforma.">
+        <source>Este concurso no se sortea en la plataforma.</source>
+        <target>Este concurso no se sortea en la plataforma.</target>
+      </trans-unit>
+      <trans-unit id="MwigjF1" resname="Hay calculadoras repetidas.">
+        <source>Hay calculadoras repetidas.</source>
+        <target>Hay calculadoras repetidas.</target>
+      </trans-unit>
+      <trans-unit id="9lQF6H5" resname="Hay países repetidos.">
+        <source>Hay países repetidos.</source>
+        <target>Hay países repetidos.</target>
+      </trans-unit>
+      <trans-unit id="897njvS" resname="La fecha de fin debe ser posterior a la de inicio.">
+        <source>La fecha de fin debe ser posterior a la de inicio.</source>
+        <target>La fecha de fin debe ser posterior a la de inicio.</target>
+      </trans-unit>
+      <trans-unit id="6b.wPvk" resname="La inscripción en un concurso por compensación requiere una aportación.">
+        <source>La inscripción en un concurso por compensación requiere una aportación.</source>
+        <target>La inscripción en un concurso por compensación requiere una aportación.</target>
+      </trans-unit>
+      <trans-unit id="8Plq3vP" resname="La inscripción no está pendiente de pago.">
+        <source>La inscripción no está pendiente de pago.</source>
+        <target>La inscripción no está pendiente de pago.</target>
+      </trans-unit>
+      <trans-unit id="ZHDAWGw" resname="La nueva fecha de fin de un concurso publicado debe ser futura.">
+        <source>La nueva fecha de fin de un concurso publicado debe ser futura.</source>
+        <target>La nueva fecha de fin de un concurso publicado debe ser futura.</target>
+      </trans-unit>
+      <trans-unit id="7B5t9cM" resname="Solo se puede cerrar un concurso publicado.">
+        <source>Solo se puede cerrar un concurso publicado.</source>
+        <target>Solo se puede cerrar un concurso publicado.</target>
+      </trans-unit>
+      <trans-unit id="XNCMt8v" resname="Solo se puede descalificar una inscripción confirmada y con sus datos.">
+        <source>Solo se puede descalificar una inscripción confirmada y con sus datos.</source>
+        <target>Solo se puede descalificar una inscripción confirmada y con sus datos.</target>
+      </trans-unit>
+      <trans-unit id="EmuwBSH" resname="Solo se puede eliminar un concurso en borrador.">
+        <source>Solo se puede eliminar un concurso en borrador.</source>
+        <target>Solo se puede eliminar un concurso en borrador.</target>
+      </trans-unit>
+      <trans-unit id="P2kxOMp" resname="Solo se pueden purgar los datos de un concurso cerrado.">
+        <source>Solo se pueden purgar los datos de un concurso cerrado.</source>
+        <target>Solo se pueden purgar los datos de un concurso cerrado.</target>
+      </trans-unit>
+      <trans-unit id="8mAcnWe" resname="Solo se puede premiar una inscripción confirmada.">
+        <source>Solo se puede premiar una inscripción confirmada.</source>
+        <target>Solo se puede premiar una inscripción confirmada.</target>
+      </trans-unit>
+      <trans-unit id="6uSzvqv" resname="Solo se puede publicar un concurso en borrador.">
+        <source>Solo se puede publicar un concurso en borrador.</source>
+        <target>Solo se puede publicar un concurso en borrador.</target>
+      </trans-unit>
+      <trans-unit id="TLJdzb3" resname="Solo se puede sortear un concurso cerrado.">
+        <source>Solo se puede sortear un concurso cerrado.</source>
+        <target>Solo se puede sortear un concurso cerrado.</target>
+      </trans-unit>
+      <trans-unit id="tinOcaG" resname="Solo se vuelve a sortear un premio en un concurso ya sorteado por la plataforma.">
+        <source>Solo se vuelve a sortear un premio en un concurso ya sorteado por la plataforma.</source>
+        <target>Solo se vuelve a sortear un premio en un concurso ya sorteado por la plataforma.</target>
+      </trans-unit>
+      <trans-unit id="qYF3cxA" resname="Un concurso publicado debe mantener al menos una calculadora.">
+        <source>Un concurso publicado debe mantener al menos una calculadora.</source>
+        <target>Un concurso publicado debe mantener al menos una calculadora.</target>
+      </trans-unit>
+      <trans-unit id="YRVoktH" resname="Ya hay una inscripción en este concurso con estos datos.">
+        <source>Ya hay una inscripción en este concurso con estos datos.</source>
+        <target>Ya hay una inscripción en este concurso con estos datos.</target>
+      </trans-unit>
+      <trans-unit id="rCPU_WC" resname="Calculadoras">
+        <source>Calculadoras</source>
+        <target>Calculadoras</target>
+      </trans-unit>
+      <trans-unit id="O_HfpI7" resname="Fin">
+        <source>Fin</source>
+        <target>Fin</target>
+      </trans-unit>
+      <trans-unit id="wo2oeAQ" resname="Apuntados">
+        <source>Apuntados</source>
+        <target>Apuntados</target>
+      </trans-unit>
+      <trans-unit id="LMeMRL3" resname="Todavía no has creado ningún concurso.">
+        <source>Todavía no has creado ningún concurso.</source>
+        <target>Todavía no has creado ningún concurso.</target>
+      </trans-unit>
+      <trans-unit id="HZUf9Bb" resname="Cerrar concurso">
+        <source>Cerrar concurso</source>
+        <target>Cerrar concurso</target>
+      </trans-unit>
+      <trans-unit id="d4DOh4n" resname="Se cerrará el concurso y no admitirá más inscripciones. ¿Desea continuar?">
+        <source>Se cerrará el concurso y no admitirá más inscripciones. ¿Desea continuar?</source>
+        <target>Se cerrará el concurso y no admitirá más inscripciones. ¿Desea continuar?</target>
+      </trans-unit>
+      <trans-unit id=".n71Lu1" resname="Cualquier país">
+        <source>Cualquier país</source>
+        <target>Cualquier país</target>
+      </trans-unit>
+      <trans-unit id="f6aFhX2" resname="Organizador">
+        <source>Organizador</source>
+        <target>Organizador</target>
+      </trans-unit>
+      <trans-unit id="6CeCtdN" resname="Descalificados">
+        <source>Descalificados</source>
+        <target>Descalificados</target>
+      </trans-unit>
+      <trans-unit id="f5l4Od8" resname="Ganadores">
+        <source>Ganadores</source>
+        <target>Ganadores</target>
+      </trans-unit>
+      <trans-unit id="Q1A7.Kj" resname="Fecha del sorteo">
+        <source>Fecha del sorteo</source>
+        <target>Fecha del sorteo</target>
+      </trans-unit>
+      <trans-unit id="5vLFu5S" resname="Sorteo realizado por">
+        <source>Sorteo realizado por</source>
+        <target>Sorteo realizado por</target>
+      </trans-unit>
+      <trans-unit id="mPco7Wr" resname="Candidatos del sorteo">
+        <source>Candidatos del sorteo</source>
+        <target>Candidatos del sorteo</target>
+      </trans-unit>
+      <trans-unit id="ahVJcl7" resname="Premios vueltos a sortear por descalificación o baja">
+        <source>Premios vueltos a sortear por descalificación o baja</source>
+        <target>Premios vueltos a sortear por descalificación o baja</target>
+      </trans-unit>
+      <trans-unit id="8JSD5y." resname="Datos personales purgados el">
+        <source>Datos personales purgados el</source>
+        <target>Datos personales purgados el</target>
+      </trans-unit>
+      <trans-unit id="Cu0oiZ2" resname="Purgados por">
+        <source>Purgados por</source>
+        <target>Purgados por</target>
+      </trans-unit>
+      <trans-unit id="Tcs1cox" resname="Se eliminará la inscripción. Si tenía premio, pasará a la siguiente persona de la lista.">
+        <source>Se eliminará la inscripción. Si tenía premio, pasará a la siguiente persona de la lista.</source>
+        <target>Se eliminará la inscripción. Si tenía premio, pasará a la siguiente persona de la lista.</target>
+      </trans-unit>
+      <trans-unit id="R1s8RA7" resname="Realizar sorteo">
+        <source>Realizar sorteo</source>
+        <target>Realizar sorteo</target>
+      </trans-unit>
+      <trans-unit id="ewHrxPF" resname="Purgar datos personales">
+        <source>Purgar datos personales</source>
+        <target>Purgar datos personales</target>
+      </trans-unit>
+      <trans-unit id="dYs8naa" resname="El sorteo elegirá {n} ganadores entre los apuntados y no se puede repetir.">
+        <source>El sorteo elegirá {n} ganadores entre los apuntados y no se puede repetir.</source>
+        <target>El sorteo elegirá {n} ganadores entre los apuntados y no se puede repetir.</target>
+      </trans-unit>
+      <trans-unit id="KVfjAfq" resname="Se borrarán de forma irreversible los datos personales de todos los apuntados.">
+        <source>Se borrarán de forma irreversible los datos personales de todos los apuntados.</source>
+        <target>Se borrarán de forma irreversible los datos personales de todos los apuntados.</target>
+      </trans-unit>
+      <trans-unit id="8kgk9tN" resname="Resultado">
+        <source>Resultado</source>
+        <target>Resultado</target>
+      </trans-unit>
+      <trans-unit id="W2T_Gks" resname="Fecha de inscripción">
+        <source>Fecha de inscripción</source>
+        <target>Fecha de inscripción</target>
+      </trans-unit>
+      <trans-unit id="Bx4RiS8" resname="Todavía no hay nadie apuntado a este concurso.">
+        <source>Todavía no hay nadie apuntado a este concurso.</source>
+        <target>Todavía no hay nadie apuntado a este concurso.</target>
+      </trans-unit>
+      <trans-unit id="Gsmncph" resname="La descalificación no se puede deshacer. La persona seguirá en el registro, pero no participará en el sorteo ni optará a premio.">
+        <source>La descalificación no se puede deshacer. La persona seguirá en el registro, pero no participará en el sorteo ni optará a premio.</source>
+        <target>La descalificación no se puede deshacer. La persona seguirá en el registro, pero no participará en el sorteo ni optará a premio.</target>
+      </trans-unit>
+      <trans-unit id="yehtC9p" resname="Su premio pasará a otra persona apuntada.">
+        <source>Su premio pasará a otra persona apuntada.</source>
+        <target>Su premio pasará a otra persona apuntada.</target>
+      </trans-unit>
+      <trans-unit id="LVZTqmT" resname="Un sorteo en el que hay que pagar para participar puede requerir autorización administrativa. Consúltalo con tu asesor legal.">
+        <source>Un sorteo en el que hay que pagar para participar puede requerir autorización administrativa. Consúltalo con tu asesor legal.</source>
+        <target>Un sorteo en el que hay que pagar para participar puede requerir autorización administrativa. Consúltalo con tu asesor legal.</target>
+      </trans-unit>
+      <trans-unit id="h.8Ncyx" resname="El concurso es responsabilidad exclusiva del organizador. {platform} solo proporciona la herramienta.">
+        <source>El concurso es responsabilidad exclusiva del organizador. {platform} solo proporciona la herramienta.</source>
+        <target>El concurso es responsabilidad exclusiva del organizador. {platform} solo proporciona la herramienta.</target>
+      </trans-unit>
+      <trans-unit id="_WBZqAn" resname="Mecánica">
+        <source>Mecánica</source>
+        <target>Mecánica</target>
+      </trans-unit>
+      <trans-unit id="j4uxQgg" resname="Fechas">
+        <source>Fechas</source>
+        <target>Fechas</target>
+      </trans-unit>
+      <trans-unit id="oVsK8Rm" resname="Textos">
+        <source>Textos</source>
+        <target>Textos</target>
+      </trans-unit>
+      <trans-unit id="PccrcqC" resname="He leído y acepto las &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;bases del concurso&lt;/a&gt; y consiento que {organizer} trate mis datos para gestionar mi participación y contactarme si resulto ganador.">
+        <source>He leído y acepto las &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;bases del concurso&lt;/a&gt; y consiento que {organizer} trate mis datos para gestionar mi participación y contactarme si resulto ganador.</source>
+        <target><![CDATA[He leído y acepto las <a href="{url}" target="_blank" rel="noopener noreferrer">bases del concurso</a> y consiento que {organizer} trate mis datos para gestionar mi participación y contactarme si resulto ganador.]]></target>
+      </trans-unit>
+      <trans-unit id="NJn_6we" resname="Ya hay una inscripción con este email.">
+        <source>Ya hay una inscripción con este email.</source>
+        <target>Ya hay una inscripción con este email.</target>
+      </trans-unit>
+      <trans-unit id="8auc1QR" resname="Tu país no puede participar en este concurso.">
+        <source>Tu país no puede participar en este concurso.</source>
+        <target>Tu país no puede participar en este concurso.</target>
+      </trans-unit>
+      <trans-unit id="KOCQkdR" resname="Confirmo que soy mayor de edad">
+        <source>Confirmo que soy mayor de edad</source>
+        <target>Confirmo que soy mayor de edad</target>
+      </trans-unit>
+      <trans-unit id="tcR6d7l" resname="Participar en el concurso">
+        <source>Participar en el concurso</source>
+        <target>Participar en el concurso</target>
+      </trans-unit>
+      <trans-unit id="qdO2gW4" resname="Concurso">
+        <source>Concurso</source>
+        <target>Concurso</target>
+      </trans-unit>
+      <trans-unit id="PvShFPb" resname="Apuntados del concurso">
+        <source>Apuntados del concurso</source>
+        <target>Apuntados del concurso</target>
+      </trans-unit>
+      <trans-unit id="gWroSDg" resname="Fecha de confirmación">
+        <source>Fecha de confirmación</source>
+        <target>Fecha de confirmación</target>
+      </trans-unit>
+      <trans-unit id="UVSLP7F" resname="Fecha de descalificación">
+        <source>Fecha de descalificación</source>
+        <target>Fecha de descalificación</target>
+      </trans-unit>
+      <trans-unit id="eZO5Zv1" resname="Motivo de descalificación">
+        <source>Motivo de descalificación</source>
+        <target>Motivo de descalificación</target>
+      </trans-unit>
+      <trans-unit id="qtJDs6L" resname="Fecha del consentimiento">
+        <source>Fecha del consentimiento</source>
+        <target>Fecha del consentimiento</target>
+      </trans-unit>
+      <trans-unit id="gFISvYf" resname="Versión de bases aceptada">
+        <source>Versión de bases aceptada</source>
+        <target>Versión de bases aceptada</target>
+      </trans-unit>
+      <trans-unit id="3Qn9i_." resname="IP">
+        <source>IP</source>
+        <target>IP</target>
+      </trans-unit>
+      <trans-unit id="GZXR.5m" resname="Tu país no puede participar en este concurso. Desmarca la casilla para continuar.">
+        <source>Tu país no puede participar en este concurso. Desmarca la casilla para continuar.</source>
+        <target>Tu país no puede participar en este concurso. Desmarca la casilla para continuar.</target>
+      </trans-unit>
+      <trans-unit id="lZk2GgD" resname="Organiza: {organizer} ({taxId}). Contacto: {email}.">
+        <source>Organiza: {organizer} ({taxId}). Contacto: {email}.</source>
+        <target>Organiza: {organizer} ({taxId}). Contacto: {email}.</target>
+      </trans-unit>
+      <trans-unit id="ar0gHjn" resname="Tu inscripción ya no participa en este concurso.">
+        <source>Tu inscripción ya no participa en este concurso.</source>
+        <target>Tu inscripción ya no participa en este concurso.</target>
+      </trans-unit>
+      <trans-unit id="gIG_.8w" resname="Ya estás apuntado al concurso.">
+        <source>Ya estás apuntado al concurso.</source>
+        <target>Ya estás apuntado al concurso.</target>
+      </trans-unit>
+      <trans-unit id="Xx6lcNz" resname="Los {n} premios de este concurso ya se han adjudicado. Puedes apuntarte, pero sin premio.">
+        <source>Los {n} premios de este concurso ya se han adjudicado. Puedes apuntarte, pero sin premio.</source>
+        <target>Los {n} premios de este concurso ya se han adjudicado. Puedes apuntarte, pero sin premio.</target>
+      </trans-unit>
+      <trans-unit id="5jy1fWM" resname="Premio: {prize}">
+        <source>Premio: {prize}</source>
+        <target>Premio: {prize}</target>
+      </trans-unit>
+      <trans-unit id="xNQZkXE" resname="Ver bases">
+        <source>Ver bases</source>
+        <target>Ver bases</target>
+      </trans-unit>
+      <trans-unit id="t_kSs1C" resname="Compensa tu huella para participar">
+        <source>Compensa tu huella para participar</source>
+        <target>Compensa tu huella para participar</target>
+      </trans-unit>
+      <trans-unit id="ELdiHVe" resname="Premio sujeto a disponibilidad al confirmarse la compensación.">
+        <source>Premio sujeto a disponibilidad al confirmarse la compensación.</source>
+        <target>Premio sujeto a disponibilidad al confirmarse la compensación.</target>
+      </trans-unit>
+      <trans-unit id="99m.m7C" resname="Ya estás apuntado.">
+        <source>Ya estás apuntado.</source>
+        <target>Ya estás apuntado.</target>
+      </trans-unit>
+      <trans-unit id="BPgcpMP" resname="¡Tienes premio! {organizer} se pondrá en contacto contigo.">
+        <source>¡Tienes premio! {organizer} se pondrá en contacto contigo.</source>
+        <target>¡Tienes premio! {organizer} se pondrá en contacto contigo.</target>
+      </trans-unit>
+      <trans-unit id="wQbfKsF" resname="Los {n} premios ya se habían adjudicado cuando te apuntaste.">
+        <source>Los {n} premios ya se habían adjudicado cuando te apuntaste.</source>
+        <target>Los {n} premios ya se habían adjudicado cuando te apuntaste.</target>
+      </trans-unit>
+      <trans-unit id="nUpNsqB" resname="Si resultas ganador, {organizer} se pondrá en contacto contigo.">
+        <source>Si resultas ganador, {organizer} se pondrá en contacto contigo.</source>
+        <target>Si resultas ganador, {organizer} se pondrá en contacto contigo.</target>
+      </trans-unit>
+      <trans-unit id="0P7CJFE" resname="Bases del concurso">
+        <source>Bases del concurso</source>
+        <target>Bases del concurso</target>
+      </trans-unit>
+      <trans-unit id="00WGElT" resname="Del {start} al {end}">
+        <source>Del {start} al {end}</source>
+        <target>Del {start} al {end}</target>
+      </trans-unit>
+      <trans-unit id="VpUF81l" resname="{platform} no organiza ni patrocina este concurso.">
+        <source>{platform} no organiza ni patrocina este concurso.</source>
+        <target>{platform} no organiza ni patrocina este concurso.</target>
+      </trans-unit>
+      <trans-unit id="ZzFcWN5" resname="Calcula tu huella para participar">
+        <source>Calcula tu huella para participar</source>
+        <target>Calcula tu huella para participar</target>
+      </trans-unit>
+      <trans-unit id="61P5KAD" resname="Calcula y compensa tu huella para participar">
+        <source>Calcula y compensa tu huella para participar</source>
+        <target>Calcula y compensa tu huella para participar</target>
+      </trans-unit>
+      <trans-unit id="bFU5Zb9" resname="Solo quedarás apuntado si finalizas la compensación.">
+        <source>Solo quedarás apuntado si finalizas la compensación.</source>
+        <target>Solo quedarás apuntado si finalizas la compensación.</target>
+      </trans-unit>
+      <trans-unit id="O6PItCg" resname="Solo pueden participar residentes en: {countries}.">
+        <source>Solo pueden participar residentes en: {countries}.</source>
+        <target>Solo pueden participar residentes en: {countries}.</target>
+      </trans-unit>
+      <trans-unit id="8cjMq3y" resname="El país del participante no es válido.">
+        <source>El país del participante no es válido.</source>
+        <target>El país del participante no es válido.</target>
+      </trans-unit>
+      <trans-unit id="SkETsUL" resname="Los datos personales de este concurso ya se han purgado.">
+        <source>Los datos personales de este concurso ya se han purgado.</source>
+        <target>Los datos personales de este concurso ya se han purgado.</target>
+      </trans-unit>
+      <trans-unit id="TDs.thX" resname="Inscripciones recibidas">
+        <source>Inscripciones recibidas</source>
+        <target>Inscripciones recibidas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

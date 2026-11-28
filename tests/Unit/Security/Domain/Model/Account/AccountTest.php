@@ -166,6 +166,7 @@ class AccountTest extends TestCase
             events: false,
             compensation: true,
             organizationalCarbonFootprint: false,
+            contests: true,
         ));
 
         $lastEvent = $this->spySubscriber->lastEvent();
@@ -179,12 +180,14 @@ class AccountTest extends TestCase
             'events' => false,
             'compensation' => true,
             'organizationalCarbonFootprint' => false,
+            'contests' => true,
         ], $lastEvent->payload());
         $this->assertFalse($account->features()->accountTripCalculator());
         $this->assertTrue($account->features()->propertyTripCalculators());
         $this->assertFalse($account->features()->events());
         $this->assertTrue($account->features()->compensation());
         $this->assertFalse($account->features()->organizationalCarbonFootprint());
+        $this->assertTrue($account->features()->contests());
     }
 
     public function testChangeFeaturesWithoutChangesDoesNotPublish(): void

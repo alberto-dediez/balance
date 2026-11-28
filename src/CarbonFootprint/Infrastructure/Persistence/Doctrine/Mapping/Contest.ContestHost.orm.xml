@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Contest\ContestHost" table="contest_hosts">
+        <id name="id" type="contest_host_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="hostType" type="string" length="10" column="host_type" enum-type="App\CarbonFootprint\Domain\Model\Contest\ContestHostType" nullable="false" />
+        <field name="hostId" type="string" length="36" column="host_id" nullable="false" />
+
+        <many-to-one field="contest" target-entity="App\CarbonFootprint\Domain\Model\Contest\Contest" inversed-by="hosts">
+            <join-column name="contest_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <indexes>
+            <index name="idx_contest_host_host" columns="host_type,host_id" />
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint name="uq_contest_host" columns="contest_id,host_type,host_id" />
+        </unique-constraints>
+    </entity>
+
+</doctrine-mapping>

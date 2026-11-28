@@ -1,13 +1,35 @@
 {#
     Variables expected: hasContributionOptions, offersContact, contribution_path, contact_path, contribution_text
+    Optional: contest, contestEntry, contestRoutes, contestPrizesExhausted
 #}
-{% if hasContributionOptions or offersContact %}
+{% set contest = contest ?? null %}
+{% set compensates = hasContributionOptions or offersContact %}
+
+{% if compensates or contest %}
     <div class="border-top pt-4 mt-4 text-center">
-        <h6 class="fw-semibold mb-2">{{ 'Compensa tu huella' | trans }}</h6>
-        <p class="text-muted small">{{ contribution_text }}</p>
-        <a class="btn btn-success" href="{{ hasContributionOptions ? contribution_path : contact_path }}">
-            <twig:Icon name="solar:hand-heart-bold" class="me-1" />
-            {{ 'Compensar mi huella' | trans }}
-        </a>
+        {% if contest %}
+            {{ include(theme_template('@carbon_footprint/public/contest/_result.html.twig')) }}
+        {% endif %}
+
+        {% if compensates %}
+            <h6 class="fw-semibold mb-2">{{ 'Compensa tu huella' | trans }}</h6>
+            <p class="text-muted small">{{ contribution_text }}</p>
+        {% endif %}
+
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+            {% if compensates %}
+                <a class="btn btn-success" href="{{ hasContributionOptions ? contribution_path : contact_path }}">
+                    <twig:Icon name="solar:hand-heart-bold" class="me-1" />
+                    {{ 'Compensar mi huella' | trans }}
+                </a>
+            {% endif %}
+
+            {% if contest and contest.participationMode.calculation and not contestEntry %}
+                <a class="btn btn-primary" href="{{ path(contestRoutes.contest, contestRoutes.routeParams) }}">
+                    <twig:Icon name="solar:cup-star-line-duotone" class="me-1" />
+                    {{ 'Participar en el concurso' | trans }}
+                </a>
+            {% endif %}
+        </div>
     </div>
 {% endif %}

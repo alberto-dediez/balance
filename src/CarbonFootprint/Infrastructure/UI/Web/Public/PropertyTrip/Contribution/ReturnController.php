@@ -11,6 +11,7 @@ use App\Balance\Domain\Model\Project\ProjectRepository;
 use App\Balance\Domain\Model\ProjectContribution\ProjectContributionRepository;
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculation\TripCalculationRepository;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Payments\Domain\Model\Payment\PaymentId;
@@ -49,6 +50,7 @@ class ReturnController extends AbstractController
         PaymentRepository $paymentRepository,
         ContributionCertificateRepository $contributionCertificateRepository,
         ConfirmProjectContributionService $confirmProjectContribution,
+        ContestPublicHandler $contestHandler,
         Request $request,
     ): Response {
         if ($limited = $this->propertyTripRateLimiter->check($request)) {
@@ -85,6 +87,6 @@ class ReturnController extends AbstractController
             'project' => null !== $projectId ? $projectRepository->find($projectId) : null,
             'payment' => $payment,
             'certificate' => $contributionCertificateRepository->findByProjectContributionId($projectContribution->id()),
-        ]);
+        ] + $contestHandler->confirmationParameters((string) $projectContribution->id()));
     }
 }

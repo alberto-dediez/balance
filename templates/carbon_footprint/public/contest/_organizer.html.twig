@@ -1,0 +1,7 @@
+<p class="form-text">
+    {{ 'Organiza: {organizer} ({taxId}). Contacto: {email}.' | trans({'{organizer}': contest.organizerName, '{taxId}': contest.organizerTaxId, '{email}': contest.organizerContactEmail}) }}
+
+    {% if contest.privacyPolicyUrl %}
+        <a href="{{ contest.privacyPolicyUrl }}" target="_blank" rel="noopener noreferrer">{{ 'Política de privacidad del organizador' | trans }}</a>
+    {% endif %}
+</p>

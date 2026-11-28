@@ -581,6 +581,74 @@
         <source>This is not a valid ULID.</source>
         <target>This value is not a valid ULID.</target>
       </trans-unit>
+      <trans-unit id="1y8F_UV" resname="This file is not a valid audio file.">
+        <source>This file is not a valid audio file.</source>
+        <target>This file is not a valid audio file.</target>
+      </trans-unit>
+      <trans-unit id="lPVgPoC" resname="The audio is too short ({{ duration }} seconds). Minimum duration expected is {{ min_duration }} seconds.">
+        <source>The audio is too short ({{ duration }} seconds). Minimum duration expected is {{ min_duration }} seconds.</source>
+        <target>The audio is too short ({{ duration }} seconds). Minimum duration expected is {{ min_duration }} seconds.</target>
+      </trans-unit>
+      <trans-unit id="F3Gjrs_" resname="The audio is too long ({{ duration }} seconds). Allowed maximum duration is {{ max_duration }} seconds.">
+        <source>The audio is too long ({{ duration }} seconds). Allowed maximum duration is {{ max_duration }} seconds.</source>
+        <target>The audio is too long ({{ duration }} seconds). Allowed maximum duration is {{ max_duration }} seconds.</target>
+      </trans-unit>
+      <trans-unit id="OlGnUlx" resname="The duration of the audio could not be detected.">
+        <source>The duration of the audio could not be detected.</source>
+        <target>The duration of the audio could not be detected.</target>
+      </trans-unit>
+      <trans-unit id="ZgW0kvo" resname="The audio bitrate is too low ({{ bitrate }} bps). Minimum bitrate expected is {{ min_bitrate }} bps.">
+        <source>The audio bitrate is too low ({{ bitrate }} bps). Minimum bitrate expected is {{ min_bitrate }} bps.</source>
+        <target>The audio bitrate is too low ({{ bitrate }} bps). Minimum bitrate expected is {{ min_bitrate }} bps.</target>
+      </trans-unit>
+      <trans-unit id="Dq83L4E" resname="The audio bitrate is too high ({{ bitrate }} bps). Allowed maximum bitrate is {{ max_bitrate }} bps.">
+        <source>The audio bitrate is too high ({{ bitrate }} bps). Allowed maximum bitrate is {{ max_bitrate }} bps.</source>
+        <target>The audio bitrate is too high ({{ bitrate }} bps). Allowed maximum bitrate is {{ max_bitrate }} bps.</target>
+      </trans-unit>
+      <trans-unit id="aMeF8fe" resname="The bitrate of the audio could not be detected.">
+        <source>The bitrate of the audio could not be detected.</source>
+        <target>The bitrate of the audio could not be detected.</target>
+      </trans-unit>
+      <trans-unit id="X14mXjC" resname="Unsupported audio sample rate ({{ sample_rate }} Hz).">
+        <source>Unsupported audio sample rate ({{ sample_rate }} Hz).</source>
+        <target>Unsupported audio sample rate ({{ sample_rate }} Hz).</target>
+      </trans-unit>
+      <trans-unit id="BdJ77QI" resname="The sample rate of the audio could not be detected.">
+        <source>The sample rate of the audio could not be detected.</source>
+        <target>The sample rate of the audio could not be detected.</target>
+      </trans-unit>
+      <trans-unit id="Tbr6WtY" resname="The audio has too few channels ({{ channels }}). Minimum amount expected is {{ min_channels }}.">
+        <source>The audio has too few channels ({{ channels }}). Minimum amount expected is {{ min_channels }}.</source>
+        <target>The audio has too few channels ({{ channels }}). Minimum amount expected is {{ min_channels }}.</target>
+      </trans-unit>
+      <trans-unit id="z8cnfja" resname="The audio has too many channels ({{ channels }}). Maximum amount expected is {{ max_channels }}.">
+        <source>The audio has too many channels ({{ channels }}). Maximum amount expected is {{ max_channels }}.</source>
+        <target>The audio has too many channels ({{ channels }}). Maximum amount expected is {{ max_channels }}.</target>
+      </trans-unit>
+      <trans-unit id="DPIXDjs" resname="The number of audio channels could not be detected.">
+        <source>The number of audio channels could not be detected.</source>
+        <target>The number of audio channels could not be detected.</target>
+      </trans-unit>
+      <trans-unit id="oYHij0i" resname="The audio file is corrupted.">
+        <source>The audio file is corrupted.</source>
+        <target>The audio file is corrupted.</target>
+      </trans-unit>
+      <trans-unit id="06a2dgz" resname="The audio contains multiple streams. Only one stream is allowed.">
+        <source>The audio contains multiple streams. Only one stream is allowed.</source>
+        <target>The audio contains multiple streams. Only one stream is allowed.</target>
+      </trans-unit>
+      <trans-unit id="q8qXfSm" resname="Unsupported audio codec &quot;{{ codec }}&quot;.">
+        <source>Unsupported audio codec "{{ codec }}".</source>
+        <target>Unsupported audio codec "{{ codec }}".</target>
+      </trans-unit>
+      <trans-unit id="6vxNhLZ" resname="Unsupported audio container &quot;{{ container }}&quot;.">
+        <source>Unsupported audio container "{{ container }}".</source>
+        <target>Unsupported audio container "{{ container }}".</target>
+      </trans-unit>
+      <trans-unit id="KbFeBM7" resname="The file does not contain any audio stream.">
+        <source>The file does not contain any audio stream.</source>
+        <target>The file does not contain any audio stream.</target>
+      </trans-unit>
       <trans-unit id="tDkL4Jc" resname="This form should not contain extra fields.">
         <source>This form should not contain extra fields.</source>
         <target>This form should not contain extra fields.</target>

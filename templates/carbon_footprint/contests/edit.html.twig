@@ -1,0 +1,54 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Concursos' | trans)
+    ~ ' > '
+    ~ ('Editar' | trans)
+    ~ ' > '
+    ~ contest.name %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('contests') }}" />
+
+    {% if contest | is_authorized('view') %}
+        <twig:TopAction path="{{ path('contests_entries', {contestId: contest.id}) }}">
+            <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Apuntados' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
+    {% if contest.draft and contest | is_authorized('edit') %}
+        <twig:TopAction path="{{ path('contests_publish', {contestId: contest.id}) }}">
+            <twig:Icon name="solar:plain-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Publicar' | trans }}
+        </twig:TopAction>
+    {% endif %}
+
+    {% if contest.published and contest | is_authorized('edit') %}
+        <twig:TopAction path="{{ path('contests_close', {contestId: contest.id, _token: csrf_token('close')}) }}"
+            data-controller="confirm"
+            data-confirm-text-param="{{ 'Se cerrará el concurso y no admitirá más inscripciones. ¿Desea continuar?' | trans }}"
+            data-action="confirm#link:prevent"
+        >
+            <twig:Icon name="solar:lock-keyhole-line-duotone" size="lg" class="me-2" />
+
+            {{ 'Cerrar concurso' | trans }}
+        </twig:TopAction>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <twig:Card>
+        <div class="row">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Estado' | trans }}"><span class="badge {{ contest.status.style }}">{{ contest.status.value | trans({}, 'contestStatus') }}</span></twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Inscripciones recibidas' | trans }}">{{ contest.confirmedEntries | number_format(0, ',', '.') }}</twig:View:Field>
+            </div>
+        </div>
+    </twig:Card>
+
+    {{ include('@carbon_footprint/contests/_form.html.twig') }}
+{% endblock %}

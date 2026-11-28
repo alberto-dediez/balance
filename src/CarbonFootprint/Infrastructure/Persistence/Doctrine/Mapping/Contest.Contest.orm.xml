@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\Contest\Contest" table="contests">
+        <id name="id" type="contest_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="participationMode" type="string" length="20" column="participation_mode" enum-type="App\CarbonFootprint\Domain\Model\Contest\ContestParticipationMode" nullable="false" />
+        <field name="awardMode" type="string" length="20" column="award_mode" enum-type="App\CarbonFootprint\Domain\Model\Contest\ContestAwardMode" nullable="false" />
+        <field name="winnersCount" type="integer" column="winners_count" nullable="true" />
+        <field name="platformDraw" type="boolean" column="platform_draw" nullable="false" />
+        <field name="adultsOnly" type="boolean" column="adults_only" nullable="false" />
+
+        <field name="name" type="string" length="255" column="name" nullable="false" />
+        <field name="description" type="text" column="description" nullable="false" />
+        <field name="prizeDescription" type="string" length="255" column="prize_description" nullable="false" />
+        <field name="terms" type="text" column="terms" nullable="false" />
+
+        <field name="organizerName" type="string" length="255" column="organizer_name" nullable="false" />
+        <field name="organizerTaxId" type="string" length="40" column="organizer_tax_id" nullable="false" />
+        <field name="organizerContactEmail" type="string" length="255" column="organizer_contact_email" nullable="false" />
+        <field name="privacyPolicyUrl" type="string" length="255" column="privacy_policy_url" nullable="true" />
+
+        <field name="startsAt" type="datetime_immutable" column="starts_at" nullable="false" />
+        <field name="endsAt" type="datetime_immutable" column="ends_at" nullable="false" />
+        <field name="status" type="string" length="20" column="status" enum-type="App\CarbonFootprint\Domain\Model\Contest\ContestStatus" nullable="false" />
+        <field name="confirmedEntries" type="integer" column="confirmed_entries" nullable="false" />
+
+        <field name="responsibilityAcceptedBy" type="user_id" column="responsibility_accepted_by" nullable="true" />
+        <field name="responsibilityAcceptedAt" type="datetime_immutable" column="responsibility_accepted_at" nullable="true" />
+        <field name="publishedAt" type="datetime_immutable" column="published_at" nullable="true" />
+        <field name="closedAt" type="datetime_immutable" column="closed_at" nullable="true" />
+        <field name="resolvedAt" type="datetime_immutable" column="resolved_at" nullable="true" />
+        <field name="drawnBy" type="user_id" column="drawn_by" nullable="true" />
+        <field name="drawCandidates" type="integer" column="draw_candidates" nullable="true" />
+        <field name="redrawnPrizes" type="integer" column="redrawn_prizes" nullable="false" />
+        <field name="personalDataPurgedAt" type="datetime_immutable" column="personal_data_purged_at" nullable="true" />
+        <field name="personalDataPurgedBy" type="user_id" column="personal_data_purged_by" nullable="true" />
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+
+        <one-to-many field="hosts"
+                     target-entity="App\CarbonFootprint\Domain\Model\Contest\ContestHost"
+                     mapped-by="contest"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="allowedCountries"
+                     target-entity="App\CarbonFootprint\Domain\Model\Contest\ContestAllowedCountry"
+                     mapped-by="contest"
+                     orphan-removal="true">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="translations"
+                     target-entity="App\CarbonFootprint\Domain\Model\Contest\ContestTranslation"
+                     mapped-by="translatable"
+                     fetch="EXTRA_LAZY">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <indexes>
+            <index name="idx_contest_account_status" columns="account_id,status" />
+            <index name="idx_contest_status_ends_at" columns="status,ends_at" />
+        </indexes>
+    </entity>
+
+</doctrine-mapping>

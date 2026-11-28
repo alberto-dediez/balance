@@ -13089,6 +13089,734 @@
         <source>Recibirá la factura en {email}</source>
         <target>Faturayı {email} adresine alacaksınız</target>
       </trans-unit>
+      <trans-unit id="wF6Ylpq" resname="Concursos">
+        <source>Concursos</source>
+        <target>Yarışmalar</target>
+      </trans-unit>
+      <trans-unit id="nIrOt_." resname="Inscripción descalificada con éxito">
+        <source>Inscripción descalificada con éxito</source>
+        <target>Katılım başarıyla diskalifiye edildi</target>
+      </trans-unit>
+      <trans-unit id="PDLQL0n" resname="Sorteo realizado con éxito">
+        <source>Sorteo realizado con éxito</source>
+        <target>Çekiliş başarıyla yapıldı</target>
+      </trans-unit>
+      <trans-unit id="c9jpA.J" resname="No se ha podido realizar el sorteo">
+        <source>No se ha podido realizar el sorteo</source>
+        <target>Çekiliş yapılamadı</target>
+      </trans-unit>
+      <trans-unit id="1Y8qdzd" resname="Concurso registrado con éxito">
+        <source>Concurso registrado con éxito</source>
+        <target>Yarışma başarıyla kaydedildi</target>
+      </trans-unit>
+      <trans-unit id="NhE2YUk" resname="Concurso actualizado con éxito">
+        <source>Concurso actualizado con éxito</source>
+        <target>Yarışma başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="tu2dVzM" resname="La calculadora «{name}» ya tiene otro concurso publicado.">
+        <source>La calculadora «{name}» ya tiene otro concurso publicado.</source>
+        <target>«{name}» hesaplayıcısının zaten yayında olan başka bir yarışması var.</target>
+      </trans-unit>
+      <trans-unit id="6XXvdoo" resname="Concurso eliminado con éxito">
+        <source>Concurso eliminado con éxito</source>
+        <target>Yarışma başarıyla silindi</target>
+      </trans-unit>
+      <trans-unit id="l6CkNLb" resname="No se ha podido eliminar el concurso">
+        <source>No se ha podido eliminar el concurso</source>
+        <target>Yarışma silinemedi</target>
+      </trans-unit>
+      <trans-unit id="Aq00Gdp" resname="Inscripción eliminada con éxito">
+        <source>Inscripción eliminada con éxito</source>
+        <target>Katılım başarıyla silindi</target>
+      </trans-unit>
+      <trans-unit id="mLQP1Ko" resname="No se ha podido eliminar la inscripción">
+        <source>No se ha podido eliminar la inscripción</source>
+        <target>Katılım silinemedi</target>
+      </trans-unit>
+      <trans-unit id="BP0YwsJ" resname="Datos personales purgados con éxito">
+        <source>Datos personales purgados con éxito</source>
+        <target>Kişisel veriler başarıyla temizlendi</target>
+      </trans-unit>
+      <trans-unit id="fOckbnh" resname="No se han podido purgar los datos personales">
+        <source>No se han podido purgar los datos personales</source>
+        <target>Kişisel veriler temizlenemedi</target>
+      </trans-unit>
+      <trans-unit id="faAD7L2" resname="Concurso cerrado con éxito">
+        <source>Concurso cerrado con éxito</source>
+        <target>Yarışma başarıyla kapatıldı</target>
+      </trans-unit>
+      <trans-unit id="Shp5.O9" resname="No se ha podido cerrar el concurso">
+        <source>No se ha podido cerrar el concurso</source>
+        <target>Yarışma kapatılamadı</target>
+      </trans-unit>
+      <trans-unit id="x6nnpkj" resname="Concurso publicado con éxito">
+        <source>Concurso publicado con éxito</source>
+        <target>Yarışma başarıyla yayınlandı</target>
+      </trans-unit>
+      <trans-unit id="YxoLg7t" resname="Descalificar">
+        <source>Descalificar</source>
+        <target>Diskalifiye et</target>
+      </trans-unit>
+      <trans-unit id="B2N.D1w" resname="Participación">
+        <source>Participación</source>
+        <target>Katılım</target>
+      </trans-unit>
+      <trans-unit id="owkSarh" resname="Premio">
+        <source>Premio</source>
+        <target>Ödül</target>
+      </trans-unit>
+      <trans-unit id="YWZ3ycQ" resname="Ganador">
+        <source>Ganador</source>
+        <target>Kazanan</target>
+      </trans-unit>
+      <trans-unit id="UrFz4KZ" resname="Declaro que soy el organizador y único responsable de este concurso, que dispongo de bases legales y que cumplo la normativa aplicable de juego, consumo, fiscalidad y protección de datos.">
+        <source>Declaro que soy el organizador y único responsable de este concurso, que dispongo de bases legales y que cumplo la normativa aplicable de juego, consumo, fiscalidad y protección de datos.</source>
+        <target>Bu yarışmanın düzenleyicisi ve tek sorumlusu olduğumu, yasal katılım koşullarına sahip olduğumu ve yürürlükteki şans oyunları, tüketici, vergi ve veri koruma mevzuatına uyduğumu beyan ederim.</target>
+      </trans-unit>
+      <trans-unit id="1YxeGWG" resname="Bases">
+        <source>Bases</source>
+        <target>Katılım koşulları</target>
+      </trans-unit>
+      <trans-unit id="Tb41CIh" resname="Nombre o razón social del organizador">
+        <source>Nombre o razón social del organizador</source>
+        <target>Düzenleyicinin adı veya unvanı</target>
+      </trans-unit>
+      <trans-unit id="nDjO6Zm" resname="NIF del organizador">
+        <source>NIF del organizador</source>
+        <target>Düzenleyicinin vergi numarası</target>
+      </trans-unit>
+      <trans-unit id="nQGLYhq" resname="Email de contacto del organizador">
+        <source>Email de contacto del organizador</source>
+        <target>Düzenleyicinin iletişim e-postası</target>
+      </trans-unit>
+      <trans-unit id="33BLY5E" resname="Política de privacidad del organizador">
+        <source>Política de privacidad del organizador</source>
+        <target>Düzenleyicinin gizlilik politikası</target>
+      </trans-unit>
+      <trans-unit id="Sl87HpO" resname="Encuestas de asistentes de los eventos">
+        <source>Encuestas de asistentes de los eventos</source>
+        <target>Etkinliklerin katılımcı anketleri</target>
+      </trans-unit>
+      <trans-unit id="DUgksXL" resname="Calculadoras de las propiedades">
+        <source>Calculadoras de las propiedades</source>
+        <target>Tesislerin hesaplayıcıları</target>
+      </trans-unit>
+      <trans-unit id="rOKgezv" resname="Número de premiados">
+        <source>Número de premiados</source>
+        <target>Kazanan sayısı</target>
+      </trans-unit>
+      <trans-unit id="x6Ywew3" resname="Realizar el sorteo en la plataforma">
+        <source>Realizar el sorteo en la plataforma</source>
+        <target>Çekilişi platformda yap</target>
+      </trans-unit>
+      <trans-unit id="jn1kZQo" resname="Solo mayores de edad">
+        <source>Solo mayores de edad</source>
+        <target>Yalnızca reşit olanlar</target>
+      </trans-unit>
+      <trans-unit id="kI6U0i3" resname="Países admitidos">
+        <source>Países admitidos</source>
+        <target>İzin verilen ülkeler</target>
+      </trans-unit>
+      <trans-unit id="ArYUET5" resname="Vacío = cualquier país">
+        <source>Vacío = cualquier país</source>
+        <target>Boş = herhangi bir ülke</target>
+      </trans-unit>
+      <trans-unit id="uq5ErGx" resname="Calculadora retirada del concurso">
+        <source>Calculadora retirada del concurso</source>
+        <target>Yarışmadan çıkarılan hesaplayıcı</target>
+      </trans-unit>
+      <trans-unit id=".juuF47" resname="Debes aceptar la declaración de responsabilidad para publicar el concurso.">
+        <source>Debes aceptar la declaración de responsabilidad para publicar el concurso.</source>
+        <target>Yarışmayı yayınlamak için sorumluluk beyanını kabul etmelisiniz.</target>
+      </trans-unit>
+      <trans-unit id="dnbiOpX" resname="Debes aceptar las bases y la cesión de datos para participar.">
+        <source>Debes aceptar las bases y la cesión de datos para participar.</source>
+        <target>Katılmak için katılım koşullarını ve verilerinizin aktarılmasını kabul etmelisiniz.</target>
+      </trans-unit>
+      <trans-unit id="LcjGBwz" resname="Debes confirmar que eres mayor de edad para participar.">
+        <source>Debes confirmar que eres mayor de edad para participar.</source>
+        <target>Katılmak için reşit olduğunuzu onaylamalısınız.</target>
+      </trans-unit>
+      <trans-unit id="MCMqkR3" resname="El concurso debe estar asociado al menos a una calculadora.">
+        <source>El concurso debe estar asociado al menos a una calculadora.</source>
+        <target>Yarışma en az bir hesaplayıcıya bağlı olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="AV6ak1K" resname="El concurso debe tener nombre, NIF y email del organizador.">
+        <source>El concurso debe tener nombre, NIF y email del organizador.</source>
+        <target>Yarışmada düzenleyicinin adı, vergi numarası ve e-postası bulunmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="gvsvop8" resname="El concurso debe tener nombre, premio y bases.">
+        <source>El concurso debe tener nombre, premio y bases.</source>
+        <target>Yarışmanın bir adı, ödülü ve katılım koşulları olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="t_shEUy" resname="El concurso no admite inscripciones.">
+        <source>El concurso no admite inscripciones.</source>
+        <target>Yarışma katılım kabul etmiyor.</target>
+      </trans-unit>
+      <trans-unit id="zaoJv53" resname="El concurso no se puede modificar en su estado actual.">
+        <source>El concurso no se puede modificar en su estado actual.</source>
+        <target>Yarışma mevcut durumunda değiştirilemez.</target>
+      </trans-unit>
+      <trans-unit id="eo2Ql_C" resname="El concurso ya está resuelto.">
+        <source>El concurso ya está resuelto.</source>
+        <target>Yarışma zaten sonuçlandı.</target>
+      </trans-unit>
+      <trans-unit id=".Bxx_U7" resname="El email del participante es obligatorio.">
+        <source>El email del participante es obligatorio.</source>
+        <target>Katılımcının e-postası zorunludur.</target>
+      </trans-unit>
+      <trans-unit id="_8rq8ut" resname="El email del participante no es válido.">
+        <source>El email del participante no es válido.</source>
+        <target>Katılımcının e-postası geçerli değil.</target>
+      </trans-unit>
+      <trans-unit id="RYgdkxC" resname="El motivo de la descalificación es obligatorio.">
+        <source>El motivo de la descalificación es obligatorio.</source>
+        <target>Diskalifiye nedeni zorunludur.</target>
+      </trans-unit>
+      <trans-unit id="_vFOLmB" resname="El nombre del concurso es obligatorio.">
+        <source>El nombre del concurso es obligatorio.</source>
+        <target>Yarışma adı zorunludur.</target>
+      </trans-unit>
+      <trans-unit id="Zkbpisn" resname="El nombre del participante es obligatorio.">
+        <source>El nombre del participante es obligatorio.</source>
+        <target>Katılımcının adı zorunludur.</target>
+      </trans-unit>
+      <trans-unit id="9VSqoSR" resname="El número de premiados debe ser al menos 1.">
+        <source>El número de premiados debe ser al menos 1.</source>
+        <target>Kazanan sayısı en az 1 olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id=".Nl1Xvk" resname="El país del participante es obligatorio.">
+        <source>El país del participante es obligatorio.</source>
+        <target>Katılımcının ülkesi zorunludur.</target>
+      </trans-unit>
+      <trans-unit id="FXNeRV9" resname="El sorteo de la plataforma solo está disponible en los concursos por sorteo.">
+        <source>El sorteo de la plataforma solo está disponible en los concursos por sorteo.</source>
+        <target>Platform çekilişi yalnızca çekilişli yarışmalarda kullanılabilir.</target>
+      </trans-unit>
+      <trans-unit id="x2QqkU0" resname="En un concurso publicado solo se pueden cambiar los textos, la fecha de fin, el organizador y las calculadoras.">
+        <source>En un concurso publicado solo se pueden cambiar los textos, la fecha de fin, el organizador y las calculadoras.</source>
+        <target>Yayındaki bir yarışmada yalnızca metinler, bitiş tarihi, düzenleyici ve hesaplayıcılar değiştirilebilir.</target>
+      </trans-unit>
+      <trans-unit id="kVtneoI" resname="Este concurso no se sortea en la plataforma.">
+        <source>Este concurso no se sortea en la plataforma.</source>
+        <target>Bu yarışmanın çekilişi platformda yapılmaz.</target>
+      </trans-unit>
+      <trans-unit id="MwigjF1" resname="Hay calculadoras repetidas.">
+        <source>Hay calculadoras repetidas.</source>
+        <target>Tekrarlanan hesaplayıcılar var.</target>
+      </trans-unit>
+      <trans-unit id="9lQF6H5" resname="Hay países repetidos.">
+        <source>Hay países repetidos.</source>
+        <target>Tekrarlanan ülkeler var.</target>
+      </trans-unit>
+      <trans-unit id="897njvS" resname="La fecha de fin debe ser posterior a la de inicio.">
+        <source>La fecha de fin debe ser posterior a la de inicio.</source>
+        <target>Bitiş tarihi başlangıç tarihinden sonra olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="6b.wPvk" resname="La inscripción en un concurso por compensación requiere una aportación.">
+        <source>La inscripción en un concurso por compensación requiere una aportación.</source>
+        <target>Dengeleme ile katılınan bir yarışmaya katılım için bir katkı gereklidir.</target>
+      </trans-unit>
+      <trans-unit id="8Plq3vP" resname="La inscripción no está pendiente de pago.">
+        <source>La inscripción no está pendiente de pago.</source>
+        <target>Katılım ödeme beklemiyor.</target>
+      </trans-unit>
+      <trans-unit id="ZHDAWGw" resname="La nueva fecha de fin de un concurso publicado debe ser futura.">
+        <source>La nueva fecha de fin de un concurso publicado debe ser futura.</source>
+        <target>Yayındaki bir yarışmanın yeni bitiş tarihi gelecekte olmalıdır.</target>
+      </trans-unit>
+      <trans-unit id="7B5t9cM" resname="Solo se puede cerrar un concurso publicado.">
+        <source>Solo se puede cerrar un concurso publicado.</source>
+        <target>Yalnızca yayındaki bir yarışma kapatılabilir.</target>
+      </trans-unit>
+      <trans-unit id="XNCMt8v" resname="Solo se puede descalificar una inscripción confirmada y con sus datos.">
+        <source>Solo se puede descalificar una inscripción confirmada y con sus datos.</source>
+        <target>Yalnızca verileri bulunan onaylanmış bir katılım diskalifiye edilebilir.</target>
+      </trans-unit>
+      <trans-unit id="EmuwBSH" resname="Solo se puede eliminar un concurso en borrador.">
+        <source>Solo se puede eliminar un concurso en borrador.</source>
+        <target>Yalnızca taslak bir yarışma silinebilir.</target>
+      </trans-unit>
+      <trans-unit id="P2kxOMp" resname="Solo se pueden purgar los datos de un concurso cerrado.">
+        <source>Solo se pueden purgar los datos de un concurso cerrado.</source>
+        <target>Bir yarışmanın verileri yalnızca kapatıldıktan sonra temizlenebilir.</target>
+      </trans-unit>
+      <trans-unit id="8mAcnWe" resname="Solo se puede premiar una inscripción confirmada.">
+        <source>Solo se puede premiar una inscripción confirmada.</source>
+        <target>Yalnızca onaylanmış bir katılıma ödül verilebilir.</target>
+      </trans-unit>
+      <trans-unit id="6uSzvqv" resname="Solo se puede publicar un concurso en borrador.">
+        <source>Solo se puede publicar un concurso en borrador.</source>
+        <target>Yalnızca taslak bir yarışma yayınlanabilir.</target>
+      </trans-unit>
+      <trans-unit id="TLJdzb3" resname="Solo se puede sortear un concurso cerrado.">
+        <source>Solo se puede sortear un concurso cerrado.</source>
+        <target>Yalnızca kapatılmış bir yarışmanın çekilişi yapılabilir.</target>
+      </trans-unit>
+      <trans-unit id="tinOcaG" resname="Solo se vuelve a sortear un premio en un concurso ya sorteado por la plataforma.">
+        <source>Solo se vuelve a sortear un premio en un concurso ya sorteado por la plataforma.</source>
+        <target>Bir ödül yalnızca çekilişi platformda yapılmış bir yarışmada yeniden çekilir.</target>
+      </trans-unit>
+      <trans-unit id="qYF3cxA" resname="Un concurso publicado debe mantener al menos una calculadora.">
+        <source>Un concurso publicado debe mantener al menos una calculadora.</source>
+        <target>Yayındaki bir yarışma en az bir hesaplayıcıyı korumalıdır.</target>
+      </trans-unit>
+      <trans-unit id="YRVoktH" resname="Ya hay una inscripción en este concurso con estos datos.">
+        <source>Ya hay una inscripción en este concurso con estos datos.</source>
+        <target>Bu yarışmada bu bilgilerle zaten bir katılım var.</target>
+      </trans-unit>
+      <trans-unit id="rCPU_WC" resname="Calculadoras">
+        <source>Calculadoras</source>
+        <target>Hesaplayıcılar</target>
+      </trans-unit>
+      <trans-unit id="O_HfpI7" resname="Fin">
+        <source>Fin</source>
+        <target>Bitiş</target>
+      </trans-unit>
+      <trans-unit id="wo2oeAQ" resname="Apuntados">
+        <source>Apuntados</source>
+        <target>Katılımcılar</target>
+      </trans-unit>
+      <trans-unit id="LMeMRL3" resname="Todavía no has creado ningún concurso.">
+        <source>Todavía no has creado ningún concurso.</source>
+        <target>Henüz hiç yarışma oluşturmadınız.</target>
+      </trans-unit>
+      <trans-unit id="HZUf9Bb" resname="Cerrar concurso">
+        <source>Cerrar concurso</source>
+        <target>Yarışmayı kapat</target>
+      </trans-unit>
+      <trans-unit id="d4DOh4n" resname="Se cerrará el concurso y no admitirá más inscripciones. ¿Desea continuar?">
+        <source>Se cerrará el concurso y no admitirá más inscripciones. ¿Desea continuar?</source>
+        <target>Yarışma kapatılacak ve başka katılım kabul etmeyecek. Devam etmek istiyor musunuz?</target>
+      </trans-unit>
+      <trans-unit id=".n71Lu1" resname="Cualquier país">
+        <source>Cualquier país</source>
+        <target>Herhangi bir ülke</target>
+      </trans-unit>
+      <trans-unit id="f6aFhX2" resname="Organizador">
+        <source>Organizador</source>
+        <target>Düzenleyici</target>
+      </trans-unit>
+      <trans-unit id="6CeCtdN" resname="Descalificados">
+        <source>Descalificados</source>
+        <target>Diskalifiye edilenler</target>
+      </trans-unit>
+      <trans-unit id="f5l4Od8" resname="Ganadores">
+        <source>Ganadores</source>
+        <target>Kazananlar</target>
+      </trans-unit>
+      <trans-unit id="Q1A7.Kj" resname="Fecha del sorteo">
+        <source>Fecha del sorteo</source>
+        <target>Çekiliş tarihi</target>
+      </trans-unit>
+      <trans-unit id="5vLFu5S" resname="Sorteo realizado por">
+        <source>Sorteo realizado por</source>
+        <target>Çekilişi yapan</target>
+      </trans-unit>
+      <trans-unit id="mPco7Wr" resname="Candidatos del sorteo">
+        <source>Candidatos del sorteo</source>
+        <target>Çekiliş adayları</target>
+      </trans-unit>
+      <trans-unit id="ahVJcl7" resname="Premios vueltos a sortear por descalificación o baja">
+        <source>Premios vueltos a sortear por descalificación o baja</source>
+        <target>Diskalifiye veya silme sonrası yeniden çekilen ödüller</target>
+      </trans-unit>
+      <trans-unit id="8JSD5y." resname="Datos personales purgados el">
+        <source>Datos personales purgados el</source>
+        <target>Kişisel verilerin temizlendiği tarih</target>
+      </trans-unit>
+      <trans-unit id="Cu0oiZ2" resname="Purgados por">
+        <source>Purgados por</source>
+        <target>Temizleyen</target>
+      </trans-unit>
+      <trans-unit id="Tcs1cox" resname="Se eliminará la inscripción. Si tenía premio, pasará a la siguiente persona de la lista.">
+        <source>Se eliminará la inscripción. Si tenía premio, pasará a la siguiente persona de la lista.</source>
+        <target>Katılım silinecek. Ödülü varsa listedeki bir sonraki kişiye geçecek.</target>
+      </trans-unit>
+      <trans-unit id="R1s8RA7" resname="Realizar sorteo">
+        <source>Realizar sorteo</source>
+        <target>Çekilişi yap</target>
+      </trans-unit>
+      <trans-unit id="ewHrxPF" resname="Purgar datos personales">
+        <source>Purgar datos personales</source>
+        <target>Kişisel verileri temizle</target>
+      </trans-unit>
+      <trans-unit id="dYs8naa" resname="El sorteo elegirá {n} ganadores entre los apuntados y no se puede repetir.">
+        <source>El sorteo elegirá {n} ganadores entre los apuntados y no se puede repetir.</source>
+        <target>Çekiliş katılımcılar arasından {n} kazanan seçecek ve tekrarlanamaz.</target>
+      </trans-unit>
+      <trans-unit id="KVfjAfq" resname="Se borrarán de forma irreversible los datos personales de todos los apuntados.">
+        <source>Se borrarán de forma irreversible los datos personales de todos los apuntados.</source>
+        <target>Tüm katılımcıların kişisel verileri geri alınamaz şekilde silinecek.</target>
+      </trans-unit>
+      <trans-unit id="8kgk9tN" resname="Resultado">
+        <source>Resultado</source>
+        <target>Sonuç</target>
+      </trans-unit>
+      <trans-unit id="W2T_Gks" resname="Fecha de inscripción">
+        <source>Fecha de inscripción</source>
+        <target>Katılım tarihi</target>
+      </trans-unit>
+      <trans-unit id="Bx4RiS8" resname="Todavía no hay nadie apuntado a este concurso.">
+        <source>Todavía no hay nadie apuntado a este concurso.</source>
+        <target>Bu yarışmaya henüz kimse katılmadı.</target>
+      </trans-unit>
+      <trans-unit id="Gsmncph" resname="La descalificación no se puede deshacer. La persona seguirá en el registro, pero no participará en el sorteo ni optará a premio.">
+        <source>La descalificación no se puede deshacer. La persona seguirá en el registro, pero no participará en el sorteo ni optará a premio.</source>
+        <target>Diskalifiye geri alınamaz. Kişi kayıtta kalacak ancak çekilişe katılmayacak ve ödül alamayacak.</target>
+      </trans-unit>
+      <trans-unit id="yehtC9p" resname="Su premio pasará a otra persona apuntada.">
+        <source>Su premio pasará a otra persona apuntada.</source>
+        <target>Ödülü başka bir katılımcıya geçecek.</target>
+      </trans-unit>
+      <trans-unit id="LVZTqmT" resname="Un sorteo en el que hay que pagar para participar puede requerir autorización administrativa. Consúltalo con tu asesor legal.">
+        <source>Un sorteo en el que hay que pagar para participar puede requerir autorización administrativa. Consúltalo con tu asesor legal.</source>
+        <target>Katılmak için ödeme yapılması gereken bir çekiliş idari izin gerektirebilir. Hukuk danışmanınıza danışın.</target>
+      </trans-unit>
+      <trans-unit id="h.8Ncyx" resname="El concurso es responsabilidad exclusiva del organizador. {platform} solo proporciona la herramienta.">
+        <source>El concurso es responsabilidad exclusiva del organizador. {platform} solo proporciona la herramienta.</source>
+        <target>Yarışmanın tüm sorumluluğu düzenleyiciye aittir. {platform} yalnızca aracı sağlar.</target>
+      </trans-unit>
+      <trans-unit id="_WBZqAn" resname="Mecánica">
+        <source>Mecánica</source>
+        <target>İşleyiş</target>
+      </trans-unit>
+      <trans-unit id="j4uxQgg" resname="Fechas">
+        <source>Fechas</source>
+        <target>Tarihler</target>
+      </trans-unit>
+      <trans-unit id="oVsK8Rm" resname="Textos">
+        <source>Textos</source>
+        <target>Metinler</target>
+      </trans-unit>
+      <trans-unit id="PccrcqC" resname="He leído y acepto las &lt;a href=&quot;{url}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;bases del concurso&lt;/a&gt; y consiento que {organizer} trate mis datos para gestionar mi participación y contactarme si resulto ganador.">
+        <source>He leído y acepto las &lt;a href="{url}" target="_blank" rel="noopener noreferrer"&gt;bases del concurso&lt;/a&gt; y consiento que {organizer} trate mis datos para gestionar mi participación y contactarme si resulto ganador.</source>
+        <target><![CDATA[<a href="{url}" target="_blank" rel="noopener noreferrer">Yarışma katılım koşullarını</a> okudum ve kabul ediyorum; {organizer} kuruluşunun katılımımı yönetmek ve kazanırsam benimle iletişime geçmek için verilerimi işlemesine onay veriyorum.]]></target>
+      </trans-unit>
+      <trans-unit id="NJn_6we" resname="Ya hay una inscripción con este email.">
+        <source>Ya hay una inscripción con este email.</source>
+        <target>Bu e-posta ile zaten bir katılım var.</target>
+      </trans-unit>
+      <trans-unit id="8auc1QR" resname="Tu país no puede participar en este concurso.">
+        <source>Tu país no puede participar en este concurso.</source>
+        <target>Ülkeniz bu yarışmaya katılamaz.</target>
+      </trans-unit>
+      <trans-unit id="KOCQkdR" resname="Confirmo que soy mayor de edad">
+        <source>Confirmo que soy mayor de edad</source>
+        <target>Reşit olduğumu onaylıyorum</target>
+      </trans-unit>
+      <trans-unit id="tcR6d7l" resname="Participar en el concurso">
+        <source>Participar en el concurso</source>
+        <target>Yarışmaya katıl</target>
+      </trans-unit>
+      <trans-unit id="qdO2gW4" resname="Concurso">
+        <source>Concurso</source>
+        <target>Yarışma</target>
+      </trans-unit>
+      <trans-unit id="PvShFPb" resname="Apuntados del concurso">
+        <source>Apuntados del concurso</source>
+        <target>Yarışma katılımcıları</target>
+      </trans-unit>
+      <trans-unit id="gWroSDg" resname="Fecha de confirmación">
+        <source>Fecha de confirmación</source>
+        <target>Onay tarihi</target>
+      </trans-unit>
+      <trans-unit id="UVSLP7F" resname="Fecha de descalificación">
+        <source>Fecha de descalificación</source>
+        <target>Diskalifiye tarihi</target>
+      </trans-unit>
+      <trans-unit id="eZO5Zv1" resname="Motivo de descalificación">
+        <source>Motivo de descalificación</source>
+        <target>Diskalifiye nedeni</target>
+      </trans-unit>
+      <trans-unit id="qtJDs6L" resname="Fecha del consentimiento">
+        <source>Fecha del consentimiento</source>
+        <target>Onay verme tarihi</target>
+      </trans-unit>
+      <trans-unit id="gFISvYf" resname="Versión de bases aceptada">
+        <source>Versión de bases aceptada</source>
+        <target>Kabul edilen koşul sürümü</target>
+      </trans-unit>
+      <trans-unit id="3Qn9i_." resname="IP">
+        <source>IP</source>
+        <target>IP</target>
+      </trans-unit>
+      <trans-unit id="GZXR.5m" resname="Tu país no puede participar en este concurso. Desmarca la casilla para continuar.">
+        <source>Tu país no puede participar en este concurso. Desmarca la casilla para continuar.</source>
+        <target>Ülkeniz bu yarışmaya katılamaz. Devam etmek için kutunun işaretini kaldırın.</target>
+      </trans-unit>
+      <trans-unit id="lZk2GgD" resname="Organiza: {organizer} ({taxId}). Contacto: {email}.">
+        <source>Organiza: {organizer} ({taxId}). Contacto: {email}.</source>
+        <target>Düzenleyen: {organizer} ({taxId}). İletişim: {email}.</target>
+      </trans-unit>
+      <trans-unit id="ar0gHjn" resname="Tu inscripción ya no participa en este concurso.">
+        <source>Tu inscripción ya no participa en este concurso.</source>
+        <target>Katılımınız artık bu yarışmada yer almıyor.</target>
+      </trans-unit>
+      <trans-unit id="gIG_.8w" resname="Ya estás apuntado al concurso.">
+        <source>Ya estás apuntado al concurso.</source>
+        <target>Yarışmaya katıldınız.</target>
+      </trans-unit>
+      <trans-unit id="Xx6lcNz" resname="Los {n} premios de este concurso ya se han adjudicado. Puedes apuntarte, pero sin premio.">
+        <source>Los {n} premios de este concurso ya se han adjudicado. Puedes apuntarte, pero sin premio.</source>
+        <target>Bu yarışmanın {n} ödülü zaten verildi. Yine de katılabilirsiniz ancak ödülsüz.</target>
+      </trans-unit>
+      <trans-unit id="5jy1fWM" resname="Premio: {prize}">
+        <source>Premio: {prize}</source>
+        <target>Ödül: {prize}</target>
+      </trans-unit>
+      <trans-unit id="xNQZkXE" resname="Ver bases">
+        <source>Ver bases</source>
+        <target>Katılım koşullarını gör</target>
+      </trans-unit>
+      <trans-unit id="t_kSs1C" resname="Compensa tu huella para participar">
+        <source>Compensa tu huella para participar</source>
+        <target>Katılmak için ayak izinizi dengeleyin</target>
+      </trans-unit>
+      <trans-unit id="ELdiHVe" resname="Premio sujeto a disponibilidad al confirmarse la compensación.">
+        <source>Premio sujeto a disponibilidad al confirmarse la compensación.</source>
+        <target>Ödül, dengeleme onaylandığında stok durumuna bağlıdır.</target>
+      </trans-unit>
+      <trans-unit id="99m.m7C" resname="Ya estás apuntado.">
+        <source>Ya estás apuntado.</source>
+        <target>Katıldınız.</target>
+      </trans-unit>
+      <trans-unit id="BPgcpMP" resname="¡Tienes premio! {organizer} se pondrá en contacto contigo.">
+        <source>¡Tienes premio! {organizer} se pondrá en contacto contigo.</source>
+        <target>Ödül kazandınız! {organizer} sizinle iletişime geçecek.</target>
+      </trans-unit>
+      <trans-unit id="wQbfKsF" resname="Los {n} premios ya se habían adjudicado cuando te apuntaste.">
+        <source>Los {n} premios ya se habían adjudicado cuando te apuntaste.</source>
+        <target>Katıldığınızda {n} ödül zaten verilmişti.</target>
+      </trans-unit>
+      <trans-unit id="nUpNsqB" resname="Si resultas ganador, {organizer} se pondrá en contacto contigo.">
+        <source>Si resultas ganador, {organizer} se pondrá en contacto contigo.</source>
+        <target>Kazanırsanız {organizer} sizinle iletişime geçecek.</target>
+      </trans-unit>
+      <trans-unit id="0P7CJFE" resname="Bases del concurso">
+        <source>Bases del concurso</source>
+        <target>Yarışma katılım koşulları</target>
+      </trans-unit>
+      <trans-unit id="00WGElT" resname="Del {start} al {end}">
+        <source>Del {start} al {end}</source>
+        <target>{start} - {end}</target>
+      </trans-unit>
+      <trans-unit id="VpUF81l" resname="{platform} no organiza ni patrocina este concurso.">
+        <source>{platform} no organiza ni patrocina este concurso.</source>
+        <target>{platform} bu yarışmayı düzenlemez veya sponsorluğunu yapmaz.</target>
+      </trans-unit>
+      <trans-unit id="ZzFcWN5" resname="Calcula tu huella para participar">
+        <source>Calcula tu huella para participar</source>
+        <target>Katılmak için ayak izinizi hesaplayın</target>
+      </trans-unit>
+      <trans-unit id="61P5KAD" resname="Calcula y compensa tu huella para participar">
+        <source>Calcula y compensa tu huella para participar</source>
+        <target>Katılmak için ayak izinizi hesaplayın ve dengeleyin</target>
+      </trans-unit>
+      <trans-unit id="bFU5Zb9" resname="Solo quedarás apuntado si finalizas la compensación.">
+        <source>Solo quedarás apuntado si finalizas la compensación.</source>
+        <target>Yalnızca dengelemeyi tamamlarsanız katılmış sayılırsınız.</target>
+      </trans-unit>
+      <trans-unit id="O6PItCg" resname="Solo pueden participar residentes en: {countries}.">
+        <source>Solo pueden participar residentes en: {countries}.</source>
+        <target>Yalnızca şu ülkelerde ikamet edenler katılabilir: {countries}.</target>
+      </trans-unit>
+      <trans-unit id="687AV4j" resname="La carpeta elegida ya no existe">
+        <source>La carpeta elegida ya no existe</source>
+        <target>Seçilen klasör artık mevcut değil</target>
+      </trans-unit>
+      <trans-unit id="XWsXyf2" resname="Mover a carpeta">
+        <source>Mover a carpeta</source>
+        <target>Klasöre taşı</target>
+      </trans-unit>
+      <trans-unit id="Y1P.FhF" resname="Se ha movido el archivo {id}">
+        <source>Se ha movido el archivo {id}</source>
+        <target>{id} dosyası taşındı</target>
+      </trans-unit>
+      <trans-unit id="gFNL3zQ" resname="No se ha podido mover el archivo {id}">
+        <source>No se ha podido mover el archivo {id}</source>
+        <target>{id} dosyası taşınamadı</target>
+      </trans-unit>
+      <trans-unit id="xUBIshr" resname="Ya existe una subcarpeta con ese nombre en esta carpeta">
+        <source>Ya existe una subcarpeta con ese nombre en esta carpeta</source>
+        <target>Bu klasörde bu ada sahip bir alt klasör zaten var</target>
+      </trans-unit>
+      <trans-unit id="VNflF2V" resname="Ya existe una carpeta con ese nombre">
+        <source>Ya existe una carpeta con ese nombre</source>
+        <target>Bu ada sahip bir klasör zaten var</target>
+      </trans-unit>
+      <trans-unit id="V4SzDMC" resname="Subcarpeta creada con éxito">
+        <source>Subcarpeta creada con éxito</source>
+        <target>Alt klasör başarıyla oluşturuldu</target>
+      </trans-unit>
+      <trans-unit id="M248cIQ" resname="Carpeta creada con éxito">
+        <source>Carpeta creada con éxito</source>
+        <target>Klasör başarıyla oluşturuldu</target>
+      </trans-unit>
+      <trans-unit id="5rijHPT" resname="Carpeta actualizada con éxito">
+        <source>Carpeta actualizada con éxito</source>
+        <target>Klasör başarıyla güncellendi</target>
+      </trans-unit>
+      <trans-unit id="qdF4E_0" resname="Se ha eliminado la carpeta {folder}">
+        <source>Se ha eliminado la carpeta {folder}</source>
+        <target>{folder} klasörü silindi</target>
+      </trans-unit>
+      <trans-unit id="PJ1jnNL" resname="No se ha podido eliminar la carpeta {folder} porque alguno de sus archivos no se ha podido eliminar">
+        <source>No se ha podido eliminar la carpeta {folder} porque alguno de sus archivos no se ha podido eliminar</source>
+        <target>Dosyalarından bazıları silinemediği için {folder} klasörü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="kTmyTjx" resname="No se ha podido eliminar la carpeta {folder}">
+        <source>No se ha podido eliminar la carpeta {folder}</source>
+        <target>{folder} klasörü silinemedi</target>
+      </trans-unit>
+      <trans-unit id="s5a3dBs" resname="Crear">
+        <source>Crear</source>
+        <target>Oluştur</target>
+      </trans-unit>
+      <trans-unit id="jGKQKAG" resname="Los archivos subidos se guardarán en esta carpeta">
+        <source>Los archivos subidos se guardarán en esta carpeta</source>
+        <target>Yüklenen dosyalar bu klasöre kaydedilecek</target>
+      </trans-unit>
+      <trans-unit id="jYpOG1P" resname="Sin carpeta">
+        <source>Sin carpeta</source>
+        <target>Klasörsüz</target>
+      </trans-unit>
+      <trans-unit id="CaeryFa" resname="Carpeta">
+        <source>Carpeta</source>
+        <target>Klasör</target>
+      </trans-unit>
+      <trans-unit id="LzHODVk" resname="Todas las carpetas">
+        <source>Todas las carpetas</source>
+        <target>Tüm klasörler</target>
+      </trans-unit>
+      <trans-unit id=".t7Sr8m" resname="{folder} / Todas las subcarpetas">
+        <source>{folder} / Todas las subcarpetas</source>
+        <target>{folder} / Tüm alt klasörler</target>
+      </trans-unit>
+      <trans-unit id="aGsOc4S" resname="Todas las subcarpetas">
+        <source>Todas las subcarpetas</source>
+        <target>Tüm alt klasörler</target>
+      </trans-unit>
+      <trans-unit id="VxnXZjp" resname="Movido el archivo a una carpeta">
+        <source>Movido el archivo a una carpeta</source>
+        <target>Dosya bir klasöre taşındı</target>
+      </trans-unit>
+      <trans-unit id="S5a30YW" resname="Sacado el archivo de su carpeta">
+        <source>Sacado el archivo de su carpeta</source>
+        <target>Dosya klasöründen çıkarıldı</target>
+      </trans-unit>
+      <trans-unit id="OoVo3Xa" resname="Creada la subcarpeta {name}">
+        <source>Creada la subcarpeta {name}</source>
+        <target>{name} alt klasörü oluşturuldu</target>
+      </trans-unit>
+      <trans-unit id="HNiQ1eS" resname="Creada la carpeta {name}">
+        <source>Creada la carpeta {name}</source>
+        <target>{name} klasörü oluşturuldu</target>
+      </trans-unit>
+      <trans-unit id="vYi_vbJ" resname="Eliminada la carpeta {name}">
+        <source>Eliminada la carpeta {name}</source>
+        <target>{name} klasörü silindi</target>
+      </trans-unit>
+      <trans-unit id="YjX6qZE" resname="Cambiada la visibilidad del archivo a &quot;{visibility}&quot;">
+        <source>Cambiada la visibilidad del archivo a "{visibility}"</source>
+        <target>Dosyanın görünürlüğü "{visibility}" olarak değiştirildi</target>
+      </trans-unit>
+      <trans-unit id="6Yt8Z6B" resname="Compartido el archivo con las demás cuentas">
+        <source>Compartido el archivo con las demás cuentas</source>
+        <target>Dosya diğer hesaplarla paylaşıldı</target>
+      </trans-unit>
+      <trans-unit id="GfPDoX3" resname="Dejado de compartir el archivo con las demás cuentas">
+        <source>Dejado de compartir el archivo con las demás cuentas</source>
+        <target>Dosyanın diğer hesaplarla paylaşımı durduruldu</target>
+      </trans-unit>
+      <trans-unit id="YGZdhC5" resname="Renombrada la carpeta a {name}">
+        <source>Renombrada la carpeta a {name}</source>
+        <target>Klasörün adı {name} olarak değiştirildi</target>
+      </trans-unit>
+      <trans-unit id="r1h5l3L" resname="Eliminado el archivo">
+        <source>Eliminado el archivo</source>
+        <target>Dosya silindi</target>
+      </trans-unit>
+      <trans-unit id="x6DWTVV" resname="Actualizados los datos del archivo {name}">
+        <source>Actualizados los datos del archivo {name}</source>
+        <target>{name} dosyasının bilgileri güncellendi</target>
+      </trans-unit>
+      <trans-unit id="bYR1l3K" resname="Subido el archivo {name}">
+        <source>Subido el archivo {name}</source>
+        <target>{name} dosyası yüklendi</target>
+      </trans-unit>
+      <trans-unit id=".QYUjWT" resname="Buscar archivos o carpetas">
+        <source>Buscar archivos o carpetas</source>
+        <target>Dosya veya klasör ara</target>
+      </trans-unit>
+      <trans-unit id="VVGQVjP" resname="Subcarpeta">
+        <source>Subcarpeta</source>
+        <target>Alt klasör</target>
+      </trans-unit>
+      <trans-unit id="kV0QyU9" resname="Sin subcarpeta">
+        <source>Sin subcarpeta</source>
+        <target>Alt klasörsüz</target>
+      </trans-unit>
+      <trans-unit id="8cjMq3y" resname="El país del participante no es válido.">
+        <source>El país del participante no es válido.</source>
+        <target>Katılımcının ülkesi geçerli değil.</target>
+      </trans-unit>
+      <trans-unit id="6jQJjpr" resname="La copia de seguridad de la biblioteca ha fallado">
+        <source>La copia de seguridad de la biblioteca ha fallado</source>
+        <target>Kütüphanenin yedeklemesi başarısız oldu</target>
+      </trans-unit>
+      <trans-unit id="FACPjWl" resname="Editar subcarpeta">
+        <source>Editar subcarpeta</source>
+        <target>Alt klasörü düzenle</target>
+      </trans-unit>
+      <trans-unit id="ANIi1t0" resname="Editar carpeta">
+        <source>Editar carpeta</source>
+        <target>Klasörü düzenle</target>
+      </trans-unit>
+      <trans-unit id="9vtYUJZ" resname="Nueva subcarpeta">
+        <source>Nueva subcarpeta</source>
+        <target>Yeni alt klasör</target>
+      </trans-unit>
+      <trans-unit id="0g.tD08" resname="Nueva carpeta">
+        <source>Nueva carpeta</source>
+        <target>Yeni klasör</target>
+      </trans-unit>
+      <trans-unit id="J9vJtbs" resname="¿Está seguro de que desea eliminar esta carpeta? Se eliminarán también sus subcarpetas y todos los archivos que contiene. Esta acción no se puede deshacer">
+        <source>¿Está seguro de que desea eliminar esta carpeta? Se eliminarán también sus subcarpetas y todos los archivos que contiene. Esta acción no se puede deshacer</source>
+        <target>Bu klasörü silmek istediğinizden emin misiniz? Alt klasörleri ve içerdiği tüm dosyalar da silinecek. Bu işlem geri alınamaz</target>
+      </trans-unit>
+      <trans-unit id="8VH9dmn" resname="¿Está seguro de que desea eliminar esta subcarpeta? Se eliminarán también todos los archivos que contiene. Esta acción no se puede deshacer">
+        <source>¿Está seguro de que desea eliminar esta subcarpeta? Se eliminarán también todos los archivos que contiene. Esta acción no se puede deshacer</source>
+        <target>Bu alt klasörü silmek istediğinizden emin misiniz? İçerdiği tüm dosyalar da silinecek. Bu işlem geri alınamaz</target>
+      </trans-unit>
+      <trans-unit id="YuSdwQ9" resname="Subcarpetas de {folder}">
+        <source>Subcarpetas de {folder}</source>
+        <target>{folder} alt klasörleri</target>
+      </trans-unit>
+      <trans-unit id="NxstEct" resname="Esta carpeta todavía no tiene subcarpetas">
+        <source>Esta carpeta todavía no tiene subcarpetas</source>
+        <target>Bu klasörün henüz alt klasörü yok</target>
+      </trans-unit>
+      <trans-unit id="n.VJKOP" resname="Todavía no hay carpetas">
+        <source>Todavía no hay carpetas</source>
+        <target>Henüz klasör yok</target>
+      </trans-unit>
+      <trans-unit id="0L1wK4p" resname="Carpetas">
+        <source>Carpetas</source>
+        <target>Klasörler</target>
+      </trans-unit>
+      <trans-unit id="tAj0EJK" resname="La última copia de seguridad de la biblioteca terminó con {failed} archivos sin copiar. Revisa el resultado con el comando library:backup:run.">
+        <source>La última copia de seguridad de la biblioteca terminó con {failed} archivos sin copiar. Revisa el resultado con el comando library:backup:run.</source>
+        <target>Kütüphanenin son yedeklemesi {failed} dosya kopyalanmadan tamamlandı. Sonucu library:backup:run komutuyla kontrol edin.</target>
+      </trans-unit>
+      <trans-unit id="SkETsUL" resname="Los datos personales de este concurso ya se han purgado.">
+        <source>Los datos personales de este concurso ya se han purgado.</source>
+        <target>Bu yarışmanın kişisel verileri zaten temizlendi.</target>
+      </trans-unit>
+      <trans-unit id="TDs.thX" resname="Inscripciones recibidas">
+        <source>Inscripciones recibidas</source>
+        <target>Alınan katılımlar</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

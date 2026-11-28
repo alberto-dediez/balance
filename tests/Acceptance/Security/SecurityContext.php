@@ -611,6 +611,7 @@ final class SecurityContext implements Context
             events: AccountFeature::Events !== $disabled && $current->events(),
             compensation: AccountFeature::Compensation !== $disabled && $current->compensation(),
             organizationalCarbonFootprint: AccountFeature::OrganizationalCarbonFootprint !== $disabled && $current->organizationalCarbonFootprint(),
+            contests: AccountFeature::Contests !== $disabled && $current->contests(),
         ));
 
         $this->getAccountRepository()->add($account);

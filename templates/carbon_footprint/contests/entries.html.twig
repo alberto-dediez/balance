@@ -1,0 +1,142 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = ('Concursos' | trans)
+    ~ ' > '
+    ~ ('Apuntados' | trans)
+    ~ ' > '
+    ~ contest.name %}
+
+{% block list_top %}
+    <twig:Card title="{{ 'Resultado' | trans }}">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Estado' | trans }}"><span class="badge {{ contest.status.style }}">{{ contest.status.value | trans({}, 'contestStatus') }}</span></twig:View:Field>
+                <twig:View:Field label="{{ 'Inscripciones recibidas' | trans }}">{{ contest.confirmedEntries | number_format(0, ',', '.') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Descalificados' | trans }}">{{ disqualified | number_format(0, ',', '.') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Ganadores' | trans }}">{{ winners | number_format(0, ',', '.') }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                {% if contest.drawn %}
+                    <twig:View:Field label="{{ 'Fecha del sorteo' | trans }}">{{ contest.resolvedAt | date('d/m/Y H:i') }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Sorteo realizado por' | trans }}">{{ contest.drawnBy | user_name }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Candidatos del sorteo' | trans }}">{{ contest.drawCandidates | number_format(0, ',', '.') }}</twig:View:Field>
+
+                    {% if contest.redrawnPrizes > 0 %}
+                        <twig:View:Field label="{{ 'Premios vueltos a sortear por descalificación o baja' | trans }}">{{ contest.redrawnPrizes | number_format(0, ',', '.') }}</twig:View:Field>
+                    {% endif %}
+                {% endif %}
+
+                {% if contest.personalDataPurged %}
+                    <twig:View:Field label="{{ 'Datos personales purgados el' | trans }}">{{ contest.personalDataPurgedAt | date('d/m/Y H:i') }}</twig:View:Field>
+                    <twig:View:Field label="{{ 'Purgados por' | trans }}">{{ contest.personalDataPurgedBy | user_name }}</twig:View:Field>
+                {% endif %}
+            </div>
+        </div>
+    </twig:Card>
+{% endblock %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nº' | trans,
+            'sortable': true,
+            'sortableBy': 'entryNumber'
+        }, {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Email' | trans,
+            'sortable': true,
+            'sortableBy': 'email'
+        }, {
+            'label': 'Teléfono' | trans
+        }, {
+            'label': 'País' | trans
+        }, {
+            'label': 'Calculadora' | trans
+        }, {
+            'label': 'Fecha de inscripción' | trans,
+            'sortable': true,
+            'sortableBy': 'confirmedAt'
+        }, {
+            'label': 'Estado' | trans
+        }, {
+            'label': 'Ganador' | trans
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    {% if entries is empty %}
+        <p class="mb-0">{{ 'Todavía no hay nadie apuntado a este concurso.' | trans }}</p>
+    {% else %}
+        <twig:List:Table :columns="columns" :elements="entries">
+            <td>{{ element.entryNumber ?? '---' }}</td>
+            <td>{{ element.purged ? '---' : element.name }}</td>
+            <td>{{ element.email ?? '---' }}</td>
+            <td>{{ element.phone ?? '---' }}</td>
+            <td>{{ element.country ? (countries[element.country] ?? element.country) : '---' }}</td>
+            <td>{{ (hostNames[element.host.key] ?? 'Calculadora retirada del concurso') | trans }}</td>
+            <td>{{ element.confirmedAt ? element.confirmedAt | date('d/m/Y H:i') : '---' }}</td>
+            <td>
+                <span class="badge {{ element.status.style }}">{{ element.status.value | trans({}, 'contestEntryStatus') }}</span>
+
+                {% if element.disqualified and element.disqualificationReason %}
+                    <br><small class="text-muted">{{ element.disqualificationReason }}</small>
+                {% endif %}
+            </td>
+            <td>{{ element.winner | show_field_value | trans }}</td>
+            <td>
+                {% if element.confirmed and not element.purged and contest | is_authorized('edit') %}
+                    <twig:List:Action:Disqualify path="{{ path('contests_entries_disqualify', {'contestId': contest.id, 'entryId': element.id}) }}" />
+                {% endif %}
+
+                {% if contest | is_authorized('remove') %}
+                    <twig:List:Action:Delete
+                        path="{{ path('contests_entries_remove', {'contestId': contest.id, 'entryId': element.id}) }}"
+                        confirm="{{ element.winner ? ('Se eliminará la inscripción. Si tenía premio, pasará a la siguiente persona de la lista.' | trans) : null }}"
+                    />
+                {% endif %}
+            </td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}
+
+{% block list_actions %}
+    {% set canDraw = contest.closed and contest.requiresPlatformDraw and contest | is_authorized('edit') %}
+    {% set canPurge = (contest.closed or contest.resolved) and not contest.personalDataPurged and contest | is_authorized('remove') %}
+
+    {% if contest | is_authorized('export') %}
+        <twig:Link:Export path="{{ path('export', {'code': 'contest_entries', 'contestId': contest.id}) }}" />
+    {% endif %}
+
+    <twig:List:ActionDropdown label="{{ 'Acciones' | trans }}">
+        <twig:TopAction:Return path="{{ path('contests') }}" />
+
+        {% if canDraw %}
+            <twig:TopAction
+                path="{{ path('contests_draw', {contestId: contest.id, _token: csrf_token('draw')}) }}"
+                data-controller="confirm"
+                data-confirm-text-param="{{ 'El sorteo elegirá {n} ganadores entre los apuntados y no se puede repetir.' | trans({'{n}': contest.winnersCount}) }}"
+                data-action="confirm#link:prevent"
+            >
+                <twig:Icon name="solar:cup-star-line-duotone" size="lg" class="me-2" />
+                {{ 'Realizar sorteo' | trans }}
+            </twig:TopAction>
+        {% endif %}
+
+        {% if canPurge %}
+            <twig:TopAction
+                path="{{ path('contests_purge', {contestId: contest.id, _token: csrf_token('purge')}) }}"
+                class="text-danger"
+                data-controller="confirm"
+                data-confirm-text-param="{{ 'Se borrarán de forma irreversible los datos personales de todos los apuntados.' | trans }}"
+                data-action="confirm#link:prevent"
+            >
+                <twig:Icon name="solar:trash-bin-trash-line-duotone" size="lg" class="me-2" />
+                {{ 'Purgar datos personales' | trans }}
+            </twig:TopAction>
+        {% endif %}
+    </twig:List:ActionDropdown>
+{% endblock list_actions %}

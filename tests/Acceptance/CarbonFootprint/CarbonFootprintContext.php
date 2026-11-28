@@ -57,6 +57,16 @@ use App\CarbonFootprint\Domain\Model\Combustible\CombustibleRepository;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprint;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintId;
 use App\CarbonFootprint\Domain\Model\CompanyCarbonFootprint\CompanyCarbonFootprintRepository;
+use App\CarbonFootprint\Domain\Model\Contest\Contest;
+use App\CarbonFootprint\Domain\Model\Contest\ContestAwardMode;
+use App\CarbonFootprint\Domain\Model\Contest\ContestHostReference;
+use App\CarbonFootprint\Domain\Model\Contest\ContestHostType;
+use App\CarbonFootprint\Domain\Model\Contest\ContestId;
+use App\CarbonFootprint\Domain\Model\Contest\ContestParticipationMode;
+use App\CarbonFootprint\Domain\Model\Contest\ContestRepository;
+use App\CarbonFootprint\Domain\Model\ContestEntry\ContestEntry;
+use App\CarbonFootprint\Domain\Model\ContestEntry\ContestEntryId;
+use App\CarbonFootprint\Domain\Model\ContestEntry\ContestEntryRepository;
 use App\CarbonFootprint\Domain\Model\EconomicSector\EconomicSectorRepository;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerId;
 use App\CarbonFootprint\Domain\Model\ElectricityMarketer\ElectricityMarketerRepository;
@@ -157,11 +167,13 @@ use App\Property\Domain\Model\Country\CountryRepository;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyInfo;
 use App\Property\Domain\Model\Property\PropertyRepository;
+use App\Security\Domain\Model\Account\AccountFeatures;
 use App\Security\Domain\Model\Account\AccountId;
 use App\Security\Domain\Model\Account\AccountRepository;
 use App\Security\Domain\Model\User\Role;
 use App\Security\Domain\Model\User\UserId;
 use App\Security\Domain\Model\User\UserRepository;
+use App\Shared\Domain\Model\Consent\ConsentProof;
 use App\Shared\Domain\Model\Geo\GeoBounds;
 use App\Shared\Domain\Model\Geo\PlaceFinder;
 use App\Shared\Domain\Model\Locale\Locale;
@@ -4095,5 +4107,256 @@ final readonly class CarbonFootprintContext implements Context
             IntensityIndicator::PerStay,
             $footprint->totalEmissions()->co2eq(),
         ));
+    }
+
+    #[Given('account :accountId has the contests feature enabled')]
+    public function accountHasTheContestsFeatureEnabled(string $accountId): void
+    {
+        $repository = $this->client->getContainer()->get(AccountRepository::class);
+        $account = $repository->find(new AccountId($accountId));
+        Assert::assertNotNull($account);
+        $current = $account->features();
+
+        $account->changeFeatures(new AccountFeatures(
+            accountTripCalculator: $current->accountTripCalculator(),
+            propertyTripCalculators: $current->propertyTripCalculators(),
+            events: $current->events(),
+            compensation: $current->compensation(),
+            organizationalCarbonFootprint: $current->organizationalCarbonFootprint(),
+            contests: true,
+        ));
+
+        $repository->add($account);
+    }
+
+    #[Given('contest :name with id :id of account :account for :hostType :hostId exists')]
+    public function contestOfAccountForHostExists(string $name, string $id, string $account, string $hostType, string $hostId): void
+    {
+        $this->contestWithMechanicsExists($name, $id, $account, $hostType, $hostId, 'calculation', 'draw');
+    }
+
+    #[Given('contest :name with id :id of account :account for :hostType :hostId with participation :participation and award :award exists')]
+    public function contestWithMechanicsExists(string $name, string $id, string $account, string $hostType, string $hostId, string $participation, string $award): void
+    {
+        $awardMode = ContestAwardMode::from($award);
+        $contest = new Contest(new ContestId($id));
+        $contest->register(
+            accountId: new AccountId($account),
+            participationMode: ContestParticipationMode::from($participation),
+            awardMode: $awardMode,
+            winnersCount: $awardMode->needsWinnersCount() ? 1 : null,
+            platformDraw: false,
+            adultsOnly: false,
+            name: $name,
+            description: 'Descripción del concurso ' . $name,
+            prizeDescription: 'Premio del concurso ' . $name,
+            terms: 'Bases del concurso ' . $name,
+            organizerName: 'Organizador ' . $name,
+            organizerTaxId: 'B00000000',
+            organizerContactEmail: 'organizador@example.com',
+            privacyPolicyUrl: null,
+            startsAt: new \DateTimeImmutable('-1 day'),
+            endsAt: new \DateTimeImmutable('+30 days'),
+            hosts: [new ContestHostReference(ContestHostType::from($hostType), $hostId)],
+            allowedCountries: [],
+        );
+
+        $this->contestRepository()->add($contest);
+    }
+
+    #[Given('contest :id has :winners winners')]
+    public function contestHasWinners(string $id, int $winners): void
+    {
+        $this->reconfigureContest($id, winnersCount: $winners);
+    }
+
+    #[Given('contest :id is drawn by the platform')]
+    public function contestIsDrawnByThePlatform(string $id): void
+    {
+        $this->reconfigureContest($id, platformDraw: true);
+    }
+
+    #[Given('contest :id requires adults')]
+    public function contestRequiresAdults(string $id): void
+    {
+        $this->reconfigureContest($id, adultsOnly: true);
+    }
+
+    #[Given('contest :id only admits countries :isos')]
+    public function contestOnlyAdmitsCountries(string $id, string $isos): void
+    {
+        $this->reconfigureContest($id, allowedCountries: array_values(array_filter(array_map('trim', explode(',', $isos)))));
+    }
+
+    #[Given('contest :id runs from :startsAt to :endsAt')]
+    public function contestRunsFromTo(string $id, string $startsAt, string $endsAt): void
+    {
+        $this->reconfigureContest($id, startsAt: new \DateTimeImmutable($startsAt), endsAt: new \DateTimeImmutable($endsAt));
+    }
+
+    #[Given('contest :id is also offered in :hostType :hostId')]
+    public function contestIsAlsoOfferedIn(string $id, string $hostType, string $hostId): void
+    {
+        $contest = $this->contest($id);
+        $this->reconfigureContest($id, hosts: [...$contest->hostReferences(), new ContestHostReference(ContestHostType::from($hostType), $hostId)]);
+    }
+
+    #[Given('contest :id is no longer offered in :hostType :hostId')]
+    public function contestIsNoLongerOfferedIn(string $id, string $hostType, string $hostId): void
+    {
+        $removed = new ContestHostReference(ContestHostType::from($hostType), $hostId);
+
+        $this->reconfigureContest($id, hosts: array_values(array_filter(
+            $this->contest($id)->hostReferences(),
+            static fn(ContestHostReference $host): bool => !$host->equals($removed),
+        )));
+    }
+
+    #[When('I go back to the checkout of the latest contribution of attendee survey :token')]
+    public function iGoBackToTheCheckoutOfTheLatestContributionOfAttendeeSurvey(string $token): void
+    {
+        $contributions = $this->client->getContainer()->get(ProjectContributionRepository::class)->findByFilter(new ProjectContributionFilter(limit: 0));
+        Assert::assertNotEmpty($contributions);
+
+        usort($contributions, static fn(ProjectContribution $a, ProjectContribution $b): int => [$a->registeredAt(), (string) $a->id()] <=> [$b->registeredAt(), (string) $b->id()]);
+        $latest = end($contributions);
+
+        $this->client->request('GET', sprintf(
+            '/es/carbon-footprint/attendee-survey/%s/result/%s/compensate/%s',
+            $token,
+            (string) $latest->originId(),
+            (string) $latest->projectId(),
+        ));
+    }
+
+    #[When('I go to the payment return of the latest contribution of attendee survey :token')]
+    public function iGoToThePaymentReturnOfTheLatestContributionOfAttendeeSurvey(string $token): void
+    {
+        $contributions = $this->client->getContainer()->get(ProjectContributionRepository::class)->findByFilter(new ProjectContributionFilter(limit: 0));
+        Assert::assertNotEmpty($contributions);
+
+        usort($contributions, static fn(ProjectContribution $a, ProjectContribution $b): int => [$a->registeredAt(), (string) $a->id()] <=> [$b->registeredAt(), (string) $b->id()]);
+
+        $this->client->request('GET', sprintf('/es/carbon-footprint/attendee-survey/%s/contribution/%s/return', $token, (string) end($contributions)->id()));
+    }
+
+    #[Given('contest :id is published')]
+    public function contestIsPublished(string $id): void
+    {
+        $contest = $this->contest($id);
+        $contest->publish(UserId::generate(), new \DateTimeImmutable('-1 hour'));
+        $this->contestRepository()->add($contest);
+    }
+
+    #[Given('contest :id is closed')]
+    public function contestIsClosed(string $id): void
+    {
+        $contest = $this->contest($id);
+        $contest->close(new \DateTimeImmutable('NOW'));
+        $this->contestRepository()->add($contest);
+    }
+
+    #[Given('contest :id has :count confirmed entries')]
+    public function contestHasConfirmedEntries(string $id, int $count): void
+    {
+        $contest = $this->contest($id);
+
+        for ($i = 1; $i <= $count; ++$i) {
+            $this->addConfirmedEntry($contest, sprintf('Apuntado %d', $contest->confirmedEntries() + 1), sprintf('apuntado%d-%s@example.com', $contest->confirmedEntries() + 1, $id));
+        }
+    }
+
+    #[Given('contest :id has a confirmed entry with id :entryId named :name and email :email')]
+    public function contestHasAConfirmedEntryNamed(string $id, string $entryId, string $name, string $email): void
+    {
+        $this->addConfirmedEntry($this->contest($id), $name, $email, $entryId);
+    }
+
+    private function addConfirmedEntry(Contest $contest, string $name, string $email, ?string $entryId = null): void
+    {
+        $accountId = $contest->accountId();
+        Assert::assertNotNull($accountId);
+        $entries = $this->contestEntryRepository();
+
+        $entry = new ContestEntry(null === $entryId ? ContestEntryId::generate() : new ContestEntryId($entryId));
+        $entry->register(
+            contestId: $contest->id(),
+            accountId: $accountId,
+            host: $contest->hostReferences()[0],
+            origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+            originId: 'origin-' . bin2hex(random_bytes(6)),
+            projectContributionId: null,
+            name: $name,
+            email: $email,
+            phone: null,
+            country: 'ES',
+            locale: Locale::Spanish,
+            consentProof: new ConsentProof(new \DateTimeImmutable('NOW'), $contest->termsVersion(), 'es', '127.0.0.1'),
+            at: new \DateTimeImmutable('NOW'),
+        );
+        $entry->confirm($contest->countConfirmedEntry(), new \DateTimeImmutable('NOW'));
+
+        if ($contest->awardsOnConfirmation($entries->countWinners($contest->id()))) {
+            $entry->award(new \DateTimeImmutable('NOW'));
+        }
+
+        $entries->add($entry);
+        $this->contestRepository()->add($contest);
+    }
+
+    /**
+     * @param list<string>|null               $allowedCountries
+     * @param list<ContestHostReference>|null $hosts
+     */
+    private function reconfigureContest(
+        string $id,
+        ?int $winnersCount = null,
+        ?bool $platformDraw = null,
+        ?bool $adultsOnly = null,
+        ?array $allowedCountries = null,
+        ?\DateTimeImmutable $startsAt = null,
+        ?\DateTimeImmutable $endsAt = null,
+        ?array $hosts = null,
+    ): void {
+        $contest = $this->contest($id);
+        $contest->update(
+            participationMode: $contest->participationMode(),
+            awardMode: $contest->awardMode(),
+            winnersCount: $winnersCount ?? $contest->winnersCount(),
+            platformDraw: $platformDraw ?? $contest->platformDraw(),
+            adultsOnly: $adultsOnly ?? $contest->adultsOnly(),
+            name: $contest->name(),
+            description: $contest->description(),
+            prizeDescription: $contest->prizeDescription(),
+            terms: $contest->terms(),
+            organizerName: $contest->organizerName(),
+            organizerTaxId: $contest->organizerTaxId(),
+            organizerContactEmail: $contest->organizerContactEmail(),
+            privacyPolicyUrl: $contest->privacyPolicyUrl(),
+            startsAt: $startsAt ?? $contest->startsAt(),
+            endsAt: $endsAt ?? $contest->endsAt(),
+            hosts: $hosts ?? $contest->hostReferences(),
+            allowedCountries: $allowedCountries ?? $contest->allowedCountryIsos(),
+        );
+
+        $this->contestRepository()->add($contest);
+    }
+
+    private function contest(string $id): Contest
+    {
+        $contest = $this->contestRepository()->find(new ContestId($id));
+        Assert::assertNotNull($contest, sprintf('Contest "%s" not found', $id));
+
+        return $contest;
+    }
+
+    private function contestRepository(): ContestRepository
+    {
+        return $this->client->getContainer()->get(ContestRepository::class);
+    }
+
+    private function contestEntryRepository(): ContestEntryRepository
+    {
+        return $this->client->getContainer()->get(ContestEntryRepository::class);
     }
 }

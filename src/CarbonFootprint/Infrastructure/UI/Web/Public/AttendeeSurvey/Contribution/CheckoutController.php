@@ -10,6 +10,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurveyResponse\AttendeeSurveyRespon
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionCheckoutHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\ProjectContribution\ContributionContext;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\Security\Domain\Model\Account\AccountId;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,6 +39,7 @@ class CheckoutController extends AbstractController
         GetAttendeeSurveyByTokenService $getByToken,
         AttendeeSurveyResponseRepository $attendeeSurveyResponseRepository,
         ContributionCheckoutHandler $checkoutHandler,
+        ContestPublicHandler $contestHandler,
         Request $request,
     ): Response {
         if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
@@ -61,19 +63,26 @@ class CheckoutController extends AbstractController
             throw $this->createAccessDeniedException('Token CSRF no válido');
         }
 
+        $context = new ContributionContext(
+            accountId: $accountId,
+            co2eqKg: (float) $response->emissions()->co2eq(),
+            origin: ProjectContributionOrigin::AttendeeSurveyResponse,
+            originId: $responseId,
+            originName: $survey->event->name(),
+            token: $token,
+            allowSharedCredit: true,
+        );
+        $contestHost = ContestPublicHandler::hostForEvent($survey->event->id());
+        $contest = $contestHandler->activeContest($contestHost);
+
         $result = $checkoutHandler->handle(
-            new ContributionContext(
-                accountId: $accountId,
-                co2eqKg: (float) $response->emissions()->co2eq(),
-                origin: ProjectContributionOrigin::AttendeeSurveyResponse,
-                originId: $responseId,
-                originName: $survey->event->name(),
-                token: $token,
-                allowSharedCredit: true,
-            ),
+            $context,
             $this->contributionRoutes($token, $responseId),
             $projectId,
             $request,
+            contest: $contest,
+            contestEntry: null !== $contest ? $contestHandler->entryFor($contest, $context) : null,
+            contestHost: $contestHost,
         );
 
         if ($result->invalid) {

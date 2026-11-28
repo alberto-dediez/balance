@@ -12,6 +12,7 @@ use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyClosedExceptio
 use App\CarbonFootprint\Domain\Model\AttendeeSurvey\AttendeeSurveyTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\AttendeeSurvey\AttendeeSurveyPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\ConsentRequestReader;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\Trip\LegInputsHttpMapper;
 use App\Security\Infrastructure\UI\Web\Branding\BrandedPublicControllerTrait;
@@ -35,6 +36,7 @@ class CityController extends AbstractController
         string $token,
         GetAttendeeSurveyByTokenService $getByToken,
         RegisterAttendeeSurveyResponseService $registerResponse,
+        ContestPublicHandler $contestHandler,
         Request $request,
     ): Response {
         if ($limited = $this->attendeeSurveyRateLimiter->check($request)) {
@@ -133,6 +135,7 @@ class CityController extends AbstractController
             'maxLegs' => $response->maxLegs,
             'accommodationPlaceReference' => $intercityData['accommodationPlaceReference'] ?? null,
             'accommodationLabel' => $intercityData['accommodationLabel'] ?? null,
+            'contest' => $contestHandler->activeContest(ContestPublicHandler::hostForEvent($response->event->id())),
         ]);
     }
 }

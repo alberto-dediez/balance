@@ -12,6 +12,7 @@ final class AccountFeatures
         private bool $events = true,
         private bool $compensation = true,
         private bool $organizationalCarbonFootprint = true,
+        private bool $contests = false,
     ) {}
 
     public function isEnabled(AccountFeature $feature): bool
@@ -22,6 +23,7 @@ final class AccountFeatures
             AccountFeature::Events => $this->events,
             AccountFeature::Compensation => $this->compensation,
             AccountFeature::OrganizationalCarbonFootprint => $this->organizationalCarbonFootprint,
+            AccountFeature::Contests => $this->contests,
         };
     }
 
@@ -50,12 +52,18 @@ final class AccountFeatures
         return $this->organizationalCarbonFootprint;
     }
 
+    public function contests(): bool
+    {
+        return $this->contests;
+    }
+
     public function equals(self $other): bool
     {
         return $this->accountTripCalculator === $other->accountTripCalculator()
             && $this->propertyTripCalculators === $other->propertyTripCalculators()
             && $this->events === $other->events()
             && $this->compensation === $other->compensation()
-            && $this->organizationalCarbonFootprint === $other->organizationalCarbonFootprint();
+            && $this->organizationalCarbonFootprint === $other->organizationalCarbonFootprint()
+            && $this->contests === $other->contests();
     }
 }

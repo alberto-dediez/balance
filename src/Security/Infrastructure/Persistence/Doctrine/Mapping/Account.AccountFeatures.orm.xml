@@ -11,6 +11,7 @@
         <field name="events" type="boolean" column="events" nullable="false"/>
         <field name="compensation" type="boolean" column="compensation" nullable="false"/>
         <field name="organizationalCarbonFootprint" type="boolean" column="organizational_carbon_footprint" nullable="false"/>
+        <field name="contests" type="boolean" column="contests" nullable="false"/>
     </embeddable>
 
 </doctrine-mapping>

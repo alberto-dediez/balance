@@ -1,0 +1,47 @@
+{% extends '@shared/layout/edit.html.twig' %}
+
+{% set page_title = ('Concursos' | trans)
+    ~ ' > '
+    ~ ('Publicar' | trans)
+    ~ ' > '
+    ~ contest.name %}
+
+{% block top_actions %}
+    <twig:TopAction:Return path="{{ path('contests_edit', {contestId: contest.id}) }}" />
+{% endblock %}
+
+{% block content %}
+    <twig:Card title="{{ 'Resumen' | trans }}">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Calculadoras' | trans }}">{{ hostNames is empty ? '---' : hostNames | map(name => name | trans) | join(', ') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Participación' | trans }}">{{ contest.participationMode.value | trans({}, 'contestParticipationMode') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Premio' | trans }}">{{ contest.awardMode.value | trans({}, 'contestAwardMode') }}{% if contest.winnersCount %} ({{ contest.winnersCount }}){% endif %}</twig:View:Field>
+                <twig:View:Field label="{{ 'Realizar el sorteo en la plataforma' | trans }}">{{ contest.platformDraw | show_field_value | trans }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Países admitidos' | trans }}">{{ contest.allowedCountryIsos is empty ? ('Cualquier país' | trans) : contest.allowedCountryIsos | map(iso => countries[iso] ?? iso) | join(', ') }}</twig:View:Field>
+            </div>
+            <div class="col-md-6">
+                <twig:View:Field label="{{ 'Inicio' | trans }}">{{ contest.startsAt | date('d/m/Y H:i') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Fin' | trans }}">{{ contest.endsAt | date('d/m/Y H:i') }}</twig:View:Field>
+                <twig:View:Field label="{{ 'Organizador' | trans }}">{{ contest.organizerName }} ({{ contest.organizerTaxId }})</twig:View:Field>
+                <twig:View:Field label="{{ 'Email de contacto del organizador' | trans }}">{{ contest.organizerContactEmail }}</twig:View:Field>
+            </div>
+        </div>
+    </twig:Card>
+
+    {{ form_start(form) }}
+        <twig:Card>
+            {{ form_errors(form) }}
+
+            <div class="row">
+                <div class="col-12">
+                    {{ form_row(form.responsibilityAccepted) }}
+                </div>
+            </div>
+
+            <twig:ActionBar>
+                <twig:ActionBar:Button type="primary" :button="form.publish" />
+            </twig:ActionBar>
+        </twig:Card>
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends '@shared/layout/list.html.twig' %}
+
+{% set page_title = 'Concursos' | trans %}
+
+{% block table %}
+    {% set columns = [
+        {
+            'label': 'Nombre' | trans,
+            'sortable': true,
+            'sortableBy': 'name'
+        }, {
+            'label': 'Calculadoras' | trans
+        }, {
+            'label': 'Participación' | trans
+        }, {
+            'label': 'Premio' | trans
+        }, {
+            'label': 'Inicio' | trans,
+            'sortable': true,
+            'sortableBy': 'startsAt'
+        }, {
+            'label': 'Fin' | trans,
+            'sortable': true,
+            'sortableBy': 'endsAt'
+        }, {
+            'label': 'Estado' | trans
+        }, {
+            'label': 'Inscripciones recibidas' | trans
+        }, {
+            'label': ''
+        }
+    ] %}
+
+    {% if contests is empty %}
+        <p class="mb-0">{{ 'Todavía no has creado ningún concurso.' | trans }}</p>
+    {% else %}
+        <twig:List:Table :columns="columns" :elements="contests">
+            <td>{{ element.name }}</td>
+            <td>{{ element.hostReferences | length }}</td>
+            <td>{{ element.participationMode.value | trans({}, 'contestParticipationMode') }}</td>
+            <td>{{ element.awardMode.value | trans({}, 'contestAwardMode') }}</td>
+            <td>{{ element.startsAt | date('d/m/Y H:i') }}</td>
+            <td>{{ element.endsAt | date('d/m/Y H:i') }}</td>
+            <td><span class="badge {{ element.status.style }}">{{ element.status.value | trans({}, 'contestStatus') }}</span></td>
+            <td>{{ element.confirmedEntries | number_format(0, ',', '.') }}</td>
+            <td>
+                {% if element | is_authorized('view') %}
+                    <twig:List:Action path="{{ path('contests_entries', {'contestId': element.id}) }}"
+                        title="{{ 'Apuntados' | trans }}"
+                    >
+                        <twig:Icon name="solar:users-group-rounded-line-duotone" size="lg" />
+                    </twig:List:Action>
+                {% endif %}
+
+                {% if element.draft and element | is_authorized('edit') %}
+                    <twig:List:Action:Publish path="{{ path('contests_publish', {'contestId': element.id}) }}" />
+                {% endif %}
+
+                {% if element.published and element | is_authorized('edit') %}
+                    <twig:List:Action path="{{ path('contests_close', {'contestId': element.id, '_token': csrf_token('close')}) }}"
+                        title="{{ 'Cerrar concurso' | trans }}"
+                        data-controller="confirm"
+                        data-confirm-text-param="{{ 'Se cerrará el concurso y no admitirá más inscripciones. ¿Desea continuar?' | trans }}"
+                        data-action="confirm#link:prevent"
+                    >
+                        <twig:Icon name="solar:lock-keyhole-line-duotone" size="lg" />
+                    </twig:List:Action>
+                {% endif %}
+
+                {% if element | is_authorized('edit') %}
+                    <twig:List:Action:Edit path="{{ path('contests_edit', {'contestId': element.id}) }}" />
+                {% endif %}
+
+                {% if element.draft and element | is_authorized('remove') %}
+                    <twig:List:Action:Delete path="{{ path('contests_remove', {'contestId': element.id}) }}" />
+                {% endif %}
+            </td>
+        </twig:List:Table>
+    {% endif %}
+{% endblock %}
+
+{% block list_actions %}
+    <twig:Link:Register path="{{ path('contests_register') }}" />
+{% endblock list_actions %}

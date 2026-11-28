@@ -10,6 +10,7 @@ use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalcul
 use App\CarbonFootprint\Application\TripCalculationLink\GetByToken\GetTripCalculationLinkByTokenService;
 use App\CarbonFootprint\Domain\Model\TripCalculationLink\TripCalculationLinkTokenInvalidException;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\ConsentRequestReader;
+use App\CarbonFootprint\Infrastructure\UI\Web\Public\Contest\ContestPublicHandler;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PropertyTripPublicControllerTrait;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PropertyTrip\PublicTripRoutes;
 use App\CarbonFootprint\Infrastructure\UI\Web\Public\PublicFormRateLimiter;
@@ -37,6 +38,7 @@ class TripController extends AbstractController
         string $token,
         GetTripCalculationLinkByTokenService $getByToken,
         RegisterTripCalculationService $registerTripCalculation,
+        ContestPublicHandler $contestHandler,
         TranslatorInterface $translator,
         Request $request,
     ): Response {
@@ -111,6 +113,7 @@ class TripController extends AbstractController
             'maxLegs' => $response->maxLegs,
             'scope' => $scope,
             'assumesOvernightStay' => $response->assumesOvernightStay,
+            'contest' => $contestHandler->activeContest(ContestPublicHandler::hostForTripCalculationLink($response->tripCalculationLink)),
         ]);
     }
 }

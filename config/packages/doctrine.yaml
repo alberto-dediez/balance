@@ -119,6 +119,10 @@ doctrine:
             carbon_footprint_report_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\CarbonFootprintReportIdType
             public_landing_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingIdType
             public_landing_block_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\PublicLandingBlockIdType
+            contest_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ContestIdType
+            contest_host_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ContestHostIdType
+            contest_allowed_country_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ContestAllowedCountryIdType
+            contest_entry_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ContestEntryIdType
             exchange_rate_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\ExchangeRateIdType
             base_year_declaration_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\BaseYearDeclarationIdType
             sector_benchmark_id: App\CarbonFootprint\Infrastructure\Persistence\Doctrine\Type\SectorBenchmarkIdType

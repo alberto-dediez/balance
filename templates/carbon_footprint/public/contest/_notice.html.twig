@@ -1,0 +1,14 @@
+{% if contest ?? null %}
+    <twig:Alert:Alert type="info">
+        <p class="fw-bold mb-1">{{ contest.name }}</p>
+        <p class="mb-1">{{ 'Premio: {prize}' | trans({'{prize}': contest.prizeDescription}) }}</p>
+        <p class="mb-1">
+            {% if contest.participationMode.calculation %}
+                {{ 'Calcula tu huella para participar' | trans }}
+            {% else %}
+                {{ 'Calcula y compensa tu huella para participar' | trans }}
+            {% endif %}
+        </p>
+        <a href="{{ contest_terms_path }}" target="_blank" rel="noopener noreferrer">{{ 'Ver bases' | trans }}</a>
+    </twig:Alert:Alert>
+{% endif %}

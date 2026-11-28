@@ -11,6 +11,7 @@ use App\Balance\Application\LedgerEntry\Check\CheckLedgerRequest;
 use App\Balance\Application\ProjectContribution\Expire\ExpirePendingContributionsRequest;
 use App\Balance\Application\ProjectContribution\Reallocate\ReallocateAllUnderallocatedContributionsRequest;
 use App\Bioscore\Application\BioscoreCatalogItem\Sync\SyncBioscoreCatalogsRequest;
+use App\CarbonFootprint\Application\Contest\CloseExpired\CloseExpiredContestsRequest;
 use App\CarbonFootprint\Application\ExchangeRate\Sync\SyncExchangeRatesRequest;
 use App\CarbonFootprint\Application\SectorBenchmark\Refresh\RefreshSectorBenchmarksRequest;
 use App\Changelog\Application\Announcement\PublishScheduled\PublishScheduledAnnouncementsRequest;
@@ -44,6 +45,11 @@ class CommandSchedule
             ScheduledCommand::everyHours(
                 id: 'balance:expire-pending-contributions',
                 command: new ExpirePendingContributionsRequest(new \DateTimeImmutable('NOW')),
+                hours: 1,
+            ),
+            ScheduledCommand::everyHours(
+                id: 'carbon-footprint:close-expired-contests',
+                command: new CloseExpiredContestsRequest(new \DateTimeImmutable('NOW')),
                 hours: 1,
             ),
             ScheduledCommand::dailyAt(

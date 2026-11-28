@@ -1,0 +1,40 @@
+<div class="border-top pt-3 mt-3">
+    <p class="fw-semibold mb-1">{{ contest.name }}</p>
+    <p class="text-muted small mb-2">{{ 'Premio: {prize}' | trans({'{prize}': contest.prizeDescription}) }}</p>
+
+    {% if contestPrizesExhausted %}
+        <twig:Alert:Alert type="warning">{{ 'Los {n} premios de este concurso ya se han adjudicado. Puedes apuntarte, pero sin premio.' | trans({'{n}': contest.winnersCount}) }}</twig:Alert:Alert>
+    {% endif %}
+
+    <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" value="1"
+               id="contribution_contest" name="contribution[contest]"
+               {{ contribution.contest | default(false) ? 'checked' : '' }}>
+        <label class="form-check-label" for="contribution_contest">
+            {{ contestConsentLabel | raw }}
+        </label>
+    </div>
+
+    {% if contest.adultsOnly %}
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="1"
+                   id="contribution_contest_adult" name="contribution[contestAdult]"
+                   {{ contribution.contestAdult | default(false) ? 'checked' : '' }}>
+            <label class="form-check-label" for="contribution_contest_adult">
+                {{ 'Confirmo que soy mayor de edad' | trans }}
+            </label>
+        </div>
+    {% endif %}
+
+    <p class="form-text mb-1">{{ 'Solo quedarás apuntado si finalizas la compensación.' | trans }}</p>
+
+    {% if contest.awardMode.firstEntrants and not contestPrizesExhausted %}
+        <p class="form-text mb-1">{{ 'Premio sujeto a disponibilidad al confirmarse la compensación.' | trans }}</p>
+    {% endif %}
+
+    {% if contestCountries is not empty %}
+        <p class="form-text mb-1">{{ 'Solo pueden participar residentes en: {countries}.' | trans({'{countries}': contestCountries | join(', ')}) }}</p>
+    {% endif %}
+
+    {{ include(theme_template('@carbon_footprint/public/contest/_organizer.html.twig')) }}
+</div>

@@ -1,0 +1,34 @@
+{% extends theme_template(routes.layout) %}
+
+{% set page_title = '¡Gracias!' | trans %}
+
+{% block card_body %}
+    <div class="text-center">
+        <twig:Icon name="solar:cup-star-line-duotone" size="xl" class="text-success mb-3" />
+        <h5 class="mb-2">{{ contest.name }}</h5>
+
+        {{ block('contest_message') }}
+    </div>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-link btn-sm text-muted" href="{{ path(routes.result, routes.resultRouteParams) }}">
+            {{ 'Volver al resultado' | trans }}
+        </a>
+    </div>
+{% endblock %}
+
+{% block contest_message %}
+    {% if contestEntry.disqualified %}
+        <p class="text-muted mb-0">{{ 'Tu inscripción ya no participa en este concurso.' | trans }}</p>
+    {% else %}
+        <p class="mb-2">{{ 'Ya estás apuntado.' | trans }}</p>
+
+        {% if contestEntry.winner %}
+            <p class="mb-0">{{ '¡Tienes premio! {organizer} se pondrá en contacto contigo.' | trans({'{organizer}': contest.organizerName}) }}</p>
+        {% elseif contest.awardMode.firstEntrants %}
+            <p class="text-muted mb-0">{{ 'Los {n} premios ya se habían adjudicado cuando te apuntaste.' | trans({'{n}': contest.winnersCount}) }}</p>
+        {% elseif contest.awardMode.draw %}
+            <p class="text-muted mb-0">{{ 'Si resultas ganador, {organizer} se pondrá en contacto contigo.' | trans({'{organizer}': contest.organizerName}) }}</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}

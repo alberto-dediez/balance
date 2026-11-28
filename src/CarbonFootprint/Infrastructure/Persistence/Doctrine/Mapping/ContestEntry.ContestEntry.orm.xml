@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="App\CarbonFootprint\Domain\Model\ContestEntry\ContestEntry" table="contest_entries">
+        <id name="id" type="contest_entry_id" column="id">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="contestId" type="contest_id" column="contest_id" nullable="false" />
+        <field name="accountId" type="account_id" column="account_id" nullable="false" />
+        <field name="hostType" type="string" length="10" column="host_type" enum-type="App\CarbonFootprint\Domain\Model\Contest\ContestHostType" nullable="false" />
+        <field name="hostId" type="string" length="36" column="host_id" nullable="false" />
+        <field name="origin" type="string" length="40" column="origin" enum-type="App\Balance\Domain\Model\ProjectContribution\ProjectContributionOrigin" nullable="false" />
+        <field name="originId" type="string" length="36" column="origin_id" nullable="false" />
+        <field name="projectContributionId" type="string" length="36" column="project_contribution_id" nullable="true" />
+
+        <field name="name" type="string" length="255" column="name" nullable="false" />
+        <field name="email" type="string" length="255" column="email" nullable="true" />
+        <field name="phone" type="string" length="40" column="phone" nullable="true" />
+        <field name="country" type="string" length="2" column="country" nullable="true" />
+        <field name="locale" type="string" length="5" column="locale" enum-type="App\Shared\Domain\Model\Locale\Locale" nullable="false" />
+
+        <field name="status" type="string" length="20" column="status" enum-type="App\CarbonFootprint\Domain\Model\ContestEntry\ContestEntryStatus" nullable="false" />
+        <field name="entryNumber" type="integer" column="entry_number" nullable="true" />
+        <field name="winner" type="boolean" column="winner" nullable="false" />
+
+        <field name="registeredAt" type="datetime_immutable" column="registered_at" nullable="false" />
+        <field name="confirmedAt" type="datetime_immutable" column="confirmed_at" nullable="true" />
+        <field name="awardedAt" type="datetime_immutable" column="awarded_at" nullable="true" />
+        <field name="disqualifiedAt" type="datetime_immutable" column="disqualified_at" nullable="true" />
+        <field name="disqualifiedBy" type="user_id" column="disqualified_by" nullable="true" />
+        <field name="disqualificationReason" type="string" length="255" column="disqualification_reason" nullable="true" />
+        <field name="personalDataPurgedAt" type="datetime_immutable" column="personal_data_purged_at" nullable="true" />
+
+        <embedded name="consentProof" class="App\Shared\Domain\Model\Consent\ConsentProof" use-column-prefix="true" column-prefix="consent_" />
+
+        <indexes>
+            <index name="idx_contest_entry_contest_status" columns="contest_id,status,winner" />
+            <index name="idx_contest_entry_project_contribution" columns="project_contribution_id" />
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint name="uq_contest_entry_origin" columns="contest_id,origin,origin_id" />
+            <unique-constraint name="uq_contest_entry_email" columns="contest_id,email" />
+            <unique-constraint name="uq_contest_entry_number" columns="contest_id,entry_number" />
+        </unique-constraints>
+    </entity>
+
+</doctrine-mapping>

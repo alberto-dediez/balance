@@ -11,4 +11,5 @@ enum AccountFeature: string
     case Events = 'events';
     case Compensation = 'compensation';
     case OrganizationalCarbonFootprint = 'organizational_carbon_footprint';
+    case Contests = 'contests';
 }

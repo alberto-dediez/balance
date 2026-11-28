@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="es" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="EE1DNyc" resname="draw">
+        <source>draw</source>
+        <target>Prize draw</target>
+      </trans-unit>
+      <trans-unit id="YawAc_T" resname="first_entrants">
+        <source>first_entrants</source>
+        <target>First entrants</target>
+      </trans-unit>
+      <trans-unit id="R8e3MzW" resname="everyone">
+        <source>everyone</source>
+        <target>Everyone</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

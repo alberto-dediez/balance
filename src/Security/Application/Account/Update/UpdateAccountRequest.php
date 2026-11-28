@@ -25,6 +25,7 @@ class UpdateAccountRequest implements Command
         public bool $featureEvents = true,
         public bool $featureCompensation = true,
         public bool $featureOrganizationalCarbonFootprint = true,
+        public bool $featureContests = false,
         public bool $apiTokensEnabled = false,
     ) {}
 }

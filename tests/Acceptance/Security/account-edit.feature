@@ -122,6 +122,25 @@ Feature:
         Then I see a form field "featureEvents" with value "1"
         Then I see a form field "featureCompensation" with value "1"
         Then I see a form field "featureOrganizationalCarbonFootprint" with value "1"
+        Then I see a form field "featureContests" with value "0"
+
+    Scenario: As an admin, I can enable the contests of an account and its owner sees them in the menu
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "MyCompany" with id "333" exists
+        Given user "owner@dediez.software" with role "ROLE_OWNER" of account "333" exists
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/users"
+        Then I do not see a link to "/es/carbon-footprint/contests"
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/accounts/edit/333"
+        When I submit a form with "name:MyCompany|active:1|featureContests:1" and button "Guardar"
+        When I follow redirect
+        Then I see a text "Cuenta actualizada"
+        When I go to "/es/admin/accounts/edit/333"
+        Then I see a form field "featureContests" with value "1"
+        When I am logged as "owner@dediez.software"
+        When I go to "/es/users"
+        Then I see a link to "/es/carbon-footprint/contests"
 
     Scenario: As an admin, I can disable a feature of an account
         Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
