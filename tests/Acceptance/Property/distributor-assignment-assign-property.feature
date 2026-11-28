@@ -30,3 +30,18 @@ Feature:
         When I follow redirect
         Then the response status should be 200
         Then I see a text "No se ha podido asignar el distribuidor seleccionado a la propiedad"
+
+    Scenario: As an admin, I cannot assign a distributor to a property without account
+        Given user "admin@dediez.software" with role "ROLE_ADMIN" exists
+        Given account "Greenhost" with id "555" exists
+        Given account "555" is a distributor
+        Given property "Hotel Huérfano" with id "60" exists
+        When I am logged as "admin@dediez.software"
+        When I go to "/es/admin/properties"
+        When I submit a form with "elements:[60]|action:assign-distributor|distributorAccountId:555" and button "Realizar"
+        When I follow redirect
+        Then the response status should be 200
+        Then I see a text "La propiedad Hotel Huérfano (60) no tiene cuenta asignada"
+        Then I see a text "No se ha podido asignar el distribuidor seleccionado a la propiedad"
+        When I go to "/es/admin/distributor-assignments"
+        Then I do not see a text "Hotel Huérfano"

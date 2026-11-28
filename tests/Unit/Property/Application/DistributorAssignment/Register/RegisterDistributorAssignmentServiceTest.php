@@ -10,6 +10,7 @@ use App\Property\Domain\Model\DistributorAssignment\AccountIsNotDistributorExcep
 use App\Property\Domain\Model\DistributorAssignment\DistributorAssignmentFilter;
 use App\Property\Domain\Model\DistributorAssignment\DistributorAssignmentRegistered;
 use App\Property\Domain\Model\DistributorAssignment\DistributorCannotDistributeItselfException;
+use App\Property\Domain\Model\DistributorAssignment\PropertyWithoutAccountException;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Infrastructure\Persistence\InMemory\Repository\InMemoryDistributorAssignmentRepository;
@@ -144,6 +145,24 @@ class RegisterDistributorAssignmentServiceTest extends TestCase
         $this->property->remove();
 
         $this->createSUT()(new RegisterDistributorAssignmentRequest($this->distributor->id(), propertyId: $this->property->id()), UserMother::adminUser());
+    }
+
+    public function testFailsWithPropertyWithoutAccount(): void
+    {
+        $orphan = PropertyMother::from(PropertyId::generate(), 'Hotel Huérfano');
+        $this->propertyRepository->add($orphan);
+
+        $this->expectException(PropertyWithoutAccountException::class);
+        $this->expectExceptionMessage(sprintf('La propiedad Hotel Huérfano (%s) no tiene cuenta asignada', $orphan->id()));
+
+        $this->createSUT()(new RegisterDistributorAssignmentRequest($this->distributor->id(), propertyId: $orphan->id()), UserMother::adminUser());
+    }
+
+    public function testFailsWithUnknownProperty(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->createSUT()(new RegisterDistributorAssignmentRequest($this->distributor->id(), propertyId: PropertyId::generate()), UserMother::adminUser());
     }
 
     public function testNonAdminIsDenied(): void

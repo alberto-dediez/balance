@@ -11,10 +11,23 @@ use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentRepo
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentStatus;
 use App\Materiality\Domain\Model\MaterialityAssessment\MaterialityAssessmentSubjectType;
 use App\Security\Domain\Model\Account\AccountId;
+use App\Shared\Domain\Event\DomainEventPublisher;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class MaterialityAssessmentRepositoryTest extends KernelTestCase
 {
+    protected function setUp(): void
+    {
+        DomainEventPublisher::instance()->reset();
+    }
+
+    protected function tearDown(): void
+    {
+        DomainEventPublisher::instance()->reset();
+
+        parent::tearDown();
+    }
+
     public function testAddAndFind(): void
     {
         $repository = $this->createSUT();

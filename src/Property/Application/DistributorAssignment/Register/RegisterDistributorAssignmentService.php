@@ -10,6 +10,7 @@ use App\Property\Domain\Model\DistributorAssignment\DistributorAssignment;
 use App\Property\Domain\Model\DistributorAssignment\DistributorAssignmentId;
 use App\Property\Domain\Model\DistributorAssignment\DistributorAssignmentRepository;
 use App\Property\Domain\Model\DistributorAssignment\DistributorCannotDistributeItselfException;
+use App\Property\Domain\Model\DistributorAssignment\PropertyWithoutAccountException;
 use App\Property\Domain\Model\Property\Property;
 use App\Property\Domain\Model\Property\PropertyId;
 use App\Property\Domain\Model\Property\PropertyRepository;
@@ -84,10 +85,15 @@ class RegisterDistributorAssignmentService implements CommandHandler
     private function assignmentForProperty(AccountId $distributorAccountId, ?PropertyId $propertyId, User $user): DistributorAssignment
     {
         $property = $propertyId instanceof PropertyId ? $this->propertyRepository->find($propertyId) : null;
-        $propertyAccountId = $property?->accountId();
 
-        if (!$property instanceof Property || $property->isRemoved() || !$propertyAccountId instanceof AccountId) {
+        if (!$property instanceof Property || $property->isRemoved()) {
             throw new \InvalidArgumentException('Property not found');
+        }
+
+        $propertyAccountId = $property->accountId();
+
+        if (!$propertyAccountId instanceof AccountId) {
+            throw new PropertyWithoutAccountException($property);
         }
 
         if ($propertyAccountId->equals($distributorAccountId)) {
